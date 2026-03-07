@@ -191,7 +191,37 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
     FINANCE: "bg-red-50 text-red-700 border-red-200",
   }
 
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://aimseos.com"
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: service.name,
+    description: service.shortDesc,
+    brand: { "@type": "Brand", name: "AIMS" },
+    url: `${appUrl}/services/${slug}`,
+    offers: service.tiers.length > 0
+      ? service.tiers.map((t) => ({
+          "@type": "Offer",
+          name: t.name,
+          price: t.price / 100,
+          priceCurrency: "USD",
+          priceSpecification: {
+            "@type": "UnitPriceSpecification",
+            price: t.price / 100,
+            priceCurrency: "USD",
+            billingDuration: t.interval === "month" ? "P1M" : "P1Y",
+          },
+        }))
+      : { "@type": "Offer", availability: "https://schema.org/InStock" },
+  }
+
   return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
     <div className="min-h-screen bg-white">
       {/* Hero */}
       <section className="border-b border-gray-100 bg-white py-20">
@@ -335,5 +365,6 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
         </div>
       </section>
     </div>
+    </>
   )
 }

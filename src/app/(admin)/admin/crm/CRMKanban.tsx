@@ -1,8 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { motion } from "framer-motion"
-import { Plus, MoreHorizontal, DollarSign, Clock } from "lucide-react"
+import { Plus, MoreHorizontal, DollarSign, Clock, Search } from "lucide-react"
 import Link from "next/link"
 import { AddDealModal } from "./AddDealModal"
 import {
@@ -181,6 +181,22 @@ export function CRMKanban({ initialDeals }: { initialDeals: Deal[] }) {
   const [deals, setDeals] = useState<Deal[]>(initialDeals)
   const [activeDeal, setActiveDeal] = useState<Deal | null>(null)
   const [addingToStage, setAddingToStage] = useState<DealStage | null>(null)
+  const [search, setSearch] = useState("")
+  const [sourceFilter, setSourceFilter] = useState<string>("all")
+
+  const sources = useMemo(() => {
+    const s = new Set(deals.map((d) => d.source).filter(Boolean) as string[])
+    return Array.from(s)
+  }, [deals])
+
+  const filteredDeals = useMemo(() => {
+    return deals.filter((d) => {
+      const q = search.toLowerCase()
+      if (q && !d.contactName.toLowerCase().includes(q) && !d.company?.toLowerCase().includes(q)) return false
+      if (sourceFilter !== "all" && d.source !== sourceFilter) return false
+      return true
+    })
+  }, [deals, search, sourceFilter])
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
@@ -214,6 +230,37 @@ export function CRMKanban({ initialDeals }: { initialDeals: Deal[] }) {
 
   return (
     <>
+      {/* Search + filter bar */}
+      <div className="flex flex-col sm:flex-row gap-3 mb-5">
+        <div className="relative flex-1 max-w-xs">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-500" />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search deals..."
+            className="w-full pl-9 pr-4 py-2 bg-[#151821] border border-white/10 rounded-lg text-sm text-white placeholder-gray-600 focus:outline-none focus:border-white/20"
+          />
+        </div>
+        {sources.length > 0 && (
+          <select
+            value={sourceFilter}
+            onChange={(e) => setSourceFilter(e.target.value)}
+            className="px-3 py-2 bg-[#151821] border border-white/10 rounded-lg text-sm text-gray-300 focus:outline-none focus:border-white/20"
+          >
+            <option value="all">All Sources</option>
+            {sources.map((s) => (
+              <option key={s} value={s}>{s}</option>
+            ))}
+          </select>
+        )}
+        {(search || sourceFilter !== "all") && (
+          <div className="text-xs text-gray-500 flex items-center">
+            {filteredDeals.length} of {deals.length} deals
+          </div>
+        )}
+      </div>
+
       {addingToStage && (
         <AddDealModal
           stage={addingToStage}
@@ -234,7 +281,7 @@ export function CRMKanban({ initialDeals }: { initialDeals: Deal[] }) {
               <DroppableColumn
                 key={stage.key}
                 stage={stage}
-                deals={deals.filter((d) => d.stage === stage.key)}
+                deals={filteredDeals.filter((d) => d.stage === stage.key)}
                 onAddDeal={setAddingToStage}
               />
             ))}
