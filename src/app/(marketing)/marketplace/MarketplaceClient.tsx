@@ -362,10 +362,10 @@ const SERVICES: AIMSService[] = [
 ]
 
 const PILLAR_STYLES: Record<Pillar, string> = {
-  MARKETING: "text-red-700 bg-red-50 border-red-200",
-  SALES: "text-red-700 bg-red-50 border-red-200",
-  OPERATIONS: "text-red-700 bg-red-50 border-red-200",
-  FINANCE: "text-red-700 bg-red-50 border-red-200",
+  MARKETING: "text-green-700 bg-green-50 border-green-200",
+  SALES: "text-blue-700 bg-blue-50 border-blue-200",
+  OPERATIONS: "text-orange-700 bg-orange-50 border-orange-200",
+  FINANCE: "text-purple-700 bg-purple-50 border-purple-200",
 }
 
 
@@ -423,8 +423,8 @@ function ServiceCard({ service }: { service: AIMSService }) {
           <span className="text-xs text-muted-foreground">{service.setupTime} setup</span>
         </div>
 
-        <h3 className="text-lg font-bold text-foreground mb-1.5 leading-tight">{service.name}</h3>
-        <p className="text-sm text-muted-foreground leading-relaxed">{service.desc}</p>
+        <h3 className="text-lg font-bold text-foreground mb-1.5 leading-tight line-clamp-2 min-h-[3.5rem]">{service.name}</h3>
+        <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">{service.desc}</p>
       </div>
 
       {/* Tool logos */}
@@ -437,30 +437,27 @@ function ServiceCard({ service }: { service: AIMSService }) {
         </div>
       </div>
 
-      {/* Deliverables */}
+      {/* Deliverables — always exactly 3 rows */}
       <div className="px-5 pb-4 flex-1">
         <ul className="space-y-2">
           {service.deliverables.slice(0, 3).map((d, i) => (
             <li key={i} className="flex items-start gap-2 text-sm text-foreground/80">
               <span className="text-gray-300 mt-0.5 flex-shrink-0">—</span>
-              <span>{d}</span>
+              <span className="line-clamp-1">{d}</span>
             </li>
           ))}
-          {service.deliverables.length > 3 && (
-            <li className="text-xs text-muted-foreground pl-4">+{service.deliverables.length - 3} more deliverables</li>
-          )}
         </ul>
       </div>
 
-      {/* Outcome box */}
-      <div className="mx-5 mb-4 px-4 py-3 bg-muted border border-border rounded-xl">
+      {/* Outcome box — fixed height */}
+      <div className="mx-5 mb-4 px-4 py-3 bg-muted border border-border rounded-xl min-h-[72px]">
         <div className="text-xs text-muted-foreground font-semibold uppercase tracking-wider mb-1">Outcome</div>
-        <p className="text-sm text-foreground/80 leading-snug">{service.outcome}</p>
+        <p className="text-sm text-foreground/80 leading-snug line-clamp-2">{service.outcome}</p>
       </div>
 
-      {/* Tier selector (only for tiered services) */}
-      {hasTiers && pricing?.tiers && (
-        <div className="px-5 pb-3">
+      {/* Tier selector — always reserve the same height */}
+      <div className="px-5 pb-3 min-h-[48px]">
+        {hasTiers && pricing?.tiers && (
           <div className="flex gap-1.5 flex-wrap">
             {pricing.tiers.map((tier) => (
               <button
@@ -470,15 +467,15 @@ function ServiceCard({ service }: { service: AIMSService }) {
                   "px-3 py-1 rounded-lg text-xs font-semibold border transition-colors",
                   selectedTier === tier.id
                     ? "bg-gray-900 text-white border-gray-900"
-                    : "bg-white text-gray-600 border-gray-200 hover:border-gray-400"
+                    : "bg-white text-gray-600 border-gray-200 hover:border-gray-400 cursor-pointer"
                 )}
               >
                 {tier.name} — ${tier.priceMonthly / 100}/mo
               </button>
             ))}
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Pricing + CTA */}
       <div className="px-5 pb-5">

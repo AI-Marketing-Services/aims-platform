@@ -132,7 +132,7 @@ export default function AdminDashboard() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground">Dashboard</h1>
-          <p className="mt-0.5 text-sm text-muted-foreground">AIMS operational overview — March 2026</p>
+          <p className="mt-0.5 text-sm text-muted-foreground">AIMS operational overview</p>
         </div>
         <div className="flex items-center gap-3">
           <NotificationBell variant="light" />

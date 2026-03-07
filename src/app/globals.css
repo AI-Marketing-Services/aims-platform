@@ -186,6 +186,16 @@
   .stagger-in > *:nth-child(5) { animation-delay: 0.25s; }
   .stagger-in > *:nth-child(6) { animation-delay: 0.3s; }
 
+  /* Vertical benefit card ticker */
+  @keyframes ticker-vertical {
+    0%   { transform: translateY(0); }
+    100% { transform: translateY(-33.333%); }
+  }
+  .animate-ticker-vertical {
+    animation: ticker-vertical 28s linear infinite;
+    will-change: transform;
+  }
+
   /* Scrollbar styling for portals */
   .custom-scrollbar::-webkit-scrollbar {
     width: 6px;

@@ -51,7 +51,7 @@ export function HowItWorks() {
               className="relative rounded-2xl border border-border bg-background p-7 hover:border-gray-300 transition-colors"
             >
               {/* Step number */}
-              <span className="text-[4rem] font-black leading-none text-gray-100 select-none">
+              <span className="text-[4rem] font-black leading-none text-gray-300 select-none">
                 {step.num}
               </span>
 

@@ -89,6 +89,11 @@ export default function SimulatePurchasePage() {
         <p className="text-gray-400 text-sm">
           Create a test client subscription + auto-generate onboarding tasks. Use for demos, QA, or training.
         </p>
+        {process.env.NODE_ENV === "production" && (
+          <div className="mt-3 rounded-lg bg-yellow-500/10 border border-yellow-500/30 px-4 py-2.5">
+            <p className="text-xs font-semibold text-yellow-400">Production environment — simulation is disabled unless ALLOW_SIMULATE=true is set.</p>
+          </div>
+        )}
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">

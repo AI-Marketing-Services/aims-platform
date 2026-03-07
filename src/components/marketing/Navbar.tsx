@@ -14,7 +14,6 @@ const NAV_LINKS = [
   { label: "Services", href: "/marketplace" },
   { label: "Why AIMS?", href: "/why-aims" },
   { label: "Pricing", href: "/pricing" },
-  { label: "Marketplace", href: "/marketplace" },
   { label: "FAQ", href: "/#faq" },
 ] as const
 
@@ -134,6 +133,24 @@ export function Navbar() {
                 </Link>
               ))}
               <div className="pt-3 mt-3 border-t border-border space-y-2">
+                {/* Cart button — mobile */}
+                <button
+                  onClick={() => { openCart(); setMobileOpen(false) }}
+                  className="flex w-full items-center gap-2 px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
+                >
+                  <ShoppingCart className="w-4 h-4" />
+                  Cart
+                  {items.length > 0 && (
+                    <span className="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-[#DC2626] text-[10px] font-bold text-white">
+                      {items.length}
+                    </span>
+                  )}
+                </button>
+                <SignedIn>
+                  <Link href="/portal/dashboard" className="block px-3 py-2 text-sm font-medium text-muted-foreground">
+                    Dashboard
+                  </Link>
+                </SignedIn>
                 <SignedOut>
                   <Link href="/sign-in" className="block px-3 py-2 text-sm font-medium text-muted-foreground">
                     Sign in

@@ -39,6 +39,14 @@ export default async function PortalDashboard({
   const subs = dbUser?.subscriptions ?? []
   const totalMrr = subs.reduce((sum, s) => sum + s.monthlyAmount, 0)
 
+  // Real metrics
+  const [leadCount, meetingCount] = dbUser
+    ? await Promise.all([
+        db.deal.count({ where: { userId: dbUser.id } }),
+        db.dealActivity.count({ where: { deal: { userId: dbUser.id }, type: "DEMO_COMPLETED" } }),
+      ])
+    : [0, 0]
+
   return (
     <div className="space-y-8">
       {/* Checkout success banner */}
@@ -59,8 +67,8 @@ export default async function PortalDashboard({
         {[
           { label: "Active Services", value: String(subs.length), icon: Zap },
           { label: "Monthly Spend", value: `$${totalMrr.toLocaleString()}`, icon: DollarSign },
-          { label: "Leads Generated", value: "—", icon: BarChart2 },
-          { label: "Meetings Booked", value: "—", icon: Globe },
+          { label: "Leads Generated", value: leadCount > 0 ? String(leadCount) : "—", icon: BarChart2 },
+          { label: "Meetings Booked", value: meetingCount > 0 ? String(meetingCount) : "—", icon: Globe },
         ].map(({ label, value, icon: Icon }) => (
           <div key={label} className="rounded-xl border border-border bg-card p-5">
             <div className="flex items-center justify-between">
@@ -127,17 +135,26 @@ export default async function PortalDashboard({
 
       {/* Upsell — only show if < 3 services */}
       {subs.length < 3 && (
-        <div className="rounded-xl border border-red-200 bg-red-50 p-5">
-          <div className="flex items-center justify-between">
+        <div className="rounded-xl border border-red-200 bg-gradient-to-br from-red-50 to-white p-5">
+          <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="font-semibold text-foreground">Boost your pipeline with AI Voice Agents</p>
-              <p className="mt-1 text-sm text-muted-foreground">Handle inbound calls 24/7 and run outbound campaigns while you sleep.</p>
+              <p className="text-xs font-semibold uppercase tracking-widest text-red-400 mb-1">Recommended for you</p>
+              <p className="font-semibold text-foreground">
+                {subs.some(s => s.serviceArm.slug === "cold-outbound")
+                  ? "Add AI Voice Agents to close more deals"
+                  : "Add Cold Outbound to fill your pipeline"}
+              </p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {subs.some(s => s.serviceArm.slug === "cold-outbound")
+                  ? "Handle inbound calls 24/7 and follow up while you sleep."
+                  : "Multi-domain sequences with AI personalization — 40+ meetings/mo."}
+              </p>
             </div>
             <Link
-              href="/portal/marketplace"
-              className="ml-4 shrink-0 rounded-lg bg-[#DC2626] px-4 py-2 text-sm font-semibold text-white hover:bg-[#B91C1C] transition"
+              href="/marketplace"
+              className="shrink-0 rounded-lg bg-[#DC2626] px-4 py-2 text-sm font-semibold text-white hover:bg-[#B91C1C] transition whitespace-nowrap"
             >
-              Add Service
+              Explore Services
             </Link>
           </div>
         </div>

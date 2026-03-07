@@ -8,10 +8,10 @@ import { ArrowUpRight, Play, Phone, PhoneCall, Zap, TrendingUp, RefreshCw, Datab
 
 // ─── Outbound Demo ────────────────────────────────────────────────────────────
 const OUTBOUND_STEPS = [
-  { tool: "/integrations/google-drive-svgrepo-com.svg", label: "Scrape ICP list", sub: "Clay → 2,400 contacts", color: "#4285F4" },
-  { tool: "/integrations/openai-svgrepo-com.svg", label: "AI personalization", sub: "GPT-4 writes 1:1 copy", color: "#10A37F" },
-  { tool: "/integrations/icons8-microsoft-teams.svg", label: "Multi-step sequence", sub: "Email D1 → D3 → D7 → D14", color: "#6264A7" },
-  { tool: "/integrations/slack.svg", label: "Reply routed to Slack", sub: "Hot lead alert fired", color: "#4A154B" },
+  { tool: "/integrations/apollo.svg", label: "Build ICP list", sub: "Clay → Apollo → 2,400 contacts", color: "#DC2626" },
+  { tool: "/integrations/openai-svgrepo-com.svg", label: "AI personalization", sub: "Claude writes 1:1 copy", color: "#10A37F" },
+  { tool: "/integrations/instantly.webp", label: "Multi-step sequence", sub: "Email D1 → D3 → D7 → D14", color: "#6264A7" },
+  { tool: "/integrations/slack.png", label: "Reply routed to Slack", sub: "Hot lead alert fired", color: "#4A154B" },
 ]
 
 function OutboundDemo() {

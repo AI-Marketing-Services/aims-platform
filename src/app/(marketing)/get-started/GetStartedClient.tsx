@@ -1,44 +1,12 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useSearchParams } from "next/navigation"
 import { Check, ArrowRight, ArrowLeft } from "lucide-react"
 
-declare global {
-  interface Window {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    Cal?: any
-  }
-}
-
 function CalBooking() {
-  useEffect(() => {
-    if (document.getElementById("cal-embed-script")) return
-    const script = document.createElement("script")
-    script.id = "cal-embed-script"
-    script.src = "https://app.cal.com/embed/embed.js"
-    script.async = true
-    script.onload = () => {
-      try {
-        window.Cal("init", "aims", { origin: "https://app.cal.com" })
-        window.Cal.ns.aims("inline", {
-          elementOrSelector: "#my-cal-inline-aims",
-          config: { layout: "month_view", useSlotsViewOnSmallScreen: "true", theme: "light" },
-          calLink: "adamwolfe/aims",
-        })
-        window.Cal.ns.aims("ui", {
-          theme: "light",
-          cssVarsPerTheme: { light: { "cal-brand": "#DC2626" } },
-          hideEventTypeDetails: true,
-          layout: "month_view",
-        })
-      } catch {}
-    }
-    document.head.appendChild(script)
-  }, [])
-
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div className="text-center">
         <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-green-100 mb-4">
           <Check className="h-6 w-6 text-green-600" />
@@ -46,7 +14,15 @@ function CalBooking() {
         <h2 className="text-2xl font-bold text-gray-900">Request submitted!</h2>
         <p className="mt-2 text-gray-500">Pick a time that works best for your strategy call below.</p>
       </div>
-      <div id="my-cal-inline-aims" style={{ width: "100%", height: "600px", overflow: "scroll" }} />
+      <div className="rounded-xl border border-gray-200 overflow-hidden">
+        <iframe
+          src="https://cal.com/adamwolfe/aims?embed=true&layout=month_view&theme=light&brandColor=%23DC2626&hideEventTypeDetails=true"
+          width="100%"
+          height="640"
+          style={{ border: "none", display: "block" }}
+          title="Book a strategy call"
+        />
+      </div>
     </div>
   )
 }
