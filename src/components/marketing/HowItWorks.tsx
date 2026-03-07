@@ -25,17 +25,17 @@ const STEPS = [
 
 export function HowItWorks() {
   return (
-    <section className="py-24 bg-white">
+    <section className="py-24 bg-card">
       <div className="mx-auto max-w-6xl px-4">
         {/* Header */}
         <div className="mb-16 max-w-xl">
-          <span className="inline-block rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-gray-500 mb-4">
+          <span className="inline-block rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">
             How It Works
           </span>
-          <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+          <h2 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
             From kickoff to calendar-full in 30 days
           </h2>
-          <p className="mt-3 text-base text-gray-500">
+          <p className="mt-3 text-base text-muted-foreground">
             A proven three-phase process built to generate qualified meetings fast — not six months from now.
           </p>
         </div>
@@ -48,19 +48,19 @@ export function HowItWorks() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.12 }}
-              className="relative rounded-2xl border border-gray-200 bg-[#FAFAFA] p-7 hover:border-gray-300 transition-colors"
+              className="relative rounded-2xl border border-border bg-background p-7 hover:border-gray-300 transition-colors"
             >
               {/* Step number */}
               <span className="text-[4rem] font-black leading-none text-gray-100 select-none">
                 {step.num}
               </span>
 
-              <h3 className="mt-1 text-lg font-bold text-gray-900">{step.title}</h3>
-              <p className="mt-3 text-sm text-gray-500 leading-relaxed">{step.desc}</p>
+              <h3 className="mt-1 text-lg font-bold text-foreground">{step.title}</h3>
+              <p className="mt-3 text-sm text-muted-foreground leading-relaxed">{step.desc}</p>
 
               <ul className="mt-6 space-y-2.5">
                 {step.items.map((item) => (
-                  <li key={item} className="flex items-center gap-2.5 text-sm text-gray-700">
+                  <li key={item} className="flex items-center gap-2.5 text-sm text-foreground/80">
                     <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-50">
                       <span className="h-1.5 w-1.5 rounded-full bg-[#DC2626]" />
                     </span>
@@ -78,16 +78,16 @@ export function HowItWorks() {
         </div>
 
         {/* Timeline bar */}
-        <div className="mt-10 flex items-center gap-0 overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div className="mt-10 flex items-center gap-0 overflow-hidden rounded-xl border border-border bg-card">
           {[
             { week: "Week 1–2", label: "Strategy & Setup", color: "bg-blue-500" },
             { week: "Week 2–3", label: "Build & Launch", color: "bg-orange-500" },
             { week: "Week 4+", label: "Optimize & Scale", color: "bg-green-500" },
           ].map((phase, i) => (
-            <div key={phase.label} className="flex-1 border-r border-gray-200 last:border-r-0 px-5 py-3.5">
+            <div key={phase.label} className="flex-1 border-r border-border last:border-r-0 px-5 py-3.5">
               <div className={`mb-1.5 h-1 w-8 rounded-full ${phase.color}`} />
-              <p className="text-xs font-semibold text-gray-900">{phase.week}</p>
-              <p className="text-xs text-gray-400">{phase.label}</p>
+              <p className="text-xs font-semibold text-foreground">{phase.week}</p>
+              <p className="text-xs text-muted-foreground">{phase.label}</p>
             </div>
           ))}
         </div>

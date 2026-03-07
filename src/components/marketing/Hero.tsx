@@ -31,7 +31,7 @@ const STATUS_CONFIG = {
 
 export function Hero() {
   return (
-    <section className="relative overflow-hidden bg-[#FAFAFA] pt-28 pb-16 md:pt-36 md:pb-24">
+    <section className="relative overflow-hidden bg-background pt-28 pb-16 md:pt-36 md:pb-24">
       {/* Subtle grid background */}
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.03]"
@@ -55,7 +55,7 @@ export function Hero() {
         >
           {/* Badge */}
           <motion.div variants={fadeUp} className="mb-8">
-            <span className="inline-flex items-center gap-2 rounded-full border border-red-200/80 bg-white px-4 py-1.5 text-sm font-medium text-red-700 shadow-sm">
+            <span className="inline-flex items-center gap-2 rounded-full border border-red-200/80 bg-card px-4 py-1.5 text-sm font-medium text-red-700 shadow-sm">
               <span className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse" />
               AI-Managed Growth Infrastructure
             </span>
@@ -64,7 +64,7 @@ export function Hero() {
           {/* Headline */}
           <motion.h1
             variants={fadeUp}
-            className="max-w-4xl text-[2.75rem] font-extrabold leading-[1.1] tracking-tight text-gray-900 sm:text-5xl md:text-6xl lg:text-[4rem]"
+            className="max-w-4xl text-[2.75rem] font-extrabold leading-[1.1] tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-[4rem]"
           >
             The operating system
             <br />
@@ -84,7 +84,7 @@ export function Hero() {
           {/* Sub */}
           <motion.p
             variants={fadeUp}
-            className="mx-auto mt-6 max-w-xl text-lg text-gray-500 leading-relaxed"
+            className="mx-auto mt-6 max-w-xl text-lg text-muted-foreground leading-relaxed"
           >
             AIMS builds and runs your outbound engine, AI calling systems, and pipeline operations
             — so your team closes deals, not chases them.
@@ -104,13 +104,13 @@ export function Hero() {
             </Link>
             <Link
               href="/marketplace"
-              className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-7 py-3.5 text-sm font-semibold text-gray-700 shadow-sm transition hover:border-gray-300 hover:bg-gray-50"
+              className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-7 py-3.5 text-sm font-semibold text-foreground/80 shadow-sm transition hover:border-gray-300 hover:bg-muted"
             >
               Browse Services
             </Link>
           </motion.div>
 
-          <motion.p variants={fadeUp} className="mt-4 text-xs text-gray-400">
+          <motion.p variants={fadeUp} className="mt-4 text-xs text-muted-foreground">
             No retainer lock-in &middot; Results in 30 days or your money back
           </motion.p>
 
@@ -121,15 +121,15 @@ export function Hero() {
             transition={{ duration: 0.6, delay: 0.4 }}
             className="mt-16 w-full max-w-3xl"
           >
-            <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl shadow-gray-100/80">
+            <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-xl shadow-gray-100/80">
               {/* Card header */}
-              <div className="flex items-center justify-between border-b border-gray-100 px-5 py-3.5">
+              <div className="flex items-center justify-between border-b border-border px-5 py-3.5">
                 <div className="flex items-center gap-2">
                   <div className="h-2.5 w-2.5 rounded-full bg-red-400" />
                   <div className="h-2.5 w-2.5 rounded-full bg-yellow-400" />
                   <div className="h-2.5 w-2.5 rounded-full bg-green-400" />
                 </div>
-                <span className="text-xs font-medium text-gray-400">AIMS Pipeline — Live View</span>
+                <span className="text-xs font-medium text-muted-foreground">AIMS Pipeline — Live View</span>
                 <span className="flex items-center gap-1.5 rounded-full bg-green-50 px-2.5 py-0.5 text-xs font-medium text-green-700">
                   <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
                   Live
@@ -139,13 +139,13 @@ export function Hero() {
               <div className="grid grid-cols-1 divide-y divide-gray-100 sm:grid-cols-2 sm:divide-x sm:divide-y-0">
                 {/* Pipeline funnel */}
                 <div className="p-5">
-                  <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-gray-400">
+                  <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                     Pipeline Stages
                   </p>
                   <div className="space-y-2.5">
                     {PIPELINE_STAGES.map((stage) => (
                       <div key={stage.label} className="flex items-center gap-3">
-                        <span className="w-24 shrink-0 text-xs text-gray-500">{stage.label}</span>
+                        <span className="w-24 shrink-0 text-xs text-muted-foreground">{stage.label}</span>
                         <div className="flex-1 overflow-hidden rounded-full bg-gray-100 h-1.5">
                           <motion.div
                             initial={{ width: 0 }}
@@ -155,7 +155,7 @@ export function Hero() {
                             style={{ backgroundColor: stage.color }}
                           />
                         </div>
-                        <span className="w-8 shrink-0 text-right text-xs font-semibold text-gray-700">
+                        <span className="w-8 shrink-0 text-right text-xs font-semibold text-foreground/80">
                           {stage.count}
                         </span>
                       </div>
@@ -163,15 +163,15 @@ export function Hero() {
                   </div>
 
                   {/* MRR chip */}
-                  <div className="mt-5 flex items-center justify-between rounded-xl bg-gray-50 px-4 py-3">
-                    <span className="text-xs text-gray-500">Pipeline Value</span>
-                    <span className="text-sm font-bold text-gray-900">$284,000</span>
+                  <div className="mt-5 flex items-center justify-between rounded-xl bg-muted px-4 py-3">
+                    <span className="text-xs text-muted-foreground">Pipeline Value</span>
+                    <span className="text-sm font-bold text-foreground">$284,000</span>
                   </div>
                 </div>
 
                 {/* Recent leads */}
                 <div className="p-5">
-                  <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-gray-400">
+                  <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                     Recent Leads
                   </p>
                   <div className="space-y-3">
@@ -180,18 +180,18 @@ export function Hero() {
                       return (
                         <div
                           key={lead.company}
-                          className="flex items-start justify-between rounded-xl bg-gray-50 px-3.5 py-3"
+                          className="flex items-start justify-between rounded-xl bg-muted px-3.5 py-3"
                         >
                           <div>
-                            <p className="text-sm font-semibold text-gray-900">{lead.company}</p>
-                            <p className="mt-0.5 text-xs text-gray-400">{lead.service}</p>
+                            <p className="text-sm font-semibold text-foreground">{lead.company}</p>
+                            <p className="mt-0.5 text-xs text-muted-foreground">{lead.service}</p>
                           </div>
                           <div className="flex flex-col items-end gap-1">
-                            <span className="flex items-center gap-1.5 text-xs font-medium text-gray-600">
+                            <span className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
                               <span className={`h-1.5 w-1.5 rounded-full ${config.dot}`} />
                               {config.label}
                             </span>
-                            <span className="text-[10px] text-gray-400">{lead.ago}</span>
+                            <span className="text-[10px] text-muted-foreground">{lead.ago}</span>
                           </div>
                         </div>
                       )
@@ -217,8 +217,8 @@ export function Hero() {
                   <Icon className="h-4 w-4 text-[#DC2626]" />
                 </div>
                 <div>
-                  <div className="text-lg font-bold text-gray-900">{value}</div>
-                  <div className="text-xs text-gray-400">{label}</div>
+                  <div className="text-lg font-bold text-foreground">{value}</div>
+                  <div className="text-xs text-muted-foreground">{label}</div>
                 </div>
               </div>
             ))}

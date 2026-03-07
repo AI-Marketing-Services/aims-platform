@@ -334,18 +334,5 @@ export async function createLeadMagnetSubmission(data: {
 }) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const submission = await db.leadMagnetSubmission.create({ data: data as any })
-
-  // Auto-create deal from lead magnet
-  await createDeal({
-    contactName: data.name ?? data.email.split("@")[0],
-    contactEmail: data.email,
-    company: data.company,
-    source: data.type.toLowerCase().replace(/_/g, "-"),
-    sourceDetail: submission.id,
-    utmSource: data.utmSource,
-    utmMedium: data.utmMedium,
-    utmCampaign: data.utmCampaign,
-  })
-
   return submission
 }

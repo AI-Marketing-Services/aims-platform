@@ -33,7 +33,7 @@ export function LogoTicker() {
             {doubled.map((logo, i) => (
               <div
                 key={i}
-                className="mx-8 inline-flex items-center gap-2.5 text-gray-500 hover:text-gray-800 transition-all grayscale hover:grayscale-0"
+                className="mx-8 inline-flex items-center gap-2.5 text-muted-foreground hover:text-foreground transition-all grayscale hover:grayscale-0"
               >
                 <div className="relative w-6 h-6 flex-shrink-0">
                   <Image

@@ -69,7 +69,7 @@ export function Integrations() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.3, delay: i * 0.06 }}
-                className="flex items-center gap-3 rounded-xl border border-border bg-white p-4 shadow-sm hover:-translate-y-0.5 hover:shadow-md transition-all duration-200"
+                className="flex items-center gap-3 rounded-xl border border-border bg-card p-4 shadow-sm hover:-translate-y-0.5 hover:shadow-md transition-all duration-200"
               >
                 <div className="relative w-8 h-8 flex-shrink-0">
                   <Image

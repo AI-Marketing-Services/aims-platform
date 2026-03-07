@@ -39,7 +39,7 @@ const BENEFITS = [
 
 export function Benefits() {
   return (
-    <section className="py-24 bg-[#FAFAFA]">
+    <section className="py-24 bg-background">
       <div className="mx-auto max-w-6xl px-4">
         <div className="grid grid-cols-1 gap-16 lg:grid-cols-2 lg:gap-24 lg:items-center">
 
@@ -50,15 +50,15 @@ export function Benefits() {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <span className="inline-block rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-gray-500 mb-6">
+            <span className="inline-block rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-6">
               Why AIMS Works
             </span>
-            <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+            <h2 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
               Numbers that actually
               <br />
               move your business
             </h2>
-            <p className="mt-4 text-base text-gray-500 max-w-sm">
+            <p className="mt-4 text-base text-muted-foreground max-w-sm">
               Proven infrastructure. AI-powered execution. Results measured in pipeline — not impressions.
             </p>
 
@@ -70,10 +70,10 @@ export function Benefits() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.4, delay: i * 0.1 }}
-                  className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm"
+                  className="rounded-xl border border-border bg-card p-5 shadow-sm"
                 >
-                  <div className="text-3xl font-extrabold text-gray-900">{m.value}</div>
-                  <div className="mt-1 text-xs text-gray-500 leading-snug">{m.label}</div>
+                  <div className="text-3xl font-extrabold text-foreground">{m.value}</div>
+                  <div className="mt-1 text-xs text-muted-foreground leading-snug">{m.label}</div>
                 </motion.div>
               ))}
             </div>
@@ -94,12 +94,12 @@ export function Benefits() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.35, delay: i * 0.07 }}
-                className="flex gap-4 rounded-xl border border-gray-200 bg-white px-5 py-4 shadow-sm"
+                className="flex gap-4 rounded-xl border border-border bg-card px-5 py-4 shadow-sm"
               >
                 <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#DC2626]" />
                 <div>
-                  <p className="text-sm font-semibold text-gray-900">{benefit.title}</p>
-                  <p className="mt-1 text-xs text-gray-500 leading-relaxed">{benefit.desc}</p>
+                  <p className="text-sm font-semibold text-foreground">{benefit.title}</p>
+                  <p className="mt-1 text-xs text-muted-foreground leading-relaxed">{benefit.desc}</p>
                 </div>
               </motion.div>
             ))}

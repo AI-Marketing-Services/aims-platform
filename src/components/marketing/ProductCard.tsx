@@ -36,7 +36,7 @@ export function ProductCard({ service }: ProductCardProps) {
     <Link
       href={`/services/${slug}`}
       className={cn(
-        "group relative flex flex-col rounded-xl border bg-white p-6 card-hover",
+        "group relative flex flex-col rounded-xl border bg-card p-6 card-hover",
         isFeatured ? "border-red-200 shadow-sm" : "border-border"
       )}
     >

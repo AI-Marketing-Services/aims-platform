@@ -2,7 +2,21 @@
 
 import { useState } from "react"
 import { motion } from "framer-motion"
-import { Plus, MoreHorizontal, DollarSign, User, Clock } from "lucide-react"
+import { Plus, MoreHorizontal, DollarSign, Clock } from "lucide-react"
+import Link from "next/link"
+import {
+  DndContext,
+  DragOverlay,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  useDroppable,
+  useDraggable,
+  type DragStartEvent,
+  type DragEndEvent,
+} from "@dnd-kit/core"
+import { CSS } from "@dnd-kit/utilities"
 import { cn } from "@/lib/utils"
 
 type DealStage =
@@ -46,21 +60,20 @@ const DEMO_DEALS: Deal[] = [
   { id: "d9", contactName: "Mia Hoffman", company: "Hoffman & Co", stage: "ACTIVE_CLIENT", value: 5964, mrr: 497, source: "partner", serviceArms: ["Elite Bundle"], daysInStage: 62 },
 ]
 
-function DealCard({ deal }: { deal: Deal }) {
+function DealCardInner({ deal }: { deal: Deal }) {
   const isStale = deal.daysInStage > 5 && deal.stage !== "ACTIVE_CLIENT"
 
   return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="bg-[#1C1F2A] border border-white/5 rounded-xl p-4 hover:border-white/15 transition-colors cursor-pointer"
-    >
+    <>
       <div className="flex items-start justify-between mb-3">
-        <div>
+        <Link
+          href={`/admin/crm/${deal.id}`}
+          className="hover:underline"
+          onClick={(e) => e.stopPropagation()}
+        >
           <div className="text-white font-medium text-sm">{deal.contactName}</div>
           {deal.company && <div className="text-gray-500 text-xs">{deal.company}</div>}
-        </div>
+        </Link>
         <button className="p-1 hover:bg-white/5 rounded transition-colors text-gray-500 hover:text-white">
           <MoreHorizontal className="w-3.5 h-3.5" />
         </button>
@@ -81,10 +94,7 @@ function DealCard({ deal }: { deal: Deal }) {
 
       <div className="flex flex-wrap gap-1">
         {deal.serviceArms.slice(0, 2).map((arm) => (
-          <span
-            key={arm}
-            className="text-xs px-2 py-0.5 bg-white/5 text-gray-400 rounded-md"
-          >
+          <span key={arm} className="text-xs px-2 py-0.5 bg-white/5 text-gray-400 rounded-md">
             {arm}
           </span>
         ))}
@@ -94,57 +104,144 @@ function DealCard({ deal }: { deal: Deal }) {
           </span>
         )}
       </div>
+    </>
+  )
+}
 
-      {deal.source && (
-        <div className="mt-2 text-xs text-gray-600 flex items-center gap-1">
-          <User className="w-3 h-3" />
-          {deal.source}
+function DraggableDealCard({ deal }: { deal: Deal }) {
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+    id: deal.id,
+    data: { stage: deal.stage },
+  })
+
+  const style = {
+    transform: CSS.Translate.toString(transform),
+    opacity: isDragging ? 0.35 : 1,
+    cursor: isDragging ? "grabbing" : "grab",
+  }
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      className="bg-[#1C1F2A] border border-white/5 rounded-xl p-4 hover:border-white/15 transition-colors touch-none"
+    >
+      <DealCardInner deal={deal} />
+    </div>
+  )
+}
+
+function DroppableColumn({
+  stage,
+  deals,
+}: {
+  stage: { key: DealStage; label: string; color: string }
+  deals: Deal[]
+}) {
+  const stageMRR = deals.reduce((sum, d) => sum + d.mrr, 0)
+  const { isOver, setNodeRef } = useDroppable({ id: stage.key })
+
+  return (
+    <div className="flex flex-col w-60 flex-shrink-0">
+      <div className={cn("border-t-2 pt-3 mb-3", stage.color)}>
+        <div className="flex items-center justify-between">
+          <span className="text-sm font-medium text-white">{stage.label}</span>
+          <span className="text-xs text-gray-500">{deals.length}</span>
         </div>
-      )}
-    </motion.div>
+        {stageMRR > 0 && (
+          <div className="text-xs text-gray-500 mt-0.5">${stageMRR}/mo</div>
+        )}
+      </div>
+
+      <div
+        ref={setNodeRef}
+        className={cn(
+          "flex-1 space-y-2 overflow-y-auto pr-1 rounded-xl min-h-24 transition-colors",
+          isOver ? "bg-white/3 ring-1 ring-inset ring-white/10" : ""
+        )}
+      >
+        {deals.map((deal) => (
+          <motion.div
+            key={deal.id}
+            layout
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.15 }}
+          >
+            <DraggableDealCard deal={deal} />
+          </motion.div>
+        ))}
+        <button className="w-full flex items-center gap-2 py-2.5 px-3 text-gray-600 hover:text-gray-400 text-sm transition-colors rounded-xl hover:bg-white/3 border border-dashed border-white/5 hover:border-white/10">
+          <Plus className="w-3.5 h-3.5" />
+          Add deal
+        </button>
+      </div>
+    </div>
   )
 }
 
 export function CRMKanban() {
   const [deals, setDeals] = useState<Deal[]>(DEMO_DEALS)
+  const [activeDeal, setActiveDeal] = useState<Deal | null>(null)
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
+  )
+
+  function handleDragStart(event: DragStartEvent) {
+    const deal = deals.find((d) => d.id === String(event.active.id))
+    if (deal) setActiveDeal(deal)
+  }
+
+  function handleDragEnd(event: DragEndEvent) {
+    setActiveDeal(null)
+    const { active, over } = event
+    if (!over) return
+
+    const dealId = String(active.id)
+    const newStage = String(over.id) as DealStage
+
+    if (!STAGES.some((s) => s.key === newStage)) return
+
+    setDeals((prev) =>
+      prev.map((d) => (d.id === dealId ? { ...d, stage: newStage } : d))
+    )
+
+    fetch(`/api/deals/${dealId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ stage: newStage }),
+    }).catch(console.error)
+  }
 
   return (
-    <div className="flex-1 overflow-x-auto">
-      <div className="flex gap-4 h-full pb-4" style={{ minWidth: `${STAGES.length * 260}px` }}>
-        {STAGES.map((stage) => {
-          const stageDeals = deals.filter((d) => d.stage === stage.key)
-          const stageMRR = stageDeals.reduce((sum, d) => sum + d.mrr, 0)
-
-          return (
-            <div
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+    >
+      <div className="flex-1 overflow-x-auto">
+        <div className="flex gap-4 h-full pb-4" style={{ minWidth: `${STAGES.length * 260}px` }}>
+          {STAGES.map((stage) => (
+            <DroppableColumn
               key={stage.key}
-              className="flex flex-col w-60 flex-shrink-0"
-            >
-              {/* Column header */}
-              <div className={cn("border-t-2 pt-3 mb-3", stage.color)}>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-white">{stage.label}</span>
-                  <span className="text-xs text-gray-500">{stageDeals.length}</span>
-                </div>
-                {stageMRR > 0 && (
-                  <div className="text-xs text-gray-500 mt-0.5">${stageMRR}/mo</div>
-                )}
-              </div>
-
-              {/* Cards */}
-              <div className="flex-1 space-y-2 overflow-y-auto pr-1">
-                {stageDeals.map((deal) => (
-                  <DealCard key={deal.id} deal={deal} />
-                ))}
-                <button className="w-full flex items-center gap-2 py-2.5 px-3 text-gray-600 hover:text-gray-400 text-sm transition-colors rounded-xl hover:bg-white/3 border border-dashed border-white/5 hover:border-white/10">
-                  <Plus className="w-3.5 h-3.5" />
-                  Add deal
-                </button>
-              </div>
-            </div>
-          )
-        })}
+              stage={stage}
+              deals={deals.filter((d) => d.stage === stage.key)}
+            />
+          ))}
+        </div>
       </div>
-    </div>
+
+      <DragOverlay dropAnimation={null}>
+        {activeDeal && (
+          <div className="bg-[#1C1F2A] border border-white/20 rounded-xl p-4 w-60 shadow-2xl shadow-black/50 rotate-2">
+            <DealCardInner deal={activeDeal} />
+          </div>
+        )}
+      </DragOverlay>
+    </DndContext>
   )
 }

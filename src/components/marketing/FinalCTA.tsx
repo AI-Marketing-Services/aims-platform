@@ -14,13 +14,13 @@ export function FinalCTA() {
         <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
           <Link
             href="/get-started"
-            className="inline-flex items-center gap-2 rounded-lg bg-white px-8 py-3.5 text-base font-semibold text-[#DC2626] shadow-sm transition hover:bg-red-50"
+            className="inline-flex items-center gap-2 rounded-lg bg-card px-8 py-3.5 text-base font-semibold text-[#DC2626] shadow-sm transition hover:bg-red-50"
           >
             Book a Strategy Call <ArrowRight className="h-4 w-4" />
           </Link>
           <Link
             href="/marketplace"
-            className="inline-flex items-center gap-2 rounded-lg border border-white/30 px-8 py-3.5 text-base font-semibold text-white transition hover:bg-white/10"
+            className="inline-flex items-center gap-2 rounded-lg border border-white/30 px-8 py-3.5 text-base font-semibold text-white transition hover:bg-card/10"
           >
             Browse Services
           </Link>

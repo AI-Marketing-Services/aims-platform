@@ -4,8 +4,8 @@ function getResend() {
   return new Resend(process.env.RESEND_API_KEY ?? "re_placeholder")
 }
 
-const FROM_EMAIL = "AIMS <hello@aimanagingservices.com>"
-const REPLY_TO = "support@aimanagingservices.com"
+const FROM_EMAIL = "AIMS <hello@aimseos.com>"
+const REPLY_TO = "support@aimseos.com"
 
 // ============ TRANSACTIONAL ============
 
@@ -23,7 +23,7 @@ export async function sendWelcomeEmail(params: {
     subject: `Welcome to AIMS — Your ${params.serviceName} is live`,
     html: `
       <div style="font-family: system-ui, sans-serif; max-width: 600px; margin: 0 auto;">
-        <img src="https://aimanagingservices.com/logo.png" alt="AIMS" width="120" style="margin-bottom: 24px;" />
+        <img src="https://aimseos.com/logo.png" alt="AIMS" width="120" style="margin-bottom: 24px;" />
         <h1 style="font-size: 24px; color: #0A0A0A;">Welcome aboard, ${params.name}!</h1>
         <p style="color: #4B5563; line-height: 1.6;">
           Your <strong>${params.serviceName}${params.tier ? ` (${params.tier})` : ""}</strong> subscription is now active.
@@ -67,7 +67,7 @@ export async function sendLeadMagnetResults(params: {
     subject: subjectMap[params.type] ?? "Your AIMS Results",
     html: `
       <div style="font-family: system-ui, sans-serif; max-width: 600px; margin: 0 auto;">
-        <img src="https://aimanagingservices.com/logo.png" alt="AIMS" width="120" style="margin-bottom: 24px;" />
+        <img src="https://aimseos.com/logo.png" alt="AIMS" width="120" style="margin-bottom: 24px;" />
         <h1 style="font-size: 24px; color: #0A0A0A;">
           ${params.name ? `Hey ${params.name},` : "Hey there,"} your results are ready
         </h1>
@@ -78,7 +78,7 @@ export async function sendLeadMagnetResults(params: {
         <p style="color: #4B5563; line-height: 1.6; margin-top: 24px;">
           Want to talk through your results with our team?
         </p>
-        <a href="https://aimanagingservices.com/get-started" style="color: #DC2626; font-weight: 600;">
+        <a href="https://aimseos.com/get-started" style="color: #DC2626; font-weight: 600;">
           Book a free strategy call →
         </a>
       </div>
@@ -125,7 +125,7 @@ export async function sendInternalNotification(params: {
   // Send to admin team
   return getResend().emails.send({
     from: FROM_EMAIL,
-    to: "team@aimanagingservices.com",
+    to: "team@aimseos.com",
     subject: `[AIMS${params.urgency === "high" ? " URGENT" : ""}] ${params.subject}`,
     html: `<div style="font-family: monospace; padding: 16px;">${params.message}</div>`,
   })

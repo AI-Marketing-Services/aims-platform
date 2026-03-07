@@ -89,7 +89,7 @@ export function Pricing() {
 
         {/* Toggle */}
         <div className="mt-8 flex justify-center">
-          <div className="inline-flex items-center gap-3 rounded-full border border-border bg-white p-1 shadow-sm">
+          <div className="inline-flex items-center gap-3 rounded-full border border-border bg-card p-1 shadow-sm">
             <button
               onClick={() => setAnnual(false)}
               className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
@@ -121,7 +121,7 @@ export function Pricing() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: i * 0.08 }}
-              className={`relative flex flex-col rounded-2xl border-2 bg-white p-6 shadow-sm ${tier.color} ${
+              className={`relative flex flex-col rounded-2xl border-2 bg-card p-6 shadow-sm ${tier.color} ${
                 tier.popular ? "shadow-lg" : ""
               }`}
             >

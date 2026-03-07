@@ -47,7 +47,7 @@ export function FAQ() {
           heading="Common Questions With Clear Answers"
         />
 
-        <div className="mt-12 divide-y divide-border rounded-2xl border border-border bg-white shadow-sm overflow-hidden">
+        <div className="mt-12 divide-y divide-border rounded-2xl border border-border bg-card shadow-sm overflow-hidden">
           {FAQS.map((faq, i) => (
             <div key={i}>
               <button

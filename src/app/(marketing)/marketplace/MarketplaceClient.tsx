@@ -313,7 +313,7 @@ function ToolLogo({ domain, name }: { domain: string; name: string }) {
         el.style.display = "none"
         if (el.nextSibling) return
         const span = document.createElement("span")
-        span.className = "w-5 h-5 rounded bg-gray-100 flex items-center justify-center text-[9px] font-bold text-gray-400"
+        span.className = "w-5 h-5 rounded bg-gray-100 flex items-center justify-center text-[9px] font-bold text-muted-foreground"
         span.textContent = name.charAt(0)
         el.parentNode?.insertBefore(span, el.nextSibling)
       }}
@@ -323,7 +323,7 @@ function ToolLogo({ domain, name }: { domain: string; name: string }) {
 
 function ServiceCard({ service }: { service: AIMSService }) {
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden flex flex-col hover:shadow-md transition-shadow duration-200">
+    <div className="bg-card border border-border rounded-2xl overflow-hidden flex flex-col hover:shadow-md transition-shadow duration-200">
       {/* Card header */}
       <div className="px-5 pt-5 pb-4">
         <div className="flex items-center justify-between mb-3">
@@ -332,20 +332,20 @@ function ServiceCard({ service }: { service: AIMSService }) {
               {service.pillar.charAt(0) + service.pillar.slice(1).toLowerCase()}
             </span>
             {service.isBeta && (
-              <span className="text-xs font-semibold px-2 py-0.5 rounded-full border border-gray-300 text-gray-500">BETA</span>
+              <span className="text-xs font-semibold px-2 py-0.5 rounded-full border border-gray-300 text-muted-foreground">BETA</span>
             )}
           </div>
-          <span className="text-xs text-gray-400">{service.setupTime} setup</span>
+          <span className="text-xs text-muted-foreground">{service.setupTime} setup</span>
         </div>
 
-        <h3 className="text-lg font-bold text-gray-900 mb-1.5 leading-tight">{service.name}</h3>
-        <p className="text-sm text-gray-500 leading-relaxed">{service.desc}</p>
+        <h3 className="text-lg font-bold text-foreground mb-1.5 leading-tight">{service.name}</h3>
+        <p className="text-sm text-muted-foreground leading-relaxed">{service.desc}</p>
       </div>
 
       {/* Tool logos */}
       <div className="px-5 pb-4">
         <div className="flex items-center gap-1.5">
-          <span className="text-xs text-gray-400 font-medium mr-1">Uses:</span>
+          <span className="text-xs text-muted-foreground font-medium mr-1">Uses:</span>
           {service.tools.map((tool) => (
             <ToolLogo key={tool.domain} domain={tool.domain} name={tool.name} />
           ))}
@@ -356,27 +356,27 @@ function ServiceCard({ service }: { service: AIMSService }) {
       <div className="px-5 pb-4 flex-1">
         <ul className="space-y-2">
           {service.deliverables.slice(0, 3).map((d, i) => (
-            <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
+            <li key={i} className="flex items-start gap-2 text-sm text-foreground/80">
               <span className="text-gray-300 mt-0.5 flex-shrink-0">—</span>
               <span>{d}</span>
             </li>
           ))}
           {service.deliverables.length > 3 && (
-            <li className="text-xs text-gray-400 pl-4">+{service.deliverables.length - 3} more deliverables</li>
+            <li className="text-xs text-muted-foreground pl-4">+{service.deliverables.length - 3} more deliverables</li>
           )}
         </ul>
       </div>
 
       {/* Outcome box */}
-      <div className="mx-5 mb-4 px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl">
-        <div className="text-xs text-gray-400 font-semibold uppercase tracking-wider mb-1">Outcome</div>
-        <p className="text-sm text-gray-700 leading-snug">{service.outcome}</p>
+      <div className="mx-5 mb-4 px-4 py-3 bg-muted border border-border rounded-xl">
+        <div className="text-xs text-muted-foreground font-semibold uppercase tracking-wider mb-1">Outcome</div>
+        <p className="text-sm text-foreground/80 leading-snug">{service.outcome}</p>
       </div>
 
       {/* Pricing + CTA */}
       <div className="px-5 pb-5">
         <div className="flex items-center justify-between mb-3">
-          <span className="text-sm font-bold text-gray-900">
+          <span className="text-sm font-bold text-foreground">
             {service.pricing === "from" && service.priceFrom ? `From ${service.priceFrom}` : service.pricing === "custom" ? "Custom pricing" : "Contact us"}
           </span>
         </div>
@@ -416,22 +416,22 @@ export function MarketplaceClient() {
   }, [pillar, search])
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA]">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-card border-b border-border">
         <div className="max-w-6xl mx-auto px-4 py-12">
-          <h1 className="text-4xl font-bold text-gray-900">AI Services Marketplace</h1>
-          <p className="mt-3 text-lg text-gray-500">Browse every AIMS service. Filter by pillar. Start with what matters most.</p>
+          <h1 className="text-4xl font-bold text-foreground">AI Services Marketplace</h1>
+          <p className="mt-3 text-lg text-muted-foreground">Browse every AIMS service. Filter by pillar. Start with what matters most.</p>
 
           {/* Search + filters */}
           <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">
             <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search services..."
-                className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl bg-white text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#DC2626]/20 focus:border-[#DC2626]"
+                className="w-full pl-10 pr-4 py-2.5 border border-border rounded-xl bg-card text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#DC2626]/20 focus:border-[#DC2626]"
               />
             </div>
             <div className="flex flex-wrap gap-2">
@@ -443,7 +443,7 @@ export function MarketplaceClient() {
                     "px-4 py-1.5 rounded-full text-sm font-medium border transition-colors",
                     pillar === tab.value
                       ? "bg-[#DC2626] text-white border-[#DC2626]"
-                      : "bg-white text-gray-600 border-gray-200 hover:border-gray-400 hover:text-gray-900"
+                      : "bg-card text-muted-foreground border-border hover:border-gray-400 hover:text-foreground"
                   )}
                 >
                   {tab.label}
@@ -456,7 +456,7 @@ export function MarketplaceClient() {
 
       {/* Grid */}
       <div className="max-w-6xl mx-auto px-4 py-12">
-        <p className="mb-6 text-sm text-gray-500">
+        <p className="mb-6 text-sm text-muted-foreground">
           Showing {filtered.length} of {SERVICES.length} services
         </p>
         <AnimatePresence mode="popLayout">
@@ -478,7 +478,7 @@ export function MarketplaceClient() {
 
         {filtered.length === 0 && (
           <div className="py-24 text-center">
-            <p className="text-gray-400">No services match your search.</p>
+            <p className="text-muted-foreground">No services match your search.</p>
             <button
               onClick={() => { setPillar("ALL"); setSearch("") }}
               className="mt-4 text-sm font-medium text-[#DC2626] hover:underline"

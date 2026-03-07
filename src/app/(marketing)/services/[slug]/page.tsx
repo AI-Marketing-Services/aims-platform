@@ -113,7 +113,7 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
   return (
     <div className="min-h-screen bg-background">
       {/* Hero */}
-      <section className="border-b border-border bg-white py-20">
+      <section className="border-b border-border bg-card py-20">
         <div className="container mx-auto max-w-4xl px-4">
           <span className={`inline-block rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-wider mb-4 ${pillarColors[service.pillar] ?? ""}`}>
             {service.pillar}
@@ -143,7 +143,7 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
           <h2 className="text-2xl font-bold mb-8">What&rsquo;s Included</h2>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {service.features.map((feature) => (
-              <div key={feature} className="flex items-center gap-3 rounded-lg border border-border bg-white p-4">
+              <div key={feature} className="flex items-center gap-3 rounded-lg border border-border bg-card p-4">
                 <Check className="h-5 w-5 shrink-0 text-[#DC2626]" />
                 <span className="text-sm font-medium text-foreground">{feature}</span>
               </div>
@@ -158,7 +158,7 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
           <h2 className="text-2xl font-bold mb-8">Results By Industry</h2>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
             {service.useCases.map((uc) => (
-              <div key={uc.industry} className="rounded-xl border border-border bg-white p-6 text-center shadow-sm">
+              <div key={uc.industry} className="rounded-xl border border-border bg-card p-6 text-center shadow-sm">
                 <div className="text-sm font-semibold text-muted-foreground mb-2">{uc.industry}</div>
                 <div className="text-lg font-bold text-[#DC2626]">{uc.result}</div>
               </div>
@@ -176,7 +176,7 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
               {service.tiers.map((tier) => (
                 <div
                   key={tier.name}
-                  className={`rounded-xl border-2 bg-white p-6 ${tier.popular ? "border-[#DC2626] shadow-lg" : "border-border"}`}
+                  className={`rounded-xl border-2 bg-card p-6 ${tier.popular ? "border-[#DC2626] shadow-lg" : "border-border"}`}
                 >
                   {tier.popular && (
                     <div className="mb-3">
@@ -215,7 +215,7 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
           <p className="mt-3 text-red-100">Book a strategy call and we&rsquo;ll build your custom plan.</p>
           <Link
             href="/get-started"
-            className="mt-8 inline-flex items-center gap-2 rounded-lg bg-white px-8 py-3.5 font-semibold text-[#DC2626] hover:bg-red-50 transition"
+            className="mt-8 inline-flex items-center gap-2 rounded-lg bg-card px-8 py-3.5 font-semibold text-[#DC2626] hover:bg-red-50 transition"
           >
             Book a Strategy Call <ArrowRight className="h-4 w-4" />
           </Link>
