@@ -34,6 +34,8 @@ model User {
 
   stripeCustomerId String?   @unique
   lastLoginAt      DateTime?
+  emailNotifs      Boolean   @default(true)
+  slackNotifs      Boolean   @default(false)
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
 

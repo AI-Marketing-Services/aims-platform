@@ -4,6 +4,7 @@ import { useState } from "react"
 import { motion } from "framer-motion"
 import { Plus, MoreHorizontal, DollarSign, Clock } from "lucide-react"
 import Link from "next/link"
+import { AddDealModal } from "./AddDealModal"
 import {
   DndContext,
   DragOverlay,
@@ -125,9 +126,11 @@ function DraggableDealCard({ deal }: { deal: Deal }) {
 function DroppableColumn({
   stage,
   deals,
+  onAddDeal,
 }: {
   stage: { key: DealStage; label: string; color: string }
   deals: Deal[]
+  onAddDeal: (stage: DealStage) => void
 }) {
   const stageMRR = deals.reduce((sum, d) => sum + d.mrr, 0)
   const { isOver, setNodeRef } = useDroppable({ id: stage.key })
@@ -162,7 +165,10 @@ function DroppableColumn({
             <DraggableDealCard deal={deal} />
           </motion.div>
         ))}
-        <button className="w-full flex items-center gap-2 py-2.5 px-3 text-gray-600 hover:text-gray-400 text-sm transition-colors rounded-xl hover:bg-white/3 border border-dashed border-white/5 hover:border-white/10">
+        <button
+          onClick={() => onAddDeal(stage.key)}
+          className="w-full flex items-center gap-2 py-2.5 px-3 text-gray-600 hover:text-gray-400 text-sm transition-colors rounded-xl hover:bg-white/3 border border-dashed border-white/5 hover:border-white/10"
+        >
           <Plus className="w-3.5 h-3.5" />
           Add deal
         </button>
@@ -174,6 +180,7 @@ function DroppableColumn({
 export function CRMKanban({ initialDeals }: { initialDeals: Deal[] }) {
   const [deals, setDeals] = useState<Deal[]>(initialDeals)
   const [activeDeal, setActiveDeal] = useState<Deal | null>(null)
+  const [addingToStage, setAddingToStage] = useState<DealStage | null>(null)
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
@@ -206,31 +213,42 @@ export function CRMKanban({ initialDeals }: { initialDeals: Deal[] }) {
   }
 
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
-    >
-      <div className="flex-1 overflow-x-auto">
-        <div className="flex gap-4 h-full pb-4" style={{ minWidth: `${STAGES.length * 260}px` }}>
-          {STAGES.map((stage) => (
-            <DroppableColumn
-              key={stage.key}
-              stage={stage}
-              deals={deals.filter((d) => d.stage === stage.key)}
-            />
-          ))}
-        </div>
-      </div>
+    <>
+      {addingToStage && (
+        <AddDealModal
+          stage={addingToStage}
+          onClose={() => setAddingToStage(null)}
+          onCreated={(deal) => setDeals((prev) => [deal, ...prev])}
+        />
+      )}
 
-      <DragOverlay dropAnimation={null}>
-        {activeDeal && (
-          <div className="bg-[#1C1F2A] border border-white/20 rounded-xl p-4 w-60 shadow-2xl shadow-black/50 rotate-2">
-            <DealCardInner deal={activeDeal} />
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+      >
+        <div className="flex-1 overflow-x-auto">
+          <div className="flex gap-4 h-full pb-4" style={{ minWidth: `${STAGES.length * 260}px` }}>
+            {STAGES.map((stage) => (
+              <DroppableColumn
+                key={stage.key}
+                stage={stage}
+                deals={deals.filter((d) => d.stage === stage.key)}
+                onAddDeal={setAddingToStage}
+              />
+            ))}
           </div>
-        )}
-      </DragOverlay>
-    </DndContext>
+        </div>
+
+        <DragOverlay dropAnimation={null}>
+          {activeDeal && (
+            <div className="bg-[#1C1F2A] border border-white/20 rounded-xl p-4 w-60 shadow-2xl shadow-black/50 rotate-2">
+              <DealCardInner deal={activeDeal} />
+            </div>
+          )}
+        </DragOverlay>
+      </DndContext>
+    </>
   )
 }

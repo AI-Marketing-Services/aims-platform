@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
-import { Users, CheckSquare, DollarSign, Clock } from "lucide-react"
+import { Users, CheckSquare, DollarSign, FileText } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 export const metadata = { title: "Intern Ops" }
@@ -29,15 +29,24 @@ export default async function AdminInternOpsPage() {
   const role = (sessionClaims?.metadata as { role?: string })?.role
   if (!role || !["ADMIN", "SUPER_ADMIN"].includes(role)) redirect("/portal/dashboard")
 
-  const interns = await db.internProfile.findMany({
-    include: {
-      user: { select: { name: true, email: true, avatarUrl: true } },
-      tasks: { where: { status: "DONE" } },
-      eodReports: { orderBy: { date: "desc" }, take: 1 },
-      sprintGoals: { where: { status: "active" } },
-    },
-    orderBy: { createdAt: "desc" },
-  })
+  const [interns, recentReports] = await Promise.all([
+    db.internProfile.findMany({
+      include: {
+        user: { select: { name: true, email: true, avatarUrl: true } },
+        tasks: { where: { status: "DONE" } },
+        eodReports: { orderBy: { date: "desc" }, take: 1 },
+        sprintGoals: { where: { status: "active" } },
+      },
+      orderBy: { createdAt: "desc" },
+    }),
+    db.eODReport.findMany({
+      orderBy: { date: "desc" },
+      take: 20,
+      include: {
+        intern: { include: { user: { select: { name: true } } } },
+      },
+    }),
+  ])
 
   const activeInterns = interns.filter((i) => i.status === "ACTIVE")
   const totalTasks = interns.reduce((s, i) => s + i.tasksCompleted, 0)
@@ -139,6 +148,58 @@ export default async function AdminInternOpsPage() {
                 })}
               </tbody>
             </table>
+          </div>
+        )}
+      </div>
+
+      {/* EOD Reports */}
+      <div className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="px-5 py-4 border-b border-border flex items-center gap-2">
+          <FileText className="h-4 w-4 text-muted-foreground" />
+          <h2 className="text-sm font-semibold text-foreground">Recent EOD Reports</h2>
+          <span className="ml-auto text-xs text-muted-foreground">{recentReports.length} reports</span>
+        </div>
+        {recentReports.length === 0 ? (
+          <div className="p-8 text-center">
+            <p className="text-sm text-muted-foreground">No EOD reports submitted yet.</p>
+          </div>
+        ) : (
+          <div className="divide-y divide-border/50">
+            {recentReports.map((report) => {
+              const completed = Array.isArray(report.completed) ? (report.completed as string[]) : []
+              const blockers = Array.isArray(report.blockers) ? (report.blockers as string[]) : []
+              return (
+                <div key={report.id} className="px-5 py-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium text-foreground">
+                      {report.intern.user.name ?? "Intern"}
+                    </span>
+                    <div className="flex items-center gap-3">
+                      {report.hoursWorked != null && (
+                        <span className="text-xs text-muted-foreground">{report.hoursWorked}h</span>
+                      )}
+                      <span className="text-xs text-muted-foreground">
+                        {new Date(report.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                      </span>
+                    </div>
+                  </div>
+                  <ul className="space-y-0.5 mb-1">
+                    {completed.slice(0, 3).map((item, i) => (
+                      <li key={i} className="text-xs text-muted-foreground flex items-start gap-1.5">
+                        <span className="text-green-500 mt-0.5">✓</span>
+                        {item}
+                      </li>
+                    ))}
+                    {completed.length > 3 && (
+                      <li className="text-xs text-muted-foreground">+{completed.length - 3} more</li>
+                    )}
+                  </ul>
+                  {blockers.length > 0 && (
+                    <p className="text-xs text-orange-400 mt-1">Blocker: {blockers[0]}</p>
+                  )}
+                </div>
+              )
+            })}
           </div>
         )}
       </div>

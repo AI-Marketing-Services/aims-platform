@@ -12,7 +12,7 @@ export default async function PortalSettingsPage() {
   const clerkUser = await currentUser()
   const dbUser = await db.user.findUnique({
     where: { clerkId: userId },
-    select: { id: true, name: true, email: true, company: true, phone: true, website: true, industry: true },
+    select: { id: true, name: true, email: true, company: true, phone: true, website: true, industry: true, emailNotifs: true, slackNotifs: true },
   })
 
   return (

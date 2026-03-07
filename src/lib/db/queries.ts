@@ -59,7 +59,7 @@ export async function getDealById(id: string) {
 }
 
 export async function getDealsByStage() {
-  const stages: DealStage[] = [
+  const STAGES: DealStage[] = [
     "NEW_LEAD",
     "QUALIFIED",
     "DEMO_BOOKED",
@@ -72,21 +72,23 @@ export async function getDealsByStage() {
     "LOST",
   ]
 
-  const pipeline = await Promise.all(
-    stages.map(async (stage) => {
-      const deals = await db.deal.findMany({
-        where: { stage },
-        include: {
-          serviceArms: { include: { serviceArm: { select: { name: true, pillar: true } } } },
-        },
-        orderBy: { updatedAt: "desc" },
-      })
-      const totalValue = deals.reduce((sum, d) => sum + d.value, 0)
-      return { stage, deals, count: deals.length, totalValue }
-    })
-  )
+  const allDeals = await db.deal.findMany({
+    where: { stage: { in: STAGES } },
+    include: {
+      serviceArms: { include: { serviceArm: { select: { name: true, pillar: true } } } },
+    },
+    orderBy: { updatedAt: "desc" },
+  })
 
-  return pipeline
+  const byStage = new Map<DealStage, typeof allDeals>(STAGES.map((s) => [s, []]))
+  for (const deal of allDeals) {
+    byStage.get(deal.stage)?.push(deal)
+  }
+
+  return STAGES.map((stage) => {
+    const deals = byStage.get(stage) ?? []
+    return { stage, deals, count: deals.length, totalValue: deals.reduce((sum, d) => sum + d.value, 0) }
+  })
 }
 
 export async function createDeal(data: {

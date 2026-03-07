@@ -4,6 +4,7 @@ import { db } from "@/lib/db"
 import { notifyNewLead } from "@/lib/notifications"
 import { createCloseLead } from "@/lib/close"
 import { scoreLeadFromSignals } from "@/lib/scoring/lead-scorer"
+import { formRatelimit, getIp } from "@/lib/ratelimit"
 
 const intakeSchema = z.object({
   name: z.string().min(1),
@@ -18,6 +19,11 @@ const intakeSchema = z.object({
 })
 
 export async function POST(req: Request) {
+  if (formRatelimit) {
+    const { success } = await formRatelimit.limit(getIp(req))
+    if (!success) return NextResponse.json({ error: "Too many requests" }, { status: 429 })
+  }
+
   try {
     const body = await req.json()
     const parsed = intakeSchema.safeParse(body)

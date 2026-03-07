@@ -1,8 +1,8 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { User, Bell, Shield, ExternalLink } from "lucide-react"
-import Link from "next/link"
 import Image from "next/image"
 
 interface Props {
@@ -20,13 +20,46 @@ interface Props {
     phone: string | null
     website: string | null
     industry: string | null
+    emailNotifs: boolean
+    slackNotifs: boolean
   } | null
 }
 
 export function PortalSettingsClient({ clerkUser, dbUser }: Props) {
-  const [emailNotifs, setEmailNotifs] = useState(true)
-  const [slackNotifs, setSlackNotifs] = useState(false)
+  const router = useRouter()
+  const [emailNotifs, setEmailNotifs] = useState(dbUser?.emailNotifs ?? true)
+  const [slackNotifs, setSlackNotifs] = useState(dbUser?.slackNotifs ?? false)
   const [deleteConfirm, setDeleteConfirm] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+
+  async function handleToggle(field: "emailNotifs" | "slackNotifs", value: boolean) {
+    if (field === "emailNotifs") setEmailNotifs(value)
+    else setSlackNotifs(value)
+
+    await fetch("/api/user/preferences", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ [field]: value }),
+    }).catch(console.error)
+  }
+
+  async function handleDelete() {
+    setDeleting(true)
+    try {
+      const res = await fetch("/api/user", { method: "DELETE" })
+      if (res.ok) {
+        router.push("/")
+      } else {
+        alert("Failed to delete account. Please contact support.")
+        setDeleting(false)
+        setDeleteConfirm(false)
+      }
+    } catch {
+      alert("Failed to delete account. Please contact support.")
+      setDeleting(false)
+      setDeleteConfirm(false)
+    }
+  }
 
   return (
     <div className="max-w-2xl space-y-8">
@@ -102,7 +135,7 @@ export function PortalSettingsClient({ clerkUser, dbUser }: Props) {
               <p className="text-xs text-muted-foreground">Service updates, billing alerts, reports</p>
             </div>
             <button
-              onClick={() => setEmailNotifs(!emailNotifs)}
+              onClick={() => handleToggle("emailNotifs", !emailNotifs)}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${emailNotifs ? "bg-[#DC2626]" : "bg-muted"}`}
             >
               <span
@@ -116,7 +149,7 @@ export function PortalSettingsClient({ clerkUser, dbUser }: Props) {
               <p className="text-xs text-muted-foreground">Get notified in your team Slack</p>
             </div>
             <button
-              onClick={() => setSlackNotifs(!slackNotifs)}
+              onClick={() => handleToggle("slackNotifs", !slackNotifs)}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${slackNotifs ? "bg-[#DC2626]" : "bg-muted"}`}
             >
               <span
@@ -165,12 +198,17 @@ export function PortalSettingsClient({ clerkUser, dbUser }: Props) {
             <div className="flex gap-3">
               <button
                 onClick={() => setDeleteConfirm(false)}
-                className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-white transition-colors"
+                disabled={deleting}
+                className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-white transition-colors disabled:opacity-50"
               >
                 Cancel
               </button>
-              <button className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 transition-colors">
-                Yes, delete my account
+              <button
+                onClick={handleDelete}
+                disabled={deleting}
+                className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 transition-colors disabled:opacity-50"
+              >
+                {deleting ? "Deleting..." : "Yes, delete my account"}
               </button>
             </div>
           </div>
