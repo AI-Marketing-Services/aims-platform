@@ -180,7 +180,7 @@ function AICallingDemo() {
           ))}
         </div>
       </div>
-      <div className="space-y-1 max-h-[120px] overflow-hidden">
+      <div className="space-y-1 max-h-[160px] overflow-hidden">
         {TRANSCRIPT.slice(0, shown).map((line, i) => (
           <motion.div
             key={i}
