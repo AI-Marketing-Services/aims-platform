@@ -2,10 +2,12 @@
 
 import { useState, useMemo } from "react"
 import { AnimatePresence, motion } from "framer-motion"
-import { Search, ArrowRight } from "lucide-react"
+import { Search, ShoppingCart, Check } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { ToolLogo } from "@/components/shared/ToolLogo"
+import { useCart } from "@/components/shared/CartContext"
+import { getPricing } from "@/lib/services-pricing"
 
 type Pillar = "MARKETING" | "SALES" | "OPERATIONS" | "FINANCE"
 
@@ -302,6 +304,43 @@ const PILLAR_STYLES: Record<Pillar, string> = {
 
 
 function ServiceCard({ service }: { service: AIMSService }) {
+  const { addItem, items } = useCart()
+  const pricing = getPricing(service.slug)
+  const hasTiers = !!pricing?.tiers?.length
+  const [selectedTier, setSelectedTier] = useState(pricing?.tiers?.[0]?.id ?? "")
+  const inCart = items.some((i) => i.serviceId === service.id)
+
+  const handleAddToCart = () => {
+    if (!pricing) return
+    if (hasTiers && pricing.tiers) {
+      const tier = pricing.tiers.find((t) => t.id === selectedTier) ?? pricing.tiers[0]
+      addItem({
+        serviceId: service.id,
+        slug: service.slug,
+        name: service.name,
+        tierId: tier.id,
+        tierName: tier.name,
+        priceMonthly: tier.priceMonthly,
+      })
+    } else {
+      addItem({
+        serviceId: service.id,
+        slug: service.slug,
+        name: service.name,
+        priceMonthly: pricing.priceMonthly!,
+      })
+    }
+  }
+
+  const displayPrice = () => {
+    if (!pricing) return service.pricing === "from" && service.priceFrom ? `From ${service.priceFrom}` : service.pricing === "custom" ? "Custom pricing" : "Contact us"
+    if (hasTiers && pricing.tiers) {
+      const tier = pricing.tiers.find((t) => t.id === selectedTier) ?? pricing.tiers[0]
+      return `$${tier.priceMonthly / 100}/mo`
+    }
+    return `$${pricing.priceMonthly! / 100}/mo`
+  }
+
   return (
     <div className="bg-card border border-border rounded-2xl overflow-hidden flex flex-col hover:shadow-md transition-shadow duration-200">
       {/* Card header */}
@@ -353,20 +392,51 @@ function ServiceCard({ service }: { service: AIMSService }) {
         <p className="text-sm text-foreground/80 leading-snug">{service.outcome}</p>
       </div>
 
+      {/* Tier selector (only for tiered services) */}
+      {hasTiers && pricing?.tiers && (
+        <div className="px-5 pb-3">
+          <div className="flex gap-1.5 flex-wrap">
+            {pricing.tiers.map((tier) => (
+              <button
+                key={tier.id}
+                onClick={() => setSelectedTier(tier.id)}
+                className={cn(
+                  "px-3 py-1 rounded-lg text-xs font-semibold border transition-colors",
+                  selectedTier === tier.id
+                    ? "bg-gray-900 text-white border-gray-900"
+                    : "bg-white text-gray-600 border-gray-200 hover:border-gray-400"
+                )}
+              >
+                {tier.name} — ${tier.priceMonthly / 100}/mo
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Pricing + CTA */}
       <div className="px-5 pb-5">
         <div className="flex items-center justify-between mb-3">
-          <span className="text-sm font-bold text-foreground">
-            {service.pricing === "from" && service.priceFrom ? `From ${service.priceFrom}` : service.pricing === "custom" ? "Custom pricing" : "Contact us"}
-          </span>
+          <span className="text-sm font-bold text-foreground">{displayPrice()}</span>
+          <Link href={`/services/${service.slug}`} className="text-xs text-muted-foreground hover:text-[#DC2626] transition-colors">
+            Learn more →
+          </Link>
         </div>
-        <Link
-          href={`/get-started?service=${service.slug}`}
-          className="w-full flex items-center justify-center gap-2 py-3 bg-gray-900 text-white text-sm font-semibold rounded-xl hover:bg-gray-800 transition-colors"
+        <button
+          onClick={handleAddToCart}
+          className={cn(
+            "w-full flex items-center justify-center gap-2 py-3 text-sm font-semibold rounded-xl transition-colors",
+            inCart
+              ? "bg-green-50 text-green-700 border border-green-200 hover:bg-green-100"
+              : "bg-gray-900 text-white hover:bg-gray-800"
+          )}
         >
-          Get This Service
-          <ArrowRight className="w-4 h-4" />
-        </Link>
+          {inCart ? (
+            <><Check className="w-4 h-4" /> Added to Cart</>
+          ) : (
+            <><ShoppingCart className="w-4 h-4" /> Add to Cart</>
+          )}
+        </button>
       </div>
     </div>
   )
