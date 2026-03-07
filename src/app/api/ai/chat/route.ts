@@ -1,4 +1,6 @@
-import { anthropic } from "@ai-sdk/anthropic"
+import { createGoogleGenerativeAI } from "@ai-sdk/google"
+
+const google = createGoogleGenerativeAI({ apiKey: process.env.GEMINI_API_KEY ?? "" })
 import { streamText, tool } from "ai"
 import { z } from "zod"
 import { db } from "@/lib/db"
@@ -54,12 +56,12 @@ QUALIFICATION BEHAVIOR:
 export async function POST(req: Request) {
   const { messages } = await req.json()
 
-  if (!process.env.ANTHROPIC_API_KEY) {
+  if (!process.env.GEMINI_API_KEY) {
     return Response.json({ error: "AI not configured" }, { status: 503 })
   }
 
   const result = streamText({
-    model: anthropic("claude-haiku-4-5-20251001"),
+    model: google("gemini-2.0-flash-001"),
     system: AIMS_SYSTEM_PROMPT,
     messages,
     maxOutputTokens: 512,
