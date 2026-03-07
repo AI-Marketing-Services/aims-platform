@@ -206,53 +206,126 @@ function AICallingDemo() {
 }
 
 // ─── Content Demo ─────────────────────────────────────────────────────────────
-const CONTENT_VARIANTS = [
-  "\"We doubled Apex Corp's pipeline in 30 days.\"",
-  "\"The AI SDR that never sleeps — 47 meetings/mo.\"",
-  "\"Your competitors are already using AIMS.\"",
-  "\"From 0 to 200 qualified leads in 6 weeks.\"",
+const CONTENT_POSTS = [
+  {
+    platform: "LinkedIn",
+    logo: "/integrations/linkedin.svg",
+    color: "#0A66C2",
+    bg: "#EFF6FF",
+    snippet: "We helped a B2B SaaS team book 47 meetings in 30 days using AI outbound — here's the exact playbook 🧵",
+    stat: "3.2K impressions",
+  },
+  {
+    platform: "Instagram",
+    logo: "/integrations/icons8-instagram.svg",
+    color: "#E1306C",
+    bg: "#FFF0F5",
+    snippet: "Your SDR team doesn't have to burn out chasing cold leads. Here's what AI-powered outbound actually looks like 👇",
+    stat: "1.8K reach",
+  },
+  {
+    platform: "TikTok",
+    logo: "/integrations/tiktok.svg",
+    color: "#010101",
+    bg: "#F5F5F5",
+    snippet: "POV: You wake up to 12 new qualified meetings while your AI SDR worked overnight 🤖",
+    stat: "22K views",
+  },
+  {
+    platform: "X (Twitter)",
+    logo: null,
+    color: "#000000",
+    bg: "#F5F5F5",
+    snippet: "Cold email isn't dead. Bad cold email is. Here's what an AI-personalized sequence actually looks like →",
+    stat: "941 impressions",
+  },
+  {
+    platform: "Email",
+    logo: "/integrations/gmail.svg",
+    color: "#EA4335",
+    bg: "#FEF2F2",
+    snippet: "Subject: The 3-step framework we used to 3x pipeline for [Company Name]",
+    stat: "68% open rate",
+  },
 ]
 
 function ContentDemo() {
-  const [idx, setIdx] = useState(0)
-  const [typed, setTyped] = useState("")
+  const [active, setActive] = useState(0)
+  const [published, setPublished] = useState<number[]>([])
 
   useEffect(() => {
-    setTyped("")
-    const target = CONTENT_VARIANTS[idx]
+    setPublished([])
+    setActive(0)
     let i = 0
     const t = setInterval(() => {
-      if (i < target.length) {
-        setTyped(target.slice(0, i + 1))
-        i++
-      } else {
-        clearInterval(t)
-        setTimeout(() => setIdx((s) => (s + 1) % CONTENT_VARIANTS.length), 1200)
-      }
-    }, 28)
+      setPublished((p) => [...p, i])
+      i++
+      if (i < CONTENT_POSTS.length) setActive(i)
+      else clearInterval(t)
+    }, 700)
     return () => clearInterval(t)
-  }, [idx])
+  }, [])
+
+  const post = CONTENT_POSTS[active]
 
   return (
-    <div className="space-y-2.5">
-      <div className="flex items-center gap-2 text-[11px] text-gray-500 font-medium">
-        <Image src="/integrations/openai-svgrepo-com.svg" alt="AI" width={13} height={13} />
-        AI Content Generator
-        <motion.div animate={{ opacity: [1,0,1] }} transition={{ repeat: Infinity, duration: 0.9 }} className="h-1.5 w-1.5 rounded-full bg-green-500 ml-auto" />
-      </div>
-      <div className="min-h-[56px] rounded-xl border border-gray-100 bg-white/70 p-3">
-        <p className="text-[13px] font-semibold text-gray-800 leading-snug">
-          {typed}
-          <motion.span animate={{ opacity: [1,0,1] }} transition={{ repeat: Infinity, duration: 0.5 }} className="inline-block w-0.5 h-3.5 bg-gray-700 ml-0.5 align-middle" />
-        </p>
-      </div>
-      <div className="grid grid-cols-3 gap-1.5">
-        {[["4.8/5", "Hook Score"], ["94%", "Open Rate"], ["2.1x", "CTR Lift"]].map(([val, lbl]) => (
-          <div key={lbl} className="rounded-lg bg-gray-50 border border-gray-100 px-2 py-1.5 text-center">
-            <p className="text-sm font-bold text-gray-800">{val}</p>
-            <p className="text-[9px] text-gray-400">{lbl}</p>
-          </div>
+    <div className="space-y-2">
+      {/* Platform pills */}
+      <div className="flex gap-1.5 flex-wrap">
+        {CONTENT_POSTS.map((p, i) => (
+          <button
+            key={p.platform}
+            onClick={() => setActive(i)}
+            className="flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-semibold transition-all border"
+            style={{
+              backgroundColor: active === i ? p.color : "#F9FAFB",
+              color: active === i ? "white" : "#6B7280",
+              borderColor: active === i ? p.color : "#E5E7EB",
+            }}
+          >
+            {p.logo
+              ? <Image src={p.logo} alt={p.platform} width={11} height={11} className="object-contain" />
+              : <span className="font-black text-[9px]">𝕏</span>
+            }
+            {p.platform.split(" ")[0]}
+            {published.includes(i) && <CheckCircle2 className="h-2.5 w-2.5 ml-0.5" />}
+          </button>
         ))}
+      </div>
+
+      {/* Active post preview */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={active}
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -6 }}
+          transition={{ duration: 0.2 }}
+          className="rounded-xl border border-gray-100 p-3"
+          style={{ backgroundColor: post.bg }}
+        >
+          <div className="flex items-center gap-2 mb-2">
+            <div className="h-7 w-7 rounded-lg bg-white border border-gray-100 flex items-center justify-center flex-shrink-0">
+              {post.logo
+                ? <Image src={post.logo} alt={post.platform} width={15} height={15} className="object-contain" />
+                : <span className="text-[11px] font-black text-gray-900">𝕏</span>
+              }
+            </div>
+            <span className="text-[11px] font-semibold text-gray-700">{post.platform}</span>
+            {published.includes(active) && (
+              <span className="ml-auto text-[10px] font-semibold text-green-600 flex items-center gap-0.5">
+                <CheckCircle2 className="h-3 w-3" /> Published
+              </span>
+            )}
+          </div>
+          <p className="text-[11px] text-gray-700 leading-snug line-clamp-2">{post.snippet}</p>
+          <p className="text-[10px] font-semibold mt-1.5" style={{ color: post.color }}>{post.stat}</p>
+        </motion.div>
+      </AnimatePresence>
+
+      <div className="rounded-lg bg-gray-50 border border-gray-100 px-3 py-2 flex items-center justify-between">
+        <span className="text-[10px] text-gray-400">This month</span>
+        <span className="text-[11px] font-bold text-gray-800">30+ assets published</span>
       </div>
     </div>
   )
