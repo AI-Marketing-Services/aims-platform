@@ -1,14 +1,18 @@
+import Image from "next/image"
+
 const LOGOS = [
-  { name: "HubSpot", text: "HubSpot" },
-  { name: "Salesforce", text: "Salesforce" },
-  { name: "Instantly", text: "Instantly.ai" },
-  { name: "GoHighLevel", text: "GoHighLevel" },
-  { name: "Slack", text: "Slack" },
-  { name: "Apollo", text: "Apollo.io" },
-  { name: "Clay", text: "Clay" },
-  { name: "Notion", text: "Notion" },
-  { name: "Zapier", text: "Zapier" },
-  { name: "OpenAI", text: "OpenAI" },
+  { name: "HubSpot", src: "/integrations/hubspot-svgrepo-com.svg" },
+  { name: "Salesforce", src: "/integrations/salesforce.svg" },
+  { name: "Instantly", src: "/integrations/instantly.webp" },
+  { name: "Slack", src: "/integrations/slack.svg" },
+  { name: "Apollo", src: "/integrations/apollo.svg" },
+  { name: "Notion", src: "/integrations/notion.svg" },
+  { name: "OpenAI", src: "/integrations/openai-svgrepo-com.svg" },
+  { name: "LinkedIn", src: "/integrations/linkedin.svg" },
+  { name: "Google Ads", src: "/integrations/google-ads-svgrepo-com.svg" },
+  { name: "Shopify", src: "/integrations/shopify.svg" },
+  { name: "Calendly", src: "/integrations/calendly.svg" },
+  { name: "Airtable", src: "/integrations/airtable-svgrepo-com.svg" },
 ]
 
 export function LogoTicker() {
@@ -22,19 +26,25 @@ export function LogoTicker() {
         </p>
         <div className="relative overflow-hidden">
           {/* Fade edges */}
-          <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-24 bg-gradient-to-r from-secondary/30 to-transparent" />
-          <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-24 bg-gradient-to-l from-secondary/30 to-transparent" />
+          <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-24 bg-gradient-to-r from-[#FAFAFA] to-transparent" />
+          <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-24 bg-gradient-to-l from-[#FAFAFA] to-transparent" />
 
           <div className="flex animate-ticker whitespace-nowrap">
             {doubled.map((logo, i) => (
               <div
                 key={i}
-                className="mx-8 inline-flex items-center gap-2 text-muted-foreground grayscale hover:grayscale-0 transition-all"
+                className="mx-8 inline-flex items-center gap-2.5 text-gray-500 hover:text-gray-800 transition-all grayscale hover:grayscale-0"
               >
-                <div className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-white shadow-sm text-xs font-bold text-foreground">
-                  {logo.name.charAt(0)}
+                <div className="relative w-6 h-6 flex-shrink-0">
+                  <Image
+                    src={logo.src}
+                    alt={logo.name}
+                    fill
+                    className="object-contain"
+                    sizes="24px"
+                  />
                 </div>
-                <span className="text-sm font-medium">{logo.text}</span>
+                <span className="text-sm font-semibold">{logo.name}</span>
               </div>
             ))}
           </div>

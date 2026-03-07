@@ -1,19 +1,19 @@
 "use client"
 
+import Image from "next/image"
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { ArrowRight } from "lucide-react"
-import { SectionHeader } from "./SectionHeader"
 
 const INTEGRATIONS = [
-  { name: "Notion", category: "Productivity" },
-  { name: "Google Drive", category: "Storage" },
-  { name: "Instantly.ai", category: "Outbound" },
-  { name: "ChatGPT", category: "AI" },
-  { name: "HubSpot", category: "CRM" },
-  { name: "Slack", category: "Comms" },
-  { name: "Clay", category: "Enrichment" },
-  { name: "Apollo.io", category: "Prospecting" },
+  { name: "HubSpot", category: "CRM", src: "/integrations/hubspot-svgrepo-com.svg" },
+  { name: "Salesforce", category: "CRM", src: "/integrations/salesforce.svg" },
+  { name: "Instantly", category: "Outbound", src: "/integrations/instantly.webp" },
+  { name: "Slack", category: "Comms", src: "/integrations/slack.svg" },
+  { name: "Apollo", category: "Prospecting", src: "/integrations/apollo.svg" },
+  { name: "Notion", category: "Productivity", src: "/integrations/notion.svg" },
+  { name: "OpenAI", category: "AI", src: "/integrations/openai-svgrepo-com.svg" },
+  { name: "Google Drive", category: "Storage", src: "/integrations/google-drive-svgrepo-com.svg" },
 ]
 
 export function Integrations() {
@@ -54,7 +54,7 @@ export function Integrations() {
             </Link>
           </motion.div>
 
-          {/* Right: stacked integration cards */}
+          {/* Right: integration cards with real logos */}
           <motion.div
             initial={{ opacity: 0, x: 24 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -69,13 +69,19 @@ export function Integrations() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.3, delay: i * 0.06 }}
-                className="flex items-center gap-3 rounded-xl border border-border bg-white p-4 shadow-sm card-hover"
+                className="flex items-center gap-3 rounded-xl border border-border bg-white p-4 shadow-sm hover:-translate-y-0.5 hover:shadow-md transition-all duration-200"
               >
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-secondary text-sm font-bold text-foreground">
-                  {integration.name.charAt(0)}
+                <div className="relative w-8 h-8 flex-shrink-0">
+                  <Image
+                    src={integration.src}
+                    alt={integration.name}
+                    fill
+                    className="object-contain"
+                    sizes="32px"
+                  />
                 </div>
                 <div>
-                  <div className="text-sm font-medium text-foreground">{integration.name}</div>
+                  <div className="text-sm font-semibold text-foreground">{integration.name}</div>
                   <div className="text-xs text-muted-foreground">{integration.category}</div>
                 </div>
               </motion.div>
