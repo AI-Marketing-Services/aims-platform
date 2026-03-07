@@ -2,11 +2,10 @@
 
 import { motion } from "framer-motion"
 import { X, Check } from "lucide-react"
-import { SectionHeader } from "./SectionHeader"
 
 const OLD_AGENCY = [
   "Slow 90-day onboarding",
-  "High retainer with no guarantee",
+  "High retainer with no guarantees",
   "One-size-fits-all strategy",
   "Manually reviewed campaigns",
   "Lagging monthly reports",
@@ -24,43 +23,60 @@ const AIMS_PROS = [
   "You keep all assets, data & workflows",
 ]
 
-const HUB_TOOLS = [
-  { label: "HubSpot", angle: 0 },
-  { label: "Instantly", angle: 51 },
-  { label: "Clay", angle: 102 },
-  { label: "Apollo", angle: 154 },
-  { label: "Slack", angle: 205 },
-  { label: "GHL", angle: 257 },
-  { label: "Claude AI", angle: 308 },
+const TOOLS = [
+  { name: "HubSpot", domain: "hubspot.com" },
+  { name: "Salesforce", domain: "salesforce.com" },
+  { name: "Instantly", domain: "instantly.ai" },
+  { name: "Clay", domain: "clay.com" },
+  { name: "Apollo", domain: "apollo.io" },
+  { name: "Slack", domain: "slack.com" },
+  { name: "Notion", domain: "notion.so" },
+  { name: "OpenAI", domain: "openai.com" },
+  { name: "LinkedIn", domain: "linkedin.com" },
+  { name: "Google Ads", domain: "google.com" },
+  { name: "Calendly", domain: "calendly.com" },
+  { name: "Airtable", domain: "airtable.com" },
 ]
 
 export function WhyAIMS() {
   return (
-    <section className="py-24 bg-secondary/20">
-      <div className="container mx-auto max-w-6xl px-4">
-        <SectionHeader
-          badge="Why AIMS"
-          heading="A Smarter Way To Grow Your Business"
-          subheading="The old agency model is broken. AIMS is built for how modern B2B sales actually works."
-        />
+    <section className="py-24 bg-white">
+      <div className="mx-auto max-w-6xl px-4">
+
+        {/* Header */}
+        <div className="mb-14 max-w-xl">
+          <span className="inline-block rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-gray-500 mb-4">
+            Why AIMS
+          </span>
+          <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+            The old agency model is broken
+          </h2>
+          <p className="mt-3 text-base text-gray-500">
+            AIMS is built for how modern B2B sales actually works — fast, data-driven, and AI-powered from day one.
+          </p>
+        </div>
 
         {/* Comparison table */}
-        <div className="mt-16 grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {/* Old agency */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="rounded-2xl border border-border bg-secondary/50 p-8"
+            className="rounded-2xl border border-gray-200 bg-gray-50 p-8"
           >
-            <div className="mb-6 inline-block rounded-full bg-muted px-3 py-1 text-xs font-semibold text-muted-foreground">
-              The Old Agency Model
+            <div className="mb-6">
+              <span className="rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-semibold text-gray-500">
+                Traditional Agency
+              </span>
             </div>
-            <ul className="space-y-3">
+            <ul className="space-y-3.5">
               {OLD_AGENCY.map((item) => (
-                <li key={item} className="flex items-center gap-3 text-sm text-muted-foreground">
-                  <X className="h-4 w-4 shrink-0 text-red-400" />
+                <li key={item} className="flex items-center gap-3 text-sm text-gray-500">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-gray-200">
+                    <X className="h-3 w-3 text-gray-400" />
+                  </span>
                   {item}
                 </li>
               ))}
@@ -73,15 +89,19 @@ export function WhyAIMS() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="rounded-2xl border-2 border-[#DC2626] bg-white p-8 shadow-md"
+            className="rounded-2xl border border-red-200 bg-white p-8 shadow-sm"
           >
-            <div className="mb-6 inline-block rounded-full bg-red-50 px-3 py-1 text-xs font-semibold text-red-700 border border-red-200">
-              AIMS
+            <div className="mb-6">
+              <span className="rounded-full border border-red-200 bg-red-50 px-3 py-1 text-xs font-semibold text-red-700">
+                AIMS
+              </span>
             </div>
-            <ul className="space-y-3">
+            <ul className="space-y-3.5">
               {AIMS_PROS.map((item) => (
-                <li key={item} className="flex items-center gap-3 text-sm font-medium text-foreground">
-                  <Check className="h-4 w-4 shrink-0 text-[#DC2626]" />
+                <li key={item} className="flex items-center gap-3 text-sm font-medium text-gray-900">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-50">
+                    <Check className="h-3 w-3 text-[#DC2626]" />
+                  </span>
                   {item}
                 </li>
               ))}
@@ -89,40 +109,41 @@ export function WhyAIMS() {
           </motion.div>
         </div>
 
-        {/* Hub-and-spoke diagram */}
+        {/* Tool stack grid */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="mt-20 text-center"
+          transition={{ duration: 0.5 }}
+          className="mt-16 rounded-2xl border border-gray-200 bg-[#FAFAFA] p-8"
         >
-          <p className="mb-8 text-sm font-medium text-muted-foreground uppercase tracking-wider">
-            All your tools, orchestrated by AIMS
+          <p className="mb-8 text-center text-xs font-semibold uppercase tracking-widest text-gray-400">
+            Your full tech stack, orchestrated by AIMS
           </p>
-          <div className="relative mx-auto h-64 w-64">
-            {/* Center */}
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 flex h-20 w-20 items-center justify-center rounded-2xl bg-[#DC2626] shadow-lg">
-              <span className="text-lg font-black text-white">AIMS</span>
-            </div>
-            {/* Orbiting tools */}
-            {HUB_TOOLS.map((tool) => {
-              const rad = (tool.angle * Math.PI) / 180
-              const r = 100
-              const x = 50 + r * Math.cos(rad)
-              const y = 50 + r * Math.sin(rad)
-              return (
-                <div
-                  key={tool.label}
-                  className="absolute flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-lg border border-border bg-white shadow-sm text-[10px] font-semibold text-foreground"
-                  style={{ left: `${x}%`, top: `${y}%` }}
-                >
-                  {tool.label.split(" ")[0]}
+          <div className="grid grid-cols-4 gap-4 sm:grid-cols-6 md:grid-cols-12">
+            {TOOLS.map((tool) => (
+              <div
+                key={tool.domain}
+                className="flex flex-col items-center gap-2 group"
+              >
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-gray-200 bg-white shadow-sm group-hover:shadow-md transition-shadow">
+                  <img
+                    src={`https://logo.clearbit.com/${tool.domain}?size=48`}
+                    alt={tool.name}
+                    width={24}
+                    height={24}
+                    className="h-6 w-6 object-contain grayscale group-hover:grayscale-0 transition-all"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = "none"
+                    }}
+                  />
                 </div>
-              )
-            })}
+                <span className="text-[10px] text-gray-400 text-center leading-tight">{tool.name}</span>
+              </div>
+            ))}
           </div>
         </motion.div>
+
       </div>
     </section>
   )

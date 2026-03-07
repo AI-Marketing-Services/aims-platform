@@ -1,79 +1,94 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Search, Rocket, TrendingUp } from "lucide-react"
-import { SectionHeader } from "./SectionHeader"
 
 const STEPS = [
   {
     num: "01",
-    icon: Search,
     title: "Strategy & ICP Dive",
-    desc: "We audit your current pipeline, define your Ideal Customer Profile, and identify the highest-ROI campaigns for your business.",
-    items: ["Pipeline audit", "ICP definition", "Campaign roadmap"],
+    desc: "We audit your current pipeline, define your Ideal Customer Profile, identify gaps, and design a campaign roadmap scoped to your specific revenue target.",
+    items: ["Pipeline audit", "ICP definition", "Channel selection", "Campaign roadmap"],
   },
   {
     num: "02",
-    icon: Rocket,
     title: "Build & Launch",
-    desc: "We spin up warmed email domains, write personalized sequences, configure voice agents, and connect your CRM — all in under 2 weeks.",
+    desc: "We configure warmed email domains, write personalized sequences, deploy AI calling agents, and connect your CRM — all live within two weeks of kickoff.",
     items: ["Domain warmup", "Sequence writing", "AI agent setup", "CRM integration"],
   },
   {
     num: "03",
-    icon: TrendingUp,
     title: "Optimize & Scale",
-    desc: "Weekly reporting, A/B testing, and continuous optimization. We scale what's working and cut what isn't — driving down CAC every month.",
+    desc: "Weekly performance reviews, A/B testing, and continuous iteration. We cut what underperforms and scale what drives qualified pipeline — every single week.",
     items: ["Weekly reporting", "A/B testing", "CAC reduction", "Scale winners"],
   },
 ]
 
 export function HowItWorks() {
   return (
-    <section className="py-24 bg-secondary/20">
-      <div className="container mx-auto max-w-6xl px-4">
-        <SectionHeader
-          badge="How It Works"
-          heading="Get Booked Meetings In 3 Simple Steps"
-          subheading="From kickoff to calendar-filling pipeline in 30 days or less."
-        />
+    <section className="py-24 bg-white">
+      <div className="mx-auto max-w-6xl px-4">
+        {/* Header */}
+        <div className="mb-16 max-w-xl">
+          <span className="inline-block rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-gray-500 mb-4">
+            How It Works
+          </span>
+          <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+            From kickoff to calendar-full in 30 days
+          </h2>
+          <p className="mt-3 text-base text-gray-500">
+            A proven three-phase process built to generate qualified meetings fast — not six months from now.
+          </p>
+        </div>
 
-        <div className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           {STEPS.map((step, i) => (
             <motion.div
               key={step.num}
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.15 }}
-              className="relative rounded-2xl border border-border bg-white p-8 shadow-sm"
+              transition={{ duration: 0.5, delay: i * 0.12 }}
+              className="relative rounded-2xl border border-gray-200 bg-[#FAFAFA] p-7 hover:border-gray-300 transition-colors"
             >
-              {/* Connector line */}
-              {i < STEPS.length - 1 && (
-                <div className="absolute hidden md:block top-12 left-full w-8 h-px bg-border z-10" />
-              )}
-
               {/* Step number */}
-              <div className="mb-4 text-5xl font-black text-red-100 leading-none">{step.num}</div>
+              <span className="text-[4rem] font-black leading-none text-gray-100 select-none">
+                {step.num}
+              </span>
 
-              {/* Icon */}
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-red-50 text-[#DC2626]">
-                <step.icon className="h-6 w-6" />
-              </div>
+              <h3 className="mt-1 text-lg font-bold text-gray-900">{step.title}</h3>
+              <p className="mt-3 text-sm text-gray-500 leading-relaxed">{step.desc}</p>
 
-              <h3 className="text-xl font-bold text-foreground">{step.title}</h3>
-              <p className="mt-3 text-sm text-muted-foreground leading-relaxed">{step.desc}</p>
-
-              {/* Checklist */}
-              <ul className="mt-5 space-y-2">
+              <ul className="mt-6 space-y-2.5">
                 {step.items.map((item) => (
-                  <li key={item} className="flex items-center gap-2 text-sm text-foreground">
-                    <div className="h-1.5 w-1.5 rounded-full bg-[#DC2626]" />
+                  <li key={item} className="flex items-center gap-2.5 text-sm text-gray-700">
+                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-50">
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#DC2626]" />
+                    </span>
                     {item}
                   </li>
                 ))}
               </ul>
+
+              {/* Connector */}
+              {i < STEPS.length - 1 && (
+                <div className="absolute hidden md:block top-[4.5rem] left-full w-4 h-px bg-gray-200 z-10" />
+              )}
             </motion.div>
+          ))}
+        </div>
+
+        {/* Timeline bar */}
+        <div className="mt-10 flex items-center gap-0 overflow-hidden rounded-xl border border-gray-200 bg-white">
+          {[
+            { week: "Week 1–2", label: "Strategy & Setup", color: "bg-blue-500" },
+            { week: "Week 2–3", label: "Build & Launch", color: "bg-orange-500" },
+            { week: "Week 4+", label: "Optimize & Scale", color: "bg-green-500" },
+          ].map((phase, i) => (
+            <div key={phase.label} className="flex-1 border-r border-gray-200 last:border-r-0 px-5 py-3.5">
+              <div className={`mb-1.5 h-1 w-8 rounded-full ${phase.color}`} />
+              <p className="text-xs font-semibold text-gray-900">{phase.week}</p>
+              <p className="text-xs text-gray-400">{phase.label}</p>
+            </div>
           ))}
         </div>
       </div>
