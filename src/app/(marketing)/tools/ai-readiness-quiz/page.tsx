@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { ChevronRight, CheckCircle, AlertCircle, XCircle, Zap, ArrowRight } from "lucide-react"
+import { ChevronRight, CheckCircle, AlertCircle, XCircle, Zap, ArrowRight, Copy, Share2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const QUESTIONS = [
@@ -135,6 +135,8 @@ export default function AIReadinessQuizPage() {
   const [name, setName] = useState("")
   const [company, setCompany] = useState("")
   const [submitting, setSubmitting] = useState(false)
+  const [submissionId, setSubmissionId] = useState<string | null>(null)
+  const [copied, setCopied] = useState(false)
 
   const totalScore = answers.reduce((sum, s) => sum + s, 0)
 
@@ -159,7 +161,7 @@ export default function AIReadinessQuizPage() {
     e.preventDefault()
     setSubmitting(true)
     try {
-      await fetch("/api/lead-magnets/submit", {
+      const res = await fetch("/api/lead-magnets/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -167,13 +169,31 @@ export default function AIReadinessQuizPage() {
           email,
           name,
           company,
+          score: pct,
           data: { answers, score: totalScore, category: category.label },
         }),
       })
+      const json = await res.json()
+      if (json.id) setSubmissionId(json.id)
     } catch {}
     setSubmitting(false)
     setStep("results")
   }
+
+  function copyShareLink() {
+    const url = submissionId
+      ? `${window.location.origin}/tools/ai-readiness-quiz/results/${submissionId}`
+      : window.location.href
+    navigator.clipboard.writeText(url).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    })
+  }
+
+  const shareText = `I scored ${pct}/100 on the AIMS AI Readiness Quiz — ${category.label}. See where your business stands:`
+  const shareUrl = submissionId
+    ? `${typeof window !== "undefined" ? window.location.origin : "https://aimseos.com"}/tools/ai-readiness-quiz/results/${submissionId}`
+    : "https://aimseos.com/tools/ai-readiness-quiz"
 
   return (
     <div className="min-h-screen bg-[#FAFAFA]">
@@ -401,6 +421,42 @@ export default function AIReadinessQuizPage() {
                       <span className="text-gray-800 font-medium">{rec}</span>
                     </div>
                   ))}
+                </div>
+              </div>
+
+              {/* Share section */}
+              <div className="bg-white border border-gray-200 rounded-2xl p-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <Share2 className="w-4 h-4 text-gray-500" />
+                  <h4 className="font-semibold text-gray-900">Share your score</h4>
+                </div>
+                <p className="text-sm text-gray-500 mb-4">
+                  Challenge your network to see how they compare — or save your unique results link.
+                </p>
+                <div className="flex flex-wrap gap-3">
+                  <button
+                    onClick={copyShareLink}
+                    className="inline-flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                  >
+                    <Copy className="w-3.5 h-3.5" />
+                    {copied ? "Copied!" : "Copy link"}
+                  </button>
+                  <a
+                    href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
+                  >
+                    Share on X
+                  </a>
+                  <a
+                    href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-[#0A66C2] text-white rounded-lg text-sm font-medium hover:bg-[#0958a8] transition-colors"
+                  >
+                    Share on LinkedIn
+                  </a>
                 </div>
               </div>
 
