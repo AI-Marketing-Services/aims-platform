@@ -1,7 +1,8 @@
 import { currentUser } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
-import { CreditCard, Download, CheckCircle, AlertTriangle, ExternalLink } from "lucide-react"
+import { CreditCard, Download, CheckCircle, AlertTriangle } from "lucide-react"
 import Link from "next/link"
+import { BillingPortalButton } from "./BillingPortalButton"
 
 const DEMO_INVOICES = [
   { id: "inv_001", date: "2026-03-01", amount: 494, status: "paid", services: ["Website + CRM + Chatbot Bundle", "Cold Outbound System"] },
@@ -56,12 +57,9 @@ export default async function BillingPage() {
       <div className="bg-gray-50 border border-gray-100 rounded-xl p-5 mb-8 flex items-center justify-between gap-4">
         <div>
           <div className="text-gray-900 font-medium mb-0.5">Manage Subscription</div>
-          <div className="text-gray-500 text-sm">Update payment method, cancel, or change plans in the billing portal</div>
+          <div className="text-gray-500 text-sm">Update payment method, cancel, or change plans in the Stripe billing portal</div>
         </div>
-        <button className="flex items-center gap-2 px-4 py-2 bg-white hover:bg-gray-50 text-gray-700 text-sm rounded-lg transition-colors border border-gray-200 whitespace-nowrap">
-          Open Portal
-          <ExternalLink className="w-3.5 h-3.5" />
-        </button>
+        <BillingPortalButton />
       </div>
 
       {/* Invoice history */}

@@ -28,3 +28,8 @@ export async function PATCH(req: Request) {
 
   return NextResponse.json({ ok: true })
 }
+
+// POST = mark all read (same as PATCH with no body)
+export async function POST(req: Request) {
+  return PATCH(req)
+}

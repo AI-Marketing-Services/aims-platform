@@ -652,3 +652,20 @@ model ApiCostLog {
   @@index([clientId])
   @@index([createdAt])
 }
+
+// ============ EMAIL QUEUE ============
+
+model EmailQueueItem {
+  id             String    @id @default(cuid())
+  recipientEmail String
+  sequenceKey    String
+  emailIndex     Int
+  scheduledFor   DateTime
+  sentAt         DateTime?
+  status         String    @default("pending")
+  metadata       Json?
+  createdAt      DateTime  @default(now())
+
+  @@index([status, scheduledFor])
+  @@index([recipientEmail, sequenceKey])
+}

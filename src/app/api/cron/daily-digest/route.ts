@@ -2,119 +2,116 @@ import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { notify } from "@/lib/notifications"
 
-// Vercel Cron: runs daily at 8am UTC (Monday–Friday)
-// Configure in vercel.json: { "crons": [{ "path": "/api/cron/daily-digest", "schedule": "0 8 * * 1-5" }] }
-
 export const maxDuration = 60
 
 export async function GET(req: Request) {
   const authHeader = req.headers.get("authorization")
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
   const now = new Date()
-  const yesterday = new Date(now)
-  yesterday.setDate(yesterday.getDate() - 1)
-  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-  const startOfYesterday = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate())
+  const yesterday = new Date(now.getTime() - 86400000)
+  const lastMonth = new Date(now.getTime() - 30 * 86400000)
 
-  // Gather yesterday's metrics in parallel
   const [
-    newLeads,
-    newPurchases,
-    totalMrr,
+    mrr,
+    mrrLastMonth,
+    newSubsYesterday,
     activeClients,
-    openTickets,
-    overdueTasksCount,
+    newLeadsYesterday,
     hotLeads,
-    recentActivities,
+    warmLeads,
+    coldLeads,
+    dealsInNegotiation,
+    atRiskClients,
+    quizCompletions,
+    calcCompletions,
+    auditCompletions,
+    chatbotLeads,
+    activeTasks,
+    overdueTasks,
+    eodReports,
+    expectedInterns,
+    newSubAmount,
   ] = await Promise.all([
-    db.deal.count({
-      where: { createdAt: { gte: startOfYesterday, lt: startOfToday } },
-    }),
-    db.subscription.count({
-      where: { createdAt: { gte: startOfYesterday, lt: startOfToday }, status: "ACTIVE" },
-    }),
-    db.subscription.aggregate({
-      where: { status: "ACTIVE" },
-      _sum: { monthlyAmount: true },
-    }),
-    db.subscription.groupBy({
-      by: ["userId"],
-      where: { status: "ACTIVE" },
-    }).then((r) => r.length),
-    db.supportTicket.count({ where: { status: "OPEN" } }).catch(() => 0),
-    db.fulfillmentTask.count({
-      where: {
-        status: { not: "DONE" },
-        dueDate: { lt: now },
-      },
-    }),
-    db.deal.findMany({
-      where: {
-        leadScoreTier: "hot",
-        stage: { in: ["NEW_LEAD", "QUALIFIED", "DEMO_BOOKED"] },
-      },
-      select: { contactName: true, company: true, leadScore: true },
-      orderBy: { leadScore: "desc" },
+    db.subscription.aggregate({ where: { status: "ACTIVE" }, _sum: { monthlyAmount: true } }),
+    db.subscription.aggregate({ where: { status: "ACTIVE", createdAt: { lt: lastMonth } }, _sum: { monthlyAmount: true } }),
+    db.subscription.count({ where: { createdAt: { gte: yesterday }, status: "ACTIVE" } }),
+    db.subscription.groupBy({ by: ["userId"], where: { status: "ACTIVE" } }).then(r => r.length),
+    db.deal.count({ where: { createdAt: { gte: yesterday } } }),
+    db.deal.count({ where: { leadScoreTier: "hot", stage: { in: ["NEW_LEAD", "QUALIFIED", "DEMO_BOOKED"] }, createdAt: { gte: yesterday } } }),
+    db.deal.count({ where: { leadScoreTier: "warm", createdAt: { gte: yesterday } } }),
+    db.deal.count({ where: { leadScoreTier: "cold", createdAt: { gte: yesterday } } }),
+    db.deal.findMany({ where: { stage: { in: ["NEGOTIATION", "PROPOSAL_SENT"] } }, select: { contactName: true, value: true } }),
+    db.user.findMany({
+      where: { lastLoginAt: { lt: new Date(now.getTime() - 14 * 86400000) }, subscriptions: { some: { status: "ACTIVE" } } },
+      include: { subscriptions: { where: { status: "ACTIVE" }, select: { monthlyAmount: true } } },
       take: 5,
     }),
-    db.dealActivity.findMany({
-      where: { createdAt: { gte: startOfYesterday } },
-      include: { deal: { select: { contactName: true, company: true } } },
-      orderBy: { createdAt: "desc" },
+    db.leadMagnetSubmission.count({ where: { type: "AI_READINESS_QUIZ", createdAt: { gte: yesterday } } }),
+    db.leadMagnetSubmission.count({ where: { type: "ROI_CALCULATOR", createdAt: { gte: yesterday } } }),
+    db.leadMagnetSubmission.count({ where: { type: "WEBSITE_AUDIT", createdAt: { gte: yesterday } } }),
+    db.deal.count({ where: { channelTag: "website-chatbot", createdAt: { gte: yesterday } } }),
+    db.fulfillmentTask.count({ where: { status: { not: "done" }, dueDate: { gte: now } } }),
+    db.fulfillmentTask.findMany({
+      where: { status: { not: "done" }, dueDate: { lt: now } },
+      select: { title: true, assignedTo: true, dueDate: true },
       take: 10,
     }),
+    db.eODReport.count({ where: { createdAt: { gte: yesterday } } }).catch(() => 0),
+    db.internProfile.count({ where: { status: "ACTIVE" } }).catch(() => 0),
+    db.subscription.aggregate({ where: { createdAt: { gte: yesterday }, status: "ACTIVE" }, _sum: { monthlyAmount: true } }),
   ])
 
-  const mrr = totalMrr._sum.monthlyAmount ?? 0
+  const currentMrr = mrr._sum.monthlyAmount ?? 0
+  const previousMrr = mrrLastMonth._sum.monthlyAmount ?? 0
+  const mrrChange = previousMrr > 0 ? ((currentMrr - previousMrr) / previousMrr * 100).toFixed(1) : "n/a"
+  const atRiskMrr = atRiskClients.reduce((s, u) => s + u.subscriptions.reduce((a, sub) => a + sub.monthlyAmount, 0), 0)
+  const negotiationValue = dealsInNegotiation.reduce((s, d) => s + (d.value ?? 0), 0)
+  const newMrr = newSubAmount._sum.monthlyAmount ?? 0
 
-  // Build digest message
   const lines: string[] = [
-    `*AIMS Daily Digest — ${now.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}*`,
+    `📊 *AIMS Daily Digest — ${now.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}*`,
     "",
-    `*Revenue*`,
-    `MRR: $${mrr.toLocaleString()} | Active clients: ${activeClients}`,
+    `💰 *Revenue*`,
+    `  MRR: $${currentMrr.toLocaleString()}${previousMrr > 0 ? ` (${Number(mrrChange) >= 0 ? "+" : ""}${mrrChange}% vs last month)` : ""}`,
+    `  New subscriptions yesterday: ${newSubsYesterday}${newMrr > 0 ? ` worth $${newMrr.toLocaleString()}/mo` : ""}`,
+    `  Active clients: ${activeClients}`,
     "",
-    `*Yesterday*`,
-    `New leads: ${newLeads} | New purchases: ${newPurchases}`,
+    `🎯 *Pipeline*`,
+    `  New leads (24h): ${newLeadsYesterday} (${hotLeads} hot, ${warmLeads} warm, ${coldLeads} cold)`,
+    `  Deals in negotiation: ${dealsInNegotiation.length}${negotiationValue > 0 ? ` worth $${negotiationValue.toLocaleString()}` : ""}`,
+    `  At risk (no login 14+ days): ${atRiskClients.length} clients ($${atRiskMrr.toLocaleString()} MRR at risk)`,
     "",
+    `🧲 *Lead Magnets (last 24h)*`,
+    `  Quiz completions: ${quizCompletions}`,
+    `  ROI calculations: ${calcCompletions}`,
+    `  Website audits: ${auditCompletions}`,
+    `  Chatbot leads captured: ${chatbotLeads}`,
+    "",
+    `🔧 *Fulfillment*`,
+    `  Active tasks: ${activeTasks}`,
+    `  Overdue tasks: ${overdueTasks.length}${overdueTasks.length > 0 ? " ⚠️" : " ✓"}`,
   ]
 
-  if (hotLeads.length > 0) {
-    lines.push(`*Hot Leads to Follow Up*`)
-    hotLeads.forEach((l) => {
-      lines.push(`• ${l.contactName}${l.company ? ` (${l.company})` : ""} — Score: ${l.leadScore ?? "?"}`)
-    })
-    lines.push("")
-  }
-
-  if (overdueTasksCount > 0) {
-    lines.push(`*Action Required*`)
-    lines.push(`${overdueTasksCount} overdue fulfillment task${overdueTasksCount !== 1 ? "s" : ""}`)
-    lines.push("")
-  }
-
-  if (openTickets > 0) {
-    lines.push(`${openTickets} open support ticket${openTickets !== 1 ? "s" : ""} awaiting response`)
-    lines.push("")
-  }
-
-  if (recentActivities.length > 0) {
-    lines.push(`*Activity*`)
-    recentActivities.slice(0, 5).forEach((a) => {
-      const who = a.deal.company ?? a.deal.contactName
-      lines.push(`• ${who}: ${a.type.replace(/_/g, " ").toLowerCase()}`)
+  if (overdueTasks.length > 0) {
+    overdueTasks.slice(0, 5).forEach(t => {
+      const daysAgo = Math.floor((now.getTime() - (t.dueDate?.getTime() ?? 0)) / 86400000)
+      lines.push(`    • ${t.title} (${t.assignedTo ?? "unassigned"}) — ${daysAgo}d overdue`)
     })
   }
+
+  lines.push("")
+  lines.push(`👥 *Team*`)
+  lines.push(`  EOD reports submitted: ${eodReports}/${expectedInterns > 0 ? expectedInterns : "?"}`)
+  if (eodReports === 0 && expectedInterns > 0) lines.push("  ⚠️ No EOD reports received!")
 
   const message = lines.join("\n")
 
-  // Send via notify (Slack + in-app)
   await notify({
     type: "daily_digest",
-    title: "Daily Digest",
+    title: `Daily Digest — ${now.toLocaleDateString("en-US", { month: "short", day: "numeric" })}`,
     message,
     channel: "ALL",
     urgency: "low",
@@ -122,13 +119,10 @@ export async function GET(req: Request) {
 
   return NextResponse.json({
     sent: true,
-    newLeads,
-    newPurchases,
-    mrr,
+    mrr: currentMrr,
+    newLeadsYesterday,
+    newSubsYesterday,
     activeClients,
-    hotLeads: hotLeads.length,
-    overdueTasksCount,
-    openTickets,
-    timestamp: now.toISOString(),
+    overdueCount: overdueTasks.length,
   })
 }

@@ -1,7 +1,7 @@
 import { headers } from "next/headers"
 import { NextResponse } from "next/server"
 import Stripe from "stripe"
-import { stripe, handleSubscriptionCreated, handleSubscriptionUpdated, handleSubscriptionDeleted, handleInvoicePaid } from "@/lib/stripe"
+import { stripe, handleSubscriptionUpdated, handleSubscriptionDeleted, handleInvoicePaid } from "@/lib/stripe"
 import { notifyNewPurchase } from "@/lib/notifications"
 import { sendWelcomeEmail } from "@/lib/email"
 import { db } from "@/lib/db"
@@ -18,11 +18,7 @@ export async function POST(req: Request) {
   let event: Stripe.Event
 
   try {
-    event = stripe.webhooks.constructEvent(
-      body,
-      sig,
-      process.env.STRIPE_WEBHOOK_SECRET!
-    )
+    event = stripe.webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET!)
   } catch (err) {
     console.error("Stripe webhook signature verification failed:", err)
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 })
@@ -30,32 +26,237 @@ export async function POST(req: Request) {
 
   try {
     switch (event.type) {
-      case "customer.subscription.created": {
-        const sub = event.data.object as Stripe.Subscription
-        const subscription = await handleSubscriptionCreated(sub)
 
-        if (subscription) {
-          // Send notifications
-          const user = await db.user.findUnique({ where: { id: subscription.userId } })
-          const serviceArm = await db.serviceArm.findUnique({ where: { id: subscription.serviceArmId } })
+      // ── Cart-based multi-service checkout ─────────────────────────────────
+      case "checkout.session.completed": {
+        const session = event.data.object as Stripe.Checkout.Session
 
-          if (user && serviceArm) {
+        if (session.mode !== "subscription") break
+        if (session.metadata?.source !== "cart") {
+          // Legacy single-service checkout — handled by subscription.created below
+          break
+        }
+
+        // Resolve the DB user
+        let userId = session.metadata.userId as string | undefined
+
+        if (!userId) {
+          // Guest or unlinked — try to find by Clerk ID or email
+          const clerkId = session.client_reference_id
+          const email = session.customer_details?.email
+
+          if (clerkId) {
+            const user = await db.user.findFirst({ where: { clerkId } })
+            userId = user?.id
+          }
+          if (!userId && email) {
+            const user = await db.user.findFirst({ where: { email } })
+            userId = user?.id
+          }
+          if (!userId && email) {
+            // Create the user record so portal works after sign-up
+            const newUser = await db.user.create({
+              data: {
+                clerkId: session.client_reference_id ?? `guest_${Date.now()}`,
+                email,
+                name: session.customer_details?.name ?? undefined,
+                stripeCustomerId: session.customer as string,
+              },
+            })
+            userId = newUser.id
+          }
+        }
+
+        if (!userId) {
+          console.error("checkout.session.completed: could not resolve userId", session.id)
+          break
+        }
+
+        // Update Stripe customer on user if not already set
+        await db.user.update({
+          where: { id: userId },
+          data: { stripeCustomerId: session.customer as string },
+        }).catch(() => {})
+
+        // Parse cart items from metadata
+        const slugsArr = (session.metadata.slugs ?? "").split(",").filter(Boolean)
+        const tierIdsArr = (session.metadata.tierIds ?? "").split(",")
+        const amountsArr = (session.metadata.amounts ?? "").split(",").map(Number)
+
+        const user = await db.user.findUnique({ where: { id: userId } })
+
+        for (let i = 0; i < slugsArr.length; i++) {
+          const slug = slugsArr[i]
+          const tierId = tierIdsArr[i] || undefined
+          const monthlyAmount = (amountsArr[i] ?? 0) / 100
+
+          const serviceArm = await db.serviceArm.findUnique({ where: { slug } })
+          if (!serviceArm) {
+            console.warn(`No service arm found for slug: ${slug}`)
+            continue
+          }
+
+          // Resolve tier name from DB
+          let tierName: string | undefined
+          if (tierId) {
+            const tier = await db.serviceTier.findFirst({
+              where: { serviceArmId: serviceArm.id, slug: tierId },
+            })
+            tierName = tier?.name
+          }
+
+          // Create subscription record
+          const subscription = await db.subscription.create({
+            data: {
+              userId,
+              serviceArmId: serviceArm.id,
+              stripeSubId: session.subscription as string,
+              stripeCustId: session.customer as string,
+              status: "ACTIVE",
+              tier: tierName ?? tierId,
+              monthlyAmount,
+              fulfillmentStatus: "PENDING_SETUP",
+              assignedTeamMember: serviceArm.defaultAssignee,
+              currentPeriodStart: new Date(),
+              currentPeriodEnd: new Date(Date.now() + 30 * 86400000),
+            },
+          }).catch((e) => {
+            // May already exist from subscription.created event — that's fine
+            if (!e.message?.includes("Unique constraint")) console.error(e)
+            return null
+          })
+
+          if (!subscription) continue
+
+          // Create fulfillment tasks from service arm setup steps
+          const setupSteps = (serviceArm.setupSteps as Array<{ title: string; description?: string }>) ?? []
+          if (setupSteps.length > 0) {
+            await db.fulfillmentTask.createMany({
+              data: setupSteps.map((step, j) => ({
+                subscriptionId: subscription.id,
+                title: step.title,
+                description: step.description,
+                assignedTo: serviceArm.defaultAssignee,
+                priority: j === 0 ? "high" : "medium",
+                dueDate: new Date(Date.now() + (j + 1) * 2 * 86400000),
+              })),
+            })
+          }
+
+          // Update existing deal to ACTIVE_CLIENT
+          const deal = await db.deal.findFirst({
+            where: { userId, stage: { not: "ACTIVE_CLIENT" } },
+            orderBy: { createdAt: "desc" },
+          })
+
+          if (deal) {
+            await db.deal.update({
+              where: { id: deal.id },
+              data: {
+                stage: "ACTIVE_CLIENT",
+                closedAt: new Date(),
+                activities: {
+                  create: {
+                    type: "SUBSCRIPTION_CREATED",
+                    detail: `Subscribed to ${serviceArm.name}${tierName ? ` (${tierName})` : ""} at $${monthlyAmount}/mo`,
+                  },
+                },
+              },
+            })
+            await db.dealServiceArm.create({
+              data: {
+                dealId: deal.id,
+                serviceArmId: serviceArm.id,
+                tier: tierName ?? tierId,
+                monthlyPrice: monthlyAmount,
+                status: "active",
+                activatedAt: new Date(),
+              },
+            }).catch(() => {})
+          }
+
+          // Notifications + welcome email for first item only
+          if (i === 0 && user) {
             await Promise.allSettled([
               notifyNewPurchase({
                 clientName: user.name ?? user.email,
-                serviceName: serviceArm.name,
-                tier: subscription.tier ?? undefined,
-                amount: subscription.monthlyAmount,
+                serviceName: slugsArr.length > 1 ? `${serviceArm.name} +${slugsArr.length - 1} more` : serviceArm.name,
+                tier: tierName,
+                amount: amountsArr.reduce((s, a) => s + a, 0) / 100,
               }),
               sendWelcomeEmail({
                 to: user.email,
                 name: user.name ?? "there",
-                serviceName: serviceArm.name,
-                tier: subscription.tier ?? undefined,
+                serviceName: slugsArr.length > 1 ? `${slugsArr.length} AIMS Services` : serviceArm.name,
+                tier: tierName,
                 portalUrl: `${process.env.NEXT_PUBLIC_APP_URL}/portal/dashboard`,
               }),
             ])
           }
+        }
+        break
+      }
+
+      // ── Legacy single-service direct checkout ─────────────────────────────
+      case "customer.subscription.created": {
+        const sub = event.data.object as Stripe.Subscription
+
+        // Skip if this came from a cart checkout (already handled above)
+        if (sub.metadata.source === "cart") break
+
+        const userId = sub.metadata.userId
+        const serviceArmSlug = sub.metadata.serviceArmSlug
+        const tier = sub.metadata.tier
+
+        if (!userId || !serviceArmSlug) break
+
+        const serviceArm = await db.serviceArm.findUnique({ where: { slug: serviceArmSlug } })
+        if (!serviceArm) break
+
+        const amount = (sub.items.data[0]?.price?.unit_amount ?? 0) / 100
+
+        const subscription = await db.subscription.create({
+          data: {
+            userId,
+            serviceArmId: serviceArm.id,
+            stripeSubId: sub.id,
+            stripeCustId: sub.customer as string,
+            status: "ACTIVE",
+            tier,
+            monthlyAmount: amount,
+            fulfillmentStatus: "PENDING_SETUP",
+            assignedTeamMember: serviceArm.defaultAssignee,
+            currentPeriodStart: new Date(sub.current_period_start * 1000),
+            currentPeriodEnd: new Date(sub.current_period_end * 1000),
+          },
+        })
+
+        const setupSteps = (serviceArm.setupSteps as Array<{ title: string; description?: string }>) ?? []
+        if (setupSteps.length > 0) {
+          await db.fulfillmentTask.createMany({
+            data: setupSteps.map((step, i) => ({
+              subscriptionId: subscription.id,
+              title: step.title,
+              description: step.description,
+              assignedTo: serviceArm.defaultAssignee,
+              priority: i === 0 ? "high" : "medium",
+              dueDate: new Date(Date.now() + (i + 1) * 2 * 86400000),
+            })),
+          })
+        }
+
+        const user = await db.user.findUnique({ where: { id: userId } })
+        if (user) {
+          await Promise.allSettled([
+            notifyNewPurchase({ clientName: user.name ?? user.email, serviceName: serviceArm.name, tier, amount }),
+            sendWelcomeEmail({
+              to: user.email,
+              name: user.name ?? "there",
+              serviceName: serviceArm.name,
+              tier,
+              portalUrl: `${process.env.NEXT_PUBLIC_APP_URL}/portal/dashboard`,
+            }),
+          ])
         }
         break
       }
@@ -69,6 +270,25 @@ export async function POST(req: Request) {
       case "customer.subscription.deleted": {
         const sub = event.data.object as Stripe.Subscription
         await handleSubscriptionDeleted(sub)
+        // Mark associated deals as churned
+        const existingSub = await db.subscription.findUnique({
+          where: { stripeSubId: sub.id },
+          select: { userId: true },
+        })
+        if (existingSub?.userId) {
+          const deal = await db.deal.findFirst({
+            where: { userId: existingSub.userId, stage: "ACTIVE_CLIENT" },
+          })
+          if (deal) {
+            await db.deal.update({
+              where: { id: deal.id },
+              data: {
+                stage: "CHURNED",
+                activities: { create: { type: "SUBSCRIPTION_CANCELLED", detail: "Subscription cancelled via Stripe" } },
+              },
+            })
+          }
+        }
         break
       }
 
@@ -81,49 +301,17 @@ export async function POST(req: Request) {
       case "invoice.payment_failed": {
         const invoice = event.data.object as Stripe.Invoice
         if (invoice.subscription) {
-          const sub = await db.subscription.findUnique({
+          await db.subscription.updateMany({
             where: { stripeSubId: invoice.subscription as string },
-            include: { user: true },
+            data: { status: "PAST_DUE" },
           })
-          if (sub) {
-            await db.subscription.update({
-              where: { id: sub.id },
-              data: { status: "PAST_DUE" },
-            })
-          }
-        }
-        break
-      }
-
-      case "checkout.session.completed": {
-        const session = event.data.object as Stripe.Checkout.Session
-        // Handle one-time payments if needed
-        if (session.mode === "payment") {
-          const userId = session.metadata?.userId
-          const serviceArmSlug = session.metadata?.serviceArmSlug
-          if (userId && serviceArmSlug) {
-            // Create a completed deal activity
-            const deal = await db.deal.findFirst({
-              where: { userId },
-              orderBy: { createdAt: "desc" },
-            })
-            if (deal) {
-              await db.dealActivity.create({
-                data: {
-                  dealId: deal.id,
-                  type: "PAYMENT_RECEIVED",
-                  detail: `One-time payment of $${((session.amount_total ?? 0) / 100).toFixed(2)} for ${serviceArmSlug}`,
-                },
-              })
-            }
-          }
         }
         break
       }
     }
   } catch (err) {
     console.error(`Error handling ${event.type}:`, err)
-    // Return 200 anyway to prevent Stripe retries on business logic errors
+    // Always return 200 to prevent Stripe retries on business logic errors
   }
 
   return NextResponse.json({ received: true })

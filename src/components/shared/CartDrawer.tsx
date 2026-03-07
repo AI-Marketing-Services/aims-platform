@@ -2,12 +2,40 @@
 
 import { useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
-import { X, ShoppingCart, Trash2, ArrowRight, Loader2 } from "lucide-react"
+import { X, ShoppingCart, Trash2, ArrowRight, Loader2, Phone } from "lucide-react"
+import Link from "next/link"
 import { useCart } from "./CartContext"
 
 function formatPrice(cents: number): string {
   return `$${(cents / 100).toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}/mo`
 }
+
+// Context-aware upsell suggestions
+const UPSELL_RULES: Array<{
+  ifHas: string
+  ifMissing: string
+  message: string
+  href: string
+}> = [
+  {
+    ifHas: "website-crm-chatbot",
+    ifMissing: "cold-outbound",
+    message: "Most clients add Cold Outbound to fill their new website with leads.",
+    href: "/get-started?service=cold-outbound",
+  },
+  {
+    ifHas: "cold-outbound",
+    ifMissing: "voice-agents",
+    message: "Close 3x more deals by following up with AI voice calls.",
+    href: "/get-started?service=voice-agents",
+  },
+  {
+    ifHas: "seo-aeo",
+    ifMissing: "ai-content-engine",
+    message: "Pair SEO with the AI Content Engine for 4x more content output.",
+    href: "/marketplace?service=ai-content-engine",
+  },
+]
 
 export function CartDrawer() {
   const { items, isOpen, closeCart, removeItem, total } = useCart()
@@ -25,11 +53,19 @@ export function CartDrawer() {
       const data = await res.json()
       if (data.url) {
         window.location.href = data.url
+      } else {
+        setLoading(false)
       }
     } catch {
       setLoading(false)
     }
   }
+
+  // Find the first matching upsell
+  const slugsInCart = new Set(items.map((i) => i.slug))
+  const upsell = UPSELL_RULES.find(
+    (r) => slugsInCart.has(r.ifHas) && !slugsInCart.has(r.ifMissing)
+  )
 
   return (
     <>
@@ -46,13 +82,13 @@ export function CartDrawer() {
               onClick={closeCart}
             />
 
-            {/* Drawer */}
+            {/* Drawer — full screen on mobile, sidebar on desktop */}
             <motion.div
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 28, stiffness: 300 }}
-              className="fixed right-0 top-0 bottom-0 z-50 w-full max-w-[400px] bg-white shadow-2xl flex flex-col"
+              className="fixed right-0 top-0 bottom-0 z-50 w-full sm:max-w-[420px] bg-white shadow-2xl flex flex-col"
             >
               {/* Header */}
               <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
@@ -82,43 +118,59 @@ export function CartDrawer() {
                     <p className="mt-1 text-xs text-gray-400">Add services from the marketplace to get started.</p>
                   </div>
                 ) : (
-                  items.map((item) => (
-                    <div key={item.serviceId} className="flex items-start gap-3 p-3.5 bg-gray-50 rounded-xl border border-gray-100">
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-gray-900 leading-snug">{item.name}</p>
-                        {item.tierName && (
-                          <p className="mt-0.5 text-xs text-gray-500">{item.tierName} plan</p>
-                        )}
-                        <p className="mt-1.5 text-sm font-bold text-[#DC2626]">{formatPrice(item.priceMonthly)}</p>
+                  <>
+                    {items.map((item) => (
+                      <div key={item.serviceId} className="flex items-start gap-3 p-3.5 bg-gray-50 rounded-xl border border-gray-100">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold text-gray-900 leading-snug">{item.name}</p>
+                          {item.tierName && (
+                            <p className="mt-0.5 text-xs text-gray-500">{item.tierName} plan</p>
+                          )}
+                          <p className="mt-1.5 text-sm font-bold text-[#DC2626]">{formatPrice(item.priceMonthly)}</p>
+                        </div>
+                        <button
+                          onClick={() => removeItem(item.serviceId)}
+                          className="p-1.5 rounded-lg text-gray-300 hover:text-red-500 hover:bg-red-50 transition-colors flex-shrink-0"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
                       </div>
-                      <button
-                        onClick={() => removeItem(item.serviceId)}
-                        className="p-1.5 rounded-lg text-gray-300 hover:text-red-500 hover:bg-red-50 transition-colors flex-shrink-0"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  ))
+                    ))}
+
+                    {/* Context-aware upsell */}
+                    {upsell && (
+                      <div className="p-3.5 bg-red-50 rounded-xl border border-red-100">
+                        <p className="text-xs font-semibold text-[#DC2626] uppercase tracking-wide mb-1">Add-on suggestion</p>
+                        <p className="text-xs text-gray-700 mb-2">{upsell.message}</p>
+                        <Link
+                          href={upsell.href}
+                          onClick={closeCart}
+                          className="flex items-center gap-1 text-xs font-semibold text-[#DC2626] hover:underline"
+                        >
+                          <Phone className="w-3 h-3" /> Book a call to add it
+                        </Link>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
 
-              {/* Footer */}
+              {/* Footer — sticky at bottom */}
               {items.length > 0 && (
-                <div className="px-5 py-4 border-t border-gray-100 space-y-4">
-                  {/* Total */}
+                <div className="px-5 py-4 border-t border-gray-100 space-y-3 bg-white">
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-500">Monthly total</span>
                     <span className="text-lg font-bold text-gray-900">{formatPrice(total)}</span>
                   </div>
 
                   <p className="text-xs text-gray-400 leading-relaxed">
-                    Billed monthly. Cancel anytime. Final scoping confirmed after onboarding call.
+                    Billed monthly. Cancel anytime. Final scoping confirmed on your onboarding call.
                   </p>
 
                   <button
                     onClick={handleCheckout}
                     disabled={loading}
-                    className="w-full flex items-center justify-center gap-2 py-3.5 bg-[#DC2626] text-white text-sm font-bold rounded-xl hover:bg-[#B91C1C] disabled:opacity-60 transition-colors"
+                    className="w-full flex items-center justify-center gap-2 py-3.5 bg-[#DC2626] text-white text-sm font-bold rounded-xl hover:bg-[#B91C1C] disabled:opacity-60 transition-colors active:scale-95"
                   >
                     {loading ? (
                       <><Loader2 className="w-4 h-4 animate-spin" /> Processing…</>
@@ -126,6 +178,14 @@ export function CartDrawer() {
                       <>Checkout with Stripe <ArrowRight className="w-4 h-4" /></>
                     )}
                   </button>
+
+                  <Link
+                    href="/get-started"
+                    onClick={closeCart}
+                    className="block w-full text-center text-xs text-gray-400 hover:text-gray-600 transition-colors py-1"
+                  >
+                    Need custom pricing? Book a strategy call →
+                  </Link>
                 </div>
               )}
             </motion.div>
