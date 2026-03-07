@@ -40,10 +40,12 @@ const UPSELL_RULES: Array<{
 export function CartDrawer() {
   const { items, isOpen, closeCart, removeItem, total } = useCart()
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const handleCheckout = async () => {
     if (!items.length) return
     setLoading(true)
+    setError(null)
     try {
       const res = await fetch("/api/checkout", {
         method: "POST",
@@ -54,9 +56,11 @@ export function CartDrawer() {
       if (data.url) {
         window.location.href = data.url
       } else {
+        setError(data.error ?? "Checkout failed — please try again.")
         setLoading(false)
       }
     } catch {
+      setError("Network error — please check your connection and try again.")
       setLoading(false)
     }
   }
@@ -166,6 +170,12 @@ export function CartDrawer() {
                   <p className="text-xs text-gray-400 leading-relaxed">
                     Billed monthly. Cancel anytime. Final scoping confirmed on your onboarding call.
                   </p>
+
+                  {error && (
+                    <div className="rounded-lg bg-red-50 border border-red-200 px-3 py-2.5 text-xs text-red-700 font-medium">
+                      {error}
+                    </div>
+                  )}
 
                   <button
                     onClick={handleCheckout}

@@ -137,7 +137,16 @@
     box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.08), 0 4px 10px -6px rgba(0, 0, 0, 0.04);
   }
 
-  /* Logo ticker animation */
+  /* Logo ticker — triple content, translate 1/3 for seamless infinite loop */
+  @keyframes ticker-seamless {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-33.333%); }
+  }
+  .animate-ticker-seamless {
+    animation: ticker-seamless 34s linear infinite;
+    will-change: transform;
+  }
+  /* Legacy alias */
   @keyframes ticker-scroll {
     0% { transform: translateX(0); }
     100% { transform: translateX(-50%); }
