@@ -6,13 +6,14 @@ import { ArrowRight, CheckCircle2, Star } from "lucide-react"
 import type { Metadata } from "next"
 
 interface Props {
-  params: { partnerSlug: string }
-  searchParams: { ref?: string }
+  params: Promise<{ partnerSlug: string }>
+  searchParams: Promise<{ ref?: string }>
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { partnerSlug } = await params
   const referral = await db.referral.findFirst({
-    where: { landingPageSlug: params.partnerSlug },
+    where: { landingPageSlug: partnerSlug },
     include: { referrer: { select: { name: true, company: true } } },
   })
 
@@ -33,11 +34,13 @@ const BENEFITS = [
 ]
 
 export default async function PartnerLandingPage({ params, searchParams }: Props) {
+  const { partnerSlug } = await params
+  const { ref } = await searchParams
   const referral = await db.referral.findFirst({
     where: {
       OR: [
-        { landingPageSlug: params.partnerSlug },
-        { code: params.partnerSlug },
+        { landingPageSlug: partnerSlug },
+        { code: partnerSlug },
       ],
     },
     include: {
@@ -63,7 +66,7 @@ export default async function PartnerLandingPage({ params, searchParams }: Props
   }).catch(() => null)
 
   const partnerName = referral.referrer.company ?? referral.referrer.name ?? "Our Partner"
-  const refCode = searchParams.ref ?? referral.code
+  const refCode = ref ?? referral.code
 
   return (
     <div className="min-h-screen bg-[#FAFAFA]">

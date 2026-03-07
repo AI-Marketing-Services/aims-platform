@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { User, Bell, Shield, ExternalLink } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 
 interface Props {
   clerkUser: {
@@ -45,7 +46,7 @@ export function PortalSettingsClient({ clerkUser, dbUser }: Props) {
         <div className="space-y-4">
           <div className="flex items-center gap-4">
             {clerkUser.imageUrl && (
-              <img src={clerkUser.imageUrl} alt="" className="h-12 w-12 rounded-full" />
+              <Image src={clerkUser.imageUrl} alt="" width={48} height={48} className="h-12 w-12 rounded-full" />
             )}
             <div>
               <p className="font-semibold text-foreground">

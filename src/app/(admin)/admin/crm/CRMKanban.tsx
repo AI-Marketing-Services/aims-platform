@@ -48,17 +48,6 @@ const STAGES: { key: DealStage; label: string; color: string }[] = [
   { key: "ACTIVE_CLIENT", label: "Active Client", color: "border-green-500" },
 ]
 
-const DEMO_DEALS: Deal[] = [
-  { id: "d1", contactName: "Sarah Chen", company: "TechFlow Inc", stage: "NEW_LEAD", value: 2964, mrr: 297, source: "ai-readiness-quiz", serviceArms: ["Cold Outbound"], daysInStage: 1 },
-  { id: "d2", contactName: "Marcus Johnson", company: "AutoMax Detroit", stage: "NEW_LEAD", value: 5964, mrr: 597, source: "direct", serviceArms: ["Website + CRM", "Voice Agents"], daysInStage: 3 },
-  { id: "d3", contactName: "Rachel Torres", company: "Vend Co LLC", stage: "QUALIFIED", value: 1164, mrr: 97, source: "referral", serviceArms: ["Starter Bundle"], daysInStage: 2 },
-  { id: "d4", contactName: "Devon Park", company: "Park Hotels Group", stage: "QUALIFIED", value: 3564, mrr: 297, source: "roi-calculator", serviceArms: ["Full Stack"], daysInStage: 5 },
-  { id: "d5", contactName: "Angela Reeves", company: "Reeves Dental", stage: "DEMO_BOOKED", value: 2364, mrr: 197, source: "direct", serviceArms: ["SEO + AEO", "Chatbot"], daysInStage: 1 },
-  { id: "d6", contactName: "James Wu", company: "WuTech Solutions", stage: "PROPOSAL_SENT", value: 4764, mrr: 397, source: "reseller", serviceArms: ["Elite Bundle"], daysInStage: 4 },
-  { id: "d7", contactName: "Kira Nolan", company: "Nolan Fitness", stage: "NEGOTIATION", value: 2364, mrr: 197, source: "direct", serviceArms: ["Cold Outbound", "Audience"], daysInStage: 8 },
-  { id: "d8", contactName: "Bill Santos", company: "Santos Auto Group", stage: "ACTIVE_CLIENT", value: 3564, mrr: 297, source: "direct", serviceArms: ["Pro Bundle"], daysInStage: 47 },
-  { id: "d9", contactName: "Mia Hoffman", company: "Hoffman & Co", stage: "ACTIVE_CLIENT", value: 5964, mrr: 497, source: "partner", serviceArms: ["Elite Bundle"], daysInStage: 62 },
-]
 
 function DealCardInner({ deal }: { deal: Deal }) {
   const isStale = deal.daysInStage > 5 && deal.stage !== "ACTIVE_CLIENT"
@@ -182,8 +171,8 @@ function DroppableColumn({
   )
 }
 
-export function CRMKanban() {
-  const [deals, setDeals] = useState<Deal[]>(DEMO_DEALS)
+export function CRMKanban({ initialDeals }: { initialDeals: Deal[] }) {
+  const [deals, setDeals] = useState<Deal[]>(initialDeals)
   const [activeDeal, setActiveDeal] = useState<Deal | null>(null)
 
   const sensors = useSensors(

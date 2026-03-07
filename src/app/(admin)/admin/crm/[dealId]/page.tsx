@@ -45,13 +45,14 @@ function InfoRow({ icon: Icon, label, value }: { icon: React.FC<{ className?: st
   )
 }
 
-export default async function AdminDealDetailPage({ params }: { params: { dealId: string } }) {
+export default async function AdminDealDetailPage({ params }: { params: Promise<{ dealId: string }> }) {
+  const { dealId } = await params
   const { userId, sessionClaims } = await auth()
   if (!userId) redirect("/sign-in")
   const role = (sessionClaims?.metadata as { role?: string })?.role
   if (!role || !["ADMIN", "SUPER_ADMIN"].includes(role)) redirect("/portal/dashboard")
 
-  const deal = await getDealById(params.dealId)
+  const deal = await getDealById(dealId)
   if (!deal) notFound()
 
   const activities = deal.activities.map((a) => ({

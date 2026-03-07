@@ -1,7 +1,8 @@
 import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
-import { FolderOpen, Link as LinkIcon, Copy, ExternalLink, FileText } from "lucide-react"
+import { FolderOpen, Link as LinkIcon, ExternalLink, FileText } from "lucide-react"
+import { CopyButton } from "@/components/portal/CopyButton"
 
 export const metadata = { title: "Partner Resources" }
 
@@ -55,13 +56,7 @@ export default async function ResellerResourcesPage() {
                   <p className="text-xs font-medium text-foreground mb-0.5">{label}</p>
                   <code className="text-xs text-muted-foreground truncate block">{url}</code>
                 </div>
-                <button
-                  onClick={() => navigator.clipboard.writeText(url)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-card border border-border rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground transition-colors flex-shrink-0"
-                >
-                  <Copy className="h-3 w-3" />
-                  Copy
-                </button>
+                <CopyButton text={url} />
               </div>
             ))}
           </div>

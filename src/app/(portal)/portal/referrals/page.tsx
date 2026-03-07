@@ -1,6 +1,7 @@
 import { currentUser } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
-import { Share2, DollarSign, Users, Copy, CheckCircle } from "lucide-react"
+import { Share2, DollarSign, Users, CheckCircle } from "lucide-react"
+import { CopyButton } from "@/components/portal/CopyButton"
 
 export default async function ReferralsPage() {
   const user = await currentUser()
@@ -41,10 +42,7 @@ export default async function ReferralsPage() {
           <div className="flex-1 px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-700 text-sm font-mono truncate">
             {refLink}
           </div>
-          <button className="flex items-center gap-2 px-4 py-3 bg-[#DC2626] text-white text-sm font-medium rounded-lg hover:bg-[#B91C1C] transition-colors whitespace-nowrap">
-            <Copy className="w-4 h-4" />
-            Copy Link
-          </button>
+          <CopyButton text={refLink} />
         </div>
         <p className="text-xs text-gray-500 mt-3">Share this link. When someone signs up and pays, you earn 20% of their first 3 months.</p>
       </div>

@@ -31,8 +31,9 @@ const FULFILLMENT_LABELS: Record<string, { label: string; color: string }> = {
 export default async function PortalServiceDetailPage({
   params,
 }: {
-  params: { serviceId: string }
+  params: Promise<{ serviceId: string }>
 }) {
+  const { serviceId } = await params
   const { userId } = await auth()
   if (!userId) redirect("/sign-in")
 
@@ -40,7 +41,7 @@ export default async function PortalServiceDetailPage({
   if (!dbUser) redirect("/sign-in")
 
   const subscription = await db.subscription.findFirst({
-    where: { userId: dbUser.id, serviceArmId: params.serviceId },
+    where: { userId: dbUser.id, serviceArmId: serviceId },
     include: {
       serviceArm: true,
       fulfillmentTasks: { orderBy: { createdAt: "asc" } },
