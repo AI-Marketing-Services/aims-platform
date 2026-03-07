@@ -479,10 +479,10 @@ const VIEW_MAP: Record<string, React.FC> = {
 // ─── Floating logo animation ──────────────────────────────────────────────────
 
 const FLOAT_LOGOS = [
-  { src: "/integrations/hubspot-svgrepo-com.svg", label: "HubSpot", style: { top: "9%", left: "5%" }, delay: 0 },
-  { src: "/integrations/notion.svg", label: "Notion", style: { top: "9%", right: "5%" }, delay: 0.1 },
-  { src: "/integrations/instantly.webp", label: "Instantly", style: { top: "52%", left: "4%" }, delay: 0.2 },
-  { src: "/integrations/slack.png", label: "Slack", style: { top: "52%", right: "4%" }, delay: 0.3 },
+  { src: "/integrations/hubspot-svgrepo-com.svg", label: "HubSpot", style: { top: "10%", left: "4%" }, delay: 0 },
+  { src: "/integrations/notion.svg", label: "Notion", style: { top: "10%", right: "4%" }, delay: 0.1 },
+  { src: "/integrations/instantly.webp", label: "Instantly", style: { top: "38%", left: "3%" }, delay: 0.2 },
+  { src: "/integrations/slack.png", label: "Slack", style: { top: "38%", right: "3%" }, delay: 0.3 },
 ]
 
 // ─── Hero ─────────────────────────────────────────────────────────────────────
@@ -537,10 +537,7 @@ export function Hero() {
             className="max-w-3xl text-[2.75rem] font-extrabold leading-[1.1] tracking-tight text-gray-900 sm:text-5xl md:text-[3.6rem]"
           >
             Your &quot;Always On&quot;<br />
-            <span style={{ WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundImage:"linear-gradient(135deg,#DC2626 0%,#7F1D1D 100%)", backgroundClip:"text" }}>
-              AI-Powered Lead
-            </span>
-            <br />Generation Partner
+            AI-Powered Lead<br />Generation Partner
           </motion.h1>
 
           <motion.p

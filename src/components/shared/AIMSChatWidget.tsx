@@ -173,8 +173,8 @@ function AIChat({ onClose }: { onClose: () => void }) {
               className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
             >
               {m.role === "assistant" && (
-                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#DC2626] mr-2 mt-1 flex-shrink-0">
-                  <MessageSquare className="h-3 w-3 text-white" />
+                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white border border-gray-200 shadow-sm mr-2 mt-1 flex-shrink-0 overflow-hidden">
+                  <Image src="/logo.png" alt="AIMS" width={16} height={16} className="object-contain" />
                 </div>
               )}
               <div
@@ -192,8 +192,8 @@ function AIChat({ onClose }: { onClose: () => void }) {
 
         {isStreaming && (
           <div className="flex justify-start">
-            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#DC2626] mr-2 mt-1 flex-shrink-0">
-              <MessageSquare className="h-3 w-3 text-white" />
+            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white border border-gray-200 shadow-sm mr-2 mt-1 flex-shrink-0 overflow-hidden">
+              <Image src="/logo.png" alt="AIMS" width={16} height={16} className="object-contain" />
             </div>
             <div className="bg-muted rounded-xl rounded-bl-sm px-3.5 py-2.5">
               <Loader2 className="h-4 w-4 text-muted-foreground animate-spin" />
