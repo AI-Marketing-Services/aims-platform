@@ -1,0 +1,194 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Background */
+    --background: 0 0% 98%;
+    --foreground: 0 0% 4%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 4%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 4%;
+
+    /* AIMS Crimson */
+    --primary: 0 84% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary */
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 220 9% 46%;
+
+    /* Muted */
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
+
+    /* Accent */
+    --accent: 220 14% 96%;
+    --accent-foreground: 220 9% 46%;
+
+    /* Destructive */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Border / Input / Ring */
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 0 84% 50%;
+
+    /* Radius */
+    --radius: 0.75rem;
+
+    /* Pillar colors */
+    --pillar-marketing: 142 76% 36%;
+    --pillar-sales: 221 83% 53%;
+    --pillar-operations: 21 90% 48%;
+    --pillar-finance: 271 81% 56%;
+
+    /* Chart colors */
+    --chart-1: 0 84% 50%;
+    --chart-2: 142 76% 36%;
+    --chart-3: 221 83% 53%;
+    --chart-4: 21 90% 48%;
+    --chart-5: 271 81% 56%;
+  }
+
+  .dark {
+    --background: 224 25% 5%;
+    --foreground: 210 40% 98%;
+    --card: 224 22% 8%;
+    --card-foreground: 210 40% 98%;
+    --popover: 224 22% 8%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 0 84% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 224 22% 12%;
+    --secondary-foreground: 210 40% 80%;
+
+    --muted: 224 22% 12%;
+    --muted-foreground: 215 20% 55%;
+
+    --accent: 224 22% 14%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 224 15% 15%;
+    --input: 224 15% 15%;
+    --ring: 0 84% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply tracking-tight;
+  }
+}
+
+@layer utilities {
+  /* AIMS-specific utilities */
+  .aims-gradient {
+    background: radial-gradient(
+      ellipse at 50% 0%,
+      hsl(0 84% 50% / 0.08) 0%,
+      transparent 60%
+    );
+  }
+
+  .aims-gradient-hero {
+    background: radial-gradient(
+      ellipse at 50% 50%,
+      hsl(0 84% 50% / 0.06) 0%,
+      transparent 70%
+    );
+  }
+
+  .glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .glass-dark {
+    background: rgba(13, 15, 20, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  /* Smooth card hover */
+  .card-hover {
+    @apply transition-all duration-200 ease-out;
+  }
+  .card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.08), 0 4px 10px -6px rgba(0, 0, 0, 0.04);
+  }
+
+  /* Logo ticker animation */
+  @keyframes ticker-scroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  .animate-ticker {
+    animation: ticker-scroll 30s linear infinite;
+  }
+
+  /* Count-up number animation */
+  @keyframes count-up {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-count {
+    animation: count-up 0.6s ease-out forwards;
+  }
+
+  /* Ambient blob */
+  @keyframes float-blob {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(20px, -30px) scale(1.05); }
+    66% { transform: translate(-15px, 15px) scale(0.95); }
+  }
+  .animate-blob {
+    animation: float-blob 8s ease-in-out infinite;
+  }
+
+  /* Stagger children fade-in */
+  .stagger-in > * {
+    opacity: 0;
+    animation: count-up 0.5s ease-out forwards;
+  }
+  .stagger-in > *:nth-child(1) { animation-delay: 0.05s; }
+  .stagger-in > *:nth-child(2) { animation-delay: 0.1s; }
+  .stagger-in > *:nth-child(3) { animation-delay: 0.15s; }
+  .stagger-in > *:nth-child(4) { animation-delay: 0.2s; }
+  .stagger-in > *:nth-child(5) { animation-delay: 0.25s; }
+  .stagger-in > *:nth-child(6) { animation-delay: 0.3s; }
+
+  /* Scrollbar styling for portals */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 3px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.3);
+  }
+}

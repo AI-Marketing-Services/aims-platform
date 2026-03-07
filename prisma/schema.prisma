@@ -1,0 +1,647 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ============ USERS & AUTH ============
+
+model User {
+  id            String    @id @default(cuid())
+  clerkId       String    @unique
+  email         String    @unique
+  name          String?
+  company       String?
+  role          UserRole  @default(CLIENT)
+  avatarUrl     String?
+  phone         String?
+  industry      String?
+  website       String?
+  locationCount Int       @default(1)
+
+  deals                   Deal[]
+  subscriptions           Subscription[]
+  referralsGiven          Referral[]               @relation("referrer")
+  referralReceived        Referral?                @relation("referred")
+  leadMagnetSubmissions   LeadMagnetSubmission[]
+  supportTickets          SupportTicket[]
+  internProfile           InternProfile?
+  notifications           Notification[]
+
+  stripeCustomerId String?   @unique
+  lastLoginAt      DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  @@index([clerkId])
+  @@index([email])
+  @@index([role])
+}
+
+enum UserRole {
+  CLIENT
+  RESELLER
+  INTERN
+  ADMIN
+  SUPER_ADMIN
+}
+
+// ============ CRM & DEALS ============
+
+model Deal {
+  id            String      @id @default(cuid())
+  userId        String?
+  user          User?       @relation(fields: [userId], references: [id])
+
+  contactName   String
+  contactEmail  String
+  company       String?
+  phone         String?
+  industry      String?
+  website       String?
+
+  stage         DealStage   @default(NEW_LEAD)
+  value         Float       @default(0)
+  mrr           Float       @default(0)
+  priority      DealPriority @default(MEDIUM)
+
+  source        String?
+  sourceDetail  String?
+  channelTag    String?
+  utmSource     String?
+  utmMedium     String?
+  utmCampaign   String?
+
+  serviceArms   DealServiceArm[]
+  notes         DealNote[]
+  activities    DealActivity[]
+
+  assignedTo    String?
+  closedAt      DateTime?
+  lostReason    String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@index([stage])
+  @@index([assignedTo])
+  @@index([channelTag])
+  @@index([createdAt])
+}
+
+enum DealStage {
+  NEW_LEAD
+  QUALIFIED
+  DEMO_BOOKED
+  PROPOSAL_SENT
+  NEGOTIATION
+  ACTIVE_CLIENT
+  UPSELL_OPPORTUNITY
+  AT_RISK
+  CHURNED
+  LOST
+}
+
+enum DealPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+model DealServiceArm {
+  id            String      @id @default(cuid())
+  dealId        String
+  deal          Deal        @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  serviceArmId  String
+  serviceArm    ServiceArm  @relation(fields: [serviceArmId], references: [id])
+  tier          String?
+  monthlyPrice  Float?
+  status        String      @default("pending")
+  activatedAt   DateTime?
+  createdAt     DateTime    @default(now())
+
+  @@index([dealId])
+  @@index([serviceArmId])
+}
+
+model DealNote {
+  id        String   @id @default(cuid())
+  dealId    String
+  deal      Deal     @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  authorId  String
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+
+  @@index([dealId])
+}
+
+model DealActivity {
+  id        String   @id @default(cuid())
+  dealId    String
+  deal      Deal     @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  type      ActivityType
+  detail    String?
+  metadata  Json?
+  authorId  String?
+  createdAt DateTime @default(now())
+
+  @@index([dealId])
+  @@index([type])
+  @@index([createdAt])
+}
+
+enum ActivityType {
+  EMAIL_SENT
+  CALL_MADE
+  DEMO_COMPLETED
+  STAGE_CHANGE
+  NOTE_ADDED
+  SUBSCRIPTION_CREATED
+  SUBSCRIPTION_CANCELLED
+  PAYMENT_RECEIVED
+  TASK_CREATED
+  FORM_SUBMITTED
+}
+
+// ============ SERVICES & PRODUCTS ============
+
+model ServiceArm {
+  id            String        @id @default(cuid())
+  slug          String        @unique
+  name          String
+  shortDesc     String
+  longDesc      String?       @db.Text
+
+  pillar        ServicePillar
+  status        ServiceStatus @default(COMING_SOON)
+
+  pricingModel  PricingModel  @default(MONTHLY)
+  basePrice     Float?
+  tiers         ServiceTier[]
+
+  iconName      String?
+  heroImage     String?
+  demoType      DemoType?
+  demoUrl       String?
+  features      Json?
+  useCases      Json?
+  faq           Json?
+
+  deals         DealServiceArm[]
+  subscriptions Subscription[]
+
+  sortOrder     Int           @default(0)
+  isFeatured    Boolean       @default(false)
+
+  // Fulfillment config
+  defaultAssignee String?
+  setupSteps      Json?
+  estimatedSetupDays Int?
+
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@index([pillar])
+  @@index([status])
+  @@index([slug])
+}
+
+enum ServicePillar {
+  MARKETING
+  SALES
+  OPERATIONS
+  FINANCE
+}
+
+enum ServiceStatus {
+  ACTIVE
+  COMING_SOON
+  INTERNAL_ONLY
+  BETA
+  DEPRECATED
+}
+
+enum PricingModel {
+  MONTHLY
+  QUARTERLY
+  ONE_TIME
+  USAGE_BASED
+  CUSTOM
+}
+
+enum DemoType {
+  INTERACTIVE
+  VOICE_PLAYER
+  LIVE_TOOL
+  VIDEO
+  ANIMATED_FLOW
+  BEFORE_AFTER
+}
+
+model ServiceTier {
+  id            String      @id @default(cuid())
+  serviceArmId  String
+  serviceArm    ServiceArm  @relation(fields: [serviceArmId], references: [id], onDelete: Cascade)
+  name          String
+  slug          String
+  price         Float
+  interval      String      @default("month")
+  stripePriceId String?
+  features      Json?
+  limits        Json?
+  isPopular     Boolean     @default(false)
+  sortOrder     Int         @default(0)
+  createdAt     DateTime    @default(now())
+
+  @@index([serviceArmId])
+  @@unique([serviceArmId, slug])
+}
+
+// ============ SUBSCRIPTIONS & BILLING ============
+
+model Subscription {
+  id                String            @id @default(cuid())
+  userId            String
+  user              User              @relation(fields: [userId], references: [id])
+  serviceArmId      String
+  serviceArm        ServiceArm        @relation(fields: [serviceArmId], references: [id])
+
+  stripeSubId       String?           @unique
+  stripeCustId      String?
+  status            SubStatus         @default(ACTIVE)
+  tier              String?
+  monthlyAmount     Float
+
+  fulfillmentStatus FulfillmentStatus @default(PENDING_SETUP)
+  fulfillmentTasks  FulfillmentTask[]
+  assignedTeamMember String?
+
+  onboardingCompletedAt DateTime?
+  currentPeriodStart    DateTime?
+  currentPeriodEnd      DateTime?
+  cancelledAt           DateTime?
+  cancelReason          String?
+
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  @@index([userId])
+  @@index([serviceArmId])
+  @@index([status])
+  @@index([fulfillmentStatus])
+}
+
+enum SubStatus {
+  ACTIVE
+  PAST_DUE
+  CANCELLED
+  PAUSED
+  TRIALING
+}
+
+enum FulfillmentStatus {
+  PENDING_SETUP
+  IN_PROGRESS
+  ACTIVE_MANAGED
+  NEEDS_ATTENTION
+  COMPLETED
+  ON_HOLD
+}
+
+model FulfillmentTask {
+  id              String       @id @default(cuid())
+  subscriptionId  String
+  subscription    Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  title           String
+  description     String?      @db.Text
+  status          String       @default("todo")
+  assignedTo      String?
+  priority        String       @default("medium")
+  dueDate         DateTime?
+  completedAt     DateTime?
+
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  @@index([subscriptionId])
+  @@index([assignedTo])
+  @@index([status])
+}
+
+// ============ LEAD MAGNETS ============
+
+model LeadMagnetSubmission {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+
+  type      LeadMagnetType
+  email     String
+  name      String?
+  company   String?
+  phone     String?
+  data      Json
+  results   Json?
+  score     Float?
+
+  source    String?
+  utmSource String?
+  utmMedium String?
+  utmCampaign String?
+
+  emailSequenceId     String?
+  emailSequenceStarted Boolean @default(false)
+  convertedToDeal     Boolean  @default(false)
+  dealId              String?
+
+  createdAt DateTime  @default(now())
+
+  @@index([type])
+  @@index([email])
+  @@index([createdAt])
+}
+
+enum LeadMagnetType {
+  AI_READINESS_QUIZ
+  ROI_CALCULATOR
+  WEBSITE_AUDIT
+  SEGMENT_EXPLORER
+  STACK_CONFIGURATOR
+}
+
+// ============ REFERRALS & AFFILIATES ============
+
+model Referral {
+  id            String       @id @default(cuid())
+  referrerId    String
+  referrer      User         @relation("referrer", fields: [referrerId], references: [id])
+  referredId    String?      @unique
+  referred      User?        @relation("referred", fields: [referredId], references: [id])
+
+  code          String       @unique
+  tier          ReferralTier @default(AFFILIATE)
+
+  clicks        Int          @default(0)
+  signups       Int          @default(0)
+  conversions   Int          @default(0)
+  totalEarned   Float        @default(0)
+
+  pendingPayout Float        @default(0)
+  stripeConnectId String?
+
+  landingPageSlug String?
+  customBranding  Json?
+
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  @@index([code])
+  @@index([referrerId])
+}
+
+enum ReferralTier {
+  AFFILIATE
+  COMMUNITY_PARTNER
+  RESELLER
+}
+
+// ============ INTERN OS ============
+
+model InternProfile {
+  id            String      @id @default(cuid())
+  userId        String      @unique
+  user          User        @relation(fields: [userId], references: [id])
+
+  role          InternRole
+  status        InternStatus @default(ONBOARDING)
+  cohort        String?
+
+  tasksCompleted    Int     @default(0)
+  revenueAttributed Float   @default(0)
+
+  portfolio     String?
+  linkedIn      String?
+  university    String?
+  startDate     DateTime?
+  endDate       DateTime?
+
+  tasks         InternTask[]
+  eodReports    EODReport[]
+  sprintGoals   SprintGoal[]
+
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+enum InternRole {
+  AI_BUILDER
+  BDR
+  PM
+  COORDINATOR
+}
+
+enum InternStatus {
+  APPLIED
+  INTERVIEW
+  ONBOARDING
+  ACTIVE
+  PAUSED
+  COMPLETED
+  REJECTED
+}
+
+model InternTask {
+  id              String        @id @default(cuid())
+  internId        String
+  intern          InternProfile @relation(fields: [internId], references: [id])
+
+  title           String
+  description     String?       @db.Text
+  status          TaskStatus    @default(TODO)
+  priority        DealPriority  @default(MEDIUM)
+
+  linkedProductSlug String?
+  linkedDealId      String?
+  sprintGoalId      String?
+  sprintGoal        SprintGoal?  @relation(fields: [sprintGoalId], references: [id])
+
+  estimatedHours  Float?
+  actualHours     Float?
+  revenueImpact   Float?
+
+  dueDate         DateTime?
+  completedAt     DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([internId])
+  @@index([status])
+  @@index([sprintGoalId])
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  IN_REVIEW
+  DONE
+  BLOCKED
+}
+
+model SprintGoal {
+  id          String        @id @default(cuid())
+  internId    String
+  intern      InternProfile @relation(fields: [internId], references: [id])
+
+  title       String
+  startDate   DateTime
+  endDate     DateTime
+  status      String        @default("active")
+
+  tasks       InternTask[]
+
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([internId])
+}
+
+model EODReport {
+  id        String        @id @default(cuid())
+  internId  String
+  intern    InternProfile @relation(fields: [internId], references: [id])
+
+  completed Json
+  nextPriority Json?
+  blockers  Json?
+  hoursWorked Float?
+
+  date      DateTime      @default(now())
+  createdAt DateTime      @default(now())
+
+  @@index([internId])
+  @@index([date])
+}
+
+// ============ NOTIFICATIONS ============
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+
+  channel   NotificationChannel
+  type      String
+  title     String
+  message   String   @db.Text
+  metadata  Json?
+  read      Boolean  @default(false)
+  sentAt    DateTime @default(now())
+
+  @@index([userId])
+  @@index([channel])
+  @@index([read])
+}
+
+enum NotificationChannel {
+  IN_APP
+  SLACK
+  EMAIL
+  ALL
+}
+
+// ============ SUPPORT ============
+
+model SupportTicket {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+
+  subject   String
+  message   String   @db.Text
+  status    String   @default("open")
+  priority  String   @default("normal")
+
+  assignedTo String?
+  resolvedAt DateTime?
+  responses  SupportResponse[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([status])
+}
+
+model SupportResponse {
+  id        String        @id @default(cuid())
+  ticketId  String
+  ticket    SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  authorId  String
+  message   String        @db.Text
+  isInternal Boolean      @default(false)
+  createdAt DateTime      @default(now())
+
+  @@index([ticketId])
+}
+
+// ============ VENDOR TRACKING ============
+
+model VendorTracker {
+  id                String   @id @default(cuid())
+  vendorName        String
+  monthlyCost       Float
+  category          String
+  currentContract   String?
+  replacementName   String?
+  replacementStatus String   @default("not_started")
+  projectedSavings  Float    @default(0)
+  actualSavings     Float    @default(0)
+  paybackMonths     Float?
+  buildEffortDays   Float?
+  notes             String?  @db.Text
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+// ============ ANALYTICS ============
+
+model PageView {
+  id        String   @id @default(cuid())
+  path      String
+  referrer  String?
+  utmSource String?
+  utmMedium String?
+  utmCampaign String?
+  userAgent String?
+  ip        String?
+  sessionId String?
+  userId    String?
+  createdAt DateTime @default(now())
+
+  @@index([path])
+  @@index([createdAt])
+  @@index([sessionId])
+}
+
+model ApiCostLog {
+  id          String   @id @default(cuid())
+  provider    String
+  model       String?
+  endpoint    String?
+  tokens      Int?
+  cost        Float
+  serviceArm  String?
+  clientId    String?
+  metadata    Json?
+  createdAt   DateTime @default(now())
+
+  @@index([provider])
+  @@index([serviceArm])
+  @@index([clientId])
+  @@index([createdAt])
+}
