@@ -38,10 +38,10 @@ async function main() {
         { icon: "BarChart", title: "Analytics Dashboard", description: "See what's working at a glance" },
       ],
       tiers: [
-        { name: "Starter", slug: "starter", price: 97, interval: "month", sortOrder: 0, features: ["GHL website template", "Booking calendar", "Basic analytics", "Email support"] },
-        { name: "Growth", slug: "growth", price: 197, interval: "month", sortOrder: 1, features: ["Everything in Starter", "AI Chatbot", "CRM pipeline", "Contact management", "Basic automations"] },
-        { name: "Pro", slug: "pro", price: 297, interval: "month", sortOrder: 2, isPopular: true, features: ["Everything in Growth", "Email automations", "Lead nurture sequences", "SMS follow-up", "Priority support"] },
-        { name: "Elite", slug: "elite", price: 397, interval: "month", sortOrder: 3, features: ["Everything in Pro", "Voice agent integration", "Full workflow automation", "Dedicated account manager", "Custom integrations"] },
+        { name: "Starter", slug: "starter", price: 97, interval: "month", sortOrder: 0, stripePriceId: "price_1T8B9IExwpuzI9OqNUo8zIIA", features: ["GHL website template", "Booking calendar", "Basic analytics", "Email support"] },
+        { name: "Growth", slug: "growth", price: 197, interval: "month", sortOrder: 1, stripePriceId: "price_1T8B9IExwpuzI9Oq6JYgM2t3", features: ["Everything in Starter", "AI Chatbot", "CRM pipeline", "Contact management", "Basic automations"] },
+        { name: "Pro", slug: "pro", price: 297, interval: "month", sortOrder: 2, isPopular: true, stripePriceId: "price_1T8B9JExwpuzI9OqYMPWhc8K", features: ["Everything in Growth", "Email automations", "Lead nurture sequences", "SMS follow-up", "Priority support"] },
+        { name: "Elite", slug: "elite", price: 397, interval: "month", sortOrder: 3, stripePriceId: "price_1T8B9JExwpuzI9OqfiasQeyd", features: ["Everything in Pro", "Voice agent integration", "Full workflow automation", "Dedicated account manager", "Custom integrations"] },
       ],
     },
     {

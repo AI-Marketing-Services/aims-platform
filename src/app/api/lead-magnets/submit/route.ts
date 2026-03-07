@@ -2,6 +2,8 @@ import { NextResponse } from "next/server"
 import { z } from "zod"
 import { createLeadMagnetSubmission } from "@/lib/db/queries"
 import { sendLeadMagnetResults } from "@/lib/email"
+import { db } from "@/lib/db"
+import { notifyNewLead } from "@/lib/notifications"
 
 const submitSchema = z.object({
   type: z.enum([
@@ -38,8 +40,46 @@ export async function POST(req: Request) {
 
     const submission = await createLeadMagnetSubmission(parsed.data)
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://aimanagingservices.com"
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://aimseos.com"
     const typeSlug = parsed.data.type.toLowerCase().replace(/_/g, "-")
+
+    // Auto-create Deal from lead magnet
+    const deal = await db.deal.create({
+      data: {
+        contactName: parsed.data.name ?? parsed.data.email.split("@")[0],
+        contactEmail: parsed.data.email,
+        company: parsed.data.company,
+        phone: parsed.data.phone,
+        source: typeSlug,
+        sourceDetail: submission.id,
+        utmSource: parsed.data.utmSource,
+        utmMedium: parsed.data.utmMedium,
+        utmCampaign: parsed.data.utmCampaign,
+        value: 0,
+        activities: {
+          create: {
+            type: "FORM_SUBMITTED",
+            detail: `Lead magnet submission: ${parsed.data.type}${parsed.data.score ? ` (score: ${parsed.data.score})` : ""}`,
+          },
+        },
+      },
+    }).catch(console.error)
+
+    // Update submission with deal link
+    if (deal) {
+      await db.leadMagnetSubmission.update({
+        where: { id: submission.id },
+        data: { convertedToDeal: true, dealId: deal.id },
+      }).catch(console.error)
+
+      // Notify team of new lead
+      await notifyNewLead({
+        contactName: parsed.data.name ?? parsed.data.email,
+        contactEmail: parsed.data.email,
+        company: parsed.data.company,
+        source: typeSlug,
+      }).catch(console.error)
+    }
 
     // Send results email
     await sendLeadMagnetResults({

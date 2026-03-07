@@ -1,5 +1,10 @@
 # CLAUDE.md — AIMS Platform
 
+## Spec Documents
+- `docs/AIMS-PLATFORM-BUILD-PROMPT.md` — Architecture, tech stack, all 15 service arms, route map, fulfillment chain, env vars
+- `docs/AIMS-DEEP-DIVE-SPEC.md` — UI implementation details: homepage sections, marketplace, checkout flow, lead magnets, portal views, admin CRM, intern OS
+- `docs/AIMS-AUTONOMOUS-BUILD-PLAN.md` — Repo copy manifest, Paperclip agent configs, Close CRM integration, complete env var list
+
 ## Project Overview
 Full-stack AI services marketplace built with Next.js 14 (App Router), TypeScript, Tailwind CSS, shadcn/ui, Clerk auth, Neon/Prisma, and Stripe.
 
