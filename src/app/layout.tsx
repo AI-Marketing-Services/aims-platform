@@ -49,7 +49,29 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <ClerkProvider>
+    <ClerkProvider
+      appearance={{
+        layout: {
+          logoImageUrl: "https://aimseos.com/logo.png",
+          logoLinkUrl: "https://aimseos.com",
+        },
+        variables: {
+          colorPrimary: "#DC2626",
+          colorBackground: "#ffffff",
+          colorText: "#111827",
+          colorInputBackground: "#f9fafb",
+          colorInputText: "#111827",
+          borderRadius: "0.375rem",
+        },
+        elements: {
+          card: "shadow-lg border border-gray-100",
+          headerTitle: "font-bold text-gray-900",
+          headerSubtitle: "text-gray-500",
+          formButtonPrimary: "bg-[#DC2626] hover:bg-[#B91C1C] text-white font-semibold uppercase tracking-wider text-xs",
+          footerActionLink: "text-[#DC2626] hover:text-[#B91C1C]",
+        },
+      }}
+    >
       <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
         <body className="min-h-screen bg-background font-sans antialiased">
           {children}

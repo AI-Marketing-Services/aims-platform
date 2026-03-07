@@ -7,7 +7,87 @@ function getResend() {
 const FROM_EMAIL = "AIMS <hello@aimseos.com>"
 const REPLY_TO = "support@aimseos.com"
 
-// ============ TRANSACTIONAL ============
+// ─── Branded HTML wrapper ─────────────────────────────────────────────────────
+
+function emailLayout(content: string, preheader = "") {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AIMS</title>
+</head>
+<body style="margin:0;padding:0;background:#F5F5F5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+  ${preheader ? `<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">${preheader}&nbsp;&zwnj;&nbsp;</div>` : ""}
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#F5F5F5;padding:32px 16px;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;width:100%;">
+
+          <!-- Header -->
+          <tr>
+            <td style="background:#ffffff;border-radius:12px 12px 0 0;padding:28px 40px;border-bottom:1px solid #F0F0F0;">
+              <table width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td>
+                    <img src="https://aimseos.com/logo.png" alt="AIMS" width="36" height="36"
+                      style="display:inline-block;vertical-align:middle;margin-right:10px;" />
+                    <span style="font-size:18px;font-weight:800;color:#111827;vertical-align:middle;letter-spacing:-0.5px;">AIMS</span>
+                  </td>
+                  <td align="right">
+                    <span style="font-size:11px;color:#9CA3AF;letter-spacing:0.05em;text-transform:uppercase;">AI Managing Services</span>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="background:#ffffff;padding:40px 40px 32px;">
+              ${content}
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="background:#F9FAFB;border-radius:0 0 12px 12px;padding:24px 40px;border-top:1px solid #F0F0F0;">
+              <p style="margin:0 0 8px;font-size:12px;color:#6B7280;">
+                Questions? Reply to this email or reach us at
+                <a href="mailto:${REPLY_TO}" style="color:#DC2626;text-decoration:none;">${REPLY_TO}</a>
+              </p>
+              <p style="margin:0;font-size:11px;color:#9CA3AF;">
+                AIMS · AI-Powered Business Infrastructure ·
+                <a href="https://aimseos.com" style="color:#9CA3AF;text-decoration:none;">aimseos.com</a>
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`
+}
+
+function btn(text: string, url: string) {
+  return `<a href="${url}" style="display:inline-block;background:#DC2626;color:#ffffff;padding:13px 28px;border-radius:6px;text-decoration:none;font-weight:700;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;margin:8px 0;">${text}</a>`
+}
+
+function h1(text: string) {
+  return `<h1 style="margin:0 0 16px;font-size:26px;font-weight:800;color:#111827;line-height:1.2;letter-spacing:-0.5px;">${text}</h1>`
+}
+
+function p(text: string) {
+  return `<p style="margin:0 0 16px;font-size:15px;color:#4B5563;line-height:1.7;">${text}</p>`
+}
+
+function divider() {
+  return `<hr style="border:none;border-top:1px solid #F0F0F0;margin:28px 0;" />`
+}
+
+// ─── Transactional emails ─────────────────────────────────────────────────────
 
 export async function sendWelcomeEmail(params: {
   to: string
@@ -16,32 +96,24 @@ export async function sendWelcomeEmail(params: {
   tier?: string
   portalUrl: string
 }) {
+  const body = `
+    ${h1(`Welcome aboard, ${params.name}!`)}
+    ${p(`Your <strong style="color:#111827;">${params.serviceName}${params.tier ? ` (${params.tier} tier)` : ""}</strong> subscription is now active. Here's what happens next:`)}
+    <ol style="margin:0 0 24px;padding-left:20px;color:#4B5563;line-height:2;font-size:15px;">
+      <li>Our team has been notified and will begin setup within <strong style="color:#111827;">24 hours</strong></li>
+      <li>You'll receive a setup guide specific to your service</li>
+      <li>Log into your portal to track progress and manage your account</li>
+    </ol>
+    ${btn("Go to Your Portal →", params.portalUrl)}
+    ${divider()}
+    ${p(`Need help? Just reply to this email — we typically respond within 2 business hours.`)}
+  `
   return getResend().emails.send({
     from: FROM_EMAIL,
     to: params.to,
     replyTo: REPLY_TO,
     subject: `Welcome to AIMS — Your ${params.serviceName} is live`,
-    html: `
-      <div style="font-family: system-ui, sans-serif; max-width: 600px; margin: 0 auto;">
-        <img src="https://aimseos.com/logo.png" alt="AIMS" width="120" style="margin-bottom: 24px;" />
-        <h1 style="font-size: 24px; color: #0A0A0A;">Welcome aboard, ${params.name}!</h1>
-        <p style="color: #4B5563; line-height: 1.6;">
-          Your <strong>${params.serviceName}${params.tier ? ` (${params.tier})` : ""}</strong> subscription is now active.
-          Here's what happens next:
-        </p>
-        <ol style="color: #4B5563; line-height: 2;">
-          <li>Our team has been notified and will begin setup within 24 hours</li>
-          <li>You'll receive a setup guide specific to your service</li>
-          <li>Log into your portal to track progress and manage your account</li>
-        </ol>
-        <a href="${params.portalUrl}" style="display: inline-block; background: #DC2626; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; margin: 16px 0;">
-          Go to Your Portal
-        </a>
-        <p style="color: #9CA3AF; font-size: 14px; margin-top: 32px;">
-          Questions? Reply to this email or reach out at ${REPLY_TO}
-        </p>
-      </div>
-    `,
+    html: emailLayout(body, `Your ${params.serviceName} is now active. Here's what to expect.`),
   })
 }
 
@@ -60,29 +132,28 @@ export async function sendLeadMagnetResults(params: {
     "stack-configurator": "Your Recommended AI Stack",
   }
 
+  const body = `
+    ${h1(`${params.name ? `Hey ${params.name} —` : "Hey —"} your results are ready`)}
+    ${params.score ? `
+      <div style="background:#FEF2F2;border-left:4px solid #DC2626;border-radius:6px;padding:20px 24px;margin:0 0 24px;">
+        <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#DC2626;text-transform:uppercase;letter-spacing:0.08em;">Your Score</p>
+        <p style="margin:0;font-size:48px;font-weight:800;color:#111827;line-height:1;">${params.score}<span style="font-size:20px;color:#6B7280;">/100</span></p>
+      </div>
+    ` : ""}
+    ${p("We've analyzed your inputs and put together a personalized report with specific recommendations for your business.")}
+    ${btn("View Full Results →", params.resultsUrl)}
+    ${divider()}
+    ${p(`Want to talk through your results with our team? We'll map the right AIMS services to your exact gaps — no pitch, just a working session.`)}
+    <a href="https://aimseos.com/get-started" style="font-size:14px;color:#DC2626;font-weight:600;text-decoration:none;">
+      Book a free strategy call →
+    </a>
+  `
   return getResend().emails.send({
     from: FROM_EMAIL,
     to: params.to,
     replyTo: REPLY_TO,
     subject: subjectMap[params.type] ?? "Your AIMS Results",
-    html: `
-      <div style="font-family: system-ui, sans-serif; max-width: 600px; margin: 0 auto;">
-        <img src="https://aimseos.com/logo.png" alt="AIMS" width="120" style="margin-bottom: 24px;" />
-        <h1 style="font-size: 24px; color: #0A0A0A;">
-          ${params.name ? `Hey ${params.name},` : "Hey there,"} your results are ready
-        </h1>
-        ${params.score ? `<p style="font-size: 48px; font-weight: 700; color: #DC2626; margin: 16px 0;">${params.score}/100</p>` : ""}
-        <a href="${params.resultsUrl}" style="display: inline-block; background: #DC2626; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600;">
-          View Full Results
-        </a>
-        <p style="color: #4B5563; line-height: 1.6; margin-top: 24px;">
-          Want to talk through your results with our team?
-        </p>
-        <a href="https://aimseos.com/get-started" style="color: #DC2626; font-weight: 600;">
-          Book a free strategy call →
-        </a>
-      </div>
-    `,
+    html: emailLayout(body, "Your personalized AIMS results are ready to view."),
   })
 }
 
@@ -95,43 +166,62 @@ export async function sendFulfillmentAssignment(params: {
   clientEmail: string
   clientWebsite?: string
 }) {
+  const body = `
+    ${h1(`New fulfillment assignment`)}
+    ${p(`Hey ${params.assigneeName}, a new client has been assigned to you.`)}
+    <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #E5E7EB;border-radius:8px;overflow:hidden;margin:0 0 24px;">
+      ${[
+        ["Client", params.clientName],
+        ["Service", `${params.serviceName}${params.tier ? ` (${params.tier})` : ""}`],
+        ["Email", params.clientEmail],
+        ...(params.clientWebsite ? [["Website", params.clientWebsite]] : []),
+      ].map(([label, value], i) => `
+        <tr style="background:${i % 2 === 0 ? "#F9FAFB" : "#ffffff"};">
+          <td style="padding:12px 16px;font-size:13px;color:#6B7280;width:120px;">${label}</td>
+          <td style="padding:12px 16px;font-size:13px;font-weight:600;color:#111827;">${value}</td>
+        </tr>
+      `).join("")}
+    </table>
+    ${btn("Open Admin Portal →", "https://aimseos.com/admin")}
+    ${p("Check the admin portal for setup tasks and the fulfillment checklist.")}
+  `
   return getResend().emails.send({
     from: FROM_EMAIL,
     to: params.to,
     replyTo: REPLY_TO,
     subject: `New client: ${params.clientName} — ${params.serviceName}`,
-    html: `
-      <div style="font-family: system-ui, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h1 style="font-size: 20px; color: #0A0A0A;">New fulfillment assignment</h1>
-        <table style="width: 100%; border-collapse: collapse; margin: 16px 0;">
-          <tr><td style="padding: 8px 0; color: #6B7280;">Client</td><td style="padding: 8px 0; font-weight: 600;">${params.clientName}</td></tr>
-          <tr><td style="padding: 8px 0; color: #6B7280;">Service</td><td style="padding: 8px 0; font-weight: 600;">${params.serviceName}${params.tier ? ` (${params.tier})` : ""}</td></tr>
-          <tr><td style="padding: 8px 0; color: #6B7280;">Email</td><td style="padding: 8px 0;">${params.clientEmail}</td></tr>
-          ${params.clientWebsite ? `<tr><td style="padding: 8px 0; color: #6B7280;">Website</td><td style="padding: 8px 0;">${params.clientWebsite}</td></tr>` : ""}
-        </table>
-        <p style="color: #4B5563;">Check the admin portal for setup tasks and fulfillment checklist.</p>
-      </div>
-    `,
+    html: emailLayout(body, `New fulfillment: ${params.clientName} signed up for ${params.serviceName}.`),
   })
 }
 
-// ============ NOTIFICATION HELPER ============
+// ─── Notification helper ──────────────────────────────────────────────────────
 
 export async function sendInternalNotification(params: {
   subject: string
   message: string
   urgency?: "low" | "normal" | "high"
 }) {
-  // Send to admin team
+  const urgencyBar = params.urgency === "high"
+    ? `<div style="background:#DC2626;color:#ffffff;padding:10px 16px;border-radius:6px;font-size:13px;font-weight:700;margin-bottom:20px;">⚠ HIGH PRIORITY</div>`
+    : params.urgency === "normal"
+    ? `<div style="background:#FEF2F2;color:#DC2626;padding:10px 16px;border-radius:6px;font-size:13px;font-weight:600;margin-bottom:20px;">Notification</div>`
+    : ""
+
+  const body = `
+    ${urgencyBar}
+    ${h1(params.subject)}
+    <pre style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:6px;padding:16px;font-size:13px;color:#374151;white-space:pre-wrap;overflow-wrap:break-word;">${params.message}</pre>
+    ${btn("Open Admin Portal →", "https://aimseos.com/admin")}
+  `
   return getResend().emails.send({
     from: FROM_EMAIL,
     to: "team@aimseos.com",
     subject: `[AIMS${params.urgency === "high" ? " URGENT" : ""}] ${params.subject}`,
-    html: `<div style="font-family: monospace; padding: 16px;">${params.message}</div>`,
+    html: emailLayout(body),
   })
 }
 
-// ============ SEQUENCE DEFINITIONS ============
+// ─── Sequence definitions ─────────────────────────────────────────────────────
 
 export const EMAIL_SEQUENCES = {
   "post-quiz": {
