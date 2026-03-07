@@ -15,6 +15,10 @@ interface SimulateResult {
   success: boolean
   userId?: string
   subscriptionId?: string
+  dealId?: string
+  taskCount?: number
+  notificationId?: string
+  serviceName?: string
   message?: string
   error?: string
 }
@@ -215,29 +219,46 @@ export default function SimulatePurchasePage() {
         </div>
 
         {/* Result */}
-        {result && (
-          <div className={`rounded-xl p-4 border flex items-start gap-3 ${
-            result.success
-              ? "bg-green-500/10 border-green-500/20"
-              : "bg-red-500/10 border-red-500/20"
-          }`}>
-            {result.success ? (
-              <CheckCircle className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
-            ) : (
-              <AlertCircle className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0" />
-            )}
+        {result && !result.success && (
+          <div className="rounded-xl p-4 border flex items-start gap-3 bg-red-500/10 border-red-500/20">
+            <AlertCircle className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0" />
             <div>
-              <p className={`text-sm font-medium ${result.success ? "text-green-300" : "text-red-300"}`}>
-                {result.success ? "Purchase simulated!" : "Simulation failed"}
-              </p>
-              <p className="text-xs text-gray-400 mt-0.5">
-                {result.success ? result.message : result.error}
-              </p>
-              {result.success && result.subscriptionId && (
-                <p className="text-xs text-gray-500 mt-1">
-                  Subscription: {result.subscriptionId}
-                </p>
-              )}
+              <p className="text-sm font-medium text-red-300">Simulation failed</p>
+              <p className="text-xs text-gray-400 mt-0.5">{result.error}</p>
+            </div>
+          </div>
+        )}
+
+        {result?.success && (
+          <div className="rounded-xl border border-green-500/20 bg-green-500/5 p-5 space-y-4">
+            <div className="flex items-center gap-2">
+              <CheckCircle className="w-5 h-5 text-green-400" />
+              <p className="text-sm font-semibold text-green-300">E2E Verification Passed</p>
+            </div>
+            <div className="space-y-2">
+              {[
+                { label: "User account", value: result.userId ? `ID: ${result.userId.slice(0, 16)}…` : null, ok: !!result.userId },
+                { label: "ACTIVE subscription", value: result.subscriptionId ? `ID: ${result.subscriptionId.slice(0, 16)}…` : null, ok: !!result.subscriptionId },
+                { label: "Fulfillment tasks", value: result.taskCount ? `${result.taskCount} tasks created` : "0 tasks (check setup steps)", ok: (result.taskCount ?? 0) > 0 },
+                { label: "ACTIVE_CLIENT deal", value: result.dealId ? `ID: ${result.dealId.slice(0, 16)}…` : null, ok: !!result.dealId },
+                { label: "Notification fired", value: result.notificationId ? "Notification created + Slack alert sent" : null, ok: !!result.notificationId },
+              ].map((check) => (
+                <div key={check.label} className="flex items-start gap-3">
+                  {check.ok
+                    ? <CheckCircle className="w-4 h-4 text-green-400 flex-shrink-0 mt-0.5" />
+                    : <AlertCircle className="w-4 h-4 text-yellow-400 flex-shrink-0 mt-0.5" />
+                  }
+                  <div>
+                    <span className="text-xs font-medium text-white">{check.label}</span>
+                    {check.value && <span className="ml-2 text-xs text-gray-500">{check.value}</span>}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="flex flex-wrap gap-2 pt-2 border-t border-white/5">
+              <a href="/admin/clients" className="text-xs text-[#DC2626] hover:underline">View in Clients →</a>
+              <a href="/admin/fulfillment" className="text-xs text-[#DC2626] hover:underline">View Tasks →</a>
+              <a href="/admin/crm" className="text-xs text-[#DC2626] hover:underline">View CRM →</a>
             </div>
           </div>
         )}

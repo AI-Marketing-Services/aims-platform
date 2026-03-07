@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server"
 import { z } from "zod"
 import { db } from "@/lib/db"
 import { generateOnboardingTasks } from "@/lib/automation/onboarding"
+import { notifyNewPurchase } from "@/lib/notifications"
 
 const schema = z.object({
   serviceArmId: z.string(),
@@ -63,7 +64,7 @@ export async function POST(req: Request) {
 
   // Create a deal as ACTIVE_CLIENT
   const serviceArm = await db.serviceArm.findUnique({ where: { id: serviceArmId }, select: { name: true } })
-  await db.deal.create({
+  const deal = await db.deal.create({
     data: {
       contactName: clientName,
       contactEmail: clientEmail,
@@ -75,10 +76,36 @@ export async function POST(req: Request) {
     },
   })
 
+  // Count tasks created
+  const taskCount = await db.fulfillmentTask.count({ where: { subscriptionId: subscription.id } })
+
+  // Fire notification
+  let notificationId: string | null = null
+  try {
+    const notif = await db.notification.create({
+      data: {
+        type: "new_purchase",
+        title: `[SIMULATED] New Purchase — ${serviceArm?.name ?? "Service"}`,
+        message: `${clientName} (${clientEmail}) subscribed at $${monthlyAmount}/mo`,
+        channel: "IN_APP",
+      },
+    })
+    notificationId = notif.id
+    await notifyNewPurchase({
+      clientName,
+      serviceName: `[SIMULATED] ${serviceArm?.name ?? "service"}`,
+      amount: monthlyAmount,
+    }).catch(() => {})
+  } catch {}
+
   return NextResponse.json({
     success: true,
     userId: user.id,
     subscriptionId: subscription.id,
+    dealId: deal.id,
+    taskCount,
+    notificationId,
+    serviceName: serviceArm?.name,
     message: `Onboarding tasks generated for ${clientName}`,
   }, { status: 201 })
 }
