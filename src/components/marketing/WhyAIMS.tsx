@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion"
 import { X, Check } from "lucide-react"
+import { ToolLogo } from "@/components/shared/ToolLogo"
 
 const OLD_AGENCY = [
   "Slow 90-day onboarding",
@@ -11,6 +12,7 @@ const OLD_AGENCY = [
   "Lagging monthly reports",
   "No AI-powered personalization",
   "You own nothing when you leave",
+  "Siloed teams — strategy doesn't talk to ops",
 ]
 
 const AIMS_PROS = [
@@ -21,6 +23,7 @@ const AIMS_PROS = [
   "Real-time dashboards & weekly calls",
   "Claude-powered personalization at scale",
   "You keep all assets, data & workflows",
+  "One team owns strategy, build, and execution",
 ]
 
 const TOOLS = [
@@ -109,38 +112,30 @@ export function WhyAIMS() {
           </motion.div>
         </div>
 
-        {/* Tool stack grid */}
+        {/* Tool stack ticker */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="mt-16 rounded-2xl border border-border bg-background p-8"
+          className="mt-16 rounded-2xl border border-border bg-background py-8"
         >
           <p className="mb-8 text-center text-xs font-semibold uppercase tracking-widest text-muted-foreground">
             Your full tech stack, orchestrated by AIMS
           </p>
-          <div className="grid grid-cols-4 gap-4 sm:grid-cols-6 md:grid-cols-12">
-            {TOOLS.map((tool) => (
-              <div
-                key={tool.domain}
-                className="flex flex-col items-center gap-2 group"
-              >
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-border bg-card shadow-sm group-hover:shadow-md transition-shadow">
-                  <img
-                    src={`https://logo.clearbit.com/${tool.domain}?size=48`}
-                    alt={tool.name}
-                    width={24}
-                    height={24}
-                    className="h-6 w-6 object-contain grayscale group-hover:grayscale-0 transition-all"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).style.display = "none"
-                    }}
-                  />
+          <div className="relative overflow-hidden">
+            <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-20 bg-gradient-to-r from-white to-transparent" />
+            <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-20 bg-gradient-to-l from-white to-transparent" />
+            <div className="flex animate-ticker whitespace-nowrap items-end pb-1">
+              {[...TOOLS, ...TOOLS].map((tool, i) => (
+                <div key={i} className="mx-6 inline-flex flex-col items-center gap-2 flex-shrink-0">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-gray-100 bg-white shadow-sm">
+                    <ToolLogo domain={tool.domain} name={tool.name} size={28} />
+                  </div>
+                  <span className="text-[10px] text-gray-500 text-center leading-tight whitespace-nowrap">{tool.name}</span>
                 </div>
-                <span className="text-[10px] text-muted-foreground text-center leading-tight">{tool.name}</span>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </motion.div>
 

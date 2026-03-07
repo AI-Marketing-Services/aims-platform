@@ -1,4 +1,5 @@
 import Link from "next/link"
+import Image from "next/image"
 
 const FOOTER_LINKS = {
   Services: [
@@ -34,17 +35,7 @@ export function Footer() {
           {/* Brand column */}
           <div className="col-span-2">
             <Link href="/" className="flex items-center gap-2.5">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-600">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  className="h-5 w-5 text-white"
-                  stroke="currentColor"
-                  strokeWidth={2.5}
-                >
-                  <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-                </svg>
-              </div>
+              <Image src="/logo.png" alt="AIMS" width={32} height={32} className="object-contain" />
               <span className="text-lg font-bold tracking-tight">AIMS</span>
             </Link>
             <p className="mt-4 max-w-xs text-sm text-muted-foreground leading-relaxed">

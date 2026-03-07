@@ -22,6 +22,8 @@ const isPublicRoute = createRouteMatcher([
   "/api/lead-magnets/submit(.*)",
   "/api/referrals/track(.*)",
   "/api/services(.*)",
+  "/api/ai/(.*)",
+  "/api/intake(.*)",
 ])
 
 const isAdminRoute = createRouteMatcher(["/admin(.*)"])

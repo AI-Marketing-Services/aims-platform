@@ -38,20 +38,20 @@
     --ring: 0 84% 50%;
 
     /* Radius */
-    --radius: 0.75rem;
+    --radius: 0.25rem;
 
-    /* Pillar colors */
-    --pillar-marketing: 142 76% 36%;
-    --pillar-sales: 221 83% 53%;
-    --pillar-operations: 21 90% 48%;
-    --pillar-finance: 271 81% 56%;
+    /* Pillar colors — all red variants */
+    --pillar-marketing: 0 84% 50%;
+    --pillar-sales: 0 72% 42%;
+    --pillar-operations: 0 90% 38%;
+    --pillar-finance: 350 75% 50%;
 
-    /* Chart colors */
+    /* Chart colors — red palette */
     --chart-1: 0 84% 50%;
-    --chart-2: 142 76% 36%;
-    --chart-3: 221 83% 53%;
-    --chart-4: 21 90% 48%;
-    --chart-5: 271 81% 56%;
+    --chart-2: 0 72% 42%;
+    --chart-3: 0 60% 60%;
+    --chart-4: 0 84% 72%;
+    --chart-5: 0 45% 38%;
   }
 
   .dark {

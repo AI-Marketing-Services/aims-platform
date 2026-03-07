@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { ChevronRight, CheckCircle, AlertCircle, XCircle, Zap, ArrowRight, BarChart2 } from "lucide-react"
+import { ChevronRight, CheckCircle, AlertCircle, XCircle, Zap, ArrowRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const QUESTIONS = [
@@ -177,22 +177,7 @@ export default function AIReadinessQuizPage() {
 
   return (
     <div className="min-h-screen bg-[#FAFAFA]">
-      {/* Header */}
-      <div className="border-b border-gray-200 bg-white">
-        <div className="max-w-3xl mx-auto px-4 py-4 flex items-center gap-3">
-          <div className="w-8 h-8 bg-[#DC2626] rounded-lg flex items-center justify-center">
-            <BarChart2 className="w-4 h-4 text-white" />
-          </div>
-          <span className="font-semibold text-gray-900">AIMS AI Readiness Quiz</span>
-          {step === "quiz" && (
-            <span className="ml-auto text-sm text-gray-500">
-              {currentQ + 1} / {QUESTIONS.length}
-            </span>
-          )}
-        </div>
-      </div>
-
-      <div className="max-w-2xl mx-auto px-4 py-12">
+      <div className="max-w-2xl mx-auto px-4 py-12 pt-8">
         <AnimatePresence mode="wait">
 
           {/* INTRO */}

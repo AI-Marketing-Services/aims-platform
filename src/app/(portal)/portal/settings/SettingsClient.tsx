@@ -146,29 +146,29 @@ export function PortalSettingsClient({ clerkUser, dbUser }: Props) {
       </div>
 
       {/* Danger Zone */}
-      <div className="rounded-xl border border-red-900/30 bg-red-950/10 p-6">
-        <h2 className="text-base font-semibold text-red-400 mb-1">Danger Zone</h2>
-        <p className="text-xs text-muted-foreground mb-4">
+      <div className="rounded-xl border border-red-200 bg-red-50 p-6">
+        <h2 className="text-base font-semibold text-red-600 mb-1">Danger Zone</h2>
+        <p className="text-xs text-gray-500 mb-4">
           Deleting your account will remove all your data permanently. This cannot be undone.
         </p>
         {!deleteConfirm ? (
           <button
             onClick={() => setDeleteConfirm(true)}
-            className="rounded-lg border border-red-800 px-4 py-2 text-sm font-medium text-red-400 hover:bg-red-950/30 transition-colors"
+            className="rounded-lg border border-red-300 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-100 transition-colors"
           >
             Delete Account
           </button>
         ) : (
           <div className="space-y-3">
-            <p className="text-sm text-red-400 font-medium">Are you sure? This is permanent.</p>
+            <p className="text-sm text-red-600 font-medium">Are you sure? This is permanent.</p>
             <div className="flex gap-3">
               <button
                 onClick={() => setDeleteConfirm(false)}
-                className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-muted transition-colors"
+                className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-white transition-colors"
               >
                 Cancel
               </button>
-              <button className="rounded-lg bg-red-700 px-4 py-2 text-sm font-medium text-white hover:bg-red-800 transition-colors">
+              <button className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 transition-colors">
                 Yes, delete my account
               </button>
             </div>

@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion"
 import { Search, ArrowRight } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
+import { ToolLogo } from "@/components/shared/ToolLogo"
 
 type Pillar = "MARKETING" | "SALES" | "OPERATIONS" | "FINANCE"
 
@@ -293,33 +294,12 @@ const SERVICES: AIMSService[] = [
 ]
 
 const PILLAR_STYLES: Record<Pillar, string> = {
-  MARKETING: "text-green-700 bg-green-50 border-green-200",
-  SALES: "text-blue-700 bg-blue-50 border-blue-200",
-  OPERATIONS: "text-orange-700 bg-orange-50 border-orange-200",
-  FINANCE: "text-purple-700 bg-purple-50 border-purple-200",
+  MARKETING: "text-red-700 bg-red-50 border-red-200",
+  SALES: "text-red-700 bg-red-50 border-red-200",
+  OPERATIONS: "text-red-700 bg-red-50 border-red-200",
+  FINANCE: "text-red-700 bg-red-50 border-red-200",
 }
 
-function ToolLogo({ domain, name }: { domain: string; name: string }) {
-  return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={`https://logo.clearbit.com/${domain}?size=64`}
-      alt={name}
-      width={20}
-      height={20}
-      className="w-5 h-5 rounded object-contain"
-      onError={(e) => {
-        const el = e.currentTarget as HTMLImageElement
-        el.style.display = "none"
-        if (el.nextSibling) return
-        const span = document.createElement("span")
-        span.className = "w-5 h-5 rounded bg-gray-100 flex items-center justify-center text-[9px] font-bold text-muted-foreground"
-        span.textContent = name.charAt(0)
-        el.parentNode?.insertBefore(span, el.nextSibling)
-      }}
-    />
-  )
-}
 
 function ServiceCard({ service }: { service: AIMSService }) {
   return (

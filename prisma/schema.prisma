@@ -83,6 +83,13 @@ model Deal {
   assignedTo    String?
   closedAt      DateTime?
   lostReason    String?
+
+  leadScore     Int?
+  leadScoreTier String?     // 'hot' | 'warm' | 'cold'
+  leadScoreReason String?   @db.Text
+
+  closeLeadId   String?     @unique
+
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 

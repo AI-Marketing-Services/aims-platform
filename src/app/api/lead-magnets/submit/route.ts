@@ -4,6 +4,7 @@ import { createLeadMagnetSubmission } from "@/lib/db/queries"
 import { sendLeadMagnetResults } from "@/lib/email"
 import { db } from "@/lib/db"
 import { notifyNewLead } from "@/lib/notifications"
+import { createCloseLead } from "@/lib/close"
 
 const submitSchema = z.object({
   type: z.enum([
@@ -78,6 +79,19 @@ export async function POST(req: Request) {
         contactEmail: parsed.data.email,
         company: parsed.data.company,
         source: typeSlug,
+      }).catch(console.error)
+
+      // Sync to Close CRM (fire-and-forget)
+      createCloseLead({
+        contactName: parsed.data.name ?? parsed.data.email,
+        contactEmail: parsed.data.email,
+        company: parsed.data.company,
+        source: typeSlug,
+        dealId: deal.id,
+      }).then((closeLeadId) => {
+        if (closeLeadId) {
+          db.deal.update({ where: { id: deal.id }, data: { closeLeadId } }).catch(console.error)
+        }
       }).catch(console.error)
     }
 

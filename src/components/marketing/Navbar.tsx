@@ -4,9 +4,10 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs"
-import { Menu, X, Zap } from "lucide-react"
+import { Menu, X } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
+import Image from "next/image"
 
 const NAV_LINKS = [
   { label: "Services", href: "/marketplace" },
@@ -43,9 +44,7 @@ export function Navbar() {
 
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 flex-shrink-0">
-            <div className="w-7 h-7 rounded-lg bg-[#DC2626] flex items-center justify-center">
-              <Zap className="w-4 h-4 text-white fill-white" />
-            </div>
+            <Image src="/logo.png" alt="AIMS" width={28} height={28} className="object-contain" priority />
             <span className="text-[15px] font-bold tracking-tight text-foreground">AIMS</span>
           </Link>
 
@@ -81,7 +80,7 @@ export function Navbar() {
               </Link>
               <Link
                 href="/get-started"
-                className="text-sm font-semibold bg-[#DC2626] text-white px-4 py-2 rounded-lg hover:bg-[#B91C1C] transition-colors shadow-sm"
+                className="text-xs font-bold bg-[#DC2626] text-white px-5 py-2 uppercase tracking-wider hover:bg-[#B91C1C] transition-colors"
               >
                 Get started
               </Link>
@@ -126,7 +125,7 @@ export function Navbar() {
                 </SignedOut>
                 <Link
                   href="/get-started"
-                  className="block w-full text-center bg-[#DC2626] text-white text-sm font-semibold px-4 py-2.5 rounded-lg"
+                  className="block w-full text-center bg-[#DC2626] text-white text-xs font-bold px-4 py-2.5 uppercase tracking-wider"
                 >
                   Get started
                 </Link>

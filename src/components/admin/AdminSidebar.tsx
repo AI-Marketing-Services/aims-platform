@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { UserButton } from "@clerk/nextjs"
 import {
@@ -18,9 +19,11 @@ import {
   ChevronLeft,
   ChevronRight,
   ExternalLink,
+  FlaskConical,
 } from "lucide-react"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
+import { NotificationBell } from "@/components/shared/NotificationBell"
 
 const ADMIN_NAV = [
   {
@@ -51,6 +54,7 @@ const ADMIN_NAV = [
       { label: "Intern Ops", href: "/admin/intern-ops", icon: GraduationCap },
       { label: "Referrals", href: "/admin/referrals", icon: Share2 },
       { label: "Lead Magnets", href: "/admin/lead-magnets", icon: FileBarChart },
+      { label: "Simulate", href: "/admin/simulate", icon: FlaskConical },
     ],
   },
   {
@@ -75,11 +79,7 @@ export function AdminSidebar() {
       {/* Logo */}
       <div className="flex h-16 items-center justify-between px-4 border-b border-border">
         <Link href="/admin/dashboard" className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-600">
-            <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5 text-white" stroke="currentColor" strokeWidth={2.5}>
-              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-            </svg>
-          </div>
+          <Image src="/logo.png" alt="AIMS" width={32} height={32} className="shrink-0 object-contain" />
           {!collapsed && (
             <div>
               <span className="text-lg font-bold tracking-tight">AIMS</span>
@@ -147,9 +147,14 @@ export function AdminSidebar() {
 
       {/* User */}
       <div className="border-t border-border p-4">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <UserButton afterSignOutUrl="/" />
-          {!collapsed && <span className="text-sm text-muted-foreground truncate">Admin</span>}
+          {!collapsed && (
+            <>
+              <span className="text-sm text-muted-foreground truncate flex-1">Admin</span>
+              <NotificationBell variant="light" />
+            </>
+          )}
         </div>
       </div>
     </aside>

@@ -105,7 +105,7 @@ export function Pricing() {
               }`}
             >
               Annual
-              <span className="ml-1.5 rounded-full bg-green-100 px-1.5 py-0.5 text-[10px] font-semibold text-green-700">
+              <span className="ml-1.5 rounded-full bg-red-100 px-1.5 py-0.5 text-[10px] font-semibold text-red-700">
                 Save 15%
               </span>
             </button>

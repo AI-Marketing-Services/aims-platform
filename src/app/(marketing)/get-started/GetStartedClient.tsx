@@ -1,8 +1,55 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useSearchParams } from "next/navigation"
 import { Check, ArrowRight, ArrowLeft } from "lucide-react"
+
+declare global {
+  interface Window {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    Cal?: any
+  }
+}
+
+function CalBooking() {
+  useEffect(() => {
+    if (document.getElementById("cal-embed-script")) return
+    const script = document.createElement("script")
+    script.id = "cal-embed-script"
+    script.src = "https://app.cal.com/embed/embed.js"
+    script.async = true
+    script.onload = () => {
+      try {
+        window.Cal("init", "aims", { origin: "https://app.cal.com" })
+        window.Cal.ns.aims("inline", {
+          elementOrSelector: "#my-cal-inline-aims",
+          config: { layout: "month_view", useSlotsViewOnSmallScreen: "true", theme: "light" },
+          calLink: "adamwolfe/aims",
+        })
+        window.Cal.ns.aims("ui", {
+          theme: "light",
+          cssVarsPerTheme: { light: { "cal-brand": "#DC2626" } },
+          hideEventTypeDetails: true,
+          layout: "month_view",
+        })
+      } catch {}
+    }
+    document.head.appendChild(script)
+  }, [])
+
+  return (
+    <div className="space-y-4">
+      <div className="text-center">
+        <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-green-100 mb-4">
+          <Check className="h-6 w-6 text-green-600" />
+        </div>
+        <h2 className="text-2xl font-bold text-gray-900">Request submitted!</h2>
+        <p className="mt-2 text-gray-500">Pick a time that works best for your strategy call below.</p>
+      </div>
+      <div id="my-cal-inline-aims" style={{ width: "100%", height: "600px", overflow: "scroll" }} />
+    </div>
+  )
+}
 
 const SERVICES = [
   { slug: "website-crm-chatbot", name: "Website + CRM + Chatbot", price: "from $97/mo" },
@@ -64,10 +111,10 @@ export function GetStartedClient() {
 
   const handleSubmit = async () => {
     try {
-      await fetch("/api/lead-magnets/submit", {
+      await fetch("/api/intake", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type: "get-started", ...form }),
+        body: JSON.stringify(form),
       })
     } catch {}
     setSubmitted(true)
@@ -75,18 +122,9 @@ export function GetStartedClient() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen pt-20 flex items-center justify-center bg-background">
-        <div className="text-center max-w-lg px-4">
-          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-green-50">
-            <Check className="h-8 w-8 text-green-600" />
-          </div>
-          <h2 className="text-3xl font-bold">You&rsquo;re on the calendar!</h2>
-          <p className="mt-4 text-muted-foreground">
-            We received your request and will reach out within 24 hours to confirm your strategy call.
-          </p>
-          <p className="mt-2 text-muted-foreground">
-            Check your email at <strong>{form.email}</strong> for confirmation.
-          </p>
+      <div className="min-h-screen pt-20 bg-background">
+        <div className="container mx-auto max-w-2xl px-4 py-16">
+          <CalBooking />
         </div>
       </div>
     )
@@ -104,18 +142,20 @@ export function GetStartedClient() {
         </div>
 
         {/* Progress */}
-        <div className="mb-10 flex items-center gap-2">
-          {[1, 2, 3].map((s) => (
-            <div key={s} className="flex items-center gap-2 flex-1">
-              <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-semibold ${step >= s ? "bg-[#DC2626] text-white" : "bg-muted text-muted-foreground"}`}>
+        <div className="mb-10 flex items-center">
+          {[1, 2, 3].map((s, i) => (
+            <div key={s} className="flex items-center flex-1 last:flex-none">
+              <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-semibold transition-colors ${step >= s ? "bg-[#DC2626] text-white" : "bg-gray-100 text-gray-400"}`}>
                 {step > s ? <Check className="h-4 w-4" /> : s}
               </div>
-              <div className={`h-px flex-1 ${s < 3 ? (step > s ? "bg-[#DC2626]" : "bg-border") : "hidden"}`} />
+              {i < 2 && (
+                <div className={`h-px flex-1 mx-2 transition-colors ${step > s ? "bg-[#DC2626]" : "bg-gray-200"}`} />
+              )}
             </div>
           ))}
         </div>
 
-        <div className="rounded-2xl border border-border bg-white p-8 shadow-sm">
+        <div className="border border-gray-200 bg-white p-8 shadow-sm">
           {/* Step 1: Services */}
           {step === 1 && (
             <div>

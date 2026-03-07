@@ -54,12 +54,12 @@ export function Benefits() {
               Why AIMS Works
             </span>
             <h2 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-              Numbers that actually
+              Our clients add
               <br />
-              move your business
+              $700K–$1M to their pipeline
             </h2>
             <p className="mt-4 text-base text-muted-foreground max-w-sm">
-              Proven infrastructure. AI-powered execution. Results measured in pipeline — not impressions.
+              Proven infrastructure, AI-powered execution. Results measured in qualified meetings and closed revenue — not impressions.
             </p>
 
             <div className="mt-10 grid grid-cols-2 gap-4">

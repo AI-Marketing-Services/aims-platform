@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { UserButton } from "@clerk/nextjs"
 import {
@@ -17,6 +18,7 @@ import {
 } from "lucide-react"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
+import { NotificationBell } from "@/components/shared/NotificationBell"
 
 const PORTAL_NAV = [
   { label: "Dashboard", href: "/portal/dashboard", icon: LayoutDashboard },
@@ -36,24 +38,14 @@ export function PortalSidebar() {
   return (
     <aside
       className={cn(
-        "relative flex flex-col border-r border-border bg-card transition-all duration-200",
+        "relative flex flex-col border-r border-gray-200 bg-white transition-all duration-200",
         collapsed ? "w-16" : "w-64"
       )}
     >
       {/* Logo */}
-      <div className="flex h-16 items-center px-4 border-b border-border">
+      <div className="flex h-16 items-center px-4 border-b border-gray-200">
         <Link href="/" className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-600">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              className="h-5 w-5 text-white"
-              stroke="currentColor"
-              strokeWidth={2.5}
-            >
-              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-            </svg>
-          </div>
+          <Image src="/logo.png" alt="AIMS" width={32} height={32} className="shrink-0 object-contain" />
           {!collapsed && <span className="text-lg font-bold tracking-tight">AIMS</span>}
         </Link>
       </div>
@@ -69,8 +61,8 @@ export function PortalSidebar() {
               className={cn(
                 "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
                 isActive
-                  ? "bg-red-600/10 text-red-500"
-                  : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                  ? "bg-red-50 text-[#DC2626]"
+                  : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
               )}
             >
               <item.icon className={cn("h-4.5 w-4.5 shrink-0", isActive && "text-red-500")} />
@@ -83,7 +75,7 @@ export function PortalSidebar() {
       {/* Collapse toggle */}
       <button
         onClick={() => setCollapsed(!collapsed)}
-        className="absolute -right-3 top-20 flex h-6 w-6 items-center justify-center rounded-full border border-border bg-card shadow-sm hover:bg-accent transition-colors"
+        className="absolute -right-3 top-20 flex h-6 w-6 items-center justify-center rounded-full border border-gray-200 bg-white shadow-sm hover:bg-gray-100 transition-colors"
       >
         {collapsed ? (
           <ChevronRight className="h-3 w-3" />
@@ -93,11 +85,14 @@ export function PortalSidebar() {
       </button>
 
       {/* User */}
-      <div className="border-t border-border p-4">
-        <div className="flex items-center gap-3">
+      <div className="border-t border-gray-200 p-4">
+        <div className="flex items-center gap-2">
           <UserButton afterSignOutUrl="/" />
           {!collapsed && (
-            <span className="text-sm text-muted-foreground truncate">My Account</span>
+            <>
+              <span className="text-sm text-gray-500 truncate flex-1">My Account</span>
+              <NotificationBell variant="light" />
+            </>
           )}
         </div>
       </div>

@@ -1,228 +1,605 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import Link from "next/link"
-import { motion } from "framer-motion"
-import { ArrowUpRight } from "lucide-react"
+import Image from "next/image"
+import { motion, AnimatePresence } from "framer-motion"
+import { ArrowUpRight, Play, Phone, PhoneCall, Zap, TrendingUp, RefreshCw, Database, CheckCircle2, ChevronRight } from "lucide-react"
 
-const SERVICES = [
-  {
-    name: "Outbound Lead Campaigns",
-    slug: "cold-outbound",
-    desc: "Multi-domain email infrastructure, AI SDR reply handling, auto-enrichment, and deliverability monitoring — all managed end-to-end.",
-    tags: ["Email Sequences", "AI SDR", "Lead Enrichment"],
-    outcome: "Avg. 47 qualified meetings / mo",
-    pillar: "Sales",
-    pillarColor: "#2563EB",
-    tools: ["instantly.ai", "clay.com", "apollo.io"],
-    size: "large",
-  },
-  {
-    name: "AI Calling Agents",
-    slug: "voice-agents",
-    desc: "Inbound and outbound AI voice agents with multi-location routing, live transcripts, and CRM sync.",
-    tags: ["Voice AI", "Inbound", "Outbound"],
-    outcome: "2.4x pickup-to-meeting rate",
-    pillar: "Sales",
-    pillarColor: "#2563EB",
-    tools: ["bland.ai", "twilio.com"],
-    size: "normal",
-  },
-  {
-    name: "Lead Reactivation",
-    slug: "lead-reactivation",
-    desc: "Turn dead CRM contacts into booked meetings using AI personalization and multi-channel reactivation sequences.",
-    tags: ["Reactivation", "AI Copy", "Multi-Channel"],
-    outcome: "14-day avg. time to first meeting",
-    pillar: "Marketing",
-    pillarColor: "#16A34A",
-    tools: ["hubspot.com", "instantly.ai"],
-    size: "normal",
-  },
-  {
-    name: "RevOps Pipeline",
-    slug: "revops-pipeline",
-    desc: "CRM architecture, lead routing, attribution tracking, conversion dashboards, and rep coaching — built for revenue teams.",
-    tags: ["CRM Build", "Routing", "Attribution"],
-    outcome: "Full pipeline visibility in 7 days",
-    pillar: "Operations",
-    pillarColor: "#EA580C",
-    tools: ["salesforce.com", "hubspot.com", "notion.so"],
-    size: "normal",
-  },
-  {
-    name: "Content Production Pod",
-    slug: "content-production",
-    desc: "Weekly content calendar execution: LinkedIn posts, newsletters, short-form video scripts, and SEO articles — AI-written, human-edited.",
-    tags: ["LinkedIn", "Newsletter", "SEO"],
-    outcome: "20+ assets per month delivered",
-    pillar: "Marketing",
-    pillarColor: "#16A34A",
-    tools: ["notion.so", "slack.com"],
-    size: "normal",
-  },
-  {
-    name: "Paid Ads Management",
-    slug: "paid-ads",
-    desc: "Google, Meta, and LinkedIn ad management with weekly optimization, creative testing, and ROI dashboards.",
-    tags: ["Google Ads", "Meta", "LinkedIn"],
-    outcome: "Avg. 4.1x ROAS across accounts",
-    pillar: "Marketing",
-    pillarColor: "#16A34A",
-    tools: ["google.com", "facebook.com", "linkedin.com"],
-    size: "normal",
-  },
+// ─── Outbound Demo ────────────────────────────────────────────────────────────
+const OUTBOUND_STEPS = [
+  { tool: "/integrations/google-drive-svgrepo-com.svg", label: "Scrape ICP list", sub: "Clay → 2,400 contacts", color: "#4285F4" },
+  { tool: "/integrations/openai-svgrepo-com.svg", label: "AI personalization", sub: "GPT-4 writes 1:1 copy", color: "#10A37F" },
+  { tool: "/integrations/icons8-microsoft-teams.svg", label: "Multi-step sequence", sub: "Email D1 → D3 → D7 → D14", color: "#6264A7" },
+  { tool: "/integrations/slack.svg", label: "Reply routed to Slack", sub: "Hot lead alert fired", color: "#4A154B" },
 ]
 
-function ToolLogo({ domain }: { domain: string }) {
+function OutboundDemo() {
+  const [step, setStep] = useState(0)
+
+  useEffect(() => {
+    const t = setInterval(() => setStep((s) => (s + 1) % OUTBOUND_STEPS.length), 1400)
+    return () => clearInterval(t)
+  }, [])
+
   return (
-    <img
-      src={`https://logo.clearbit.com/${domain}?size=48`}
-      alt={domain}
-      width={20}
-      height={20}
-      className="h-5 w-5 rounded object-contain grayscale opacity-50 group-hover:opacity-80 transition-opacity"
-      onError={(e) => {
-        (e.target as HTMLImageElement).style.display = "none"
-      }}
-    />
+    <div className="space-y-2">
+      {OUTBOUND_STEPS.map((s, i) => (
+        <motion.div
+          key={i}
+          animate={{ opacity: i <= step ? 1 : 0.25, x: i === step ? 4 : 0 }}
+          transition={{ duration: 0.3 }}
+          className="flex items-center gap-2.5 rounded-lg bg-white/60 border border-gray-100 px-3 py-2"
+        >
+          <div
+            className="h-6 w-6 rounded-md flex items-center justify-center flex-shrink-0"
+            style={{ backgroundColor: `${s.color}15` }}
+          >
+            <Image src={s.tool} alt="" width={14} height={14} className="object-contain" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-[11px] font-semibold text-gray-800 leading-none">{s.label}</p>
+            <p className="text-[10px] text-gray-400 mt-0.5">{s.sub}</p>
+          </div>
+          {i < step && <CheckCircle2 className="h-3.5 w-3.5 text-green-500 flex-shrink-0" />}
+          {i === step && (
+            <motion.div
+              animate={{ opacity: [1, 0.3, 1] }}
+              transition={{ repeat: Infinity, duration: 0.8 }}
+              className="h-1.5 w-1.5 rounded-full bg-red-500 flex-shrink-0"
+            />
+          )}
+        </motion.div>
+      ))}
+      <div className="mt-2 rounded-lg bg-red-50 border border-red-100 px-3 py-2 flex items-center gap-2">
+        <TrendingUp className="h-3.5 w-3.5 text-red-600" />
+        <span className="text-[11px] font-semibold text-red-700">47 qualified meetings booked this month</span>
+      </div>
+    </div>
   )
 }
 
-export function ServicesGrid() {
-  const large = SERVICES.filter((s) => s.size === "large")
-  const normal = SERVICES.filter((s) => s.size === "normal")
+// ─── RevOps Demo ──────────────────────────────────────────────────────────────
+const PIPELINE_STAGES = ["New Lead", "Qualified", "Demo", "Proposal", "Closed"]
+const PIPELINE_DEALS = [
+  { name: "Apex Corp", value: "$8,400", stage: 0 },
+  { name: "Vertex Inc", value: "$5,200", stage: 1 },
+  { name: "Prism LLC", value: "$12,000", stage: 2 },
+  { name: "Orbit Co", value: "$3,800", stage: 3 },
+  { name: "Nexus AI", value: "$9,100", stage: 4 },
+]
+
+function RevOpsDemo() {
+  const [active, setActive] = useState(0)
+
+  useEffect(() => {
+    const t = setInterval(() => setActive((s) => (s + 1) % PIPELINE_STAGES.length), 1200)
+    return () => clearInterval(t)
+  }, [])
+
+  const stageDeal = PIPELINE_DEALS[active]
 
   return (
-    <section className="py-24 bg-background">
-      <div className="mx-auto max-w-6xl px-4">
+    <div className="space-y-2">
+      <div className="flex gap-1">
+        {PIPELINE_STAGES.map((stage, i) => (
+          <button
+            key={i}
+            onClick={() => setActive(i)}
+            className="flex-1 rounded-md px-1 py-1.5 text-center transition-all"
+            style={{
+              backgroundColor: active === i ? "#DC2626" : "#F3F4F6",
+              color: active === i ? "white" : "#6B7280",
+            }}
+          >
+            <span className="text-[9px] font-semibold leading-none block">{stage}</span>
+          </button>
+        ))}
+      </div>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={active}
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -6 }}
+          transition={{ duration: 0.25 }}
+          className="rounded-xl border border-gray-100 bg-white/70 p-3"
+        >
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <div className="h-7 w-7 rounded-full bg-gray-100 flex items-center justify-center text-[11px] font-bold text-gray-600">
+                {stageDeal.name.charAt(0)}
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-gray-800">{stageDeal.name}</p>
+                <p className="text-[10px] text-gray-400">Stage: {PIPELINE_STAGES[stageDeal.stage]}</p>
+              </div>
+            </div>
+            <span className="text-xs font-bold text-green-600">{stageDeal.value}</span>
+          </div>
+          <div className="flex gap-1">
+            {PIPELINE_STAGES.map((_, i) => (
+              <div key={i} className="flex-1 h-1 rounded-full" style={{ backgroundColor: i <= active ? "#DC2626" : "#E5E7EB" }} />
+            ))}
+          </div>
+        </motion.div>
+      </AnimatePresence>
+      <div className="grid grid-cols-3 gap-1.5">
+        {[["$47.2K", "Pipeline"], ["82%", "Win Rate"], ["4 days", "Avg. Close"]].map(([val, lbl]) => (
+          <div key={lbl} className="rounded-lg bg-gray-50 border border-gray-100 px-2 py-1.5 text-center">
+            <p className="text-sm font-bold text-gray-800">{val}</p>
+            <p className="text-[9px] text-gray-400">{lbl}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ─── AI Calling Demo ─────────────────────────────────────────────────────────
+const TRANSCRIPT = [
+  { role: "agent", text: "Hey, is this Sarah from Apex Corp?" },
+  { role: "lead", text: "Yes, this is her." },
+  { role: "agent", text: "I'm calling about your growth targets this quarter — do you have 2 minutes?" },
+  { role: "lead", text: "Sure, what's this about?" },
+  { role: "agent", text: "We help B2B teams book 40+ meetings/mo with AI outbound. Want to see a quick demo?" },
+  { role: "lead", text: "Actually yeah, send me a link." },
+]
+
+function AICallingDemo() {
+  const [shown, setShown] = useState(1)
+
+  useEffect(() => {
+    if (shown >= TRANSCRIPT.length) return
+    const t = setTimeout(() => setShown((s) => s + 1), 900)
+    return () => clearTimeout(t)
+  }, [shown])
+
+  return (
+    <div className="space-y-1.5">
+      <div className="flex items-center gap-2 mb-2">
+        <motion.div
+          animate={{ scale: [1, 1.15, 1] }}
+          transition={{ repeat: Infinity, duration: 1.2 }}
+          className="h-6 w-6 rounded-full bg-green-100 flex items-center justify-center"
+        >
+          <PhoneCall className="h-3 w-3 text-green-600" />
+        </motion.div>
+        <div>
+          <p className="text-[11px] font-semibold text-gray-800">AI Voice Agent — Live Call</p>
+          <p className="text-[10px] text-gray-400">Bland.ai · Twilio · CRM sync</p>
+        </div>
+        <div className="ml-auto flex gap-0.5">
+          {[1,2,3,4,5].map((b) => (
+            <motion.div
+              key={b}
+              animate={{ scaleY: [0.4, 1, 0.4] }}
+              transition={{ repeat: Infinity, duration: 0.6, delay: b * 0.1 }}
+              className="w-0.5 h-4 bg-green-400 rounded-full origin-bottom"
+            />
+          ))}
+        </div>
+      </div>
+      <div className="space-y-1 max-h-[120px] overflow-hidden">
+        {TRANSCRIPT.slice(0, shown).map((line, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, x: line.role === "agent" ? -8 : 8 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3 }}
+            className={`flex ${line.role === "lead" ? "justify-end" : "justify-start"}`}
+          >
+            <div
+              className="max-w-[80%] rounded-xl px-2.5 py-1.5 text-[10px] leading-snug"
+              style={{
+                backgroundColor: line.role === "agent" ? "#EFF6FF" : "#F0FDF4",
+                color: line.role === "agent" ? "#1D4ED8" : "#166534",
+              }}
+            >
+              {line.text}
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ─── Content Demo ─────────────────────────────────────────────────────────────
+const CONTENT_VARIANTS = [
+  "\"We doubled Apex Corp's pipeline in 30 days.\"",
+  "\"The AI SDR that never sleeps — 47 meetings/mo.\"",
+  "\"Your competitors are already using AIMS.\"",
+  "\"From 0 to 200 qualified leads in 6 weeks.\"",
+]
+
+function ContentDemo() {
+  const [idx, setIdx] = useState(0)
+  const [typed, setTyped] = useState("")
+
+  useEffect(() => {
+    setTyped("")
+    const target = CONTENT_VARIANTS[idx]
+    let i = 0
+    const t = setInterval(() => {
+      if (i < target.length) {
+        setTyped(target.slice(0, i + 1))
+        i++
+      } else {
+        clearInterval(t)
+        setTimeout(() => setIdx((s) => (s + 1) % CONTENT_VARIANTS.length), 1200)
+      }
+    }, 28)
+    return () => clearInterval(t)
+  }, [idx])
+
+  return (
+    <div className="space-y-2.5">
+      <div className="flex items-center gap-2 text-[11px] text-gray-500 font-medium">
+        <Image src="/integrations/openai-svgrepo-com.svg" alt="AI" width={13} height={13} />
+        AI Content Generator
+        <motion.div animate={{ opacity: [1,0,1] }} transition={{ repeat: Infinity, duration: 0.9 }} className="h-1.5 w-1.5 rounded-full bg-green-500 ml-auto" />
+      </div>
+      <div className="min-h-[56px] rounded-xl border border-gray-100 bg-white/70 p-3">
+        <p className="text-[13px] font-semibold text-gray-800 leading-snug">
+          {typed}
+          <motion.span animate={{ opacity: [1,0,1] }} transition={{ repeat: Infinity, duration: 0.5 }} className="inline-block w-0.5 h-3.5 bg-gray-700 ml-0.5 align-middle" />
+        </p>
+      </div>
+      <div className="grid grid-cols-3 gap-1.5">
+        {[["4.8/5", "Hook Score"], ["94%", "Open Rate"], ["2.1x", "CTR Lift"]].map(([val, lbl]) => (
+          <div key={lbl} className="rounded-lg bg-gray-50 border border-gray-100 px-2 py-1.5 text-center">
+            <p className="text-sm font-bold text-gray-800">{val}</p>
+            <p className="text-[9px] text-gray-400">{lbl}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ─── Reactivation Demo ────────────────────────────────────────────────────────
+function ReactivationDemo() {
+  const [count, setCount] = useState(0)
+  const [replied, setReplied] = useState(0)
+  const TARGET = 652
+  const REPLY_TARGET = 117
+
+  useEffect(() => {
+    setCount(0)
+    setReplied(0)
+    let frame = 0
+    const t = setInterval(() => {
+      frame++
+      const progress = Math.min(frame / 60, 1)
+      const ease = 1 - Math.pow(1 - progress, 3)
+      setCount(Math.floor(ease * TARGET))
+      setReplied(Math.floor(ease * REPLY_TARGET))
+      if (progress >= 1) clearInterval(t)
+    }, 30)
+    return () => clearInterval(t)
+  }, [])
+
+  const pct = Math.round((REPLY_TARGET / 2783) * 100)
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center gap-2 mb-1">
+        <RefreshCw className="h-3.5 w-3.5 text-red-500" />
+        <span className="text-[11px] font-semibold text-gray-700">Dead CRM contacts scanned</span>
+      </div>
+      <div className="rounded-xl border border-gray-100 bg-white/70 p-3">
+        <div className="flex items-end gap-2">
+          <span className="text-3xl font-extrabold text-gray-900 tabular-nums">{count.toLocaleString()}</span>
+          <span className="text-sm text-gray-400 mb-1">/ 2,783 contacts</span>
+        </div>
+        <div className="mt-2 h-2 rounded-full bg-gray-100 overflow-hidden">
+          <motion.div
+            animate={{ width: `${(count / 2783) * 100}%` }}
+            transition={{ duration: 0.05 }}
+            className="h-full bg-gradient-to-r from-red-500 to-red-400 rounded-full"
+          />
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-1.5">
+        <div className="rounded-lg bg-green-50 border border-green-100 p-2.5">
+          <p className="text-xl font-extrabold text-green-700 tabular-nums">{replied}</p>
+          <p className="text-[10px] text-green-600 font-medium">Replied positively</p>
+        </div>
+        <div className="rounded-lg bg-red-50 border border-red-100 p-2.5">
+          <p className="text-xl font-extrabold text-red-700">{pct}%</p>
+          <p className="text-[10px] text-red-600 font-medium">Reactivation rate</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ─── Database Demo ────────────────────────────────────────────────────────────
+const DB_FIELDS = [
+  { label: "Bounced emails", count: 341, color: "#EF4444" },
+  { label: "Duplicate records", count: 89, color: "#F97316" },
+  { label: "Missing phone #s", count: 512, color: "#EAB308" },
+  { label: "No job title", count: 203, color: "#3B82F6" },
+]
+
+function DatabaseDemo() {
+  const [scanning, setScanning] = useState(true)
+  const [progress, setProgress] = useState(0)
+
+  useEffect(() => {
+    setProgress(0)
+    setScanning(true)
+    const t = setInterval(() => {
+      setProgress((p) => {
+        if (p >= 100) { clearInterval(t); setScanning(false); return 100 }
+        return p + 2
+      })
+    }, 40)
+    return () => clearInterval(t)
+  }, [])
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center gap-2 mb-1">
+        <Database className="h-3.5 w-3.5 text-blue-500" />
+        <span className="text-[11px] font-semibold text-gray-700">CRM Health Scanner</span>
+        {scanning
+          ? <motion.div animate={{ opacity: [1,0,1] }} transition={{ repeat: Infinity, duration: 0.7 }} className="ml-auto text-[10px] text-orange-500 font-medium">Scanning…</motion.div>
+          : <span className="ml-auto text-[10px] text-green-600 font-semibold">Complete</span>
+        }
+      </div>
+      <div className="rounded-xl border border-gray-100 bg-white/70 p-2.5">
+        <div className="flex items-center justify-between mb-1.5">
+          <span className="text-[10px] text-gray-500">Analyzing 8,430 records</span>
+          <span className="text-[10px] font-bold text-gray-700">{progress}%</span>
+        </div>
+        <div className="h-1.5 rounded-full bg-gray-100 overflow-hidden">
+          <motion.div
+            animate={{ width: `${progress}%` }}
+            transition={{ duration: 0.05 }}
+            className="h-full bg-blue-500 rounded-full"
+          />
+        </div>
+      </div>
+      <AnimatePresence>
+        {!scanning && (
+          <motion.div initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} className="space-y-1">
+            {DB_FIELDS.map((f) => (
+              <div key={f.label} className="flex items-center gap-2 rounded-lg bg-gray-50 border border-gray-100 px-2.5 py-1.5">
+                <div className="h-2 w-2 rounded-full flex-shrink-0" style={{ backgroundColor: f.color }} />
+                <span className="text-[10px] text-gray-600 flex-1">{f.label}</span>
+                <span className="text-[10px] font-bold text-gray-800">{f.count}</span>
+              </div>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
+
+// ─── Service Card ─────────────────────────────────────────────────────────────
+interface ServiceCard {
+  slug: string
+  name: string
+  desc: string
+  outcome: string
+  icon: React.ReactNode
+  tools: string[]
+  Demo: React.ComponentType
+  accentColor: string
+  tags: string[]
+}
+
+const SERVICES: ServiceCard[] = [
+  {
+    slug: "cold-outbound",
+    name: "Outbound Lead Campaigns",
+    desc: "Multi-domain email infra, AI SDR reply handling, auto-enrichment, and deliverability monitoring — all managed end-to-end.",
+    outcome: "Avg. 47 qualified meetings / mo",
+    icon: <Zap className="h-5 w-5" />,
+    tools: ["/integrations/google-drive-svgrepo-com.svg", "/integrations/openai-svgrepo-com.svg", "/integrations/icons8-microsoft-teams.svg"],
+    Demo: OutboundDemo,
+    accentColor: "#DC2626",
+    tags: ["Email Sequences", "AI SDR", "Lead Enrichment"],
+  },
+  {
+    slug: "revops-pipeline",
+    name: "RevOps Pipeline",
+    desc: "CRM architecture, lead routing, attribution, conversion dashboards, and rep coaching — built for revenue teams.",
+    outcome: "Full pipeline visibility in 7 days",
+    icon: <TrendingUp className="h-5 w-5" />,
+    tools: ["/integrations/hubspot-svgrepo-com.svg", "/integrations/notion.svg"],
+    Demo: RevOpsDemo,
+    accentColor: "#2563EB",
+    tags: ["CRM Build", "Attribution", "Routing"],
+  },
+  {
+    slug: "voice-agents",
+    name: "AI Calling Agents",
+    desc: "Inbound and outbound AI voice agents with multi-location routing, live transcripts, and CRM sync.",
+    outcome: "2.4x pickup-to-meeting rate",
+    icon: <Phone className="h-5 w-5" />,
+    tools: ["/integrations/google-drive-svgrepo-com.svg", "/integrations/slack.svg"],
+    Demo: AICallingDemo,
+    accentColor: "#16A34A",
+    tags: ["Voice AI", "Inbound", "Outbound"],
+  },
+  {
+    slug: "content-production",
+    name: "Content Production Pod",
+    desc: "AI-powered content calendar, short-form video scripts, email copy, and LinkedIn ghostwriting — published weekly.",
+    outcome: "30+ assets per month, fully managed",
+    icon: <Play className="h-5 w-5" />,
+    tools: ["/integrations/openai-svgrepo-com.svg", "/integrations/notion.svg"],
+    Demo: ContentDemo,
+    accentColor: "#EA580C",
+    tags: ["AI Copy", "Video Scripts", "LinkedIn"],
+  },
+  {
+    slug: "lead-reactivation",
+    name: "Lead Reactivation",
+    desc: "Turn dead CRM contacts into booked meetings using AI personalization and multi-channel reactivation sequences.",
+    outcome: "18% of dead leads convert in 30 days",
+    icon: <RefreshCw className="h-5 w-5" />,
+    tools: ["/integrations/hubspot-svgrepo-com.svg", "/integrations/slack.svg"],
+    Demo: ReactivationDemo,
+    accentColor: "#DC2626",
+    tags: ["Reactivation", "AI Copy", "Multi-Channel"],
+  },
+  {
+    slug: "database-reactivation",
+    name: "Database Reactivation",
+    desc: "Full CRM audit, deduplication, re-enrichment, and a scored outreach plan to monetize your existing contacts.",
+    outcome: "Avg. $24K recovered pipeline per client",
+    icon: <Database className="h-5 w-5" />,
+    tools: ["/integrations/google-drive-svgrepo-com.svg", "/integrations/openai-svgrepo-com.svg"],
+    Demo: DatabaseDemo,
+    accentColor: "#9333EA",
+    tags: ["CRM Audit", "Enrichment", "Dedup"],
+  },
+]
+
+function ServiceCard({ service, index }: { service: ServiceCard; index: number }) {
+  const [hovered, setHovered] = useState(false)
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.4, delay: index * 0.07 }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      className="group relative flex flex-col rounded-2xl border border-border bg-white overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer"
+      style={{ minHeight: 420 }}
+    >
+      <div className="flex flex-col flex-1 p-5">
         {/* Header */}
-        <div className="mb-14">
-          <span className="inline-block rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">
-            Core Services
-          </span>
-          <h2 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-            Every way we fill your pipeline
-          </h2>
-          <p className="mt-3 max-w-xl text-base text-muted-foreground">
-            Outbound. Inbound. Reactivation. Content. Paid. All AI-powered, all fully managed.
-          </p>
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gray-100 text-gray-600 flex-shrink-0">
+            {service.icon}
+          </div>
+          <div className="flex items-center gap-1.5">
+            {service.tools.map((t, i) => (
+              <div key={i} className="h-6 w-6 rounded-md bg-gray-50 border border-gray-100 flex items-center justify-center">
+                <Image src={t} alt="" width={13} height={13} className="object-contain" />
+              </div>
+            ))}
+          </div>
         </div>
 
-        {/* Large card */}
-        {large.map((service, i) => (
-          <motion.div
-            key={service.slug}
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="mb-4"
-          >
-            <Link
-              href={`/services/${service.slug}`}
-              className="group flex flex-col sm:flex-row items-start justify-between gap-6 rounded-2xl border border-border bg-card p-7 shadow-sm hover:border-gray-300 hover:shadow-md transition-all"
-            >
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-3">
-                  <span
-                    className="rounded-full px-2.5 py-0.5 text-xs font-semibold text-white"
-                    style={{ backgroundColor: service.pillarColor }}
-                  >
-                    {service.pillar}
-                  </span>
-                  {service.tools.map((t) => (
-                    <ToolLogo key={t} domain={t} />
-                  ))}
+        <h3 className="text-sm font-bold text-gray-900 mb-1.5 group-hover:text-[#DC2626] transition-colors">
+          {service.name}
+        </h3>
+
+        {/* Demo / description toggle */}
+        <div className="flex-1 relative overflow-hidden min-h-[220px]">
+          <AnimatePresence mode="wait">
+            {hovered ? (
+              <motion.div
+                key="demo"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.2 }}
+                className="absolute inset-0"
+              >
+                <service.Demo />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="desc"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.2 }}
+                className="absolute inset-0"
+              >
+                <p className="text-xs text-gray-500 leading-relaxed">{service.desc}</p>
+                <div className="mt-3 rounded-lg bg-gray-50 border border-gray-100 px-3 py-2">
+                  <p className="text-[10px] text-gray-400 mb-0.5">Client outcome</p>
+                  <p className="text-xs font-bold text-gray-800">{service.outcome}</p>
                 </div>
-                <h3 className="text-xl font-bold text-foreground group-hover:text-[#DC2626] transition-colors">
-                  {service.name}
-                </h3>
-                <p className="mt-2 text-sm text-muted-foreground leading-relaxed max-w-xl">{service.desc}</p>
-                <div className="mt-4 flex flex-wrap gap-2">
+                <div className="mt-3 flex flex-wrap gap-1.5">
                   {service.tags.map((tag) => (
-                    <span key={tag} className="rounded-md bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
+                    <span key={tag} className="rounded-md bg-gray-100 px-2 py-0.5 text-[10px] font-medium text-gray-500">
                       {tag}
                     </span>
                   ))}
                 </div>
-              </div>
-              <div className="flex flex-col items-end justify-between self-stretch gap-4 min-w-[180px]">
-                <div className="rounded-xl border border-border bg-muted px-4 py-3 text-right">
-                  <p className="text-xs text-muted-foreground mb-0.5">Client outcome</p>
-                  <p className="text-sm font-bold text-foreground">{service.outcome}</p>
-                </div>
-                <span className="flex items-center gap-1.5 text-sm font-semibold text-[#DC2626] group-hover:gap-2.5 transition-all">
-                  Get this service
-                  <ArrowUpRight className="h-4 w-4" />
-                </span>
-              </div>
-            </Link>
-          </motion.div>
-        ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
 
-        {/* Normal cards grid */}
+        {/* Footer CTA */}
+        <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between">
+          <Link
+            href={`/services/${service.slug}`}
+            className="flex items-center gap-1 text-xs font-semibold text-gray-600 hover:text-[#DC2626] transition-colors"
+            onClick={(e) => e.stopPropagation()}
+          >
+            Learn more
+            <ChevronRight className="h-3.5 w-3.5" />
+          </Link>
+          <span className="text-[10px] text-gray-400">
+            {hovered ? "Live preview" : "Hover to demo"}
+          </span>
+        </div>
+      </div>
+    </motion.div>
+  )
+}
+
+// ─── Main Export ──────────────────────────────────────────────────────────────
+export function ServicesGrid() {
+  return (
+    <section className="py-24 bg-[#F5F5F5]">
+      <div className="mx-auto max-w-6xl px-4">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="mb-14"
+        >
+          <span className="inline-block rounded-full border border-red-200 bg-red-50 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-red-700 mb-4">
+            Core Services
+          </span>
+          <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+            Every way we fill your pipeline
+          </h2>
+          <p className="mt-3 max-w-xl text-base text-gray-500">
+            Outbound. Inbound. Reactivation. Content. Paid. All AI-powered, all fully managed. Hover any card to see it in action.
+          </p>
+        </motion.div>
+
+        {/* Grid */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {normal.map((service, i) => (
-            <motion.div
-              key={service.slug}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: i * 0.07 }}
-            >
-              <Link
-                href={`/services/${service.slug}`}
-                className="group flex flex-col h-full rounded-2xl border border-border bg-card p-6 shadow-sm hover:border-gray-300 hover:shadow-md transition-all"
-              >
-                <div className="flex items-center justify-between mb-3">
-                  <span
-                    className="rounded-full px-2.5 py-0.5 text-xs font-semibold text-white"
-                    style={{ backgroundColor: service.pillarColor }}
-                  >
-                    {service.pillar}
-                  </span>
-                  <div className="flex items-center gap-1.5">
-                    {service.tools.map((t) => (
-                      <ToolLogo key={t} domain={t} />
-                    ))}
-                  </div>
-                </div>
-
-                <h3 className="text-base font-bold text-foreground group-hover:text-[#DC2626] transition-colors">
-                  {service.name}
-                </h3>
-                <p className="mt-2 flex-1 text-sm text-muted-foreground leading-relaxed">{service.desc}</p>
-
-                <div className="mt-4 rounded-lg bg-muted px-3.5 py-2.5 text-xs text-muted-foreground">
-                  <span className="font-semibold text-foreground/80">Outcome: </span>
-                  {service.outcome}
-                </div>
-
-                <div className="mt-4 flex items-center justify-between">
-                  <div className="flex flex-wrap gap-1.5">
-                    {service.tags.slice(0, 2).map((tag) => (
-                      <span key={tag} className="rounded-md bg-gray-100 px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                  <ArrowUpRight className="h-4 w-4 text-gray-300 group-hover:text-[#DC2626] transition-colors" />
-                </div>
-              </Link>
-            </motion.div>
+          {SERVICES.map((service, i) => (
+            <ServiceCard key={service.slug} service={service} index={i} />
           ))}
         </div>
 
         {/* View all */}
-        <div className="mt-10 text-center">
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.4, delay: 0.3 }}
+          className="mt-10 text-center"
+        >
           <Link
             href="/marketplace"
-            className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-6 py-3 text-sm font-semibold text-foreground/80 shadow-sm hover:border-gray-300 hover:bg-muted transition"
+            className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-6 py-3 text-sm font-semibold text-gray-700 shadow-sm hover:border-gray-300 hover:bg-gray-50 transition"
           >
-            View all 12 services
+            View all 15 services
             <ArrowUpRight className="h-4 w-4" />
           </Link>
-        </div>
+        </motion.div>
       </div>
     </section>
   )

@@ -13,6 +13,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 })
 
+
 export const metadata: Metadata = {
   title: {
     default: "AIMS — AI-Powered Business Infrastructure",

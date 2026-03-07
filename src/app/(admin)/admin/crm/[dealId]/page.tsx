@@ -2,7 +2,7 @@ import { auth } from "@clerk/nextjs/server"
 import { redirect, notFound } from "next/navigation"
 import { db } from "@/lib/db"
 import { getDealById } from "@/lib/db/queries"
-import { ArrowLeft, DollarSign, Building2, Mail, Phone, Globe, Tag, User } from "lucide-react"
+import { ArrowLeft, DollarSign, Building2, Mail, Phone, Globe, Tag, User, ExternalLink } from "lucide-react"
 import Link from "next/link"
 import { DealDetailClient } from "./DealDetailClient"
 
@@ -106,6 +106,18 @@ export default async function AdminDealDetailPage({ params }: { params: { dealId
               <InfoRow icon={Tag} label="Source" value={deal.source} />
               <InfoRow icon={User} label="Assigned" value={deal.assignedTo} />
             </div>
+
+            {(deal as { closeLeadId?: string | null }).closeLeadId && (
+              <a
+                href={`https://app.close.com/lead/${(deal as { closeLeadId?: string | null }).closeLeadId}/`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors w-full"
+              >
+                <ExternalLink className="h-3.5 w-3.5" />
+                View in Close CRM
+              </a>
+            )}
           </div>
 
           {/* Value card */}

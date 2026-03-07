@@ -3,6 +3,9 @@ import { auth } from "@clerk/nextjs/server"
 import { z } from "zod"
 import { getDeals, createDeal, getDealsByStage } from "@/lib/db/queries"
 import { notifyNewLead } from "@/lib/notifications"
+import { createCloseLead } from "@/lib/close"
+import { db } from "@/lib/db"
+import { scoreLeadFromSignals } from "@/lib/scoring/lead-scorer"
 
 const createDealSchema = z.object({
   contactName: z.string().min(1),
@@ -63,15 +66,42 @@ export async function POST(req: Request) {
       )
     }
 
-    const deal = await createDeal(parsed.data)
+    const scored = scoreLeadFromSignals({
+      source: parsed.data.source ?? "direct",
+      industry: parsed.data.industry,
+      isVendingpreneur: parsed.data.channelTag === "vendingpreneurs" || parsed.data.source?.includes("vending"),
+    })
 
-    // Notify team of new lead
+    const deal = await createDeal({
+      ...parsed.data,
+      leadScore: scored.score,
+      leadScoreTier: scored.tier,
+      leadScoreReason: scored.reason,
+      priority: scored.priority,
+    })
+
+    // Notify team
     await notifyNewLead({
       contactName: deal.contactName,
       contactEmail: deal.contactEmail,
       company: deal.company ?? undefined,
       source: deal.source ?? undefined,
       channelTag: deal.channelTag ?? undefined,
+    }).catch(console.error)
+
+    // Sync to Close CRM (fire-and-forget)
+    createCloseLead({
+      contactName: deal.contactName,
+      contactEmail: deal.contactEmail,
+      company: deal.company,
+      phone: deal.phone,
+      website: deal.website,
+      source: deal.source,
+      dealId: deal.id,
+    }).then((closeLeadId) => {
+      if (closeLeadId) {
+        db.deal.update({ where: { id: deal.id }, data: { closeLeadId } }).catch(console.error)
+      }
     }).catch(console.error)
 
     return NextResponse.json(deal, { status: 201 })

@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server"
 import { z } from "zod"
 import { getDealById, updateDealStage } from "@/lib/db/queries"
 import { db } from "@/lib/db"
+import { updateCloseLeadStatus } from "@/lib/close"
 
 const updateDealSchema = z.object({
   stage: z.enum([
@@ -69,6 +70,10 @@ export async function PATCH(
     const deal = await updateDealStage(dealId, stage, userId)
     if (Object.keys(rest).length > 0) {
       await db.deal.update({ where: { id: dealId }, data: rest })
+    }
+    // Sync stage to Close CRM (fire-and-forget)
+    if (deal.closeLeadId) {
+      updateCloseLeadStatus(deal.closeLeadId, stage).catch(console.error)
     }
     return NextResponse.json(deal)
   }

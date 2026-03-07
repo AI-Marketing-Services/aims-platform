@@ -39,25 +39,25 @@ const pillars = [
     icon: Zap,
     title: "AI-Native from Day One",
     description: "Every service is built around AI execution — not AI as a buzzword, but AI as the actual delivery engine. Claude, GPT-4o, and custom-trained models handle the work at scale.",
-    color: "bg-yellow-50 text-yellow-600",
+    color: "bg-red-50 text-[#DC2626]",
   },
   {
     icon: BarChart,
     title: "Full-Stack Growth",
     description: "We don't just run ads or just do outbound. We cover every stage of your pipeline: awareness, outbound, nurture, close, retain — across every channel that matters.",
-    color: "bg-blue-50 text-blue-600",
+    color: "bg-red-50 text-[#DC2626]",
   },
   {
     icon: Clock,
     title: "Speed of a Startup",
     description: "AIMS moves in days, not months. We've eliminated every bottleneck that slows traditional agencies down. From kickoff to first lead in 14 days, guaranteed.",
-    color: "bg-green-50 text-green-600",
+    color: "bg-red-50 text-[#DC2626]",
   },
   {
     icon: Shield,
     title: "Transparent by Design",
     description: "Every client gets a live portal with real-time data on campaigns, pipeline, and ROI. No more waiting for monthly PDF reports that are already 30 days stale.",
-    color: "bg-purple-50 text-purple-600",
+    color: "bg-red-50 text-[#DC2626]",
   },
 ]
 
@@ -112,7 +112,7 @@ export default function WhyAIMSPage() {
               <div className="space-y-4">
                 {aimsWay.map((item) => (
                   <div key={item} className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                    <CheckCircle className="w-5 h-5 text-[#DC2626] flex-shrink-0 mt-0.5" />
                     <span className="text-gray-800 font-medium">{item}</span>
                   </div>
                 ))}

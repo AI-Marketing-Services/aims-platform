@@ -57,7 +57,7 @@ export function ProductCard({ service }: ProductCardProps) {
           </span>
         )}
         {status === "BETA" && (
-          <span className="text-[10px] font-medium uppercase tracking-wider text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">
+          <span className="text-[10px] font-medium uppercase tracking-wider text-red-600 bg-red-50 px-2 py-0.5 rounded-full">
             Beta
           </span>
         )}

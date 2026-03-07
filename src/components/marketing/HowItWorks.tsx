@@ -80,9 +80,9 @@ export function HowItWorks() {
         {/* Timeline bar */}
         <div className="mt-10 flex items-center gap-0 overflow-hidden rounded-xl border border-border bg-card">
           {[
-            { week: "Week 1–2", label: "Strategy & Setup", color: "bg-blue-500" },
-            { week: "Week 2–3", label: "Build & Launch", color: "bg-orange-500" },
-            { week: "Week 4+", label: "Optimize & Scale", color: "bg-green-500" },
+            { week: "Week 1–2", label: "Strategy & Setup", color: "bg-[#FCA5A5]" },
+            { week: "Week 2–3", label: "Build & Launch", color: "bg-[#DC2626]" },
+            { week: "Week 4+", label: "Optimize & Scale", color: "bg-[#991B1B]" },
           ].map((phase, i) => (
             <div key={phase.label} className="flex-1 border-r border-border last:border-r-0 px-5 py-3.5">
               <div className={`mb-1.5 h-1 w-8 rounded-full ${phase.color}`} />

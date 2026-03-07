@@ -2,124 +2,205 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import { ArrowRight, Check } from "lucide-react"
+import { db } from "@/lib/db"
+import { ServiceDemoSection } from "@/components/marketing/ServiceDemoSection"
 
-// Static data — replace with DB queries once prisma is set up
-const SERVICES: Record<string, {
+type Params = { slug: string }
+
+// Static fallback data for the 6 core services (used when DB row doesn't exist yet)
+const STATIC_SERVICES: Record<string, {
   name: string
   pillar: string
   shortDesc: string
   longDesc: string
-  basePrice?: number
-  pricingModel: string
   features: string[]
-  useCases: { industry: string; result: string }[]
-  tiers?: { name: string; price: number; features: string[]; popular?: boolean }[]
 }> = {
-  "website-crm-chatbot": {
-    name: "Website + CRM + Chatbot",
-    pillar: "MARKETING",
-    shortDesc: "GHL-powered website with built-in CRM and AI chatbot",
-    longDesc: "The complete front-end and back-end infrastructure for your business. Built on GoHighLevel, we deploy a conversion-optimized website, configure your CRM pipeline, and train an AI chatbot on your business in under 2 weeks.",
-    basePrice: 97,
-    pricingModel: "MONTHLY",
+  "cold-outbound": {
+    name: "Outbound Lead Campaigns",
+    pillar: "SALES",
+    shortDesc: "Multi-domain email infra, AI SDR reply handling, auto-enrichment, and deliverability monitoring.",
+    longDesc: "We build and run your entire cold outbound engine — from ICP research and lead sourcing to AI-personalized copy, multi-step sequences, and hot-lead routing. Your team receives warm, qualified meetings. We handle everything else.",
     features: [
-      "Custom GHL website template",
-      "AI-powered chatbot trained on your business",
-      "CRM pipeline with lead tracking",
-      "Booking calendar integration",
-      "Contact management & automations",
-      "Email + SMS follow-up sequences",
-      "Analytics dashboard",
-    ],
-    useCases: [
-      { industry: "Car Dealerships", result: "42% more test drive bookings" },
-      { industry: "Vending Operators", result: "3x increase in location inquiries" },
-      { industry: "Professional Services", result: "2x more qualified consultations" },
-    ],
-    tiers: [
-      { name: "Starter", price: 97, features: ["GHL website", "Booking calendar", "Basic analytics"] },
-      { name: "Growth", price: 197, features: ["+ AI Chatbot", "+ CRM pipeline", "+ Contact management"] },
-      { name: "Pro", price: 297, features: ["+ Email automations", "+ Lead nurture", "+ SMS follow-up"], popular: true },
-      { name: "Elite", price: 397, features: ["+ Voice agent", "+ Full workflow automation", "+ Priority support"] },
+      "Multi-domain email infrastructure setup",
+      "AI-powered lead sourcing & enrichment",
+      "1:1 personalized email copy via GPT-4",
+      "Multi-step sequences (D1, D3, D7, D14)",
+      "Auto reply handling & meeting routing",
+      "Weekly deliverability monitoring",
+      "CRM integration & reporting dashboard",
+      "Dedicated AIMS success manager",
     ],
   },
-  "cold-outbound": {
-    name: "Cold Outbound Engine",
-    pillar: "SALES",
-    shortDesc: "Multi-domain email infrastructure with AI SDR reply handling",
-    longDesc: "We build a complete cold email system: domain warmup, personalized sequences written by our team, AI-powered reply handling, and weekly optimization. You get booked meetings — we handle everything else.",
-    pricingModel: "CUSTOM",
+  "revops-pipeline": {
+    name: "RevOps Pipeline",
+    pillar: "OPERATIONS",
+    shortDesc: "CRM architecture, lead routing, attribution, conversion dashboards, and rep coaching.",
+    longDesc: "We architect your entire revenue operations layer — CRM setup, lead routing rules, attribution models, conversion tracking, and rep performance dashboards. Get full pipeline visibility in under 7 days.",
     features: [
-      "5-15 warmed email domains",
-      "AI-personalized sequences",
-      "Auto-enrichment via Clay + Apollo",
-      "AI SDR handles replies & books meetings",
-      "Weekly A/B testing",
-      "Monthly performance reports",
-    ],
-    useCases: [
-      { industry: "SaaS Companies", result: "14 demos booked in first 30 days" },
-      { industry: "Staffing Agencies", result: "8x increase in pipeline value" },
-      { industry: "Commercial Services", result: "47 qualified meetings in 90 days" },
+      "CRM audit and full rebuild",
+      "Lead routing and assignment rules",
+      "Attribution and conversion tracking",
+      "Pipeline stage definitions and playbooks",
+      "Sales rep coaching dashboard",
+      "Revenue forecasting model",
+      "Slack-based deal alerts",
+      "Bi-weekly RevOps review calls",
     ],
   },
   "voice-agents": {
-    name: "AI Voice Agent Platform",
+    name: "AI Calling Agents",
     pillar: "SALES",
-    shortDesc: "Inbound and outbound AI calling with multi-location routing",
-    longDesc: "Deploy AI voice agents that handle inbound calls, qualify leads, book appointments, and even run outbound call campaigns — without human SDRs picking up the phone.",
-    pricingModel: "CUSTOM",
+    shortDesc: "Inbound and outbound AI voice agents with multi-location routing, live transcripts, and CRM sync.",
+    longDesc: "Deploy AI voice agents that handle inbound calls 24/7 and run outbound dial campaigns while you sleep. Calls are transcribed in real-time, leads are scored, and hot prospects are routed directly to your team.",
     features: [
-      "Inbound call handling 24/7",
-      "Outbound campaign dialing",
+      "Inbound AI receptionist — 24/7 coverage",
+      "Outbound AI dialer campaigns",
+      "Real-time call transcription",
+      "Lead scoring and qualification",
+      "CRM sync after every call",
       "Multi-location call routing",
-      "Live call transcripts",
-      "CRM integration",
-      "Custom voice + script",
+      "Custom voice and script setup",
+      "Call analytics dashboard",
     ],
-    useCases: [
-      { industry: "Multi-location Retail", result: "Zero missed calls, 3x booking rate" },
-      { industry: "Healthcare Clinics", result: "60% reduction in front-desk call volume" },
-      { industry: "Auto Dealerships", result: "18% more service appointments" },
+  },
+  "content-production": {
+    name: "Content Production Pod",
+    pillar: "MARKETING",
+    shortDesc: "AI-powered content calendar, short-form video scripts, email copy, and LinkedIn ghostwriting.",
+    longDesc: "Your dedicated AI content team produces 30+ high-quality assets per month — video scripts, LinkedIn posts, email sequences, and ad copy — all aligned to your brand voice and ICP.",
+    features: [
+      "Monthly content calendar and strategy",
+      "30+ assets per month",
+      "Short-form video scripts (TikTok, Reels, Shorts)",
+      "LinkedIn ghostwriting and scheduling",
+      "Email sequence copywriting",
+      "Ad copy and creative briefs",
+      "Brand voice guide and training",
+      "Content performance reporting",
+    ],
+  },
+  "lead-reactivation": {
+    name: "Lead Reactivation",
+    pillar: "SALES",
+    shortDesc: "Turn dead CRM contacts into booked meetings using AI personalization and multi-channel sequences.",
+    longDesc: "We mine your existing CRM for dead or cold leads and run personalized multi-channel reactivation sequences via email, SMS, and LinkedIn. Avg. 18% of dead leads convert to booked meetings within 30 days.",
+    features: [
+      "Full CRM dead-lead audit",
+      "AI-personalized reactivation copy",
+      "Multi-channel: email + SMS + LinkedIn",
+      "Lead scoring and segmentation",
+      "Hot lead routing to your team",
+      "30-day reactivation sprint",
+      "CRM updates and tagging",
+      "Results report and ROI tracking",
+    ],
+  },
+  "database-reactivation": {
+    name: "Database Reactivation",
+    pillar: "OPERATIONS",
+    shortDesc: "Full CRM audit, deduplication, re-enrichment, and a scored outreach plan for your existing contacts.",
+    longDesc: "We perform a complete CRM health audit — deduplication, bounce cleanup, re-enrichment with fresh firmographic and contact data, and a scored outreach prioritization plan. Avg. $24K recovered pipeline per client.",
+    features: [
+      "Complete CRM data audit",
+      "Deduplication and record merging",
+      "Bounce and invalid email cleanup",
+      "Re-enrichment with fresh contact data",
+      "Company firmographic enrichment",
+      "Lead scoring model build",
+      "Prioritized outreach playbook",
+      "Clean CRM handoff with documentation",
     ],
   },
 }
 
-type Params = { slug: string }
-
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { slug } = await params
-  const service = SERVICES[slug]
-  if (!service) return {}
-  return {
-    title: service.name,
-    description: service.shortDesc,
+  const staticSvc = STATIC_SERVICES[slug]
+  if (!staticSvc) {
+    try {
+      const service = await db.serviceArm.findUnique({ where: { slug } })
+      if (!service) return {}
+      return { title: service.name, description: service.shortDesc }
+    } catch {
+      return {}
+    }
   }
+  return { title: staticSvc.name, description: staticSvc.shortDesc }
 }
 
 export default async function ServicePage({ params }: { params: Promise<Params> }) {
   const { slug } = await params
-  const service = SERVICES[slug]
 
-  if (!service) notFound()
+  // Try DB first, fall back to static data
+  let service: {
+    name: string
+    pillar: string
+    shortDesc: string
+    longDesc: string | null
+    features: string[]
+    useCases: { industry: string; result: string }[]
+    tiers: { id: string; name: string; price: number; interval: string; slug: string; isPopular: boolean; features: string[] }[]
+    pricingModel?: string
+  } | null = null
+
+  try {
+    const dbService = await db.serviceArm.findUnique({
+      where: { slug },
+      include: { tiers: { orderBy: { sortOrder: "asc" } } },
+    })
+    if (dbService) {
+      service = {
+        name: dbService.name,
+        pillar: dbService.pillar,
+        shortDesc: dbService.shortDesc,
+        longDesc: dbService.longDesc,
+        features: Array.isArray(dbService.features) ? (dbService.features as string[]) : [],
+        useCases: Array.isArray(dbService.useCases) ? (dbService.useCases as { industry: string; result: string }[]) : [],
+        tiers: dbService.tiers.map((t) => ({
+          id: t.id,
+          name: t.name,
+          price: t.price,
+          interval: t.interval,
+          slug: t.slug,
+          isPopular: t.isPopular,
+          features: Array.isArray(t.features) ? (t.features as string[]) : [],
+        })),
+        pricingModel: dbService.pricingModel,
+      }
+    }
+  } catch {
+    // DB unavailable — use static data
+  }
+
+  // Fall back to static config
+  if (!service) {
+    const staticSvc = STATIC_SERVICES[slug]
+    if (!staticSvc) notFound()
+    service = {
+      ...staticSvc,
+      longDesc: staticSvc.longDesc,
+      useCases: [],
+      tiers: [],
+    }
+  }
 
   const pillarColors: Record<string, string> = {
-    MARKETING: "bg-green-50 text-green-700 border-green-200",
-    SALES: "bg-blue-50 text-blue-700 border-blue-200",
-    OPERATIONS: "bg-orange-50 text-orange-700 border-orange-200",
-    FINANCE: "bg-purple-50 text-purple-700 border-purple-200",
+    MARKETING: "bg-red-50 text-red-700 border-red-200",
+    SALES: "bg-red-50 text-red-700 border-red-200",
+    OPERATIONS: "bg-red-50 text-red-700 border-red-200",
+    FINANCE: "bg-red-50 text-red-700 border-red-200",
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white">
       {/* Hero */}
-      <section className="border-b border-border bg-card py-20">
+      <section className="border-b border-gray-100 bg-white py-20">
         <div className="container mx-auto max-w-4xl px-4">
-          <span className={`inline-block rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-wider mb-4 ${pillarColors[service.pillar] ?? ""}`}>
+          <span className={`inline-block rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-wider mb-4 ${pillarColors[service.pillar] ?? "bg-gray-100 text-gray-600 border-gray-200"}`}>
             {service.pillar}
           </span>
-          <h1 className="text-4xl font-bold tracking-tight md:text-5xl">{service.name}</h1>
-          <p className="mt-4 text-xl text-muted-foreground max-w-2xl">{service.longDesc}</p>
+          <h1 className="text-4xl font-bold tracking-tight text-gray-900 md:text-5xl">{service.name}</h1>
+          <p className="mt-4 text-xl text-gray-500 max-w-2xl">{service.longDesc ?? service.shortDesc}</p>
           <div className="mt-8 flex flex-col gap-4 sm:flex-row">
             <Link
               href={`/get-started?service=${slug}`}
@@ -129,7 +210,7 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
             </Link>
             <Link
               href="/get-started"
-              className="inline-flex items-center gap-2 rounded-lg border border-border px-8 py-3.5 font-semibold text-foreground hover:bg-secondary transition"
+              className="inline-flex items-center gap-2 rounded-lg border border-gray-200 px-8 py-3.5 font-semibold text-gray-700 hover:bg-gray-50 transition"
             >
               Book a Call
             </Link>
@@ -137,67 +218,79 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
         </div>
       </section>
 
+      {/* Interactive Demo */}
+      <ServiceDemoSection slug={slug} />
+
       {/* Features */}
-      <section className="py-20">
-        <div className="container mx-auto max-w-4xl px-4">
-          <h2 className="text-2xl font-bold mb-8">What&rsquo;s Included</h2>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            {service.features.map((feature) => (
-              <div key={feature} className="flex items-center gap-3 rounded-lg border border-border bg-card p-4">
-                <Check className="h-5 w-5 shrink-0 text-[#DC2626]" />
-                <span className="text-sm font-medium text-foreground">{feature}</span>
-              </div>
-            ))}
+      {service.features.length > 0 && (
+        <section className="py-20 bg-white">
+          <div className="container mx-auto max-w-4xl px-4">
+            <h2 className="text-2xl font-bold text-gray-900 mb-8">What&rsquo;s Included</h2>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {service.features.map((feature) => (
+                <div key={feature} className="flex items-center gap-3 rounded-xl border border-gray-100 bg-gray-50 p-4">
+                  <Check className="h-5 w-5 shrink-0 text-[#DC2626]" />
+                  <span className="text-sm font-medium text-gray-800">{feature}</span>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Use Cases */}
-      <section className="py-20 bg-secondary/20">
-        <div className="container mx-auto max-w-4xl px-4">
-          <h2 className="text-2xl font-bold mb-8">Results By Industry</h2>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
-            {service.useCases.map((uc) => (
-              <div key={uc.industry} className="rounded-xl border border-border bg-card p-6 text-center shadow-sm">
-                <div className="text-sm font-semibold text-muted-foreground mb-2">{uc.industry}</div>
-                <div className="text-lg font-bold text-[#DC2626]">{uc.result}</div>
-              </div>
-            ))}
+      {service.useCases.length > 0 && (
+        <section className="py-20 bg-gray-50">
+          <div className="container mx-auto max-w-4xl px-4">
+            <h2 className="text-2xl font-bold text-gray-900 mb-8">Results By Industry</h2>
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+              {service.useCases.map((uc) => (
+                <div key={uc.industry} className="rounded-xl border border-gray-100 bg-white p-6 text-center shadow-sm">
+                  <div className="text-sm font-semibold text-gray-500 mb-2">{uc.industry}</div>
+                  <div className="text-lg font-bold text-[#DC2626]">{uc.result}</div>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Pricing */}
-      {service.tiers && (
-        <section className="py-20">
+      {service.tiers.length > 0 && (
+        <section className="py-20 bg-white">
           <div className="container mx-auto max-w-4xl px-4">
-            <h2 className="text-2xl font-bold mb-8">Pricing</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-8">Pricing</h2>
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {service.tiers.map((tier) => (
                 <div
-                  key={tier.name}
-                  className={`rounded-xl border-2 bg-card p-6 ${tier.popular ? "border-[#DC2626] shadow-lg" : "border-border"}`}
+                  key={tier.id}
+                  className={`rounded-xl border-2 bg-white p-6 ${tier.isPopular ? "border-[#DC2626] shadow-lg" : "border-gray-100"}`}
                 >
-                  {tier.popular && (
+                  {tier.isPopular && (
                     <div className="mb-3">
                       <span className="rounded-full bg-[#DC2626] px-2 py-0.5 text-[10px] font-semibold text-white">
                         Most Popular
                       </span>
                     </div>
                   )}
-                  <div className="text-lg font-bold">{tier.name}</div>
-                  <div className="mt-2 text-3xl font-black">${tier.price}<span className="text-sm font-normal text-muted-foreground">/mo</span></div>
-                  <ul className="mt-4 space-y-2">
-                    {tier.features.map((f) => (
-                      <li key={f} className="flex items-start gap-2 text-xs text-muted-foreground">
-                        <Check className="mt-0.5 h-3 w-3 shrink-0 text-[#DC2626]" />
-                        {f}
-                      </li>
-                    ))}
-                  </ul>
+                  <div className="text-lg font-bold text-gray-900">{tier.name}</div>
+                  <div className="mt-2 text-3xl font-black text-gray-900">
+                    ${tier.price.toLocaleString()}
+                    <span className="text-sm font-normal text-gray-500">/{tier.interval}</span>
+                  </div>
+                  {tier.features.length > 0 && (
+                    <ul className="mt-4 space-y-2">
+                      {tier.features.map((f) => (
+                        <li key={f} className="flex items-start gap-2 text-xs text-gray-500">
+                          <Check className="mt-0.5 h-3 w-3 shrink-0 text-[#DC2626]" />
+                          {f}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                   <Link
-                    href={`/get-started?service=${slug}&tier=${tier.name.toLowerCase()}`}
-                    className={`mt-5 block rounded-lg py-2.5 text-center text-sm font-semibold transition ${tier.popular ? "bg-[#DC2626] text-white hover:bg-[#B91C1C]" : "border border-border text-foreground hover:bg-secondary"}`}
+                    href={`/get-started?service=${slug}&tier=${tier.slug}`}
+                    className={`mt-5 block rounded-lg py-2.5 text-center text-sm font-semibold transition ${tier.isPopular ? "bg-[#DC2626] text-white hover:bg-[#B91C1C]" : "border border-gray-200 text-gray-700 hover:bg-gray-50"}`}
                   >
                     Get Started
                   </Link>
@@ -208,14 +301,34 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
         </section>
       )}
 
+      {/* Custom pricing fallback */}
+      {service.tiers.length === 0 && (
+        <section className="py-20 bg-gray-50">
+          <div className="container mx-auto max-w-4xl px-4">
+            <div className="rounded-2xl border border-gray-100 bg-white p-10 text-center shadow-sm">
+              <h2 className="text-2xl font-bold text-gray-900 mb-3">Custom Pricing</h2>
+              <p className="text-gray-500 mb-6 max-w-lg mx-auto">
+                Pricing for {service.name} is tailored to your business size, goals, and scope. Book a call and we&rsquo;ll build your plan.
+              </p>
+              <Link
+                href={`/get-started?service=${slug}`}
+                className="inline-flex items-center gap-2 rounded-lg bg-[#DC2626] px-8 py-3.5 font-semibold text-white hover:bg-[#B91C1C] transition"
+              >
+                Get a Custom Quote <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* CTA */}
-      <section className="py-20 bg-[#DC2626]">
+      <section className="py-20 bg-gray-900">
         <div className="container mx-auto max-w-2xl px-4 text-center">
           <h2 className="text-3xl font-bold text-white">Ready to get started?</h2>
-          <p className="mt-3 text-red-100">Book a strategy call and we&rsquo;ll build your custom plan.</p>
+          <p className="mt-3 text-gray-400">Book a strategy call and we&rsquo;ll build your custom plan.</p>
           <Link
             href="/get-started"
-            className="mt-8 inline-flex items-center gap-2 rounded-lg bg-card px-8 py-3.5 font-semibold text-[#DC2626] hover:bg-red-50 transition"
+            className="mt-8 inline-flex items-center gap-2 rounded-lg bg-[#DC2626] px-8 py-3.5 font-semibold text-white hover:bg-[#B91C1C] transition"
           >
             Book a Strategy Call <ArrowRight className="h-4 w-4" />
           </Link>

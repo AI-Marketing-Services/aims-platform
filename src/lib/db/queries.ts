@@ -1,6 +1,7 @@
 import { db } from "./index"
 import type {
   DealStage,
+  DealPriority,
   ServicePillar,
   ServiceStatus,
   SubStatus,
@@ -102,6 +103,10 @@ export async function createDeal(data: {
   utmMedium?: string
   utmCampaign?: string
   value?: number
+  leadScore?: number
+  leadScoreTier?: string
+  leadScoreReason?: string
+  priority?: DealPriority
 }) {
   return db.deal.create({
     data: {

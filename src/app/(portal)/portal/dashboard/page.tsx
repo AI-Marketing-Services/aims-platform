@@ -2,19 +2,52 @@ import type { Metadata } from "next"
 import { auth, currentUser } from "@clerk/nextjs/server"
 import Link from "next/link"
 import { ArrowRight, BarChart2, Zap, Globe, DollarSign } from "lucide-react"
+import { db } from "@/lib/db"
 
 export const metadata: Metadata = { title: "Dashboard" }
 
-const DEMO_SERVICES = [
-  { name: "Website + CRM + Chatbot", status: "ACTIVE", tier: "Pro", amount: 297, nextBilling: "Apr 1, 2026" },
-  { name: "Cold Outbound Engine", status: "ACTIVE", tier: "Custom", amount: 2500, nextBilling: "Apr 1, 2026" },
-]
+const statusColors: Record<string, string> = {
+  ACTIVE: "bg-green-100 text-green-700",
+  TRIALING: "bg-blue-100 text-blue-700",
+  PAST_DUE: "bg-orange-100 text-orange-700",
+  PAUSED: "bg-gray-100 text-gray-600",
+  CANCELLED: "bg-red-100 text-red-700",
+}
 
-export default async function PortalDashboard() {
+export default async function PortalDashboard({
+  searchParams,
+}: {
+  searchParams: Promise<{ checkout?: string }>
+}) {
+  const { checkout } = await searchParams
+  const { userId: clerkId } = await auth()
   const user = await currentUser()
+
+  const dbUser = clerkId
+    ? await db.user.findUnique({
+        where: { clerkId },
+        include: {
+          subscriptions: {
+            where: { status: { in: ["ACTIVE", "TRIALING", "PAST_DUE"] } },
+            include: { serviceArm: true },
+            orderBy: { createdAt: "desc" },
+          },
+        },
+      })
+    : null
+
+  const subs = dbUser?.subscriptions ?? []
+  const totalMrr = subs.reduce((sum, s) => sum + s.monthlyAmount, 0)
 
   return (
     <div className="space-y-8">
+      {/* Checkout success banner */}
+      {checkout === "success" && (
+        <div className="rounded-xl border border-green-200 bg-green-50 px-5 py-4 text-sm text-green-800 font-medium">
+          Your subscription is active. Our team will begin setup within 24 hours — check your email for next steps.
+        </div>
+      )}
+
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold">Welcome back, {user?.firstName ?? "there"}</h1>
@@ -24,10 +57,10 @@ export default async function PortalDashboard() {
       {/* Metrics */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {[
-          { label: "Active Services", value: "2", icon: Zap },
-          { label: "Monthly Spend", value: "$2,797", icon: DollarSign },
-          { label: "Leads Generated", value: "142", icon: BarChart2 },
-          { label: "Meetings Booked", value: "18", icon: Globe },
+          { label: "Active Services", value: String(subs.length), icon: Zap },
+          { label: "Monthly Spend", value: `$${totalMrr.toLocaleString()}`, icon: DollarSign },
+          { label: "Leads Generated", value: "—", icon: BarChart2 },
+          { label: "Meetings Booked", value: "—", icon: Globe },
         ].map(({ label, value, icon: Icon }) => (
           <div key={label} className="rounded-xl border border-border bg-card p-5">
             <div className="flex items-center justify-between">
@@ -47,43 +80,68 @@ export default async function PortalDashboard() {
           <h2 className="text-lg font-semibold">Active Services</h2>
           <Link href="/portal/services" className="text-sm text-primary hover:underline">View all</Link>
         </div>
-        <div className="space-y-3">
-          {DEMO_SERVICES.map((service) => (
-            <div key={service.name} className="flex items-center justify-between rounded-xl border border-border bg-card p-5">
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="font-medium">{service.name}</span>
-                  <span className="rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-medium text-green-700">
-                    {service.status}
-                  </span>
+
+        {subs.length === 0 ? (
+          <div className="rounded-xl border border-border bg-card p-10 text-center">
+            <p className="text-muted-foreground mb-4">You don&apos;t have any active services yet.</p>
+            <Link
+              href="/portal/marketplace"
+              className="inline-flex items-center gap-2 rounded-lg bg-[#DC2626] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#B91C1C] transition"
+            >
+              Browse Services <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {subs.map((sub) => {
+              const statusClass = statusColors[sub.status] ?? "bg-gray-100 text-gray-600"
+              const renewsAt = sub.currentPeriodEnd
+                ? new Date(sub.currentPeriodEnd).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+                : null
+              return (
+                <div key={sub.id} className="flex items-center justify-between rounded-xl border border-border bg-card p-5">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium">{sub.serviceArm.name}</span>
+                      <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${statusClass}`}>
+                        {sub.status}
+                      </span>
+                    </div>
+                    <div className="mt-1 text-sm text-muted-foreground">
+                      {sub.tier ? `${sub.tier} · ` : ""}${sub.monthlyAmount.toLocaleString()}/mo
+                      {renewsAt ? ` · Renews ${renewsAt}` : ""}
+                    </div>
+                  </div>
+                  <Link
+                    href={`/portal/services/${sub.id}`}
+                    className="text-sm text-primary hover:underline flex items-center gap-1"
+                  >
+                    View <ArrowRight className="h-3 w-3" />
+                  </Link>
                 </div>
-                <div className="mt-1 text-sm text-muted-foreground">
-                  {service.tier} · ${service.amount.toLocaleString()}/mo · Renews {service.nextBilling}
-                </div>
-              </div>
-              <Link href="/portal/services" className="text-sm text-primary hover:underline flex items-center gap-1">
-                View <ArrowRight className="h-3 w-3" />
-              </Link>
-            </div>
-          ))}
-        </div>
+              )
+            })}
+          </div>
+        )}
       </div>
 
-      {/* Upsell */}
-      <div className="rounded-xl border border-red-200 bg-red-50 p-5">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="font-semibold text-foreground">Boost your pipeline with AI Voice Agents</p>
-            <p className="mt-1 text-sm text-muted-foreground">Handle inbound calls 24/7 and run outbound campaigns while you sleep.</p>
+      {/* Upsell — only show if < 3 services */}
+      {subs.length < 3 && (
+        <div className="rounded-xl border border-red-200 bg-red-50 p-5">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="font-semibold text-foreground">Boost your pipeline with AI Voice Agents</p>
+              <p className="mt-1 text-sm text-muted-foreground">Handle inbound calls 24/7 and run outbound campaigns while you sleep.</p>
+            </div>
+            <Link
+              href="/portal/marketplace"
+              className="ml-4 shrink-0 rounded-lg bg-[#DC2626] px-4 py-2 text-sm font-semibold text-white hover:bg-[#B91C1C] transition"
+            >
+              Add Service
+            </Link>
           </div>
-          <Link
-            href="/portal/marketplace"
-            className="ml-4 shrink-0 rounded-lg bg-[#DC2626] px-4 py-2 text-sm font-semibold text-white hover:bg-[#B91C1C] transition"
-          >
-            Add Service
-          </Link>
         </div>
-      </div>
+      )}
     </div>
   )
 }

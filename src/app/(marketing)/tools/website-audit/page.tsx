@@ -29,15 +29,12 @@ type AuditScore = {
   overall: number
 }
 
-function mockAuditScore(url: string): AuditScore {
-  const seed = url.length % 40
-  return {
-    seo: 42 + seed,
-    speed: 38 + seed,
-    conversion: 29 + seed,
-    ai: 21 + seed,
-    overall: 33 + seed,
-  }
+type AuditAnalysis = {
+  scores: AuditScore
+  issues: { severity: string; issue: string; fix: string }[]
+  strengths: string[]
+  summary: string
+  topOpportunity: string
 }
 
 function ScoreRing({ score, label, size = 80 }: { score: number; label: string; size?: number }) {
@@ -73,17 +70,32 @@ export default function WebsiteAuditPage() {
   const [currentStep, setCurrentStep] = useState(0)
   const [completedSteps, setCompletedSteps] = useState<number[]>([])
   const [scores, setScores] = useState<AuditScore | null>(null)
+  const [analysis, setAnalysis] = useState<AuditAnalysis | null>(null)
   const [email, setEmail] = useState("")
   const [submitting, setSubmitting] = useState(false)
   const stepTimerRef = useRef<NodeJS.Timeout | null>(null)
+  const auditPromiseRef = useRef<Promise<AuditAnalysis | null> | null>(null)
 
   function startAudit(e: React.FormEvent) {
     e.preventDefault()
     const cleanUrl = url.startsWith("http") ? url : `https://${url}`
-    setScores(mockAuditScore(cleanUrl))
+
     setPhase("scanning")
     setCurrentStep(0)
     setCompletedSteps([])
+
+    // Start real AI audit in background while animation plays
+    auditPromiseRef.current = fetch("/api/ai/audit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ url: cleanUrl }),
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.analysis) return data.analysis as AuditAnalysis
+        return null
+      })
+      .catch(() => null)
   }
 
   useEffect(() => {
@@ -93,7 +105,17 @@ export default function WebsiteAuditPage() {
 
     function runStep() {
       if (stepIndex >= AUDIT_STEPS.length) {
-        setTimeout(() => setPhase("email"), 400)
+        // Wait for AI audit to complete before showing email gate
+        auditPromiseRef.current?.then((result) => {
+          if (result) {
+            setAnalysis(result)
+            setScores(result.scores)
+          } else {
+            // Fallback scores if API failed
+            setScores({ seo: 48, speed: 52, conversion: 39, ai: 28, overall: 43 })
+          }
+          setTimeout(() => setPhase("email"), 400)
+        })
         return
       }
       setCurrentStep(stepIndex)
@@ -342,9 +364,9 @@ export default function WebsiteAuditPage() {
                   {scores.overall < 50 ? "Needs Significant Work" : scores.overall < 70 ? "Room for Improvement" : "Good Foundation"}
                 </div>
                 <p className="text-gray-500 text-sm">
-                  {scores.overall < 50
-                    ? `Your site has major gaps that are costing you leads daily. AIMS can address all of these within 2 weeks.`
-                    : `You're above average but leaving leads on the table. Let's close the gaps.`}
+                  {analysis?.summary ?? (scores.overall < 50
+                    ? "Your site has major gaps that are costing you leads daily. AIMS can address all of these within 2 weeks."
+                    : "You're above average but leaving leads on the table. Let's close the gaps.")}
                 </p>
               </div>
 
@@ -359,16 +381,29 @@ export default function WebsiteAuditPage() {
                 </div>
               </div>
 
+              {/* Top opportunity */}
+              {analysis?.topOpportunity && (
+                <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5">
+                  <div className="flex items-start gap-3">
+                    <Zap className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                    <div>
+                      <div className="text-sm font-semibold text-amber-900 mb-1">Top Opportunity</div>
+                      <div className="text-sm text-amber-800">{analysis.topOpportunity}</div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Top issues */}
               <div className="bg-white border border-gray-200 rounded-2xl p-6">
-                <h3 className="font-semibold text-gray-900 mb-4">Top Issues Found</h3>
+                <h3 className="font-semibold text-gray-900 mb-4">Issues Found</h3>
                 <div className="space-y-3">
-                  {[
+                  {(analysis?.issues ?? [
                     { severity: "critical", issue: "No FAQ schema markup — invisible to AI search engines", fix: "AIMS adds structured FAQ schema within 48 hours" },
                     { severity: "high", issue: "CTA appears below the fold on mobile — 60% of visitors miss it", fix: "Conversion audit + sticky CTA implementation" },
                     { severity: "high", issue: "Page load time exceeds 3.2s — above Google's recommended threshold", fix: "Technical SEO sprint to optimize Core Web Vitals" },
                     { severity: "medium", issue: "No lead capture widget on highest-traffic pages", fix: "AI chatbot + form placement optimization" },
-                  ].map((item, i) => (
+                  ]).map((item, i) => (
                     <div key={i} className="flex gap-3 p-4 rounded-xl bg-gray-50 border border-gray-100">
                       <AlertCircle className={cn("w-4 h-4 flex-shrink-0 mt-0.5", item.severity === "critical" ? "text-red-500" : item.severity === "high" ? "text-orange-500" : "text-yellow-500")} />
                       <div>
@@ -382,6 +417,21 @@ export default function WebsiteAuditPage() {
                   ))}
                 </div>
               </div>
+
+              {/* Strengths */}
+              {analysis?.strengths && analysis.strengths.length > 0 && (
+                <div className="bg-green-50 border border-green-200 rounded-2xl p-6">
+                  <h3 className="font-semibold text-green-900 mb-3">What&apos;s Working</h3>
+                  <ul className="space-y-2">
+                    {analysis.strengths.map((s, i) => (
+                      <li key={i} className="flex items-start gap-2 text-sm text-green-800">
+                        <CheckCircle2 className="w-4 h-4 text-green-600 shrink-0 mt-0.5" />
+                        {s}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
               {/* CTA */}
               <div className="bg-[#DC2626] rounded-2xl p-8 text-center text-white">
