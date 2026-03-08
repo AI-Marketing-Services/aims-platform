@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { ArrowRight, CheckCircle2, TrendingUp, Phone, Mail, MapPin, BarChart2, Zap, DollarSign } from "lucide-react"
+import { ArrowRight, CheckCircle2, TrendingUp, Phone, Mail, MapPin, BarChart2, Zap, DollarSign, Check, Star, Lock } from "lucide-react"
 
 export const metadata: Metadata = {
   title: "AI Systems for Vendingpreneurs — AIMS",
@@ -52,6 +52,127 @@ const SERVICES = [
     price: "Custom",
     badge: null,
   },
+]
+
+// VP Operator Toolkit add-ons
+type VPTier = "free" | "solo" | "root" | "empire"
+
+interface VPAddon {
+  name: string
+  desc: string
+  tools: string
+  price: string
+  tier: VPTier
+  href?: string
+}
+
+const VP_ADDONS: VPAddon[] = [
+  {
+    name: "Vending ROI Calculator",
+    desc: "Real-time ROI estimates using live data from 500+ VP operators. Input any location, get revenue projections.",
+    tools: "Vercel, live operator database",
+    price: "Free with membership",
+    tier: "free",
+    href: "/tools/roi-calculator?ref=vp",
+  },
+  {
+    name: "Live Operator Map",
+    desc: "Interactive map of all VP operator locations — useful for territory planning and expansion decisions.",
+    tools: "Mapbox, Vercel",
+    price: "Free with membership",
+    tier: "free",
+  },
+  {
+    name: "Community Knowledge Bot",
+    desc: "AI trained on all VP content, webinars, and SOPs — ask it anything about running your vending business.",
+    tools: "Claude API, Skool, N8N",
+    price: "Included (Solo+)",
+    tier: "solo",
+    href: "/services/ai-community-chatbot",
+  },
+  {
+    name: "Vendor Ordering Portal",
+    desc: "Order Red Bull, Pepsi, and other vendors directly through your VP dashboard with volume pricing and order history.",
+    tools: "Airtable, Stripe, Resend",
+    price: "Included (Solo+)",
+    tier: "solo",
+    href: "/services/vendor-ordering-portal",
+  },
+  {
+    name: "Location Mockup Generator",
+    desc: "Generate professional vending machine placement mockups for any space to close location deals faster.",
+    tools: "V0, Canva API",
+    price: "$47/mo add-on",
+    tier: "solo",
+  },
+  {
+    name: "AI Receptionist",
+    desc: "24/7 inbound call handling for your vending business — handles FAQs, routes location requests, books callbacks.",
+    tools: "Retell AI, GHL, Twilio",
+    price: "$97/mo add-on",
+    tier: "root",
+    href: "/services/voice-agents",
+  },
+  {
+    name: "Reputation Autopilot",
+    desc: "Automated review requests to location partners and customers. Routes feedback and boosts Google profile.",
+    tools: "GHL, Twilio, Google Business",
+    price: "$97/mo add-on",
+    tier: "root",
+    href: "/services/ai-reputation-engine",
+  },
+  {
+    name: "Location Scouting Score",
+    desc: "Enter any address, get foot traffic, demographic, and competitor proximity score to evaluate before you commit.",
+    tools: "Google Places API, Clay, N8N",
+    price: "$97/mo add-on",
+    tier: "root",
+  },
+  {
+    name: "Operator Dashboard",
+    desc: "Machine performance, revenue per location, lease tracking, inventory alerts — all in one view.",
+    tools: "Airtable, BaseDash, N8N",
+    price: "$147/mo add-on",
+    tier: "root",
+  },
+  {
+    name: "VP GHL Business OS",
+    desc: "Full GoHighLevel subaccount: website, CRM, pipelines, AI receptionist, and outbound dialer — ready day one.",
+    tools: "GoHighLevel, Retell AI, Twilio",
+    price: "$297/mo add-on",
+    tier: "root",
+    href: "/services/ghl-community-os",
+  },
+  {
+    name: "Outbound Lead Dialer",
+    desc: "AI outbound calls to location prospects, qualifies interest, books site visits automatically.",
+    tools: "Retell AI, GHL, Clay",
+    price: "$197/mo add-on",
+    tier: "empire",
+    href: "/services/voice-agents",
+  },
+  {
+    name: "Cold Outbound Engine (VP Edition)",
+    desc: "Pre-configured Clay sequences targeting your ICP — gyms, offices, warehouses, schools — with VP-specific copy.",
+    tools: "Clay, Instantly, GHL",
+    price: "$297/mo add-on",
+    tier: "empire",
+    href: "/services/cold-outbound",
+  },
+]
+
+const TIER_CONFIG: Record<VPTier, { label: string; color: string; bg: string; border: string }> = {
+  free:   { label: "Free",         color: "text-gray-600",    bg: "bg-gray-50",    border: "border-gray-200" },
+  solo:   { label: "Solo",         color: "text-blue-700",    bg: "bg-blue-50",    border: "border-blue-200" },
+  root:   { label: "Root Owner",   color: "text-purple-700",  bg: "bg-purple-50",  border: "border-purple-200" },
+  empire: { label: "Vending Empire", color: "text-[#DC2626]", bg: "bg-red-50",     border: "border-red-200" },
+}
+
+const TIER_TIERS: { tier: VPTier; title: string; subtitle: string }[] = [
+  { tier: "free",   title: "Any VP Member",      subtitle: "Included with any membership tier" },
+  { tier: "solo",   title: "Solo Operator",       subtitle: "Base subscription benefits" },
+  { tier: "root",   title: "Root Owner",          subtitle: "Mid-tier unlock + all above" },
+  { tier: "empire", title: "Vending Empire",      subtitle: "Full stack — nothing held back" },
 ]
 
 export default function VendingpreneursPage() {
@@ -147,7 +268,7 @@ export default function VendingpreneursPage() {
         </div>
       </section>
 
-      {/* Services */}
+      {/* AIMS Services for VP */}
       <section className="py-24 bg-background">
         <div className="mx-auto max-w-5xl px-4">
           <div className="mb-14">
@@ -187,8 +308,117 @@ export default function VendingpreneursPage() {
         </div>
       </section>
 
+      {/* VP Operator Toolkit */}
+      <section className="py-24 bg-card">
+        <div className="mx-auto max-w-5xl px-4">
+          <div className="mb-4">
+            <span className="inline-block rounded-full bg-red-50 border border-red-200 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-[#DC2626] mb-4">
+              VP Operator Toolkit
+            </span>
+            <h2 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
+              Operating infrastructure built for vending
+            </h2>
+            <p className="mt-3 max-w-2xl text-base text-muted-foreground leading-relaxed">
+              Tools built specifically for VP community members. Add any tool to your subscription.
+              Some included free, some paid add-ons — every tier deepens your competitive edge.
+            </p>
+          </div>
+
+          {/* Tier legend */}
+          <div className="flex flex-wrap gap-3 mb-10 mt-8">
+            {TIER_TIERS.map(({ tier, title, subtitle }) => {
+              const config = TIER_CONFIG[tier]
+              return (
+                <div key={tier} className={`flex items-center gap-2 rounded-xl border px-4 py-2.5 ${config.border} ${config.bg}`}>
+                  <span className={`text-xs font-bold uppercase tracking-wider ${config.color}`}>{title}</span>
+                  <span className="text-xs text-muted-foreground hidden sm:inline">— {subtitle}</span>
+                </div>
+              )
+            })}
+          </div>
+
+          {/* Add-ons grid */}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {VP_ADDONS.map((addon) => {
+              const config = TIER_CONFIG[addon.tier]
+              const card = (
+                <div className={`rounded-2xl border bg-background p-5 flex flex-col gap-3 h-full ${addon.href ? "hover:border-[#DC2626]/40 hover:shadow-md transition-all" : ""}`}>
+                  <div className="flex items-start justify-between gap-2">
+                    <h3 className="text-sm font-bold text-foreground leading-snug">{addon.name}</h3>
+                    <span className={`shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${config.color} ${config.bg} ${config.border}`}>
+                      {config.label}
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted-foreground leading-relaxed flex-1">{addon.desc}</p>
+                  <div className="flex items-center justify-between pt-1 border-t border-border">
+                    <span className="text-xs text-muted-foreground font-medium">{addon.tools}</span>
+                    <span className={`text-xs font-bold ${addon.tier === "free" ? "text-green-600" : addon.price.includes("Included") ? "text-blue-600" : "text-foreground"}`}>
+                      {addon.price}
+                    </span>
+                  </div>
+                  {addon.href && (
+                    <div className={`flex items-center gap-1 text-xs font-semibold ${config.color}`}>
+                      Learn more <ArrowRight className="h-3 w-3" />
+                    </div>
+                  )}
+                </div>
+              )
+
+              return addon.href ? (
+                <Link key={addon.name} href={addon.href} className="block h-full">
+                  {card}
+                </Link>
+              ) : (
+                <div key={addon.name} className="h-full">
+                  {card}
+                </div>
+              )
+            })}
+          </div>
+
+          {/* Tier unlock table */}
+          <div className="mt-14 rounded-2xl border border-border bg-background overflow-hidden">
+            <div className="px-6 py-5 border-b border-border">
+              <h3 className="text-base font-bold text-foreground">What unlocks at each tier</h3>
+              <p className="text-sm text-muted-foreground mt-1">Every add-on deepens switching costs and creates a clear upgrade path.</p>
+            </div>
+            <div className="divide-y divide-border">
+              {TIER_TIERS.map(({ tier, title }) => {
+                const config = TIER_CONFIG[tier]
+                const tierAddons = VP_ADDONS.filter((a) => a.tier === tier)
+                return (
+                  <div key={tier} className="px-6 py-4 flex items-start gap-4">
+                    <span className={`shrink-0 mt-0.5 rounded-lg border px-3 py-1 text-xs font-bold uppercase tracking-wider w-28 text-center ${config.color} ${config.bg} ${config.border}`}>
+                      {title}
+                    </span>
+                    <div className="flex flex-wrap gap-2">
+                      {tierAddons.map((a) => (
+                        <span key={a.name} className="flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-xs text-foreground/70">
+                          <Check className="h-3 w-3 text-green-500 shrink-0" />
+                          {a.name}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+
+          <div className="mt-8 text-center">
+            <Link
+              href="/get-started?ref=vp-toolkit"
+              className="inline-flex items-center gap-2 rounded-xl bg-[#DC2626] px-8 py-4 text-base font-semibold text-white hover:bg-[#B91C1C] transition"
+            >
+              Get access to the VP Toolkit <ArrowRight className="h-5 w-5" />
+            </Link>
+            <p className="mt-3 text-sm text-muted-foreground">Book a 30-min call to see which tier fits your operation.</p>
+          </div>
+        </div>
+      </section>
+
       {/* Social proof quote */}
-      <section className="py-20 bg-card">
+      <section className="py-20 bg-background">
         <div className="mx-auto max-w-3xl px-4 text-center">
           <div className="text-4xl text-muted-foreground mb-6">&ldquo;</div>
           <blockquote className="text-xl font-medium text-foreground leading-relaxed">
