@@ -4,7 +4,32 @@ import Anthropic from "@anthropic-ai/sdk"
 import { auditRatelimit, getIp } from "@/lib/ratelimit"
 
 const auditSchema = z.object({
-  url: z.string().url(),
+  url: z
+    .string()
+    .url()
+    .refine((u) => {
+      try {
+        const { hostname, protocol } = new URL(u)
+        // Only allow public HTTPS/HTTP URLs — block private/internal IP ranges
+        if (!["https:", "http:"].includes(protocol)) return false
+        const privatePatterns = [
+          /^localhost$/i,
+          /^127\./,
+          /^10\./,
+          /^172\.(1[6-9]|2\d|3[01])\./,
+          /^192\.168\./,
+          /^0\./,
+          /^::1$/,
+          /^fc00:/i,
+          /^fe80:/i,
+          /\.internal$/i,
+          /\.local$/i,
+        ]
+        return !privatePatterns.some((p) => p.test(hostname))
+      } catch {
+        return false
+      }
+    }, "URL must be a publicly accessible address"),
 })
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })

@@ -5,8 +5,13 @@ import { streamText, tool } from "ai"
 import { z } from "zod"
 import { db } from "@/lib/db"
 import { notifyNewLead } from "@/lib/notifications"
+import { chatRatelimit, getIp } from "@/lib/ratelimit"
 
 export const maxDuration = 30
+
+// Max messages per request and max content length to prevent token exhaustion
+const MAX_MESSAGES = 20
+const MAX_MESSAGE_LENGTH = 2000
 
 const AIMS_SYSTEM_PROMPT = `You are the AI assistant for AIMS (AI Managing Services). You help visitors understand our services and find the right solution for their business.
 
@@ -54,11 +59,40 @@ QUALIFICATION BEHAVIOR:
 10. When you capture name and email, immediately use the capture_lead tool.`
 
 export async function POST(req: Request) {
-  const { messages } = await req.json()
+  // Rate limit public chat: 20 requests per minute per IP
+  if (chatRatelimit) {
+    const { success } = await chatRatelimit.limit(getIp(req))
+    if (!success) return Response.json({ error: "Too many requests. Please slow down." }, { status: 429 })
+  }
 
   if (!process.env.GEMINI_API_KEY) {
     return Response.json({ error: "AI not configured" }, { status: 503 })
   }
+
+  let rawMessages: unknown
+  try {
+    const body = await req.json()
+    rawMessages = body?.messages
+  } catch {
+    return Response.json({ error: "Invalid request body" }, { status: 400 })
+  }
+
+  if (!Array.isArray(rawMessages)) {
+    return Response.json({ error: "messages must be an array" }, { status: 400 })
+  }
+
+  // Clamp to last MAX_MESSAGES and truncate each content to MAX_MESSAGE_LENGTH
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const messages: any[] = rawMessages
+    .slice(-MAX_MESSAGES)
+    .filter((m: unknown) => typeof m === "object" && m !== null)
+    .map((m: unknown) => {
+      const msg = m as Record<string, unknown>
+      const content = typeof msg.content === "string"
+        ? msg.content.slice(0, MAX_MESSAGE_LENGTH)
+        : msg.content
+      return { ...msg, content }
+    })
 
   const result = streamText({
     model: google("gemini-2.0-flash-001"),

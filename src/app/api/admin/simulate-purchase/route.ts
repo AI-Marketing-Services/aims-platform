@@ -14,16 +14,17 @@ const schema = z.object({
 })
 
 export async function POST(req: Request) {
-  // Block in production unless explicitly enabled
-  if (process.env.NODE_ENV === "production" && process.env.ALLOW_SIMULATE !== "true") {
-    return NextResponse.json({ error: "Simulation disabled in production" }, { status: 403 })
-  }
-
+  // Auth and role check always run first
   const { userId, sessionClaims } = await auth()
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   const role = (sessionClaims?.metadata as { role?: string })?.role
   if (!role || !["ADMIN", "SUPER_ADMIN"].includes(role)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+  }
+
+  // Block in production — ALLOW_SIMULATE must never be set in prod env vars
+  if (process.env.NODE_ENV === "production") {
+    return NextResponse.json({ error: "Simulation disabled in production" }, { status: 403 })
   }
 
   const body = await req.json()

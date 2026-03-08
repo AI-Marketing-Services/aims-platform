@@ -22,6 +22,9 @@ export const formRatelimit = createRatelimiter(5, 60)
 // 3 AI audit requests per minute per IP (more expensive)
 export const auditRatelimit = createRatelimiter(3, 60)
 
+// 20 chat messages per minute per IP/user (public chatbot + portal chat)
+export const chatRatelimit = createRatelimiter(20, 60)
+
 export function getIp(req: Request): string {
   return (
     req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??

@@ -3,8 +3,12 @@ import { streamText, tool } from "ai"
 import { z } from "zod"
 import { auth } from "@clerk/nextjs/server"
 import { db } from "@/lib/db"
+import { chatRatelimit, getIp } from "@/lib/ratelimit"
 
 export const maxDuration = 30
+
+const MAX_MESSAGES = 20
+const MAX_MESSAGE_LENGTH = 2000
 
 const PORTAL_SYSTEM_PROMPT = `You are the AIMS Client Support Assistant. You help existing AIMS clients with their services, billing, and account questions.
 
@@ -32,11 +36,39 @@ export async function POST(req: Request) {
   const { userId } = await auth()
   if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 })
 
+  // Rate limit per authenticated user: 30 requests per minute
+  if (chatRatelimit) {
+    const { success } = await chatRatelimit.limit(`portal-chat:${userId}`)
+    if (!success) return Response.json({ error: "Too many requests. Please slow down." }, { status: 429 })
+  }
+
   if (!process.env.ANTHROPIC_API_KEY) {
     return Response.json({ error: "AI not configured" }, { status: 503 })
   }
 
-  const { messages } = await req.json()
+  let rawMessages: unknown
+  try {
+    const body = await req.json()
+    rawMessages = body?.messages
+  } catch {
+    return Response.json({ error: "Invalid request body" }, { status: 400 })
+  }
+
+  if (!Array.isArray(rawMessages)) {
+    return Response.json({ error: "messages must be an array" }, { status: 400 })
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const messages: any[] = rawMessages
+    .slice(-MAX_MESSAGES)
+    .filter((m: unknown) => typeof m === "object" && m !== null)
+    .map((m: unknown) => {
+      const msg = m as Record<string, unknown>
+      const content = typeof msg.content === "string"
+        ? msg.content.slice(0, MAX_MESSAGE_LENGTH)
+        : msg.content
+      return { ...msg, content }
+    })
 
   // Fetch client context
   let clientContext = ""
