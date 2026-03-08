@@ -568,8 +568,8 @@ export function Hero() {
             transition={{ duration: 0.7, delay: 0.45 }}
             className="mt-14 w-full max-w-5xl"
           >
-            <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl shadow-gray-300/40 h-auto sm:h-[420px]">
-              <div className="flex flex-col sm:flex-row h-auto sm:h-[420px]">
+            <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl shadow-gray-300/40 h-auto sm:h-[560px]">
+              <div className="flex flex-col sm:flex-row h-auto sm:h-[560px]">
 
                 {/* DESKTOP SIDEBAR — hidden on mobile */}
                 <div className="hidden sm:flex w-40 flex-shrink-0 border-r border-gray-100 bg-white flex-col">
