@@ -12,10 +12,7 @@ import {
   Cpu,
   GraduationCap,
   PiggyBank,
-  Package,
-  Share2,
   FileBarChart,
-  Settings,
   ChevronLeft,
   ChevronRight,
   ExternalLink,
@@ -50,17 +47,9 @@ const ADMIN_NAV = [
   {
     section: "Operations",
     items: [
-      { label: "Products", href: "/admin/products", icon: Package },
       { label: "Intern Ops", href: "/admin/intern-ops", icon: GraduationCap },
-      { label: "Referrals", href: "/admin/referrals", icon: Share2 },
       { label: "Lead Magnets", href: "/admin/lead-magnets", icon: FileBarChart },
       { label: "Simulate", href: "/admin/simulate", icon: FlaskConical },
-    ],
-  },
-  {
-    section: "System",
-    items: [
-      { label: "Settings", href: "/admin/settings", icon: Settings },
     ],
   },
 ] as const

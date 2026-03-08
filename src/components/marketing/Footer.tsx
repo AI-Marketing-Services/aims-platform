@@ -8,21 +8,29 @@ const FOOTER_LINKS = {
     { label: "SEO & AEO", href: "/services/seo-aeo" },
     { label: "RevOps Pipeline", href: "/services/revops-pipeline" },
     { label: "Lead Reactivation", href: "/services/lead-reactivation" },
+    { label: "Website + CRM + Chat", href: "/services/website-crm-chatbot" },
     { label: "View All Services", href: "/marketplace" },
+  ],
+  "Free Tools": [
+    { label: "AI Readiness Quiz", href: "/tools/ai-readiness-quiz" },
+    { label: "ROI Calculator", href: "/tools/roi-calculator" },
+    { label: "Free Website Audit", href: "/tools/website-audit" },
+    { label: "Segment Explorer", href: "/tools/segment-explorer" },
+    { label: "Stack Configurator", href: "/tools/stack-configurator" },
+  ],
+  Industries: [
+    { label: "Vendingpreneurs", href: "/industries/vendingpreneurs" },
+    { label: "Car Dealerships", href: "/industries/car-dealerships" },
+    { label: "Small Business", href: "/industries/small-business" },
+    { label: "Hotels & Hospitality", href: "/industries/hotels-hospitality" },
+    { label: "Enterprise", href: "/industries/enterprise" },
   ],
   Company: [
     { label: "About AIMS", href: "/about" },
     { label: "Case Studies", href: "/case-studies" },
     { label: "Blog", href: "/blog" },
-    { label: "Careers", href: "/careers" },
-    { label: "Partner Program", href: "/partners" },
-  ],
-  Resources: [
-    { label: "AI Readiness Quiz", href: "/tools/ai-readiness-quiz" },
-    { label: "ROI Calculator", href: "/tools/roi-calculator" },
-    { label: "Free Website Audit", href: "/tools/website-audit" },
     { label: "Pricing", href: "/pricing" },
-    { label: "FAQ", href: "/#faq" },
+    { label: "Get Started", href: "/get-started" },
   ],
 } as const
 
@@ -31,7 +39,7 @@ export function Footer() {
     <footer className="border-t border-border bg-background">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Main footer */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 py-12 lg:py-16">
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-8 py-12 lg:py-16">
           {/* Brand column */}
           <div className="col-span-2">
             <Link href="/" className="flex items-center gap-2.5">
@@ -94,11 +102,11 @@ export function Footer() {
             &copy; {new Date().getFullYear()} AI Managing Services. All rights reserved.
           </p>
           <div className="flex gap-6">
-            <Link href="/privacy" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
-              Privacy
+            <Link href="/about" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
+              About
             </Link>
-            <Link href="/terms" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
-              Terms
+            <Link href="/get-started" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
+              Contact
             </Link>
           </div>
         </div>

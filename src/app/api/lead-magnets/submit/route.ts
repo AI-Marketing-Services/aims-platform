@@ -167,13 +167,19 @@ export async function POST(req: Request) {
       }).catch(console.error)
     }
 
+    // Build results URL — dedicated page for quiz/calculator/audit, generic for others
+    const RESULTS_PAGE_TYPES = new Set(["ai-readiness-quiz", "roi-calculator", "website-audit"])
+    const resultsUrl = RESULTS_PAGE_TYPES.has(typeSlug)
+      ? `${appUrl}/tools/${typeSlug}/results/${submission.id}`
+      : `${appUrl}/tools/${typeSlug}`
+
     // Send immediate results email
     await sendLeadMagnetResults({
       to: parsed.data.email,
       name: parsed.data.name ?? "",
       type: typeSlug,
       score: parsed.data.score,
-      resultsUrl: `${appUrl}/tools/${typeSlug}?results=${submission.id}`,
+      resultsUrl,
     }).catch(console.error)
 
     return NextResponse.json(

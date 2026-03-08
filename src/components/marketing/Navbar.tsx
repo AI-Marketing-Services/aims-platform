@@ -1,27 +1,77 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs"
-import { Menu, X, ShoppingCart } from "lucide-react"
+import { Menu, X, ShoppingCart, ChevronDown } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
 import Image from "next/image"
 import { useCart } from "@/components/shared/CartContext"
 
-const NAV_LINKS = [
-  { label: "Services", href: "/marketplace" },
-  { label: "Why AIMS?", href: "/why-aims" },
-  { label: "Pricing", href: "/pricing" },
-  { label: "FAQ", href: "/#faq" },
-] as const
+const TOOLS_LINKS = [
+  { label: "AI Readiness Quiz", href: "/tools/ai-readiness-quiz", desc: "See how AI-ready your business is" },
+  { label: "ROI Calculator", href: "/tools/roi-calculator", desc: "Project your revenue impact" },
+  { label: "Free Website Audit", href: "/tools/website-audit", desc: "Score your site in 60 seconds" },
+  { label: "Segment Explorer", href: "/tools/segment-explorer", desc: "Browse 100+ B2B audiences" },
+  { label: "Stack Configurator", href: "/tools/stack-configurator", desc: "Build your custom AI stack" },
+]
+
+const INDUSTRIES_LINKS = [
+  { label: "Vendingpreneurs", href: "/industries/vendingpreneurs" },
+  { label: "Car Dealerships", href: "/industries/car-dealerships" },
+  { label: "Small Business", href: "/industries/small-business" },
+  { label: "Hotels & Hospitality", href: "/industries/hotels-hospitality" },
+  { label: "Enterprise", href: "/industries/enterprise" },
+]
+
+const RESOURCES_LINKS = [
+  { label: "Blog", href: "/blog", desc: "Playbooks and insights" },
+  { label: "Case Studies", href: "/case-studies", desc: "Real results from real clients" },
+]
+
+type DropdownKey = "tools" | "industries" | "resources" | null
+
+function DropdownMenu({
+  items,
+  withDesc,
+}: {
+  items: { label: string; href: string; desc?: string }[]
+  withDesc?: boolean
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -4 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -4 }}
+      transition={{ duration: 0.12 }}
+      className="absolute top-full left-1/2 -translate-x-1/2 mt-2 bg-white border border-gray-200 rounded-xl shadow-lg py-2 z-50 min-w-[200px]"
+    >
+      {items.map((item) => (
+        <Link
+          key={item.href}
+          href={item.href}
+          className="flex flex-col px-4 py-2.5 hover:bg-gray-50 transition-colors"
+        >
+          <span className="text-sm font-medium text-gray-800">{item.label}</span>
+          {withDesc && item.desc && (
+            <span className="text-xs text-gray-400 mt-0.5">{item.desc}</span>
+          )}
+        </Link>
+      ))}
+    </motion.div>
+  )
+}
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [dropdown, setDropdown] = useState<DropdownKey>(null)
+  const [mobileExpanded, setMobileExpanded] = useState<DropdownKey>(null)
   const pathname = usePathname()
   const { items, openCart } = useCart()
+  const dropdownRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12)
@@ -29,7 +79,22 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", onScroll)
   }, [])
 
-  useEffect(() => { setMobileOpen(false) }, [pathname])
+  useEffect(() => { setMobileOpen(false); setDropdown(null) }, [pathname])
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setDropdown(null)
+      }
+    }
+    document.addEventListener("mousedown", handleClick)
+    return () => document.removeEventListener("mousedown", handleClick)
+  }, [])
+
+  function toggleDropdown(key: DropdownKey) {
+    setDropdown((prev) => (prev === key ? null : key))
+  }
 
   return (
     <header
@@ -41,7 +106,7 @@ export function Navbar() {
       )}
     >
       <div className="mx-auto max-w-6xl px-4">
-        <div className="flex h-16 items-center justify-between gap-8">
+        <div className="flex h-16 items-center justify-between gap-6">
 
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 flex-shrink-0">
@@ -50,26 +115,93 @@ export function Navbar() {
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-0.5 flex-1 justify-center">
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.label}
-                href={link.href}
+          <nav ref={dropdownRef} className="hidden md:flex items-center gap-0.5 flex-1 justify-center">
+
+            {/* Services */}
+            <Link
+              href="/marketplace"
+              className={cn(
+                "px-3.5 py-1.5 text-sm font-medium rounded-lg transition-colors",
+                pathname === "/marketplace"
+                  ? "text-foreground bg-gray-100"
+                  : "text-muted-foreground hover:text-foreground hover:bg-gray-100/70"
+              )}
+            >
+              Services
+            </Link>
+
+            {/* Tools dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => toggleDropdown("tools")}
                 className={cn(
-                  "px-3.5 py-1.5 text-sm font-medium rounded-lg transition-colors",
-                  pathname === link.href
+                  "flex items-center gap-1 px-3.5 py-1.5 text-sm font-medium rounded-lg transition-colors",
+                  dropdown === "tools"
                     ? "text-foreground bg-gray-100"
                     : "text-muted-foreground hover:text-foreground hover:bg-gray-100/70"
                 )}
               >
-                {link.label}
-              </Link>
-            ))}
+                Free Tools
+                <ChevronDown className={cn("w-3.5 h-3.5 transition-transform", dropdown === "tools" ? "rotate-180" : "")} />
+              </button>
+              <AnimatePresence>
+                {dropdown === "tools" && <DropdownMenu items={TOOLS_LINKS} withDesc />}
+              </AnimatePresence>
+            </div>
+
+            {/* Industries dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => toggleDropdown("industries")}
+                className={cn(
+                  "flex items-center gap-1 px-3.5 py-1.5 text-sm font-medium rounded-lg transition-colors",
+                  dropdown === "industries"
+                    ? "text-foreground bg-gray-100"
+                    : "text-muted-foreground hover:text-foreground hover:bg-gray-100/70"
+                )}
+              >
+                Industries
+                <ChevronDown className={cn("w-3.5 h-3.5 transition-transform", dropdown === "industries" ? "rotate-180" : "")} />
+              </button>
+              <AnimatePresence>
+                {dropdown === "industries" && <DropdownMenu items={INDUSTRIES_LINKS} />}
+              </AnimatePresence>
+            </div>
+
+            {/* Resources dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => toggleDropdown("resources")}
+                className={cn(
+                  "flex items-center gap-1 px-3.5 py-1.5 text-sm font-medium rounded-lg transition-colors",
+                  dropdown === "resources"
+                    ? "text-foreground bg-gray-100"
+                    : "text-muted-foreground hover:text-foreground hover:bg-gray-100/70"
+                )}
+              >
+                Resources
+                <ChevronDown className={cn("w-3.5 h-3.5 transition-transform", dropdown === "resources" ? "rotate-180" : "")} />
+              </button>
+              <AnimatePresence>
+                {dropdown === "resources" && <DropdownMenu items={RESOURCES_LINKS} withDesc />}
+              </AnimatePresence>
+            </div>
+
+            <Link
+              href="/pricing"
+              className={cn(
+                "px-3.5 py-1.5 text-sm font-medium rounded-lg transition-colors",
+                pathname === "/pricing"
+                  ? "text-foreground bg-gray-100"
+                  : "text-muted-foreground hover:text-foreground hover:bg-gray-100/70"
+              )}
+            >
+              Pricing
+            </Link>
           </nav>
 
           {/* Desktop auth */}
           <div className="hidden md:flex items-center gap-3 flex-shrink-0">
-            {/* Cart button */}
             <button
               onClick={openCart}
               className="relative p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-gray-100 transition-colors"
@@ -123,17 +255,75 @@ export function Navbar() {
             className="md:hidden overflow-hidden bg-card border-b border-border"
           >
             <div className="px-4 py-4 space-y-1">
-              {NAV_LINKS.map((link) => (
-                <Link
-                  key={link.label}
-                  href={link.href}
-                  className="flex items-center px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
+              <Link href="/marketplace" className="flex items-center px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors">
+                Services
+              </Link>
+
+              {/* Mobile Tools */}
+              <div>
+                <button
+                  onClick={() => setMobileExpanded((p) => p === "tools" ? null : "tools")}
+                  className="flex items-center justify-between w-full px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
                 >
-                  {link.label}
-                </Link>
-              ))}
+                  Free Tools
+                  <ChevronDown className={cn("w-4 h-4 transition-transform", mobileExpanded === "tools" ? "rotate-180" : "")} />
+                </button>
+                {mobileExpanded === "tools" && (
+                  <div className="ml-3 mt-1 space-y-1">
+                    {TOOLS_LINKS.map((l) => (
+                      <Link key={l.href} href={l.href} className="block px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors">
+                        {l.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Mobile Industries */}
+              <div>
+                <button
+                  onClick={() => setMobileExpanded((p) => p === "industries" ? null : "industries")}
+                  className="flex items-center justify-between w-full px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
+                >
+                  Industries
+                  <ChevronDown className={cn("w-4 h-4 transition-transform", mobileExpanded === "industries" ? "rotate-180" : "")} />
+                </button>
+                {mobileExpanded === "industries" && (
+                  <div className="ml-3 mt-1 space-y-1">
+                    {INDUSTRIES_LINKS.map((l) => (
+                      <Link key={l.href} href={l.href} className="block px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors">
+                        {l.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Mobile Resources */}
+              <div>
+                <button
+                  onClick={() => setMobileExpanded((p) => p === "resources" ? null : "resources")}
+                  className="flex items-center justify-between w-full px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
+                >
+                  Resources
+                  <ChevronDown className={cn("w-4 h-4 transition-transform", mobileExpanded === "resources" ? "rotate-180" : "")} />
+                </button>
+                {mobileExpanded === "resources" && (
+                  <div className="ml-3 mt-1 space-y-1">
+                    {RESOURCES_LINKS.map((l) => (
+                      <Link key={l.href} href={l.href} className="block px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors">
+                        {l.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <Link href="/pricing" className="flex items-center px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors">
+                Pricing
+              </Link>
+
               <div className="pt-3 mt-3 border-t border-border space-y-2">
-                {/* Cart button — mobile */}
                 <button
                   onClick={() => { openCart(); setMobileOpen(false) }}
                   className="flex w-full items-center gap-2 px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"

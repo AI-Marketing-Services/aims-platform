@@ -13,9 +13,10 @@ export async function generateMetadata({ params }: Props) {
   const sub = await db.leadMagnetSubmission.findUnique({ where: { id: submissionId } })
   if (!sub) return { title: "ROI Calculator Results — AIMS" }
   const data = sub.data as Record<string, unknown>
-  const savings = data?.monthlySavings as number | undefined
+  const calcResults = (data?.results ?? {}) as Record<string, unknown>
+  const savings = (calcResults?.additionalRevenue ?? 0) as number
   return {
-    title: `${sub.name ?? "Someone"} could save $${savings?.toLocaleString() ?? "—"}/mo with AI | AIMS`,
+    title: `${sub.name ?? "Someone"} could add $${savings > 0 ? savings.toLocaleString() : "—"}/mo with AI | AIMS`,
     description: "See how much time and money AI automation could save this business — and calculate your own ROI.",
   }
 }
@@ -29,12 +30,14 @@ export default async function ROIResultsPage({ params }: Props) {
   if (!submission || submission.type !== "ROI_CALCULATOR") notFound()
 
   const data = (submission.data ?? {}) as Record<string, unknown>
-  const results = (submission.results ?? {}) as Record<string, unknown>
+  // Calculator stores: data: { inputs: {...}, results: {...} }
+  const calcResults = ((data.results ?? submission.results ?? {}) as Record<string, unknown>)
 
-  const monthlySavings = (results.monthlySavings ?? data.monthlySavings ?? 0) as number
+  const monthlySavings = (calcResults.additionalRevenue ?? calcResults.monthlySavings ?? 0) as number
   const annualSavings = monthlySavings * 12
-  const hoursReclaimed = (results.hoursReclaimed ?? data.hoursReclaimed ?? 0) as number
-  const roiMultiple = (results.roiMultiple ?? data.roiMultiple ?? 3) as number
+  const hoursReclaimed = (calcResults.hoursReclaimed ?? 0) as number
+  const rawRoi = (calcResults.roi ?? 0) as number
+  const roiMultiple = rawRoi > 0 ? Math.round(rawRoi / 100 * 10) / 10 : 3
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://aimseos.com"
   const shareUrl = `${appUrl}/tools/roi-calculator/results/${submissionId}`

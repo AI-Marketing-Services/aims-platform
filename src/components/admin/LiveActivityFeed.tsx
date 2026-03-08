@@ -66,7 +66,7 @@ export function LiveActivityFeed() {
             Live
           </span>
         </div>
-        <Link href="/admin/notifications" className="flex items-center gap-1 text-xs font-medium text-[#DC2626] hover:underline">
+        <Link href="/admin/crm" className="flex items-center gap-1 text-xs font-medium text-[#DC2626] hover:underline">
           View all <ArrowUpRight className="h-3 w-3" />
         </Link>
       </div>
