@@ -2,9 +2,23 @@ import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
 import { FileText, TrendingUp, Users, Award } from "lucide-react"
-import { cn } from "@/lib/utils"
+import {
+  SubmissionsByTypeChart,
+  SubmissionsOverTimeChart,
+  type SubmissionsByTypeEntry,
+  type SubmissionOverTimeEntry,
+} from "@/components/admin/LeadMagnetCharts"
+import { LeadMagnetTable, type SubmissionRow } from "@/components/admin/LeadMagnetTable"
 
 export const metadata = { title: "Lead Magnets" }
+
+const LEAD_MAGNET_TYPES = [
+  "AI_READINESS_QUIZ",
+  "ROI_CALCULATOR",
+  "WEBSITE_AUDIT",
+  "SEGMENT_EXPLORER",
+  "STACK_CONFIGURATOR",
+]
 
 const TYPE_LABEL: Record<string, string> = {
   AI_READINESS_QUIZ: "AI Readiness Quiz",
@@ -14,73 +28,180 @@ const TYPE_LABEL: Record<string, string> = {
   STACK_CONFIGURATOR: "Stack Configurator",
 }
 
-const TYPE_COLOR: Record<string, string> = {
-  AI_READINESS_QUIZ: "text-blue-400 bg-blue-500/10 border-blue-500/20",
-  ROI_CALCULATOR: "text-green-400 bg-green-500/10 border-green-500/20",
-  WEBSITE_AUDIT: "text-purple-400 bg-purple-500/10 border-purple-500/20",
-  SEGMENT_EXPLORER: "text-orange-400 bg-orange-500/10 border-orange-500/20",
-  STACK_CONFIGURATOR: "text-yellow-400 bg-yellow-500/10 border-yellow-500/20",
-}
-
-function timeAgo(date: Date) {
-  const diff = Date.now() - date.getTime()
-  const mins = Math.floor(diff / 60000)
-  if (mins < 60) return `${mins}m ago`
-  const hrs = Math.floor(mins / 60)
-  if (hrs < 24) return `${hrs}h ago`
-  return `${Math.floor(hrs / 24)}d ago`
-}
-
 export default async function AdminLeadMagnetsPage() {
   const { userId, sessionClaims } = await auth()
   if (!userId) redirect("/sign-in")
   const role = (sessionClaims?.metadata as { role?: string })?.role
   if (!role || !["ADMIN", "SUPER_ADMIN"].includes(role)) redirect("/portal/dashboard")
 
-  const [submissions, byType] = await Promise.all([
+  // Date helpers
+  const now = new Date()
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+  const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+
+  const [
+    totalCount,
+    thisMonthCount,
+    convertedCount,
+    allScores,
+    byType,
+    submissionsForTable,
+    last30Days,
+  ] = await Promise.all([
+    // Total submissions
+    db.leadMagnetSubmission.count(),
+    // This month
+    db.leadMagnetSubmission.count({
+      where: { createdAt: { gte: startOfMonth } },
+    }),
+    // Converted to deal where deal stage is ACTIVE_CLIENT
+    db.leadMagnetSubmission.count({
+      where: {
+        convertedToDeal: true,
+      },
+    }),
+    // Scores for average
+    db.leadMagnetSubmission.findMany({
+      where: { score: { not: null } },
+      select: { score: true },
+    }),
+    // By type counts + conversion per type
+    db.leadMagnetSubmission.groupBy({
+      by: ["type"],
+      _count: { id: true },
+    }),
+    // All submissions for table
     db.leadMagnetSubmission.findMany({
       orderBy: { createdAt: "desc" },
-      take: 50,
       select: {
         id: true,
         type: true,
         email: true,
         name: true,
-        company: true,
         score: true,
         convertedToDeal: true,
+        dealId: true,
         source: true,
+        data: true,
         createdAt: true,
       },
     }),
-    db.leadMagnetSubmission.groupBy({
-      by: ["type"],
-      _count: { id: true },
-      _avg: { score: true },
+    // Last 30 days for area chart
+    db.leadMagnetSubmission.findMany({
+      where: { createdAt: { gte: thirtyDaysAgo } },
+      select: { createdAt: true },
+      orderBy: { createdAt: "asc" },
     }),
   ])
 
-  const total = submissions.length
-  const converted = submissions.filter((s) => s.convertedToDeal).length
-  const convRate = total > 0 ? Math.round((converted / total) * 100) : 0
-  const avgScore = submissions.filter((s) => s.score !== null).reduce((s, sub) => s + (sub.score ?? 0), 0) /
-    (submissions.filter((s) => s.score !== null).length || 1)
+  // Conversion rate: converted / total
+  const convRate = totalCount > 0 ? Math.round((convertedCount / totalCount) * 100) : 0
+
+  // Average score
+  const scoresArr = allScores.map((s) => s.score as number)
+  const avgScore =
+    scoresArr.length > 0
+      ? scoresArr.reduce((acc, v) => acc + v, 0) / scoresArr.length
+      : null
+
+  // Submissions by type data
+  const typeCountMap: Record<string, number> = {}
+  for (const t of byType) {
+    typeCountMap[t.type] = t._count.id
+  }
+  const submissionsByTypeData: SubmissionsByTypeEntry[] = LEAD_MAGNET_TYPES.map((type) => ({
+    type,
+    count: typeCountMap[type] ?? 0,
+  }))
+
+  // Submissions over time: group by day
+  const dayMap: Record<string, number> = {}
+  for (let i = 0; i < 30; i++) {
+    const d = new Date(thirtyDaysAgo.getTime() + i * 24 * 60 * 60 * 1000)
+    const key = d.toLocaleDateString("en-US", { month: "short", day: "numeric" })
+    dayMap[key] = 0
+  }
+  for (const sub of last30Days) {
+    const key = new Date(sub.createdAt).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+    })
+    if (key in dayMap) {
+      dayMap[key] = (dayMap[key] ?? 0) + 1
+    }
+  }
+  const overTimeData: SubmissionOverTimeEntry[] = Object.entries(dayMap).map(
+    ([date, count]) => ({ date, count })
+  )
+
+  // Per-type conversion rates for insight card
+  const typeConvMap: Record<string, { total: number; converted: number }> = {}
+  for (const sub of submissionsForTable) {
+    if (!typeConvMap[sub.type]) typeConvMap[sub.type] = { total: 0, converted: 0 }
+    typeConvMap[sub.type]!.total++
+    if (sub.convertedToDeal) typeConvMap[sub.type]!.converted++
+  }
+  let bestType = ""
+  let bestConvRate = 0
+  for (const [type, vals] of Object.entries(typeConvMap)) {
+    const r = vals.total > 0 ? Math.round((vals.converted / vals.total) * 100) : 0
+    if (r > bestConvRate) {
+      bestConvRate = r
+      bestType = type
+    }
+  }
+
+  // Serialize for client components
+  const tableRows: SubmissionRow[] = submissionsForTable.map((s) => ({
+    id: s.id,
+    type: s.type,
+    email: s.email,
+    name: s.name,
+    score: s.score,
+    convertedToDeal: s.convertedToDeal,
+    dealId: s.dealId,
+    source: s.source,
+    data: s.data,
+    createdAt: s.createdAt.toISOString(),
+  }))
 
   return (
     <div className="space-y-8">
       <div>
         <h1 className="text-2xl font-bold text-foreground">Lead Magnet Analytics</h1>
-        <p className="text-sm text-muted-foreground mt-1">Submissions, conversion rates, and scores across all lead magnets</p>
+        <p className="text-sm text-muted-foreground mt-1">
+          Submissions, conversion rates, and scores across all lead magnets
+        </p>
       </div>
 
       {/* KPI row */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         {[
-          { label: "Total Submissions", value: total.toString(), icon: FileText },
-          { label: "Converted to Deal", value: converted.toString(), icon: TrendingUp },
-          { label: "Conversion Rate", value: `${convRate}%`, icon: Users },
-          { label: "Avg. Score", value: isNaN(avgScore) ? "—" : avgScore.toFixed(1), icon: Award },
-        ].map(({ label, value, icon: Icon }) => (
+          {
+            label: "Total Submissions",
+            value: totalCount.toLocaleString(),
+            sub: "All time",
+            icon: FileText,
+          },
+          {
+            label: "This Month",
+            value: thisMonthCount.toLocaleString(),
+            sub: new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" }),
+            icon: TrendingUp,
+          },
+          {
+            label: "Conversion Rate",
+            value: `${convRate}%`,
+            sub: `${convertedCount} converted`,
+            icon: Users,
+          },
+          {
+            label: "Avg. Score",
+            value: avgScore != null ? avgScore.toFixed(1) : "—",
+            sub: `${scoresArr.length} scored`,
+            icon: Award,
+          },
+        ].map(({ label, value, sub, icon: Icon }) => (
           <div key={label} className="rounded-xl border border-border bg-card p-5">
             <div className="flex items-center justify-between mb-3">
               <p className="text-xs text-muted-foreground">{label}</p>
@@ -89,80 +210,41 @@ export default async function AdminLeadMagnetsPage() {
               </div>
             </div>
             <p className="text-xl font-bold text-foreground font-mono">{value}</p>
+            <p className="text-xs text-muted-foreground mt-1">{sub}</p>
           </div>
         ))}
       </div>
 
-      {/* By type */}
-      <div className="rounded-xl border border-border bg-card p-6">
-        <h2 className="text-sm font-semibold text-foreground mb-5">Submissions by Type</h2>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {byType.map((t) => (
-            <div key={t.type} className={cn("rounded-lg border p-4", TYPE_COLOR[t.type] ?? "border-border bg-muted")}>
-              <p className="text-sm font-medium mb-1">{TYPE_LABEL[t.type] ?? t.type}</p>
-              <div className="flex items-baseline gap-3">
-                <span className="text-2xl font-bold font-mono">{t._count.id}</span>
-                {t._avg.score && (
-                  <span className="text-xs opacity-70">avg {t._avg.score.toFixed(1)} score</span>
-                )}
-              </div>
-            </div>
-          ))}
+      {/* Charts row */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div className="rounded-xl border border-border bg-card p-6">
+          <h2 className="text-sm font-semibold text-foreground mb-5">Submissions by Type</h2>
+          <SubmissionsByTypeChart data={submissionsByTypeData} />
+        </div>
+        <div className="rounded-xl border border-border bg-card p-6">
+          <h2 className="text-sm font-semibold text-foreground mb-1">Submissions Over Time</h2>
+          <p className="text-xs text-muted-foreground mb-4">Last 30 days</p>
+          <SubmissionsOverTimeChart data={overTimeData} />
         </div>
       </div>
 
-      {/* Recent submissions */}
-      <div className="rounded-xl border border-border bg-card overflow-hidden">
-        <div className="px-5 py-4 border-b border-border">
-          <h2 className="text-sm font-semibold text-foreground">Recent Submissions</h2>
+      {/* Submissions table */}
+      <LeadMagnetTable submissions={tableRows} />
+
+      {/* Insight card */}
+      {bestType && (
+        <div className="rounded-xl border border-[#DC2626]/20 bg-[#DC2626]/5 p-5">
+          <p className="text-sm text-foreground">
+            <span className="font-semibold text-[#DC2626]">Insight: </span>
+            Your highest-converting tool is{" "}
+            <span className="font-semibold">{TYPE_LABEL[bestType] ?? bestType}</span> at{" "}
+            <span className="font-semibold text-green-400">{bestConvRate}% conversion</span>.{" "}
+            {bestConvRate > 0
+              ? "Consider driving more traffic to this tool."
+              : "No conversions recorded yet — consider improving follow-up sequences."}
+          </p>
         </div>
-        {submissions.length === 0 ? (
-          <div className="p-8 text-center">
-            <p className="text-sm text-muted-foreground">No submissions yet.</p>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-border">
-                  {["Contact", "Type", "Score", "Converted", "Source", "Time"].map((h) => (
-                    <th key={h} className="px-4 py-3 text-left text-xs font-medium text-muted-foreground">{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {submissions.map((sub) => (
-                  <tr key={sub.id} className="border-b border-border/50 hover:bg-muted/30 transition-colors">
-                    <td className="px-4 py-3">
-                      <p className="text-sm font-medium text-foreground">{sub.name ?? sub.email.split("@")[0]}</p>
-                      <p className="text-xs text-muted-foreground">{sub.email}</p>
-                    </td>
-                    <td className="px-4 py-3">
-                      <span className={cn("text-xs font-medium px-2 py-0.5 rounded-full border", TYPE_COLOR[sub.type] ?? "border-border bg-muted text-muted-foreground")}>
-                        {TYPE_LABEL[sub.type] ?? sub.type}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <span className="text-sm font-mono text-foreground">{sub.score?.toFixed(0) ?? "—"}</span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <span className={cn("text-xs font-medium", sub.convertedToDeal ? "text-green-400" : "text-muted-foreground")}>
-                        {sub.convertedToDeal ? "Yes" : "No"}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <span className="text-xs text-muted-foreground">{sub.source ?? "direct"}</span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <span className="text-xs text-muted-foreground">{timeAgo(sub.createdAt)}</span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+      )}
     </div>
   )
 }

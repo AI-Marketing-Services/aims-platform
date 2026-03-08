@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react"
 import { motion } from "framer-motion"
-import { Plus, MoreHorizontal, DollarSign, Clock, Search } from "lucide-react"
+import { Plus, Search, ChevronDown } from "lucide-react"
 import Link from "next/link"
 import { AddDealModal } from "./AddDealModal"
 import {
@@ -27,6 +27,8 @@ type DealStage =
   | "PROPOSAL_SENT"
   | "NEGOTIATION"
   | "ACTIVE_CLIENT"
+  | "CHURNED"
+  | "LOST"
 
 type Deal = {
   id: string
@@ -36,11 +38,15 @@ type Deal = {
   value: number
   mrr: number
   source?: string
+  channelTag?: string
   serviceArms: string[]
   daysInStage: number
+  leadScore?: number
+  assignedTo?: string
+  updatedAt?: string
 }
 
-const STAGES: { key: DealStage; label: string; color: string }[] = [
+const KANBAN_STAGES: { key: DealStage; label: string; color: string }[] = [
   { key: "NEW_LEAD", label: "New Lead", color: "border-gray-500" },
   { key: "QUALIFIED", label: "Qualified", color: "border-blue-500" },
   { key: "DEMO_BOOKED", label: "Demo Booked", color: "border-purple-500" },
@@ -49,51 +55,132 @@ const STAGES: { key: DealStage; label: string; color: string }[] = [
   { key: "ACTIVE_CLIENT", label: "Active Client", color: "border-green-500" },
 ]
 
+const CLOSED_STAGES: { key: DealStage; label: string; color: string }[] = [
+  { key: "CHURNED", label: "Churned", color: "border-gray-600" },
+  { key: "LOST", label: "Lost", color: "border-red-900" },
+]
 
-function DealCardInner({ deal }: { deal: Deal }) {
-  const isStale = deal.daysInStage > 5 && deal.stage !== "ACTIVE_CLIENT"
+const SOURCE_OPTIONS = [
+  { value: "all", label: "All Sources" },
+  { value: "Quiz", label: "Quiz" },
+  { value: "Calculator", label: "Calculator" },
+  { value: "Audit", label: "Audit" },
+  { value: "Chatbot", label: "Chatbot" },
+  { value: "Referral", label: "Referral" },
+  { value: "Direct", label: "Direct" },
+  { value: "Intake", label: "Intake" },
+]
+
+const SCORE_OPTIONS = [
+  { value: "all", label: "All Scores" },
+  { value: "hot", label: "Hot (70+)" },
+  { value: "warm", label: "Warm (40–69)" },
+  { value: "cold", label: "Cold (<40)" },
+]
+
+function getInitials(name: string): string {
+  return name
+    .split(" ")
+    .slice(0, 2)
+    .map((w) => w[0] ?? "")
+    .join("")
+    .toUpperCase()
+}
+
+function timeInStage(updatedAt: string | undefined, daysInStage: number): { label: string; stale: boolean } {
+  if (updatedAt) {
+    const days = Math.max(0, Math.floor((Date.now() - new Date(updatedAt).getTime()) / 86_400_000))
+    return { label: `${days}d`, stale: days > 7 }
+  }
+  return { label: `${daysInStage}d`, stale: daysInStage > 7 }
+}
+
+function LeadScoreDot({ score }: { score?: number }) {
+  if (score == null) return null
+  if (score >= 70) {
+    return (
+      <span className="flex items-center gap-1">
+        <span className="w-1.5 h-1.5 rounded-full bg-red-500 flex-shrink-0" />
+        <span className="text-xs text-red-400 font-mono">Hot</span>
+      </span>
+    )
+  }
+  if (score >= 40) {
+    return (
+      <span className="flex items-center gap-1">
+        <span className="w-1.5 h-1.5 rounded-full bg-amber-500 flex-shrink-0" />
+        <span className="text-xs text-amber-400 font-mono">Warm</span>
+      </span>
+    )
+  }
+  return null
+}
+
+function DealCardInner({ deal, isDraggingOverlay = false }: { deal: Deal; isDraggingOverlay?: boolean }) {
+  const { label: timeLabel, stale } = timeInStage(deal.updatedAt, deal.daysInStage)
 
   return (
     <>
-      <div className="flex items-start justify-between mb-3">
-        <Link
-          href={`/admin/crm/${deal.id}`}
-          className="hover:underline"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <div className="text-white font-medium text-sm">{deal.contactName}</div>
-          {deal.company && <div className="text-gray-500 text-xs">{deal.company}</div>}
-        </Link>
-        <button className="p-1 hover:bg-white/5 rounded transition-colors text-gray-500 hover:text-white">
-          <MoreHorizontal className="w-3.5 h-3.5" />
-        </button>
+      <div className="flex items-start justify-between mb-2">
+        {isDraggingOverlay ? (
+          <div>
+            <div className="text-white font-semibold text-sm">{deal.contactName}</div>
+            {deal.company && <div className="text-gray-400 text-xs">{deal.company}</div>}
+          </div>
+        ) : (
+          <Link
+            href={`/admin/crm/${deal.id}`}
+            className="hover:underline min-w-0"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="text-white font-semibold text-sm leading-tight">{deal.contactName}</div>
+            {deal.company && <div className="text-gray-400 text-xs mt-0.5">{deal.company}</div>}
+          </Link>
+        )}
+        {deal.assignedTo && (
+          <div
+            className="flex-shrink-0 ml-2 w-6 h-6 rounded-full bg-[#DC2626]/20 border border-[#DC2626]/30 flex items-center justify-center text-[10px] font-bold text-[#DC2626]"
+            title={deal.assignedTo}
+          >
+            {getInitials(deal.assignedTo)}
+          </div>
+        )}
       </div>
 
-      <div className="flex items-center gap-3 text-xs text-gray-400 mb-3">
-        <span className="flex items-center gap-1">
-          <DollarSign className="w-3 h-3" />
-          ${deal.mrr}/mo
+      {/* Value badge */}
+      <div className="flex items-center gap-2 mb-2 flex-wrap">
+        <span className="text-xs font-mono text-white/80 bg-white/8 px-1.5 py-0.5 rounded">
+          ${deal.mrr.toLocaleString()}/mo
         </span>
-        <span className="flex items-center gap-1">
-          <Clock className="w-3 h-3" />
-          <span className={cn(isStale ? "text-orange-400" : "")}>
-            {deal.daysInStage}d
-          </span>
-        </span>
-      </div>
-
-      <div className="flex flex-wrap gap-1">
-        {deal.serviceArms.slice(0, 2).map((arm) => (
-          <span key={arm} className="text-xs px-2 py-0.5 bg-white/5 text-gray-400 rounded-md">
-            {arm}
-          </span>
-        ))}
-        {deal.serviceArms.length > 2 && (
-          <span className="text-xs px-2 py-0.5 bg-white/5 text-gray-400 rounded-md">
-            +{deal.serviceArms.length - 2}
+        {deal.channelTag && (
+          <span className="text-xs px-1.5 py-0.5 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded">
+            {deal.channelTag}
           </span>
         )}
       </div>
+
+      {/* Score + time row */}
+      <div className="flex items-center justify-between gap-2">
+        <LeadScoreDot score={deal.leadScore} />
+        <span className={cn("text-xs font-mono ml-auto", stale ? "text-red-400" : "text-gray-500")}>
+          {timeLabel}
+        </span>
+      </div>
+
+      {deal.serviceArms.length > 0 && (
+        <div className="flex flex-wrap gap-1 mt-2">
+          {deal.serviceArms.slice(0, 2).map((arm) => (
+            <span key={arm} className="text-xs px-1.5 py-0.5 bg-white/5 text-gray-400 rounded">
+              {arm}
+            </span>
+          ))}
+          {deal.serviceArms.length > 2 && (
+            <span className="text-xs px-1.5 py-0.5 bg-white/5 text-gray-400 rounded">
+              +{deal.serviceArms.length - 2}
+            </span>
+          )}
+        </div>
+      )}
     </>
   )
 }
@@ -106,7 +193,7 @@ function DraggableDealCard({ deal }: { deal: Deal }) {
 
   const style = {
     transform: CSS.Translate.toString(transform),
-    opacity: isDragging ? 0.35 : 1,
+    opacity: isDragging ? 0.3 : 1,
     cursor: isDragging ? "grabbing" : "grab",
   }
 
@@ -116,7 +203,7 @@ function DraggableDealCard({ deal }: { deal: Deal }) {
       style={style}
       {...attributes}
       {...listeners}
-      className="bg-[#1C1F2A] border border-white/5 rounded-xl p-4 hover:border-white/15 transition-colors touch-none"
+      className="bg-[#1C1F2A] border border-white/5 rounded-xl p-3.5 hover:border-white/15 transition-colors touch-none"
     >
       <DealCardInner deal={deal} />
     </div>
@@ -127,31 +214,39 @@ function DroppableColumn({
   stage,
   deals,
   onAddDeal,
+  activeId,
 }: {
   stage: { key: DealStage; label: string; color: string }
   deals: Deal[]
   onAddDeal: (stage: DealStage) => void
+  activeId: string | null
 }) {
   const stageMRR = deals.reduce((sum, d) => sum + d.mrr, 0)
   const { isOver, setNodeRef } = useDroppable({ id: stage.key })
+  const isDragging = activeId !== null
 
   return (
     <div className="flex flex-col w-60 flex-shrink-0">
+      {/* Column header */}
       <div className={cn("border-t-2 pt-3 mb-3", stage.color)}>
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-white">{stage.label}</span>
-          <span className="text-xs text-gray-500">{deals.length}</span>
+        <div className="flex items-baseline justify-between gap-1">
+          <span className="text-sm font-medium text-white truncate">{stage.label}</span>
+          <span className="text-xs font-mono text-gray-500 flex-shrink-0">({deals.length})</span>
         </div>
         {stageMRR > 0 && (
-          <div className="text-xs text-gray-500 mt-0.5">${stageMRR}/mo</div>
+          <div className="text-xs font-mono text-gray-500 mt-0.5">${stageMRR.toLocaleString()}/mo</div>
         )}
       </div>
 
       <div
         ref={setNodeRef}
         className={cn(
-          "flex-1 space-y-2 overflow-y-auto pr-1 rounded-xl min-h-24 transition-colors",
-          isOver ? "bg-white/3 ring-1 ring-inset ring-white/10" : ""
+          "flex-1 space-y-2 overflow-y-auto pr-1 rounded-xl min-h-24 transition-all",
+          isDragging && isOver
+            ? "bg-red-950/30 ring-1 ring-inset ring-red-500/40 border border-dashed border-red-500/40"
+            : isDragging
+            ? "bg-white/2 ring-1 ring-inset ring-white/5"
+            : ""
         )}
       >
         {deals.map((deal) => (
@@ -183,20 +278,35 @@ export function CRMKanban({ initialDeals }: { initialDeals: Deal[] }) {
   const [addingToStage, setAddingToStage] = useState<DealStage | null>(null)
   const [search, setSearch] = useState("")
   const [sourceFilter, setSourceFilter] = useState<string>("all")
-
-  const sources = useMemo(() => {
-    const s = new Set(deals.map((d) => d.source).filter(Boolean) as string[])
-    return Array.from(s)
-  }, [deals])
+  const [scoreFilter, setScoreFilter] = useState<string>("all")
+  const [showClosed, setShowClosed] = useState(false)
 
   const filteredDeals = useMemo(() => {
     return deals.filter((d) => {
       const q = search.toLowerCase()
-      if (q && !d.contactName.toLowerCase().includes(q) && !d.company?.toLowerCase().includes(q)) return false
-      if (sourceFilter !== "all" && d.source !== sourceFilter) return false
+      if (
+        q &&
+        !d.contactName.toLowerCase().includes(q) &&
+        !d.company?.toLowerCase().includes(q)
+      )
+        return false
+      if (sourceFilter !== "all") {
+        const src = (d.source ?? d.channelTag ?? "").toLowerCase()
+        if (!src.includes(sourceFilter.toLowerCase())) return false
+      }
+      if (scoreFilter !== "all") {
+        const score = d.leadScore ?? 0
+        if (scoreFilter === "hot" && score < 70) return false
+        if (scoreFilter === "warm" && (score < 40 || score >= 70)) return false
+        if (scoreFilter === "cold" && score >= 40) return false
+      }
       return true
     })
-  }, [deals, search, sourceFilter])
+  }, [deals, search, sourceFilter, scoreFilter])
+
+  const visibleStages = useMemo(() => {
+    return showClosed ? [...KANBAN_STAGES, ...CLOSED_STAGES] : KANBAN_STAGES
+  }, [showClosed])
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
@@ -214,8 +324,9 @@ export function CRMKanban({ initialDeals }: { initialDeals: Deal[] }) {
 
     const dealId = String(active.id)
     const newStage = String(over.id) as DealStage
+    const allStageKeys = [...KANBAN_STAGES, ...CLOSED_STAGES].map((s) => s.key)
 
-    if (!STAGES.some((s) => s.key === newStage)) return
+    if (!allStageKeys.includes(newStage)) return
 
     setDeals((prev) =>
       prev.map((d) => (d.id === dealId ? { ...d, stage: newStage } : d))
@@ -230,9 +341,10 @@ export function CRMKanban({ initialDeals }: { initialDeals: Deal[] }) {
 
   return (
     <>
-      {/* Search + filter bar */}
-      <div className="flex flex-col sm:flex-row gap-3 mb-5">
-        <div className="relative flex-1 max-w-xs">
+      {/* Toolbar */}
+      <div className="flex flex-wrap items-center gap-3 mb-5">
+        {/* Search */}
+        <div className="relative flex-1 min-w-[160px] max-w-xs">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-500" />
           <input
             type="text"
@@ -242,30 +354,68 @@ export function CRMKanban({ initialDeals }: { initialDeals: Deal[] }) {
             className="w-full pl-9 pr-4 py-2 bg-[#151821] border border-white/10 rounded-lg text-sm text-white placeholder-gray-600 focus:outline-none focus:border-white/20"
           />
         </div>
-        {sources.length > 0 && (
+
+        {/* Source filter */}
+        <div className="relative">
           <select
             value={sourceFilter}
             onChange={(e) => setSourceFilter(e.target.value)}
-            className="px-3 py-2 bg-[#151821] border border-white/10 rounded-lg text-sm text-gray-300 focus:outline-none focus:border-white/20"
+            className="appearance-none pl-3 pr-8 py-2 bg-[#151821] border border-white/10 rounded-lg text-sm text-gray-300 focus:outline-none focus:border-white/20 cursor-pointer"
           >
-            <option value="all">All Sources</option>
-            {sources.map((s) => (
-              <option key={s} value={s}>{s}</option>
+            {SOURCE_OPTIONS.map((o) => (
+              <option key={o.value} value={o.value}>{o.label}</option>
             ))}
           </select>
+          <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-500 pointer-events-none" />
+        </div>
+
+        {/* Score filter */}
+        <div className="relative">
+          <select
+            value={scoreFilter}
+            onChange={(e) => setScoreFilter(e.target.value)}
+            className="appearance-none pl-3 pr-8 py-2 bg-[#151821] border border-white/10 rounded-lg text-sm text-gray-300 focus:outline-none focus:border-white/20 cursor-pointer"
+          >
+            {SCORE_OPTIONS.map((o) => (
+              <option key={o.value} value={o.value}>{o.label}</option>
+            ))}
+          </select>
+          <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-500 pointer-events-none" />
+        </div>
+
+        {/* Show Closed toggle */}
+        <label className="flex items-center gap-2 cursor-pointer text-sm text-gray-400 hover:text-gray-300 select-none">
+          <input
+            type="checkbox"
+            checked={showClosed}
+            onChange={(e) => setShowClosed(e.target.checked)}
+            className="w-3.5 h-3.5 accent-[#DC2626] cursor-pointer"
+          />
+          Show Closed
+        </label>
+
+        {/* Result count */}
+        {(search || sourceFilter !== "all" || scoreFilter !== "all") && (
+          <span className="text-xs text-gray-500 font-mono">
+            {filteredDeals.length} / {deals.length} deals
+          </span>
         )}
-        {(search || sourceFilter !== "all") && (
-          <div className="text-xs text-gray-500 flex items-center">
-            {filteredDeals.length} of {deals.length} deals
-          </div>
-        )}
+
+        {/* Add Deal button */}
+        <button
+          onClick={() => setAddingToStage("NEW_LEAD")}
+          className="ml-auto flex items-center gap-2 px-4 py-2 bg-[#DC2626] hover:bg-[#B91C1C] text-white text-sm font-medium rounded-lg transition-colors"
+        >
+          <Plus className="w-3.5 h-3.5" />
+          Add Deal
+        </button>
       </div>
 
       {addingToStage && (
         <AddDealModal
-          stage={addingToStage}
+          stage={addingToStage as "NEW_LEAD" | "QUALIFIED" | "DEMO_BOOKED" | "PROPOSAL_SENT" | "NEGOTIATION" | "ACTIVE_CLIENT"}
           onClose={() => setAddingToStage(null)}
-          onCreated={(deal) => setDeals((prev) => [deal, ...prev])}
+          onCreated={(deal) => setDeals((prev) => [deal as Deal, ...prev])}
         />
       )}
 
@@ -276,13 +426,17 @@ export function CRMKanban({ initialDeals }: { initialDeals: Deal[] }) {
         onDragEnd={handleDragEnd}
       >
         <div className="flex-1 overflow-x-auto">
-          <div className="flex gap-4 h-full pb-4" style={{ minWidth: `${STAGES.length * 260}px` }}>
-            {STAGES.map((stage) => (
+          <div
+            className="flex gap-4 h-full pb-4"
+            style={{ minWidth: `${visibleStages.length * 260}px` }}
+          >
+            {visibleStages.map((stage) => (
               <DroppableColumn
                 key={stage.key}
                 stage={stage}
                 deals={filteredDeals.filter((d) => d.stage === stage.key)}
                 onAddDeal={setAddingToStage}
+                activeId={activeDeal?.id ?? null}
               />
             ))}
           </div>
@@ -290,8 +444,8 @@ export function CRMKanban({ initialDeals }: { initialDeals: Deal[] }) {
 
         <DragOverlay dropAnimation={null}>
           {activeDeal && (
-            <div className="bg-[#1C1F2A] border border-white/20 rounded-xl p-4 w-60 shadow-2xl shadow-black/50 rotate-2">
-              <DealCardInner deal={activeDeal} />
+            <div className="bg-[#1C1F2A] border border-white/20 rounded-xl p-3.5 w-60 shadow-2xl shadow-black/50 rotate-1">
+              <DealCardInner deal={activeDeal} isDraggingOverlay />
             </div>
           )}
         </DragOverlay>

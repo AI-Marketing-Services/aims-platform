@@ -11,46 +11,86 @@ export default async function AdminClientsPage() {
   const role = (sessionClaims?.metadata as { role?: string })?.role
   if (!role || !["ADMIN", "SUPER_ADMIN"].includes(role)) redirect("/portal/dashboard")
 
-  const clients = await db.user.findMany({
-    where: {
-      subscriptions: { some: { status: { in: ["ACTIVE", "TRIALING", "PAST_DUE"] } } },
-    },
-    include: {
-      subscriptions: {
-        where: { status: { in: ["ACTIVE", "TRIALING", "PAST_DUE"] } },
-        include: { serviceArm: { select: { name: true } } },
+  type SubWithArm = {
+    id: string
+    userId: string
+    monthlyAmount: number
+    serviceArm: { slug: string; name: string }
+  }
+
+  // Fetch all deals for stage/score/source data
+  let deals: Awaited<ReturnType<typeof db.deal.findMany>> = []
+  let allSubscriptions: SubWithArm[] = []
+
+  try {
+    deals = await db.deal.findMany({
+      orderBy: { createdAt: "desc" },
+    })
+  } catch {}
+
+  try {
+    allSubscriptions = await db.subscription.findMany({
+      where: { status: { in: ["ACTIVE", "TRIALING", "PAST_DUE"] } },
+      select: {
+        id: true,
+        userId: true,
+        monthlyAmount: true,
+        serviceArm: { select: { name: true, slug: true } },
       },
-    },
-    orderBy: { createdAt: "desc" },
-    take: 100,
-  })
+    }) as SubWithArm[]
+  } catch {}
 
-  const fourteenDaysAgo = new Date(Date.now() - 14 * 86400000)
-
-  const rows = clients.map((client) => {
-    const mrr = client.subscriptions.reduce((s, sub) => s + sub.monthlyAmount, 0)
-    const hasPastDue = client.subscriptions.some((s) => s.status === "PAST_DUE")
-    const isAtRisk = !hasPastDue && client.lastLoginAt != null && client.lastLoginAt < fourteenDaysAgo
-    const status = hasPastDue ? "past_due" as const : isAtRisk ? "at_risk" as const : "healthy" as const
-    const services = client.subscriptions.map((s) => s.serviceArm.name)
+  // Build rows keyed by deal id — each deal is one "client" row
+  const rows = deals.map((deal) => {
+    // Find subscriptions for the deal's linked user
+    const userSubs = deal.userId
+      ? allSubscriptions.filter((s) => s.userId === deal.userId)
+      : []
+    const mrr = userSubs.reduce((s, sub) => s + sub.monthlyAmount, 0)
+    const services = [...new Set(userSubs.map((s) => s.serviceArm.slug))]
     return {
-      id: client.id,
-      name: client.name ?? "",
-      email: client.email,
-      company: client.company ?? "",
+      dealId: deal.id,
+      name: deal.contactName,
+      email: deal.contactEmail,
+      company: deal.company ?? "",
+      stage: deal.stage as string,
+      leadScore: deal.leadScore ?? null,
       mrr,
-      status,
       services,
-      createdAt: new Date(client.createdAt).toLocaleDateString("en-US", { month: "short", year: "numeric" }),
+      source: deal.channelTag ?? null,
+      createdAt: deal.createdAt.toISOString(),
     }
   })
 
-  const totalMRR = rows.reduce((s, r) => s + r.mrr, 0)
-  const atRisk = rows.filter((r) => r.status !== "healthy").length
+  // Summary stats
+  const totalClients = rows.filter((r) => r.stage === "ACTIVE_CLIENT").length
+  const churned = rows.filter((r) => r.stage === "CHURNED" || r.stage === "LOST").length
+  const activeRows = rows.filter((r) => r.stage === "ACTIVE_CLIENT")
+  const totalMRR = activeRows.reduce((s, r) => s + r.mrr, 0)
+  const avgMRR = totalClients > 0 ? Math.round(totalMRR / totalClients) : 0
 
   return (
-    <div className="max-w-5xl">
-      <ClientsTable rows={rows} totalMRR={totalMRR} atRisk={atRisk} />
+    <div className="max-w-7xl">
+      {/* Summary stat cards */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-8">
+        {[
+          { label: "Total Clients", value: rows.length.toString() },
+          { label: "Active Clients", value: totalClients.toString() },
+          { label: "Churned / Lost", value: churned.toString() },
+          { label: "Avg MRR / Client", value: `$${avgMRR.toLocaleString()}` },
+          { label: "Total MRR", value: `$${totalMRR.toLocaleString()}` },
+        ].map((s) => (
+          <div
+            key={s.label}
+            className="bg-[#151821] border border-white/10 rounded-xl px-4 py-3"
+          >
+            <div className="text-xs text-gray-500 mb-1">{s.label}</div>
+            <div className="text-lg font-bold font-mono text-white">{s.value}</div>
+          </div>
+        ))}
+      </div>
+
+      <ClientsTable rows={rows} />
     </div>
   )
 }

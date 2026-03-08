@@ -1,7 +1,18 @@
 import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
-import { TrendingUp, TrendingDown, DollarSign, Users, ArrowUpRight } from "lucide-react"
-import { RevenueChart } from "./RevenueChart"
+import { db } from "@/lib/db"
+import { RevenueCharts } from "./RevenueChart"
+
+export const metadata = { title: "Revenue" }
+
+const MRR_TARGET = 100_000
+
+// Hardcoded cost estimates per service arm slug
+const SERVICE_COSTS: Record<string, { label: string; cost: number }> = {
+  "ai-growth-engine": { label: "AI Growth Engine", cost: 150 },
+  "ai-sales-engine":  { label: "AI Sales Engine",  cost: 200 },
+  "ai-ops-engine":    { label: "AI Ops Engine",     cost: 100 },
+}
 
 export default async function AdminRevenuePage() {
   const { userId, sessionClaims } = await auth()
@@ -9,82 +20,217 @@ export default async function AdminRevenuePage() {
   const role = (sessionClaims?.metadata as { role?: string })?.role
   if (!role || !["ADMIN", "SUPER_ADMIN"].includes(role)) redirect("/portal/dashboard")
 
+  // ── Active subscriptions ──────────────────────────────────────────────────
+  let activeSubs: {
+    monthlyAmount: number
+    createdAt: Date
+    serviceArm: { slug: string; name: string }
+  }[] = []
+  try {
+    activeSubs = await db.subscription.findMany({
+      where: { status: { in: ["ACTIVE", "TRIALING"] } },
+      select: {
+        monthlyAmount: true,
+        createdAt: true,
+        serviceArm: { select: { slug: true, name: true } },
+      },
+    })
+  } catch {}
+
+  // ── Active client deals (for channel breakdown) ────────────────────────────
+  let activeDeals: { channelTag: string | null }[] = []
+  try {
+    activeDeals = await db.deal.findMany({
+      where: { stage: "ACTIVE_CLIENT" },
+      select: { channelTag: true },
+    })
+  } catch {}
+
+  // ── Compute current MRR ────────────────────────────────────────────────────
+  const currentMRR = activeSubs.reduce((s, sub) => s + sub.monthlyAmount, 0)
+  const arr = currentMRR * 12
+  const mrrProgress = Math.min(100, (currentMRR / MRR_TARGET) * 100)
+
+  // ── MRR over time: group by YYYY-MM ───────────────────────────────────────
+  const mrrByMonth: Record<string, number> = {}
+  for (const sub of activeSubs) {
+    const key = sub.createdAt.toISOString().slice(0, 7) // "2024-12"
+    mrrByMonth[key] = (mrrByMonth[key] ?? 0) + sub.monthlyAmount
+  }
+  // Build running cumulative MRR per month
+  const sortedMonthKeys = Object.keys(mrrByMonth).sort()
+  let running = 0
+  const mrrOverTime = sortedMonthKeys.map((k) => {
+    running += mrrByMonth[k]
+    const [year, month] = k.split("-")
+    const label = new Date(Number(year), Number(month) - 1).toLocaleString("en-US", {
+      month: "short",
+      year: "2-digit",
+    })
+    return { month: label, mrr: running }
+  })
+
+  // ── Revenue by service arm ─────────────────────────────────────────────────
+  const byService: Record<string, { name: string; revenue: number }> = {}
+  for (const sub of activeSubs) {
+    const slug = sub.serviceArm.slug
+    if (!byService[slug]) byService[slug] = { name: sub.serviceArm.name, revenue: 0 }
+    byService[slug].revenue += sub.monthlyAmount
+  }
+  const revenueByService = Object.entries(byService)
+    .map(([slug, v]) => ({ slug, name: v.name, revenue: v.revenue }))
+    .sort((a, b) => b.revenue - a.revenue)
+
+  // ── Revenue by channel tag ─────────────────────────────────────────────────
+  const byChannel: Record<string, number> = {}
+  for (const deal of activeDeals) {
+    const ch = deal.channelTag ?? "Direct"
+    byChannel[ch] = (byChannel[ch] ?? 0) + 1
+  }
+  const revenueByChannel = Object.entries(byChannel).map(([name, value]) => ({ name, value }))
+
+  // ── 10x Margin tracker ────────────────────────────────────────────────────
+  const marginRows = revenueByService
+    .filter((s) => SERVICE_COSTS[s.slug])
+    .map((s) => {
+      const cost = SERVICE_COSTS[s.slug].cost
+      const margin = s.revenue > 0 ? s.revenue / cost : 0
+      return {
+        slug: s.slug,
+        label: SERVICE_COSTS[s.slug].label,
+        revenue: s.revenue,
+        cost,
+        margin,
+      }
+    })
+
   return (
-    <div className="max-w-5xl">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-white mb-1">Revenue</h1>
-        <p className="text-gray-400">MRR growth, churn, and financial metrics</p>
-      </div>
-
-      {/* Key metrics */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        {[
-          { label: "MRR", value: "$12,450", change: "+18.4%", positive: true, icon: DollarSign },
-          { label: "ARR", value: "$149,400", change: "+18.4%", positive: true, icon: TrendingUp },
-          { label: "Active Clients", value: "34", change: "+3 this mo", positive: true, icon: Users },
-          { label: "Churn Rate", value: "2.1%", change: "-0.4%", positive: true, icon: TrendingDown },
-        ].map((m) => (
-          <div key={m.label} className="bg-[#151821] border border-white/10 rounded-xl p-5">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs text-gray-500 font-medium">{m.label}</span>
-              <m.icon className="w-4 h-4 text-gray-500" />
-            </div>
-            <div className="text-2xl font-bold text-white mb-1">{m.value}</div>
-            <div className={`flex items-center gap-1 text-xs ${m.positive ? "text-green-400" : "text-red-400"}`}>
-              <ArrowUpRight className="w-3 h-3" />
-              {m.change}
-            </div>
+    <div className="max-w-6xl">
+      {/* ── MRR Hero ──────────────────────────────────────────────────────── */}
+      <div className="bg-[#151821] border border-white/10 rounded-2xl p-8 mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-4">
+          <div>
+            <p className="text-sm text-gray-500 mb-1">Monthly Recurring Revenue</p>
+            <p className="text-5xl font-mono font-bold text-white">
+              ${currentMRR.toLocaleString()}
+            </p>
+            <p className="text-sm text-gray-500 mt-2">
+              ARR projection:{" "}
+              <span className="text-white font-mono font-semibold">
+                ${arr.toLocaleString()}
+              </span>
+            </p>
           </div>
-        ))}
-      </div>
-
-      {/* MRR Chart */}
-      <div className="bg-[#151821] border border-white/10 rounded-xl p-6 mb-6">
-        <h3 className="font-semibold text-white mb-6">MRR Growth (Last 12 Months)</h3>
-        <RevenueChart />
-      </div>
-
-      {/* MRR breakdown */}
-      <div className="grid md:grid-cols-2 gap-6">
-        <div className="bg-[#151821] border border-white/10 rounded-xl p-6">
-          <h3 className="font-semibold text-white mb-4">Revenue by Service Pillar</h3>
-          <div className="space-y-3">
-            {[
-              { pillar: "Marketing", amount: 5640, pct: 45, color: "bg-green-500" },
-              { pillar: "Sales", amount: 3726, pct: 30, color: "bg-blue-500" },
-              { pillar: "Operations", amount: 1868, pct: 15, color: "bg-orange-500" },
-              { pillar: "Finance", amount: 1216, pct: 10, color: "bg-purple-500" },
-            ].map((row) => (
-              <div key={row.pillar}>
-                <div className="flex justify-between text-sm mb-1">
-                  <span className="text-gray-400">{row.pillar}</span>
-                  <span className="text-white font-medium">${row.amount.toLocaleString()}</span>
-                </div>
-                <div className="h-2 bg-white/5 rounded-full">
-                  <div className={`h-2 rounded-full ${row.color}`} style={{ width: `${row.pct}%` }} />
-                </div>
-              </div>
-            ))}
+          <div className="text-right">
+            <p className="text-xs text-gray-500 mb-1">Target: $100,000/mo</p>
+            <p className="text-2xl font-mono font-bold text-[#DC2626]">
+              {mrrProgress.toFixed(1)}%
+            </p>
           </div>
         </div>
-
-        <div className="bg-[#151821] border border-white/10 rounded-xl p-6">
-          <h3 className="font-semibold text-white mb-4">New vs Expansion vs Churn</h3>
-          <div className="space-y-3">
-            {[
-              { label: "New MRR", value: "+$2,880", color: "text-green-400" },
-              { label: "Expansion MRR", value: "+$890", color: "text-blue-400" },
-              { label: "Contraction MRR", value: "-$120", color: "text-orange-400" },
-              { label: "Churn MRR", value: "-$297", color: "text-red-400" },
-              { label: "Net New MRR", value: "+$3,353", color: "text-white" },
-            ].map((row) => (
-              <div key={row.label} className="flex justify-between items-center text-sm border-b border-white/5 pb-2 last:border-0">
-                <span className="text-gray-400">{row.label}</span>
-                <span className={`font-bold ${row.color}`}>{row.value}</span>
-              </div>
-            ))}
-          </div>
+        {/* Progress bar */}
+        <div className="h-2 bg-white/5 rounded-full overflow-hidden">
+          <div
+            className="h-2 bg-[#DC2626] rounded-full transition-all"
+            style={{ width: `${mrrProgress}%` }}
+          />
         </div>
+        <p className="text-xs text-gray-600 mt-2">
+          ${(MRR_TARGET - currentMRR).toLocaleString()} remaining to target
+        </p>
+      </div>
+
+      {/* ── Charts ────────────────────────────────────────────────────────── */}
+      <RevenueCharts
+        mrrOverTime={mrrOverTime}
+        revenueByService={revenueByService}
+        revenueByChannel={revenueByChannel}
+      />
+
+      {/* ── 10x Margin Tracker ────────────────────────────────────────────── */}
+      <div className="bg-[#151821] border border-white/10 rounded-xl p-6 mt-8">
+        <h3 className="font-semibold text-white mb-1">10x Margin Tracker</h3>
+        <p className="text-xs text-gray-500 mb-5">
+          Service revenue vs estimated delivery cost. Green = 10x+, Yellow = 5–10x, Red = below 5x.
+        </p>
+        {marginRows.length === 0 ? (
+          <p className="text-gray-500 text-sm">No matched service data yet.</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-white/10">
+                  {["Service", "Revenue", "Est. Cost", "Margin", "Multiple"].map((h) => (
+                    <th key={h} className="text-left text-xs text-gray-500 font-medium px-3 py-2">
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/5">
+                {marginRows.map((row) => {
+                  const bg =
+                    row.margin >= 10
+                      ? "bg-green-950/40"
+                      : row.margin >= 5
+                      ? "bg-yellow-950/40"
+                      : "bg-red-950/40"
+                  const multipleColor =
+                    row.margin >= 10
+                      ? "text-green-400"
+                      : row.margin >= 5
+                      ? "text-yellow-400"
+                      : "text-red-400"
+                  return (
+                    <tr key={row.slug} className={bg}>
+                      <td className="px-3 py-3 text-white font-medium">{row.label}</td>
+                      <td className="px-3 py-3 font-mono text-gray-300">
+                        ${row.revenue.toLocaleString()}/mo
+                      </td>
+                      <td className="px-3 py-3 font-mono text-gray-500">
+                        ${row.cost}/mo
+                      </td>
+                      <td className="px-3 py-3 font-mono text-gray-300">
+                        {row.revenue > 0
+                          ? `${((row.revenue - row.cost) / row.revenue * 100).toFixed(0)}%`
+                          : "—"}
+                      </td>
+                      <td className={`px-3 py-3 font-mono font-bold ${multipleColor}`}>
+                        {row.revenue > 0 ? `${row.margin.toFixed(1)}x` : "—"}
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* Services not yet in the tracker */}
+        {Object.entries(SERVICE_COSTS)
+          .filter(([slug]) => !marginRows.find((r) => r.slug === slug))
+          .length > 0 && (
+          <div className="mt-4 pt-4 border-t border-white/5">
+            <p className="text-xs text-gray-600 mb-2">Services with no active subscriptions:</p>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <tbody className="divide-y divide-white/5">
+                  {Object.entries(SERVICE_COSTS)
+                    .filter(([slug]) => !marginRows.find((r) => r.slug === slug))
+                    .map(([slug, { label, cost }]) => (
+                      <tr key={slug} className="bg-white/[0.01]">
+                        <td className="px-3 py-2 text-gray-500">{label}</td>
+                        <td className="px-3 py-2 font-mono text-gray-600">$0/mo</td>
+                        <td className="px-3 py-2 font-mono text-gray-600">${cost}/mo</td>
+                        <td className="px-3 py-2 text-gray-600">—</td>
+                        <td className="px-3 py-2 text-gray-600">—</td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
