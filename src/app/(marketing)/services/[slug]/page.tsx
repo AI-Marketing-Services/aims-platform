@@ -3,7 +3,8 @@ import { notFound } from "next/navigation"
 import Link from "next/link"
 import { ArrowRight, Check } from "lucide-react"
 import { db } from "@/lib/db"
-import { ServiceDemoSection, ServiceDemoWidget, DEMO_SLUGS } from "@/components/marketing/ServiceDemoSection"
+import { ServiceDemoSection, ServiceDemoWidget } from "@/components/marketing/ServiceDemoSection"
+import { DEMO_SLUGS } from "@/components/marketing/service-demo-config"
 
 type Params = { slug: string }
 

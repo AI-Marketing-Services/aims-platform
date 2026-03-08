@@ -649,9 +649,6 @@ const DEMO_MAP: Record<string, React.ComponentType> = {
   "audience-targeting": AudienceDemo,
 }
 
-// Exported so the page can check if a demo exists (for layout branching)
-export const DEMO_SLUGS = Object.keys(DEMO_MAP)
-
 // Bare widget — rendered inline inside the hero column
 export function ServiceDemoWidget({ slug }: { slug: string }) {
   const Demo = DEMO_MAP[slug]
