@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { ArrowRight, CheckCircle2, TrendingUp, Phone, Mail, MapPin, BarChart2, Zap, DollarSign, Check, Star, Lock } from "lucide-react"
+import { ArrowRight, CheckCircle2, TrendingUp, Phone, Mail, MapPin, BarChart2, Zap, DollarSign, Check } from "lucide-react"
 
 export const metadata: Metadata = {
   title: "AI Systems for Vendingpreneurs — AIMS",
@@ -54,125 +54,77 @@ const SERVICES = [
   },
 ]
 
-// VP Operator Toolkit add-ons
-type VPTier = "free" | "solo" | "root" | "empire"
-
-interface VPAddon {
+// VP Operator Toolkit — tier pricing
+interface VPTier {
+  id: string
   name: string
-  desc: string
-  tools: string
   price: string
-  tier: VPTier
-  href?: string
+  priceNote: string
+  description: string
+  popular: boolean
+  features: { name: string; desc: string }[]
+  cta: string
 }
 
-const VP_ADDONS: VPAddon[] = [
+const VP_TIERS: VPTier[] = [
   {
-    name: "Vending ROI Calculator",
-    desc: "Real-time ROI estimates using live data from 500+ VP operators. Input any location, get revenue projections.",
-    tools: "Vercel, live operator database",
-    price: "Free with membership",
-    tier: "free",
-    href: "/tools/roi-calculator?ref=vp",
+    id: "free",
+    name: "Free",
+    price: "$0",
+    priceNote: "with any VP membership",
+    description: "Core tools every operator gets on day one.",
+    popular: false,
+    cta: "Join VP Community",
+    features: [
+      { name: "Vending ROI Calculator", desc: "Real-time ROI estimates using live data from 500+ operators. Input any location, get revenue projections." },
+      { name: "Community Knowledge Bot", desc: "AI trained on all VP content, webinars, and SOPs — ask it anything about running your vending business." },
+    ],
   },
   {
-    name: "Live Operator Map",
-    desc: "Interactive map of all VP operator locations — useful for territory planning and expansion decisions.",
-    tools: "Mapbox, Vercel",
-    price: "Free with membership",
-    tier: "free",
+    id: "solo",
+    name: "Solo Operator",
+    price: "$297",
+    priceNote: "per month",
+    description: "Everything in Free, plus ordering and location tools.",
+    popular: false,
+    cta: "Start Solo",
+    features: [
+      { name: "Everything in Free", desc: "" },
+      { name: "Vendor Ordering Portal", desc: "Order Red Bull, Pepsi, and other vendors directly through your VP dashboard with volume pricing and order history." },
+      { name: "Location Mockup Generator", desc: "Generate professional vending machine placement mockups for any space to close location deals faster." },
+    ],
   },
   {
-    name: "Community Knowledge Bot",
-    desc: "AI trained on all VP content, webinars, and SOPs — ask it anything about running your vending business.",
-    tools: "Claude API, Skool, N8N",
-    price: "Included (Solo+)",
-    tier: "solo",
-    href: "/services/ai-community-chatbot",
+    id: "root",
+    name: "Root Owner",
+    price: "$597",
+    priceNote: "per month",
+    description: "Full operating infrastructure — the complete GHL snapshot.",
+    popular: true,
+    cta: "Get Root Owner",
+    features: [
+      { name: "Everything in Solo", desc: "" },
+      { name: "VP GHL Business OS", desc: "Full GoHighLevel subaccount: website, CRM, pipelines, AI receptionist, and outbound dialer — ready day one." },
+      { name: "AI Receptionist", desc: "24/7 inbound call handling — handles FAQs, routes location requests, and books callbacks automatically." },
+      { name: "Reputation Autopilot", desc: "Automated review requests to location partners. Routes feedback and boosts your Google profile." },
+      { name: "Location Scouting Score", desc: "Enter any address, get foot traffic, demographic, and competitor proximity score before you commit." },
+      { name: "Operator Dashboard", desc: "Machine performance, revenue per location, lease tracking, and inventory alerts — all in one view." },
+    ],
   },
   {
-    name: "Vendor Ordering Portal",
-    desc: "Order Red Bull, Pepsi, and other vendors directly through your VP dashboard with volume pricing and order history.",
-    tools: "Airtable, Stripe, Resend",
-    price: "Included (Solo+)",
-    tier: "solo",
-    href: "/services/vendor-ordering-portal",
+    id: "empire",
+    name: "Vending Empire",
+    price: "$997",
+    priceNote: "per month",
+    description: "Everything in Root Owner, plus full outbound growth engine.",
+    popular: false,
+    cta: "Go Empire",
+    features: [
+      { name: "Everything in Root Owner", desc: "" },
+      { name: "Outbound Lead Dialer", desc: "AI outbound calls to location prospects — qualifies interest and books site visits without lifting a finger." },
+      { name: "Cold Outbound Engine (VP Edition)", desc: "Pre-configured Clay sequences targeting gyms, offices, warehouses, and schools with VP-specific copy." },
+    ],
   },
-  {
-    name: "Location Mockup Generator",
-    desc: "Generate professional vending machine placement mockups for any space to close location deals faster.",
-    tools: "V0, Canva API",
-    price: "$47/mo add-on",
-    tier: "solo",
-  },
-  {
-    name: "AI Receptionist",
-    desc: "24/7 inbound call handling for your vending business — handles FAQs, routes location requests, books callbacks.",
-    tools: "Retell AI, GHL, Twilio",
-    price: "$97/mo add-on",
-    tier: "root",
-    href: "/services/voice-agents",
-  },
-  {
-    name: "Reputation Autopilot",
-    desc: "Automated review requests to location partners and customers. Routes feedback and boosts Google profile.",
-    tools: "GHL, Twilio, Google Business",
-    price: "$97/mo add-on",
-    tier: "root",
-    href: "/services/ai-reputation-engine",
-  },
-  {
-    name: "Location Scouting Score",
-    desc: "Enter any address, get foot traffic, demographic, and competitor proximity score to evaluate before you commit.",
-    tools: "Google Places API, Clay, N8N",
-    price: "$97/mo add-on",
-    tier: "root",
-  },
-  {
-    name: "Operator Dashboard",
-    desc: "Machine performance, revenue per location, lease tracking, inventory alerts — all in one view.",
-    tools: "Airtable, BaseDash, N8N",
-    price: "$147/mo add-on",
-    tier: "root",
-  },
-  {
-    name: "VP GHL Business OS",
-    desc: "Full GoHighLevel subaccount: website, CRM, pipelines, AI receptionist, and outbound dialer — ready day one.",
-    tools: "GoHighLevel, Retell AI, Twilio",
-    price: "$297/mo add-on",
-    tier: "root",
-    href: "/services/ghl-community-os",
-  },
-  {
-    name: "Outbound Lead Dialer",
-    desc: "AI outbound calls to location prospects, qualifies interest, books site visits automatically.",
-    tools: "Retell AI, GHL, Clay",
-    price: "$197/mo add-on",
-    tier: "empire",
-    href: "/services/voice-agents",
-  },
-  {
-    name: "Cold Outbound Engine (VP Edition)",
-    desc: "Pre-configured Clay sequences targeting your ICP — gyms, offices, warehouses, schools — with VP-specific copy.",
-    tools: "Clay, Instantly, GHL",
-    price: "$297/mo add-on",
-    tier: "empire",
-    href: "/services/cold-outbound",
-  },
-]
-
-const TIER_CONFIG: Record<VPTier, { label: string; color: string; bg: string; border: string }> = {
-  free:   { label: "Free",         color: "text-gray-600",    bg: "bg-gray-50",    border: "border-gray-200" },
-  solo:   { label: "Solo",         color: "text-blue-700",    bg: "bg-blue-50",    border: "border-blue-200" },
-  root:   { label: "Root Owner",   color: "text-purple-700",  bg: "bg-purple-50",  border: "border-purple-200" },
-  empire: { label: "Vending Empire", color: "text-[#DC2626]", bg: "bg-red-50",     border: "border-red-200" },
-}
-
-const TIER_TIERS: { tier: VPTier; title: string; subtitle: string }[] = [
-  { tier: "free",   title: "Any VP Member",      subtitle: "Included with any membership tier" },
-  { tier: "solo",   title: "Solo Operator",       subtitle: "Base subscription benefits" },
-  { tier: "root",   title: "Root Owner",          subtitle: "Mid-tier unlock + all above" },
-  { tier: "empire", title: "Vending Empire",      subtitle: "Full stack — nothing held back" },
 ]
 
 export default function VendingpreneursPage() {
@@ -221,14 +173,17 @@ export default function VendingpreneursPage() {
         </div>
       </section>
 
-      {/* Results bar */}
-      <section className="bg-[#DC2626] py-12">
+      {/* Results — stat cards with red outlines */}
+      <section className="py-12 bg-background">
         <div className="mx-auto max-w-5xl px-4">
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
             {RESULTS.map((r) => (
-              <div key={r.value} className="text-center">
-                <div className="text-3xl font-black text-white font-mono">{r.value}</div>
-                <div className="mt-1 text-sm text-red-200">{r.label}</div>
+              <div
+                key={r.value}
+                className="rounded-2xl border-2 border-[#DC2626] bg-white px-6 py-5 text-center shadow-sm"
+              >
+                <div className="text-3xl font-black text-[#DC2626] font-mono">{r.value}</div>
+                <div className="mt-1.5 text-xs text-muted-foreground leading-snug">{r.label}</div>
               </div>
             ))}
           </div>
@@ -308,112 +263,82 @@ export default function VendingpreneursPage() {
         </div>
       </section>
 
-      {/* VP Operator Toolkit */}
+      {/* VP Operator Toolkit — clean tier pricing */}
       <section className="py-24 bg-card">
-        <div className="mx-auto max-w-5xl px-4">
+        <div className="mx-auto max-w-6xl px-4">
           <div className="mb-4">
-            <span className="inline-block rounded-full bg-red-50 border border-red-200 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-[#DC2626] mb-4">
+            <span className="inline-block rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">
               VP Operator Toolkit
             </span>
             <h2 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-              Operating infrastructure built for vending
+              One operating system. Four tiers.
             </h2>
             <p className="mt-3 max-w-2xl text-base text-muted-foreground leading-relaxed">
-              Tools built specifically for VP community members. Add any tool to your subscription.
-              Some included free, some paid add-ons — every tier deepens your competitive edge.
+              Every tool below is delivered as a module inside your VP GHL Business OS snapshot —
+              no separate logins, no duct tape. One system, everything in one place.
             </p>
           </div>
 
-          {/* Tier legend */}
-          <div className="flex flex-wrap gap-3 mb-10 mt-8">
-            {TIER_TIERS.map(({ tier, title, subtitle }) => {
-              const config = TIER_CONFIG[tier]
-              return (
-                <div key={tier} className={`flex items-center gap-2 rounded-xl border px-4 py-2.5 ${config.border} ${config.bg}`}>
-                  <span className={`text-xs font-bold uppercase tracking-wider ${config.color}`}>{title}</span>
-                  <span className="text-xs text-muted-foreground hidden sm:inline">— {subtitle}</span>
-                </div>
-              )
-            })}
-          </div>
-
-          {/* Add-ons grid */}
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {VP_ADDONS.map((addon) => {
-              const config = TIER_CONFIG[addon.tier]
-              const card = (
-                <div className={`rounded-2xl border bg-background p-5 flex flex-col gap-3 h-full ${addon.href ? "hover:border-[#DC2626]/40 hover:shadow-md transition-all" : ""}`}>
-                  <div className="flex items-start justify-between gap-2">
-                    <h3 className="text-sm font-bold text-foreground leading-snug">{addon.name}</h3>
-                    <span className={`shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${config.color} ${config.bg} ${config.border}`}>
-                      {config.label}
+          <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {VP_TIERS.map((tier) => (
+              <div
+                key={tier.id}
+                className={`relative flex flex-col rounded-2xl border bg-background p-6 ${
+                  tier.popular
+                    ? "border-[#DC2626] shadow-md"
+                    : "border-border"
+                }`}
+              >
+                {tier.popular && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                    <span className="rounded-full bg-[#DC2626] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
+                      Most Popular
                     </span>
                   </div>
-                  <p className="text-xs text-muted-foreground leading-relaxed flex-1">{addon.desc}</p>
-                  <div className="flex items-center justify-between pt-1 border-t border-border">
-                    <span className="text-xs text-muted-foreground font-medium">{addon.tools}</span>
-                    <span className={`text-xs font-bold ${addon.tier === "free" ? "text-green-600" : addon.price.includes("Included") ? "text-blue-600" : "text-foreground"}`}>
-                      {addon.price}
-                    </span>
-                  </div>
-                  {addon.href && (
-                    <div className={`flex items-center gap-1 text-xs font-semibold ${config.color}`}>
-                      Learn more <ArrowRight className="h-3 w-3" />
-                    </div>
-                  )}
-                </div>
-              )
+                )}
 
-              return addon.href ? (
-                <Link key={addon.name} href={addon.href} className="block h-full">
-                  {card}
+                <div className="mb-5">
+                  <h3 className="text-sm font-bold text-foreground uppercase tracking-wider">{tier.name}</h3>
+                  <div className="mt-2 flex items-end gap-1">
+                    <span className="text-3xl font-black text-foreground">{tier.price}</span>
+                    <span className="text-xs text-muted-foreground mb-1.5">/{tier.priceNote}</span>
+                  </div>
+                  <p className="mt-2 text-xs text-muted-foreground leading-relaxed">{tier.description}</p>
+                </div>
+
+                <ul className="flex-1 space-y-3 mb-6">
+                  {tier.features.map((f) => (
+                    <li key={f.name} className="flex items-start gap-2">
+                      <Check className={`h-3.5 w-3.5 shrink-0 mt-0.5 ${f.desc === "" ? "text-muted-foreground" : "text-[#DC2626]"}`} />
+                      <div>
+                        <p className={`text-xs font-semibold ${f.desc === "" ? "text-muted-foreground" : "text-foreground"}`}>{f.name}</p>
+                        {f.desc && <p className="text-[11px] text-muted-foreground leading-snug mt-0.5">{f.desc}</p>}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+
+                <Link
+                  href={`/get-started?ref=vp-${tier.id}`}
+                  className={`w-full text-center rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors ${
+                    tier.popular
+                      ? "bg-[#DC2626] text-white hover:bg-[#B91C1C]"
+                      : "border border-border bg-background text-foreground hover:bg-muted"
+                  }`}
+                >
+                  {tier.cta}
                 </Link>
-              ) : (
-                <div key={addon.name} className="h-full">
-                  {card}
-                </div>
-              )
-            })}
+              </div>
+            ))}
           </div>
 
-          {/* Tier unlock table */}
-          <div className="mt-14 rounded-2xl border border-border bg-background overflow-hidden">
-            <div className="px-6 py-5 border-b border-border">
-              <h3 className="text-base font-bold text-foreground">What unlocks at each tier</h3>
-              <p className="text-sm text-muted-foreground mt-1">Every add-on deepens switching costs and creates a clear upgrade path.</p>
-            </div>
-            <div className="divide-y divide-border">
-              {TIER_TIERS.map(({ tier, title }) => {
-                const config = TIER_CONFIG[tier]
-                const tierAddons = VP_ADDONS.filter((a) => a.tier === tier)
-                return (
-                  <div key={tier} className="px-6 py-4 flex items-start gap-4">
-                    <span className={`shrink-0 mt-0.5 rounded-lg border px-3 py-1 text-xs font-bold uppercase tracking-wider w-28 text-center ${config.color} ${config.bg} ${config.border}`}>
-                      {title}
-                    </span>
-                    <div className="flex flex-wrap gap-2">
-                      {tierAddons.map((a) => (
-                        <span key={a.name} className="flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-xs text-foreground/70">
-                          <Check className="h-3 w-3 text-green-500 shrink-0" />
-                          {a.name}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-
-          <div className="mt-8 text-center">
-            <Link
-              href="/get-started?ref=vp-toolkit"
-              className="inline-flex items-center gap-2 rounded-xl bg-[#DC2626] px-8 py-4 text-base font-semibold text-white hover:bg-[#B91C1C] transition"
-            >
-              Get access to the VP Toolkit <ArrowRight className="h-5 w-5" />
-            </Link>
-            <p className="mt-3 text-sm text-muted-foreground">Book a 30-min call to see which tier fits your operation.</p>
-          </div>
+          <p className="mt-6 text-center text-sm text-muted-foreground">
+            Not sure which tier fits your operation?{" "}
+            <Link href="/get-started?ref=vp-consult" className="text-[#DC2626] font-medium hover:underline">
+              Book a free 30-min call
+            </Link>{" "}
+            and we&apos;ll recommend the right starting point.
+          </p>
         </div>
       </section>
 
