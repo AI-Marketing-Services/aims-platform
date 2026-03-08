@@ -5,18 +5,36 @@ import Image from "next/image"
 import { motion, AnimatePresence } from "framer-motion"
 import { useState } from "react"
 import {
-  LayoutDashboard, Users, Megaphone, MessageSquare, GitBranch,
+  LayoutDashboard, Users, Megaphone, GitBranch,
   BarChart2, Settings, TrendingUp, Bell, Search, ChevronDown, X,
-  CreditCard, ArrowRight,
+  CreditCard, ArrowRight, Phone, Mail, Plus, Pause, Play, Filter,
+  CheckCircle2, AlertCircle, DollarSign,
 } from "lucide-react"
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
-const RECENT_LEADS = [
-  { initials: "SC", color: "#DC2626", name: "Sarah Chen", company: "Acme Corp", status: "hot" },
-  { initials: "MW", color: "#991B1B", name: "Marcus Webb", company: "TechFlow Inc", status: "warm" },
-  { initials: "DR", color: "#7F1D1D", name: "Diana Ross", company: "Velocity Partners", status: "warm" },
-  { initials: "JL", color: "#b91c1c", name: "James Liu", company: "Growth Labs", status: "new" },
+type LeadStatus = "hot" | "warm" | "new"
+
+interface Lead {
+  initials: string
+  color: string
+  name: string
+  company: string
+  status: LeadStatus
+  score: number
+  email: string
+  phone: string
+  lastContacted: string
+  notes: string
+}
+
+const RECENT_LEADS: Lead[] = [
+  { initials: "SC", color: "#DC2626", name: "Sarah Chen", company: "Acme Corp", status: "hot", score: 92, email: "sarah@acmecorp.com", phone: "+1 555-0101", lastContacted: "2h ago", notes: "Follow up on Q2 budget — interested in AI Sales Engine" },
+  { initials: "MW", color: "#991B1B", name: "Marcus Webb", company: "TechFlow Inc", status: "warm", score: 74, email: "marcus@techflow.io", phone: "+1 555-0102", lastContacted: "1d ago", notes: "Requested demo for outbound automation stack" },
+  { initials: "DR", color: "#7F1D1D", name: "Diana Ross", company: "Velocity Partners", status: "warm", score: 68, email: "diana@velocityp.com", phone: "+1 555-0103", lastContacted: "2d ago", notes: "Evaluating competitors — send case studies" },
+  { initials: "JL", color: "#b91c1c", name: "James Liu", company: "Growth Labs", status: "new", score: 61, email: "james@growthlabs.co", phone: "+1 555-0104", lastContacted: "3d ago", notes: "Inbound from LinkedIn ad — schedule intro call" },
+  { initials: "KP", color: "#6B21A8", name: "Kevin Park", company: "CloudBase", status: "new", score: 55, email: "kevin@cloudbase.io", phone: "+1 555-0105", lastContacted: "4d ago", notes: "Referred by Acme Corp — high intent signal" },
+  { initials: "AL", color: "#0369A1", name: "Amy Lin", company: "FinStack", status: "warm", score: 71, email: "amy@finstack.com", phone: "+1 555-0106", lastContacted: "1d ago", notes: "Interested in fractional SDR + AI calling bundle" },
 ]
 
 const HOT_DEALS = [
@@ -31,25 +49,79 @@ const REVENUE_SOURCES = [
   { label: "Partner", value: "$450K", pct: 38 },
 ]
 
-const NOTIFICATIONS = [
-  { icon: Users, text: "New high-value lead", time: "4 hours ago", unread: true },
-  { icon: Megaphone, text: "Campaign 'Alpha' started", time: "3 hours ago", unread: true },
-  { icon: Bell, text: "Meeting booked: Acme Corp", time: "3 hours ago", unread: false },
-  { icon: CreditCard, text: "Invoice paid: $12,000", time: "Yesterday", unread: false },
+interface Notification {
+  icon: React.ElementType
+  text: string
+  time: string
+  unread: boolean
+  action: string
+  type: "lead" | "campaign" | "meeting" | "billing" | "system"
+}
+
+const NOTIFICATIONS: Notification[] = [
+  { icon: Users, text: "New high-value lead: Sarah Chen", time: "4 hours ago", unread: true, action: "View →", type: "lead" },
+  { icon: Megaphone, text: "Campaign 'Alpha' started", time: "3 hours ago", unread: true, action: "View →", type: "campaign" },
+  { icon: Bell, text: "Meeting booked: Acme Corp", time: "3 hours ago", unread: false, action: "Reply →", type: "meeting" },
+  { icon: CreditCard, text: "Invoice paid: $12,000", time: "Yesterday", unread: false, action: "Dismiss", type: "billing" },
+  { icon: AlertCircle, text: "Lead score alert: Kevin Park hit 55", time: "2 days ago", unread: false, action: "View →", type: "system" },
 ]
 
-const CAMPAIGNS = [
-  { name: "Alpha Outbound", status: "live", leads: 124, meetings: 14 },
-  { name: "Re-engagement Q1", status: "live", leads: 89, meetings: 8 },
-  { name: "AI Voice Follow-up", status: "paused", leads: 56, meetings: 5 },
+interface Campaign {
+  name: string
+  status: "live" | "paused"
+  leads: number
+  meetings: number
+  emailsSent: number
+  openRate: number
+  isAB?: boolean
+}
+
+const CAMPAIGNS: Campaign[] = [
+  { name: "Alpha Outbound", status: "live", leads: 124, meetings: 14, emailsSent: 1840, openRate: 48, isAB: true },
+  { name: "Re-engagement Q1", status: "live", leads: 89, meetings: 8, emailsSent: 1420, openRate: 41 },
+  { name: "AI Voice Follow-up", status: "paused", leads: 56, meetings: 5, emailsSent: 1561, openRate: 38 },
 ]
 
-const PIPELINE_STAGES = [
-  { label: "New Lead", count: 142, pct: 100 },
-  { label: "Qualified", count: 89, pct: 63 },
-  { label: "Demo Booked", count: 54, pct: 38 },
-  { label: "Proposal", count: 31, pct: 22 },
-  { label: "Closed Won", count: 18, pct: 13 },
+interface KanbanDeal {
+  company: string
+  value: string
+  days: number
+}
+
+interface KanbanColumn {
+  label: string
+  deals: KanbanDeal[]
+}
+
+const KANBAN_COLUMNS: KanbanColumn[] = [
+  {
+    label: "New Lead",
+    deals: [
+      { company: "CloudBase", value: "$42K", days: 2 },
+      { company: "FinStack", value: "$67K", days: 4 },
+      { company: "PivotIO", value: "$31K", days: 1 },
+    ],
+  },
+  {
+    label: "Demo Booked",
+    deals: [
+      { company: "TechFlow Inc", value: "$85K", days: 7 },
+      { company: "Velocity Ptrs", value: "$110K", days: 5 },
+    ],
+  },
+  {
+    label: "Closing",
+    deals: [
+      { company: "Acme Corp", value: "$120K", days: 14 },
+      { company: "Growth Labs", value: "$450K", days: 11 },
+    ],
+  },
+]
+
+const TEAM_ACTIVITY = [
+  { initials: "SC", text: "SC booked meeting with Acme Corp", time: "2h ago" },
+  { initials: "MW", text: "MW replied to TechFlow proposal", time: "4h ago" },
+  { initials: "DR", text: "DR added 12 leads from LinkedIn", time: "6h ago" },
 ]
 
 const NAV_ITEMS = [
@@ -93,41 +165,60 @@ function DashboardView() {
   const [showBreakdown, setShowBreakdown] = useState(false)
   return (
     <div className="flex-1 min-w-0 bg-gray-50/40 overflow-hidden">
-      {/* Metric row */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 border-b border-gray-100">
-        <div className="bg-white px-4 py-3 border-r border-gray-100">
+      {/* Metric row — 5 cols on desktop, 2 on mobile */}
+      <div className="grid grid-cols-2 sm:grid-cols-5 border-b border-gray-100">
+        <div className="bg-white px-3 py-3 border-r border-gray-100">
           <p className="text-[9px] font-semibold uppercase tracking-wide text-gray-400">New Leads</p>
           <motion.p className="mt-0.5 text-xl font-extrabold text-gray-900" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}>847</motion.p>
           <p className="flex items-center gap-1 text-[9px] text-green-600 font-medium mt-0.5"><TrendingUp className="h-2 w-2" /> 23% vs last week</p>
-          <p className="mt-1.5 text-[9px] text-[#DC2626] cursor-pointer hover:underline">Revenues report →</p>
+          <p className="mt-1.5 text-[9px] text-[#DC2626] cursor-pointer hover:underline">Revenue report →</p>
         </div>
-        <div className="bg-white px-4 py-3 border-r border-gray-100">
+        <div className="bg-white px-3 py-3 border-r border-gray-100">
           <p className="text-[9px] font-semibold uppercase tracking-wide text-gray-400">Total Revenue</p>
           <p className="mt-0.5 text-xl font-extrabold text-gray-900">$4.5M</p>
           <p className="flex items-center gap-1 text-[9px] text-green-600 font-medium mt-0.5"><TrendingUp className="h-2 w-2" /> 32% vs last year</p>
           <p className="mt-1.5 text-[9px] text-[#DC2626] cursor-pointer hover:underline">All deals →</p>
         </div>
-        <div className="bg-white px-4 py-3 border-r border-gray-100 flex flex-col items-center justify-center">
+        <div className="bg-white px-3 py-3 border-r border-gray-100 flex flex-col items-center justify-center">
           <p className="w-full text-[9px] font-semibold uppercase tracking-wide text-gray-400 mb-1">Pipeline Value</p>
           <DonutChart pct={78} value="$312K" />
         </div>
-        <div className="bg-white px-4 py-3">
+        <div className="bg-white px-3 py-3 border-r border-gray-100">
           <div className="flex items-center justify-between mb-1.5">
             <p className="text-[9px] font-semibold uppercase tracking-wide text-gray-400">Notifications</p>
             <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-[#DC2626] text-[7px] font-bold text-white">6</span>
           </div>
           <div className="space-y-1.5">
-            {NOTIFICATIONS.slice(0,3).map((n) => (
+            {NOTIFICATIONS.slice(0, 3).map((n) => (
               <div key={n.text} className="flex items-start gap-1.5">
                 <n.icon className="h-2.5 w-2.5 text-[#DC2626] mt-0.5 flex-shrink-0" />
                 <div>
-                  <p className="text-[9px] font-medium text-gray-700 leading-tight">{n.text}</p>
+                  <p className="text-[9px] font-medium text-gray-700 leading-tight truncate max-w-[80px]">{n.text}</p>
                   <p className="text-[8px] text-gray-400">{n.time}</p>
                 </div>
               </div>
             ))}
           </div>
         </div>
+        <div className="bg-white px-3 py-3">
+          <p className="text-[9px] font-semibold uppercase tracking-wide text-gray-400">Win Rate</p>
+          <p className="mt-0.5 text-xl font-extrabold text-gray-900">68%</p>
+          <p className="flex items-center gap-1 text-[9px] text-green-600 font-medium mt-0.5"><TrendingUp className="h-2 w-2" /> +5pts this quarter</p>
+          <p className="mt-1.5 text-[9px] text-[#DC2626] cursor-pointer hover:underline">View by rep →</p>
+        </div>
+      </div>
+
+      {/* Quick Actions bar */}
+      <div className="flex items-center gap-2 bg-gray-50 px-4 py-1.5 border-b border-gray-100">
+        {["Add Lead", "New Campaign", "Schedule Call"].map((label) => (
+          <button
+            key={label}
+            className="text-[9px] px-2 py-1 rounded-lg border border-gray-200 text-gray-500 hover:border-[#DC2626] hover:text-[#DC2626] transition-colors flex items-center gap-1"
+          >
+            <Plus className="h-2.5 w-2.5" />
+            {label}
+          </button>
+        ))}
       </div>
 
       {/* Middle row */}
@@ -139,7 +230,7 @@ function DashboardView() {
             <span className="text-[9px] text-gray-400 border border-gray-200 rounded px-1 py-0.5 flex items-center gap-0.5">Sort by Newest <ChevronDown className="h-2 w-2" /></span>
           </div>
           <div className="space-y-2">
-            {RECENT_LEADS.map((lead) => (
+            {RECENT_LEADS.slice(0, 4).map((lead) => (
               <motion.div
                 key={lead.name}
                 className="flex items-center gap-2 cursor-pointer rounded-lg px-2 py-1 hover:bg-red-50 transition-colors"
@@ -183,14 +274,11 @@ function DashboardView() {
             <motion.path d="M0,62 C40,52 80,34 120,29 C160,24 200,32 235,22 L260,17 L260,70 L0,70 Z" fill="url(#rg)" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.9 }} />
             <motion.path d="M0,62 C40,52 80,34 120,29 C160,24 200,32 235,22 L260,17" fill="none" stroke="#DC2626" strokeWidth="1.5" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 0.9, duration: 1.2 }} />
             <motion.path d="M200,32 C220,24 240,15 260,10" fill="none" stroke="#9CA3AF" strokeWidth="1" strokeDasharray="3 3" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 1.6, duration: 0.6 }} />
-            {["Q2","Q3","Q4","Q1-25","Q2-25"].map((l, i) => (
+            {["Q2", "Q3", "Q4", "Q1-25", "Q2-25"].map((l, i) => (
               <text key={l} x={i * 55 + 8} y="69" fontSize="6.5" fill="#9CA3AF">{l}</text>
             ))}
           </svg>
-          <button
-            onClick={() => setShowBreakdown(!showBreakdown)}
-            className="mt-0.5 text-[9px] text-[#DC2626] hover:underline"
-          >
+          <button onClick={() => setShowBreakdown(!showBreakdown)} className="mt-0.5 text-[9px] text-[#DC2626] hover:underline">
             {showBreakdown ? "Hide breakdown" : "View revenue breakdown →"}
           </button>
           <AnimatePresence>
@@ -206,7 +294,7 @@ function DashboardView() {
                   <p className="text-[10px] font-semibold text-gray-700">Revenue Breakdown</p>
                   <button onClick={() => setShowBreakdown(false)}><X className="h-3 w-3 text-gray-400" /></button>
                 </div>
-                {[["#DC2626","Closed Won","$1.2M"],["#991B1B","Email","$950K"],["#FCA5A5","LinkedIn","$950K"],["#F87171","Partner","$450K"]].map(([c,l,v]) => (
+                {[["#DC2626", "Closed Won", "$1.2M"], ["#991B1B", "Email", "$950K"], ["#FCA5A5", "LinkedIn", "$950K"], ["#F87171", "Partner", "$450K"]].map(([c, l, v]) => (
                   <div key={l} className="flex items-center gap-1.5 mb-1">
                     <span className="h-2 w-2 rounded-full flex-shrink-0" style={{ background: c }} />
                     <span className="text-[9px] text-gray-500 flex-1">{l}</span>
@@ -234,6 +322,19 @@ function DashboardView() {
         <div className="bg-white px-4 py-3 border-r border-gray-100">
           <p className="text-[9px] font-semibold uppercase tracking-wide text-gray-400">Active Campaigns</p>
           <p className="mt-0.5 text-2xl font-extrabold text-gray-900">12</p>
+          <div className="mt-2 space-y-1">
+            <p className="text-[9px] font-semibold text-gray-400 uppercase tracking-wide">Team Activity</p>
+            {TEAM_ACTIVITY.map((a) => (
+              <div key={a.initials + a.time} className="flex items-start gap-1.5">
+                <span className="text-[8px] font-bold text-white bg-[#DC2626] rounded-full h-4 w-4 flex items-center justify-center flex-shrink-0">{a.initials[0]}</span>
+                <p className="text-[8px] text-gray-500 leading-tight">
+                  <span className="font-semibold text-gray-700">{a.text.split(" ")[0]}</span>
+                  {" " + a.text.slice(a.text.indexOf(" ") + 1)}
+                  {" "}<span className="text-gray-400">· {a.time}</span>
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
         <div className="bg-white px-4 py-3 border-r border-gray-100">
           <p className="text-[10px] font-semibold text-gray-700 mb-2">Revenue by Source</p>
@@ -265,33 +366,118 @@ function DashboardView() {
   )
 }
 
+type LeadFilter = "all" | "hot" | "warm" | "new"
+
 function LeadsView() {
   const [selected, setSelected] = useState<string | null>(null)
+  const [filter, setFilter] = useState<LeadFilter>("all")
+
+  const filterCounts: Record<LeadFilter, number> = {
+    all: RECENT_LEADS.length,
+    hot: RECENT_LEADS.filter((l) => l.status === "hot").length,
+    warm: RECENT_LEADS.filter((l) => l.status === "warm").length,
+    new: RECENT_LEADS.filter((l) => l.status === "new").length,
+  }
+
+  const filtered = filter === "all" ? RECENT_LEADS : RECENT_LEADS.filter((l) => l.status === filter)
+
+  const filterLabels: { key: LeadFilter; label: string }[] = [
+    { key: "all", label: `All (${filterCounts.all})` },
+    { key: "hot", label: `Hot (${filterCounts.hot})` },
+    { key: "warm", label: `Warm (${filterCounts.warm})` },
+    { key: "new", label: `New (${filterCounts.new})` },
+  ]
+
   return (
-    <div className="flex-1 bg-white p-4">
-      <p className="text-[11px] font-semibold text-gray-700 mb-3">All Leads</p>
-      <div className="space-y-1">
-        {RECENT_LEADS.concat([
-          { initials: "KP", color: "#6B21A8", name: "Kevin Park", company: "CloudBase", status: "new" },
-          { initials: "AL", color: "#0369A1", name: "Amy Lin", company: "FinStack", status: "warm" },
-        ]).map((lead) => (
-          <motion.div
-            key={lead.name}
-            onClick={() => setSelected(selected === lead.name ? null : lead.name)}
-            className={`flex items-center gap-3 rounded-xl px-3 py-2 cursor-pointer transition-all ${selected === lead.name ? "bg-red-50 border border-red-200" : "hover:bg-gray-50 border border-transparent"}`}
-            whileHover={{ x: 2 }}
+    <div className="flex-1 bg-white p-4 overflow-hidden">
+      <div className="flex items-center justify-between mb-2">
+        <p className="text-[11px] font-semibold text-gray-700">All Leads</p>
+        <button className="flex items-center gap-1 text-[9px] px-2 py-1 rounded-lg bg-[#DC2626] text-white font-semibold hover:bg-[#B91C1C] transition-colors">
+          <Plus className="h-2.5 w-2.5" />
+          Add Lead +
+        </button>
+      </div>
+
+      {/* Filter pills */}
+      <div className="flex items-center gap-1 mb-2.5">
+        <Filter className="h-2.5 w-2.5 text-gray-400 flex-shrink-0" />
+        {filterLabels.map(({ key, label }) => (
+          <button
+            key={key}
+            onClick={() => setFilter(key)}
+            className={`text-[8px] px-2 py-0.5 rounded-full border font-medium transition-colors ${filter === key ? "bg-[#DC2626] border-[#DC2626] text-white" : "border-gray-200 text-gray-500 hover:border-[#DC2626] hover:text-[#DC2626]"}`}
           >
-            <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-white" style={{ background: lead.color }}>
-              {lead.initials}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-[11px] font-semibold text-gray-800">{lead.name}</p>
-              <p className="text-[10px] text-gray-400">{lead.company}</p>
-            </div>
-            <span className={`text-[8px] px-1.5 py-0.5 rounded-full font-medium ${lead.status === "hot" ? "bg-red-100 text-red-600" : lead.status === "warm" ? "bg-orange-100 text-orange-600" : "bg-gray-100 text-gray-500"}`}>
-              {lead.status}
-            </span>
-          </motion.div>
+            {label}
+          </button>
+        ))}
+      </div>
+
+      <div className="space-y-1">
+        {filtered.map((lead) => (
+          <div key={lead.name}>
+            <motion.div
+              onClick={() => setSelected(selected === lead.name ? null : lead.name)}
+              className={`flex items-center gap-3 rounded-xl px-3 py-2 cursor-pointer transition-all ${selected === lead.name ? "bg-red-50 border border-red-200" : "hover:bg-gray-50 border border-transparent"}`}
+              whileHover={{ x: 2 }}
+            >
+              <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-white" style={{ background: lead.color }}>
+                {lead.initials}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[11px] font-semibold text-gray-800 leading-none">{lead.name}</p>
+                <p className="text-[9px] text-gray-400 leading-tight">{lead.company}</p>
+                <p className="text-[8px] text-gray-400 leading-none">{lead.email} · {lead.phone}</p>
+              </div>
+              <div className="flex flex-col items-end gap-0.5">
+                <span className={`text-[8px] px-1.5 py-0.5 rounded-full font-medium ${lead.status === "hot" ? "bg-red-100 text-red-600" : lead.status === "warm" ? "bg-orange-100 text-orange-600" : "bg-gray-100 text-gray-500"}`}>
+                  {lead.status}
+                </span>
+                <span className={`text-[9px] font-bold rounded px-1 py-0 ${lead.score >= 80 ? "text-green-600 bg-green-50" : lead.score >= 60 ? "text-orange-600 bg-orange-50" : "text-gray-500 bg-gray-50"}`}>
+                  {lead.score}
+                </span>
+                <span className="text-[8px] text-gray-400">{lead.lastContacted}</span>
+              </div>
+            </motion.div>
+
+            <AnimatePresence>
+              {selected === lead.name && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="mx-3 mb-1 overflow-hidden"
+                >
+                  <div className="rounded-b-xl border border-t-0 border-red-200 bg-red-50 px-3 py-2">
+                    <div className="flex gap-2 mb-2">
+                      <button className="flex items-center gap-1 text-[8px] px-2 py-1 rounded border border-[#DC2626] text-[#DC2626] font-semibold hover:bg-red-100 transition-colors">
+                        <Mail className="h-2.5 w-2.5" /> Send Email
+                      </button>
+                      <button className="flex items-center gap-1 text-[8px] px-2 py-1 rounded border border-[#DC2626] text-[#DC2626] font-semibold hover:bg-red-100 transition-colors">
+                        <Phone className="h-2.5 w-2.5" /> Call Now
+                      </button>
+                    </div>
+                    <div className="mb-2">
+                      <div className="flex items-center justify-between mb-0.5">
+                        <p className="text-[8px] text-gray-500">Lead Score</p>
+                        <p className="text-[8px] font-bold text-gray-700">{lead.score}/100</p>
+                      </div>
+                      <div className="h-1.5 rounded-full bg-gray-200 overflow-hidden">
+                        <motion.div
+                          className="h-full rounded-full bg-[#DC2626]"
+                          initial={{ width: 0 }}
+                          animate={{ width: `${lead.score}%` }}
+                          transition={{ duration: 0.6, ease: "easeOut" }}
+                        />
+                      </div>
+                    </div>
+                    <p className="text-[8px] text-gray-500 italic mb-1.5">&ldquo;{lead.notes}&rdquo;</p>
+                    <p className="text-[8px] text-[#DC2626] cursor-pointer hover:underline font-medium">View Full Profile →</p>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         ))}
       </div>
     </div>
@@ -300,35 +486,82 @@ function LeadsView() {
 
 function CampaignsView() {
   const [active, setActive] = useState("Alpha Outbound")
+  const [paused, setPaused] = useState<string[]>(["AI Voice Follow-up"])
+
+  const campaignStats = [
+    { label: "Sent", value: "4,821" },
+    { label: "Opens", value: "2,140 · 44%" },
+    { label: "Clicks", value: "891 · 18%" },
+    { label: "Replies", value: "203 · 4%" },
+  ]
+
   return (
-    <div className="flex-1 bg-white p-4">
-      <p className="text-[11px] font-semibold text-gray-700 mb-3">Active Campaigns</p>
+    <div className="flex-1 bg-white p-4 overflow-hidden">
+      <div className="flex items-center justify-between mb-2">
+        <p className="text-[11px] font-semibold text-gray-700">Active Campaigns</p>
+        <button className="flex items-center gap-1 text-[9px] px-2 py-1 rounded-lg bg-[#DC2626] text-white font-semibold hover:bg-[#B91C1C] transition-colors">
+          <Plus className="h-2.5 w-2.5" />
+          New Campaign +
+        </button>
+      </div>
+
+      {/* Aggregate stats row */}
+      <div className="grid grid-cols-4 gap-1.5 mb-3">
+        {campaignStats.map((s) => (
+          <div key={s.label} className="rounded-lg bg-gray-50 px-2 py-1.5 text-center">
+            <p className="text-[8px] text-gray-400">{s.label}</p>
+            <p className="text-[11px] font-bold text-gray-800">{s.value}</p>
+          </div>
+        ))}
+      </div>
+
       <div className="space-y-2">
-        {CAMPAIGNS.map((c) => (
-          <motion.div
-            key={c.name}
-            onClick={() => setActive(c.name)}
-            className={`rounded-xl border px-3 py-2.5 cursor-pointer transition-all ${active === c.name ? "border-[#DC2626] bg-red-50" : "border-gray-100 hover:border-gray-200"}`}
-            whileHover={{ scale: 1.01 }}
-          >
-            <div className="flex items-center justify-between mb-1.5">
-              <p className="text-[11px] font-semibold text-gray-800">{c.name}</p>
-              <span className={`text-[8px] px-1.5 py-0.5 rounded-full font-semibold ${c.status === "live" ? "bg-green-100 text-green-600" : "bg-yellow-100 text-yellow-600"}`}>
-                {c.status}
-              </span>
-            </div>
-            <div className="flex gap-4">
-              <div><p className="text-[9px] text-gray-400">Leads</p><p className="text-[12px] font-bold text-gray-800">{c.leads}</p></div>
-              <div><p className="text-[9px] text-gray-400">Meetings</p><p className="text-[12px] font-bold text-[#DC2626]">{c.meetings}</p></div>
-              <div className="flex-1">
-                <p className="text-[9px] text-gray-400 mb-1">Conv. rate</p>
-                <div className="h-1.5 rounded-full bg-gray-100">
-                  <motion.div className="h-full rounded-full bg-[#DC2626]" initial={{ width: 0 }} animate={{ width: `${Math.round(c.meetings / c.leads * 100)}%` }} transition={{ duration: 0.8 }} />
+        {CAMPAIGNS.map((c) => {
+          const isPaused = paused.includes(c.name)
+          return (
+            <motion.div
+              key={c.name}
+              onClick={() => setActive(c.name)}
+              className={`rounded-xl border px-3 py-2.5 cursor-pointer transition-all ${active === c.name ? "border-[#DC2626] bg-red-50" : "border-gray-100 hover:border-gray-200"}`}
+              whileHover={{ scale: 1.01 }}
+            >
+              <div className="flex items-center justify-between mb-1.5">
+                <div className="flex items-center gap-1.5">
+                  <p className="text-[11px] font-semibold text-gray-800">{c.name}</p>
+                  {c.isAB && (
+                    <span className="text-[7px] px-1 py-0.5 rounded-full bg-gray-100 text-gray-500 font-semibold border border-gray-200">A/B Test</span>
+                  )}
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className={`text-[8px] px-1.5 py-0.5 rounded-full font-semibold ${isPaused ? "bg-yellow-100 text-yellow-600" : "bg-green-100 text-green-600"}`}>
+                    {isPaused ? "paused" : "live"}
+                  </span>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setPaused((prev) => isPaused ? prev.filter((n) => n !== c.name) : [...prev, c.name])
+                    }}
+                    className="flex items-center justify-center h-5 w-5 rounded border border-gray-200 text-gray-400 hover:border-[#DC2626] hover:text-[#DC2626] transition-colors"
+                  >
+                    {isPaused ? <Play className="h-2.5 w-2.5" /> : <Pause className="h-2.5 w-2.5" />}
+                  </button>
                 </div>
               </div>
-            </div>
-          </motion.div>
-        ))}
+              <div className="flex gap-4">
+                <div><p className="text-[9px] text-gray-400">Leads</p><p className="text-[12px] font-bold text-gray-800">{c.leads}</p></div>
+                <div><p className="text-[9px] text-gray-400">Meetings</p><p className="text-[12px] font-bold text-[#DC2626]">{c.meetings}</p></div>
+                <div><p className="text-[9px] text-gray-400">Emails Sent</p><p className="text-[12px] font-bold text-gray-700">{c.emailsSent.toLocaleString()}</p></div>
+                <div><p className="text-[9px] text-gray-400">Open Rate</p><p className="text-[12px] font-bold text-gray-700">{c.openRate}%</p></div>
+                <div className="flex-1">
+                  <p className="text-[9px] text-gray-400 mb-1">Conv. rate</p>
+                  <div className="h-1.5 rounded-full bg-gray-100">
+                    <motion.div className="h-full rounded-full bg-[#DC2626]" initial={{ width: 0 }} animate={{ width: `${Math.round(c.meetings / c.leads * 100)}%` }} transition={{ duration: 0.8 }} />
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )
+        })}
       </div>
     </div>
   )
@@ -336,87 +569,283 @@ function CampaignsView() {
 
 function PipelineView() {
   return (
-    <div className="flex-1 bg-white p-4">
-      <p className="text-[11px] font-semibold text-gray-700 mb-3">Pipeline Stages</p>
-      <div className="space-y-2.5">
-        {PIPELINE_STAGES.map((s, i) => (
-          <div key={s.label} className="flex items-center gap-3">
-            <span className="w-20 shrink-0 text-[10px] text-gray-500">{s.label}</span>
-            <div className="flex-1 h-2 rounded-full bg-gray-100 overflow-hidden">
+    <div className="flex-1 bg-white p-4 overflow-hidden">
+      <div className="flex items-center justify-between mb-3">
+        <p className="text-[11px] font-semibold text-gray-700">Pipeline Board</p>
+        <button className="flex items-center gap-1 text-[9px] px-2 py-1 rounded-lg bg-[#DC2626] text-white font-semibold hover:bg-[#B91C1C] transition-colors">
+          <Plus className="h-2.5 w-2.5" />
+          Add Deal +
+        </button>
+      </div>
+
+      {/* Kanban mini board — 3 columns */}
+      <div className="grid grid-cols-3 gap-2 mb-3">
+        {KANBAN_COLUMNS.map((col, ci) => (
+          <div key={col.label} className="rounded-xl bg-gray-50 border border-gray-100 p-2">
+            <p className="text-[9px] font-semibold text-gray-500 uppercase tracking-wide mb-1.5">{col.label}</p>
+            {col.deals.map((deal, di) => (
               <motion.div
-                className="h-full rounded-full bg-[#DC2626]"
-                initial={{ width: 0 }}
-                animate={{ width: `${s.pct}%` }}
-                transition={{ duration: 0.8, delay: 0.4 + i * 0.1 }}
-                style={{ opacity: 1 - i * 0.15 }}
-              />
-            </div>
-            <span className="w-8 shrink-0 text-right text-[10px] font-bold text-gray-700">{s.count}</span>
+                key={deal.company}
+                className="rounded-lg border border-gray-100 bg-white px-2 py-1.5 mb-1.5 cursor-pointer hover:border-red-200 transition-colors"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 + ci * 0.1 + di * 0.05 }}
+                whileHover={{ scale: 1.02 }}
+              >
+                <p className="text-[9px] font-semibold text-gray-700 leading-none truncate">{deal.company}</p>
+                <div className="flex items-center justify-between mt-0.5">
+                  <span className="text-[8px] font-bold text-[#DC2626]">{deal.value}</span>
+                  <span className="text-[7px] text-gray-400">{deal.days}d</span>
+                </div>
+              </motion.div>
+            ))}
           </div>
         ))}
       </div>
-      <div className="mt-4 rounded-xl bg-gray-50 px-4 py-3 flex items-center justify-between">
+
+      <div className="rounded-xl bg-gray-50 px-4 py-3 flex items-center justify-between">
         <span className="text-[10px] text-gray-500">Total Pipeline Value</span>
-        <span className="text-sm font-bold text-gray-900">$284,000</span>
+        <span className="text-sm font-bold text-gray-900">$905,000</span>
       </div>
     </div>
   )
 }
+
+type NotifFilter = "all" | "unread" | "leads" | "system"
 
 function NotificationsView() {
   const [read, setRead] = useState<string[]>([])
+  const [notifFilter, setNotifFilter] = useState<NotifFilter>("all")
+
+  const unreadCount = NOTIFICATIONS.filter((n) => n.unread && !read.includes(n.text)).length
+
+  const notifFilterLabels: { key: NotifFilter; label: string }[] = [
+    { key: "all", label: "All" },
+    { key: "unread", label: `Unread (${unreadCount})` },
+    { key: "leads", label: "Leads" },
+    { key: "system", label: "System" },
+  ]
+
+  const filteredNotifs = NOTIFICATIONS.filter((n) => {
+    if (notifFilter === "unread") return n.unread && !read.includes(n.text)
+    if (notifFilter === "leads") return n.type === "lead"
+    if (notifFilter === "system") return n.type === "system" || n.type === "billing"
+    return true
+  })
+
   return (
-    <div className="flex-1 bg-white p-4">
-      <div className="flex items-center justify-between mb-3">
+    <div className="flex-1 bg-white p-4 overflow-hidden">
+      <div className="flex items-center justify-between mb-2">
         <p className="text-[11px] font-semibold text-gray-700">Notifications</p>
-        <button onClick={() => setRead(NOTIFICATIONS.map(n => n.text))} className="text-[9px] text-[#DC2626] hover:underline">Mark all read</button>
+        <button onClick={() => setRead(NOTIFICATIONS.map((n) => n.text))} className="text-[9px] text-[#DC2626] hover:underline">Mark all read</button>
       </div>
-      <div className="space-y-2">
-        {NOTIFICATIONS.map((n) => (
-          <motion.div
-            key={n.text}
-            onClick={() => setRead(r => [...r, n.text])}
-            className={`flex items-start gap-2.5 rounded-xl px-3 py-2.5 cursor-pointer transition-colors ${!read.includes(n.text) && n.unread ? "bg-red-50 border border-red-100" : "hover:bg-gray-50 border border-transparent"}`}
-            whileHover={{ x: 2 }}
+
+      {/* Filter tabs */}
+      <div className="flex items-center gap-1 mb-2.5">
+        {notifFilterLabels.map(({ key, label }) => (
+          <button
+            key={key}
+            onClick={() => setNotifFilter(key)}
+            className={`text-[8px] px-2 py-0.5 rounded-full border font-medium transition-colors ${notifFilter === key ? "bg-[#DC2626] border-[#DC2626] text-white" : "border-gray-200 text-gray-500 hover:border-[#DC2626] hover:text-[#DC2626]"}`}
           >
-            {!read.includes(n.text) && n.unread && <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[#DC2626] flex-shrink-0" />}
-            <n.icon className="h-3.5 w-3.5 text-[#DC2626] mt-0.5 flex-shrink-0" />
-            <div>
-              <p className="text-[10px] font-medium text-gray-700">{n.text}</p>
-              <p className="text-[9px] text-gray-400">{n.time}</p>
-            </div>
-          </motion.div>
+            {label}
+          </button>
         ))}
+      </div>
+
+      <div className="space-y-2">
+        <AnimatePresence>
+          {filteredNotifs.map((n) => (
+            <motion.div
+              key={n.text}
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 10 }}
+              transition={{ duration: 0.2 }}
+              onClick={() => setRead((r) => [...r, n.text])}
+              className={`flex items-start gap-2.5 rounded-xl px-3 py-2.5 cursor-pointer transition-colors ${!read.includes(n.text) && n.unread ? "bg-red-50 border border-red-100" : "hover:bg-gray-50 border border-transparent"}`}
+              whileHover={{ x: 2 }}
+            >
+              {!read.includes(n.text) && n.unread && <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[#DC2626] flex-shrink-0" />}
+              {n.type === "billing" ? (
+                <CheckCircle2 className="h-3.5 w-3.5 text-green-500 mt-0.5 flex-shrink-0" />
+              ) : (
+                <n.icon className="h-3.5 w-3.5 text-[#DC2626] mt-0.5 flex-shrink-0" />
+              )}
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] font-medium text-gray-700">{n.text}</p>
+                <p className="text-[9px] text-gray-400">{n.time}</p>
+              </div>
+              <button
+                onClick={(e) => { e.stopPropagation(); setRead((r) => [...r, n.text]) }}
+                className="text-[8px] px-1.5 py-0.5 rounded border border-gray-200 text-gray-500 hover:border-[#DC2626] hover:text-[#DC2626] transition-colors flex-shrink-0"
+              >
+                {n.action}
+              </button>
+            </motion.div>
+          ))}
+        </AnimatePresence>
       </div>
     </div>
   )
 }
 
+const LEAD_SOURCES = [
+  { label: "LinkedIn", pct: 44 },
+  { label: "Cold Email", pct: 28 },
+  { label: "Partner", pct: 18 },
+  { label: "Paid", pct: 10 },
+]
+
+const HEATMAP_DAYS = [
+  { day: "M", pct: 60 },
+  { day: "T", pct: 85 },
+  { day: "W", pct: 90 },
+  { day: "T", pct: 75 },
+  { day: "F", pct: 45 },
+  { day: "S", pct: 20 },
+  { day: "S", pct: 15 },
+]
+
 function ReportsView() {
+  const topStats = [
+    { label: "MRR", value: "$12,450", delta: "↑ 8%", positive: true },
+    { label: "Deals Closed", value: "23", delta: "↑ 3", positive: true },
+    { label: "Avg Deal", value: "$541", delta: "↑ 12%", positive: true },
+    { label: "CAC", value: "$142", delta: "↓ 18%", positive: true },
+  ]
+
+  const funnelSteps: { label: string; count: number; pct?: string }[] = [
+    { label: "Leads", count: 847 },
+    { label: "Qualified", count: 312, pct: "37%" },
+    { label: "Demo", count: 89, pct: "29%" },
+    { label: "Closed", count: 23, pct: "26%" },
+  ]
+
   return (
-    <div className="flex-1 bg-white p-4">
-      <p className="text-[11px] font-semibold text-gray-700 mb-3">Revenue Report</p>
-      <svg viewBox="0 0 280 90" className="w-full mb-3" preserveAspectRatio="none">
-        <defs>
-          <linearGradient id="rg2" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#DC2626" stopOpacity="0.2" />
-            <stop offset="100%" stopColor="#DC2626" stopOpacity="0" />
-          </linearGradient>
-        </defs>
-        <motion.path d="M0,75 C30,65 60,50 90,42 C120,34 150,38 180,28 C210,20 240,15 280,10 L280,90 L0,90 Z" fill="url(#rg2)" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }} />
-        <motion.path d="M0,75 C30,65 60,50 90,42 C120,34 150,38 180,28 C210,20 240,15 280,10" fill="none" stroke="#DC2626" strokeWidth="2" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 0.4, duration: 1.2 }} />
-        {["Jan","Feb","Mar","Apr","May","Jun"].map((m, i) => (
-          <text key={m} x={i * 50 + 10} y="89" fontSize="7" fill="#9CA3AF">{m}</text>
-        ))}
-      </svg>
-      <div className="grid grid-cols-3 gap-2">
-        {[["MRR","$12,450","↑ 8%"],["Deals Closed","23","↑ 3"],["Avg Deal","$541","↑ 12%"]].map(([l,v,d]) => (
-          <div key={l} className="rounded-lg bg-gray-50 px-3 py-2 text-center">
-            <p className="text-[9px] text-gray-400">{l}</p>
-            <p className="text-[13px] font-bold text-gray-800">{v}</p>
-            <p className="text-[9px] text-green-600 font-medium">{d}</p>
+    <div className="flex-1 bg-white p-4 overflow-hidden">
+      <p className="text-[11px] font-semibold text-gray-700 mb-2">Analytics Dashboard</p>
+
+      {/* Top stats row — 4 cards */}
+      <div className="grid grid-cols-4 gap-1.5 mb-3">
+        {topStats.map((s) => (
+          <div key={s.label} className="rounded-lg bg-gray-50 px-2 py-1.5 text-center">
+            <p className="text-[8px] text-gray-400">{s.label}</p>
+            <p className="text-[12px] font-bold text-gray-800">{s.value}</p>
+            <p className={`text-[8px] font-medium ${s.positive ? "text-green-600" : "text-red-600"}`}>{s.delta}</p>
           </div>
         ))}
+      </div>
+
+      {/* Main chart area: MRR (60%) + Lead Sources (40%) */}
+      <div className="grid grid-cols-5 gap-2 mb-2">
+        {/* MRR Growth area chart */}
+        <div className="col-span-3 rounded-xl border border-gray-100 p-2">
+          <p className="text-[9px] font-semibold text-gray-500 mb-1">MRR Growth</p>
+          <div className="flex gap-1">
+            <div className="flex flex-col justify-between pr-1 text-right">
+              <span className="text-[7px] text-gray-400">$15K</span>
+              <span className="text-[7px] text-gray-400">$10K</span>
+              <span className="text-[7px] text-gray-400">$5K</span>
+            </div>
+            <svg viewBox="0 0 280 90" className="flex-1 h-[90px]" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="rg2" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#DC2626" stopOpacity="0.2" />
+                  <stop offset="100%" stopColor="#DC2626" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+              <line x1="0" y1="30" x2="280" y2="30" stroke="#E5E7EB" strokeWidth="0.5" strokeDasharray="4 4" />
+              <line x1="0" y1="60" x2="280" y2="60" stroke="#E5E7EB" strokeWidth="0.5" strokeDasharray="4 4" />
+              <motion.path
+                d="M0,75 C30,65 60,50 90,42 C120,34 150,38 180,28 C210,20 240,15 280,10 L280,90 L0,90 Z"
+                fill="url(#rg2)"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.4 }}
+              />
+              <motion.path
+                d="M0,75 C30,65 60,50 90,42 C120,34 150,38 180,28 C210,20 240,15 280,10"
+                fill="none"
+                stroke="#DC2626"
+                strokeWidth="2"
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                transition={{ delay: 0.4, duration: 1.2 }}
+              />
+              {["Jan", "Feb", "Mar", "Apr", "May", "Jun"].map((m, i) => (
+                <text key={m} x={i * 50 + 10} y="89" fontSize="7" fill="#9CA3AF">{m}</text>
+              ))}
+            </svg>
+          </div>
+        </div>
+
+        {/* Lead Sources horizontal bar chart */}
+        <div className="col-span-2 rounded-xl border border-gray-100 p-2">
+          <p className="text-[9px] font-semibold text-gray-500 mb-1.5">Lead Sources</p>
+          <div className="space-y-1.5">
+            {LEAD_SOURCES.map((s, i) => (
+              <div key={s.label} className="flex items-center gap-1.5">
+                <span className="text-[8px] text-gray-500 w-14 flex-shrink-0">{s.label}</span>
+                <div className="flex-1 h-2 rounded-full bg-gray-100 overflow-hidden">
+                  <motion.div
+                    className="h-full rounded-full bg-[#DC2626]"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${s.pct}%` }}
+                    transition={{ duration: 0.7, delay: 0.4 + i * 0.1 }}
+                    style={{ opacity: 1 - i * 0.15 }}
+                  />
+                </div>
+                <span className="text-[8px] font-semibold text-gray-600 w-6 text-right">{s.pct}%</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Conversion funnel */}
+      <div className="rounded-xl border border-gray-100 px-3 py-2 mb-2">
+        <p className="text-[9px] font-semibold text-gray-500 mb-1.5">Conversion Funnel</p>
+        <div className="flex items-center gap-1 flex-wrap">
+          {funnelSteps.map((step, i) => (
+            <div key={step.label} className="flex items-center gap-1">
+              <motion.div
+                className="flex flex-col items-center rounded-full bg-red-50 border border-red-200 px-2 py-1"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.3 + i * 0.1 }}
+              >
+                <span className="text-[9px] font-bold text-gray-800">{step.count}</span>
+                <span className="text-[7px] text-gray-500">{step.label}</span>
+              </motion.div>
+              {step.pct && (
+                <div className="flex flex-col items-center">
+                  <span className="text-[7px] text-gray-400">{step.pct}</span>
+                  <ArrowRight className="h-2.5 w-2.5 text-gray-300" />
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Activity heatmap */}
+      <div className="rounded-xl border border-gray-100 px-3 py-2">
+        <p className="text-[9px] font-semibold text-gray-500 mb-1.5">Response Rate by Day</p>
+        <div className="flex items-end gap-2">
+          {HEATMAP_DAYS.map((d, i) => (
+            <div key={`${d.day}-${i}`} className="flex flex-col items-center gap-0.5">
+              <motion.div
+                className="h-5 w-5 rounded-full"
+                style={{ background: `rgba(220, 38, 38, ${d.pct / 100})` }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 + i * 0.07 }}
+              />
+              <span className="text-[7px] text-gray-400">{d.day}</span>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   )
@@ -425,15 +854,40 @@ function ReportsView() {
 function SettingsView() {
   const [notifications, setNotifications] = useState(true)
   const [digest, setDigest] = useState(true)
+  const [leadScoring, setLeadScoring] = useState(true)
+  const [weeklySummary, setWeeklySummary] = useState(false)
+
+  const toggleItems = [
+    { label: "Email Notifications", sub: "Get alerts for new leads", state: notifications, set: setNotifications },
+    { label: "Daily Digest", sub: "Morning summary at 8am", state: digest, set: setDigest },
+    { label: "Lead Scoring Alerts", sub: "Alert when score crosses threshold", state: leadScoring, set: setLeadScoring },
+    { label: "Weekly AI Summary", sub: "AI-generated weekly report", state: weeklySummary, set: setWeeklySummary },
+  ]
+
+  const integrations = [
+    { name: "HubSpot", connected: true },
+    { name: "Slack", connected: true },
+    { name: "Gmail", connected: true },
+    { name: "Salesforce", connected: false },
+  ]
+
   return (
-    <div className="flex-1 bg-white p-4">
+    <div className="flex-1 bg-white p-4 overflow-hidden">
       <p className="text-[11px] font-semibold text-gray-700 mb-3">Settings</p>
-      <div className="space-y-3">
-        {[
-          { label: "Email Notifications", sub: "Get alerts for new leads", state: notifications, set: setNotifications },
-          { label: "Daily Digest", sub: "Morning summary at 8am", state: digest, set: setDigest },
-        ].map((item) => (
-          <div key={item.label} className="flex items-center justify-between rounded-xl border border-gray-100 px-3 py-2.5">
+
+      {/* Profile section */}
+      <div className="rounded-xl border border-gray-100 px-3 py-2.5 mb-3 flex items-center gap-2.5">
+        <div className="h-8 w-8 rounded-full bg-[#DC2626] flex items-center justify-center text-[10px] font-bold text-white flex-shrink-0">SA</div>
+        <div className="flex-1 min-w-0">
+          <p className="text-[11px] font-semibold text-gray-800 leading-none">Sam Altman</p>
+          <p className="text-[9px] text-gray-400">sam@openai.com</p>
+        </div>
+        <span className="text-[7px] px-1.5 py-0.5 rounded-full bg-[#DC2626] text-white font-bold tracking-wide">ADMIN</span>
+      </div>
+
+      <div className="space-y-2 mb-3">
+        {toggleItems.map((item) => (
+          <div key={item.label} className="flex items-center justify-between rounded-xl border border-gray-100 px-3 py-2">
             <div>
               <p className="text-[10px] font-semibold text-gray-700">{item.label}</p>
               <p className="text-[9px] text-gray-400">{item.sub}</p>
@@ -450,17 +904,43 @@ function SettingsView() {
             </button>
           </div>
         ))}
-        <div className="rounded-xl border border-gray-100 px-3 py-2.5">
-          <p className="text-[10px] font-semibold text-gray-700 mb-1.5">Team Members</p>
-          <div className="flex -space-x-2">
-            {["#DC2626","#991B1B","#7F1D1D","#b91c1c"].map((c, i) => (
-              <div key={i} className="h-6 w-6 rounded-full border-2 border-white flex items-center justify-center text-[8px] font-bold text-white" style={{ background: c }}>
-                {["A","B","C","D"][i]}
-              </div>
-            ))}
-            <div className="h-6 w-6 rounded-full border-2 border-white bg-gray-100 flex items-center justify-center text-[8px] text-gray-400">+3</div>
-          </div>
+      </div>
+
+      {/* Integrations */}
+      <div className="rounded-xl border border-gray-100 px-3 py-2.5 mb-3">
+        <p className="text-[10px] font-semibold text-gray-700 mb-2">Integrations</p>
+        <div className="flex flex-wrap gap-1.5">
+          {integrations.map((intg) => (
+            <div key={intg.name} className="flex items-center gap-1 rounded-full border border-gray-200 px-2 py-0.5">
+              <span className={`h-1.5 w-1.5 rounded-full flex-shrink-0 ${intg.connected ? "bg-green-500" : "bg-red-400"}`} />
+              <span className="text-[9px] text-gray-600 font-medium">{intg.name}</span>
+            </div>
+          ))}
         </div>
+      </div>
+
+      {/* Team Members */}
+      <div className="rounded-xl border border-gray-100 px-3 py-2.5 mb-3">
+        <p className="text-[10px] font-semibold text-gray-700 mb-1.5">Team Members</p>
+        <div className="flex -space-x-2">
+          {["#DC2626", "#991B1B", "#7F1D1D", "#b91c1c"].map((c, i) => (
+            <div key={i} className="h-6 w-6 rounded-full border-2 border-white flex items-center justify-center text-[8px] font-bold text-white" style={{ background: c }}>
+              {["A", "B", "C", "D"][i]}
+            </div>
+          ))}
+          <div className="h-6 w-6 rounded-full border-2 border-white bg-gray-100 flex items-center justify-center text-[8px] text-gray-400">+3</div>
+        </div>
+      </div>
+
+      {/* Billing */}
+      <div className="rounded-xl border border-gray-100 px-3 py-2.5 flex items-center justify-between">
+        <div>
+          <p className="text-[10px] font-semibold text-gray-700">Billing</p>
+          <p className="text-[9px] text-gray-400">Pro Plan · $297/mo</p>
+        </div>
+        <button className="text-[9px] text-[#DC2626] font-semibold hover:underline flex items-center gap-0.5">
+          Upgrade → <DollarSign className="h-2.5 w-2.5" />
+        </button>
       </div>
     </div>
   )
@@ -489,12 +969,12 @@ const FLOAT_LOGOS = [
 
 export function Hero() {
   const [activeView, setActiveView] = useState("dashboard")
-  const ActiveView = VIEW_MAP[activeView] || DashboardView
+  const ActiveView = VIEW_MAP[activeView] ?? DashboardView
 
   return (
     <section className="relative overflow-hidden bg-[#F5F5F5] pt-24 pb-16 md:pt-32 md:pb-24">
 
-      {/* Floating tool logos — fixed to section corners */}
+      {/* Floating tool logos */}
       {FLOAT_LOGOS.map((logo) => (
         <motion.div
           key={logo.label}
@@ -523,8 +1003,8 @@ export function Hero() {
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="mb-7">
             <span className="inline-flex items-center gap-2.5 rounded-full border border-red-200 bg-white px-4 py-1.5 text-sm font-medium text-gray-700 shadow-sm">
               <span className="flex -space-x-1.5">
-                {["#DC2626","#991B1B","#7F1D1D"].map((c, i) => (
-                  <span key={i} className="flex h-5 w-5 items-center justify-center rounded-full border-2 border-white text-[8px] font-bold text-white" style={{ background: c }}>{["A","B","C"][i]}</span>
+                {["#DC2626", "#991B1B", "#7F1D1D"].map((c, i) => (
+                  <span key={i} className="flex h-5 w-5 items-center justify-center rounded-full border-2 border-white text-[8px] font-bold text-white" style={{ background: c }}>{["A", "B", "C"][i]}</span>
                 ))}
               </span>
               Trusted by 1M+ users
@@ -588,9 +1068,7 @@ export function Hero() {
                       <motion.button
                         key={item.id}
                         onClick={() => setActiveView(item.id)}
-                        className={`w-full flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-[11px] font-medium transition-colors cursor-pointer ${
-                          activeView === item.id ? "bg-red-50 text-[#DC2626]" : "text-gray-500 hover:bg-gray-50 hover:text-gray-700"
-                        }`}
+                        className={`w-full flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-[11px] font-medium transition-colors cursor-pointer ${activeView === item.id ? "bg-red-50 text-[#DC2626]" : "text-gray-500 hover:bg-gray-50 hover:text-gray-700"}`}
                         whileHover={{ x: 2 }}
                         whileTap={{ scale: 0.97 }}
                       >
@@ -601,9 +1079,9 @@ export function Hero() {
                   </nav>
                   <div className="border-t border-gray-100 px-3 py-2.5">
                     <div className="flex items-center gap-1.5">
-                      <div className="h-6 w-6 rounded-full bg-[#DC2626] flex items-center justify-center text-[9px] font-bold text-white">GX</div>
+                      <div className="h-6 w-6 rounded-full bg-[#DC2626] flex items-center justify-center text-[9px] font-bold text-white">SA</div>
                       <div>
-                        <p className="text-[10px] font-semibold text-gray-700 leading-none">Gustavo Xavier</p>
+                        <p className="text-[10px] font-semibold text-gray-700 leading-none">Sam Altman</p>
                         <p className="text-[9px] text-gray-400">ADMIN</p>
                       </div>
                     </div>
@@ -613,7 +1091,6 @@ export function Hero() {
                 {/* MOBILE TAB BAR — visible only on mobile */}
                 <div className="sm:hidden flex items-center border-b border-gray-100 bg-white overflow-x-auto scrollbar-hide shrink-0">
                   <div className="flex items-center gap-0.5 px-2 py-1.5 min-w-max">
-                    {/* Logo pill */}
                     <div className="flex items-center gap-1 px-2 py-1 mr-2 border-r border-gray-100">
                       <Image src="/logo.png" alt="AIMS" width={16} height={16} className="object-contain" />
                       <span className="text-xs font-bold text-gray-800">AIMS</span>
@@ -622,11 +1099,7 @@ export function Hero() {
                       <motion.button
                         key={item.id}
                         onClick={() => setActiveView(item.id)}
-                        className={`flex items-center gap-1 rounded-lg px-2 py-1.5 text-[11px] font-medium transition-colors whitespace-nowrap cursor-pointer ${
-                          activeView === item.id
-                            ? "bg-red-50 text-[#DC2626]"
-                            : "text-gray-500 hover:bg-gray-50"
-                        }`}
+                        className={`flex items-center gap-1 rounded-lg px-2 py-1.5 text-[11px] font-medium transition-colors whitespace-nowrap cursor-pointer ${activeView === item.id ? "bg-red-50 text-[#DC2626]" : "text-gray-500 hover:bg-gray-50"}`}
                         whileTap={{ scale: 0.95 }}
                       >
                         <item.icon className="h-3 w-3 flex-shrink-0" />
@@ -660,7 +1133,7 @@ export function Hero() {
             </p>
           </motion.div>
 
-          {/* "Trusted by" label — LogoTicker picks up below */}
+          {/* "Trusted by" label */}
           <motion.p
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}
             className="mt-14 text-sm font-semibold text-gray-400 uppercase tracking-widest"

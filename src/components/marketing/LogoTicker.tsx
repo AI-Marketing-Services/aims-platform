@@ -2,16 +2,16 @@ import Image from "next/image"
 
 // Per-logo size overrides — text-only logos need more width/height to read
 const LOGO_SIZES: Record<string, { w: number; h: number }> = {
-  "/partners/6fSaG0Z9T6wu55AmxL45rMrgNms.avif": { w: 160, h: 48 }, // Toll Brothers — text heavy
-  "/partners/eZBM2bc6w6VUFPmhsr8gPaOjIM.avif":  { w: 160, h: 56 }, // Coca-Cola — script
-  "/partners/L6nZm8LsScxRkCrVutLpBDCd8w.avif":  { w: 160, h: 52 }, // American Campus — icon+text
-  "/partners/fTtyMgNdt6LbHbeiKlQuYCtl6I.avif":  { w: 148, h: 44 }, // Fairfield — text only
-  "/partners/YtZJ5gkoFtLfH4Xc9WYswHbSUTg.avif": { w: 148, h: 52 }, // Cortland — icon+text
-  "/partners/QwquX6NUmGF7dXFs9HDwVQXWIwA.avif": { w: 148, h: 44 }, // large text logo
-  "/partners/u7OFAO2pJctDed0w5dB7QQyFELE.avif":  { w: 148, h: 44 }, // large text logo
+  "/partners/6fSaG0Z9T6wu55AmxL45rMrgNms.avif": { w: 200, h: 64 }, // Toll Brothers — text heavy
+  "/partners/eZBM2bc6w6VUFPmhsr8gPaOjIM.avif":  { w: 200, h: 72 }, // Coca-Cola — script
+  "/partners/L6nZm8LsScxRkCrVutLpBDCd8w.avif":  { w: 200, h: 68 }, // American Campus — icon+text
+  "/partners/fTtyMgNdt6LbHbeiKlQuYCtl6I.avif":  { w: 180, h: 60 }, // Fairfield — text only
+  "/partners/YtZJ5gkoFtLfH4Xc9WYswHbSUTg.avif": { w: 180, h: 68 }, // Cortland — icon+text
+  "/partners/QwquX6NUmGF7dXFs9HDwVQXWIwA.avif": { w: 180, h: 60 }, // large text logo
+  "/partners/u7OFAO2pJctDed0w5dB7QQyFELE.avif":  { w: 180, h: 60 }, // large text logo
 }
 
-const DEFAULT_SIZE = { w: 120, h: 40 }
+const DEFAULT_SIZE = { w: 160, h: 56 }
 
 const PARTNER_LOGOS = [
   { name: "UDR", src: "/partners/2MAkhjCzE5rmoivR73vacCpvYE.avif" },
@@ -35,7 +35,7 @@ export function LogoTicker() {
   const track = [...PARTNER_LOGOS, ...PARTNER_LOGOS, ...PARTNER_LOGOS]
 
   return (
-    <section className="border-y border-gray-100 bg-white py-8">
+    <section className="border-y border-gray-100 bg-white py-10">
       <div className="mx-auto max-w-6xl px-4">
         <p className="mb-6 text-center text-xs font-semibold uppercase tracking-widest text-gray-400">
           Trusted by sales teams at
@@ -52,7 +52,7 @@ export function LogoTicker() {
               return (
                 <div
                   key={i}
-                  className="mx-10 inline-flex flex-shrink-0 items-center justify-center opacity-60 hover:opacity-100 transition-opacity grayscale hover:grayscale-0"
+                  className="mx-12 inline-flex flex-shrink-0 items-center justify-center opacity-60 hover:opacity-100 transition-opacity grayscale hover:grayscale-0"
                   style={{ width: size.w, height: size.h }}
                 >
                   <Image

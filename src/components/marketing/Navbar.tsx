@@ -227,7 +227,7 @@ export function Navbar() {
               </Link>
               <Link
                 href="/get-started"
-                className="text-xs font-bold bg-[#DC2626] text-white px-5 py-2 uppercase tracking-wider hover:bg-[#B91C1C] transition-colors"
+                className="text-xs font-bold rounded-lg bg-[#DC2626] text-white px-5 py-2 uppercase tracking-wider hover:bg-[#B91C1C] transition-colors"
               >
                 Get started
               </Link>
@@ -348,7 +348,7 @@ export function Navbar() {
                 </SignedOut>
                 <Link
                   href="/get-started"
-                  className="block w-full text-center bg-[#DC2626] text-white text-xs font-bold px-4 py-2.5 uppercase tracking-wider"
+                  className="block w-full text-center rounded-lg bg-[#DC2626] text-white text-xs font-bold px-4 py-2.5 uppercase tracking-wider"
                 >
                   Get started
                 </Link>

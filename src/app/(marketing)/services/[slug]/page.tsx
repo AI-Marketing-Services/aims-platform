@@ -335,6 +335,70 @@ const STATIC_SERVICES: Record<string, {
       "30-day post-launch support",
     ],
   },
+  "inbound-orchestration": {
+    name: "Inbound Lead Orchestration",
+    pillar: "SALES",
+    shortDesc: "End-to-end inbound pipeline from capture to enrichment to booking — fully automated.",
+    longDesc: "We automate your entire inbound lead flow — from form fill to enrichment to CRM routing in under 2 minutes. Every lead is scored, prioritized, and either auto-booked or routed to the right rep with full context. Zero manual triage.",
+    features: [
+      "Form → Clay enrichment → CRM routing in under 2 minutes",
+      "Lead scoring model (firmographic + behavioral signals)",
+      "Auto-book high-intent leads directly to your calendar",
+      "Slack alerts for every qualified lead with full context",
+      "Round-robin and territory-based rep assignment",
+      "Multi-source capture (form, chat, ad, referral)",
+      "SLA tracking and response-time reporting",
+      "30-day post-launch optimization sprint",
+    ],
+  },
+  "linkedin-outbound": {
+    name: "LinkedIn Outbound System",
+    pillar: "MARKETING",
+    shortDesc: "Signal-based LinkedIn pipeline from ICP connection to booked meeting.",
+    longDesc: "We build a complete LinkedIn outbound engine — optimizing your profile, running signal-based ICP connection sequences, and converting engaged connections into booked meetings. 50+ qualified connections per week flowing into your pipeline.",
+    features: [
+      "Profile optimization and positioning",
+      "3 posts/week content strategy for authority building",
+      "ICP connection sequencing with personalized openers",
+      "Signal monitoring — triggers when prospects engage with content",
+      "Tiered outreach routing based on engagement score",
+      "Meeting link integration and follow-up sequences",
+      "Weekly performance dashboard",
+      "A/B testing on messaging and CTAs",
+    ],
+  },
+  "ai-content-engine": {
+    name: "AI Content Engine",
+    pillar: "MARKETING",
+    shortDesc: "High-volume content pipeline where AI handles research and drafting, humans handle final polish.",
+    longDesc: "We build a scalable AI content pipeline that produces 4x more output with half the team time. AI handles research, briefs, and first drafts — your team reviews and publishes. Every piece is SEO-scored before it goes live.",
+    features: [
+      "Content calendar and keyword-mapped topic clusters",
+      "AI drafting pipeline — full article drafts per brief",
+      "Human review and distribution workflow (blog, LinkedIn, email)",
+      "SEO scoring for every piece before publish",
+      "AI answer engine optimization for ChatGPT/Perplexity",
+      "Content repurposing into LinkedIn posts and email snippets",
+      "Monthly performance report with traffic attribution",
+      "Brand voice guide and style enforcement",
+    ],
+  },
+  "ai-tool-tracker": {
+    name: "AI Tool Tracker (Trackr)",
+    pillar: "OPERATIONS",
+    shortDesc: "Evaluate, track, and optimize every AI tool in your stack with automated research and scoring.",
+    longDesc: "We deploy Trackr — our AI tool intelligence platform — to give you one source of truth for your entire AI stack. Every tool is scored across 7 dimensions, spend is tracked, and you get automated renewal alerts before any auto-renews hit.",
+    features: [
+      "Full AI stack audit — every tool scored across 7 dimensions",
+      "Spend tracking dashboard with ROI per tool",
+      "Automated research on any new tool in 30 minutes",
+      "Renewal calendar with Slack alerts before auto-renews",
+      "Competitor tool comparison and switch recommendations",
+      "Integration health monitoring",
+      "Monthly AI stack optimization report",
+      "Team usage analytics and adoption tracking",
+    ],
+  },
 }
 
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
@@ -378,8 +442,17 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
         pillar: dbService.pillar,
         shortDesc: dbService.shortDesc,
         longDesc: dbService.longDesc,
-        features: Array.isArray(dbService.features) ? (dbService.features as string[]) : [],
-        useCases: Array.isArray(dbService.useCases) ? (dbService.useCases as { industry: string; result: string }[]) : [],
+        features: Array.isArray(dbService.features)
+          ? (dbService.features as unknown[]).filter((f): f is string => typeof f === "string")
+          : [],
+        useCases: Array.isArray(dbService.useCases)
+          ? (dbService.useCases as unknown[]).filter(
+              (u): u is { industry: string; result: string } =>
+                typeof u === "object" && u !== null && "industry" in u && "result" in u &&
+                typeof (u as Record<string, unknown>).industry === "string" &&
+                typeof (u as Record<string, unknown>).result === "string"
+            )
+          : [],
         tiers: dbService.tiers.map((t) => ({
           id: t.id,
           name: t.name,
@@ -387,7 +460,9 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
           interval: t.interval,
           slug: t.slug,
           isPopular: t.isPopular,
-          features: Array.isArray(t.features) ? (t.features as string[]) : [],
+          features: Array.isArray(t.features)
+            ? (t.features as unknown[]).filter((f): f is string => typeof f === "string")
+            : [],
         })),
         pricingModel: dbService.pricingModel,
       }
