@@ -92,9 +92,9 @@ function DonutChart({ pct, value }: { pct: number; value: string }) {
 function DashboardView() {
   const [showBreakdown, setShowBreakdown] = useState(false)
   return (
-    <div className="flex-1 min-w-0 bg-gray-50/40">
+    <div className="flex-1 min-w-0 bg-gray-50/40 overflow-hidden">
       {/* Metric row */}
-      <div className="grid grid-cols-4 border-b border-gray-100">
+      <div className="grid grid-cols-2 sm:grid-cols-4 border-b border-gray-100">
         <div className="bg-white px-4 py-3 border-r border-gray-100">
           <p className="text-[9px] font-semibold uppercase tracking-wide text-gray-400">New Leads</p>
           <motion.p className="mt-0.5 text-xl font-extrabold text-gray-900" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}>847</motion.p>
@@ -131,7 +131,7 @@ function DashboardView() {
       </div>
 
       {/* Middle row */}
-      <div className="grid grid-cols-2 border-b border-gray-100">
+      <div className="grid grid-cols-1 sm:grid-cols-2 border-b border-gray-100">
         {/* Recent Leads */}
         <div className="bg-white px-4 py-3 border-r border-gray-100">
           <div className="flex items-center justify-between mb-2">
@@ -230,7 +230,7 @@ function DashboardView() {
       </div>
 
       {/* Bottom row */}
-      <div className="grid grid-cols-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3">
         <div className="bg-white px-4 py-3 border-r border-gray-100">
           <p className="text-[9px] font-semibold uppercase tracking-wide text-gray-400">Active Campaigns</p>
           <p className="mt-0.5 text-2xl font-extrabold text-gray-900">12</p>
@@ -566,13 +566,13 @@ export function Hero() {
             initial={{ opacity: 0, y: 56 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.45 }}
-            className="mt-14 w-full max-w-4xl"
+            className="mt-14 w-full max-w-5xl"
           >
-            <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl shadow-gray-300/40">
-              <div className="flex" style={{ height: "360px" }}>
+            <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl shadow-gray-300/40 h-auto sm:h-[420px]">
+              <div className="flex flex-col sm:flex-row h-auto sm:h-[420px]">
 
-                {/* Sidebar */}
-                <div className="w-40 flex-shrink-0 border-r border-gray-100 bg-white flex flex-col">
+                {/* DESKTOP SIDEBAR — hidden on mobile */}
+                <div className="hidden sm:flex w-40 flex-shrink-0 border-r border-gray-100 bg-white flex-col">
                   <div className="flex items-center gap-2 px-3 py-3.5 border-b border-gray-100">
                     <Image src="/logo.png" alt="AIMS" width={22} height={22} className="object-contain" />
                     <span className="text-sm font-bold text-gray-800">AIMS</span>
@@ -610,8 +610,34 @@ export function Hero() {
                   </div>
                 </div>
 
+                {/* MOBILE TAB BAR — visible only on mobile */}
+                <div className="sm:hidden flex items-center border-b border-gray-100 bg-white overflow-x-auto scrollbar-hide shrink-0">
+                  <div className="flex items-center gap-0.5 px-2 py-1.5 min-w-max">
+                    {/* Logo pill */}
+                    <div className="flex items-center gap-1 px-2 py-1 mr-2 border-r border-gray-100">
+                      <Image src="/logo.png" alt="AIMS" width={16} height={16} className="object-contain" />
+                      <span className="text-xs font-bold text-gray-800">AIMS</span>
+                    </div>
+                    {NAV_ITEMS.map((item) => (
+                      <motion.button
+                        key={item.id}
+                        onClick={() => setActiveView(item.id)}
+                        className={`flex items-center gap-1 rounded-lg px-2 py-1.5 text-[11px] font-medium transition-colors whitespace-nowrap cursor-pointer ${
+                          activeView === item.id
+                            ? "bg-red-50 text-[#DC2626]"
+                            : "text-gray-500 hover:bg-gray-50"
+                        }`}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <item.icon className="h-3 w-3 flex-shrink-0" />
+                        <span>{item.label}</span>
+                      </motion.button>
+                    ))}
+                  </div>
+                </div>
+
                 {/* Content panel */}
-                <div className="flex-1 min-w-0 overflow-hidden">
+                <div className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden">
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={activeView}

@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import { AdminSidebar } from "@/components/admin/AdminSidebar"
+import { MobileAdminNav } from "@/components/admin/MobileAdminNav"
 
 export default async function AdminLayout({
   children,
@@ -17,12 +18,23 @@ export default async function AdminLayout({
 
   return (
     <div className="dark min-h-screen bg-background text-foreground">
-      <div className="flex h-screen overflow-hidden">
+      {/* Mobile top header — only visible on mobile */}
+      <div className="lg:hidden flex items-center justify-between h-14 px-4 bg-background border-b border-border sticky top-0 z-40">
+        <span className="text-base font-bold tracking-tight text-foreground">AIMS Admin</span>
+        <div className="flex items-center gap-2">
+          {/* Notification bell or user avatar can go here */}
+        </div>
+      </div>
+
+      <div className="flex h-[calc(100dvh-3.5rem)] lg:h-screen overflow-hidden">
         <AdminSidebar />
         <main className="flex-1 overflow-y-auto custom-scrollbar">
-          <div className="p-6 lg:p-8">{children}</div>
+          <div className="p-4 pb-20 lg:p-6 lg:pb-8 xl:p-8">{children}</div>
         </main>
       </div>
+
+      {/* Mobile bottom nav */}
+      <MobileAdminNav />
     </div>
   )
 }

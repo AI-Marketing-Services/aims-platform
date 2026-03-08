@@ -43,7 +43,7 @@ export function PortalSidebar({ totalMrr = 0, hasUnread = false }: PortalSidebar
   return (
     <aside
       className={cn(
-        "relative flex flex-col border-r border-gray-200 bg-white transition-all duration-200",
+        "relative hidden lg:flex flex-col border-r border-gray-200 bg-white transition-all duration-200",
         collapsed ? "w-16" : "w-64"
       )}
     >
