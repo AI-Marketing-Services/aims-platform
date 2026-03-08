@@ -372,7 +372,7 @@ const SERVICES: AIMSService[] = [
       { name: "GoHighLevel", domain: "gohighlevel.com" },
       { name: "Twilio", domain: "twilio.com" },
       { name: "N8N", domain: "n8n.io" },
-      { name: "Zapier", domain: "zapier.com" },
+      { name: "Slack", domain: "slack.com" },
     ],
     deliverables: [
       "White-labeled GHL subaccount with custom branding, domain, and pipelines",
@@ -394,7 +394,7 @@ const SERVICES: AIMSService[] = [
     tools: [
       { name: "GoHighLevel", domain: "gohighlevel.com" },
       { name: "Twilio", domain: "twilio.com" },
-      { name: "Google", domain: "google.com" },
+      { name: "Google Business", domain: "googlebusiness.com" },
       { name: "N8N", domain: "n8n.io" },
     ],
     deliverables: [
@@ -418,7 +418,7 @@ const SERVICES: AIMSService[] = [
       { name: "Stripe", domain: "stripe.com" },
       { name: "Airtable", domain: "airtable.com" },
       { name: "Resend", domain: "resend.com" },
-      { name: "N8N", domain: "n8n.io" },
+      { name: "Zapier", domain: "zapier.com" },
     ],
     deliverables: [
       "Branded ordering portal with your product catalog and pricing logic",
@@ -441,7 +441,7 @@ const SERVICES: AIMSService[] = [
       { name: "Anthropic", domain: "anthropic.com" },
       { name: "Slack", domain: "slack.com" },
       { name: "N8N", domain: "n8n.io" },
-      { name: "Notion", domain: "notion.so" },
+      { name: "Zapier", domain: "zapier.com" },
     ],
     deliverables: [
       "Knowledge base built from your docs, videos, webinars, and FAQs",
@@ -461,10 +461,10 @@ const SERVICES: AIMSService[] = [
     pricing: "from",
     priceFrom: "$597/mo",
     tools: [
-      { name: "Close CRM", domain: "close.com" },
       { name: "Slack", domain: "slack.com" },
       { name: "Notion", domain: "notion.so" },
       { name: "OpenAI", domain: "openai.com" },
+      { name: "Linear", domain: "linear.app" },
     ],
     deliverables: [
       "Call recording with AI scoring across 7 performance dimensions",
@@ -487,7 +487,7 @@ const SERVICES: AIMSService[] = [
       { name: "Twilio", domain: "twilio.com" },
       { name: "GoHighLevel", domain: "gohighlevel.com" },
       { name: "Instantly", domain: "instantly.ai" },
-      { name: "Mailgun", domain: "mailgun.com" },
+      { name: "Zapier", domain: "zapier.com" },
     ],
     deliverables: [
       "A2P brand and campaign registration across all sending numbers",
@@ -496,29 +496,6 @@ const SERVICES: AIMSService[] = [
       "Compliance documentation and ongoing monitoring setup",
     ],
     outcome: "Compliant outbound infrastructure live in 48 hours — no more blocked sends or carrier filtering",
-  },
-  {
-    id: "s22",
-    slug: "crm-migration",
-    pillar: "OPERATIONS",
-    name: "CRM Migration & Architecture",
-    desc: "Full CRM audit, data migration, pipeline rebuild, and reporting dashboard — validated and live",
-    setupTime: "5–7 days",
-    pricing: "from",
-    priceFrom: "$2,997 one-time",
-    tools: [
-      { name: "HubSpot", domain: "hubspot.com" },
-      { name: "Salesforce", domain: "salesforce.com" },
-      { name: "Close CRM", domain: "close.com" },
-      { name: "Clay", domain: "clay.com" },
-    ],
-    deliverables: [
-      "Source CRM audit, deduplication, and re-enrichment",
-      "Full migration with field mapping, custom properties, and stage definitions",
-      "Reporting dashboard with daily pipeline visibility",
-      "Team training and handoff documentation",
-    ],
-    outcome: "Clean CRM with accurate data, rebuilt pipelines, and live reporting — zero manual spreadsheets",
   },
 ]
 
@@ -585,7 +562,7 @@ function ServiceCard({ service }: { service: AIMSService }) {
         </div>
 
         <h3 className="text-lg font-bold text-foreground mb-1.5 leading-tight line-clamp-2 min-h-[3.5rem]">{service.name}</h3>
-        <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">{service.desc}</p>
+        <p className="text-sm text-muted-foreground leading-relaxed">{service.desc}</p>
       </div>
 
       {/* Tool logos */}
@@ -613,7 +590,7 @@ function ServiceCard({ service }: { service: AIMSService }) {
       {/* Outcome box — fixed height */}
       <div className="mx-5 mb-4 px-4 py-3 bg-muted border border-border rounded-xl min-h-[72px]">
         <div className="text-xs text-muted-foreground font-semibold uppercase tracking-wider mb-1">Outcome</div>
-        <p className="text-sm text-foreground/80 leading-snug line-clamp-2">{service.outcome}</p>
+        <p className="text-sm text-foreground/80 leading-snug">{service.outcome}</p>
       </div>
 
       {/* Tier selector — always reserve the same height */}

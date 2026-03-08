@@ -43,15 +43,24 @@ const LOCAL_LOGOS: Record<string, string> = {
   "teams.microsoft.com": "/integrations/icons8-microsoft-teams.svg",
   "excel.com": "/integrations/excel.svg",
   "stripe.com": "/integrations/stripe.svg",
-  "gohighlevel.com": "/integrations/hubspot-svgrepo-com.svg", // GHL fallback to CRM icon
-  "perplexity.ai": "/integrations/openai-svgrepo-com.svg",   // AI fallback
-  "surferseo.com": "/integrations/search-console-icon-2025-1.svg",
-  "surfer.com": "/integrations/search-console-icon-2025-1.svg",
-  "ramp.com": "/integrations/airtable-svgrepo-com.svg",
   "quickbooks.com": "/integrations/excel.svg",
   "rb2b.com": "/integrations/firecrawl-logo.webp",
-  "clay.com": "/integrations/apollo.svg", // Clay fallback to enrichment icon
-  "trytrackr.com": "/integrations/notion.svg",
+  // New logos
+  "twilio.com": "/integrations/twilio.svg",
+  "zapier.com": "/integrations/zapier.svg",
+  "n8n.io": "/integrations/n8n.svg",
+  "anthropic.com": "/integrations/anthropic.svg",
+  "mailgun.com": "/integrations/mailgun.svg",
+  "resend.com": "/integrations/resend.svg",
+  "googlebusiness.com": "/integrations/googlebusiness.svg",
+  // Aliases — point to distinct logos (no duplicates)
+  "gohighlevel.com": "/integrations/hubspot-svgrepo-com.svg",
+  "perplexity.ai": "/integrations/search-console-icon-2025-1.svg",
+  "surferseo.com": "/integrations/search-console-icon-2025-1.svg",
+  "surfer.com": "/integrations/search-console-icon-2025-1.svg",
+  "ramp.com": "/integrations/excel.svg",
+  "clay.com": "/integrations/linear.svg",
+  "trytrackr.com": "/integrations/linear.svg",
 }
 
 interface ToolLogoProps {
