@@ -3,7 +3,7 @@ import { notFound } from "next/navigation"
 import Link from "next/link"
 import { ArrowRight, Check } from "lucide-react"
 import { db } from "@/lib/db"
-import { ServiceDemoSection } from "@/components/marketing/ServiceDemoSection"
+import { ServiceDemoSection, ServiceDemoWidget, DEMO_SLUGS } from "@/components/marketing/ServiceDemoSection"
 
 type Params = { slug: string }
 
@@ -515,6 +515,8 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
       : { "@type": "Offer", availability: "https://schema.org/InStock" },
   }
 
+  const hasDemo = DEMO_SLUGS.includes(slug)
+
   return (
     <>
       <script
@@ -522,33 +524,69 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
     <div className="min-h-screen bg-white">
-      {/* Hero */}
+      {/* Hero — two-column when demo exists, full-width otherwise */}
       <section className="border-b border-gray-100 bg-white py-20">
-        <div className="container mx-auto max-w-4xl px-4">
-          <span className={`inline-block rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-wider mb-4 ${pillarColors[service.pillar] ?? "bg-gray-100 text-gray-600 border-gray-200"}`}>
-            {service.pillar}
-          </span>
-          <h1 className="text-4xl font-bold tracking-tight text-gray-900 md:text-5xl">{service.name}</h1>
-          <p className="mt-4 text-xl text-gray-500 max-w-2xl">{service.longDesc ?? service.shortDesc}</p>
-          <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-            <Link
-              href={`/get-started?service=${slug}`}
-              className="inline-flex items-center gap-2 rounded-lg bg-[#DC2626] px-8 py-3.5 font-semibold text-white hover:bg-[#B91C1C] transition"
-            >
-              Get Started <ArrowRight className="h-4 w-4" />
-            </Link>
-            <Link
-              href="/get-started"
-              className="inline-flex items-center gap-2 rounded-lg border border-gray-200 px-8 py-3.5 font-semibold text-gray-700 hover:bg-gray-50 transition"
-            >
-              Book a Call
-            </Link>
-          </div>
+        <div className={`container mx-auto px-4 ${hasDemo ? "max-w-6xl" : "max-w-4xl"}`}>
+          {hasDemo ? (
+            <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
+              {/* Left: copy */}
+              <div>
+                <span className={`inline-block rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-wider mb-4 ${pillarColors[service.pillar] ?? "bg-gray-100 text-gray-600 border-gray-200"}`}>
+                  {service.pillar}
+                </span>
+                <h1 className="text-4xl font-bold tracking-tight text-gray-900 md:text-5xl">{service.name}</h1>
+                <p className="mt-4 text-xl text-gray-500">{service.longDesc ?? service.shortDesc}</p>
+                <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+                  <Link
+                    href={`/get-started?service=${slug}`}
+                    className="inline-flex items-center gap-2 rounded-lg bg-[#DC2626] px-8 py-3.5 font-semibold text-white hover:bg-[#B91C1C] transition"
+                  >
+                    Get Started <ArrowRight className="h-4 w-4" />
+                  </Link>
+                  <Link
+                    href="/get-started"
+                    className="inline-flex items-center gap-2 rounded-lg border border-gray-200 px-8 py-3.5 font-semibold text-gray-700 hover:bg-gray-50 transition"
+                  >
+                    Book a Call
+                  </Link>
+                </div>
+              </div>
+              {/* Right: live demo */}
+              <div>
+                <p className="mb-3 text-[11px] font-semibold uppercase tracking-widest text-gray-400">
+                  Live Demo — Interactive Preview
+                </p>
+                <ServiceDemoWidget slug={slug} />
+              </div>
+            </div>
+          ) : (
+            <>
+              <span className={`inline-block rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-wider mb-4 ${pillarColors[service.pillar] ?? "bg-gray-100 text-gray-600 border-gray-200"}`}>
+                {service.pillar}
+              </span>
+              <h1 className="text-4xl font-bold tracking-tight text-gray-900 md:text-5xl">{service.name}</h1>
+              <p className="mt-4 text-xl text-gray-500 max-w-2xl">{service.longDesc ?? service.shortDesc}</p>
+              <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+                <Link
+                  href={`/get-started?service=${slug}`}
+                  className="inline-flex items-center gap-2 rounded-lg bg-[#DC2626] px-8 py-3.5 font-semibold text-white hover:bg-[#B91C1C] transition"
+                >
+                  Get Started <ArrowRight className="h-4 w-4" />
+                </Link>
+                <Link
+                  href="/get-started"
+                  className="inline-flex items-center gap-2 rounded-lg border border-gray-200 px-8 py-3.5 font-semibold text-gray-700 hover:bg-gray-50 transition"
+                >
+                  Book a Call
+                </Link>
+              </div>
+            </>
+          )}
         </div>
       </section>
 
-      {/* Interactive Demo */}
-      <ServiceDemoSection slug={slug} />
+      {/* Standalone demo section only for slugs without an inline demo */}
+      {!hasDemo && <ServiceDemoSection slug={slug} />}
 
       {/* Features */}
       {service.features.length > 0 && (
