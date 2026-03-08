@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { User, Bell, Shield, ExternalLink } from "lucide-react"
+import { User, Bell, Shield, ExternalLink, Plug, Pencil, Check, X } from "lucide-react"
 import Image from "next/image"
 
 interface Props {
@@ -20,17 +20,253 @@ interface Props {
     phone: string | null
     website: string | null
     industry: string | null
+    locationCount: number
     emailNotifs: boolean
     slackNotifs: boolean
   } | null
 }
 
+// Editable profile field component
+function EditableField({
+  label,
+  value,
+  fieldKey,
+  type = "text",
+  onSave,
+}: {
+  label: string
+  value: string
+  fieldKey: string
+  type?: "text" | "url" | "tel" | "number"
+  onSave: (key: string, value: string) => Promise<void>
+}) {
+  const [editing, setEditing] = useState(false)
+  const [draft, setDraft] = useState(value)
+  const [saving, setSaving] = useState(false)
+  const [saved, setSaved] = useState(false)
+
+  async function handleSave() {
+    if (draft === value) {
+      setEditing(false)
+      return
+    }
+    setSaving(true)
+    await onSave(fieldKey, draft)
+    setSaving(false)
+    setSaved(true)
+    setEditing(false)
+    setTimeout(() => setSaved(false), 2000)
+  }
+
+  function handleKeyDown(e: React.KeyboardEvent) {
+    if (e.key === "Enter") handleSave()
+    if (e.key === "Escape") {
+      setDraft(value)
+      setEditing(false)
+    }
+  }
+
+  return (
+    <div>
+      <p className="text-xs text-muted-foreground mb-1">{label}</p>
+      {editing ? (
+        <div className="flex items-center gap-1.5">
+          <input
+            autoFocus
+            type={type}
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            onKeyDown={handleKeyDown}
+            className="flex-1 rounded border border-border bg-background px-2 py-1 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-[#DC2626]/50"
+          />
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="flex h-6 w-6 items-center justify-center rounded bg-[#DC2626] text-white hover:bg-[#B91C1C] disabled:opacity-50 transition-colors"
+          >
+            <Check className="h-3.5 w-3.5" />
+          </button>
+          <button
+            onClick={() => { setDraft(value); setEditing(false) }}
+            className="flex h-6 w-6 items-center justify-center rounded border border-border text-muted-foreground hover:bg-muted transition-colors"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      ) : (
+        <div className="flex items-center gap-1.5 group">
+          <p className="text-sm text-foreground">{value || "—"}</p>
+          {saved && <span className="text-[10px] text-green-600 font-medium">Saved</span>}
+          <button
+            onClick={() => { setDraft(value); setEditing(true) }}
+            className="opacity-0 group-hover:opacity-100 transition-opacity p-0.5 rounded hover:bg-muted"
+          >
+            <Pencil className="h-3 w-3 text-muted-foreground" />
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// Select field for industry
+function EditableSelectField({
+  label,
+  value,
+  fieldKey,
+  options,
+  onSave,
+}: {
+  label: string
+  value: string
+  fieldKey: string
+  options: string[]
+  onSave: (key: string, value: string) => Promise<void>
+}) {
+  const [editing, setEditing] = useState(false)
+  const [draft, setDraft] = useState(value)
+  const [saving, setSaving] = useState(false)
+  const [saved, setSaved] = useState(false)
+
+  async function handleSave(val: string) {
+    setSaving(true)
+    await onSave(fieldKey, val)
+    setSaving(false)
+    setSaved(true)
+    setEditing(false)
+    setTimeout(() => setSaved(false), 2000)
+  }
+
+  return (
+    <div>
+      <p className="text-xs text-muted-foreground mb-1">{label}</p>
+      {editing ? (
+        <select
+          autoFocus
+          value={draft}
+          onChange={(e) => { setDraft(e.target.value); handleSave(e.target.value) }}
+          disabled={saving}
+          className="rounded border border-border bg-background px-2 py-1 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-[#DC2626]/50 disabled:opacity-50"
+        >
+          <option value="">Select...</option>
+          {options.map((o) => (
+            <option key={o} value={o}>{o}</option>
+          ))}
+        </select>
+      ) : (
+        <div className="flex items-center gap-1.5 group">
+          <p className="text-sm text-foreground">{value || "—"}</p>
+          {saved && <span className="text-[10px] text-green-600 font-medium">Saved</span>}
+          <button
+            onClick={() => { setDraft(value); setEditing(true) }}
+            className="opacity-0 group-hover:opacity-100 transition-opacity p-0.5 rounded hover:bg-muted"
+          >
+            <Pencil className="h-3 w-3 text-muted-foreground" />
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
+
+const INDUSTRY_OPTIONS = [
+  "Vending",
+  "Retail",
+  "Food & Beverage",
+  "Healthcare",
+  "Technology",
+  "Real Estate",
+  "Finance",
+  "Manufacturing",
+  "Logistics",
+  "Other",
+]
+
+const HEARD_ABOUT_OPTIONS = [
+  "Referral",
+  "Google",
+  "Vendingpreneurs Community",
+  "Social Media",
+  "Other",
+]
+
+const INTEGRATIONS = [
+  { name: "QuickBooks", description: "Sync invoices and expenses" },
+  { name: "Slack", description: "Get alerts in your workspace" },
+  { name: "Google Calendar", description: "Sync meetings and reminders" },
+]
+
+// Toggle row component
+function NotifToggle({
+  label,
+  description,
+  value,
+  onChange,
+}: {
+  label: string
+  description: string
+  value: boolean
+  onChange: (v: boolean) => void
+}) {
+  return (
+    <div className="flex items-center justify-between">
+      <div>
+        <p className="text-sm font-medium text-foreground">{label}</p>
+        <p className="text-xs text-muted-foreground">{description}</p>
+      </div>
+      <button
+        onClick={() => onChange(!value)}
+        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${value ? "bg-[#DC2626]" : "bg-muted"}`}
+      >
+        <span
+          className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${value ? "translate-x-6" : "translate-x-1"}`}
+        />
+      </button>
+    </div>
+  )
+}
+
 export function PortalSettingsClient({ clerkUser, dbUser }: Props) {
   const router = useRouter()
+
+  // Profile field state — tracks current saved values
+  const [profileFields, setProfileFields] = useState({
+    company: dbUser?.company ?? "",
+    industry: dbUser?.industry ?? "",
+    phone: dbUser?.phone ?? "",
+    website: dbUser?.website ?? "",
+    locationCount: String(dbUser?.locationCount ?? 1),
+    heardAbout: "",
+  })
+
+  // Notification state
   const [emailNotifs, setEmailNotifs] = useState(dbUser?.emailNotifs ?? true)
   const [slackNotifs, setSlackNotifs] = useState(dbUser?.slackNotifs ?? false)
+  const [notifFeatureAnnouncements, setNotifFeatureAnnouncements] = useState(true)
+  const [notifWeeklySummary, setNotifWeeklySummary] = useState(true)
+  const [notifServiceStatus, setNotifServiceStatus] = useState(true)
+  const [notifBillingReminders, setNotifBillingReminders] = useState(true)
+
   const [deleteConfirm, setDeleteConfirm] = useState(false)
   const [deleting, setDeleting] = useState(false)
+
+  async function handleProfileSave(key: string, value: string) {
+    setProfileFields((prev) => ({ ...prev, [key]: value }))
+
+    const payload: Record<string, string | number> = {}
+    if (key === "locationCount") {
+      const num = parseInt(value, 10)
+      if (!isNaN(num)) payload[key] = num
+    } else {
+      payload[key] = value
+    }
+
+    await fetch("/api/user/preferences", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    }).catch(console.error)
+  }
 
   async function handleToggle(field: "emailNotifs" | "slackNotifs", value: boolean) {
     if (field === "emailNotifs") setEmailNotifs(value)
@@ -89,22 +325,47 @@ export function PortalSettingsClient({ clerkUser, dbUser }: Props) {
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4 pt-2 border-t border-border">
-            <div>
-              <p className="text-xs text-muted-foreground mb-1">Company</p>
-              <p className="text-sm text-foreground">{dbUser?.company ?? "—"}</p>
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground mb-1">Industry</p>
-              <p className="text-sm text-foreground">{dbUser?.industry ?? "—"}</p>
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground mb-1">Phone</p>
-              <p className="text-sm text-foreground">{dbUser?.phone ?? "—"}</p>
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground mb-1">Website</p>
-              <p className="text-sm text-foreground">{dbUser?.website ?? "—"}</p>
-            </div>
+            <EditableField
+              label="Company"
+              value={profileFields.company}
+              fieldKey="company"
+              onSave={handleProfileSave}
+            />
+            <EditableSelectField
+              label="Industry"
+              value={profileFields.industry}
+              fieldKey="industry"
+              options={INDUSTRY_OPTIONS}
+              onSave={handleProfileSave}
+            />
+            <EditableField
+              label="Phone"
+              value={profileFields.phone}
+              fieldKey="phone"
+              type="tel"
+              onSave={handleProfileSave}
+            />
+            <EditableField
+              label="Website"
+              value={profileFields.website}
+              fieldKey="website"
+              type="url"
+              onSave={handleProfileSave}
+            />
+            <EditableField
+              label="How many locations?"
+              value={profileFields.locationCount}
+              fieldKey="locationCount"
+              type="number"
+              onSave={handleProfileSave}
+            />
+            <EditableSelectField
+              label="How did you hear about AIMS?"
+              value={profileFields.heardAbout}
+              fieldKey="heardAbout"
+              options={HEARD_ABOUT_OPTIONS}
+              onSave={handleProfileSave}
+            />
           </div>
           <div className="pt-2">
             <a
@@ -129,38 +390,49 @@ export function PortalSettingsClient({ clerkUser, dbUser }: Props) {
           <h2 className="text-base font-semibold text-foreground">Notification Preferences</h2>
         </div>
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-foreground">Email Notifications</p>
-              <p className="text-xs text-muted-foreground">Service updates, billing alerts, reports</p>
-            </div>
-            <button
-              onClick={() => handleToggle("emailNotifs", !emailNotifs)}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${emailNotifs ? "bg-[#DC2626]" : "bg-muted"}`}
-            >
-              <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${emailNotifs ? "translate-x-6" : "translate-x-1"}`}
-              />
-            </button>
-          </div>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-foreground">Slack Notifications</p>
-              <p className="text-xs text-muted-foreground">Get notified in your team Slack</p>
-            </div>
-            <button
-              onClick={() => handleToggle("slackNotifs", !slackNotifs)}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${slackNotifs ? "bg-[#DC2626]" : "bg-muted"}`}
-            >
-              <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${slackNotifs ? "translate-x-6" : "translate-x-1"}`}
-              />
-            </button>
+          <NotifToggle
+            label="Email Notifications"
+            description="Service updates, billing alerts, reports"
+            value={emailNotifs}
+            onChange={(v) => handleToggle("emailNotifs", v)}
+          />
+          <NotifToggle
+            label="Slack Notifications"
+            description="Get notified in your team Slack"
+            value={slackNotifs}
+            onChange={(v) => handleToggle("slackNotifs", v)}
+          />
+          <div className="pt-2 border-t border-border space-y-4">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Email Notification Types</p>
+            <NotifToggle
+              label="New feature announcements"
+              description="Be the first to know about new AIMS services and features"
+              value={notifFeatureAnnouncements}
+              onChange={setNotifFeatureAnnouncements}
+            />
+            <NotifToggle
+              label="Weekly performance summary"
+              description="A weekly digest of your campaign and service performance"
+              value={notifWeeklySummary}
+              onChange={setNotifWeeklySummary}
+            />
+            <NotifToggle
+              label="Service status changes"
+              description="Get notified when your service status changes"
+              value={notifServiceStatus}
+              onChange={setNotifServiceStatus}
+            />
+            <NotifToggle
+              label="Billing reminders"
+              description="Upcoming renewals and payment confirmations"
+              value={notifBillingReminders}
+              onChange={setNotifBillingReminders}
+            />
           </div>
         </div>
       </div>
 
-      {/* Password */}
+      {/* Security */}
       <div className="rounded-xl border border-border bg-card p-6">
         <div className="flex items-center gap-3 mb-5">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted">
@@ -177,6 +449,38 @@ export function PortalSettingsClient({ clerkUser, dbUser }: Props) {
           Change password
           <ExternalLink className="h-3.5 w-3.5" />
         </a>
+      </div>
+
+      {/* Integrations */}
+      <div className="rounded-xl border border-border bg-card p-6">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted">
+            <Plug className="h-4 w-4 text-muted-foreground" />
+          </div>
+          <div>
+            <h2 className="text-base font-semibold text-foreground">Integrations</h2>
+          </div>
+        </div>
+        <p className="text-sm text-muted-foreground mb-4 ml-11">Connect your tools to enhance your AIMS services.</p>
+        <div className="divide-y divide-border">
+          {INTEGRATIONS.map((integration) => (
+            <div key={integration.name} className="flex items-center justify-between py-3 last:pb-0 first:pt-0">
+              <div>
+                <p className="text-sm font-medium text-foreground">{integration.name}</p>
+                <p className="text-xs text-muted-foreground">{integration.description}</p>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-xs text-muted-foreground">Not connected</span>
+                <a
+                  href={`/get-started?integration=${encodeURIComponent(integration.name.toLowerCase().replace(/\s+/g, "-"))}`}
+                  className="text-sm text-[#DC2626] font-medium hover:underline"
+                >
+                  Connect
+                </a>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Danger Zone */}

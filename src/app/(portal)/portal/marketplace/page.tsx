@@ -21,11 +21,16 @@ export default async function PortalMarketplacePage() {
     }),
     db.subscription.findMany({
       where: { userId: dbUser.id, status: { in: ["ACTIVE", "TRIALING", "PAST_DUE"] } },
-      select: { serviceArmId: true },
+      select: { serviceArmId: true, monthlyAmount: true, serviceArm: { select: { name: true } } },
     }),
   ])
 
   const subscribedIds = subscriptions.map((s) => s.serviceArmId)
+
+  const subscribedServices = subscriptions.map((s) => ({
+    name: s.serviceArm.name,
+    monthlyAmount: s.monthlyAmount,
+  }))
 
   const serialized = services.map((s) => ({
     id: s.id,
@@ -35,6 +40,7 @@ export default async function PortalMarketplacePage() {
     pillar: s.pillar,
     status: s.status,
     basePrice: s.basePrice,
+    pricingModel: s.pricingModel,
     tiers: s.tiers.map((t) => ({ price: t.price, slug: t.slug })),
   }))
 
@@ -53,6 +59,7 @@ export default async function PortalMarketplacePage() {
       <PortalMarketplaceClient
         services={serialized}
         subscribedIds={subscribedIds}
+        subscribedServices={subscribedServices}
       />
     </div>
   )

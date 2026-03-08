@@ -31,7 +31,12 @@ const PORTAL_NAV = [
   { label: "Settings", href: "/portal/settings", icon: Settings },
 ] as const
 
-export function PortalSidebar() {
+interface PortalSidebarProps {
+  totalMrr?: number
+  hasUnread?: boolean
+}
+
+export function PortalSidebar({ totalMrr = 0, hasUnread = false }: PortalSidebarProps) {
   const pathname = usePathname()
   const [collapsed, setCollapsed] = useState(false)
 
@@ -59,14 +64,19 @@ export function PortalSidebar() {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                "flex items-center gap-3 rounded-lg py-2.5 text-sm font-medium transition-colors",
                 isActive
-                  ? "bg-red-50 text-[#DC2626]"
-                  : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
+                  ? "bg-red-50 text-[#DC2626] border-l-2 border-[#DC2626] pl-[10px]"
+                  : "text-gray-500 hover:text-gray-900 hover:bg-gray-100 pl-3"
               )}
             >
               <item.icon className={cn("h-4.5 w-4.5 shrink-0", isActive && "text-red-500")} />
-              {!collapsed && <span>{item.label}</span>}
+              {!collapsed && (
+                <span className="flex-1">{item.label}</span>
+              )}
+              {!collapsed && item.label === "Dashboard" && hasUnread && (
+                <span className="ml-auto h-2 w-2 rounded-full bg-[#DC2626]" />
+              )}
             </Link>
           )
         })}
@@ -83,6 +93,14 @@ export function PortalSidebar() {
           <ChevronLeft className="h-3 w-3" />
         )}
       </button>
+
+      {/* Monthly Investment */}
+      {!collapsed && totalMrr > 0 && (
+        <div className="px-4 pb-2">
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Monthly Investment</p>
+          <p className="text-sm font-bold text-foreground">${totalMrr}/mo</p>
+        </div>
+      )}
 
       {/* User */}
       <div className="border-t border-gray-200 p-4">

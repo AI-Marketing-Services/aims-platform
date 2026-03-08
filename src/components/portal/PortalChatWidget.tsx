@@ -1,16 +1,16 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
-import { MessageSquare, X, Send, Loader2, LifeBuoy, BarChart2, CreditCard, ShoppingBag } from "lucide-react"
+import { MessageSquare, X, Send, Loader2, LifeBuoy, Layers, CreditCard, MessageSquarePlus, ShoppingBag } from "lucide-react"
 import { useChat } from "@ai-sdk/react"
 import { TextStreamChatTransport, type UIMessage } from "ai"
 import Link from "next/link"
 import Image from "next/image"
 
 const QUICK_LINKS = [
-  { label: "My Services", href: "/portal/services", icon: BarChart2 },
+  { label: "My Services", href: "/portal/services", icon: Layers },
   { label: "Billing", href: "/portal/billing", icon: CreditCard },
-  { label: "Submit Ticket", href: "/portal/support", icon: LifeBuoy },
+  { label: "Submit Ticket", href: "/portal/support", icon: MessageSquarePlus },
   { label: "Marketplace", href: "/portal/marketplace", icon: ShoppingBag },
 ]
 
@@ -21,10 +21,25 @@ function getMessageText(parts: { type: string; text?: string }[]): string {
     .join("")
 }
 
-export function PortalChatWidget() {
+function buildWelcomeMessage(firstName: string, serviceCount: number): string {
+  if (serviceCount === 0) {
+    return `Hi ${firstName}! I can help you find the right AIMS service, answer pricing questions, or connect you with our team. What would you like to know?`
+  }
+  const s = serviceCount === 1 ? "" : "s"
+  return `Hi ${firstName}! You have ${serviceCount} active service${s}. Need help with your setup, billing, or anything else?`
+}
+
+interface PortalChatWidgetProps {
+  firstName?: string
+  serviceCount?: number
+}
+
+export function PortalChatWidget({ firstName = "there", serviceCount = 0 }: PortalChatWidgetProps) {
   const [open, setOpen] = useState(false)
   const [input, setInput] = useState("")
   const messagesEndRef = useRef<HTMLDivElement>(null)
+
+  const welcomeText = buildWelcomeMessage(firstName, serviceCount)
 
   const { messages, sendMessage, status, error } = useChat<UIMessage>({
     transport: new TextStreamChatTransport({ api: "/api/ai/portal-chat" }),
@@ -32,7 +47,7 @@ export function PortalChatWidget() {
       {
         id: "welcome",
         role: "assistant" as const,
-        parts: [{ type: "text" as const, text: "Hi! I'm your AIMS support assistant. I can help with your services, billing questions, or create a support ticket. What do you need?" }],
+        parts: [{ type: "text" as const, text: welcomeText }],
       },
     ],
   })
@@ -63,7 +78,7 @@ export function PortalChatWidget() {
       )}
 
       {open && (
-        <div className="fixed bottom-6 right-6 z-50 w-[360px] h-[520px] rounded-xl border border-white/10 bg-[#0D0F14] shadow-2xl flex flex-col overflow-hidden">
+        <div className="fixed bottom-6 right-6 z-50 w-[420px] h-[520px] rounded-2xl border border-white/10 bg-[#0D0F14] shadow-2xl flex flex-col overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 flex-shrink-0">
             <div className="flex items-center gap-2">
@@ -80,15 +95,15 @@ export function PortalChatWidget() {
 
           {/* Quick links */}
           {messages.length <= 1 && (
-            <div className="flex-shrink-0 grid grid-cols-4 gap-1 px-3 py-2 border-b border-white/10">
+            <div className="flex-shrink-0 grid grid-cols-4 gap-1.5 px-3 py-2.5 border-b border-white/10">
               {QUICK_LINKS.map((link) => (
                 <Link
                   key={link.label}
                   href={link.href}
-                  className="flex flex-col items-center gap-1 rounded-lg px-2 py-2 hover:bg-white/5 transition-colors"
+                  className="flex flex-col items-center gap-1 px-3 py-2 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 transition-colors text-foreground"
                 >
-                  <link.icon className="h-4 w-4 text-[#DC2626]" />
-                  <span className="text-[9px] text-white/50 text-center leading-tight">{link.label}</span>
+                  <link.icon className="h-4 w-4 text-white/50" />
+                  <span className="text-[10px] text-white/40 text-center leading-tight">{link.label}</span>
                 </Link>
               ))}
             </div>

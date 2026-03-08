@@ -1,7 +1,18 @@
 import type { Metadata } from "next"
 import { auth, currentUser } from "@clerk/nextjs/server"
 import Link from "next/link"
-import { ArrowRight, BarChart2, Zap, Globe, DollarSign } from "lucide-react"
+import {
+  ArrowRight,
+  BarChart2,
+  Zap,
+  Globe,
+  DollarSign,
+  Check,
+  Bell,
+  ShoppingCart,
+  LifeBuoy,
+  CreditCard,
+} from "lucide-react"
 import { db } from "@/lib/db"
 
 export const metadata: Metadata = { title: "Dashboard" }
@@ -14,6 +25,16 @@ const statusColors: Record<string, string> = {
   CANCELLED: "bg-red-100 text-red-700",
 }
 
+function timeAgo(date: Date): string {
+  const diffMs = Date.now() - date.getTime()
+  const diffMin = Math.floor(diffMs / 60000)
+  if (diffMin < 60) return `${diffMin}m ago`
+  const diffHr = Math.floor(diffMin / 60)
+  if (diffHr < 24) return `${diffHr}h ago`
+  const diffDays = Math.floor(diffHr / 24)
+  return `${diffDays}d ago`
+}
+
 export default async function PortalDashboard({
   searchParams,
 }: {
@@ -22,6 +43,9 @@ export default async function PortalDashboard({
   const { checkout } = await searchParams
   const { userId: clerkId } = await auth()
   const user = await currentUser()
+
+  const userEmail = user?.emailAddresses?.[0]?.emailAddress ?? ""
+  const firstName = user?.firstName ?? "there"
 
   const dbUser = clerkId
     ? await db.user.findUnique({
@@ -43,9 +67,92 @@ export default async function PortalDashboard({
   const [leadCount, meetingCount] = dbUser
     ? await Promise.all([
         db.deal.count({ where: { userId: dbUser.id } }),
-        db.dealActivity.count({ where: { deal: { userId: dbUser.id }, type: "DEMO_COMPLETED" } }),
+        db.dealActivity.count({
+          where: { deal: { userId: dbUser.id }, type: "DEMO_COMPLETED" },
+        }),
       ])
     : [0, 0]
+
+  // Onboarding checklist data
+  let quizTaken = false
+  let dealExists = false
+  let recentActivity: Array<{
+    id: string
+    type: string
+    title: string
+    message: string
+    sentAt: Date
+  }> = []
+
+  if (userEmail) {
+    try {
+      const [quizSub, deal, notifications] = await Promise.all([
+        db.leadMagnetSubmission.findFirst({
+          where: { email: userEmail, type: "AI_READINESS_QUIZ" },
+        }),
+        db.deal.findFirst({ where: { contactEmail: userEmail } }),
+        clerkId
+          ? db.notification.findMany({
+              where: { userId: clerkId },
+              orderBy: { sentAt: "desc" },
+              take: 10,
+            })
+          : Promise.resolve([]),
+      ])
+      quizTaken = !!quizSub
+      dealExists = !!deal
+      recentActivity = notifications
+    } catch {
+      // graceful degradation — leave defaults
+    }
+  }
+
+  // Checklist progress
+  const checklist = [
+    { label: "Create your account", checked: true, href: null },
+    {
+      label: "Take the AI Readiness Quiz",
+      checked: quizTaken,
+      href: "/tools/ai-readiness-quiz",
+    },
+    {
+      label: "Browse the marketplace",
+      checked: false,
+      href: "/portal/marketplace",
+    },
+    {
+      label: "Add your first service",
+      checked: subs.length > 0,
+      href: "/portal/marketplace",
+    },
+    {
+      label: "Book a strategy call",
+      checked: dealExists,
+      href: "/get-started",
+    },
+  ]
+  const completedCount = checklist.filter((c) => c.checked).length
+  const progressPct = Math.round((completedCount / checklist.length) * 100)
+
+  // Smart upsell banner logic
+  const activeSlugs = new Set(subs.map((s) => s.serviceArm.slug))
+  let upsellValueProp = "Most clients start here."
+  let upsellService = "Website + CRM + Chatbot"
+  let upsellPrice = "from $97/mo"
+
+  if (activeSlugs.has("website-crm-chatbot") && !activeSlugs.has("cold-outbound")) {
+    upsellValueProp = "Your website is live. Now fill it with leads."
+    upsellService = "Cold Outbound Engine"
+    upsellPrice = "Custom"
+  } else if (activeSlugs.has("cold-outbound") && !activeSlugs.has("voice-agents")) {
+    upsellValueProp = "Email gets them interested. Voice closes the deal."
+    upsellService = "AI Voice Agents"
+    upsellPrice = "Custom"
+  } else if (activeSlugs.has("voice-agents") && !activeSlugs.has("audience-targeting")) {
+    upsellValueProp = "Know exactly who to call before they raise their hand."
+    upsellService = "Audience Targeting"
+    upsellPrice = "Custom"
+  }
 
   return (
     <div className="space-y-8">
@@ -58,40 +165,156 @@ export default async function PortalDashboard({
 
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold">Welcome back, {user?.firstName ?? "there"}</h1>
-        <p className="mt-1 text-muted-foreground">Here&apos;s an overview of your active AIMS services.</p>
+        <h1 className="text-2xl font-bold">
+          {subs.length === 0
+            ? `Welcome to AIMS, ${firstName}`
+            : `Welcome back, ${firstName}`}
+        </h1>
+        <p className="mt-1 text-muted-foreground">
+          {subs.length === 0
+            ? "Complete these steps to start generating leads."
+            : "Here\u2019s an overview of your active AIMS services."}
+        </p>
       </div>
 
-      {/* Metrics */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {[
-          { label: "Active Services", value: String(subs.length), icon: Zap },
-          { label: "Monthly Spend", value: `$${totalMrr.toLocaleString()}`, icon: DollarSign },
-          { label: "Leads Generated", value: leadCount > 0 ? String(leadCount) : "—", icon: BarChart2 },
-          { label: "Meetings Booked", value: meetingCount > 0 ? String(meetingCount) : "—", icon: Globe },
-        ].map(({ label, value, icon: Icon }) => (
-          <div key={label} className="rounded-xl border border-border bg-card p-5">
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-muted-foreground">{label}</p>
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted">
-                <Icon className="h-4 w-4 text-muted-foreground" />
-              </div>
+      {/* ── ONBOARDING STATE (no subscriptions) ── */}
+      {subs.length === 0 ? (
+        <div className="rounded-2xl border border-border bg-card p-6">
+          {/* Progress header */}
+          <div className="mb-5">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-foreground">
+                {completedCount} of {checklist.length} complete
+              </span>
+              <span className="text-xs text-muted-foreground">{progressPct}%</span>
             </div>
-            <p className="mt-2 text-2xl font-bold font-mono">{value}</p>
+            <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
+              <div
+                className="h-full rounded-full bg-[#DC2626] transition-all"
+                style={{ width: `${progressPct}%` }}
+              />
+            </div>
           </div>
+
+          {/* Checklist items */}
+          <ul className="space-y-3">
+            {checklist.map((item) => (
+              <li
+                key={item.label}
+                className="flex items-center justify-between gap-4 rounded-xl border border-border bg-background px-4 py-3"
+              >
+                <div className="flex items-center gap-3">
+                  <div
+                    className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${
+                      item.checked
+                        ? "border-green-500 bg-green-50"
+                        : "border-border bg-muted"
+                    }`}
+                  >
+                    {item.checked && (
+                      <Check className="h-3 w-3 text-green-600" />
+                    )}
+                  </div>
+                  <span
+                    className={`text-sm font-medium ${
+                      item.checked
+                        ? "text-muted-foreground line-through"
+                        : "text-foreground"
+                    }`}
+                  >
+                    {item.label}
+                  </span>
+                </div>
+                {!item.checked && item.href && (
+                  <Link
+                    href={item.href}
+                    className="shrink-0 flex items-center gap-1 text-sm font-medium text-[#DC2626] hover:text-[#B91C1C] transition-colors"
+                  >
+                    Go <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : (
+        /* ── ACTIVE STATE: metric cards ── */
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            {
+              label: "Active Services",
+              value: String(subs.length),
+              icon: Zap,
+              active: subs.length > 0,
+            },
+            {
+              label: "Monthly Spend",
+              value: `$${totalMrr.toLocaleString()}`,
+              icon: DollarSign,
+              active: totalMrr > 0,
+            },
+            {
+              label: "Leads Generated",
+              value: leadCount > 0 ? String(leadCount) : "0",
+              icon: BarChart2,
+              active: leadCount > 0,
+            },
+            {
+              label: "Meetings Booked",
+              value: meetingCount > 0 ? String(meetingCount) : "0",
+              icon: Globe,
+              active: meetingCount > 0,
+            },
+          ].map(({ label, value, icon: Icon, active }) => (
+            <div key={label} className="rounded-2xl border border-border bg-card p-5">
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-sm text-muted-foreground">{label}</p>
+                <div className="w-9 h-9 rounded-xl bg-red-50 flex items-center justify-center">
+                  <Icon className="h-4 w-4 text-[#DC2626]" />
+                </div>
+              </div>
+              <p className="text-3xl font-bold font-mono text-foreground">{value}</p>
+              <p className={`mt-1 text-xs font-medium ${active ? "text-green-600" : "text-muted-foreground"}`}>
+                {active ? "↑ Active" : "—"}
+              </p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* ── QUICK ACTIONS ── */}
+      <div className="flex flex-wrap gap-3">
+        {[
+          { icon: BarChart2, label: "View Reports", href: "/portal/campaigns" },
+          { icon: ShoppingCart, label: "Add Service", href: "/portal/marketplace" },
+          { icon: LifeBuoy, label: "Get Help", href: "/portal/support" },
+          { icon: CreditCard, label: "My Billing", href: "/portal/billing" },
+        ].map(({ icon: Icon, label, href }) => (
+          <Link
+            key={label}
+            href={href}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border bg-card text-sm font-medium text-muted-foreground hover:text-foreground hover:border-gray-300 transition-colors"
+          >
+            <Icon className="h-4 w-4" />
+            {label}
+          </Link>
         ))}
       </div>
 
-      {/* Active Services */}
+      {/* ── ACTIVE SERVICES ── */}
       <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold">Active Services</h2>
-          <Link href="/portal/services" className="text-sm text-primary hover:underline">View all</Link>
+          <Link href="/portal/services" className="text-sm text-primary hover:underline">
+            View all
+          </Link>
         </div>
 
         {subs.length === 0 ? (
-          <div className="rounded-xl border border-border bg-card p-10 text-center">
-            <p className="text-muted-foreground mb-4">You don&apos;t have any active services yet.</p>
+          <div className="rounded-2xl border border-border bg-card p-10 text-center">
+            <p className="text-muted-foreground mb-4">
+              You don&apos;t have any active services yet.
+            </p>
             <Link
               href="/portal/marketplace"
               className="inline-flex items-center gap-2 rounded-lg bg-[#DC2626] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#B91C1C] transition"
@@ -104,14 +327,23 @@ export default async function PortalDashboard({
             {subs.map((sub) => {
               const statusClass = statusColors[sub.status] ?? "bg-gray-100 text-gray-600"
               const renewsAt = sub.currentPeriodEnd
-                ? new Date(sub.currentPeriodEnd).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+                ? new Date(sub.currentPeriodEnd).toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  })
                 : null
               return (
-                <div key={sub.id} className="flex items-center justify-between rounded-xl border border-border bg-card p-5">
+                <div
+                  key={sub.id}
+                  className="flex items-center justify-between rounded-2xl border border-border bg-card p-5"
+                >
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="font-medium">{sub.serviceArm.name}</span>
-                      <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${statusClass}`}>
+                      <span
+                        className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${statusClass}`}
+                      >
                         {sub.status}
                       </span>
                     </div>
@@ -133,32 +365,54 @@ export default async function PortalDashboard({
         )}
       </div>
 
-      {/* Upsell — only show if < 3 services */}
-      {subs.length < 3 && (
-        <div className="rounded-xl border border-red-200 bg-gradient-to-br from-red-50 to-white p-5">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-widest text-red-400 mb-1">Recommended for you</p>
-              <p className="font-semibold text-foreground">
-                {subs.some(s => s.serviceArm.slug === "cold-outbound")
-                  ? "Add AI Voice Agents to close more deals"
-                  : "Add Cold Outbound to fill your pipeline"}
-              </p>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {subs.some(s => s.serviceArm.slug === "cold-outbound")
-                  ? "Handle inbound calls 24/7 and follow up while you sleep."
-                  : "Multi-domain sequences with AI personalization — 40+ meetings/mo."}
-              </p>
-            </div>
-            <Link
-              href="/marketplace"
-              className="shrink-0 rounded-lg bg-[#DC2626] px-4 py-2 text-sm font-semibold text-white hover:bg-[#B91C1C] transition whitespace-nowrap"
-            >
-              Explore Services
-            </Link>
+      {/* ── SMART UPSELL BANNER ── */}
+      <div className="border border-border rounded-2xl bg-card p-5 border-l-4 border-l-[#DC2626]">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-widest text-[#DC2626] mb-1">
+              Recommended for you
+            </p>
+            <p className="font-semibold text-foreground">{upsellService}</p>
+            <p className="mt-1 text-sm text-muted-foreground">{upsellValueProp}</p>
+            <p className="mt-1 text-xs text-muted-foreground font-medium">{upsellPrice}</p>
           </div>
+          <Link
+            href="/portal/marketplace"
+            className="shrink-0 inline-flex items-center gap-1.5 rounded-lg bg-[#DC2626] px-4 py-2 text-sm font-semibold text-white hover:bg-[#B91C1C] transition whitespace-nowrap"
+          >
+            Add to Plan <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
         </div>
-      )}
+      </div>
+
+      {/* ── RECENT ACTIVITY ── */}
+      <div className="rounded-2xl border border-border bg-card">
+        <div className="px-5 py-4 border-b border-border">
+          <h2 className="text-lg font-semibold">Recent Activity</h2>
+        </div>
+        {recentActivity.length === 0 ? (
+          <div className="px-5 py-10 text-center text-sm text-muted-foreground">
+            No recent activity yet. Updates from your services will appear here.
+          </div>
+        ) : (
+          <ul className="divide-y divide-border">
+            {recentActivity.map((notif) => (
+              <li key={notif.id} className="flex items-start gap-3 px-5 py-4">
+                <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-muted">
+                  <Bell className="h-3.5 w-3.5 text-muted-foreground" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-medium text-foreground">{notif.title}</p>
+                  <p className="mt-0.5 text-xs text-muted-foreground truncate">{notif.message}</p>
+                </div>
+                <span className="shrink-0 text-xs text-muted-foreground">
+                  {timeAgo(new Date(notif.sentAt))}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   )
 }
