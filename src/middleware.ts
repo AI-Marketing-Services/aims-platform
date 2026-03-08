@@ -25,6 +25,7 @@ const isPublicRoute = createRouteMatcher([
   "/api/ai/chat(.*)",
   "/api/ai/audit(.*)",
   "/api/intake(.*)",
+  "/api/admin/bootstrap(.*)",
 ])
 
 const isAdminRoute = createRouteMatcher(["/admin(.*)"])
