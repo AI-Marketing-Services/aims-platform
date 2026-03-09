@@ -6,6 +6,7 @@ import { notifyNewLead } from "@/lib/notifications"
 import { createCloseLead } from "@/lib/close"
 import { db } from "@/lib/db"
 import { scoreLeadFromSignals } from "@/lib/scoring/lead-scorer"
+import { formRatelimit, getIp } from "@/lib/ratelimit"
 
 const createDealSchema = z.object({
   contactName: z.string().min(1),
@@ -55,6 +56,12 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
+  if (formRatelimit) {
+    const ip = getIp(req)
+    const { success } = await formRatelimit.limit(`deals:${ip}`)
+    if (!success) return NextResponse.json({ error: "Too many requests. Please slow down." }, { status: 429 })
+  }
+
   try {
     const body = await req.json()
     const parsed = createDealSchema.safeParse(body)

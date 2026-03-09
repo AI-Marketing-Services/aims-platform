@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { db } from "@/lib/db"
 
-export async function PATCH(req: Request) {
+async function markRead(req: Request) {
   const { userId, sessionClaims } = await auth()
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
@@ -12,16 +12,24 @@ export async function PATCH(req: Request) {
   const role = (sessionClaims?.metadata as { role?: string })?.role
   const isAdmin = role === "ADMIN" || role === "SUPER_ADMIN"
 
+  const dbUser = isAdmin
+    ? null
+    : await db.user.findUnique({ where: { clerkId: userId }, select: { id: true } })
+
   if (ids?.length) {
+    // Non-admins: only mark notifications that belong to them
     await db.notification.updateMany({
-      where: { id: { in: ids } },
+      where: {
+        id: { in: ids },
+        // Admins can mark any notification; users can only mark their own
+        ...(isAdmin ? {} : { userId: dbUser?.id }),
+      },
       data: { read: true },
     })
   } else {
-    // Mark all unread
-    const user = isAdmin ? null : await db.user.findUnique({ where: { clerkId: userId }, select: { id: true } })
+    // Mark all unread — scoped to current user unless admin
     await db.notification.updateMany({
-      where: isAdmin ? { read: false } : { read: false, userId: user?.id },
+      where: isAdmin ? { read: false } : { read: false, userId: dbUser?.id },
       data: { read: true },
     })
   }
@@ -29,7 +37,5 @@ export async function PATCH(req: Request) {
   return NextResponse.json({ ok: true })
 }
 
-// POST = mark all read (same as PATCH with no body)
-export async function POST(req: Request) {
-  return PATCH(req)
-}
+export async function PATCH(req: Request) { return markRead(req) }
+export async function POST(req:  Request) { return markRead(req) }

@@ -9,16 +9,24 @@ export async function POST(req: Request) {
 
   const { returnUrl } = await req.json().catch(() => ({}))
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://aimseos.com"
+  const allowedHost = new URL(appUrl).hostname
+
+  // Validate returnUrl to prevent open redirect
+  let safeReturnUrl = `${appUrl}/portal/billing`
+  if (returnUrl) {
+    try {
+      const h = new URL(returnUrl).hostname
+      safeReturnUrl = h === allowedHost ? returnUrl : safeReturnUrl
+    } catch {
+      // ignore invalid URL — use default
+    }
+  }
 
   const user = await db.user.findUnique({ where: { clerkId } })
   if (!user?.stripeCustomerId) {
     return NextResponse.json({ error: "No billing account found" }, { status: 404 })
   }
 
-  const url = await getCustomerPortalUrl(
-    user.stripeCustomerId,
-    returnUrl ?? `${appUrl}/portal/billing`
-  )
-
+  const url = await getCustomerPortalUrl(user.stripeCustomerId, safeReturnUrl)
   return NextResponse.json({ url })
 }

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { z } from "zod"
 import { db } from "@/lib/db"
+import { formRatelimit, getIp } from "@/lib/ratelimit"
 
 const trackSchema = z.object({
   code: z.string(),
@@ -8,6 +9,12 @@ const trackSchema = z.object({
 })
 
 export async function POST(req: Request) {
+  if (formRatelimit) {
+    const ip = getIp(req)
+    const { success } = await formRatelimit.limit(`referrals:${ip}`)
+    if (!success) return NextResponse.json({ error: "Too many requests." }, { status: 429 })
+  }
+
   try {
     const body = await req.json()
     const parsed = trackSchema.safeParse(body)

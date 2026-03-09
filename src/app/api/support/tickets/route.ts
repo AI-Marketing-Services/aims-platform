@@ -5,7 +5,7 @@ import { db } from "@/lib/db"
 
 const createSchema = z.object({
   subject: z.string().min(1).max(255),
-  message: z.string().min(1),
+  message: z.string().min(1).max(10000),
   priority: z.enum(["low", "normal", "high", "urgent"]).default("normal"),
 })
 
