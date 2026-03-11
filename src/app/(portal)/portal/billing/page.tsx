@@ -38,7 +38,7 @@ export default async function BillingPage() {
   const hasStripeCustomer = !!dbUser.stripeCustomerId
 
   return (
-    <div className="max-w-3xl">
+    <div className="w-full">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900 mb-1">Billing</h1>
         <p className="text-gray-500">Manage your subscriptions and payment details</p>

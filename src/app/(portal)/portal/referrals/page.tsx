@@ -12,7 +12,7 @@ export default async function ReferralsPage() {
   const encodedRefLink = encodeURIComponent(refLink)
 
   return (
-    <div className="max-w-3xl">
+    <div className="w-full">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900 mb-1">Referrals</h1>
         <p className="text-gray-500">Earn 20% commission for every business you refer to AIMS</p>
