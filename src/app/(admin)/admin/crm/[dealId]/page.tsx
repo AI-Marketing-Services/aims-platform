@@ -19,7 +19,7 @@ const STAGE_OPTIONS = [
 ]
 
 const STAGE_COLORS: Record<string, string> = {
-  NEW_LEAD: "text-gray-400 bg-white/5 border-white/10",
+  NEW_LEAD: "text-gray-400 bg-muted border-border",
   QUALIFIED: "text-blue-400 bg-blue-500/10 border-blue-500/20",
   DEMO_BOOKED: "text-purple-400 bg-purple-500/10 border-purple-500/20",
   PROPOSAL_SENT: "text-yellow-400 bg-yellow-500/10 border-yellow-500/20",
@@ -27,7 +27,7 @@ const STAGE_COLORS: Record<string, string> = {
   ACTIVE_CLIENT: "text-green-400 bg-green-500/10 border-green-500/20",
   UPSELL_OPPORTUNITY: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
   AT_RISK: "text-red-400 bg-red-500/10 border-red-500/20",
-  CHURNED: "text-gray-500 bg-white/5 border-white/10",
+  CHURNED: "text-gray-500 bg-muted border-border",
   LOST: "text-gray-600 bg-white/3 border-white/5",
 }
 

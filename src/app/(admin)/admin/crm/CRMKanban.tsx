@@ -170,12 +170,12 @@ function DealCardInner({ deal, isDraggingOverlay = false }: { deal: Deal; isDrag
       {deal.serviceArms.length > 0 && (
         <div className="flex flex-wrap gap-1 mt-2">
           {deal.serviceArms.slice(0, 2).map((arm) => (
-            <span key={arm} className="text-xs px-1.5 py-0.5 bg-white/5 text-gray-400 rounded">
+            <span key={arm} className="text-xs px-1.5 py-0.5 bg-muted text-gray-400 rounded">
               {arm}
             </span>
           ))}
           {deal.serviceArms.length > 2 && (
-            <span className="text-xs px-1.5 py-0.5 bg-white/5 text-gray-400 rounded">
+            <span className="text-xs px-1.5 py-0.5 bg-muted text-gray-400 rounded">
               +{deal.serviceArms.length - 2}
             </span>
           )}
@@ -262,7 +262,7 @@ function DroppableColumn({
         ))}
         <button
           onClick={() => onAddDeal(stage.key)}
-          className="w-full flex items-center gap-2 py-2.5 px-3 text-gray-600 hover:text-gray-400 text-sm transition-colors rounded-xl hover:bg-white/3 border border-dashed border-white/5 hover:border-white/10"
+          className="w-full flex items-center gap-2 py-2.5 px-3 text-gray-600 hover:text-gray-400 text-sm transition-colors rounded-xl hover:bg-white/3 border border-dashed border-white/5 hover:border-border"
         >
           <Plus className="w-3.5 h-3.5" />
           Add deal
@@ -351,7 +351,7 @@ export function CRMKanban({ initialDeals }: { initialDeals: Deal[] }) {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search deals..."
-            className="w-full pl-9 pr-4 py-2 bg-[#151821] border border-white/10 rounded-lg text-sm text-white placeholder-gray-600 focus:outline-none focus:border-white/20"
+            className="w-full pl-9 pr-4 py-2 bg-card border border-border rounded-lg text-sm text-white placeholder:text-muted-foreground focus:outline-none focus:border-border"
           />
         </div>
 
@@ -360,7 +360,7 @@ export function CRMKanban({ initialDeals }: { initialDeals: Deal[] }) {
           <select
             value={sourceFilter}
             onChange={(e) => setSourceFilter(e.target.value)}
-            className="appearance-none pl-3 pr-8 py-2 bg-[#151821] border border-white/10 rounded-lg text-sm text-gray-300 focus:outline-none focus:border-white/20 cursor-pointer"
+            className="appearance-none pl-3 pr-8 py-2 bg-card border border-border rounded-lg text-sm text-gray-300 focus:outline-none focus:border-border cursor-pointer"
           >
             {SOURCE_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>{o.label}</option>
@@ -374,7 +374,7 @@ export function CRMKanban({ initialDeals }: { initialDeals: Deal[] }) {
           <select
             value={scoreFilter}
             onChange={(e) => setScoreFilter(e.target.value)}
-            className="appearance-none pl-3 pr-8 py-2 bg-[#151821] border border-white/10 rounded-lg text-sm text-gray-300 focus:outline-none focus:border-white/20 cursor-pointer"
+            className="appearance-none pl-3 pr-8 py-2 bg-card border border-border rounded-lg text-sm text-gray-300 focus:outline-none focus:border-border cursor-pointer"
           >
             {SCORE_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>{o.label}</option>
@@ -444,7 +444,7 @@ export function CRMKanban({ initialDeals }: { initialDeals: Deal[] }) {
 
         <DragOverlay dropAnimation={null}>
           {activeDeal && (
-            <div className="bg-[#1C1F2A] border border-white/20 rounded-xl p-3.5 w-60 shadow-2xl shadow-black/50 rotate-1">
+            <div className="bg-[#1C1F2A] border border-border rounded-xl p-3.5 w-60 shadow-2xl shadow-black/50 rotate-1">
               <DealCardInner deal={activeDeal} isDraggingOverlay />
             </div>
           )}

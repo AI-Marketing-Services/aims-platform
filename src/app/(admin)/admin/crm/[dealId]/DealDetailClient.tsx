@@ -533,7 +533,7 @@ export function DealDetailClient({
                         "text-xs px-1.5 py-0.5 rounded border",
                         sa.status === "active"
                           ? "text-green-400 bg-green-500/10 border-green-500/20"
-                          : "text-gray-400 bg-white/5 border-white/10"
+                          : "text-gray-400 bg-muted border-border"
                       )}
                     >
                       {sa.status}

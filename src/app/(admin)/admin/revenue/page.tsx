@@ -107,7 +107,7 @@ export default async function AdminRevenuePage() {
   return (
     <div className="max-w-6xl">
       {/* ── MRR Hero ──────────────────────────────────────────────────────── */}
-      <div className="bg-[#151821] border border-white/10 rounded-2xl p-8 mb-8">
+      <div className="bg-card border border-border rounded-2xl p-8 mb-8">
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-4">
           <div>
             <p className="text-sm text-gray-500 mb-1">Monthly Recurring Revenue</p>
@@ -129,7 +129,7 @@ export default async function AdminRevenuePage() {
           </div>
         </div>
         {/* Progress bar */}
-        <div className="h-2 bg-white/5 rounded-full overflow-hidden">
+        <div className="h-2 bg-muted rounded-full overflow-hidden">
           <div
             className="h-2 bg-[#DC2626] rounded-full transition-all"
             style={{ width: `${mrrProgress}%` }}
@@ -148,7 +148,7 @@ export default async function AdminRevenuePage() {
       />
 
       {/* ── 10x Margin Tracker ────────────────────────────────────────────── */}
-      <div className="bg-[#151821] border border-white/10 rounded-xl p-6 mt-8">
+      <div className="bg-card border border-border rounded-xl p-6 mt-8">
         <h3 className="font-semibold text-white mb-1">10x Margin Tracker</h3>
         <p className="text-xs text-gray-500 mb-5">
           Service revenue vs estimated delivery cost. Green = 10x+, Yellow = 5–10x, Red = below 5x.
@@ -159,7 +159,7 @@ export default async function AdminRevenuePage() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-white/10">
+                <tr className="border-b border-border">
                   {["Service", "Revenue", "Est. Cost", "Margin", "Multiple"].map((h) => (
                     <th key={h} className="text-left text-xs text-gray-500 font-medium px-3 py-2">
                       {h}

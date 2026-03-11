@@ -34,7 +34,7 @@ export default async function AdminCRMPage() {
   return (
     <div className="h-[calc(100vh-4rem)] flex flex-col">
       <div className="mb-6 flex-shrink-0">
-        <h1 className="text-2xl font-bold text-white mb-1">CRM Pipeline</h1>
+        <h1 className="text-2xl font-bold text-foreground mb-1">CRM Pipeline</h1>
         <p className="text-gray-400">Drag deals between stages to update pipeline</p>
       </div>
       <CRMKanban initialDeals={initialDeals} />

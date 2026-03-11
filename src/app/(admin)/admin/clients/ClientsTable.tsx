@@ -148,7 +148,7 @@ export function ClientsTable({ rows }: Props) {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-white mb-1">Clients</h1>
+          <h1 className="text-2xl font-bold text-foreground mb-1">Clients</h1>
           <p className="text-gray-400 text-sm">
             {rows.length} total deal{rows.length !== 1 ? "s" : ""}
             {filtered.length !== rows.length && ` · ${filtered.length} filtered`}
@@ -156,7 +156,7 @@ export function ClientsTable({ rows }: Props) {
         </div>
         <button
           onClick={exportCsv}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 text-sm font-medium rounded-lg transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-muted hover:bg-accent border border-border text-gray-300 text-sm font-medium rounded-lg transition-colors"
         >
           <Download className="w-3.5 h-3.5" />
           Export CSV
@@ -172,13 +172,13 @@ export function ClientsTable({ rows }: Props) {
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1) }}
             placeholder="Search by name, email, or company..."
-            className="w-full pl-9 pr-4 py-2 bg-[#151821] border border-white/10 rounded-lg text-sm text-white placeholder-gray-600 focus:outline-none focus:border-white/20"
+            className="w-full pl-9 pr-4 py-2 bg-card border border-border rounded-lg text-sm text-white placeholder:text-muted-foreground focus:outline-none focus:border-border"
           />
         </div>
         <select
           value={stageFilter}
           onChange={(e) => { setStageFilter(e.target.value); setPage(1) }}
-          className="px-3 py-2 bg-[#151821] border border-white/10 rounded-lg text-sm text-gray-300 focus:outline-none focus:border-white/20"
+          className="px-3 py-2 bg-card border border-border rounded-lg text-sm text-gray-300 focus:outline-none focus:border-border"
         >
           <option value="all">All Stages</option>
           {ALL_STAGES.map((s) => (
@@ -189,13 +189,13 @@ export function ClientsTable({ rows }: Props) {
 
       {/* Table */}
       {sorted.length === 0 ? (
-        <div className="bg-[#151821] border border-white/10 rounded-xl p-12 text-center">
+        <div className="bg-card border border-border rounded-xl p-12 text-center">
           <p className="text-gray-400">
             {rows.length === 0 ? "No deals yet." : "No clients match your filters."}
           </p>
         </div>
       ) : (
-        <div className="bg-[#151821] border border-white/10 rounded-xl overflow-hidden">
+        <div className="bg-card border border-border rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[900px]">
               <thead>
@@ -240,7 +240,7 @@ export function ClientsTable({ rows }: Props) {
                     >
                       {/* Name */}
                       <td className="px-4 py-3">
-                        <span className="text-white font-semibold text-sm">{r.name || "—"}</span>
+                        <span className="text-foreground font-semibold text-sm">{r.name || "—"}</span>
                       </td>
                       {/* Company */}
                       <td className="px-4 py-3 text-sm text-gray-400">{r.company || "—"}</td>
@@ -278,7 +278,7 @@ export function ClientsTable({ rows }: Props) {
                         <div className="flex flex-wrap gap-1">
                           {r.services.length > 0 ? (
                             r.services.map((s) => (
-                              <span key={s} className="text-xs px-1.5 py-0.5 bg-white/5 text-gray-500 rounded">
+                              <span key={s} className="text-xs px-1.5 py-0.5 bg-muted text-gray-500 rounded">
                                 {s}
                               </span>
                             ))
@@ -290,7 +290,7 @@ export function ClientsTable({ rows }: Props) {
                       {/* Source */}
                       <td className="px-4 py-3">
                         {r.source ? (
-                          <span className="text-xs px-2 py-0.5 bg-white/5 text-gray-400 rounded border border-white/10">
+                          <span className="text-xs px-2 py-0.5 bg-muted text-gray-400 rounded border border-border">
                             {r.source}
                           </span>
                         ) : (
@@ -318,7 +318,7 @@ export function ClientsTable({ rows }: Props) {
                 <button
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page === 1}
-                  className="p-1.5 rounded bg-white/5 text-gray-400 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="p-1.5 rounded bg-muted text-gray-400 hover:bg-accent disabled:opacity-30 disabled:cursor-not-allowed"
                 >
                   <ChevronLeft className="w-3.5 h-3.5" />
                 </button>
@@ -326,7 +326,7 @@ export function ClientsTable({ rows }: Props) {
                 <button
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page === totalPages}
-                  className="p-1.5 rounded bg-white/5 text-gray-400 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="p-1.5 rounded bg-muted text-gray-400 hover:bg-accent disabled:opacity-30 disabled:cursor-not-allowed"
                 >
                   <ChevronRight className="w-3.5 h-3.5" />
                 </button>

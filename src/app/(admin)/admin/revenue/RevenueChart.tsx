@@ -53,12 +53,12 @@ export function RevenueCharts({ mrrOverTime, revenueByService, revenueByChannel 
   return (
     <div className="space-y-6">
       {/* ── MRR Over Time ──────────────────────────────────────────────────── */}
-      <div className="bg-[#151821] border border-white/10 rounded-xl p-6">
+      <div className="bg-card border border-border rounded-xl p-6">
         <h3 className="font-semibold text-white mb-1">MRR Over Time</h3>
         <p className="text-xs text-gray-500 mb-5">Cumulative MRR from active subscriptions by signup month</p>
 
         {!hasEnoughMrrData ? (
-          <div className="flex items-center justify-center h-48 text-gray-500 text-sm border border-dashed border-white/10 rounded-lg">
+          <div className="flex items-center justify-center h-48 text-gray-500 text-sm border border-dashed border-border rounded-lg">
             More data needed for trend (need 3+ months)
           </div>
         ) : (
@@ -106,12 +106,12 @@ export function RevenueCharts({ mrrOverTime, revenueByService, revenueByChannel 
       {/* ── Revenue by Service + Channel ──────────────────────────────────── */}
       <div className="grid md:grid-cols-2 gap-6">
         {/* Revenue by Service Arm */}
-        <div className="bg-[#151821] border border-white/10 rounded-xl p-6">
+        <div className="bg-card border border-border rounded-xl p-6">
           <h3 className="font-semibold text-white mb-1">Revenue by Service Arm</h3>
           <p className="text-xs text-gray-500 mb-5">Active subscription MRR per service</p>
 
           {revenueByService.length === 0 ? (
-            <div className="flex items-center justify-center h-48 text-gray-500 text-sm border border-dashed border-white/10 rounded-lg">
+            <div className="flex items-center justify-center h-48 text-gray-500 text-sm border border-dashed border-border rounded-lg">
               No active subscriptions yet
             </div>
           ) : (
@@ -150,12 +150,12 @@ export function RevenueCharts({ mrrOverTime, revenueByService, revenueByChannel 
         </div>
 
         {/* Revenue by Source Channel */}
-        <div className="bg-[#151821] border border-white/10 rounded-xl p-6">
+        <div className="bg-card border border-border rounded-xl p-6">
           <h3 className="font-semibold text-white mb-1">Active Clients by Channel</h3>
           <p className="text-xs text-gray-500 mb-5">Source breakdown of ACTIVE_CLIENT deals</p>
 
           {revenueByChannel.length === 0 ? (
-            <div className="flex items-center justify-center h-48 text-gray-500 text-sm border border-dashed border-white/10 rounded-lg">
+            <div className="flex items-center justify-center h-48 text-gray-500 text-sm border border-dashed border-border rounded-lg">
               No active client deals yet
             </div>
           ) : (

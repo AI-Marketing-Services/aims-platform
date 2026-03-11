@@ -11,12 +11,12 @@ export default function CRMLoading() {
       <div className="flex gap-4 overflow-hidden">
         {[1, 2, 3, 4, 5, 6].map((i) => (
           <div key={i} className="w-60 flex-shrink-0 space-y-3">
-            <div className="border-t-2 border-white/20 pt-3 space-y-1.5">
+            <div className="border-t-2 border-border pt-3 space-y-1.5">
               <Skeleton className="h-4 w-24" />
               <Skeleton className="h-3 w-16" />
             </div>
             {Array.from({ length: i % 3 + 1 }).map((_, j) => (
-              <div key={j} className="bg-[#151821] border border-white/10 rounded-xl p-4 space-y-3">
+              <div key={j} className="bg-card border border-border rounded-xl p-4 space-y-3">
                 <div className="flex justify-between">
                   <div className="space-y-1">
                     <Skeleton className="h-4 w-28" />
