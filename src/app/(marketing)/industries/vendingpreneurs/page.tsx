@@ -96,12 +96,12 @@ const VP_TIERS: VPTier[] = [
   },
   {
     id: "root",
-    name: "Root Owner",
+    name: "Route Owner",
     price: "$597",
     priceNote: "per month",
     description: "Full operating infrastructure — the complete GHL snapshot.",
     popular: true,
-    cta: "Get Root Owner",
+    cta: "Get Route Owner",
     features: [
       { name: "Everything in Solo", desc: "" },
       { name: "VP GHL Business OS", desc: "Full GoHighLevel subaccount: website, CRM, pipelines, AI receptionist, and outbound dialer — ready day one." },
@@ -116,11 +116,11 @@ const VP_TIERS: VPTier[] = [
     name: "Vending Empire",
     price: "$997",
     priceNote: "per month",
-    description: "Everything in Root Owner, plus full outbound growth engine.",
+    description: "Everything in Route Owner, plus full outbound growth engine.",
     popular: false,
     cta: "Go Empire",
     features: [
-      { name: "Everything in Root Owner", desc: "" },
+      { name: "Everything in Route Owner", desc: "" },
       { name: "Outbound Lead Dialer", desc: "AI outbound calls to location prospects — qualifies interest and books site visits without lifting a finger." },
       { name: "Cold Outbound Engine (VP Edition)", desc: "Pre-configured Clay sequences targeting gyms, offices, warehouses, and schools with VP-specific copy." },
     ],
