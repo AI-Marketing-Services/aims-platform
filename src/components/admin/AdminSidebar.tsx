@@ -19,6 +19,7 @@ import {
   FlaskConical,
   Bell,
   Settings,
+  Mail,
 } from "lucide-react"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
@@ -37,6 +38,7 @@ const ADMIN_NAV = [
     items: [
       { label: "CRM Pipeline", href: "/admin/crm", icon: Kanban },
       { label: "Clients", href: "/admin/clients", icon: Users },
+      { label: "Email Campaigns", href: "/admin/email-campaigns", icon: Mail },
     ],
   },
   {

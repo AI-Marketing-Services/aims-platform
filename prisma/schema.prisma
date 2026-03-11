@@ -31,6 +31,7 @@ model User {
   supportTickets          SupportTicket[]
   internProfile           InternProfile?
   notifications           Notification[]
+  emailBisonConnection    EmailBisonConnection?
 
   stripeCustomerId String?   @unique
   lastLoginAt      DateTime?
@@ -676,4 +677,18 @@ model EmailQueueItem {
 
   @@index([status, scheduledFor])
   @@index([recipientEmail, sequenceKey])
+}
+
+// ============ EMAIL BISON ============
+
+model EmailBisonConnection {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspaceId   Int
+  workspaceName String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([userId])
 }

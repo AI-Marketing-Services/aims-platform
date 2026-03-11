@@ -12,8 +12,13 @@ import {
   ShoppingCart,
   LifeBuoy,
   CreditCard,
+  Mail,
+  Users,
+  MessageSquare,
+  AlertTriangle,
 } from "lucide-react"
 import { db } from "@/lib/db"
+import { getWorkspaceDashboard } from "@/lib/emailbison"
 
 export const metadata: Metadata = { title: "Dashboard" }
 
@@ -62,6 +67,21 @@ export default async function PortalDashboard({
 
   const subs = dbUser?.subscriptions ?? []
   const totalMrr = subs.reduce((sum, s) => sum + s.monthlyAmount, 0)
+
+  // Email Bison campaign data (if connected)
+  let emailCampaignData: Awaited<ReturnType<typeof getWorkspaceDashboard>> | null = null
+  let emailWorkspaceName: string | null = null
+  if (dbUser) {
+    const ebConn = await db.emailBisonConnection.findUnique({ where: { userId: dbUser.id } })
+    if (ebConn) {
+      emailWorkspaceName = ebConn.workspaceName
+      try {
+        emailCampaignData = await getWorkspaceDashboard(ebConn.workspaceId)
+      } catch {
+        // graceful degradation
+      }
+    }
+  }
 
   // Real metrics
   const [leadCount, meetingCount] = dbUser
@@ -364,6 +384,117 @@ export default async function PortalDashboard({
           </div>
         )}
       </div>
+
+      {/* ── EMAIL CAMPAIGNS (if connected) ── */}
+      {emailCampaignData && (
+        <div className="rounded-2xl border border-border bg-card overflow-hidden">
+          <div className="px-5 py-4 border-b border-border flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Mail className="h-4 w-4 text-[#DC2626]" />
+              <h2 className="text-lg font-semibold">Email Campaigns</h2>
+              {emailWorkspaceName && (
+                <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
+                  {emailWorkspaceName}
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Aggregate stat tiles */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-y sm:divide-y-0 divide-border">
+            {[
+              {
+                label: "Emails Sent",
+                value: emailCampaignData.totals.emailsSent.toLocaleString(),
+                icon: Mail,
+                color: "text-blue-600",
+                bg: "bg-blue-50",
+              },
+              {
+                label: "People Contacted",
+                value: emailCampaignData.totals.peopleContacted.toLocaleString(),
+                icon: Users,
+                color: "text-purple-600",
+                bg: "bg-purple-50",
+              },
+              {
+                label: "Replies",
+                value: `${emailCampaignData.totals.replies.toLocaleString()}`,
+                sub: `${emailCampaignData.replyRate}% rate`,
+                icon: MessageSquare,
+                color: "text-green-600",
+                bg: "bg-green-50",
+              },
+              {
+                label: "Bounced",
+                value: `${emailCampaignData.totals.bounced.toLocaleString()}`,
+                sub: `${emailCampaignData.bounceRate}% rate`,
+                icon: AlertTriangle,
+                color: "text-orange-600",
+                bg: "bg-orange-50",
+              },
+            ].map(({ label, value, sub, icon: Icon, color, bg }) => (
+              <div key={label} className="px-5 py-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className={`w-7 h-7 rounded-lg ${bg} flex items-center justify-center`}>
+                    <Icon className={`h-3.5 w-3.5 ${color}`} />
+                  </div>
+                  <p className="text-xs text-muted-foreground">{label}</p>
+                </div>
+                <p className="text-2xl font-bold font-mono text-foreground">{value}</p>
+                {sub && <p className="text-xs text-muted-foreground mt-0.5">{sub}</p>}
+              </div>
+            ))}
+          </div>
+
+          {/* Campaign list */}
+          {emailCampaignData.campaigns.length > 0 && (
+            <div className="border-t border-border">
+              <div className="px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                Active Campaigns
+              </div>
+              <div className="divide-y divide-border">
+                {emailCampaignData.campaigns.map((c) => (
+                  <div key={c.id} className="px-5 py-3 flex items-center justify-between gap-4">
+                    <div className="min-w-0 flex-1">
+                      <p className="font-medium text-sm text-foreground truncate">{c.name}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        {c.total_leads_contacted.toLocaleString()} contacted · {c.emails_sent.toLocaleString()} sent
+                      </p>
+                    </div>
+                    <div className="shrink-0 flex items-center gap-3">
+                      {/* Progress bar */}
+                      <div className="hidden sm:block">
+                        <div className="flex items-center gap-2">
+                          <div className="w-24 h-1.5 rounded-full bg-muted overflow-hidden">
+                            <div
+                              className="h-full rounded-full bg-[#DC2626] transition-all"
+                              style={{ width: `${Math.min(c.completion_percentage, 100)}%` }}
+                            />
+                          </div>
+                          <span className="text-xs text-muted-foreground w-10 text-right">
+                            {c.completion_percentage.toFixed(0)}%
+                          </span>
+                        </div>
+                        <p className="text-[10px] text-muted-foreground text-right mt-0.5">complete</p>
+                      </div>
+                      <span
+                        className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                          c.status === "active"
+                            ? "bg-green-50 text-green-700 border border-green-200"
+                            : "bg-muted text-muted-foreground border border-border"
+                        }`}
+                      >
+                        {c.status}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* ── SMART UPSELL BANNER ── */}
       <div className="border border-border rounded-2xl bg-card p-5 border-l-4 border-l-[#DC2626]">
