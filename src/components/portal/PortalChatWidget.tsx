@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
-import { MessageSquare, X, Send, Loader2, LifeBuoy, Layers, CreditCard, MessageSquarePlus, ShoppingBag } from "lucide-react"
+import { MessageSquare, X, Send, Loader2, Layers, CreditCard, MessageSquarePlus, ShoppingBag } from "lucide-react"
 import { useChat } from "@ai-sdk/react"
 import { TextStreamChatTransport, type UIMessage } from "ai"
 import Link from "next/link"
@@ -70,10 +70,10 @@ export function PortalChatWidget({ firstName = "there", serviceCount = 0 }: Port
       {!open && (
         <button
           onClick={() => setOpen(true)}
-          className="fixed bottom-6 right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-[#DC2626] text-white shadow-lg hover:bg-[#B91C1C] transition-all hover:scale-105 active:scale-95"
+          className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-white border border-gray-200 shadow-xl hover:shadow-2xl transition-all hover:scale-105 active:scale-95"
           aria-label="AIMS Support"
         >
-          <LifeBuoy className="h-5 w-5" />
+          <img src="/logo.png" alt="AIMS" className="h-7 w-7 object-contain" />
         </button>
       )}
 
@@ -117,8 +117,8 @@ export function PortalChatWidget({ firstName = "there", serviceCount = 0 }: Port
               return (
                 <div key={m.id} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
                   {m.role === "assistant" && (
-                    <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#DC2626] mr-2 mt-1 flex-shrink-0">
-                      <LifeBuoy className="h-2.5 w-2.5 text-white" />
+                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white border border-gray-200 shadow-sm mr-2 mt-1 flex-shrink-0 overflow-hidden">
+                      <img src="/logo.png" alt="AIMS" className="h-4 w-4 object-contain" />
                     </div>
                   )}
                   <div
@@ -135,8 +135,8 @@ export function PortalChatWidget({ firstName = "there", serviceCount = 0 }: Port
             })}
             {isStreaming && (
               <div className="flex justify-start">
-                <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#DC2626] mr-2 mt-1 flex-shrink-0">
-                  <LifeBuoy className="h-2.5 w-2.5 text-white" />
+                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white border border-gray-200 shadow-sm mr-2 mt-1 flex-shrink-0 overflow-hidden">
+                  <img src="/logo.png" alt="AIMS" className="h-4 w-4 object-contain" />
                 </div>
                 <div className="bg-[#f4f4f5] rounded-xl rounded-bl-sm px-3 py-2">
                   <Loader2 className="h-3.5 w-3.5 text-zinc-400 animate-spin" />
