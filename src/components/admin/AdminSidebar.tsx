@@ -18,6 +18,7 @@ import {
   ExternalLink,
   FlaskConical,
   Bell,
+  Settings,
 } from "lucide-react"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
@@ -28,6 +29,7 @@ const ADMIN_NAV = [
     section: "Overview",
     items: [
       { label: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
+      { label: "Services", href: "/admin/services", icon: Settings },
     ],
   },
   {

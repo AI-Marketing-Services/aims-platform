@@ -211,6 +211,12 @@ model ServiceArm {
   setupSteps      Json?
   estimatedSetupDays Int?
 
+  // Asana fulfillment config
+  asanaProjectGid   String?
+  asanaAssigneeGid  String?
+  asanaTaskTemplate Json?     // { name: string, notes: string, subtasks: string[] }
+  ctaUrl            String?   // 1:1 button link for this service
+
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
 

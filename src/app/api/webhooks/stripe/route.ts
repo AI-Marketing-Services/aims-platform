@@ -5,6 +5,7 @@ import { stripe, handleSubscriptionUpdated, handleSubscriptionDeleted, handleInv
 import { notifyNewPurchase } from "@/lib/notifications"
 import { sendWelcomeEmail } from "@/lib/email"
 import { db } from "@/lib/db"
+import { createFulfillmentTask } from "@/lib/asana"
 
 export async function POST(req: Request) {
   const body = await req.text()
@@ -134,6 +135,23 @@ export async function POST(req: Request) {
 
           if (!subscription) continue
 
+          // Auto-create Asana fulfillment task
+          if (serviceArm.asanaProjectGid) {
+            const portalUrl = `${process.env.NEXT_PUBLIC_APP_URL}/portal/dashboard`;
+            await createFulfillmentTask({
+              clientName: user?.name ?? session.customer_details?.name ?? "New Client",
+              clientEmail: user?.email ?? session.customer_details?.email ?? "",
+              serviceName: serviceArm.name,
+              tier: tierName,
+              monthlyAmount,
+              subscriptionId: subscription.id,
+              portalUrl,
+              asanaProjectGid: serviceArm.asanaProjectGid,
+              asanaAssigneeGid: serviceArm.asanaAssigneeGid ?? undefined,
+              asanaTaskTemplate: (serviceArm.asanaTaskTemplate as { name?: string; notes?: string; subtasks?: string[] }) ?? undefined,
+            }).catch((err) => console.error("Asana task creation failed:", err));
+          }
+
           // Create fulfillment tasks from service arm setup steps
           const setupSteps = (serviceArm.setupSteps as Array<{ title: string; description?: string }>) ?? []
           if (setupSteps.length > 0) {
@@ -236,6 +254,24 @@ export async function POST(req: Request) {
             currentPeriodEnd: new Date(sub.current_period_end * 1000),
           },
         })
+
+        // Auto-create Asana fulfillment task (legacy single-service checkout)
+        if (serviceArm.asanaProjectGid) {
+          const legacyUser = await db.user.findUnique({ where: { id: userId }, select: { name: true, email: true } })
+          const portalUrl = `${process.env.NEXT_PUBLIC_APP_URL}/portal/dashboard`;
+          await createFulfillmentTask({
+            clientName: legacyUser?.name ?? "New Client",
+            clientEmail: legacyUser?.email ?? "",
+            serviceName: serviceArm.name,
+            tier,
+            monthlyAmount: amount,
+            subscriptionId: subscription.id,
+            portalUrl,
+            asanaProjectGid: serviceArm.asanaProjectGid,
+            asanaAssigneeGid: serviceArm.asanaAssigneeGid ?? undefined,
+            asanaTaskTemplate: (serviceArm.asanaTaskTemplate as { name?: string; notes?: string; subtasks?: string[] }) ?? undefined,
+          }).catch((err) => console.error("Asana task creation failed (legacy):", err));
+        }
 
         const setupSteps = (serviceArm.setupSteps as Array<{ title: string; description?: string }>) ?? []
         if (setupSteps.length > 0) {
