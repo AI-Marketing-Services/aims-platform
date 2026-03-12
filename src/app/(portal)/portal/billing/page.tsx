@@ -101,7 +101,7 @@ export default async function BillingPage() {
                     </div>
                     <div className="flex items-center gap-4 shrink-0">
                       <span className="font-semibold text-gray-900">
-                        ${sub.monthlyAmount.toLocaleString()}/mo
+                        ${(sub.monthlyAmount / 100).toLocaleString()}/mo
                       </span>
                       <button className="text-sm text-gray-500 border border-border rounded-lg px-3 py-1.5 hover:bg-gray-50 transition-colors">
                         Cancel
@@ -117,11 +117,11 @@ export default async function BillingPage() {
               <div>
                 <div className="text-sm font-semibold text-gray-900">Total Monthly</div>
                 <div className="text-xs text-gray-500 mt-0.5">
-                  Annual equivalent: ${annualEquiv.toLocaleString()}/yr
+                  Annual equivalent: ${(annualEquiv / 100).toLocaleString()}/yr
                 </div>
               </div>
               <span className="text-lg font-bold text-gray-900">
-                ${totalMrr.toLocaleString()}/mo
+                ${(totalMrr / 100).toLocaleString()}/mo
               </span>
             </div>
           </div>

@@ -84,7 +84,7 @@ export default async function PortalServiceDetailPage({
             <p className="text-sm text-muted-foreground mt-1">{serviceArm.shortDesc}</p>
           </div>
           <div className="text-right flex-shrink-0">
-            <div className="text-2xl font-bold text-foreground">${subscription.monthlyAmount}</div>
+            <div className="text-2xl font-bold text-foreground">${(subscription.monthlyAmount / 100).toLocaleString()}</div>
             <div className="text-xs text-muted-foreground">/month • {subscription.tier ?? "Standard"}</div>
           </div>
         </div>

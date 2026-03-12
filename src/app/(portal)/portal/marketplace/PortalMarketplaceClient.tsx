@@ -124,9 +124,9 @@ function priceLabel(svc: ServiceArm) {
   if (svc.pricingModel === "CUSTOM") return "Custom pricing"
   if (svc.tiers.length > 0) {
     const min = Math.min(...svc.tiers.map((t) => t.price))
-    return `From $${min}/mo`
+    return `From $${(min / 100).toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}/mo`
   }
-  if (svc.basePrice) return `From $${svc.basePrice}/mo`
+  if (svc.basePrice) return `From $${(svc.basePrice / 100).toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}/mo`
   return "Custom pricing"
 }
 

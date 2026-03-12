@@ -643,7 +643,7 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
                   )}
                   <div className="text-lg font-bold text-gray-900">{tier.name}</div>
                   <div className="mt-2 text-3xl font-black text-gray-900">
-                    ${tier.price.toLocaleString()}
+                    ${(tier.price / 100).toLocaleString()}
                     <span className="text-sm font-normal text-gray-500">/{tier.interval}</span>
                   </div>
                   {tier.features.length > 0 && (

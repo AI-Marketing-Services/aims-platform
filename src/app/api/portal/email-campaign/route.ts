@@ -24,6 +24,7 @@ export async function GET() {
       ...dashboard,
     })
   } catch (err) {
-    return NextResponse.json({ error: String(err) }, { status: 500 })
+    console.error("Email Bison dashboard fetch error:", err)
+    return NextResponse.json({ error: "Failed to load campaign data" }, { status: 500 })
   }
 }

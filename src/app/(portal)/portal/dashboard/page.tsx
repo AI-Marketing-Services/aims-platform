@@ -368,7 +368,7 @@ export default async function PortalDashboard({
                       </span>
                     </div>
                     <div className="mt-1 text-sm text-muted-foreground">
-                      {sub.tier ? `${sub.tier} · ` : ""}${sub.monthlyAmount.toLocaleString()}/mo
+                      {sub.tier ? `${sub.tier} · ` : ""}${(sub.monthlyAmount / 100).toLocaleString()}/mo
                       {renewsAt ? ` · Renews ${renewsAt}` : ""}
                     </div>
                   </div>
