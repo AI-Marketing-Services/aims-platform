@@ -67,6 +67,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true, submission, deal }, { status: 201 })
   } catch (e) {
-    return NextResponse.json({ error: "DB error", details: String(e) }, { status: 500 })
+    console.error("Simulate lead DB error:", e)
+    return NextResponse.json({ error: "Failed to create simulated lead" }, { status: 500 })
   }
 }

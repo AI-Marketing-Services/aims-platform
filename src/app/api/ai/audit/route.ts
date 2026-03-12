@@ -75,6 +75,7 @@ export async function POST(req: Request) {
           pageTitle = result.title ?? ""
         }
       }
+      await logApiCost({ provider: "tavily", model: "extract", endpoint: "/extract", tokens: 0, cost: 0.02, serviceArm: "website-audit" }).catch(() => {})
     } catch {
       // Fallback — proceed with limited data
     }
@@ -102,6 +103,7 @@ export async function POST(req: Request) {
           .map((r: { title: string; content: string }) => `${r.title}: ${r.content}`)
           .join("\n") ?? ""
       }
+      await logApiCost({ provider: "tavily", model: "search", endpoint: "/search", tokens: 0, cost: 0.01, serviceArm: "website-audit" }).catch(() => {})
     } catch {}
 
     // 3. AI analysis

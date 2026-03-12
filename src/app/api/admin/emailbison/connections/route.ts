@@ -1,12 +1,18 @@
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
+import { z } from "zod"
 import { db } from "@/lib/db"
+
+async function requireAdmin() {
+  const { userId, sessionClaims } = await auth()
+  if (!userId) return false
+  const role = (sessionClaims?.metadata as { role?: string })?.role
+  return role && ["ADMIN", "SUPER_ADMIN"].includes(role)
+}
 
 // GET /api/admin/emailbison/connections — list all connections
 export async function GET() {
-  const { sessionClaims } = await auth()
-  const role = (sessionClaims?.metadata as { role?: string })?.role
-  if (!role || !["ADMIN", "SUPER_ADMIN"].includes(role)) {
+  if (!(await requireAdmin())) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   }
 
@@ -16,32 +22,40 @@ export async function GET() {
   return NextResponse.json({ connections })
 }
 
+const upsertSchema = z.object({
+  userId: z.string().min(1),
+  workspaceId: z.coerce.number().int().positive(),
+  workspaceName: z.string().min(1),
+})
+
 // POST /api/admin/emailbison/connections — upsert connection for a user
 export async function POST(req: Request) {
-  const { sessionClaims } = await auth()
-  const role = (sessionClaims?.metadata as { role?: string })?.role
-  if (!role || !["ADMIN", "SUPER_ADMIN"].includes(role)) {
+  if (!(await requireAdmin())) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   }
 
-  const { userId, workspaceId, workspaceName } = await req.json()
-  if (!userId || !workspaceId || !workspaceName) {
-    return NextResponse.json({ error: "userId, workspaceId, workspaceName required" }, { status: 400 })
+  let body: unknown
+  try { body = await req.json() } catch {
+    return NextResponse.json({ error: "Invalid request body" }, { status: 400 })
   }
 
+  const parsed = upsertSchema.safeParse(body)
+  if (!parsed.success) {
+    return NextResponse.json({ error: "userId, workspaceId (number), workspaceName required" }, { status: 400 })
+  }
+
+  const { userId, workspaceId, workspaceName } = parsed.data
   const connection = await db.emailBisonConnection.upsert({
     where: { userId },
-    create: { userId, workspaceId: Number(workspaceId), workspaceName },
-    update: { workspaceId: Number(workspaceId), workspaceName },
+    create: { userId, workspaceId, workspaceName },
+    update: { workspaceId, workspaceName },
   })
   return NextResponse.json({ connection })
 }
 
 // DELETE /api/admin/emailbison/connections?userId=xxx
 export async function DELETE(req: Request) {
-  const { sessionClaims } = await auth()
-  const role = (sessionClaims?.metadata as { role?: string })?.role
-  if (!role || !["ADMIN", "SUPER_ADMIN"].includes(role)) {
+  if (!(await requireAdmin())) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   }
 

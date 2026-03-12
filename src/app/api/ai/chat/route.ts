@@ -6,6 +6,7 @@ import { z } from "zod"
 import { db } from "@/lib/db"
 import { notifyNewLead } from "@/lib/notifications"
 import { chatRatelimit, getIp } from "@/lib/ratelimit"
+import { logApiCost } from "@/lib/ai"
 
 export const maxDuration = 30
 
@@ -99,6 +100,19 @@ export async function POST(req: Request) {
     system: AIMS_SYSTEM_PROMPT,
     messages,
     maxOutputTokens: 512,
+    onFinish: async ({ usage }) => {
+      const inputTokens = usage?.inputTokens ?? 0
+      const outputTokens = usage?.outputTokens ?? 0
+      await logApiCost({
+        provider: "google",
+        model: "gemini-2.0-flash-001",
+        endpoint: "public-chat",
+        tokens: inputTokens + outputTokens,
+        cost: (inputTokens * 0.075 + outputTokens * 0.3) / 1_000_000,
+        serviceArm: "website-chatbot",
+        metadata: { inputTokens, outputTokens },
+      }).catch(() => {})
+    },
     tools: {
       capture_lead: tool({
         description: "Save a qualified lead to the AIMS CRM. Use when the visitor provides their name and email.",

@@ -3,6 +3,7 @@ import { auth, currentUser } from "@clerk/nextjs/server"
 import { z } from "zod"
 import { db } from "@/lib/db"
 import { getOrCreateStripeCustomer } from "@/lib/stripe"
+import { checkoutRatelimit, getIp } from "@/lib/ratelimit"
 import Stripe from "stripe"
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -21,6 +22,11 @@ const cartSchema = z.object({
 })
 
 export async function POST(req: Request) {
+  if (checkoutRatelimit) {
+    const { success } = await checkoutRatelimit.limit(getIp(req))
+    if (!success) return NextResponse.json({ error: "Too many requests" }, { status: 429 })
+  }
+
   if (!process.env.STRIPE_SECRET_KEY) {
     return NextResponse.json({ error: "Stripe not configured" }, { status: 503 })
   }

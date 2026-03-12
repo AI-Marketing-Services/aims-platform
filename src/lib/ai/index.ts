@@ -37,16 +37,16 @@ export async function logApiCost(params: {
 export async function analyzeWithClaude(params: {
   prompt: string
   systemPrompt?: string
-  model?: "claude-sonnet-4-20250514" | "claude-haiku-4-5-20251001"
+  model?: "claude-sonnet-4-20250514" | "claude-haiku-4-5-20251001" | "claude-opus-4-20250514"
   maxTokens?: number
   serviceArm?: string
   clientId?: string
 }) {
-  const model = params.model ?? "claude-sonnet-4-20250514"
+  const model = params.model ?? "claude-haiku-4-5-20251001"
 
   const response = await anthropic.messages.create({
     model,
-    max_tokens: params.maxTokens ?? 2048,
+    max_tokens: params.maxTokens ?? 1024,
     system: params.systemPrompt,
     messages: [{ role: "user", content: params.prompt }],
   })

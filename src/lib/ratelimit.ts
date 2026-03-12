@@ -25,6 +25,9 @@ export const auditRatelimit = createRatelimiter(3, 60)
 // 20 chat messages per minute per IP/user (public chatbot + portal chat)
 export const chatRatelimit = createRatelimiter(20, 60)
 
+// 10 checkout attempts per minute per IP (prevents abuse)
+export const checkoutRatelimit = createRatelimiter(10, 60)
+
 export function getIp(req: Request): string {
   return (
     req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
