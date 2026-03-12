@@ -254,11 +254,16 @@ export function DealDetailClient({
   const [lostPrompt, setLostPrompt] = useState(false)
 
   async function patchDeal(data: Record<string, string | number | null>) {
-    await fetch(`/api/deals/${dealId}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...data, authorId }),
-    }).catch(console.error)
+    try {
+      const res = await fetch(`/api/deals/${dealId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...data, authorId }),
+      })
+      if (!res.ok) console.error("patchDeal failed:", res.status)
+    } catch (err) {
+      console.error("patchDeal error:", err)
+    }
   }
 
   function handleStageChange(newStage: string) {
@@ -354,21 +359,32 @@ export function DealDetailClient({
     if (!title) return
     setTaskTitle("")
     setTaskFormOpen(false)
-    await fetch(`/api/deals/${dealId}/tasks`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title, authorId }),
-    }).catch(console.error)
-    setActivities((prev) => [
-      {
-        id: crypto.randomUUID(),
-        type: "TASK_CREATED",
-        detail: title,
-        authorId,
-        createdAt: new Date().toISOString(),
-      },
-      ...prev,
-    ])
+    try {
+      const res = await fetch(`/api/deals/${dealId}/tasks`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, authorId }),
+      })
+      if (res.ok) {
+        setActivities((prev) => [
+          {
+            id: crypto.randomUUID(),
+            type: "TASK_CREATED",
+            detail: title,
+            authorId,
+            createdAt: new Date().toISOString(),
+          },
+          ...prev,
+        ])
+      } else {
+        // Restore form so user can retry
+        setTaskTitle(title)
+        setTaskFormOpen(true)
+      }
+    } catch {
+      setTaskTitle(title)
+      setTaskFormOpen(true)
+    }
   }
 
   const currentLabel = stageOptions.find((s) => s.value === stage)?.label ?? stageLabel

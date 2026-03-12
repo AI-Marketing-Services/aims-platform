@@ -317,7 +317,7 @@ export function CRMKanban({ initialDeals }: { initialDeals: Deal[] }) {
     if (deal) setActiveDeal(deal)
   }
 
-  function handleDragEnd(event: DragEndEvent) {
+  async function handleDragEnd(event: DragEndEvent) {
     setActiveDeal(null)
     const { active, over } = event
     if (!over) return
@@ -328,15 +328,32 @@ export function CRMKanban({ initialDeals }: { initialDeals: Deal[] }) {
 
     if (!allStageKeys.includes(newStage)) return
 
+    // Optimistic update
+    const prevStage = deals.find((d) => d.id === dealId)?.stage
     setDeals((prev) =>
       prev.map((d) => (d.id === dealId ? { ...d, stage: newStage } : d))
     )
 
-    fetch(`/api/deals/${dealId}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ stage: newStage }),
-    }).catch(console.error)
+    try {
+      const res = await fetch(`/api/deals/${dealId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ stage: newStage }),
+      })
+      if (!res.ok && prevStage) {
+        // Rollback on failure
+        setDeals((prev) =>
+          prev.map((d) => (d.id === dealId ? { ...d, stage: prevStage } : d))
+        )
+      }
+    } catch {
+      // Rollback on network error
+      if (prevStage) {
+        setDeals((prev) =>
+          prev.map((d) => (d.id === dealId ? { ...d, stage: prevStage } : d))
+        )
+      }
+    }
   }
 
   return (

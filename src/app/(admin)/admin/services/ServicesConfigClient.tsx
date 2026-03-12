@@ -74,6 +74,17 @@ export default function ServicesConfigClient() {
         body: JSON.stringify(patch),
       });
       if (!res.ok) throw new Error("Save failed");
+      const updated = await res.json();
+      // Update local services state so it reflects the saved data
+      setServices((prev) =>
+        prev.map((s) => (s.id === svc.id ? { ...s, ...updated } : s))
+      );
+      // Clear edits for this service since they're now saved
+      setEdits((prev) => {
+        const next = { ...prev };
+        delete next[svc.id];
+        return next;
+      });
       setSaveState((p) => ({ ...p, [svc.id]: "saved" }));
       setTimeout(() => setSaveState((p) => ({ ...p, [svc.id]: "idle" })), 2000);
     } catch {
