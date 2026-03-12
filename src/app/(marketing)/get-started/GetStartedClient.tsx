@@ -85,15 +85,29 @@ export function GetStartedClient() {
     }))
   }
 
+  const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
+
   const handleSubmit = async () => {
+    setSubmitting(true)
+    setSubmitError(null)
     try {
-      await fetch("/api/intake", {
+      const res = await fetch("/api/intake", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       })
-    } catch {}
-    setSubmitted(true)
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        setSubmitError(data.error ?? "Something went wrong. Please try again.")
+        setSubmitting(false)
+        return
+      }
+      setSubmitted(true)
+    } catch {
+      setSubmitError("Network error. Please check your connection and try again.")
+      setSubmitting(false)
+    }
   }
 
   if (submitted) {
@@ -287,18 +301,26 @@ export function GetStartedClient() {
                 By submitting, you agree to receive follow-up communications from AIMS. We respect your privacy.
               </p>
 
+              {submitError && (
+                <div className="mt-4 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+                  {submitError}
+                </div>
+              )}
+
               <div className="mt-6 flex gap-3">
                 <button
                   onClick={() => setStep(2)}
-                  className="flex items-center gap-2 rounded-lg border border-border px-6 py-3 font-semibold text-foreground hover:bg-secondary transition"
+                  disabled={submitting}
+                  className="flex items-center gap-2 rounded-lg border border-border px-6 py-3 font-semibold text-foreground hover:bg-secondary transition disabled:opacity-50"
                 >
                   <ArrowLeft className="h-4 w-4" /> Back
                 </button>
                 <button
                   onClick={handleSubmit}
-                  className="flex-1 rounded-lg bg-[#DC2626] py-3 font-semibold text-white hover:bg-[#B91C1C] transition"
+                  disabled={submitting}
+                  className="flex-1 rounded-lg bg-[#DC2626] py-3 font-semibold text-white hover:bg-[#B91C1C] transition disabled:opacity-60"
                 >
-                  Submit & Book Call
+                  {submitting ? "Submitting..." : "Submit & Book Call"}
                 </button>
               </div>
             </div>

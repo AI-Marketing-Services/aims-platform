@@ -36,7 +36,7 @@ export default async function ResellerDashboardPage() {
           <p className="text-xs text-muted-foreground mb-2 font-medium uppercase tracking-wider">Your Referral Link</p>
           <div className="flex items-center gap-3">
             <code className="flex-1 text-sm font-mono text-[#DC2626] bg-muted px-3 py-2 rounded-lg overflow-x-auto">
-              {typeof window !== "undefined" ? window.location.origin : "https://aimseos.com"}/for/{referral.landingPageSlug ?? referral.code}?ref={referral.code}
+              {process.env.NEXT_PUBLIC_APP_URL ?? "https://aimseos.com"}/for/{referral.landingPageSlug ?? referral.code}?ref={referral.code}
             </code>
             <Link
               href={`/reseller/resources`}
