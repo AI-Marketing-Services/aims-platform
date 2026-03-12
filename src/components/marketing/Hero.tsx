@@ -2,8 +2,8 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import { motion, AnimatePresence } from "framer-motion"
-import { useState } from "react"
+import { motion, AnimatePresence, useMotionValue, useSpring, useTransform, useInView } from "framer-motion"
+import { useState, useRef, useEffect, type ReactNode } from "react"
 import {
   LayoutDashboard, Users, Megaphone, GitBranch,
   BarChart2, Settings, TrendingUp, Bell, Search, ChevronDown, X,
@@ -134,6 +134,49 @@ const NAV_ITEMS = [
   { icon: Settings, label: "Settings", id: "settings" },
 ]
 
+// ─── Animation helpers ────────────────────────────────────────────────────────
+
+function AnimNum({ value, prefix = "", suffix = "", delay = 0.6, format }: { value: number; prefix?: string; suffix?: string; delay?: number; format?: (v: number) => string }) {
+  const ref = useRef(null)
+  const isInView = useInView(ref, { once: true })
+  const mv = useMotionValue(0)
+  const sp = useSpring(mv, { duration: 1800, bounce: 0 })
+  const display = useTransform(sp, (v) => {
+    const rounded = Math.round(v)
+    if (format) return format(rounded)
+    return `${prefix}${rounded.toLocaleString()}${suffix}`
+  })
+  useEffect(() => { if (isInView) setTimeout(() => mv.set(value), delay * 1000) }, [isInView, value, mv, delay])
+  return <motion.span ref={ref}>{display}</motion.span>
+}
+
+function StaggerIn({ children, className, delay = 0 }: { children: ReactNode; className?: string; delay?: number }) {
+  return (
+    <motion.div
+      className={className}
+      initial="hidden"
+      animate="visible"
+      variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.08, delayChildren: delay } } }}
+    >
+      {children}
+    </motion.div>
+  )
+}
+
+function PopUp({ children, className }: { children: ReactNode; className?: string }) {
+  return (
+    <motion.div
+      className={className}
+      variants={{
+        hidden: { opacity: 0, y: 16, scale: 0.92 },
+        visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } },
+      }}
+    >
+      {children}
+    </motion.div>
+  )
+}
+
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
 function DonutChart({ pct, value }: { pct: number; value: string }) {
@@ -169,14 +212,14 @@ function DashboardView() {
       <div className="grid grid-cols-2 sm:grid-cols-5 border-b border-gray-100">
         <div className="bg-white px-3 py-3 border-r border-gray-100">
           <p className="text-[9px] font-semibold uppercase tracking-wide text-gray-400">New Leads</p>
-          <motion.p className="mt-0.5 text-xl font-extrabold text-gray-900" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}>847</motion.p>
-          <p className="flex items-center gap-1 text-[9px] text-green-600 font-medium mt-0.5"><TrendingUp className="h-2 w-2" /> 23% vs last week</p>
+          <p className="mt-0.5 text-xl font-extrabold text-gray-900"><AnimNum value={847} delay={0.5} /></p>
+          <motion.p className="flex items-center gap-1 text-[9px] text-green-600 font-medium mt-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2 }}><TrendingUp className="h-2 w-2" /> 23% vs last week</motion.p>
           <p className="mt-1.5 text-[9px] text-[#DC2626] cursor-pointer hover:underline">Revenue report →</p>
         </div>
         <div className="bg-white px-3 py-3 border-r border-gray-100">
           <p className="text-[9px] font-semibold uppercase tracking-wide text-gray-400">Total Revenue</p>
-          <p className="mt-0.5 text-xl font-extrabold text-gray-900">$4.5M</p>
-          <p className="flex items-center gap-1 text-[9px] text-green-600 font-medium mt-0.5"><TrendingUp className="h-2 w-2" /> 32% vs last year</p>
+          <p className="mt-0.5 text-xl font-extrabold text-gray-900"><AnimNum value={45} delay={0.6} format={(v) => `$${(v / 10).toFixed(1)}M`} /></p>
+          <motion.p className="flex items-center gap-1 text-[9px] text-green-600 font-medium mt-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.3 }}><TrendingUp className="h-2 w-2" /> 32% vs last year</motion.p>
           <p className="mt-1.5 text-[9px] text-[#DC2626] cursor-pointer hover:underline">All deals →</p>
         </div>
         <div className="bg-white px-3 py-3 border-r border-gray-100 flex flex-col items-center justify-center">
@@ -202,8 +245,8 @@ function DashboardView() {
         </div>
         <div className="bg-white px-3 py-3">
           <p className="text-[9px] font-semibold uppercase tracking-wide text-gray-400">Win Rate</p>
-          <p className="mt-0.5 text-xl font-extrabold text-gray-900">68%</p>
-          <p className="flex items-center gap-1 text-[9px] text-green-600 font-medium mt-0.5"><TrendingUp className="h-2 w-2" /> +5pts this quarter</p>
+          <p className="mt-0.5 text-xl font-extrabold text-gray-900"><AnimNum value={68} suffix="%" delay={0.7} /></p>
+          <motion.p className="flex items-center gap-1 text-[9px] text-green-600 font-medium mt-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.4 }}><TrendingUp className="h-2 w-2" /> +5pts this quarter</motion.p>
           <p className="mt-1.5 text-[9px] text-[#DC2626] cursor-pointer hover:underline">View by rep →</p>
         </div>
       </div>
@@ -229,26 +272,27 @@ function DashboardView() {
             <p className="text-[11px] font-semibold text-gray-700">Recent Leads</p>
             <span className="text-[9px] text-gray-400 border border-gray-200 rounded px-1 py-0.5 flex items-center gap-0.5">Sort by Newest <ChevronDown className="h-2 w-2" /></span>
           </div>
-          <div className="space-y-2">
+          <StaggerIn className="space-y-2" delay={0.9}>
             {RECENT_LEADS.slice(0, 4).map((lead) => (
-              <motion.div
-                key={lead.name}
-                className="flex items-center gap-2 cursor-pointer rounded-lg px-2 py-1 hover:bg-red-50 transition-colors"
-                whileHover={{ x: 2 }}
-              >
-                <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-[9px] font-bold text-white" style={{ background: lead.color }}>
-                  {lead.initials}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-[10px] font-semibold text-gray-800 leading-none truncate">{lead.name}</p>
-                  <p className="text-[9px] text-gray-400">{lead.company}</p>
-                </div>
-                <span className={`text-[8px] px-1.5 py-0.5 rounded-full font-medium ${lead.status === "hot" ? "bg-red-100 text-red-600" : lead.status === "warm" ? "bg-orange-100 text-orange-600" : "bg-gray-100 text-gray-500"}`}>
-                  {lead.status}
-                </span>
-              </motion.div>
+              <PopUp key={lead.name}>
+                <motion.div
+                  className="flex items-center gap-2 cursor-pointer rounded-lg px-2 py-1 hover:bg-red-50 transition-colors"
+                  whileHover={{ x: 2 }}
+                >
+                  <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-[9px] font-bold text-white" style={{ background: lead.color }}>
+                    {lead.initials}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[10px] font-semibold text-gray-800 leading-none truncate">{lead.name}</p>
+                    <p className="text-[9px] text-gray-400">{lead.company}</p>
+                  </div>
+                  <span className={`text-[8px] px-1.5 py-0.5 rounded-full font-medium ${lead.status === "hot" ? "bg-red-100 text-red-600" : lead.status === "warm" ? "bg-orange-100 text-orange-600" : "bg-gray-100 text-gray-500"}`}>
+                    {lead.status}
+                  </span>
+                </motion.div>
+              </PopUp>
             ))}
-          </div>
+          </StaggerIn>
           <p className="mt-2 text-[9px] text-[#DC2626] cursor-pointer hover:underline">All customers →</p>
         </div>
 
@@ -319,19 +363,23 @@ function DashboardView() {
       <div className="grid grid-cols-1 sm:grid-cols-3">
         <div className="bg-white px-4 py-3 border-r border-gray-100">
           <p className="text-[9px] font-semibold uppercase tracking-wide text-gray-400">Active Campaigns</p>
-          <p className="mt-0.5 text-2xl font-extrabold text-gray-900">12</p>
+          <p className="mt-0.5 text-2xl font-extrabold text-gray-900"><AnimNum value={12} delay={0.8} /></p>
           <div className="mt-2 space-y-1">
             <p className="text-[9px] font-semibold text-gray-400 uppercase tracking-wide">Team Activity</p>
-            {TEAM_ACTIVITY.map((a) => (
-              <div key={a.initials + a.time} className="flex items-start gap-1.5">
-                <span className="text-[8px] font-bold text-white bg-[#DC2626] rounded-full h-4 w-4 flex items-center justify-center flex-shrink-0">{a.initials[0]}</span>
-                <p className="text-[8px] text-gray-500 leading-tight">
-                  <span className="font-semibold text-gray-700">{a.text.split(" ")[0]}</span>
-                  {" " + a.text.slice(a.text.indexOf(" ") + 1)}
-                  {" "}<span className="text-gray-400">· {a.time}</span>
-                </p>
-              </div>
-            ))}
+            <StaggerIn delay={1.2}>
+              {TEAM_ACTIVITY.map((a) => (
+                <PopUp key={a.initials + a.time}>
+                  <div className="flex items-start gap-1.5">
+                    <span className="text-[8px] font-bold text-white bg-[#DC2626] rounded-full h-4 w-4 flex items-center justify-center flex-shrink-0">{a.initials[0]}</span>
+                    <p className="text-[8px] text-gray-500 leading-tight">
+                      <span className="font-semibold text-gray-700">{a.text.split(" ")[0]}</span>
+                      {" " + a.text.slice(a.text.indexOf(" ") + 1)}
+                      {" "}<span className="text-gray-400">· {a.time}</span>
+                    </p>
+                  </div>
+                </PopUp>
+              ))}
+            </StaggerIn>
           </div>
         </div>
         <div className="bg-white px-4 py-3 border-r border-gray-100">
@@ -351,13 +399,17 @@ function DashboardView() {
         <div className="bg-white px-4 py-3">
           <p className="text-[10px] font-semibold text-gray-700 mb-1.5">Hot Deals</p>
           <div className="flex justify-between text-[8px] text-gray-400 mb-1"><span>Company</span><span>Value</span><span>Status</span></div>
-          {HOT_DEALS.map((d) => (
-            <motion.div key={d.company} className="flex items-center justify-between py-0.5 cursor-pointer rounded hover:bg-red-50 px-1 transition-colors" whileHover={{ x: 1 }}>
-              <span className="text-[10px] font-medium text-gray-700">{d.company}</span>
-              <span className="text-[10px] font-bold text-gray-800">{d.value}</span>
-              <span className="text-[9px] font-semibold text-[#DC2626]">· {d.status}</span>
-            </motion.div>
-          ))}
+          <StaggerIn delay={1.1}>
+            {HOT_DEALS.map((d) => (
+              <PopUp key={d.company}>
+                <motion.div className="flex items-center justify-between py-0.5 cursor-pointer rounded hover:bg-red-50 px-1 transition-colors" whileHover={{ x: 1 }}>
+                  <span className="text-[10px] font-medium text-gray-700">{d.company}</span>
+                  <span className="text-[10px] font-bold text-gray-800">{d.value}</span>
+                  <span className="text-[9px] font-semibold text-[#DC2626]">· {d.status}</span>
+                </motion.div>
+              </PopUp>
+            ))}
+          </StaggerIn>
         </div>
       </div>
     </div>
@@ -1046,7 +1098,7 @@ export function Hero() {
             transition={{ duration: 0.7, delay: 0.45 }}
             className="mt-14 w-full max-w-5xl"
           >
-            <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl shadow-gray-300/40 h-auto sm:h-[560px]">
+            <div className="overflow-hidden rounded-2xl border border-red-200/60 bg-white h-auto sm:h-[560px] shadow-[0_8px_60px_-12px_rgba(220,38,38,0.25),0_0_0_1px_rgba(220,38,38,0.08)] hover:shadow-[0_12px_70px_-10px_rgba(220,38,38,0.35),0_0_0_1px_rgba(220,38,38,0.15)] transition-shadow duration-500">
               <div className="flex flex-col sm:flex-row h-auto sm:h-[560px]">
 
                 {/* DESKTOP SIDEBAR — hidden on mobile */}
@@ -1062,11 +1114,14 @@ export function Hero() {
                     </div>
                   </div>
                   <nav className="flex-1 px-2 space-y-0.5 overflow-hidden">
-                    {NAV_ITEMS.map((item) => (
+                    {NAV_ITEMS.map((item, i) => (
                       <motion.button
                         key={item.id}
                         onClick={() => setActiveView(item.id)}
                         className={`w-full flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-[11px] font-medium transition-colors cursor-pointer ${activeView === item.id ? "bg-red-50 text-[#DC2626]" : "text-gray-500 hover:bg-gray-50 hover:text-gray-700"}`}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.35, delay: 0.6 + i * 0.06, ease: [0.22, 1, 0.36, 1] }}
                         whileHover={{ x: 2 }}
                         whileTap={{ scale: 0.97 }}
                       >
