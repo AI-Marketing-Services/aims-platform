@@ -1,9 +1,11 @@
 import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
-import { CreditCard, CheckCircle, Clock, AlertTriangle, ArrowRight } from "lucide-react"
+import { CreditCard, CheckCircle, Clock, AlertTriangle, ArrowRight, Download } from "lucide-react"
 import Link from "next/link"
 import { BillingPortalButton } from "./BillingPortalButton"
+import { CancelSubscriptionButton } from "./CancelSubscriptionButton"
 import { db } from "@/lib/db"
+import { stripe } from "@/lib/stripe"
 
 export const metadata = { title: "Billing" }
 
@@ -36,6 +38,37 @@ export default async function BillingPage() {
   const totalMrr = activeSubs.reduce((sum, s) => sum + s.monthlyAmount, 0)
   const annualEquiv = totalMrr * 12
   const hasStripeCustomer = !!dbUser.stripeCustomerId
+
+  // Fetch recent invoices from Stripe
+  let invoices: Array<{
+    id: string
+    date: string
+    amount: string
+    status: string
+    pdfUrl: string | null
+  }> = []
+
+  if (dbUser.stripeCustomerId) {
+    try {
+      const stripeInvoices = await stripe.invoices.list({
+        customer: dbUser.stripeCustomerId,
+        limit: 10,
+      })
+      invoices = stripeInvoices.data.map((inv) => ({
+        id: inv.id,
+        date: new Date((inv.created ?? 0) * 1000).toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        }),
+        amount: `$${((inv.amount_paid ?? 0) / 100).toLocaleString()}`,
+        status: inv.status ?? "unknown",
+        pdfUrl: inv.invoice_pdf ?? null,
+      }))
+    } catch {
+      // Stripe unavailable — show empty state
+    }
+  }
 
   return (
     <div className="w-full">
@@ -103,9 +136,10 @@ export default async function BillingPage() {
                       <span className="font-semibold text-gray-900">
                         ${(sub.monthlyAmount / 100).toLocaleString()}/mo
                       </span>
-                      <button className="text-sm text-gray-500 border border-border rounded-lg px-3 py-1.5 hover:bg-gray-50 transition-colors">
-                        Cancel
-                      </button>
+                      <CancelSubscriptionButton
+                        subscriptionId={sub.id}
+                        serviceName={sub.serviceArm.name}
+                      />
                     </div>
                   </div>
                 </div>
@@ -157,10 +191,44 @@ export default async function BillingPage() {
             <span>Status</span>
             <span>Action</span>
           </div>
-          {/* Empty state */}
-          <div className="px-5 py-8 text-center text-sm text-gray-500">
-            Invoice history available once billing is connected.
-          </div>
+          {invoices.length === 0 ? (
+            <div className="px-5 py-8 text-center text-sm text-gray-500">
+              {hasStripeCustomer ? "No invoices yet." : "Invoice history available once billing is connected."}
+            </div>
+          ) : (
+            invoices.map((inv) => (
+              <div key={inv.id} className="grid grid-cols-4 px-5 py-3 text-sm items-center">
+                <span className="text-gray-700">{inv.date}</span>
+                <span className="font-medium text-gray-900">{inv.amount}</span>
+                <span>
+                  <span
+                    className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
+                      inv.status === "paid"
+                        ? "bg-green-50 text-green-700"
+                        : inv.status === "open"
+                          ? "bg-yellow-50 text-yellow-700"
+                          : "bg-gray-100 text-gray-600"
+                    }`}
+                  >
+                    {inv.status}
+                  </span>
+                </span>
+                <span>
+                  {inv.pdfUrl && (
+                    <a
+                      href={inv.pdfUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+                    >
+                      <Download className="w-3 h-3" />
+                      PDF
+                    </a>
+                  )}
+                </span>
+              </div>
+            ))
+          )}
         </div>
       </div>
 

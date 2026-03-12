@@ -38,14 +38,14 @@ export async function notify(payload: NotificationPayload) {
   if ((channel === "SLACK" || channel === "ALL") && SLACK_WEBHOOK_URL) {
     const emoji =
       payload.urgency === "high"
-        ? "🚨"
+        ? ":rotating_light:"
         : payload.type.includes("new_lead")
-          ? "🎯"
+          ? ":dart:"
           : payload.type.includes("purchase")
-            ? "💰"
+            ? ":moneybag:"
             : payload.type.includes("churn")
-              ? "⚠️"
-              : "📋"
+              ? ":warning:"
+              : ":clipboard:"
 
     promises.push(
       fetch(SLACK_WEBHOOK_URL, {
@@ -88,11 +88,13 @@ export async function notifyNewLead(deal: {
   company?: string
   source?: string
   channelTag?: string
+  userId?: string
 }) {
   await notify({
     type: "new_lead",
     title: "New Lead",
     message: `${deal.contactName}${deal.company ? ` (${deal.company})` : ""} — ${deal.contactEmail}\nSource: ${deal.source ?? "direct"}${deal.channelTag ? ` | Channel: ${deal.channelTag}` : ""}`,
+    userId: deal.userId,
   })
 }
 
@@ -101,12 +103,14 @@ export async function notifyNewPurchase(params: {
   serviceName: string
   tier?: string
   amount: number
+  userId?: string
 }) {
   await notify({
     type: "new_purchase",
     title: "New Purchase",
     message: `${params.clientName} subscribed to ${params.serviceName}${params.tier ? ` (${params.tier})` : ""} at $${params.amount}/mo`,
     urgency: "high",
+    userId: params.userId,
   })
 }
 

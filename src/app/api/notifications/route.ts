@@ -16,6 +16,10 @@ export async function GET(req: Request) {
     ? undefined
     : (await db.user.findUnique({ where: { clerkId: userId }, select: { id: true } }))?.id
 
+  if (!isAdmin && !dbUserId) {
+    return NextResponse.json({ notifications: [], unreadCount: 0 })
+  }
+
   const whereClause = isAdmin ? {} : { userId: dbUserId }
 
   const [notifications, unreadCount] = await Promise.all([

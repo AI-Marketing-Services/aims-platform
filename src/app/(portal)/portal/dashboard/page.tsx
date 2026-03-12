@@ -113,7 +113,7 @@ export default async function PortalDashboard({
         db.deal.findFirst({ where: { contactEmail: userEmail } }),
         clerkId
           ? db.notification.findMany({
-              where: { userId: clerkId },
+              where: { userId: dbUser?.id },
               orderBy: { sentAt: "desc" },
               take: 10,
             })

@@ -42,7 +42,8 @@ export async function POST(req: Request) {
       },
     })
     return NextResponse.json(intern)
-  } catch {
-    return NextResponse.json({ success: true, message: "Intern invite queued" })
+  } catch (err) {
+    console.error("Failed to create intern:", err)
+    return NextResponse.json({ error: "Failed to create intern profile" }, { status: 500 })
   }
 }

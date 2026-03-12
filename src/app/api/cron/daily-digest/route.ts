@@ -72,40 +72,40 @@ export async function GET(req: Request) {
   const newMrr = newSubAmount._sum.monthlyAmount ?? 0
 
   const lines: string[] = [
-    `📊 *AIMS Daily Digest — ${now.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}*`,
+    `*AIMS Daily Digest — ${now.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}*`,
     "",
-    `💰 *Revenue*`,
+    `*Revenue*`,
     `  MRR: $${currentMrr.toLocaleString()}${previousMrr > 0 ? ` (${Number(mrrChange) >= 0 ? "+" : ""}${mrrChange}% vs last month)` : ""}`,
     `  New subscriptions yesterday: ${newSubsYesterday}${newMrr > 0 ? ` worth $${newMrr.toLocaleString()}/mo` : ""}`,
     `  Active clients: ${activeClients}`,
     "",
-    `🎯 *Pipeline*`,
+    `*Pipeline*`,
     `  New leads (24h): ${newLeadsYesterday} (${hotLeads} hot, ${warmLeads} warm, ${coldLeads} cold)`,
     `  Deals in negotiation: ${dealsInNegotiation.length}${negotiationValue > 0 ? ` worth $${negotiationValue.toLocaleString()}` : ""}`,
     `  At risk (no login 14+ days): ${atRiskClients.length} clients ($${atRiskMrr.toLocaleString()} MRR at risk)`,
     "",
-    `🧲 *Lead Magnets (last 24h)*`,
+    `*Lead Magnets (last 24h)*`,
     `  Quiz completions: ${quizCompletions}`,
     `  ROI calculations: ${calcCompletions}`,
     `  Website audits: ${auditCompletions}`,
     `  Chatbot leads captured: ${chatbotLeads}`,
     "",
-    `🔧 *Fulfillment*`,
+    `*Fulfillment*`,
     `  Active tasks: ${activeTasks}`,
-    `  Overdue tasks: ${overdueTasks.length}${overdueTasks.length > 0 ? " ⚠️" : " ✓"}`,
+    `  Overdue tasks: ${overdueTasks.length}${overdueTasks.length > 0 ? " [!]" : ""}`,
   ]
 
   if (overdueTasks.length > 0) {
     overdueTasks.slice(0, 5).forEach(t => {
       const daysAgo = Math.floor((now.getTime() - (t.dueDate?.getTime() ?? 0)) / 86400000)
-      lines.push(`    • ${t.title} (${t.assignedTo ?? "unassigned"}) — ${daysAgo}d overdue`)
+      lines.push(`    - ${t.title} (${t.assignedTo ?? "unassigned"}) — ${daysAgo}d overdue`)
     })
   }
 
   lines.push("")
-  lines.push(`👥 *Team*`)
+  lines.push(`*Team*`)
   lines.push(`  EOD reports submitted: ${eodReports}/${expectedInterns > 0 ? expectedInterns : "?"}`)
-  if (eodReports === 0 && expectedInterns > 0) lines.push("  ⚠️ No EOD reports received!")
+  if (eodReports === 0 && expectedInterns > 0) lines.push("  [!] No EOD reports received!")
 
   const message = lines.join("\n")
 

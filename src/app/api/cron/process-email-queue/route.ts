@@ -118,7 +118,7 @@ function buildEmailContent(
 
   if (sequenceKey === "post-calculator" && emailIndex === 0) {
     return {
-      subject: `You could save $${monthlySavings ?? "X,XXX"}/month with AI`,
+      subject: monthlySavings ? `You could save $${monthlySavings.toLocaleString()}/month with AI` : "Your custom AI ROI report is ready",
       html: wrap(`
         <h1 style="font-size:24px;font-weight:800;color:#111827;margin:0 0 16px;">Hey ${name} — here's your custom ROI report</h1>
         ${monthlySavings ? `<div style="background:#FEF2F2;border-left:4px solid #DC2626;border-radius:6px;padding:20px;margin:0 0 24px;">
@@ -134,7 +134,7 @@ function buildEmailContent(
 
   if (sequenceKey === "post-audit" && emailIndex === 0) {
     return {
-      subject: `Your website scored ${auditScore ?? "XX"}/100 — here are the fixes`,
+      subject: auditScore !== undefined ? `Your website scored ${auditScore}/100 — here are the fixes` : "Your website audit is complete — here are the fixes",
       html: wrap(`
         <h1 style="font-size:24px;font-weight:800;color:#111827;margin:0 0 16px;">Hey ${name} — your website audit is complete</h1>
         ${auditScore !== undefined ? `<div style="background:#FEF2F2;border-left:4px solid #DC2626;border-radius:6px;padding:20px;margin:0 0 24px;">

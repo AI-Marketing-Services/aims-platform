@@ -7,6 +7,16 @@ import {
   ArrowUpRight,
   CheckCircle2,
   AlertCircle,
+  Mail,
+  Phone,
+  Film,
+  ArrowRight,
+  StickyNote,
+  CheckCircle,
+  XCircle,
+  CheckSquare,
+  FileText,
+  type LucideIcon,
 } from "lucide-react"
 import { DealStage } from "@prisma/client"
 import { db } from "@/lib/db"
@@ -58,17 +68,17 @@ function trendLabel(n: number) {
 
 // ─── Activity icon helper ─────────────────────────────────────────────────────
 
-const ACTIVITY_ICON_MAP: Record<string, string> = {
-  EMAIL_SENT: "✉",
-  CALL_MADE: "📞",
-  DEMO_COMPLETED: "🎬",
-  STAGE_CHANGE: "→",
-  NOTE_ADDED: "📝",
-  SUBSCRIPTION_CREATED: "✅",
-  SUBSCRIPTION_CANCELLED: "✖",
-  PAYMENT_RECEIVED: "$",
-  TASK_CREATED: "☑",
-  FORM_SUBMITTED: "📋",
+const ACTIVITY_ICON_MAP: Record<string, LucideIcon> = {
+  EMAIL_SENT: Mail,
+  CALL_MADE: Phone,
+  DEMO_COMPLETED: Film,
+  STAGE_CHANGE: ArrowRight,
+  NOTE_ADDED: StickyNote,
+  SUBSCRIPTION_CREATED: CheckCircle,
+  SUBSCRIPTION_CANCELLED: XCircle,
+  PAYMENT_RECEIVED: DollarSign,
+  TASK_CREATED: CheckSquare,
+  FORM_SUBMITTED: FileText,
 }
 
 // ─── Data Fetching ────────────────────────────────────────────────────────────
@@ -670,10 +680,12 @@ export default async function AdminDashboard() {
             </p>
           ) : (
             <div className="space-y-3">
-              {recentActivity.map((activity) => (
+              {recentActivity.map((activity) => {
+                const ActivityIcon = ACTIVITY_ICON_MAP[activity.type]
+                return (
                 <div key={activity.id} className="flex items-start gap-2.5">
-                  <span className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded bg-muted text-[10px]">
-                    {ACTIVITY_ICON_MAP[activity.type] ?? "•"}
+                  <span className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded bg-muted">
+                    {ActivityIcon ? <ActivityIcon className="h-3 w-3 text-muted-foreground" /> : <span className="text-[10px]">&#x2022;</span>}
                   </span>
                   <div className="flex-1 min-w-0">
                     <p className="text-xs text-foreground truncate">
@@ -695,7 +707,8 @@ export default async function AdminDashboard() {
                     </p>
                   </div>
                 </div>
-              ))}
+                )
+              })}
             </div>
           )}
         </div>

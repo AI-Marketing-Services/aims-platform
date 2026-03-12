@@ -101,8 +101,11 @@ export async function POST(req: Request) {
       clientName,
       serviceName: `[SIMULATED] ${serviceArm?.name ?? "service"}`,
       amount: monthlyAmount,
-    }).catch(() => {})
-  } catch {}
+      userId: user.id,
+    }).catch((err) => console.error("Notification failed:", err))
+  } catch (err) {
+    console.error("Failed to create simulation notification:", err)
+  }
 
   return NextResponse.json({
     success: true,

@@ -23,6 +23,16 @@ async function main() {
       sortOrder: 1,
       defaultAssignee: "sabbir",
       estimatedSetupDays: 3,
+      asanaTaskTemplate: {
+        name: "Onboard: {{client}} -- Website + CRM + Chatbot",
+        notes: "Client: {{client}}\nEmail: {{email}}\nTier: {{tier}}\nAmount: {{amount}}/mo\nPortal: {{portalUrl}}\n\nSetup checklist:\n1. Deploy GHL snapshot for client industry\n2. Configure DNS\n3. Customize chatbot\n4. Onboarding call",
+        subtasks: [
+          "Deploy GHL snapshot for client industry",
+          "Configure DNS",
+          "Customize chatbot",
+          "Onboarding call",
+        ],
+      },
       setupSteps: [
         { title: "Deploy GHL snapshot for client industry", description: "Select appropriate snapshot and spin up subaccount" },
         { title: "Configure DNS", description: "Guide client through DNS wizard or handle manually" },
@@ -58,6 +68,24 @@ async function main() {
       sortOrder: 2,
       defaultAssignee: "marco",
       estimatedSetupDays: 7,
+      asanaTaskTemplate: {
+        name: "Onboard: {{client}} -- Cold Outbound Engine",
+        notes: "Client: {{client}}\nEmail: {{email}}\nTier: {{tier}}\nAmount: {{amount}}/mo\nPortal: {{portalUrl}}\n\nSetup checklist:\n1. Provision sender domains\n2. Configure warm-up sequences\n3. Build Clay enrichment tables\n4. Write campaign copy\n5. Launch first campaign",
+        subtasks: [
+          "Provision sender domains",
+          "Configure warm-up sequences",
+          "Build Clay enrichment tables",
+          "Write campaign copy",
+          "Launch first campaign",
+        ],
+      },
+      setupSteps: [
+        { title: "Provision sender domains", description: "Register and authenticate 3+ sending domains" },
+        { title: "Configure warm-up sequences", description: "Set up automated sender warm-up over 14 days" },
+        { title: "Build Clay enrichment tables", description: "Configure enrichment workflows for target audience" },
+        { title: "Write campaign copy", description: "Draft and approve email sequences with client" },
+        { title: "Launch first campaign", description: "Send test batch, review metrics, go live" },
+      ],
       features: [
         { icon: "Server", title: "Owned Infrastructure", description: "Multi-domain sender stack, no agency dependency" },
         { icon: "Search", title: "Clay Enrichment", description: "Leads enriched with 50+ data points before sending" },
@@ -81,6 +109,24 @@ async function main() {
       isFeatured: true,
       sortOrder: 3,
       defaultAssignee: "ivan",
+      asanaTaskTemplate: {
+        name: "Onboard: {{client}} -- AI Voice Agent Platform",
+        notes: "Client: {{client}}\nEmail: {{email}}\nTier: {{tier}}\nAmount: {{amount}}/mo\nPortal: {{portalUrl}}\n\nSetup checklist:\n1. Provision phone numbers\n2. Configure voice agent scripts\n3. Set up call routing rules\n4. CRM integration setup\n5. Test calls and go live",
+        subtasks: [
+          "Provision phone numbers",
+          "Configure voice agent scripts",
+          "Set up call routing rules",
+          "CRM integration setup",
+          "Test calls and go live",
+        ],
+      },
+      setupSteps: [
+        { title: "Provision phone numbers", description: "Acquire local/toll-free numbers for each location" },
+        { title: "Configure voice agent scripts", description: "Build conversation flows for inbound and outbound" },
+        { title: "Set up call routing rules", description: "Configure multi-location routing and escalation paths" },
+        { title: "CRM integration setup", description: "Connect call data and transcripts to client CRM" },
+        { title: "Test calls and go live", description: "Run test scenarios, review transcripts, activate" },
+      ],
       features: [
         { icon: "PhoneIncoming", title: "Inbound Handling", description: "Callbacks in under 60 seconds, 24/7 coverage" },
         { icon: "PhoneOutgoing", title: "Outbound Campaigns", description: "Recall outreach, lead reactivation at scale" },
@@ -107,6 +153,24 @@ async function main() {
       iconName: "Search",
       sortOrder: 4,
       defaultAssignee: "cody",
+      asanaTaskTemplate: {
+        name: "Onboard: {{client}} -- SEO & AEO Automation",
+        notes: "Client: {{client}}\nEmail: {{email}}\nTier: {{tier}}\nAmount: {{amount}}/mo\nPortal: {{portalUrl}}\n\nSetup checklist:\n1. Run initial SEO audit\n2. Implement technical fixes\n3. Configure AEO monitoring\n4. Set up content pipeline\n5. Deliver first monthly report",
+        subtasks: [
+          "Run initial SEO audit",
+          "Implement technical fixes",
+          "Configure AEO monitoring",
+          "Set up content pipeline",
+          "Deliver first monthly report",
+        ],
+      },
+      setupSteps: [
+        { title: "Run initial SEO audit", description: "Full technical and content audit of client website" },
+        { title: "Implement technical fixes", description: "Fix critical SEO issues from audit findings" },
+        { title: "Configure AEO monitoring", description: "Set up tracking for ChatGPT, Perplexity, AI Overview citations" },
+        { title: "Set up content pipeline", description: "Create editorial calendar and content briefs" },
+        { title: "Deliver first monthly report", description: "Baseline rankings, traffic, and AI citation report" },
+      ],
       features: [
         { icon: "Search", title: "SEO Audit & Fixes", description: "Technical audit with prioritized fix implementation" },
         { icon: "Bot", title: "AEO Optimization", description: "Get cited by ChatGPT, Perplexity, and AI Overviews" },
@@ -128,6 +192,24 @@ async function main() {
       demoType: "LIVE_TOOL" as const,
       sortOrder: 5,
       defaultAssignee: "saad",
+      asanaTaskTemplate: {
+        name: "Onboard: {{client}} -- Audience Targeting & Segments",
+        notes: "Client: {{client}}\nEmail: {{email}}\nTier: {{tier}}\nAmount: {{amount}}/mo\nPortal: {{portalUrl}}\n\nSetup checklist:\n1. Client ICP intake call\n2. Build custom audience segments\n3. Configure count builder filters\n4. Connect to outbound pipeline\n5. Deliver first audience report",
+        subtasks: [
+          "Client ICP intake call",
+          "Build custom audience segments",
+          "Configure count builder filters",
+          "Connect to outbound pipeline",
+          "Deliver first audience report",
+        ],
+      },
+      setupSteps: [
+        { title: "Client ICP intake call", description: "Define ideal customer profile and target verticals" },
+        { title: "Build custom audience segments", description: "Create tailored segments based on ICP criteria" },
+        { title: "Configure count builder filters", description: "Set up geo, intent, and seniority filters" },
+        { title: "Connect to outbound pipeline", description: "Link audience segments to campaign infrastructure" },
+        { title: "Deliver first audience report", description: "Present segment sizes, match rates, and recommendations" },
+      ],
       features: [
         { icon: "Database", title: "20K+ Segments", description: "Prebuilt audience segments across every vertical" },
         { icon: "Search", title: "Semantic Search", description: "Find segments by keyword, job title, or intent signal" },
@@ -148,6 +230,24 @@ async function main() {
       iconName: "Eye",
       sortOrder: 6,
       defaultAssignee: "kumar",
+      asanaTaskTemplate: {
+        name: "Onboard: {{client}} -- Pixel & Visitor Intelligence",
+        notes: "Client: {{client}}\nEmail: {{email}}\nTier: {{tier}}\nAmount: {{amount}}/mo\nPortal: {{portalUrl}}\n\nSetup checklist:\n1. Install tracking pixel\n2. Configure visitor identification\n3. Set up intent triggers\n4. Connect to CRM\n5. Verify pixel health and match rates",
+        subtasks: [
+          "Install tracking pixel",
+          "Configure visitor identification",
+          "Set up intent triggers",
+          "Connect to CRM",
+          "Verify pixel health and match rates",
+        ],
+      },
+      setupSteps: [
+        { title: "Install tracking pixel", description: "Add pixel snippet to client website" },
+        { title: "Configure visitor identification", description: "Set up contact enrichment pipeline" },
+        { title: "Set up intent triggers", description: "Define intent score thresholds and auto-create rules" },
+        { title: "Connect to CRM", description: "Sync identified visitors and leads to client CRM" },
+        { title: "Verify pixel health and match rates", description: "Confirm pixel fires correctly and review match quality" },
+      ],
       features: [
         { icon: "Eye", title: "Visitor Identification", description: "See who's on your site with contact details" },
         { icon: "UserCheck", title: "Auto-Enrichment", description: "Name, company, email, intent score per visitor" },
@@ -170,6 +270,24 @@ async function main() {
       demoType: "BEFORE_AFTER" as const,
       sortOrder: 7,
       defaultAssignee: "adam",
+      asanaTaskTemplate: {
+        name: "Onboard: {{client}} -- P&L Finance Automation",
+        notes: "Client: {{client}}\nEmail: {{email}}\nTier: {{tier}}\nAmount: {{amount}}/mo\nPortal: {{portalUrl}}\n\nSetup checklist:\n1. Connect QuickBooks integration\n2. Run initial P&L import\n3. Configure AI insight rules\n4. Set up rebate tracking\n5. Deliver first quarterly report",
+        subtasks: [
+          "Connect QuickBooks integration",
+          "Run initial P&L import",
+          "Configure AI insight rules",
+          "Set up rebate tracking",
+          "Deliver first quarterly report",
+        ],
+      },
+      setupSteps: [
+        { title: "Connect QuickBooks integration", description: "Authorize and sync QuickBooks data" },
+        { title: "Run initial P&L import", description: "Pull historical P&L data for baseline analysis" },
+        { title: "Configure AI insight rules", description: "Set up anomaly detection thresholds and trend alerts" },
+        { title: "Set up rebate tracking", description: "Configure vendor rebate and expense monitoring" },
+        { title: "Deliver first quarterly report", description: "Generate baseline report with AI-powered recommendations" },
+      ],
       features: [
         { icon: "FileSpreadsheet", title: "Auto P&L Analysis", description: "QuickBooks data pulled and analyzed automatically" },
         { icon: "Brain", title: "AI Insights", description: "Plain-English analysis of trends, anomalies, and opportunities" },
@@ -191,6 +309,24 @@ async function main() {
       demoType: "INTERACTIVE" as const,
       sortOrder: 8,
       defaultAssignee: "adam",
+      asanaTaskTemplate: {
+        name: "Onboard: {{client}} -- AI Tool Tracker",
+        notes: "Client: {{client}}\nEmail: {{email}}\nTier: {{tier}}\nAmount: {{amount}}/mo\nPortal: {{portalUrl}}\n\nSetup checklist:\n1. Client tool stack intake\n2. Configure research dashboard\n3. Build vendor scorecards\n4. Set up weekly digest\n5. Deliver first evaluation report",
+        subtasks: [
+          "Client tool stack intake",
+          "Configure research dashboard",
+          "Build vendor scorecards",
+          "Set up weekly digest",
+          "Deliver first evaluation report",
+        ],
+      },
+      setupSteps: [
+        { title: "Client tool stack intake", description: "Inventory current AI tools and vendor contracts" },
+        { title: "Configure research dashboard", description: "Set up category tracking and alert preferences" },
+        { title: "Build vendor scorecards", description: "Create evaluation scorecards for current vendors" },
+        { title: "Set up weekly digest", description: "Configure automated weekly tool intelligence digest" },
+        { title: "Deliver first evaluation report", description: "Present vendor analysis with cost-saving recommendations" },
+      ],
       tiers: [
         { name: "Standard", slug: "standard", price: 19700, interval: "month", sortOrder: 0, stripePriceId: "price_1T9xVrA5fjeDwxZx1QQhid1w", features: ["AI tool research", "Company scorecards", "Vendor evaluation", "Weekly digest"] },
       ],
@@ -205,6 +341,22 @@ async function main() {
       iconName: "Camera",
       demoType: "INTERACTIVE" as const,
       sortOrder: 9,
+      asanaTaskTemplate: {
+        name: "Onboard: {{client}} -- Vending Placement Visualizer",
+        notes: "Client: {{client}}\nEmail: {{email}}\nTier: {{tier}}\nAmount: {{amount}}/mo\nPortal: {{portalUrl}}\n\nSetup checklist:\n1. Collect vending machine specs and branding\n2. Configure AR templates\n3. Set up location library\n4. Client walkthrough and training",
+        subtasks: [
+          "Collect vending machine specs and branding",
+          "Configure AR templates",
+          "Set up location library",
+          "Client walkthrough and training",
+        ],
+      },
+      setupSteps: [
+        { title: "Collect vending machine specs and branding", description: "Gather dimensions, wrap designs, and brand assets" },
+        { title: "Configure AR templates", description: "Build AR mockup templates for client machine types" },
+        { title: "Set up location library", description: "Create location presets for common placement scenarios" },
+        { title: "Client walkthrough and training", description: "Demo tool and train client team on usage" },
+      ],
     },
     {
       slug: "lead-reactivation",
@@ -216,6 +368,24 @@ async function main() {
       iconName: "RefreshCw",
       sortOrder: 10,
       isFeatured: true,
+      asanaTaskTemplate: {
+        name: "Onboard: {{client}} -- Lead Reactivation",
+        notes: "Client: {{client}}\nEmail: {{email}}\nTier: {{tier}}\nAmount: {{amount}}/mo\nPortal: {{portalUrl}}\n\nSetup checklist:\n1. CRM data export and cleanup\n2. Segment dead leads by recency and value\n3. Build reactivation sequences\n4. Launch first reactivation campaign\n5. Review results and optimize",
+        subtasks: [
+          "CRM data export and cleanup",
+          "Segment dead leads by recency and value",
+          "Build reactivation sequences",
+          "Launch first reactivation campaign",
+          "Review results and optimize",
+        ],
+      },
+      setupSteps: [
+        { title: "CRM data export and cleanup", description: "Extract and deduplicate dormant lead records" },
+        { title: "Segment dead leads by recency and value", description: "Score and bucket leads by reactivation potential" },
+        { title: "Build reactivation sequences", description: "Create multi-touch email and SMS sequences" },
+        { title: "Launch first reactivation campaign", description: "Send initial batch and monitor engagement" },
+        { title: "Review results and optimize", description: "Analyze response rates and refine sequences" },
+      ],
       tiers: [
         { name: "Standard", slug: "standard", price: 99700, interval: "month", sortOrder: 0, stripePriceId: "price_1T9xVpA5fjeDwxZxH1teqyRt", features: ["Dead lead campaigns", "Multi-touch sequences", "AI-powered outreach", "Meeting booking"] },
       ],
@@ -229,6 +399,24 @@ async function main() {
       pricingModel: "CUSTOM" as const,
       iconName: "Database",
       sortOrder: 11,
+      asanaTaskTemplate: {
+        name: "Onboard: {{client}} -- Database Reactivation",
+        notes: "Client: {{client}}\nEmail: {{email}}\nTier: {{tier}}\nAmount: {{amount}}/mo\nPortal: {{portalUrl}}\n\nSetup checklist:\n1. CRM audit and data quality assessment\n2. Deduplicate and clean records\n3. Implement lead scoring model\n4. Set up attribution tracking\n5. Build conversion dashboards",
+        subtasks: [
+          "CRM audit and data quality assessment",
+          "Deduplicate and clean records",
+          "Implement lead scoring model",
+          "Set up attribution tracking",
+          "Build conversion dashboards",
+        ],
+      },
+      setupSteps: [
+        { title: "CRM audit and data quality assessment", description: "Analyze current data hygiene and completeness" },
+        { title: "Deduplicate and clean records", description: "Merge duplicates and standardize contact data" },
+        { title: "Implement lead scoring model", description: "Build scoring rules based on engagement and fit" },
+        { title: "Set up attribution tracking", description: "Configure source and channel attribution" },
+        { title: "Build conversion dashboards", description: "Create dashboards showing funnel performance" },
+      ],
     },
     {
       slug: "content-production",
@@ -240,6 +428,24 @@ async function main() {
       iconName: "PenTool",
       sortOrder: 12,
       defaultAssignee: "ailyn",
+      asanaTaskTemplate: {
+        name: "Onboard: {{client}} -- Content Production Pod",
+        notes: "Client: {{client}}\nEmail: {{email}}\nTier: {{tier}}\nAmount: {{amount}}/mo\nPortal: {{portalUrl}}\n\nSetup checklist:\n1. Brand voice and style guide intake\n2. Create editorial calendar\n3. Set up content approval workflow\n4. Produce first content batch\n5. Review and publish",
+        subtasks: [
+          "Brand voice and style guide intake",
+          "Create editorial calendar",
+          "Set up content approval workflow",
+          "Produce first content batch",
+          "Review and publish",
+        ],
+      },
+      setupSteps: [
+        { title: "Brand voice and style guide intake", description: "Collect brand guidelines, tone, and example content" },
+        { title: "Create editorial calendar", description: "Plan content topics and publishing schedule" },
+        { title: "Set up content approval workflow", description: "Configure review and approval process with client" },
+        { title: "Produce first content batch", description: "Generate and review initial batch of content" },
+        { title: "Review and publish", description: "Client review, revisions, and first publish" },
+      ],
     },
     {
       slug: "revops-pipeline",
@@ -251,6 +457,26 @@ async function main() {
       iconName: "GitBranch",
       sortOrder: 13,
       defaultAssignee: "maureen",
+      asanaTaskTemplate: {
+        name: "Onboard: {{client}} -- RevOps Pipeline",
+        notes: "Client: {{client}}\nEmail: {{email}}\nTier: {{tier}}\nAmount: {{amount}}/mo\nPortal: {{portalUrl}}\n\nSetup checklist:\n1. Current CRM and process audit\n2. Design pipeline architecture\n3. Implement lead routing rules\n4. Set up attribution tracking\n5. Build revenue dashboards\n6. Team training session",
+        subtasks: [
+          "Current CRM and process audit",
+          "Design pipeline architecture",
+          "Implement lead routing rules",
+          "Set up attribution tracking",
+          "Build revenue dashboards",
+          "Team training session",
+        ],
+      },
+      setupSteps: [
+        { title: "Current CRM and process audit", description: "Map existing sales processes and CRM usage" },
+        { title: "Design pipeline architecture", description: "Define stages, fields, and automation rules" },
+        { title: "Implement lead routing rules", description: "Configure territory and capacity-based routing" },
+        { title: "Set up attribution tracking", description: "Implement multi-touch attribution model" },
+        { title: "Build revenue dashboards", description: "Create real-time revenue and pipeline dashboards" },
+        { title: "Team training session", description: "Train sales team on new pipeline and processes" },
+      ],
     },
     {
       slug: "inbound-orchestration",
@@ -262,6 +488,26 @@ async function main() {
       iconName: "Workflow",
       sortOrder: 16,
       defaultAssignee: "marco",
+      asanaTaskTemplate: {
+        name: "Onboard: {{client}} -- Inbound Lead Orchestration",
+        notes: "Client: {{client}}\nEmail: {{email}}\nTier: {{tier}}\nAmount: {{amount}}/mo\nPortal: {{portalUrl}}\n\nSetup checklist:\n1. Map inbound lead sources\n2. Configure lead scoring rules\n3. Set up routing and assignment\n4. Build nurture sequences\n5. Connect booking calendar\n6. Go-live and monitor",
+        subtasks: [
+          "Map inbound lead sources",
+          "Configure lead scoring rules",
+          "Set up routing and assignment",
+          "Build nurture sequences",
+          "Connect booking calendar",
+          "Go-live and monitor",
+        ],
+      },
+      setupSteps: [
+        { title: "Map inbound lead sources", description: "Identify and connect all inbound lead channels" },
+        { title: "Configure lead scoring rules", description: "Build scoring model based on behavior and firmographics" },
+        { title: "Set up routing and assignment", description: "Configure geo and capacity-based lead routing" },
+        { title: "Build nurture sequences", description: "Create automated email sequences for each lead stage" },
+        { title: "Connect booking calendar", description: "Integrate calendar for qualified lead auto-booking" },
+        { title: "Go-live and monitor", description: "Activate system and monitor routing accuracy" },
+      ],
       features: [
         { icon: "Workflow", title: "Lead Routing", description: "Intelligent routing based on lead score and geography" },
         { icon: "Filter", title: "Lead Scoring", description: "AI-powered scoring based on behavior and firmographics" },
@@ -282,6 +528,24 @@ async function main() {
       iconName: "Linkedin",
       sortOrder: 17,
       defaultAssignee: "marco",
+      asanaTaskTemplate: {
+        name: "Onboard: {{client}} -- LinkedIn Outbound System",
+        notes: "Client: {{client}}\nEmail: {{email}}\nTier: {{tier}}\nAmount: {{amount}}/mo\nPortal: {{portalUrl}}\n\nSetup checklist:\n1. LinkedIn account audit and optimization\n2. Define target audience and filters\n3. Write messaging sequences\n4. Configure CRM sync\n5. Launch first campaign",
+        subtasks: [
+          "LinkedIn account audit and optimization",
+          "Define target audience and filters",
+          "Write messaging sequences",
+          "Configure CRM sync",
+          "Launch first campaign",
+        ],
+      },
+      setupSteps: [
+        { title: "LinkedIn account audit and optimization", description: "Review and optimize client LinkedIn profile" },
+        { title: "Define target audience and filters", description: "Build target lists with industry, title, and geo filters" },
+        { title: "Write messaging sequences", description: "Create personalized connection and follow-up messages" },
+        { title: "Configure CRM sync", description: "Connect LinkedIn activity to client CRM" },
+        { title: "Launch first campaign", description: "Start connection campaign and monitor acceptance rates" },
+      ],
       features: [
         { icon: "Users", title: "Connection Automation", description: "Targeted connection requests at scale" },
         { icon: "MessageSquare", title: "Messaging Sequences", description: "Multi-step DM sequences with personalization" },
@@ -302,6 +566,24 @@ async function main() {
       iconName: "PenTool",
       sortOrder: 18,
       defaultAssignee: "ailyn",
+      asanaTaskTemplate: {
+        name: "Onboard: {{client}} -- AI Content Engine",
+        notes: "Client: {{client}}\nEmail: {{email}}\nTier: {{tier}}\nAmount: {{amount}}/mo\nPortal: {{portalUrl}}\n\nSetup checklist:\n1. Brand voice and messaging intake\n2. SEO keyword research\n3. Create content calendar\n4. Generate first content batch\n5. Client review and publish",
+        subtasks: [
+          "Brand voice and messaging intake",
+          "SEO keyword research",
+          "Create content calendar",
+          "Generate first content batch",
+          "Client review and publish",
+        ],
+      },
+      setupSteps: [
+        { title: "Brand voice and messaging intake", description: "Document brand tone, messaging pillars, and examples" },
+        { title: "SEO keyword research", description: "Identify target keywords and content gaps" },
+        { title: "Create content calendar", description: "Plan topics, formats, and publishing cadence" },
+        { title: "Generate first content batch", description: "AI-draft and human-review initial content set" },
+        { title: "Client review and publish", description: "Final approval and first content publish" },
+      ],
       features: [
         { icon: "FileText", title: "Blog Content", description: "SEO-optimized articles with AI drafting and human review" },
         { icon: "Share2", title: "Social Content", description: "Platform-optimized posts for all channels" },
@@ -321,6 +603,24 @@ async function main() {
       pricingModel: "MONTHLY" as const,
       iconName: "Share2",
       sortOrder: 14,
+      asanaTaskTemplate: {
+        name: "Onboard: {{client}} -- Social Media Management",
+        notes: "Client: {{client}}\nEmail: {{email}}\nTier: {{tier}}\nAmount: {{amount}}/mo\nPortal: {{portalUrl}}\n\nSetup checklist:\n1. Social account access and audit\n2. Brand guidelines and content pillars\n3. Configure scheduling tool\n4. Create first week of content\n5. Launch and monitor engagement",
+        subtasks: [
+          "Social account access and audit",
+          "Brand guidelines and content pillars",
+          "Configure scheduling tool",
+          "Create first week of content",
+          "Launch and monitor engagement",
+        ],
+      },
+      setupSteps: [
+        { title: "Social account access and audit", description: "Get access to all social platforms and audit current state" },
+        { title: "Brand guidelines and content pillars", description: "Define content themes and brand voice for social" },
+        { title: "Configure scheduling tool", description: "Set up publishing schedule and platform connections" },
+        { title: "Create first week of content", description: "Produce and approve initial content batch" },
+        { title: "Launch and monitor engagement", description: "Publish content and track engagement metrics" },
+      ],
     },
     {
       slug: "ad-creatives",
@@ -331,6 +631,24 @@ async function main() {
       pricingModel: "MONTHLY" as const,
       iconName: "Image",
       sortOrder: 15,
+      asanaTaskTemplate: {
+        name: "Onboard: {{client}} -- Ad Creative Engine",
+        notes: "Client: {{client}}\nEmail: {{email}}\nTier: {{tier}}\nAmount: {{amount}}/mo\nPortal: {{portalUrl}}\n\nSetup checklist:\n1. Brand asset collection\n2. Define ad platforms and formats\n3. Generate initial creative variants\n4. Set up A/B testing framework\n5. Launch first ad set",
+        subtasks: [
+          "Brand asset collection",
+          "Define ad platforms and formats",
+          "Generate initial creative variants",
+          "Set up A/B testing framework",
+          "Launch first ad set",
+        ],
+      },
+      setupSteps: [
+        { title: "Brand asset collection", description: "Collect logos, colors, imagery, and brand guidelines" },
+        { title: "Define ad platforms and formats", description: "Identify target platforms and ad specifications" },
+        { title: "Generate initial creative variants", description: "AI-generate multiple ad creative options" },
+        { title: "Set up A/B testing framework", description: "Configure split testing and performance tracking" },
+        { title: "Launch first ad set", description: "Deploy approved creatives and begin optimization" },
+      ],
     },
   ]
 

@@ -28,9 +28,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       data: { dealId: id, authorId: userId, content: parsed.data.content },
     })
     return NextResponse.json(note)
-  } catch {
-    return NextResponse.json(
-      { id: crypto.randomUUID(), dealId: id, authorId: userId, content: parsed.data.content, createdAt: new Date().toISOString() }
-    )
+  } catch (err) {
+    console.error("Failed to create deal note:", err)
+    return NextResponse.json({ error: "Failed to save note" }, { status: 500 })
   }
 }

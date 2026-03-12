@@ -4,6 +4,7 @@ import Stripe from "stripe"
 import { stripe, handleSubscriptionUpdated, handleSubscriptionDeleted, handleInvoicePaid } from "@/lib/stripe"
 import { notifyNewPurchase } from "@/lib/notifications"
 import { sendWelcomeEmail } from "@/lib/email"
+import { queueEmailSequence } from "@/lib/email/queue"
 import { db } from "@/lib/db"
 import { createFulfillmentTask } from "@/lib/asana"
 
@@ -61,9 +62,13 @@ export async function POST(req: Request) {
             userId = user?.id
           }
           if (!userId && email) {
-            // Create the user record so portal works after sign-up
-            const newUser = await db.user.create({
-              data: {
+            // Upsert to handle race conditions with concurrent webhooks
+            const newUser = await db.user.upsert({
+              where: { email },
+              update: {
+                stripeCustomerId: session.customer as string,
+              },
+              create: {
                 clerkId: session.client_reference_id ?? `guest_${Date.now()}`,
                 email,
                 name: session.customer_details?.name ?? undefined,
@@ -199,7 +204,7 @@ export async function POST(req: Request) {
             }).catch(() => {})
           }
 
-          // Notifications + welcome email for first item only
+          // Notifications + welcome email + post-purchase sequence for first item only
           if (i === 0 && user) {
             await Promise.allSettled([
               notifyNewPurchase({
@@ -207,6 +212,7 @@ export async function POST(req: Request) {
                 serviceName: slugsArr.length > 1 ? `${serviceArm.name} +${slugsArr.length - 1} more` : serviceArm.name,
                 tier: tierName,
                 amount: amountsArr.reduce((s, a) => s + a, 0) / 100,
+                userId,
               }),
               sendWelcomeEmail({
                 to: user.email,
@@ -214,6 +220,10 @@ export async function POST(req: Request) {
                 serviceName: slugsArr.length > 1 ? `${slugsArr.length} AIMS Services` : serviceArm.name,
                 tier: tierName,
                 portalUrl: `${process.env.NEXT_PUBLIC_APP_URL}/portal/dashboard`,
+              }),
+              queueEmailSequence(user.email, "post-purchase", {
+                name: user.name ?? "there",
+                serviceName: slugsArr.length > 1 ? `${slugsArr.length} AIMS Services` : serviceArm.name,
               }),
             ])
           }
@@ -290,13 +300,17 @@ export async function POST(req: Request) {
         const user = await db.user.findUnique({ where: { id: userId } })
         if (user) {
           await Promise.allSettled([
-            notifyNewPurchase({ clientName: user.name ?? user.email, serviceName: serviceArm.name, tier, amount }),
+            notifyNewPurchase({ clientName: user.name ?? user.email, serviceName: serviceArm.name, tier, amount, userId }),
             sendWelcomeEmail({
               to: user.email,
               name: user.name ?? "there",
               serviceName: serviceArm.name,
               tier,
               portalUrl: `${process.env.NEXT_PUBLIC_APP_URL}/portal/dashboard`,
+            }),
+            queueEmailSequence(user.email, "post-purchase", {
+              name: user.name ?? "there",
+              serviceName: serviceArm.name,
             }),
           ])
         }
