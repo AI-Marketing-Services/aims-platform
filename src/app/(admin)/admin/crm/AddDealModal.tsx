@@ -88,7 +88,7 @@ export function AddDealModal({ stage, onClose, onCreated }: Props) {
       <div className="relative bg-card border border-border rounded-2xl p-6 w-full max-w-md mx-4 shadow-2xl">
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-base font-semibold text-foreground">Add Deal</h2>
-          <button onClick={onClose} className="p-1 hover:bg-accent rounded-lg transition-colors text-gray-400 hover:text-white">
+          <button onClick={onClose} className="p-1 hover:bg-accent rounded-lg transition-colors text-muted-foreground hover:text-foreground">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -101,7 +101,7 @@ export function AddDealModal({ stage, onClose, onCreated }: Props) {
               onChange={(e) => set("contactName", e.target.value)}
               required
               placeholder="Sarah Chen"
-              className="w-full bg-muted border border-border rounded-lg px-3 py-2 text-sm text-white placeholder:text-muted-foreground focus:outline-none focus:border-white/25"
+              className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-gray-400"
             />
           </div>
           <div>
@@ -112,7 +112,7 @@ export function AddDealModal({ stage, onClose, onCreated }: Props) {
               onChange={(e) => set("contactEmail", e.target.value)}
               required
               placeholder="sarah@company.com"
-              className="w-full bg-muted border border-border rounded-lg px-3 py-2 text-sm text-white placeholder:text-muted-foreground focus:outline-none focus:border-white/25"
+              className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-gray-400"
             />
           </div>
           <div>
@@ -121,7 +121,7 @@ export function AddDealModal({ stage, onClose, onCreated }: Props) {
               value={form.company}
               onChange={(e) => set("company", e.target.value)}
               placeholder="TechFlow Inc"
-              className="w-full bg-muted border border-border rounded-lg px-3 py-2 text-sm text-white placeholder:text-muted-foreground focus:outline-none focus:border-white/25"
+              className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-gray-400"
             />
           </div>
           <div>
@@ -130,7 +130,7 @@ export function AddDealModal({ stage, onClose, onCreated }: Props) {
               value={form.phone}
               onChange={(e) => set("phone", e.target.value)}
               placeholder="+1 (555) 000-0000"
-              className="w-full bg-muted border border-border rounded-lg px-3 py-2 text-sm text-white placeholder:text-muted-foreground focus:outline-none focus:border-white/25"
+              className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-gray-400"
             />
           </div>
           <div>
@@ -138,7 +138,7 @@ export function AddDealModal({ stage, onClose, onCreated }: Props) {
             <select
               value={form.source}
               onChange={(e) => set("source", e.target.value)}
-              className="w-full bg-[#1C1F2A] border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-white/25"
+              className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-gray-400"
             >
               {["direct", "referral", "reseller", "partner", "ai-readiness-quiz", "roi-calculator", "website-audit", "cold-email", "inbound"].map((s) => (
                 <option key={s} value={s}>{s}</option>
@@ -152,7 +152,7 @@ export function AddDealModal({ stage, onClose, onCreated }: Props) {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2.5 rounded-lg border border-border text-sm font-medium text-gray-400 hover:text-white hover:bg-accent transition-colors"
+              className="flex-1 px-4 py-2.5 rounded-lg border border-border text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
             >
               Cancel
             </button>

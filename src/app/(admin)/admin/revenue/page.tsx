@@ -111,12 +111,12 @@ export default async function AdminRevenuePage() {
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-4">
           <div>
             <p className="text-sm text-gray-500 mb-1">Monthly Recurring Revenue</p>
-            <p className="text-5xl font-mono font-bold text-white">
+            <p className="text-5xl font-mono font-bold text-foreground">
               ${currentMRR.toLocaleString()}
             </p>
             <p className="text-sm text-gray-500 mt-2">
               ARR projection:{" "}
-              <span className="text-white font-mono font-semibold">
+              <span className="text-foreground font-mono font-semibold">
                 ${arr.toLocaleString()}
               </span>
             </p>
@@ -149,7 +149,7 @@ export default async function AdminRevenuePage() {
 
       {/* ── 10x Margin Tracker ────────────────────────────────────────────── */}
       <div className="bg-card border border-border rounded-xl p-6 mt-8">
-        <h3 className="font-semibold text-white mb-1">10x Margin Tracker</h3>
+        <h3 className="font-semibold text-foreground mb-1">10x Margin Tracker</h3>
         <p className="text-xs text-gray-500 mb-5">
           Service revenue vs estimated delivery cost. Green = 10x+, Yellow = 5–10x, Red = below 5x.
         </p>
@@ -174,7 +174,7 @@ export default async function AdminRevenuePage() {
                       ? "bg-green-950/40"
                       : row.margin >= 5
                       ? "bg-yellow-950/40"
-                      : "bg-red-950/40"
+                      : "bg-red-50"
                   const multipleColor =
                     row.margin >= 10
                       ? "text-green-400"
@@ -183,7 +183,7 @@ export default async function AdminRevenuePage() {
                       : "text-red-400"
                   return (
                     <tr key={row.slug} className={bg}>
-                      <td className="px-3 py-3 text-white font-medium">{row.label}</td>
+                      <td className="px-3 py-3 text-foreground font-medium">{row.label}</td>
                       <td className="px-3 py-3 font-mono text-gray-300">
                         ${row.revenue.toLocaleString()}/mo
                       </td>
@@ -210,7 +210,7 @@ export default async function AdminRevenuePage() {
         {Object.entries(SERVICE_COSTS)
           .filter(([slug]) => !marginRows.find((r) => r.slug === slug))
           .length > 0 && (
-          <div className="mt-4 pt-4 border-t border-white/5">
+          <div className="mt-4 pt-4 border-t border-border">
             <p className="text-xs text-gray-600 mb-2">Services with no active subscriptions:</p>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">

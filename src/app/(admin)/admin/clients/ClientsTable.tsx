@@ -138,9 +138,9 @@ export function ClientsTable({ rows }: Props) {
   function SortIcon({ field }: { field: SortField }) {
     if (sortField !== field) return <ChevronUp className="w-3 h-3 opacity-20" />
     return sortDir === "asc" ? (
-      <ChevronUp className="w-3 h-3 text-white" />
+      <ChevronUp className="w-3 h-3 text-foreground" />
     ) : (
-      <ChevronDown className="w-3 h-3 text-white" />
+      <ChevronDown className="w-3 h-3 text-foreground" />
     )
   }
 
@@ -172,7 +172,7 @@ export function ClientsTable({ rows }: Props) {
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1) }}
             placeholder="Search by name, email, or company..."
-            className="w-full pl-9 pr-4 py-2 bg-card border border-border rounded-lg text-sm text-white placeholder:text-muted-foreground focus:outline-none focus:border-border"
+            className="w-full pl-9 pr-4 py-2 bg-card border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-border"
           />
         </div>
         <select
@@ -199,7 +199,7 @@ export function ClientsTable({ rows }: Props) {
           <div className="overflow-x-auto">
             <table className="w-full min-w-[900px]">
               <thead>
-                <tr className="border-b border-white/5">
+                <tr className="border-b border-border">
                   {(
                     [
                       { label: "Name", field: "name" as SortField },
@@ -266,7 +266,7 @@ export function ClientsTable({ rows }: Props) {
                       {/* MRR */}
                       <td className="px-4 py-3">
                         {r.mrr > 0 ? (
-                          <span className="text-white font-mono text-sm font-semibold">
+                          <span className="text-foreground font-mono text-sm font-semibold">
                             ${r.mrr.toLocaleString()}
                           </span>
                         ) : (
@@ -310,7 +310,7 @@ export function ClientsTable({ rows }: Props) {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between px-5 py-3 border-t border-white/5">
+            <div className="flex items-center justify-between px-5 py-3 border-t border-border">
               <span className="text-xs text-gray-500">
                 {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, sorted.length)} of {sorted.length}
               </span>

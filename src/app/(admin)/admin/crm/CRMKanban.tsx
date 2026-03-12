@@ -124,8 +124,8 @@ function DealCardInner({ deal, isDraggingOverlay = false }: { deal: Deal; isDrag
       <div className="flex items-start justify-between mb-2">
         {isDraggingOverlay ? (
           <div>
-            <div className="text-white font-semibold text-sm">{deal.contactName}</div>
-            {deal.company && <div className="text-gray-400 text-xs">{deal.company}</div>}
+            <div className="text-foreground font-semibold text-sm">{deal.contactName}</div>
+            {deal.company && <div className="text-muted-foreground text-xs">{deal.company}</div>}
           </div>
         ) : (
           <Link
@@ -133,8 +133,8 @@ function DealCardInner({ deal, isDraggingOverlay = false }: { deal: Deal; isDrag
             className="hover:underline min-w-0"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="text-white font-semibold text-sm leading-tight">{deal.contactName}</div>
-            {deal.company && <div className="text-gray-400 text-xs mt-0.5">{deal.company}</div>}
+            <div className="text-foreground font-semibold text-sm leading-tight">{deal.contactName}</div>
+            {deal.company && <div className="text-muted-foreground text-xs mt-0.5">{deal.company}</div>}
           </Link>
         )}
         {deal.assignedTo && (
@@ -149,11 +149,11 @@ function DealCardInner({ deal, isDraggingOverlay = false }: { deal: Deal; isDrag
 
       {/* Value badge */}
       <div className="flex items-center gap-2 mb-2 flex-wrap">
-        <span className="text-xs font-mono text-white/80 bg-white/8 px-1.5 py-0.5 rounded">
+        <span className="text-xs font-mono text-foreground bg-gray-100 px-1.5 py-0.5 rounded border border-gray-200">
           ${deal.mrr.toLocaleString()}/mo
         </span>
         {deal.channelTag && (
-          <span className="text-xs px-1.5 py-0.5 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded">
+          <span className="text-xs px-1.5 py-0.5 bg-blue-50 text-blue-600 border border-blue-200 rounded">
             {deal.channelTag}
           </span>
         )}
@@ -203,7 +203,7 @@ function DraggableDealCard({ deal }: { deal: Deal }) {
       style={style}
       {...attributes}
       {...listeners}
-      className="bg-[#1C1F2A] border border-white/5 rounded-xl p-3.5 hover:border-white/15 transition-colors touch-none"
+      className="bg-white border border-gray-200 rounded-xl p-3.5 hover:border-gray-400 hover:shadow-sm transition-all touch-none"
     >
       <DealCardInner deal={deal} />
     </div>
@@ -230,7 +230,7 @@ function DroppableColumn({
       {/* Column header */}
       <div className={cn("border-t-2 pt-3 mb-3", stage.color)}>
         <div className="flex items-baseline justify-between gap-1">
-          <span className="text-sm font-medium text-white truncate">{stage.label}</span>
+          <span className="text-sm font-medium text-foreground truncate">{stage.label}</span>
           <span className="text-xs font-mono text-gray-500 flex-shrink-0">({deals.length})</span>
         </div>
         {stageMRR > 0 && (
@@ -243,7 +243,7 @@ function DroppableColumn({
         className={cn(
           "flex-1 space-y-2 overflow-y-auto pr-1 rounded-xl min-h-24 transition-all",
           isDragging && isOver
-            ? "bg-red-950/30 ring-1 ring-inset ring-red-500/40 border border-dashed border-red-500/40"
+            ? "bg-red-50 ring-1 ring-inset ring-red-200 border border-dashed border-red-300"
             : isDragging
             ? "bg-white/2 ring-1 ring-inset ring-white/5"
             : ""
@@ -351,7 +351,7 @@ export function CRMKanban({ initialDeals }: { initialDeals: Deal[] }) {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search deals..."
-            className="w-full pl-9 pr-4 py-2 bg-card border border-border rounded-lg text-sm text-white placeholder:text-muted-foreground focus:outline-none focus:border-border"
+            className="w-full pl-9 pr-4 py-2 bg-card border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-border"
           />
         </div>
 
@@ -444,7 +444,7 @@ export function CRMKanban({ initialDeals }: { initialDeals: Deal[] }) {
 
         <DragOverlay dropAnimation={null}>
           {activeDeal && (
-            <div className="bg-[#1C1F2A] border border-border rounded-xl p-3.5 w-60 shadow-2xl shadow-black/50 rotate-1">
+            <div className="bg-white border border-gray-300 rounded-xl p-3.5 w-60 shadow-lg rotate-1">
               <DealCardInner deal={activeDeal} isDraggingOverlay />
             </div>
           )}

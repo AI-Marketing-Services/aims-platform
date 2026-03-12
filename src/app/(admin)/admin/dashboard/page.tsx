@@ -386,7 +386,7 @@ export default async function AdminDashboard() {
             <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               MRR
             </p>
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-red-950 text-red-400">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-red-50 text-[#DC2626]">
               <DollarSign className="h-4 w-4" />
             </div>
           </div>
@@ -417,7 +417,7 @@ export default async function AdminDashboard() {
             <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Active Clients
             </p>
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-red-950 text-red-400">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-red-50 text-[#DC2626]">
               <Users className="h-4 w-4" />
             </div>
           </div>
@@ -448,7 +448,7 @@ export default async function AdminDashboard() {
             <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Pipeline Value
             </p>
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-red-950 text-red-400">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-red-50 text-[#DC2626]">
               <Layers className="h-4 w-4" />
             </div>
           </div>
@@ -481,7 +481,7 @@ export default async function AdminDashboard() {
             <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Hot Leads
             </p>
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-red-950 text-red-400 relative">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-red-50 text-[#DC2626] relative">
               <Flame className="h-4 w-4" />
               {hotLeads.length > 0 && (
                 <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
@@ -588,7 +588,7 @@ export default async function AdminDashboard() {
                     )}
                   </div>
                   <div className="flex flex-col items-end gap-1 flex-shrink-0">
-                    <span className="rounded bg-red-900/40 px-1.5 py-0.5 text-[11px] font-semibold text-red-400">
+                    <span className="rounded bg-red-50 border border-red-200 px-1.5 py-0.5 text-[11px] font-semibold text-[#DC2626]">
                       {lead.leadScore}
                     </span>
                     <Link
@@ -718,7 +718,7 @@ export default async function AdminDashboard() {
                 key={member.assignedTo}
                 className={`rounded-lg border p-4 ${
                   member.overdue > 0
-                    ? "border-red-800 bg-red-950/20"
+                    ? "border-red-200 bg-red-50"
                     : "border-border bg-muted/20"
                 }`}
               >

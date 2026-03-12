@@ -19,8 +19,8 @@ const TYPE_CONFIG: Record<string, { icon: React.ElementType; dot: string; label:
   new_purchase: { icon: DollarSign, dot: "bg-[#DC2626]", label: "Purchase" },
   lead_magnet_completed: { icon: BarChart2, dot: "bg-[#991B1B]", label: "Lead Magnet" },
   support_ticket: { icon: LifeBuoy, dot: "bg-[#F87171]", label: "Ticket" },
-  fulfillment_overdue: { icon: Zap, dot: "bg-red-800", label: "Overdue" },
-  churn_risk: { icon: Activity, dot: "bg-red-900", label: "Churn Risk" },
+  fulfillment_overdue: { icon: Zap, dot: "bg-[#DC2626]", label: "Overdue" },
+  churn_risk: { icon: Activity, dot: "bg-red-400", label: "Churn Risk" },
   deal_stage_change: { icon: BarChart2, dot: "bg-gray-400", label: "Stage Change" },
   eod_submitted: { icon: Activity, dot: "bg-gray-400", label: "EOD" },
 }

@@ -202,7 +202,7 @@ export default function ApiCostsClient({
                   return (
                     <tr
                       key={i}
-                      className={`border-b border-border/50 last:border-0 ${isLosing ? "bg-red-950/40" : ""}`}
+                      className={`border-b border-border/50 last:border-0 ${isLosing ? "bg-red-50" : ""}`}
                     >
                       <td className="py-3 pr-4 font-medium text-foreground">{row.clientName}</td>
                       <td className="py-3 pr-4 text-muted-foreground">{row.service}</td>
