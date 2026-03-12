@@ -53,7 +53,16 @@ export function CartDrawer() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ items: checkoutItems }),
       })
-      const data = await res.json()
+
+      let data: { url?: string; error?: string }
+      try {
+        data = await res.json()
+      } catch {
+        setError(`Server error (${res.status}) — please try again.`)
+        setLoading(false)
+        return
+      }
+
       if (data.url) {
         window.location.href = data.url
       } else {
