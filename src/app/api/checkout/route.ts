@@ -126,6 +126,10 @@ export async function POST(req: Request) {
       unitAmount = defaultTier.price
     }
 
+    if (!stripePriceId && unitAmount === 0) {
+      return NextResponse.json({ error: `No pricing available for: ${item.slug}. Contact sales for custom pricing.` }, { status: 400 })
+    }
+
     resolvedItems.push({
       slug: item.slug,
       tierId: item.tierId,

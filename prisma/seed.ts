@@ -38,10 +38,10 @@ async function main() {
         { icon: "BarChart", title: "Analytics Dashboard", description: "See what's working at a glance" },
       ],
       tiers: [
-        { name: "Starter", slug: "starter", price: 97, interval: "month", sortOrder: 0, stripePriceId: "price_1T8B9IExwpuzI9OqNUo8zIIA", features: ["GHL website template", "Booking calendar", "Basic analytics", "Email support"] },
-        { name: "Growth", slug: "growth", price: 197, interval: "month", sortOrder: 1, stripePriceId: "price_1T8B9IExwpuzI9Oq6JYgM2t3", features: ["Everything in Starter", "AI Chatbot", "CRM pipeline", "Contact management", "Basic automations"] },
-        { name: "Pro", slug: "pro", price: 297, interval: "month", sortOrder: 2, isPopular: true, stripePriceId: "price_1T8B9JExwpuzI9OqYMPWhc8K", features: ["Everything in Growth", "Email automations", "Lead nurture sequences", "SMS follow-up", "Priority support"] },
-        { name: "Elite", slug: "elite", price: 397, interval: "month", sortOrder: 3, stripePriceId: "price_1T8B9JExwpuzI9OqfiasQeyd", features: ["Everything in Pro", "Voice agent integration", "Full workflow automation", "Dedicated account manager", "Custom integrations"] },
+        { name: "Starter", slug: "starter", price: 9700, interval: "month", sortOrder: 0, stripePriceId: "price_1T8B9IExwpuzI9OqNUo8zIIA", features: ["GHL website template", "Booking calendar", "Basic analytics", "Email support"] },
+        { name: "Growth", slug: "growth", price: 19700, interval: "month", sortOrder: 1, stripePriceId: "price_1T8B9IExwpuzI9Oq6JYgM2t3", features: ["Everything in Starter", "AI Chatbot", "CRM pipeline", "Contact management", "Basic automations"] },
+        { name: "Pro", slug: "pro", price: 29700, interval: "month", sortOrder: 2, isPopular: true, stripePriceId: "price_1T8B9JExwpuzI9OqYMPWhc8K", features: ["Everything in Growth", "Email automations", "Lead nurture sequences", "SMS follow-up", "Priority support"] },
+        { name: "Elite", slug: "elite", price: 39700, interval: "month", sortOrder: 3, stripePriceId: "price_1T8B9JExwpuzI9OqfiasQeyd", features: ["Everything in Pro", "Voice agent integration", "Full workflow automation", "Dedicated account manager", "Custom integrations"] },
       ],
     },
     {
@@ -63,6 +63,9 @@ async function main() {
         { icon: "Search", title: "Clay Enrichment", description: "Leads enriched with 50+ data points before sending" },
         { icon: "Bot", title: "AI SDR", description: "Automated reply handling with human escalation" },
         { icon: "BarChart", title: "Campaign Reporting", description: "Open, reply, and meeting rates in real-time" },
+      ],
+      tiers: [
+        { name: "Standard", slug: "standard", price: 99700, interval: "month", sortOrder: 0, stripePriceId: "price_1T9xVlA5fjeDwxZxiTWxMCs1", features: ["Multi-domain sender stack", "Clay enrichment", "AI SDR reply handling", "Campaign reporting"] },
       ],
     },
     {
@@ -89,6 +92,9 @@ async function main() {
         { industry: "HVAC / Home Services", pain: "Missing after-hours calls and losing leads", result: "AI answers and books within 60 seconds, any hour" },
         { industry: "Medical Offices", pain: "Front desk overwhelmed with scheduling calls", result: "AI handles scheduling, rescheduling, and confirmations" },
       ],
+      tiers: [
+        { name: "Standard", slug: "standard", price: 79700, interval: "month", sortOrder: 0, stripePriceId: "price_1T9xVmA5fjeDwxZxScUEiApF", features: ["Inbound & outbound agents", "Multi-location routing", "Full transcripts", "CRM integration"] },
+      ],
     },
     {
       slug: "seo-aeo",
@@ -106,6 +112,9 @@ async function main() {
         { icon: "Bot", title: "AEO Optimization", description: "Get cited by ChatGPT, Perplexity, and AI Overviews" },
         { icon: "FileText", title: "Content Pipeline", description: "AI-drafted, human-reviewed blog content monthly" },
         { icon: "BarChart3", title: "Monthly Reporting", description: "Rankings, traffic, and AI citation tracking" },
+      ],
+      tiers: [
+        { name: "Standard", slug: "standard", price: 49700, interval: "month", sortOrder: 0, stripePriceId: "price_1T9xVnA5fjeDwxZxKIQyLkzY", features: ["SEO audit & fixes", "AEO optimization", "Content pipeline", "Monthly reporting"] },
       ],
     },
     {
@@ -125,6 +134,9 @@ async function main() {
         { icon: "Filter", title: "Count Builder", description: "Live previews with geo, intent, seniority filters" },
         { icon: "Zap", title: "Campaign Integration", description: "One-click from audience to live outbound campaign" },
       ],
+      tiers: [
+        { name: "Standard", slug: "standard", price: 39700, interval: "month", sortOrder: 0, stripePriceId: "price_1T9xVnA5fjeDwxZxK1VQZFGj", features: ["20K+ segments", "Semantic search", "Count builder", "Campaign integration"] },
+      ],
     },
     {
       slug: "pixel-intelligence",
@@ -142,6 +154,9 @@ async function main() {
         { icon: "Zap", title: "Intent Triggers", description: "Auto-create leads when intent thresholds are hit" },
         { icon: "Activity", title: "Pixel Health", description: "Monitor pixel status and match rates in real-time" },
       ],
+      tiers: [
+        { name: "Standard", slug: "standard", price: 19700, interval: "month", sortOrder: 0, stripePriceId: "price_1T9xVoA5fjeDwxZxbZArzTL8", features: ["Visitor identification", "Auto-enrichment", "Intent triggers", "Pixel health monitoring"] },
+      ],
     },
     {
       slug: "finance-automation",
@@ -149,7 +164,7 @@ async function main() {
       shortDesc: "QuickBooks-integrated quarterly P&L analysis with AI-generated insights, rebate tracking, and expense flags.",
       pillar: "FINANCE" as const,
       status: "ACTIVE" as const,
-      pricingModel: "QUARTERLY" as const,
+      pricingModel: "MONTHLY" as const,
       basePrice: 1000,
       iconName: "DollarSign",
       demoType: "BEFORE_AFTER" as const,
@@ -160,6 +175,9 @@ async function main() {
         { icon: "Brain", title: "AI Insights", description: "Plain-English analysis of trends, anomalies, and opportunities" },
         { icon: "Receipt", title: "Rebate Tracking", description: "Catch unclaimed rebates and vendor overspend" },
         { icon: "FileText", title: "Quarterly Reports", description: "PDF + dashboard with actionable recommendations" },
+      ],
+      tiers: [
+        { name: "Standard", slug: "standard", price: 100000, interval: "month", sortOrder: 0, stripePriceId: "price_1T9xVrA5fjeDwxZxYyZbIL7L", features: ["Auto P&L analysis", "AI insights", "Rebate tracking", "Quarterly reports"] },
       ],
     },
     {
@@ -173,6 +191,9 @@ async function main() {
       demoType: "INTERACTIVE" as const,
       sortOrder: 8,
       defaultAssignee: "adam",
+      tiers: [
+        { name: "Standard", slug: "standard", price: 19700, interval: "month", sortOrder: 0, stripePriceId: "price_1T9xVrA5fjeDwxZx1QQhid1w", features: ["AI tool research", "Company scorecards", "Vendor evaluation", "Weekly digest"] },
+      ],
     },
     {
       slug: "vending-placement-visualizer",
@@ -195,6 +216,9 @@ async function main() {
       iconName: "RefreshCw",
       sortOrder: 10,
       isFeatured: true,
+      tiers: [
+        { name: "Standard", slug: "standard", price: 99700, interval: "month", sortOrder: 0, stripePriceId: "price_1T9xVpA5fjeDwxZxH1teqyRt", features: ["Dead lead campaigns", "Multi-touch sequences", "AI-powered outreach", "Meeting booking"] },
+      ],
     },
     {
       slug: "database-reactivation",
@@ -227,6 +251,66 @@ async function main() {
       iconName: "GitBranch",
       sortOrder: 13,
       defaultAssignee: "maureen",
+    },
+    {
+      slug: "inbound-orchestration",
+      name: "Inbound Lead Orchestration",
+      shortDesc: "Automated inbound lead routing, scoring, and nurture sequences that convert website visitors into qualified meetings.",
+      pillar: "MARKETING" as const,
+      status: "ACTIVE" as const,
+      pricingModel: "MONTHLY" as const,
+      iconName: "Workflow",
+      sortOrder: 16,
+      defaultAssignee: "marco",
+      features: [
+        { icon: "Workflow", title: "Lead Routing", description: "Intelligent routing based on lead score and geography" },
+        { icon: "Filter", title: "Lead Scoring", description: "AI-powered scoring based on behavior and firmographics" },
+        { icon: "Mail", title: "Nurture Sequences", description: "Automated email sequences for every lead stage" },
+        { icon: "Calendar", title: "Meeting Booking", description: "Auto-book qualified leads onto your calendar" },
+      ],
+      tiers: [
+        { name: "Standard", slug: "standard", price: 69700, interval: "month", sortOrder: 0, stripePriceId: "price_1T9xVoA5fjeDwxZxfzmmtd9n", features: ["Lead routing", "Lead scoring", "Nurture sequences", "Meeting booking"] },
+      ],
+    },
+    {
+      slug: "linkedin-outbound",
+      name: "LinkedIn Outbound System",
+      shortDesc: "Automated LinkedIn prospecting with connection requests, messaging sequences, and CRM sync.",
+      pillar: "SALES" as const,
+      status: "ACTIVE" as const,
+      pricingModel: "MONTHLY" as const,
+      iconName: "Linkedin",
+      sortOrder: 17,
+      defaultAssignee: "marco",
+      features: [
+        { icon: "Users", title: "Connection Automation", description: "Targeted connection requests at scale" },
+        { icon: "MessageSquare", title: "Messaging Sequences", description: "Multi-step DM sequences with personalization" },
+        { icon: "Database", title: "CRM Sync", description: "All LinkedIn activity synced to your CRM" },
+        { icon: "BarChart", title: "Campaign Analytics", description: "Connection, reply, and meeting conversion rates" },
+      ],
+      tiers: [
+        { name: "Standard", slug: "standard", price: 59700, interval: "month", sortOrder: 0, stripePriceId: "price_1T9xVpA5fjeDwxZx89o8KwJm", features: ["Connection automation", "Messaging sequences", "CRM sync", "Campaign analytics"] },
+      ],
+    },
+    {
+      slug: "ai-content-engine",
+      name: "AI Content Engine",
+      shortDesc: "AI-generated blog posts, social content, email copy, and ad creatives with human review and brand alignment.",
+      pillar: "MARKETING" as const,
+      status: "ACTIVE" as const,
+      pricingModel: "MONTHLY" as const,
+      iconName: "PenTool",
+      sortOrder: 18,
+      defaultAssignee: "ailyn",
+      features: [
+        { icon: "FileText", title: "Blog Content", description: "SEO-optimized articles with AI drafting and human review" },
+        { icon: "Share2", title: "Social Content", description: "Platform-optimized posts for all channels" },
+        { icon: "Mail", title: "Email Copy", description: "Campaign emails, newsletters, and sequences" },
+        { icon: "Image", title: "Ad Creatives", description: "Display and social ad copy with A/B variants" },
+      ],
+      tiers: [
+        { name: "Standard", slug: "standard", price: 49700, interval: "month", sortOrder: 0, stripePriceId: "price_1T9xVqA5fjeDwxZx5ZlWICbE", features: ["Blog content", "Social content", "Email copy", "Ad creatives"] },
+      ],
     },
     {
       slug: "social-media-management",
