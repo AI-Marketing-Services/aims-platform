@@ -6,7 +6,7 @@ export async function GET(req: Request) {
   const { userId, sessionClaims } = await auth()
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
-  const role = (sessionClaims?.publicMetadata as { role?: string })?.role
+  const role = (sessionClaims?.metadata as { role?: string })?.role
   const isAdmin = role === "ADMIN" || role === "SUPER_ADMIN"
   const { searchParams } = new URL(req.url)
   const limit = parseInt(searchParams.get("limit") ?? "20")

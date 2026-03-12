@@ -5,7 +5,7 @@ import { db } from "@/lib/db"
 // GET /api/admin/emailbison/connections — list all connections
 export async function GET() {
   const { sessionClaims } = await auth()
-  const role = (sessionClaims?.publicMetadata as { role?: string })?.role
+  const role = (sessionClaims?.metadata as { role?: string })?.role
   if (!role || !["ADMIN", "SUPER_ADMIN"].includes(role)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   }
@@ -19,7 +19,7 @@ export async function GET() {
 // POST /api/admin/emailbison/connections — upsert connection for a user
 export async function POST(req: Request) {
   const { sessionClaims } = await auth()
-  const role = (sessionClaims?.publicMetadata as { role?: string })?.role
+  const role = (sessionClaims?.metadata as { role?: string })?.role
   if (!role || !["ADMIN", "SUPER_ADMIN"].includes(role)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   }
@@ -40,7 +40,7 @@ export async function POST(req: Request) {
 // DELETE /api/admin/emailbison/connections?userId=xxx
 export async function DELETE(req: Request) {
   const { sessionClaims } = await auth()
-  const role = (sessionClaims?.publicMetadata as { role?: string })?.role
+  const role = (sessionClaims?.metadata as { role?: string })?.role
   if (!role || !["ADMIN", "SUPER_ADMIN"].includes(role)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   }

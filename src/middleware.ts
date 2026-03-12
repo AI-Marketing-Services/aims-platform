@@ -44,7 +44,7 @@ export default clerkMiddleware(async (auth, req) => {
     return NextResponse.redirect(signInUrl)
   }
 
-  const role = (sessionClaims?.publicMetadata as { role?: string })?.role ?? "CLIENT"
+  const role = (sessionClaims?.metadata as { role?: string })?.role ?? "CLIENT"
 
   // Role-based route protection
   if (isAdminRoute(req) && !["ADMIN", "SUPER_ADMIN"].includes(role)) {

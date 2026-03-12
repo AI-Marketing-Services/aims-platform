@@ -17,7 +17,7 @@ export const metadata = { title: "Intern Ops" }
 export default async function AdminInternOpsPage() {
   const { userId, sessionClaims } = await auth()
   if (!userId) redirect("/sign-in")
-  const role = (sessionClaims?.publicMetadata as { role?: string })?.role
+  const role = (sessionClaims?.metadata as { role?: string })?.role
   if (!role || !["ADMIN", "SUPER_ADMIN"].includes(role)) redirect("/portal/dashboard")
 
   const today = new Date()

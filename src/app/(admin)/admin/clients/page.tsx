@@ -8,7 +8,7 @@ export const metadata = { title: "Clients" }
 export default async function AdminClientsPage() {
   const { userId, sessionClaims } = await auth()
   if (!userId) redirect("/sign-in")
-  const role = (sessionClaims?.publicMetadata as { role?: string })?.role
+  const role = (sessionClaims?.metadata as { role?: string })?.role
   if (!role || !["ADMIN", "SUPER_ADMIN"].includes(role)) redirect("/portal/dashboard")
 
   type SubWithArm = {
