@@ -7,7 +7,18 @@ const anthropic = new Anthropic({
 
 // ============ COST TRACKING ============
 
-async function logApiCost(params: {
+export const AI_PRICING: Record<string, { input: number; output: number }> = {
+  "claude-sonnet-4-20250514":     { input: 3 / 1_000_000,   output: 15 / 1_000_000 },
+  "claude-haiku-4-5-20251001":    { input: 0.8 / 1_000_000, output: 4 / 1_000_000 },
+  "claude-opus-4-20250514":       { input: 15 / 1_000_000,  output: 75 / 1_000_000 },
+}
+
+export function estimateAnthropicCost(model: string, inputTokens: number, outputTokens: number): number {
+  const rates = AI_PRICING[model] ?? AI_PRICING["claude-sonnet-4-20250514"]
+  return inputTokens * rates.input + outputTokens * rates.output
+}
+
+export async function logApiCost(params: {
   provider: string
   model: string
   endpoint: string
@@ -15,18 +26,11 @@ async function logApiCost(params: {
   cost: number
   serviceArm?: string
   clientId?: string
+  metadata?: Record<string, string | number | boolean | null>
 }) {
   await db.apiCostLog.create({ data: params }).catch(console.error)
 }
 
-function estimateCost(model: string, inputTokens: number, outputTokens: number): number {
-  const pricing: Record<string, { input: number; output: number }> = {
-    "claude-sonnet-4-20250514": { input: 3 / 1_000_000, output: 15 / 1_000_000 },
-    "claude-haiku-4-5-20251001": { input: 0.8 / 1_000_000, output: 4 / 1_000_000 },
-  }
-  const rates = pricing[model] ?? pricing["claude-sonnet-4-20250514"]
-  return inputTokens * rates.input + outputTokens * rates.output
-}
 
 // ============ CORE AI CALLS ============
 
@@ -58,7 +62,7 @@ export async function analyzeWithClaude(params: {
     model,
     endpoint: "messages",
     tokens: (response.usage?.input_tokens ?? 0) + (response.usage?.output_tokens ?? 0),
-    cost: estimateCost(
+    cost: estimateAnthropicCost(
       model,
       response.usage?.input_tokens ?? 0,
       response.usage?.output_tokens ?? 0

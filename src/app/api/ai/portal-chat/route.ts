@@ -4,6 +4,7 @@ import { z } from "zod"
 import { auth } from "@clerk/nextjs/server"
 import { db } from "@/lib/db"
 import { chatRatelimit, getIp } from "@/lib/ratelimit"
+import { logApiCost, estimateAnthropicCost } from "@/lib/ai"
 
 export const maxDuration = 30
 
@@ -139,6 +140,21 @@ export async function POST(req: Request) {
           }
         },
       }),
+    },
+    onFinish: async ({ usage }) => {
+      const model = "claude-haiku-4-5-20251001"
+      const inputTokens = usage?.inputTokens ?? 0
+      const outputTokens = usage?.outputTokens ?? 0
+      await logApiCost({
+        provider: "anthropic",
+        model,
+        endpoint: "portal-chat",
+        tokens: inputTokens + outputTokens,
+        cost: estimateAnthropicCost(model, inputTokens, outputTokens),
+        serviceArm: "portal-support",
+        clientId: userId,
+        metadata: { inputTokens, outputTokens },
+      })
     },
   })
 

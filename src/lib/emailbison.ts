@@ -1,3 +1,5 @@
+import { logApiCost } from "@/lib/ai"
+
 const BASE_URL = "https://send.aimanagingservices.com/api"
 const API_KEY = process.env.EMAIL_BISON_API_KEY!
 
@@ -13,6 +15,8 @@ async function ebFetch(path: string, options?: RequestInit) {
     next: { revalidate: 300 }, // 5-min cache
   })
   if (!res.ok) throw new Error(`Email Bison API error: ${res.status} ${path}`)
+  // Log each EB API call (~$0 direct cost but useful for usage tracking)
+  logApiCost({ provider: "emailbison", model: "api", endpoint: path, tokens: 0, cost: 0 }).catch(() => {})
   return res.json()
 }
 

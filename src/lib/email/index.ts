@@ -1,7 +1,27 @@
 import { Resend } from "resend"
+import { db } from "@/lib/db"
 
 export function getResend() {
   return new Resend(process.env.RESEND_API_KEY ?? "re_placeholder")
+}
+
+// Wrapper that logs cost for every email sent via Resend (~$0.001/email on paid plan)
+export async function sendTrackedEmail(params: Parameters<ReturnType<typeof getResend>["emails"]["send"]>[0] & { serviceArm?: string; clientId?: string }) {
+  const { serviceArm, clientId, ...emailParams } = params
+  const result = await getResend().emails.send(emailParams)
+  db.apiCostLog.create({
+    data: {
+      provider: "resend",
+      model: "email",
+      endpoint: "emails.send",
+      tokens: 0,
+      cost: 0.001,
+      serviceArm: serviceArm ?? "email",
+      clientId,
+      metadata: { to: Array.isArray(emailParams.to) ? emailParams.to[0] : emailParams.to, subject: emailParams.subject },
+    },
+  }).catch(() => {})
+  return result
 }
 
 const FROM_EMAIL = "AIMS <hello@aimseos.com>"
@@ -108,7 +128,7 @@ export async function sendWelcomeEmail(params: {
     ${divider()}
     ${p(`Need help? Just reply to this email — we typically respond within 2 business hours.`)}
   `
-  return getResend().emails.send({
+  return sendTrackedEmail({
     from: FROM_EMAIL,
     to: params.to,
     replyTo: REPLY_TO,
@@ -148,7 +168,7 @@ export async function sendLeadMagnetResults(params: {
       Book a free strategy call →
     </a>
   `
-  return getResend().emails.send({
+  return sendTrackedEmail({
     from: FROM_EMAIL,
     to: params.to,
     replyTo: REPLY_TO,
@@ -185,7 +205,7 @@ export async function sendFulfillmentAssignment(params: {
     ${btn("Open Admin Portal →", "https://aimseos.com/admin")}
     ${p("Check the admin portal for setup tasks and the fulfillment checklist.")}
   `
-  return getResend().emails.send({
+  return sendTrackedEmail({
     from: FROM_EMAIL,
     to: params.to,
     replyTo: REPLY_TO,
@@ -213,7 +233,7 @@ export async function sendInternalNotification(params: {
     <pre style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:6px;padding:16px;font-size:13px;color:#374151;white-space:pre-wrap;overflow-wrap:break-word;">${params.message}</pre>
     ${btn("Open Admin Portal →", "https://aimseos.com/admin")}
   `
-  return getResend().emails.send({
+  return sendTrackedEmail({
     from: FROM_EMAIL,
     to: "team@aimseos.com",
     subject: `[AIMS${params.urgency === "high" ? " URGENT" : ""}] ${params.subject}`,

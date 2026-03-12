@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { getResend } from "@/lib/email"
+import { getResend, sendTrackedEmail } from "@/lib/email"
 
 export const maxDuration = 60
 
@@ -47,7 +47,7 @@ export async function GET(req: Request) {
         continue
       }
 
-      await getResend().emails.send({
+      await sendTrackedEmail({
         from: "AIMS <hello@aimseos.com>",
         to: item.recipientEmail,
         subject: emailContent.subject,

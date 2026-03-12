@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { z } from "zod"
 import Anthropic from "@anthropic-ai/sdk"
 import { auditRatelimit, getIp } from "@/lib/ratelimit"
+import { logApiCost, estimateAnthropicCost } from "@/lib/ai"
 
 const auditSchema = z.object({
   url: z
@@ -146,6 +147,18 @@ Be specific to this actual website. For scores: consider actual presence of meta
     })
 
     const rawText = message.content[0].type === "text" ? message.content[0].text : ""
+
+    // Log cost
+    const auditModel = "claude-haiku-4-5-20251001"
+    await logApiCost({
+      provider: "anthropic",
+      model: auditModel,
+      endpoint: "website-audit",
+      tokens: (message.usage?.input_tokens ?? 0) + (message.usage?.output_tokens ?? 0),
+      cost: estimateAnthropicCost(auditModel, message.usage?.input_tokens ?? 0, message.usage?.output_tokens ?? 0),
+      serviceArm: "website-audit",
+      metadata: { url, inputTokens: message.usage?.input_tokens, outputTokens: message.usage?.output_tokens },
+    })
 
     // Extract JSON from response
     const jsonMatch = rawText.match(/\{[\s\S]*\}/)
