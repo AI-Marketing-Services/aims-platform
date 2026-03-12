@@ -134,7 +134,7 @@ export default async function BillingPage() {
                     </div>
                     <div className="flex items-center gap-4 shrink-0">
                       <span className="font-semibold text-gray-900">
-                        ${(sub.monthlyAmount / 100).toLocaleString()}/mo
+                        ${sub.monthlyAmount.toLocaleString()}/mo
                       </span>
                       <CancelSubscriptionButton
                         subscriptionId={sub.id}

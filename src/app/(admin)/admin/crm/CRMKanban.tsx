@@ -436,6 +436,22 @@ export function CRMKanban({ initialDeals }: { initialDeals: Deal[] }) {
         />
       )}
 
+      {deals.length === 0 && (
+        <div className="rounded-xl border border-dashed border-border bg-muted/30 py-12 text-center mb-6">
+          <p className="text-lg font-semibold text-foreground mb-1">No deals yet</p>
+          <p className="text-sm text-muted-foreground mb-4">
+            Deals will appear here when leads come in through the intake form, lead magnets, or manual entry.
+          </p>
+          <button
+            onClick={() => setAddingToStage("NEW_LEAD")}
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#DC2626] hover:bg-[#B91C1C] text-white text-sm font-medium rounded-lg transition-colors"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            Add Your First Deal
+          </button>
+        </div>
+      )}
+
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}

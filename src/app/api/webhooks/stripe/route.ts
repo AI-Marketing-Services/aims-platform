@@ -46,7 +46,7 @@ export async function POST(req: Request) {
         }
 
         // Resolve the DB user
-        let userId = session.metadata.userId as string | undefined
+        let userId = session.metadata?.userId as string | undefined
 
         if (!userId) {
           // Guest or unlinked — try to find by Clerk ID or email
@@ -91,9 +91,9 @@ export async function POST(req: Request) {
         }).catch(() => {})
 
         // Parse cart items from metadata
-        const slugsArr = (session.metadata.slugs ?? "").split(",").filter(Boolean)
-        const tierIdsArr = (session.metadata.tierIds ?? "").split(",")
-        const amountsArr = (session.metadata.amounts ?? "").split(",").map(Number)
+        const slugsArr = (session.metadata?.slugs ?? "").split(",").filter(Boolean)
+        const tierIdsArr = (session.metadata?.tierIds ?? "").split(",")
+        const amountsArr = (session.metadata?.amounts ?? "").split(",").map(Number)
 
         const user = await db.user.findUnique({ where: { id: userId } })
 
@@ -236,11 +236,11 @@ export async function POST(req: Request) {
         const sub = event.data.object as Stripe.Subscription
 
         // Skip if this came from a cart checkout (already handled above)
-        if (sub.metadata.source === "cart") break
+        if (sub.metadata?.source === "cart") break
 
-        const userId = sub.metadata.userId
-        const serviceArmSlug = sub.metadata.serviceArmSlug
-        const tier = sub.metadata.tier
+        const userId = sub.metadata?.userId
+        const serviceArmSlug = sub.metadata?.serviceArmSlug
+        const tier = sub.metadata?.tier
 
         if (!userId || !serviceArmSlug) break
 

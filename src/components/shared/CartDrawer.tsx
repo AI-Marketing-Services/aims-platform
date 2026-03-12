@@ -47,10 +47,11 @@ export function CartDrawer() {
     setLoading(true)
     setError(null)
     try {
+      const checkoutItems = items.map((i) => ({ slug: i.slug, tierId: i.tierId }))
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items }),
+        body: JSON.stringify({ items: checkoutItems }),
       })
       const data = await res.json()
       if (data.url) {

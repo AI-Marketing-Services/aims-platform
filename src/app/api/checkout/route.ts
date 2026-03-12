@@ -117,7 +117,8 @@ export async function POST(req: Request) {
     let unitAmount = 0
 
     if (item.tierId) {
-      const tier = serviceArm.tiers.find((t) => t.slug === item.tierId || t.id === item.tierId)
+      const tierId = item.tierId!.toLowerCase()
+      const tier = serviceArm.tiers.find((t) => t.slug.toLowerCase() === tierId || t.id === item.tierId || t.name.toLowerCase() === tierId)
       if (!tier) {
         return NextResponse.json({ error: `Tier not found: ${item.tierId} for ${item.slug}` }, { status: 400 })
       }

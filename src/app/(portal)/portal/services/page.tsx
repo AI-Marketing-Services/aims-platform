@@ -288,7 +288,7 @@ export default async function PortalServicesPage() {
                 {/* Meta row */}
                 <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-4">
                   <span className="font-medium text-gray-900">
-                    ${(svc.monthlyAmount / 100).toLocaleString()}/mo
+                    ${svc.monthlyAmount.toLocaleString()}/mo
                   </span>
                   {nextBilling && <span>Next billing: {nextBilling}</span>}
                 </div>

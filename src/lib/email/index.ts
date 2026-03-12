@@ -2,6 +2,9 @@ import { Resend } from "resend"
 import { db } from "@/lib/db"
 
 export function getResend() {
+  if (!process.env.RESEND_API_KEY || process.env.RESEND_API_KEY === "re_placeholder") {
+    console.warn("[AIMS] RESEND_API_KEY is not configured — emails will not be delivered")
+  }
   return new Resend(process.env.RESEND_API_KEY ?? "re_placeholder")
 }
 

@@ -313,7 +313,7 @@ export function PortalMarketplaceClient({ services, subscribedIds, subscribedSer
                   </button>
                 ) : (
                   <Link
-                    href={`/services/${svc.slug}`}
+                    href={`/marketplace?highlight=${svc.slug}`}
                     className="w-full flex items-center justify-center gap-2 py-2.5 bg-[#DC2626] text-white text-xs font-semibold rounded-lg hover:bg-[#B91C1C] transition-colors"
                   >
                     Add to Plan

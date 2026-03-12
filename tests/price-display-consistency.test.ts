@@ -67,22 +67,23 @@ describe("No raw cent values displayed", () => {
     expect(content).toContain("/ 100")
   })
 
-  it("Billing page divides monthlyAmount by 100", () => {
+  // NOTE: Subscription.monthlyAmount is stored in DOLLARS (webhook divides by 100 on write).
+  // These pages should display monthlyAmount directly WITHOUT dividing by 100.
+  it("Billing page displays monthlyAmount directly (already in dollars)", () => {
     const content = readFileSync(
       join(SRC, "app/(portal)/portal/billing/page.tsx"),
       "utf-8"
     )
-    // All monthlyAmount displays should divide by 100
     const monthlyLines = content.split("\n").filter((l) => l.includes("monthlyAmount") && l.includes("$"))
     for (const line of monthlyLines) {
       expect(
-        line.includes("/ 100"),
-        `Billing page has raw monthlyAmount display: ${line.trim()}`
+        !line.includes("/ 100"),
+        `Billing page should not divide monthlyAmount by 100 (already dollars): ${line.trim()}`
       ).toBe(true)
     }
   })
 
-  it("Dashboard page divides monthlyAmount by 100", () => {
+  it("Dashboard page displays monthlyAmount directly (already in dollars)", () => {
     const content = readFileSync(
       join(SRC, "app/(portal)/portal/dashboard/page.tsx"),
       "utf-8"
@@ -90,13 +91,13 @@ describe("No raw cent values displayed", () => {
     const monthlyLines = content.split("\n").filter((l) => l.includes("monthlyAmount") && l.includes("$"))
     for (const line of monthlyLines) {
       expect(
-        line.includes("/ 100"),
-        `Dashboard has raw monthlyAmount display: ${line.trim()}`
+        !line.includes("/ 100"),
+        `Dashboard should not divide monthlyAmount by 100 (already dollars): ${line.trim()}`
       ).toBe(true)
     }
   })
 
-  it("Service detail page divides monthlyAmount by 100", () => {
+  it("Service detail page displays monthlyAmount directly (already in dollars)", () => {
     const content = readFileSync(
       join(SRC, "app/(portal)/portal/services/[serviceId]/page.tsx"),
       "utf-8"
@@ -104,13 +105,13 @@ describe("No raw cent values displayed", () => {
     const monthlyLines = content.split("\n").filter((l) => l.includes("monthlyAmount") && l.includes("$"))
     for (const line of monthlyLines) {
       expect(
-        line.includes("/ 100"),
-        `Service detail has raw monthlyAmount display: ${line.trim()}`
+        !line.includes("/ 100"),
+        `Service detail should not divide monthlyAmount by 100 (already dollars): ${line.trim()}`
       ).toBe(true)
     }
   })
 
-  it("Services list page divides monthlyAmount by 100", () => {
+  it("Services list page displays monthlyAmount directly (already in dollars)", () => {
     const content = readFileSync(
       join(SRC, "app/(portal)/portal/services/page.tsx"),
       "utf-8"
@@ -118,8 +119,8 @@ describe("No raw cent values displayed", () => {
     const monthlyLines = content.split("\n").filter((l) => l.includes("monthlyAmount") && l.includes("$"))
     for (const line of monthlyLines) {
       expect(
-        line.includes("/ 100"),
-        `Services list has raw monthlyAmount display: ${line.trim()}`
+        !line.includes("/ 100"),
+        `Services list should not divide monthlyAmount by 100 (already dollars): ${line.trim()}`
       ).toBe(true)
     }
   })
