@@ -39,7 +39,7 @@ export async function POST(req: Request) {
 
   const email = user.emailAddresses[0]?.emailAddress ?? ""
   const name = [user.firstName, user.lastName].filter(Boolean).join(" ")
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://aimseos.com"
 
   const session = await createCheckoutSession({
     userId,

@@ -196,6 +196,36 @@
     will-change: transform;
   }
 
+  /* Admin dashboard animated glow card */
+  .animated-glow-card {
+    position: relative;
+    border-radius: 0.5rem;
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  }
+  .animated-glow-card:hover {
+    border-color: rgba(220, 38, 38, 0.3);
+    box-shadow:
+      0 0 0 1px rgba(220, 38, 38, 0.1),
+      0 4px 20px -4px rgba(220, 38, 38, 0.15),
+      0 8px 32px -8px rgba(0, 0, 0, 0.1);
+  }
+  .animated-glow-card::after {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(220, 38, 38, 0), rgba(220, 38, 38, 0));
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    -webkit-mask-composite: xor;
+    pointer-events: none;
+    transition: background 0.3s ease;
+  }
+  .animated-glow-card:hover::after {
+    background: linear-gradient(135deg, rgba(220, 38, 38, 0.4), rgba(220, 38, 38, 0.1), rgba(220, 38, 38, 0.3));
+  }
+
   /* Scrollbar styling for portals */
   .custom-scrollbar::-webkit-scrollbar {
     width: 6px;

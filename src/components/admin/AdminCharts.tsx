@@ -53,7 +53,14 @@ export function PipelineFunnelChart({ data }: { data: PipelineFunnelEntry[] }) {
           contentStyle={{ fontSize: 12, borderRadius: 8 }}
           formatter={(v: number) => [v, "Deals"]}
         />
-        <Bar dataKey="count" radius={[0, 4, 4, 0]} maxBarSize={18}>
+        <Bar
+          dataKey="count"
+          radius={[0, 4, 4, 0]}
+          maxBarSize={18}
+          animationBegin={200}
+          animationDuration={1200}
+          animationEasing="ease-out"
+        >
           {data.map((_, i) => (
             <Cell
               key={i}
@@ -108,7 +115,14 @@ export function RevenueByServiceChart({
           contentStyle={{ fontSize: 12, borderRadius: 8 }}
           formatter={(v: number) => [`$${v.toLocaleString()}/mo`, "MRR"]}
         />
-        <Bar dataKey="mrr" radius={[0, 4, 4, 0]} maxBarSize={18}>
+        <Bar
+          dataKey="mrr"
+          radius={[0, 4, 4, 0]}
+          maxBarSize={18}
+          animationBegin={400}
+          animationDuration={1400}
+          animationEasing="ease-out"
+        >
           {data.map((_, i) => (
             <Cell
               key={i}

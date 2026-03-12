@@ -22,6 +22,7 @@ import {
   Mail,
 } from "lucide-react"
 import { useState } from "react"
+import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { NotificationBell } from "@/components/shared/NotificationBell"
 
@@ -108,8 +109,18 @@ export function AdminSidebar() {
 
       {/* Navigation */}
       <nav className="flex-1 py-4 overflow-y-auto custom-scrollbar">
-        {ADMIN_NAV.map((group) => (
-          <div key={group.section} className="mb-4">
+        {ADMIN_NAV.map((group, groupIdx) => (
+          <motion.div
+            key={group.section}
+            className="mb-4"
+            initial={{ opacity: 0, x: -16 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{
+              duration: 0.35,
+              delay: 0.1 + groupIdx * 0.08,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+          >
             {/* Section label divider */}
             {!collapsed && (
               <div className="flex items-center gap-2 px-4 mb-1.5">
@@ -121,28 +132,38 @@ export function AdminSidebar() {
             )}
 
             <div className="px-2 space-y-0.5">
-              {group.items.map((item) => {
+              {group.items.map((item, itemIdx) => {
                 const isActive =
                   pathname === item.href ||
                   pathname.startsWith(item.href + "/")
                 return (
-                  <Link
+                  <motion.div
                     key={item.href}
-                    href={item.href}
-                    className={cn(
-                      "flex items-center gap-3 rounded-lg py-2 text-sm font-medium transition-colors",
-                      isActive
-                        ? "border-l-2 border-red-500 pl-[10px] pr-3 bg-red-600/10 text-red-500"
-                        : "border-l-2 border-transparent pl-[10px] pr-3 text-muted-foreground hover:text-foreground hover:bg-accent"
-                    )}
+                    initial={{ opacity: 0, x: -12 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{
+                      duration: 0.3,
+                      delay: 0.15 + groupIdx * 0.08 + itemIdx * 0.04,
+                      ease: [0.22, 1, 0.36, 1],
+                    }}
                   >
-                    <item.icon className="h-4 w-4 shrink-0" />
-                    {!collapsed && <span>{item.label}</span>}
-                  </Link>
+                    <Link
+                      href={item.href}
+                      className={cn(
+                        "flex items-center gap-3 rounded-lg py-2 text-sm font-medium transition-all duration-200",
+                        isActive
+                          ? "border-l-2 border-red-500 pl-[10px] pr-3 bg-red-600/10 text-red-500"
+                          : "border-l-2 border-transparent pl-[10px] pr-3 text-muted-foreground hover:text-foreground hover:bg-accent hover:pl-[14px]"
+                      )}
+                    >
+                      <item.icon className="h-4 w-4 shrink-0" />
+                      {!collapsed && <span>{item.label}</span>}
+                    </Link>
+                  </motion.div>
                 )
               })}
             </div>
-          </div>
+          </motion.div>
         ))}
       </nav>
 

@@ -259,7 +259,6 @@ function DashboardView() {
               <p className="text-[11px] font-semibold text-gray-700">Revenue Forecast</p>
               <div className="flex items-center gap-2 mt-0.5">
                 <span className="flex items-center gap-1 text-[8px] text-gray-400"><span className="inline-block h-1.5 w-3 rounded-full bg-[#DC2626]" /> Closed Won</span>
-                <span className="flex items-center gap-1 text-[8px] text-gray-400"><span className="inline-block w-3 border-t border-dashed border-gray-400" /> Projected</span>
               </div>
             </div>
             <span className="text-[9px] text-gray-400 border border-gray-200 rounded px-1 py-0.5 flex items-center gap-0.5">Last 6 months <ChevronDown className="h-2 w-2" /></span>
@@ -273,7 +272,6 @@ function DashboardView() {
             </defs>
             <motion.path d="M0,62 C40,52 80,34 120,29 C160,24 200,32 235,22 L260,17 L260,70 L0,70 Z" fill="url(#rg)" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.9 }} />
             <motion.path d="M0,62 C40,52 80,34 120,29 C160,24 200,32 235,22 L260,17" fill="none" stroke="#DC2626" strokeWidth="1.5" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 0.9, duration: 1.2 }} />
-            <motion.path d="M200,32 C220,24 240,15 260,10" fill="none" stroke="#9CA3AF" strokeWidth="1" strokeDasharray="3 3" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 1.6, duration: 0.6 }} />
             {["Q2", "Q3", "Q4", "Q1-25", "Q2-25"].map((l, i) => (
               <text key={l} x={i * 55 + 8} y="69" fontSize="6.5" fill="#9CA3AF">{l}</text>
             ))}
@@ -1137,6 +1135,30 @@ export function Hero() {
           <motion.p
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}
             className="mt-14 text-sm font-semibold text-gray-400 uppercase tracking-widest"
+          >
+            Trusted by sales teams at
+          </motion.p>
+        </div>
+      </div>
+    </section>
+  )
+}
+ font-semibold text-gray-400 uppercase tracking-widest"
+          >
+            Trusted by sales teams at
+          </motion.p>
+        </div>
+      </div>
+    </section>
+  )
+}
+>
+        </div>
+      </div>
+    </section>
+  )
+}
+ font-semibold text-gray-400 uppercase tracking-widest"
           >
             Trusted by sales teams at
           </motion.p>

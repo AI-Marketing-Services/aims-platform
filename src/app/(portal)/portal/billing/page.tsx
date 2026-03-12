@@ -151,11 +151,11 @@ export default async function BillingPage() {
               <div>
                 <div className="text-sm font-semibold text-gray-900">Total Monthly</div>
                 <div className="text-xs text-gray-500 mt-0.5">
-                  Annual equivalent: ${(annualEquiv / 100).toLocaleString()}/yr
+                  Annual equivalent: ${annualEquiv.toLocaleString()}/yr
                 </div>
               </div>
               <span className="text-lg font-bold text-gray-900">
-                ${(totalMrr / 100).toLocaleString()}/mo
+                ${totalMrr.toLocaleString()}/mo
               </span>
             </div>
           </div>
