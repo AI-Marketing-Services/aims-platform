@@ -1143,27 +1143,3 @@ export function Hero() {
     </section>
   )
 }
- font-semibold text-gray-400 uppercase tracking-widest"
-          >
-            Trusted by sales teams at
-          </motion.p>
-        </div>
-      </div>
-    </section>
-  )
-}
->
-        </div>
-      </div>
-    </section>
-  )
-}
- font-semibold text-gray-400 uppercase tracking-widest"
-          >
-            Trusted by sales teams at
-          </motion.p>
-        </div>
-      </div>
-    </section>
-  )
-}
