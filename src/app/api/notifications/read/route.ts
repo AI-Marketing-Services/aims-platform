@@ -9,7 +9,7 @@ async function markRead(req: Request) {
   const body = await req.json().catch(() => ({}))
   const { ids } = body as { ids?: string[] }
 
-  const role = (sessionClaims?.metadata as { role?: string })?.role
+  const role = (sessionClaims?.publicMetadata as { role?: string })?.role
   const isAdmin = role === "ADMIN" || role === "SUPER_ADMIN"
 
   const dbUser = isAdmin

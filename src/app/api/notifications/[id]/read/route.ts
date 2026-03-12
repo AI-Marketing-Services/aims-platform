@@ -7,7 +7,7 @@ export async function PATCH(_req: Request, { params }: { params: Promise<{ id: s
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
   const { id } = await params
-  const role = (sessionClaims?.metadata as { role?: string })?.role
+  const role = (sessionClaims?.publicMetadata as { role?: string })?.role
   const isAdmin = role === "ADMIN" || role === "SUPER_ADMIN"
 
   // Resolve the DB user

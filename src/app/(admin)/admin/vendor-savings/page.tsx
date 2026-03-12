@@ -49,7 +49,7 @@ const STATUS_CONFIG: Record<
 export default async function AdminVendorSavingsPage() {
   const { userId, sessionClaims } = await auth()
   if (!userId) redirect("/sign-in")
-  const role = (sessionClaims?.metadata as { role?: string })?.role
+  const role = (sessionClaims?.publicMetadata as { role?: string })?.role
   if (!role || !["ADMIN", "SUPER_ADMIN"].includes(role)) redirect("/portal/dashboard")
 
   let vendors: Awaited<ReturnType<typeof db.vendorTracker.findMany>> = []
