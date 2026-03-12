@@ -97,6 +97,7 @@ model Deal {
   updatedAt     DateTime    @updatedAt
 
   @@index([stage])
+  @@index([userId])
   @@index([assignedTo])
   @@index([channelTag])
   @@index([createdAt])

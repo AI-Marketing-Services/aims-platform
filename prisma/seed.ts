@@ -93,7 +93,7 @@ async function main() {
         { icon: "BarChart", title: "Campaign Reporting", description: "Open, reply, and meeting rates in real-time" },
       ],
       tiers: [
-        { name: "Standard", slug: "standard", price: 99700, interval: "month", sortOrder: 0, stripePriceId: "price_1T9xVlA5fjeDwxZxiTWxMCs1", features: ["Multi-domain sender stack", "Clay enrichment", "AI SDR reply handling", "Campaign reporting"] },
+        { name: "Standard", slug: "standard", price: 99700, interval: "month", sortOrder: 0, stripePriceId: "price_1TA2SBExwpuzI9Oqt5s7b8J3", features: ["Multi-domain sender stack", "Clay enrichment", "AI SDR reply handling", "Campaign reporting"] },
       ],
     },
     {
@@ -139,7 +139,7 @@ async function main() {
         { industry: "Medical Offices", pain: "Front desk overwhelmed with scheduling calls", result: "AI handles scheduling, rescheduling, and confirmations" },
       ],
       tiers: [
-        { name: "Standard", slug: "standard", price: 79700, interval: "month", sortOrder: 0, stripePriceId: "price_1T9xVmA5fjeDwxZxScUEiApF", features: ["Inbound & outbound agents", "Multi-location routing", "Full transcripts", "CRM integration"] },
+        { name: "Standard", slug: "standard", price: 79700, interval: "month", sortOrder: 0, stripePriceId: "price_1TA2SCExwpuzI9Oq1R8bydhC", features: ["Inbound & outbound agents", "Multi-location routing", "Full transcripts", "CRM integration"] },
       ],
     },
     {
@@ -178,7 +178,7 @@ async function main() {
         { icon: "BarChart3", title: "Monthly Reporting", description: "Rankings, traffic, and AI citation tracking" },
       ],
       tiers: [
-        { name: "Standard", slug: "standard", price: 49700, interval: "month", sortOrder: 0, stripePriceId: "price_1T9xVnA5fjeDwxZxKIQyLkzY", features: ["SEO audit & fixes", "AEO optimization", "Content pipeline", "Monthly reporting"] },
+        { name: "Standard", slug: "standard", price: 49700, interval: "month", sortOrder: 0, stripePriceId: "price_1TA2SDExwpuzI9OqwSf050IF", features: ["SEO audit & fixes", "AEO optimization", "Content pipeline", "Monthly reporting"] },
       ],
     },
     {
@@ -217,7 +217,7 @@ async function main() {
         { icon: "Zap", title: "Campaign Integration", description: "One-click from audience to live outbound campaign" },
       ],
       tiers: [
-        { name: "Standard", slug: "standard", price: 39700, interval: "month", sortOrder: 0, stripePriceId: "price_1T9xVnA5fjeDwxZxK1VQZFGj", features: ["20K+ segments", "Semantic search", "Count builder", "Campaign integration"] },
+        { name: "Standard", slug: "standard", price: 39700, interval: "month", sortOrder: 0, stripePriceId: "price_1TA2SEExwpuzI9Oqnjxw7qZb", features: ["20K+ segments", "Semantic search", "Count builder", "Campaign integration"] },
       ],
     },
     {
@@ -255,7 +255,7 @@ async function main() {
         { icon: "Activity", title: "Pixel Health", description: "Monitor pixel status and match rates in real-time" },
       ],
       tiers: [
-        { name: "Standard", slug: "standard", price: 19700, interval: "month", sortOrder: 0, stripePriceId: "price_1T9xVoA5fjeDwxZxbZArzTL8", features: ["Visitor identification", "Auto-enrichment", "Intent triggers", "Pixel health monitoring"] },
+        { name: "Standard", slug: "standard", price: 19700, interval: "month", sortOrder: 0, stripePriceId: "price_1TA2SFExwpuzI9OqD0L9gXpO", features: ["Visitor identification", "Auto-enrichment", "Intent triggers", "Pixel health monitoring"] },
       ],
     },
     {
@@ -295,7 +295,7 @@ async function main() {
         { icon: "FileText", title: "Quarterly Reports", description: "PDF + dashboard with actionable recommendations" },
       ],
       tiers: [
-        { name: "Standard", slug: "standard", price: 100000, interval: "month", sortOrder: 0, stripePriceId: "price_1T9xVrA5fjeDwxZxYyZbIL7L", features: ["Auto P&L analysis", "AI insights", "Rebate tracking", "Quarterly reports"] },
+        { name: "Standard", slug: "standard", price: 100000, interval: "month", sortOrder: 0, stripePriceId: "price_1TA2SHExwpuzI9OqQ0pmMiPi", features: ["Auto P&L analysis", "AI insights", "Rebate tracking", "Quarterly reports"] },
       ],
     },
     {
@@ -328,7 +328,7 @@ async function main() {
         { title: "Deliver first evaluation report", description: "Present vendor analysis with cost-saving recommendations" },
       ],
       tiers: [
-        { name: "Standard", slug: "standard", price: 19700, interval: "month", sortOrder: 0, stripePriceId: "price_1T9xVrA5fjeDwxZx1QQhid1w", features: ["AI tool research", "Company scorecards", "Vendor evaluation", "Weekly digest"] },
+        { name: "Standard", slug: "standard", price: 19700, interval: "month", sortOrder: 0, stripePriceId: "price_1TA2SIExwpuzI9OqSNZddatT", features: ["AI tool research", "Company scorecards", "Vendor evaluation", "Weekly digest"] },
       ],
     },
     {
@@ -387,7 +387,7 @@ async function main() {
         { title: "Review results and optimize", description: "Analyze response rates and refine sequences" },
       ],
       tiers: [
-        { name: "Standard", slug: "standard", price: 99700, interval: "month", sortOrder: 0, stripePriceId: "price_1T9xVpA5fjeDwxZxH1teqyRt", features: ["Dead lead campaigns", "Multi-touch sequences", "AI-powered outreach", "Meeting booking"] },
+        { name: "Standard", slug: "standard", price: 99700, interval: "month", sortOrder: 0, stripePriceId: "price_1TA2SKExwpuzI9Oqv9ACP74W", features: ["Dead lead campaigns", "Multi-touch sequences", "AI-powered outreach", "Meeting booking"] },
       ],
     },
     {
@@ -515,7 +515,7 @@ async function main() {
         { icon: "Calendar", title: "Meeting Booking", description: "Auto-book qualified leads onto your calendar" },
       ],
       tiers: [
-        { name: "Standard", slug: "standard", price: 69700, interval: "month", sortOrder: 0, stripePriceId: "price_1T9xVoA5fjeDwxZxfzmmtd9n", features: ["Lead routing", "Lead scoring", "Nurture sequences", "Meeting booking"] },
+        { name: "Standard", slug: "standard", price: 69700, interval: "month", sortOrder: 0, stripePriceId: "price_1TA2SLExwpuzI9OqkOFHuU8q", features: ["Lead routing", "Lead scoring", "Nurture sequences", "Meeting booking"] },
       ],
     },
     {
@@ -553,7 +553,7 @@ async function main() {
         { icon: "BarChart", title: "Campaign Analytics", description: "Connection, reply, and meeting conversion rates" },
       ],
       tiers: [
-        { name: "Standard", slug: "standard", price: 59700, interval: "month", sortOrder: 0, stripePriceId: "price_1T9xVpA5fjeDwxZx89o8KwJm", features: ["Connection automation", "Messaging sequences", "CRM sync", "Campaign analytics"] },
+        { name: "Standard", slug: "standard", price: 59700, interval: "month", sortOrder: 0, stripePriceId: "price_1TA2SMExwpuzI9Oqhkqaa8wk", features: ["Connection automation", "Messaging sequences", "CRM sync", "Campaign analytics"] },
       ],
     },
     {
@@ -591,7 +591,7 @@ async function main() {
         { icon: "Image", title: "Ad Creatives", description: "Display and social ad copy with A/B variants" },
       ],
       tiers: [
-        { name: "Standard", slug: "standard", price: 49700, interval: "month", sortOrder: 0, stripePriceId: "price_1T9xVqA5fjeDwxZx5ZlWICbE", features: ["Blog content", "Social content", "Email copy", "Ad creatives"] },
+        { name: "Standard", slug: "standard", price: 49700, interval: "month", sortOrder: 0, stripePriceId: "price_1TA2SNExwpuzI9Oq1cNP7A0u", features: ["Blog content", "Social content", "Email copy", "Ad creatives"] },
       ],
     },
     {

@@ -167,7 +167,16 @@ export function InternTaskBoard({ tasks: initialTasks }: { tasks: Task[] }) {
     if (!COLUMNS.some((c) => c.key === newStatus)) return
     setTasks((prev) => prev.map((t) => (t.id === taskId ? { ...t, status: newStatus } : t)))
 
-    // TODO: wire to PATCH /api/intern/tasks/[id] once auth pattern is confirmed
+    const prevStatus = tasks.find((t) => t.id === taskId)?.status
+    fetch(`/api/intern/tasks/${taskId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: newStatus }),
+    }).catch(() => {
+      if (prevStatus) {
+        setTasks((prev) => prev.map((t) => (t.id === taskId ? { ...t, status: prevStatus } : t)))
+      }
+    })
   }
 
   return (
