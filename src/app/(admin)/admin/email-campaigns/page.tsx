@@ -12,7 +12,6 @@ export default async function AdminEmailCampaignsPage() {
   if (!role || !["ADMIN", "SUPER_ADMIN"].includes(role)) redirect("/portal/dashboard")
 
   const users = await db.user.findMany({
-    where: { role: { in: ["CLIENT", "RESELLER"] } },
     select: {
       id: true,
       name: true,
