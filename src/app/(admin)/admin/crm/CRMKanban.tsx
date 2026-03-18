@@ -262,7 +262,7 @@ function DroppableColumn({
         ))}
         <button
           onClick={() => onAddDeal(stage.key)}
-          className="w-full flex items-center gap-2 py-2.5 px-3 text-gray-600 hover:text-gray-600 text-sm transition-colors rounded-xl hover:bg-white/3 border border-dashed border-white/5 hover:border-border"
+          className="w-full flex items-center gap-2 py-2.5 px-3 text-gray-600 hover:text-gray-600 text-sm transition-colors rounded-xl hover:bg-white/3 border border-dashed border-border hover:border-gray-300"
         >
           <Plus className="w-3.5 h-3.5" />
           Add deal

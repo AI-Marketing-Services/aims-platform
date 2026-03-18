@@ -6,9 +6,14 @@ import { getOrCreateStripeCustomer } from "@/lib/stripe"
 import { checkoutRatelimit, getIp } from "@/lib/ratelimit"
 import Stripe from "stripe"
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-02-24.acacia",
-})
+function getStripe() {
+  if (!process.env.STRIPE_SECRET_KEY) {
+    throw new Error("STRIPE_SECRET_KEY is not configured")
+  }
+  return new Stripe(process.env.STRIPE_SECRET_KEY, {
+    apiVersion: "2025-02-24.acacia",
+  })
+}
 
 const cartSchema = z.object({
   items: z.array(
@@ -222,7 +227,7 @@ export async function POST(req: Request) {
       sessionParams.customer = stripeCustomerId
     }
 
-    const session = await stripe.checkout.sessions.create(sessionParams)
+    const session = await getStripe().checkout.sessions.create(sessionParams)
     return NextResponse.json({ url: session.url })
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error"

@@ -58,9 +58,9 @@ export default function SmallBusinessPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero */}
-      <section className="bg-gradient-to-b from-gray-900 to-gray-800 text-white py-20 px-4">
+      <section className="bg-gradient-to-b from-[#DC2626] to-[#B91C1C] text-white py-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 text-white/80 text-sm font-medium rounded-full mb-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/20 text-white/90 text-sm font-medium rounded-full mb-6">
             <Zap className="w-3.5 h-3.5" />
             Built for Small Business Owners
           </div>

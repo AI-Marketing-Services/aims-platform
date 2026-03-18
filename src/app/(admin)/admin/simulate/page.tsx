@@ -60,7 +60,7 @@ const LEAD_TYPES = [
 // ============ SHARED STYLES ============
 
 const inputCls =
-  "w-full bg-background border border-border rounded-lg px-3 py-2 text-white text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#DC2626]"
+  "w-full bg-background border border-border rounded-lg px-3 py-2 text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#DC2626]"
 
 // ============ PURCHASE PANEL ============
 
@@ -140,7 +140,7 @@ function PurchasePanel() {
                   />
                   <div
                     className="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0"
-                    style={{ background: active ? "#DC2626" : "#1E2028" }}
+                    style={{ background: active ? "#DC2626" : "#F3F4F6" }}
                   >
                     <Icon className="w-3.5 h-3.5 text-foreground" />
                   </div>
@@ -405,7 +405,7 @@ function LeadMagnetPanel() {
                 </div>
               ))}
             </div>
-            <a href="/admin/crm" className="block text-xs text-[#DC2626] hover:underline pt-1 border-t border-white/5">
+            <a href="/admin/crm" className="block text-xs text-[#DC2626] hover:underline pt-1 border-t border-border">
               View in CRM →
             </a>
           </div>

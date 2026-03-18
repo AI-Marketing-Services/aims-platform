@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, Fragment } from "react"
 import { ChevronDown, ChevronUp, Search, ChevronLeft, ChevronRight, Check, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -149,9 +149,8 @@ export function LeadMagnetTable({
                     year: "numeric",
                   })
                   return (
-                    <>
+                    <Fragment key={sub.id}>
                       <tr
-                        key={sub.id}
                         className="border-b border-border/50 hover:bg-muted/30 transition-colors cursor-pointer"
                         onClick={() => setExpandedId(isExpanded ? null : sub.id)}
                       >
@@ -226,7 +225,7 @@ export function LeadMagnetTable({
                           </td>
                         </tr>
                       )}
-                    </>
+                    </Fragment>
                   )
                 })}
               </tbody>

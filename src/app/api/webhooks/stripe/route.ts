@@ -100,7 +100,7 @@ export async function POST(req: Request) {
           where: { stripeSubId: session.subscription as string },
         })
         if (existingSub) {
-          console.log(`Subscription ${session.subscription} already exists, skipping duplicate cart processing`)
+          console.warn(`Subscription ${session.subscription} already exists, skipping duplicate cart processing`)
           break
         }
 
@@ -265,7 +265,7 @@ export async function POST(req: Request) {
           where: { stripeSubId: sub.id },
         })
         if (existingLegacySub) {
-          console.log(`Subscription ${sub.id} already exists, skipping duplicate creation`)
+          console.warn(`Subscription ${sub.id} already exists, skipping duplicate creation`)
           break
         }
 

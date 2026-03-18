@@ -1,4 +1,10 @@
+import type { Metadata } from "next"
 import { auth, currentUser } from "@clerk/nextjs/server"
+
+export const metadata: Metadata = {
+  title: "Your Tool Results | AIMS",
+  description: "View your AI readiness quiz, ROI calculator, and website audit results.",
+}
 import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
 import Link from "next/link"
@@ -206,9 +212,9 @@ export default async function ToolsDashboardPage() {
 
         {/* Upgrade CTA */}
         {submissions.length > 0 && (
-          <div className="mt-10 bg-gray-900 rounded-2xl p-8 text-center text-white">
+          <div className="mt-10 bg-[#DC2626] rounded-2xl p-8 text-center text-white">
             <h3 className="text-xl font-bold mb-2">Ready to act on your results?</h3>
-            <p className="text-gray-400 text-sm mb-6">
+            <p className="text-red-100 text-sm mb-6">
               Browse the full AIMS service marketplace and build your custom AI stack.
             </p>
             <Link

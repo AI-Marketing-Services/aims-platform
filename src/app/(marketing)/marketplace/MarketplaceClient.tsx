@@ -604,7 +604,7 @@ function ServiceCard({ service }: { service: AIMSService }) {
                 className={cn(
                   "px-3 py-1 rounded-lg text-xs font-semibold border transition-colors",
                   selectedTier === tier.id
-                    ? "bg-gray-900 text-white border-gray-900"
+                    ? "bg-[#DC2626] text-white border-[#DC2626]"
                     : "bg-white text-gray-600 border-gray-200 hover:border-gray-400 cursor-pointer"
                 )}
               >
@@ -629,7 +629,7 @@ function ServiceCard({ service }: { service: AIMSService }) {
             "w-full flex items-center justify-center gap-2 py-3 text-sm font-semibold rounded-xl transition-colors",
             inCart
               ? "bg-green-50 text-green-700 border border-green-200 hover:bg-green-100"
-              : "bg-gray-900 text-white hover:bg-gray-800"
+              : "bg-[#DC2626] text-white hover:bg-[#B91C1C]"
           )}
         >
           {inCart ? (

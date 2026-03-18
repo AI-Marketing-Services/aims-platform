@@ -690,10 +690,10 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
       )}
 
       {/* CTA */}
-      <section className="py-20 bg-gray-900">
+      <section className="py-20 bg-[#DC2626]">
         <div className="container mx-auto max-w-2xl px-4 text-center">
           <h2 className="text-3xl font-bold text-white">Ready to get started?</h2>
-          <p className="mt-3 text-gray-400">Book a strategy call and we&rsquo;ll build your custom plan.</p>
+          <p className="mt-3 text-red-100">Book a strategy call and we&rsquo;ll build your custom plan.</p>
           <Link
             href="/get-started"
             className="mt-8 inline-flex items-center gap-2 rounded-lg bg-[#DC2626] px-8 py-3.5 font-semibold text-white hover:bg-[#B91C1C] transition"

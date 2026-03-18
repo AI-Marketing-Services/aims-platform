@@ -99,6 +99,7 @@ export async function POST(req: Request) {
     }
   } catch (err) {
     console.error(`Error handling Clerk webhook ${type}:`, err)
+    return NextResponse.json({ error: "Webhook processing failed" }, { status: 500 })
   }
 
   return NextResponse.json({ received: true })

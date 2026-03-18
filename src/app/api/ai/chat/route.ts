@@ -1,7 +1,12 @@
 import { createGoogleGenerativeAI } from "@ai-sdk/google"
-
-const google = createGoogleGenerativeAI({ apiKey: process.env.GEMINI_API_KEY ?? "" })
 import { streamText, tool } from "ai"
+
+function getGoogle() {
+  if (!process.env.GEMINI_API_KEY) {
+    throw new Error("GEMINI_API_KEY is not configured")
+  }
+  return createGoogleGenerativeAI({ apiKey: process.env.GEMINI_API_KEY })
+}
 import { z } from "zod"
 import { db } from "@/lib/db"
 import { notifyNewLead } from "@/lib/notifications"
@@ -60,6 +65,10 @@ QUALIFICATION BEHAVIOR:
 10. When you capture name and email, immediately use the capture_lead tool.`
 
 export async function POST(req: Request) {
+  if (!process.env.GEMINI_API_KEY) {
+    return Response.json({ error: "AI chat is not configured" }, { status: 503 })
+  }
+
   // Rate limit public chat: 20 requests per minute per IP
   if (chatRatelimit) {
     const { success } = await chatRatelimit.limit(getIp(req))
@@ -96,7 +105,7 @@ export async function POST(req: Request) {
     })
 
   const result = streamText({
-    model: google("gemini-2.0-flash-001"),
+    model: getGoogle()("gemini-2.0-flash-001"),
     system: AIMS_SYSTEM_PROMPT,
     messages,
     maxOutputTokens: 512,

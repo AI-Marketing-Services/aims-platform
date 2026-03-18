@@ -2,6 +2,7 @@ import { notFound } from "next/navigation"
 import { db } from "@/lib/db"
 import { cookies } from "next/headers"
 import Link from "next/link"
+import Image from "next/image"
 import { ArrowRight, CheckCircle2, Star } from "lucide-react"
 import type { Metadata } from "next"
 
@@ -74,8 +75,7 @@ export default async function PartnerLandingPage({ params, searchParams }: Props
       <div className="bg-white border-b border-gray-200 px-4 py-3">
         <div className="max-w-4xl mx-auto flex items-center gap-3">
           {referral.referrer.avatarUrl && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={referral.referrer.avatarUrl} alt="" className="h-8 w-8 rounded-full" />
+            <Image src={referral.referrer.avatarUrl} alt="" width={32} height={32} className="h-8 w-8 rounded-full" />
           )}
           <p className="text-sm text-gray-600">
             You were referred by <span className="font-semibold text-gray-900">{partnerName}</span>
@@ -131,9 +131,9 @@ export default async function PartnerLandingPage({ params, searchParams }: Props
       </div>
 
       {/* Social proof */}
-      <div className="bg-gray-900 py-16">
+      <div className="bg-[#DC2626] py-16">
         <div className="max-w-4xl mx-auto px-4 text-center">
-          <p className="text-gray-400 text-sm uppercase tracking-wider font-semibold mb-8">What clients achieve</p>
+          <p className="text-red-100 text-sm uppercase tracking-wider font-semibold mb-8">What clients achieve</p>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
             {[
               { stat: "3.2×", label: "Average pipeline increase in 90 days" },
@@ -142,7 +142,7 @@ export default async function PartnerLandingPage({ params, searchParams }: Props
             ].map(({ stat, label }) => (
               <div key={stat} className="text-center">
                 <p className="text-3xl font-bold text-white font-mono mb-2">{stat}</p>
-                <p className="text-sm text-gray-400">{label}</p>
+                <p className="text-sm text-red-100">{label}</p>
               </div>
             ))}
           </div>

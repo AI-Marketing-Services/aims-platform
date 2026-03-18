@@ -73,7 +73,7 @@ export function PortalChatWidget({ firstName = "there", serviceCount = 0 }: Port
           className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-white border border-gray-200 shadow-xl hover:shadow-2xl transition-all hover:scale-105 active:scale-95"
           aria-label="AIMS Support"
         >
-          <img src="/logo.png" alt="AIMS" className="h-7 w-7 object-contain" />
+          <Image src="/logo.png" alt="AIMS" width={28} height={28} className="h-7 w-7 object-contain" />
         </button>
       )}
 
@@ -118,7 +118,7 @@ export function PortalChatWidget({ firstName = "there", serviceCount = 0 }: Port
                 <div key={m.id} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
                   {m.role === "assistant" && (
                     <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white border border-gray-200 shadow-sm mr-2 mt-1 flex-shrink-0 overflow-hidden">
-                      <img src="/logo.png" alt="AIMS" className="h-4 w-4 object-contain" />
+                      <Image src="/logo.png" alt="AIMS" width={16} height={16} className="h-4 w-4 object-contain" />
                     </div>
                   )}
                   <div

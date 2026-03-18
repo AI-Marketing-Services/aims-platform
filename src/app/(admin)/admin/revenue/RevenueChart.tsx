@@ -41,11 +41,11 @@ interface Props {
 const PIE_COLORS = ["#DC2626", "#EF4444", "#F87171", "#FCA5A5", "#FECACA", "#FEE2E2"]
 
 const tooltipStyle = {
-  backgroundColor: "#151821",
-  border: "1px solid rgba(255,255,255,0.1)",
+  backgroundColor: "#ffffff",
+  border: "1px solid #e5e7eb",
   borderRadius: "8px",
 }
-const labelStyle = { color: "#9CA3AF", fontSize: 12 }
+const labelStyle = { color: "#111827", fontSize: 12 }
 
 export function RevenueCharts({ mrrOverTime, revenueByService, revenueByChannel }: Props) {
   const hasEnoughMrrData = mrrOverTime.length >= 3
@@ -70,7 +70,7 @@ export function RevenueCharts({ mrrOverTime, revenueByService, revenueByChannel 
                   <stop offset="95%" stopColor="#DC2626" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" />
               <XAxis
                 dataKey="month"
                 tick={{ fill: "#6B7280", fontSize: 11 }}
@@ -121,7 +121,7 @@ export function RevenueCharts({ mrrOverTime, revenueByService, revenueByChannel 
                 layout="vertical"
                 margin={{ top: 0, right: 10, left: 0, bottom: 0 }}
               >
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" horizontal={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" horizontal={false} />
                 <XAxis
                   type="number"
                   tick={{ fill: "#6B7280", fontSize: 11 }}

@@ -200,7 +200,7 @@ export function Pricing() {
           </div>
           <Link
             href="/get-started?ref=pricing-enterprise"
-            className="shrink-0 rounded-lg bg-gray-900 text-white px-6 py-2.5 text-sm font-semibold hover:bg-gray-800 transition"
+            className="shrink-0 rounded-lg bg-[#DC2626] text-white px-6 py-2.5 text-sm font-semibold hover:bg-[#B91C1C] transition"
           >
             Book a Strategy Call →
           </Link>
