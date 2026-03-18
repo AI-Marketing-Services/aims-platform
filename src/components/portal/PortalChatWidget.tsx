@@ -136,7 +136,7 @@ export function PortalChatWidget({ firstName = "there", serviceCount = 0 }: Port
             {isStreaming && (
               <div className="flex justify-start">
                 <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white border border-gray-200 shadow-sm mr-2 mt-1 flex-shrink-0 overflow-hidden">
-                  <img src="/logo.png" alt="AIMS" className="h-4 w-4 object-contain" />
+                  <Image src="/logo.png" alt="AIMS" width={16} height={16} className="h-4 w-4 object-contain" />
                 </div>
                 <div className="bg-[#f4f4f5] rounded-xl rounded-bl-sm px-3 py-2">
                   <Loader2 className="h-3.5 w-3.5 text-zinc-400 animate-spin" />
