@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Plus, X, Send, Clock, ChevronDown } from "lucide-react"
+import { Plus, X, Send, Clock, ChevronDown, Check } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface RecentReport {
@@ -80,7 +80,7 @@ export function EODReportClient({ internId, recentReports, recentCompletedTasks 
     return (
       <div className="rounded-xl border border-green-500/20 bg-green-500/5 p-8 text-center">
         <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-500/10 mx-auto mb-4">
-          <Send className="h-6 w-6 text-green-400" />
+          <Send className="h-6 w-6 text-green-600" />
         </div>
         <h3 className="text-lg font-semibold text-foreground">Report Submitted</h3>
         <p className="text-sm text-muted-foreground mt-1">
@@ -272,7 +272,7 @@ export function EODReportClient({ internId, recentReports, recentCompletedTasks 
                     <ul className="space-y-1">
                       {items.slice(0, 3).map((item, i) => (
                         <li key={i} className="text-xs text-muted-foreground flex items-start gap-1.5">
-                          <span className="text-green-400 mt-0.5">✓</span>
+                          <Check className="h-3.5 w-3.5 text-green-600 mt-0.5" />
                           {item}
                         </li>
                       ))}

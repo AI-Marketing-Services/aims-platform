@@ -14,6 +14,10 @@ export const metadata: Metadata = {
   title: "AIMS — AI-Powered Business Infrastructure",
   description: "AIMS builds and runs your outbound engine, AI calling systems, and pipeline operations — so your team closes deals, not chases them. From $97/mo.",
   alternates: { canonical: "https://aimseos.com" },
+  openGraph: {
+    title: "AIMS — AI-Powered Business Infrastructure",
+    description: "AIMS builds and runs your outbound engine, AI calling systems, and pipeline operations — so your team closes deals, not chases them. From $97/mo.",
+  },
 }
 
 const ORG_SCHEMA = {

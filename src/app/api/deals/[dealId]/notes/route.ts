@@ -27,23 +27,28 @@ export async function POST(
     return NextResponse.json({ error: "Invalid data" }, { status: 400 })
   }
 
-  const note = await db.dealNote.create({
-    data: {
-      dealId,
-      content: parsed.data.content,
-      authorId: parsed.data.authorId ?? userId,
-    },
-  })
+  try {
+    const note = await db.dealNote.create({
+      data: {
+        dealId,
+        content: parsed.data.content,
+        authorId: parsed.data.authorId ?? userId,
+      },
+    })
 
-  // Log activity
-  await db.dealActivity.create({
-    data: {
-      dealId,
-      type: "NOTE_ADDED",
-      detail: parsed.data.content.slice(0, 100),
-      authorId: userId,
-    },
-  }).catch(() => null)
+    // Log activity
+    await db.dealActivity.create({
+      data: {
+        dealId,
+        type: "NOTE_ADDED",
+        detail: parsed.data.content.slice(0, 100),
+        authorId: userId,
+      },
+    }).catch((err) => console.error(`Failed to log activity for deal ${dealId}:`, err))
 
-  return NextResponse.json(note, { status: 201 })
+    return NextResponse.json(note, { status: 201 })
+  } catch (err) {
+    console.error(`Failed to create note for deal ${dealId}:`, err)
+    return NextResponse.json({ error: "Failed to create note" }, { status: 500 })
+  }
 }

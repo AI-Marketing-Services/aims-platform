@@ -44,7 +44,7 @@ function FallbackWidget({ onClose }: { onClose: () => void }) {
           <Image src="/logo.png" alt="AIMS" width={22} height={22} className="object-contain" />
           <span className="text-sm font-semibold text-white">AIMS AI</span>
         </div>
-        <button onClick={onClose} className="p-1 rounded hover:bg-white/10 transition-colors">
+        <button onClick={onClose} className="p-1 rounded hover:bg-white/20 transition-colors">
           <X className="h-4 w-4 text-white" />
         </button>
       </div>
@@ -157,7 +157,7 @@ function AIChat({ onClose }: { onClose: () => void }) {
             <p className="text-[10px] text-red-100">Ask about our services</p>
           </div>
         </div>
-        <button onClick={onClose} className="p-1 rounded hover:bg-white/10 transition-colors">
+        <button onClick={onClose} className="p-1 rounded hover:bg-white/20 transition-colors">
           <X className="h-4 w-4 text-white" />
         </button>
       </div>

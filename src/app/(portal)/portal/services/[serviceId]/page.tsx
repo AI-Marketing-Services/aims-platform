@@ -6,10 +6,10 @@ import Link from "next/link"
 import { cn } from "@/lib/utils"
 
 const PILLAR_PILL: Record<string, string> = {
-  MARKETING: "bg-green-500/10 text-green-400 border-green-500/20",
-  SALES: "bg-blue-500/10 text-blue-400 border-blue-500/20",
-  OPERATIONS: "bg-orange-500/10 text-orange-400 border-orange-500/20",
-  FINANCE: "bg-purple-500/10 text-purple-400 border-purple-500/20",
+  MARKETING: "bg-green-50 text-green-700 border-green-200",
+  SALES: "bg-blue-50 text-blue-700 border-blue-200",
+  OPERATIONS: "bg-orange-50 text-orange-700 border-orange-200",
+  FINANCE: "bg-purple-50 text-purple-700 border-purple-200",
 }
 
 const STATUS_CONFIG: Record<string, { icon: React.FC<{ className?: string }>; label: string; color: string }> = {
@@ -20,12 +20,12 @@ const STATUS_CONFIG: Record<string, { icon: React.FC<{ className?: string }>; la
 }
 
 const FULFILLMENT_LABELS: Record<string, { label: string; color: string }> = {
-  PENDING_SETUP: { label: "Pending Setup", color: "text-yellow-400 bg-yellow-500/10 border-yellow-500/20" },
-  IN_PROGRESS: { label: "In Progress", color: "text-blue-400 bg-blue-500/10 border-blue-500/20" },
-  ACTIVE_MANAGED: { label: "Active", color: "text-green-400 bg-green-500/10 border-green-500/20" },
-  NEEDS_ATTENTION: { label: "Needs Attention", color: "text-red-400 bg-red-500/10 border-red-500/20" },
-  COMPLETED: { label: "Completed", color: "text-green-400 bg-green-500/10 border-green-500/20" },
-  ON_HOLD: { label: "On Hold", color: "text-gray-400 bg-white/5 border-border" },
+  PENDING_SETUP: { label: "Pending Setup", color: "text-yellow-700 bg-yellow-50 border-yellow-200" },
+  IN_PROGRESS: { label: "In Progress", color: "text-blue-700 bg-blue-50 border-blue-200" },
+  ACTIVE_MANAGED: { label: "Active", color: "text-green-700 bg-green-50 border-green-200" },
+  NEEDS_ATTENTION: { label: "Needs Attention", color: "text-red-700 bg-red-50 border-red-200" },
+  COMPLETED: { label: "Completed", color: "text-green-700 bg-green-50 border-green-200" },
+  ON_HOLD: { label: "On Hold", color: "text-gray-600 bg-gray-100 border-gray-200" },
 }
 
 export default async function PortalServiceDetailPage({

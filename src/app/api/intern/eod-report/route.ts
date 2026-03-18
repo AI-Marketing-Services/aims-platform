@@ -37,16 +37,21 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   }
 
-  const report = await db.eODReport.create({
-    data: {
-      internId,
-      completed,
-      nextPriority: nextPriority ?? [],
-      blockers: blockers ?? [],
-      hoursWorked: hoursWorked ?? null,
-      date: new Date(),
-    },
-  })
+  try {
+    const report = await db.eODReport.create({
+      data: {
+        internId,
+        completed,
+        nextPriority: nextPriority ?? [],
+        blockers: blockers ?? [],
+        hoursWorked: hoursWorked ?? null,
+        date: new Date(),
+      },
+    })
 
-  return NextResponse.json(report, { status: 201 })
+    return NextResponse.json(report, { status: 201 })
+  } catch (err) {
+    console.error("Failed to create EOD report:", err)
+    return NextResponse.json({ error: "Failed to create EOD report" }, { status: 500 })
+  }
 }

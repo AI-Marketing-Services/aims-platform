@@ -10,6 +10,7 @@
     "db:push": "prisma db push",
     "db:generate": "prisma generate",
     "db:seed": "tsx prisma/seed.ts",
+    "seed": "npx prisma db seed",
     "db:studio": "prisma studio",
     "test": "vitest run",
     "test:watch": "vitest"
@@ -27,6 +28,7 @@
     "@prisma/adapter-neon": "^7.4.2",
     "@prisma/client": "^6",
     "@stripe/stripe-js": "^5",
+    "@tailwindcss/typography": "^0.5.19",
     "@upstash/ratelimit": "^2",
     "@upstash/redis": "^1",
     "ai": "^6.0.116",
@@ -34,17 +36,23 @@
     "clsx": "^2.1.1",
     "date-fns": "^4",
     "framer-motion": "^12",
+    "gray-matter": "^4.0.3",
     "lucide-react": "^0.511.0",
     "next": "^16.1.6",
     "react": "^19",
     "react-dom": "^19",
     "react-hook-form": "^7.56.4",
+    "react-markdown": "^10.1.0",
     "recharts": "^2.15.3",
     "resend": "^4",
+    "sonner": "^2.0.7",
     "stripe": "^17",
     "svix": "^1.86.0",
     "tailwind-merge": "^3.3.0",
     "zod": "^3.25.51"
+  },
+  "prisma": {
+    "seed": "npx tsx prisma/seed.ts"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",

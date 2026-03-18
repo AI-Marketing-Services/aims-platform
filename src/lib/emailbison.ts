@@ -1,9 +1,16 @@
 import { logApiCost } from "@/lib/ai"
 
 const BASE_URL = "https://send.aimanagingservices.com/api"
-const API_KEY = process.env.EMAIL_BISON_API_KEY!
+const API_KEY = process.env.EMAIL_BISON_API_KEY
+
+export function isEmailBisonConfigured(): boolean {
+  return !!API_KEY
+}
 
 async function ebFetch(path: string, options?: RequestInit) {
+  if (!API_KEY) {
+    throw new Error("Email Bison API key not configured")
+  }
   const res = await fetch(`${BASE_URL}${path}`, {
     ...options,
     headers: {
@@ -69,11 +76,13 @@ export interface EBCampaignStats {
 }
 
 export async function getWorkspaces(): Promise<EBWorkspace[]> {
+  if (!isEmailBisonConfigured()) return []
   const data = await ebFetch("/workspaces")
   return data.data ?? []
 }
 
 export async function getCampaigns(workspaceId: number): Promise<EBCampaign[]> {
+  if (!isEmailBisonConfigured()) return []
   const data = await ebFetch(`/campaigns?workspaceId=${workspaceId}`)
   return data.data ?? []
 }
@@ -83,6 +92,21 @@ export async function getCampaignStats(
   startDate: string,
   endDate: string
 ): Promise<EBCampaignStats> {
+  if (!isEmailBisonConfigured()) {
+    return {
+      emails_sent: 0,
+      total_leads_contacted: 0,
+      opened: 0,
+      opened_percentage: 0,
+      unique_replies_per_contact: 0,
+      unique_replies_per_contact_percentage: 0,
+      bounced: 0,
+      bounced_percentage: 0,
+      unsubscribed: 0,
+      interested: 0,
+      sequence_step_stats: [],
+    }
+  }
   const data = await ebFetch(`/campaigns/${campaignId}/stats`, {
     method: "POST",
     body: JSON.stringify({ start_date: startDate, end_date: endDate }),
@@ -91,6 +115,14 @@ export async function getCampaignStats(
 }
 
 export async function getWorkspaceDashboard(workspaceId: number) {
+  if (!isEmailBisonConfigured()) {
+    return {
+      campaigns: [],
+      totals: { emailsSent: 0, peopleContacted: 0, replies: 0, bounced: 0, totalLeads: 0 },
+      replyRate: "0",
+      bounceRate: "0",
+    }
+  }
   const campaigns = await getCampaigns(workspaceId)
 
   // Aggregate stats across all campaigns

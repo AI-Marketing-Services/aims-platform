@@ -5,6 +5,10 @@ import { ArrowRight, Zap, BarChart2, Clock, Shield, CheckCircle } from "lucide-r
 export const metadata: Metadata = {
   title: "About AIMS — AI Managing Services",
   description: "AIMS is a division of Modern Amenities Group, building AI-powered business infrastructure for B2B companies.",
+  openGraph: {
+    title: "About AIMS | AI Managing Services",
+    description: "AIMS is a division of Modern Amenities Group, building AI-powered business infrastructure for B2B companies.",
+  },
 }
 
 const PILLARS = [

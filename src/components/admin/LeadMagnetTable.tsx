@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { ChevronDown, ChevronUp, Search, ChevronLeft, ChevronRight } from "lucide-react"
+import { ChevronDown, ChevronUp, Search, ChevronLeft, ChevronRight, Check, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const TYPE_LABEL: Record<string, string> = {
@@ -180,10 +180,10 @@ export function LeadMagnetTable({
                           <span
                             className={cn(
                               "text-xs font-medium",
-                              sub.convertedToDeal ? "text-green-400" : "text-muted-foreground"
+                              sub.convertedToDeal ? "text-green-600" : "text-muted-foreground"
                             )}
                           >
-                            {sub.convertedToDeal ? "✓ Yes" : "✗ No"}
+                            {sub.convertedToDeal ? <><Check className="inline h-3 w-3" /> Yes</> : <><X className="inline h-3 w-3" /> No</>}
                           </span>
                         </td>
                         <td className="px-4 py-3">

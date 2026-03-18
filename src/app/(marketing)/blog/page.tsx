@@ -6,6 +6,10 @@ import { getAllPosts } from "@/lib/blog"
 export const metadata: Metadata = {
   title: "Blog — AIMS",
   description: "Insights on AI-powered sales, marketing, and operations. Practical guides for businesses building their growth infrastructure.",
+  openGraph: {
+    title: "Blog | AIMS",
+    description: "Insights on AI-powered sales, marketing, and operations. Practical guides for businesses building their growth infrastructure.",
+  },
 }
 
 export default function BlogPage() {

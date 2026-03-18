@@ -185,6 +185,72 @@ export default async function WebsiteAuditResultsPage({ params }: Props) {
           </div>
         )}
 
+        {/* Recommended Services */}
+        {analysis?.scores && (
+          <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-6 shadow-sm">
+            <h3 className="font-semibold text-gray-900 mb-1">Services That Fix These Issues</h3>
+            <p className="text-sm text-gray-500 mb-4">Based on your scores, these AIMS services will have the highest impact.</p>
+            <div className="space-y-3">
+              {analysis.scores.seo < 60 && (
+                <div className="border border-gray-200 rounded-xl p-4 hover:border-gray-300 transition-colors">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-gray-900 text-sm">SEO / AEO Strategy</h4>
+                      <p className="text-xs text-gray-500 mt-1">Your SEO score of {analysis.scores.seo} means you are invisible in search. We fix your technical SEO, build authority content, and optimize for AI answer engines so you rank and get cited.</p>
+                      <p className="text-xs text-gray-400 mt-2">from $197/mo</p>
+                    </div>
+                    <Link href="/marketplace" className="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 bg-[#DC2626] text-white text-xs font-semibold rounded-lg hover:bg-[#B91C1C] transition-colors">
+                      Learn More <ArrowRight className="w-3 h-3" />
+                    </Link>
+                  </div>
+                </div>
+              )}
+              {analysis.scores.speed < 60 && (
+                <div className="border border-gray-200 rounded-xl p-4 hover:border-gray-300 transition-colors">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-gray-900 text-sm">Website + CRM + Chatbot</h4>
+                      <p className="text-xs text-gray-500 mt-1">A speed score of {analysis.scores.speed} is costing you visitors and rankings. We rebuild your site for sub-2-second load times with built-in lead capture and AI chatbot.</p>
+                      <p className="text-xs text-gray-400 mt-2">from $97/mo</p>
+                    </div>
+                    <Link href="/marketplace" className="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 bg-[#DC2626] text-white text-xs font-semibold rounded-lg hover:bg-[#B91C1C] transition-colors">
+                      Learn More <ArrowRight className="w-3 h-3" />
+                    </Link>
+                  </div>
+                </div>
+              )}
+              {analysis.scores.conversion < 60 && (
+                <div className="border border-gray-200 rounded-xl p-4 hover:border-gray-300 transition-colors">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-gray-900 text-sm">Inbound Orchestration + Lead Reactivation</h4>
+                      <p className="text-xs text-gray-500 mt-1">A conversion score of {analysis.scores.conversion} means visitors leave without taking action. We build multi-step funnels and reactivate your dormant leads with automated sequences.</p>
+                      <p className="text-xs text-gray-400 mt-2">from $147/mo</p>
+                    </div>
+                    <Link href="/marketplace" className="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 bg-[#DC2626] text-white text-xs font-semibold rounded-lg hover:bg-[#B91C1C] transition-colors">
+                      Learn More <ArrowRight className="w-3 h-3" />
+                    </Link>
+                  </div>
+                </div>
+              )}
+              {analysis.scores.ai < 60 && (
+                <div className="border border-gray-200 rounded-xl p-4 hover:border-gray-300 transition-colors">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-gray-900 text-sm">AI Content Engine</h4>
+                      <p className="text-xs text-gray-500 mt-1">An AI visibility score of {analysis.scores.ai} means AI assistants never mention your business. We produce and distribute AI-optimized content so you get cited in ChatGPT, Perplexity, and Google AI Overviews.</p>
+                      <p className="text-xs text-gray-400 mt-2">from $247/mo</p>
+                    </div>
+                    <Link href="/marketplace" className="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 bg-[#DC2626] text-white text-xs font-semibold rounded-lg hover:bg-[#B91C1C] transition-colors">
+                      Learn More <ArrowRight className="w-3 h-3" />
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Share */}
         <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-6 shadow-sm">
           <h3 className="font-semibold text-gray-900 mb-1">Share this audit</h3>

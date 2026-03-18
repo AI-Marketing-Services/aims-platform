@@ -2,6 +2,16 @@ import { PrismaClient } from "@prisma/client"
 
 const prisma = new PrismaClient()
 
+function daysAgo(n: number): Date {
+  const d = new Date()
+  d.setDate(d.getDate() - n)
+  return d
+}
+
+function randomBetween(min: number, max: number): number {
+  return Math.floor(Math.random() * (max - min + 1)) + min
+}
+
 async function main() {
   console.log("Seeding AIMS database...")
 
@@ -647,7 +657,7 @@ async function main() {
         { title: "Define ad platforms and formats", description: "Identify target platforms and ad specifications" },
         { title: "Generate initial creative variants", description: "AI-generate multiple ad creative options" },
         { title: "Set up A/B testing framework", description: "Configure split testing and performance tracking" },
-        { title: "Launch first ad set", description: "Deploy approved creatives and begin optimization" },
+        { title: "Deploy approved creatives", description: "Deploy approved creatives and begin optimization" },
       ],
     },
   ]
@@ -675,7 +685,7 @@ async function main() {
       }
     }
 
-    console.log(`  ✓ ${arm.name}`)
+    console.log(`  > ${arm.name}`)
   }
 
   // ============ SAMPLE VENDOR TRACKER ============
@@ -696,7 +706,394 @@ async function main() {
     })
   }
 
-  console.log("\n✅ Seed complete!")
+  // ============ DEMO USERS ============
+
+  console.log("\n  Creating demo users...")
+  const demoUsers = [
+    { clerkId: "demo_client_active_1", email: "sarah@greenlawnpros.com", name: "Sarah Mitchell", company: "GreenLawn Pros", role: "CLIENT" as const, industry: "Landscaping", website: "https://greenlawnpros.com", phone: "(512) 555-0142", locationCount: 3 },
+    { clerkId: "demo_client_active_2", email: "marcus@elitedentalgroup.com", name: "Marcus Chen", company: "Elite Dental Group", role: "CLIENT" as const, industry: "Dental", website: "https://elitedentalgroup.com", phone: "(415) 555-0198", locationCount: 5 },
+    { clerkId: "demo_client_new", email: "jessica@brightsideinsurance.com", name: "Jessica Alvarez", company: "Brightside Insurance", role: "CLIENT" as const, industry: "Insurance", website: "https://brightsideinsurance.com", phone: "(305) 555-0267" },
+    { clerkId: "demo_client_churned", email: "derek@suncoastroofing.com", name: "Derek Washington", company: "Suncoast Roofing", role: "CLIENT" as const, industry: "Roofing", website: "https://suncoastroofing.com", phone: "(813) 555-0334" },
+    { clerkId: "demo_reseller_1", email: "natalie@growthpartners.co", name: "Natalie Torres", company: "Growth Partners Agency", role: "RESELLER" as const, industry: "Marketing Agency", website: "https://growthpartners.co", phone: "(646) 555-0411" },
+    { clerkId: "demo_intern_1", email: "alex.rivera@university.edu", name: "Alex Rivera", role: "INTERN" as const, industry: "Student" },
+    { clerkId: "demo_client_active_3", email: "rachel@precisionhvac.net", name: "Rachel Nguyen", company: "Precision HVAC Solutions", role: "CLIENT" as const, industry: "HVAC", website: "https://precisionhvac.net", phone: "(972) 555-0589", locationCount: 2 },
+    { clerkId: "demo_client_prospect", email: "tom@capitalcitylaw.com", name: "Tom Brennan", company: "Capital City Law", role: "CLIENT" as const, industry: "Legal", website: "https://capitalcitylaw.com", phone: "(202) 555-0623" },
+  ]
+
+  const createdUsers: Record<string, string> = {}
+  for (const u of demoUsers) {
+    const existing = await prisma.user.findUnique({ where: { clerkId: u.clerkId } })
+    if (existing) {
+      createdUsers[u.clerkId] = existing.id
+      continue
+    }
+    const created = await prisma.user.create({ data: u })
+    createdUsers[u.clerkId] = created.id
+  }
+  console.log(`  ${Object.keys(createdUsers).length} users ready`)
+
+  // Fetch services for linking
+  const allServices = await prisma.serviceArm.findMany({ select: { id: true, slug: true, basePrice: true } })
+  const svcBySlug = Object.fromEntries(allServices.map((s) => [s.slug, s]))
+
+  // ============ DEMO DEALS ============
+
+  console.log("  Creating demo deals...")
+  const existingDeals = await prisma.deal.count()
+  if (existingDeals > 0) {
+    console.log(`  Deals already exist (${existingDeals}), skipping`)
+  } else {
+    const deals = [
+      { contactName: "Sarah Mitchell", contactEmail: "sarah@greenlawnpros.com", company: "GreenLawn Pros", industry: "Landscaping", stage: "ACTIVE_CLIENT" as const, value: 14940, mrr: 1245, priority: "HIGH" as const, source: "referral", leadScore: 92, leadScoreTier: "hot", userId: createdUsers["demo_client_active_1"], createdAt: daysAgo(78) },
+      { contactName: "Marcus Chen", contactEmail: "marcus@elitedentalgroup.com", company: "Elite Dental Group", industry: "Dental", stage: "ACTIVE_CLIENT" as const, value: 29880, mrr: 2490, priority: "HIGH" as const, source: "organic", leadScore: 88, leadScoreTier: "hot", userId: createdUsers["demo_client_active_2"], createdAt: daysAgo(65) },
+      { contactName: "Jessica Alvarez", contactEmail: "jessica@brightsideinsurance.com", company: "Brightside Insurance", industry: "Insurance", stage: "NEW_LEAD" as const, value: 0, mrr: 0, priority: "MEDIUM" as const, source: "ai_readiness_quiz", leadScore: 67, leadScoreTier: "warm", userId: createdUsers["demo_client_new"], createdAt: daysAgo(3) },
+      { contactName: "Derek Washington", contactEmail: "derek@suncoastroofing.com", company: "Suncoast Roofing", industry: "Roofing", stage: "CHURNED" as const, value: 2964, mrr: 0, priority: "LOW" as const, source: "cold_outbound", leadScore: 25, leadScoreTier: "cold", lostReason: "Budget constraints -- downsized operations", closedAt: daysAgo(12), userId: createdUsers["demo_client_churned"], createdAt: daysAgo(90) },
+      { contactName: "Rachel Nguyen", contactEmail: "rachel@precisionhvac.net", company: "Precision HVAC Solutions", industry: "HVAC", stage: "ACTIVE_CLIENT" as const, value: 7164, mrr: 597, priority: "MEDIUM" as const, source: "partner_referral", leadScore: 81, leadScoreTier: "hot", userId: createdUsers["demo_client_active_3"], createdAt: daysAgo(45) },
+      { contactName: "Tom Brennan", contactEmail: "tom@capitalcitylaw.com", company: "Capital City Law", industry: "Legal", stage: "DEMO_BOOKED" as const, value: 0, mrr: 0, priority: "HIGH" as const, source: "linkedin", leadScore: 74, leadScoreTier: "warm", userId: createdUsers["demo_client_prospect"], createdAt: daysAgo(8) },
+      { contactName: "Priya Sharma", contactEmail: "priya@apexmedspa.com", company: "Apex Med Spa", industry: "Med Spa", stage: "QUALIFIED" as const, value: 0, mrr: 0, priority: "HIGH" as const, source: "roi_calculator", leadScore: 82, leadScoreTier: "hot", createdAt: daysAgo(5) },
+      { contactName: "James Holloway", contactEmail: "james@tristateplumbing.com", company: "Tri-State Plumbing", industry: "Plumbing", stage: "PROPOSAL_SENT" as const, value: 0, mrr: 0, priority: "MEDIUM" as const, source: "cold_outbound", leadScore: 71, leadScoreTier: "warm", createdAt: daysAgo(14) },
+      { contactName: "Linda Park", contactEmail: "linda@harmonyvet.com", company: "Harmony Veterinary Clinic", industry: "Veterinary", stage: "NEGOTIATION" as const, value: 0, mrr: 0, priority: "HIGH" as const, source: "website_audit", leadScore: 78, leadScoreTier: "warm", createdAt: daysAgo(11) },
+      { contactName: "Carlos Mendez", contactEmail: "carlos@sunbeltfloors.com", company: "Sunbelt Flooring", industry: "Flooring", stage: "NEW_LEAD" as const, value: 0, mrr: 0, priority: "LOW" as const, source: "organic", leadScore: 34, leadScoreTier: "cold", createdAt: daysAgo(1) },
+      { contactName: "Angela Foster", contactEmail: "angela@bayareachiro.com", company: "Bay Area Chiropractic", industry: "Chiropractic", stage: "LOST" as const, value: 0, mrr: 0, priority: "LOW" as const, source: "cold_outbound", leadScore: 21, leadScoreTier: "cold", lostReason: "Went with competitor -- already using GoHighLevel in-house", closedAt: daysAgo(20), createdAt: daysAgo(42) },
+      { contactName: "Kevin Lam", contactEmail: "kevin@pacifictitle.com", company: "Pacific Title & Escrow", industry: "Real Estate", stage: "DEMO_BOOKED" as const, value: 0, mrr: 0, priority: "MEDIUM" as const, source: "referral", leadScore: 69, leadScoreTier: "warm", createdAt: daysAgo(6) },
+      { contactName: "Michelle Torres", contactEmail: "michelle@eliteaesthetics.com", company: "Elite Aesthetics", industry: "Med Spa", stage: "UPSELL_OPPORTUNITY" as const, value: 5964, mrr: 497, priority: "MEDIUM" as const, source: "organic", leadScore: 85, leadScoreTier: "hot", createdAt: daysAgo(55) },
+    ]
+
+    for (const d of deals) {
+      await prisma.deal.create({ data: d })
+    }
+    console.log(`  Created ${deals.length} deals`)
+  }
+
+  // ============ DEAL SERVICE ARMS ============
+
+  const dealList = await prisma.deal.findMany({ select: { id: true, contactEmail: true, stage: true } })
+  const dealByEmail = Object.fromEntries(dealList.map((d) => [d.contactEmail, d]))
+
+  const existingDealArms = await prisma.dealServiceArm.count()
+  if (existingDealArms === 0) {
+    console.log("  Linking services to deals...")
+    const dealServices = [
+      { email: "sarah@greenlawnpros.com", services: ["website-crm-chatbot", "cold-outbound", "seo-aeo"] },
+      { email: "marcus@elitedentalgroup.com", services: ["website-crm-chatbot", "voice-agents", "audience-targeting", "ai-content-engine"] },
+      { email: "rachel@precisionhvac.net", services: ["voice-agents"] },
+      { email: "james@tristateplumbing.com", services: ["cold-outbound", "pixel-intelligence"] },
+      { email: "linda@harmonyvet.com", services: ["website-crm-chatbot", "ai-content-engine"] },
+      { email: "michelle@eliteaesthetics.com", services: ["website-crm-chatbot"] },
+    ]
+
+    for (const ds of dealServices) {
+      const deal = dealByEmail[ds.email]
+      if (!deal) continue
+      for (const slug of ds.services) {
+        const svc = svcBySlug[slug]
+        if (!svc) continue
+        await prisma.dealServiceArm.create({
+          data: {
+            dealId: deal.id,
+            serviceArmId: svc.id,
+            tier: "growth",
+            monthlyPrice: svc.basePrice ?? 0,
+            status: deal.stage === "ACTIVE_CLIENT" ? "active" : "pending",
+            ...(deal.stage === "ACTIVE_CLIENT" ? { activatedAt: daysAgo(randomBetween(30, 60)) } : {}),
+          },
+        })
+      }
+    }
+  }
+
+  // ============ SUBSCRIPTIONS ============
+
+  console.log("  Creating demo subscriptions...")
+  const existingSubs = await prisma.subscription.count()
+  if (existingSubs > 0) {
+    console.log(`  Subscriptions already exist (${existingSubs}), skipping`)
+  } else {
+    const subs = [
+      { userId: createdUsers["demo_client_active_1"], slug: "website-crm-chatbot", tier: "growth", amount: 497, status: "ACTIVE" as const, fulfillment: "ACTIVE_MANAGED" as const, daysAgoCreated: 75 },
+      { userId: createdUsers["demo_client_active_1"], slug: "cold-outbound", tier: "growth", amount: 397, status: "ACTIVE" as const, fulfillment: "ACTIVE_MANAGED" as const, daysAgoCreated: 75 },
+      { userId: createdUsers["demo_client_active_1"], slug: "seo-aeo", tier: "starter", amount: 351, status: "ACTIVE" as const, fulfillment: "IN_PROGRESS" as const, daysAgoCreated: 30 },
+      { userId: createdUsers["demo_client_active_2"], slug: "website-crm-chatbot", tier: "enterprise", amount: 997, status: "ACTIVE" as const, fulfillment: "ACTIVE_MANAGED" as const, daysAgoCreated: 62 },
+      { userId: createdUsers["demo_client_active_2"], slug: "voice-agents", tier: "growth", amount: 597, status: "ACTIVE" as const, fulfillment: "ACTIVE_MANAGED" as const, daysAgoCreated: 62 },
+      { userId: createdUsers["demo_client_active_2"], slug: "audience-targeting", tier: "growth", amount: 497, status: "ACTIVE" as const, fulfillment: "IN_PROGRESS" as const, daysAgoCreated: 40 },
+      { userId: createdUsers["demo_client_active_2"], slug: "ai-content-engine", tier: "starter", amount: 197, status: "ACTIVE" as const, fulfillment: "PENDING_SETUP" as const, daysAgoCreated: 10 },
+      { userId: createdUsers["demo_client_active_3"], slug: "voice-agents", tier: "growth", amount: 597, status: "ACTIVE" as const, fulfillment: "ACTIVE_MANAGED" as const, daysAgoCreated: 42 },
+      { userId: createdUsers["demo_client_churned"], slug: "cold-outbound", tier: "starter", amount: 247, status: "CANCELLED" as const, fulfillment: "COMPLETED" as const, daysAgoCreated: 85, cancelReason: "Budget constraints" },
+      { userId: createdUsers["demo_client_active_1"], slug: "ai-content-engine", tier: "growth", amount: 397, status: "PAST_DUE" as const, fulfillment: "NEEDS_ATTENTION" as const, daysAgoCreated: 45 },
+    ]
+
+    for (const s of subs) {
+      const svc = svcBySlug[s.slug]
+      if (!svc || !s.userId) continue
+      await prisma.subscription.create({
+        data: {
+          userId: s.userId,
+          serviceArmId: svc.id,
+          tier: s.tier,
+          monthlyAmount: s.amount,
+          status: s.status,
+          fulfillmentStatus: s.fulfillment,
+          currentPeriodStart: daysAgo(30),
+          currentPeriodEnd: daysAgo(-1),
+          createdAt: daysAgo(s.daysAgoCreated),
+          ...("cancelReason" in s ? { cancelReason: s.cancelReason, cancelledAt: daysAgo(12) } : {}),
+        },
+      })
+    }
+    console.log(`  Created ${subs.length} subscriptions`)
+  }
+
+  // ============ FULFILLMENT TASKS ============
+
+  console.log("  Creating fulfillment tasks...")
+  const existingTasks = await prisma.fulfillmentTask.count()
+  if (existingTasks > 0) {
+    console.log(`  Tasks already exist (${existingTasks}), skipping`)
+  } else {
+    const subscriptions = await prisma.subscription.findMany({
+      where: { status: "ACTIVE" },
+      select: { id: true },
+      take: 6,
+    })
+
+    const taskTemplates = [
+      { title: "Configure DNS records", priority: "high", dueOffset: 2, status: "done" },
+      { title: "Build landing page wireframe", priority: "high", dueOffset: 5, status: "done" },
+      { title: "Set up CRM pipelines in GHL", priority: "high", dueOffset: -2, status: "in_progress" },
+      { title: "Configure AI chatbot training data", priority: "medium", dueOffset: -5, status: "todo" },
+      { title: "Launch cold email sequence A", priority: "high", dueOffset: 1, status: "done" },
+      { title: "Review and approve ad creatives", priority: "medium", dueOffset: -3, status: "todo" },
+      { title: "Set up call tracking numbers", priority: "high", dueOffset: -1, status: "in_progress" },
+      { title: "Import existing contact list", priority: "medium", dueOffset: 3, status: "done" },
+      { title: "Configure voice agent greeting script", priority: "high", dueOffset: -4, status: "todo" },
+      { title: "A/B test subject lines -- batch 2", priority: "low", dueOffset: -7, status: "todo" },
+      { title: "Weekly performance report -- send to client", priority: "medium", dueOffset: 1, status: "todo" },
+      { title: "Optimize SEO meta tags -- top 10 pages", priority: "medium", dueOffset: 0, status: "in_progress" },
+      { title: "Set up Google Business Profile", priority: "high", dueOffset: 7, status: "done" },
+      { title: "Review reputation monitoring alerts", priority: "low", dueOffset: -2, status: "todo" },
+      { title: "Configure Stripe billing for client", priority: "high", dueOffset: 1, status: "done" },
+      { title: "Deploy chatbot to production site", priority: "high", dueOffset: -6, status: "todo" },
+      { title: "Record onboarding walkthrough video", priority: "medium", dueOffset: -8, status: "todo" },
+      { title: "QA test voice agent call flow", priority: "high", dueOffset: -3, status: "in_progress" },
+      { title: "Audience segment analysis report", priority: "medium", dueOffset: -5, status: "todo" },
+      { title: "Client kickoff call -- follow-up notes", priority: "medium", dueOffset: 4, status: "done" },
+      { title: "Set up pixel tracking script", priority: "high", dueOffset: -1, status: "in_progress" },
+      { title: "Content calendar -- month 2 planning", priority: "low", dueOffset: -10, status: "todo" },
+      { title: "Review Google Ads campaign performance", priority: "medium", dueOffset: 2, status: "todo" },
+      { title: "Send NPS survey to active clients", priority: "low", dueOffset: -14, status: "todo" },
+      { title: "Fix broken form on contact page", priority: "high", dueOffset: 0, status: "in_progress" },
+    ]
+
+    for (let i = 0; i < taskTemplates.length; i++) {
+      const t = taskTemplates[i]
+      const sub = subscriptions[i % subscriptions.length]
+      if (!sub) continue
+      await prisma.fulfillmentTask.create({
+        data: {
+          subscriptionId: sub.id,
+          title: t.title,
+          status: t.status,
+          priority: t.priority,
+          dueDate: daysAgo(t.dueOffset),
+          ...(t.status === "done" ? { completedAt: daysAgo(Math.max(0, t.dueOffset + 1)) } : {}),
+        },
+      })
+    }
+    console.log(`  Created ${taskTemplates.length} fulfillment tasks`)
+  }
+
+  // ============ LEAD MAGNET SUBMISSIONS ============
+
+  console.log("  Creating lead magnet submissions...")
+  const existingSubmissions = await prisma.leadMagnetSubmission.count()
+  if (existingSubmissions > 0) {
+    console.log(`  Submissions already exist (${existingSubmissions}), skipping`)
+  } else {
+    const submissions = [
+      { type: "AI_READINESS_QUIZ" as const, email: "jessica@brightsideinsurance.com", name: "Jessica Alvarez", company: "Brightside Insurance", data: { industry: "Insurance", teamSize: "11-50", currentTools: ["email", "crm"], aiExperience: "beginner" }, results: { score: 42, readiness: "moderate", recommendations: ["ai-voice-agents", "cold-outbound"] }, score: 42, source: "google_ads", convertedToDeal: false, createdAt: daysAgo(3) },
+      { type: "ROI_CALCULATOR" as const, email: "priya@apexmedspa.com", name: "Priya Sharma", company: "Apex Med Spa", data: { monthlyRevenue: 85000, leadCost: 45, closeRate: 0.22, industry: "Med Spa" }, results: { projectedROI: 340, monthlyGain: 12750, paybackWeeks: 3 }, score: 82, source: "organic", convertedToDeal: true, createdAt: daysAgo(6) },
+      { type: "WEBSITE_AUDIT" as const, email: "tom@capitalcitylaw.com", name: "Tom Brennan", company: "Capital City Law", data: { url: "https://capitalcitylaw.com", industry: "Legal" }, results: { overallScore: 58, seoScore: 45, speedScore: 72, mobileScore: 61, issues: 14 }, score: 58, source: "linkedin", convertedToDeal: true, createdAt: daysAgo(9) },
+      { type: "AI_READINESS_QUIZ" as const, email: "carlos@sunbeltfloors.com", name: "Carlos Mendez", company: "Sunbelt Flooring", data: { industry: "Flooring", teamSize: "1-10", currentTools: ["email"], aiExperience: "none" }, results: { score: 28, readiness: "early", recommendations: ["website-crm-chatbot"] }, score: 28, source: "organic", convertedToDeal: false, createdAt: daysAgo(1) },
+      { type: "ROI_CALCULATOR" as const, email: "kevin@pacifictitle.com", name: "Kevin Lam", company: "Pacific Title & Escrow", data: { monthlyRevenue: 120000, leadCost: 65, closeRate: 0.18, industry: "Real Estate" }, results: { projectedROI: 280, monthlyGain: 16800, paybackWeeks: 4 }, score: 75, source: "referral", convertedToDeal: true, createdAt: daysAgo(7) },
+      { type: "WEBSITE_AUDIT" as const, email: "info@midwestmanufacturing.com", name: "Robert Kline", company: "Midwest Manufacturing Co", data: { url: "https://midwestmfg.com", industry: "Manufacturing" }, results: { overallScore: 34, seoScore: 22, speedScore: 48, mobileScore: 31, issues: 27 }, score: 34, source: "cold_outbound", convertedToDeal: false, createdAt: daysAgo(15) },
+      { type: "AI_READINESS_QUIZ" as const, email: "samantha@urbanfitgym.com", name: "Samantha Reed", company: "UrbanFit Gym", data: { industry: "Fitness", teamSize: "11-50", currentTools: ["crm", "social", "email"], aiExperience: "intermediate" }, results: { score: 71, readiness: "ready", recommendations: ["ai-content-engine", "audience-targeting"] }, score: 71, source: "instagram", convertedToDeal: false, createdAt: daysAgo(4) },
+    ]
+
+    for (const s of submissions) {
+      await prisma.leadMagnetSubmission.create({ data: s })
+    }
+    console.log(`  Created ${submissions.length} lead magnet submissions`)
+  }
+
+  // ============ SUPPORT TICKETS ============
+
+  console.log("  Creating support tickets...")
+  const existingTickets = await prisma.supportTicket.count()
+  if (existingTickets > 0) {
+    console.log(`  Tickets already exist (${existingTickets}), skipping`)
+  } else {
+    const tickets = [
+      { userId: createdUsers["demo_client_active_1"]!, subject: "Chatbot not responding on mobile", message: "Our AI chatbot widget is not loading on mobile Safari. It works fine on desktop Chrome. Can you investigate? This started about 2 days ago after a WordPress update.", status: "open", priority: "high", createdAt: daysAgo(2) },
+      { userId: createdUsers["demo_client_active_2"]!, subject: "Request to add new location", message: "We are opening a 6th location in San Jose next month. Can we get the same setup as our other locations? Need the voice agent configured for the new number too.", status: "in_progress", priority: "normal", createdAt: daysAgo(5) },
+      { userId: createdUsers["demo_client_active_3"]!, subject: "Monthly report questions", message: "I received the monthly performance report but I am not sure how to read the lead attribution section. Can someone walk me through it? Also, the call volume number seems lower than expected.", status: "open", priority: "normal", createdAt: daysAgo(1) },
+      { userId: createdUsers["demo_client_active_1"]!, subject: "Update cold email sender domain", message: "We purchased a new sending domain (greenlawnservice.com) and need to switch our outbound campaigns to use it. The old domain warmup is complete.", status: "resolved", priority: "normal", resolvedAt: daysAgo(3), createdAt: daysAgo(8) },
+      { userId: createdUsers["demo_client_active_2"]!, subject: "Billing question -- double charge", message: "I noticed two charges on our card this month for the AI Voice Agents subscription. One for $597 on the 1st and another for $597 on the 3rd. Can you look into this?", status: "resolved", priority: "high", resolvedAt: daysAgo(1), createdAt: daysAgo(4) },
+    ]
+
+    for (const t of tickets) {
+      if (!t.userId) continue
+      await prisma.supportTicket.create({ data: t })
+    }
+    console.log(`  Created ${tickets.length} support tickets`)
+  }
+
+  // ============ DEAL ACTIVITIES ============
+
+  console.log("  Creating deal activities...")
+  const existingActivities = await prisma.dealActivity.count()
+  if (existingActivities > 0) {
+    console.log(`  Activities already exist (${existingActivities}), skipping`)
+  } else {
+    const deals = await prisma.deal.findMany({ select: { id: true, contactEmail: true }, take: 15 })
+    const dealMap = Object.fromEntries(deals.map((d) => [d.contactEmail, d.id]))
+
+    type ActType = "EMAIL_SENT" | "CALL_MADE" | "DEMO_COMPLETED" | "STAGE_CHANGE" | "NOTE_ADDED" | "SUBSCRIPTION_CREATED" | "FORM_SUBMITTED" | "TASK_CREATED" | "PAYMENT_RECEIVED"
+    const activities: { dealEmail: string; type: ActType; detail: string; daysAgoCreated: number }[] = [
+      { dealEmail: "sarah@greenlawnpros.com", type: "FORM_SUBMITTED", detail: "Completed AI Readiness Quiz (score: 89)", daysAgoCreated: 80 },
+      { dealEmail: "sarah@greenlawnpros.com", type: "STAGE_CHANGE", detail: "NEW_LEAD -> QUALIFIED", daysAgoCreated: 79 },
+      { dealEmail: "sarah@greenlawnpros.com", type: "EMAIL_SENT", detail: "Sent introductory email with service overview", daysAgoCreated: 79 },
+      { dealEmail: "sarah@greenlawnpros.com", type: "CALL_MADE", detail: "Discovery call -- 22 min. Interested in website + outbound", daysAgoCreated: 77 },
+      { dealEmail: "sarah@greenlawnpros.com", type: "STAGE_CHANGE", detail: "QUALIFIED -> DEMO_BOOKED", daysAgoCreated: 77 },
+      { dealEmail: "sarah@greenlawnpros.com", type: "DEMO_COMPLETED", detail: "Full platform demo -- showed chatbot and cold outbound tools", daysAgoCreated: 75 },
+      { dealEmail: "sarah@greenlawnpros.com", type: "STAGE_CHANGE", detail: "DEMO_BOOKED -> PROPOSAL_SENT", daysAgoCreated: 74 },
+      { dealEmail: "sarah@greenlawnpros.com", type: "EMAIL_SENT", detail: "Sent proposal -- 3-service bundle at $1,245/mo", daysAgoCreated: 74 },
+      { dealEmail: "sarah@greenlawnpros.com", type: "STAGE_CHANGE", detail: "PROPOSAL_SENT -> ACTIVE_CLIENT", daysAgoCreated: 72 },
+      { dealEmail: "sarah@greenlawnpros.com", type: "SUBSCRIPTION_CREATED", detail: "Website + CRM + Chatbot ($497/mo)", daysAgoCreated: 72 },
+      { dealEmail: "sarah@greenlawnpros.com", type: "SUBSCRIPTION_CREATED", detail: "Cold Outbound Engine ($397/mo)", daysAgoCreated: 72 },
+      { dealEmail: "sarah@greenlawnpros.com", type: "PAYMENT_RECEIVED", detail: "First payment received -- $1,245.00", daysAgoCreated: 72 },
+      { dealEmail: "marcus@elitedentalgroup.com", type: "STAGE_CHANGE", detail: "NEW_LEAD -> ACTIVE_CLIENT (fast close)", daysAgoCreated: 65 },
+      { dealEmail: "marcus@elitedentalgroup.com", type: "SUBSCRIPTION_CREATED", detail: "Enterprise bundle -- 4 services at $2,490/mo", daysAgoCreated: 64 },
+      { dealEmail: "marcus@elitedentalgroup.com", type: "PAYMENT_RECEIVED", detail: "First payment received -- $2,490.00", daysAgoCreated: 64 },
+      { dealEmail: "marcus@elitedentalgroup.com", type: "NOTE_ADDED", detail: "Client wants voice agent configured for all 5 locations with unique greetings", daysAgoCreated: 60 },
+      { dealEmail: "marcus@elitedentalgroup.com", type: "TASK_CREATED", detail: "Set up 5 voice agent instances with location-specific routing", daysAgoCreated: 60 },
+      { dealEmail: "jessica@brightsideinsurance.com", type: "FORM_SUBMITTED", detail: "Completed AI Readiness Quiz (score: 42)", daysAgoCreated: 3 },
+      { dealEmail: "jessica@brightsideinsurance.com", type: "EMAIL_SENT", detail: "Auto-sent quiz results email with recommendations", daysAgoCreated: 3 },
+      { dealEmail: "tom@capitalcitylaw.com", type: "FORM_SUBMITTED", detail: "Requested website audit", daysAgoCreated: 9 },
+      { dealEmail: "tom@capitalcitylaw.com", type: "STAGE_CHANGE", detail: "NEW_LEAD -> QUALIFIED", daysAgoCreated: 8 },
+      { dealEmail: "tom@capitalcitylaw.com", type: "CALL_MADE", detail: "Intro call -- 15 min. Tom wants to improve SEO and add chatbot", daysAgoCreated: 8 },
+      { dealEmail: "tom@capitalcitylaw.com", type: "STAGE_CHANGE", detail: "QUALIFIED -> DEMO_BOOKED", daysAgoCreated: 7 },
+      { dealEmail: "derek@suncoastroofing.com", type: "STAGE_CHANGE", detail: "ACTIVE_CLIENT -> AT_RISK", daysAgoCreated: 25 },
+      { dealEmail: "derek@suncoastroofing.com", type: "CALL_MADE", detail: "Retention call -- Derek mentions budget issues", daysAgoCreated: 20 },
+      { dealEmail: "derek@suncoastroofing.com", type: "STAGE_CHANGE", detail: "AT_RISK -> CHURNED", daysAgoCreated: 12 },
+      { dealEmail: "derek@suncoastroofing.com", type: "NOTE_ADDED", detail: "Client churned due to budget -- downsized from 8 to 3 trucks. May revisit in Q4.", daysAgoCreated: 12 },
+      { dealEmail: "priya@apexmedspa.com", type: "FORM_SUBMITTED", detail: "Completed ROI Calculator (projected 340% ROI)", daysAgoCreated: 6 },
+      { dealEmail: "priya@apexmedspa.com", type: "STAGE_CHANGE", detail: "NEW_LEAD -> QUALIFIED", daysAgoCreated: 5 },
+      { dealEmail: "priya@apexmedspa.com", type: "EMAIL_SENT", detail: "Sent personalized outreach based on ROI results", daysAgoCreated: 5 },
+      { dealEmail: "james@tristateplumbing.com", type: "STAGE_CHANGE", detail: "QUALIFIED -> PROPOSAL_SENT", daysAgoCreated: 14 },
+      { dealEmail: "james@tristateplumbing.com", type: "EMAIL_SENT", detail: "Sent proposal -- cold outbound + pixel at $694/mo", daysAgoCreated: 14 },
+      { dealEmail: "james@tristateplumbing.com", type: "NOTE_ADDED", detail: "James wants to start with a 90-day pilot before committing annually", daysAgoCreated: 10 },
+      { dealEmail: "linda@harmonyvet.com", type: "DEMO_COMPLETED", detail: "Demo completed -- showed website builder and content engine", daysAgoCreated: 13 },
+      { dealEmail: "linda@harmonyvet.com", type: "STAGE_CHANGE", detail: "DEMO_BOOKED -> NEGOTIATION", daysAgoCreated: 11 },
+      { dealEmail: "linda@harmonyvet.com", type: "NOTE_ADDED", detail: "Linda comparing us vs. Scorpion. Differentiator: AI chatbot + content engine bundle", daysAgoCreated: 11 },
+    ]
+
+    for (const a of activities) {
+      const dealId = dealMap[a.dealEmail]
+      if (!dealId) continue
+      await prisma.dealActivity.create({
+        data: {
+          dealId,
+          type: a.type,
+          detail: a.detail,
+          createdAt: daysAgo(a.daysAgoCreated),
+        },
+      })
+    }
+    console.log(`  Created ${activities.length} deal activities`)
+  }
+
+  // ============ NOTIFICATIONS ============
+
+  console.log("  Creating notifications...")
+  const existingNotifs = await prisma.notification.count()
+  if (existingNotifs > 0) {
+    console.log(`  Notifications already exist (${existingNotifs}), skipping`)
+  } else {
+    const notifications = [
+      { type: "new_lead", title: "New Lead", message: "Jessica Alvarez from Brightside Insurance completed the AI Readiness Quiz", channel: "IN_APP" as const, read: false, sentAt: daysAgo(3) },
+      { type: "new_lead", title: "New Lead", message: "Carlos Mendez from Sunbelt Flooring visited the marketplace", channel: "IN_APP" as const, read: false, sentAt: daysAgo(1) },
+      { type: "deal_stage", title: "Deal Moved", message: "Tom Brennan (Capital City Law) moved to Demo Booked", channel: "IN_APP" as const, read: false, sentAt: daysAgo(7) },
+      { type: "payment", title: "Payment Received", message: "GreenLawn Pros -- monthly payment of $1,245.00 processed", channel: "IN_APP" as const, read: true, sentAt: daysAgo(2) },
+      { type: "payment", title: "Payment Received", message: "Elite Dental Group -- monthly payment of $2,490.00 processed", channel: "IN_APP" as const, read: true, sentAt: daysAgo(2) },
+      { type: "churn_alert", title: "Client Churned", message: "Suncoast Roofing cancelled their subscription -- budget constraints", channel: "IN_APP" as const, read: true, sentAt: daysAgo(12) },
+      { type: "task_overdue", title: "Overdue Task", message: "Weekly performance report for GreenLawn Pros is 1 day overdue", channel: "IN_APP" as const, read: false, sentAt: daysAgo(0) },
+      { type: "support_ticket", title: "New Support Ticket", message: "Sarah Mitchell: Chatbot not responding on mobile (HIGH priority)", channel: "IN_APP" as const, read: false, sentAt: daysAgo(2) },
+      { type: "deal_stage", title: "Deal Moved", message: "Priya Sharma (Apex Med Spa) qualified -- high ROI score", channel: "IN_APP" as const, read: false, sentAt: daysAgo(5) },
+      { type: "payment_failed", title: "Payment Past Due", message: "GreenLawn Pros -- AI Content Engine subscription payment failed", channel: "IN_APP" as const, read: false, sentAt: daysAgo(1) },
+      { type: "upsell", title: "Upsell Opportunity", message: "Elite Aesthetics showing interest in adding AI Voice Agents", channel: "IN_APP" as const, read: true, sentAt: daysAgo(8) },
+      { type: "new_lead", title: "New Lead", message: "Priya Sharma from Apex Med Spa completed the ROI Calculator", channel: "IN_APP" as const, read: true, sentAt: daysAgo(6) },
+    ]
+
+    for (const n of notifications) {
+      await prisma.notification.create({ data: n })
+    }
+    console.log(`  Created ${notifications.length} notifications`)
+  }
+
+  // ============ RESELLER REFERRAL ============
+
+  console.log("  Creating reseller referral...")
+  const existingReferrals = await prisma.referral.count()
+  if (existingReferrals > 0) {
+    console.log(`  Referrals already exist (${existingReferrals}), skipping`)
+  } else {
+    const resellerId = createdUsers["demo_reseller_1"]
+    if (resellerId) {
+      await prisma.referral.create({
+        data: {
+          referrerId: resellerId,
+          code: "GROWTH25",
+          tier: "RESELLER",
+          clicks: 142,
+          signups: 8,
+          conversions: 3,
+          totalEarned: 1867.50,
+          pendingPayout: 425.00,
+          landingPageSlug: "growth-partners",
+        },
+      })
+      console.log("  Created reseller referral")
+    }
+  }
+
+  // ============ INTERN PROFILE ============
+
+  console.log("  Creating intern profile...")
+  const existingInterns = await prisma.internProfile.count()
+  if (existingInterns > 0) {
+    console.log(`  Interns already exist (${existingInterns}), skipping`)
+  } else {
+    const internId = createdUsers["demo_intern_1"]
+    if (internId) {
+      await prisma.internProfile.create({
+        data: {
+          userId: internId,
+          role: "BDR",
+          status: "ACTIVE",
+          cohort: "Spring 2026",
+          tasksCompleted: 34,
+          revenueAttributed: 2450.00,
+          university: "University of Texas at Austin",
+          linkedIn: "https://linkedin.com/in/alexrivera",
+          startDate: daysAgo(60),
+          endDate: daysAgo(-30),
+        },
+      })
+      console.log("  Created intern profile")
+    }
+  }
+
+  console.log("\nSeed complete.")
 }
 
 main()
@@ -704,7 +1101,7 @@ main()
     await prisma.$disconnect()
   })
   .catch(async (e) => {
-    console.error(e)
+    console.error("Seed failed:", e)
     await prisma.$disconnect()
     process.exit(1)
   })

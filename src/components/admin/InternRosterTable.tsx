@@ -1,24 +1,24 @@
 "use client"
 
 import { useState } from "react"
-import { ChevronDown, ChevronUp } from "lucide-react"
+import { ChevronDown, ChevronUp, Check } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const ROLE_PILL: Record<string, string> = {
-  AI_BUILDER: "text-blue-400 bg-blue-500/10 border-blue-500/20",
-  BDR: "text-green-400 bg-green-500/10 border-green-500/20",
-  PM: "text-purple-400 bg-purple-500/10 border-purple-500/20",
-  COORDINATOR: "text-orange-400 bg-orange-500/10 border-orange-500/20",
+  AI_BUILDER: "text-blue-700 bg-blue-50 border-blue-200",
+  BDR: "text-green-700 bg-green-50 border-green-200",
+  PM: "text-purple-700 bg-purple-50 border-purple-200",
+  COORDINATOR: "text-orange-700 bg-orange-50 border-orange-200",
 }
 
 const STATUS_PILL: Record<string, string> = {
-  ACTIVE: "text-green-400 bg-green-500/10 border-green-500/20",
-  ONBOARDING: "text-yellow-400 bg-yellow-500/10 border-yellow-500/20",
-  PAUSED: "text-gray-400 bg-white/5 border-border",
-  COMPLETED: "text-blue-400 bg-blue-500/10 border-blue-500/20",
+  ACTIVE: "text-green-700 bg-green-50 border-green-200",
+  ONBOARDING: "text-yellow-700 bg-yellow-50 border-yellow-200",
+  PAUSED: "text-gray-600 bg-gray-100 border-gray-200",
+  COMPLETED: "text-blue-700 bg-blue-50 border-blue-200",
   APPLIED: "text-muted-foreground bg-muted border-border",
-  INTERVIEW: "text-amber-400 bg-amber-500/10 border-amber-500/20",
-  REJECTED: "text-red-400 bg-red-500/10 border-red-500/20",
+  INTERVIEW: "text-amber-700 bg-amber-50 border-amber-200",
+  REJECTED: "text-red-700 bg-red-50 border-red-200",
 }
 
 export interface InternRowTask {
@@ -51,10 +51,10 @@ export interface InternRow {
 
 const TASK_STATUS_COLOR: Record<string, string> = {
   TODO: "text-muted-foreground bg-muted border-border",
-  IN_PROGRESS: "text-yellow-400 bg-yellow-500/10 border-yellow-500/20",
-  IN_REVIEW: "text-blue-400 bg-blue-500/10 border-blue-500/20",
-  DONE: "text-green-400 bg-green-500/10 border-green-500/20",
-  BLOCKED: "text-red-400 bg-red-500/10 border-red-500/20",
+  IN_PROGRESS: "text-yellow-700 bg-yellow-50 border-yellow-200",
+  IN_REVIEW: "text-blue-700 bg-blue-50 border-blue-200",
+  DONE: "text-green-700 bg-green-50 border-green-200",
+  BLOCKED: "text-red-700 bg-red-50 border-red-200",
 }
 
 function TaskStatusBadge({ status }: { status: string }) {
@@ -152,7 +152,7 @@ export function InternRosterTable({ interns }: { interns: InternRow[] }) {
                       <span
                         className={cn(
                           "text-sm",
-                          daysSinceEOD > 1 ? "text-orange-400" : "text-green-400"
+                          daysSinceEOD > 1 ? "text-orange-600" : "text-green-600"
                         )}
                       >
                         {daysSinceEOD === 0 ? "Today" : `${daysSinceEOD}d ago`}
@@ -226,12 +226,12 @@ export function InternRosterTable({ interns }: { interns: InternRow[] }) {
                                     <p className="text-xs text-muted-foreground mb-1">{dateStr}</p>
                                     {completed.slice(0, 2).map((item, i) => (
                                       <p key={i} className="text-xs text-foreground flex items-start gap-1.5">
-                                        <span className="text-green-500 mt-0.5 flex-shrink-0">✓</span>
+                                        <Check className="h-3.5 w-3.5 text-green-600 mt-0.5 flex-shrink-0" />
                                         {item}
                                       </p>
                                     ))}
                                     {blockers.length > 0 && (
-                                      <p className="text-xs text-orange-400 mt-1">
+                                      <p className="text-xs text-orange-600 mt-1">
                                         Blocker: {blockers[0]}
                                       </p>
                                     )}

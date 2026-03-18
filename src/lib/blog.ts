@@ -1,24 +1,37 @@
+import fs from "fs"
+import path from "path"
+import matter from "gray-matter"
+
+const BLOG_DIR = path.join(process.cwd(), "content/blog")
+
+export interface BlogSection {
+  type: "h2" | "h3" | "p" | "ul" | "ol" | "blockquote" | "callout"
+  content: string | string[]
+  label?: string
+}
+
 export interface BlogPost {
   slug: string
   title: string
+  description: string
   excerpt: string
   date: string
   author: string
   category: string
   readTime: number
-  sections: BlogSection[]
+  image?: string
+  content?: string // MDX raw content
+  sections: BlogSection[] // legacy section-based content
+  source: "mdx" | "hardcoded"
 }
 
-export interface BlogSection {
-  type: "h2" | "h3" | "p" | "ul" | "ol" | "blockquote" | "callout"
-  content: string | string[]
-  label?: string // for callout
-}
+// ============ HARDCODED POSTS (legacy) ============
 
-const POSTS: BlogPost[] = [
+const HARDCODED_POSTS: Omit<BlogPost, "source">[] = [
   {
     slug: "ai-outbound-cold-email-2025",
     title: "Why AI-Powered Cold Email Converts 3x Better Than Manual Outreach in 2025",
+    description: "Traditional cold email is dead. Here's what actually works — and the exact AI infrastructure behind campaigns generating 10-15% reply rates.",
     excerpt: "Traditional cold email is dead. Here's what actually works — and the exact AI infrastructure behind campaigns generating 10-15% reply rates.",
     date: "2025-02-18",
     author: "AIMS Team",
@@ -121,6 +134,7 @@ const POSTS: BlogPost[] = [
   {
     slug: "what-is-aeo-answer-engine-optimization",
     title: "What Is Answer Engine Optimization (AEO) — And Why It Matters More Than SEO in 2025",
+    description: "ChatGPT, Perplexity, and Google's AI Overviews are changing how buyers find businesses. Here's how to make sure your company shows up when they ask.",
     excerpt: "ChatGPT, Perplexity, and Google's AI Overviews are changing how buyers find businesses. Here's how to make sure your company shows up when they ask.",
     date: "2025-02-10",
     author: "AIMS Team",
@@ -208,6 +222,7 @@ const POSTS: BlogPost[] = [
   {
     slug: "ai-readiness-checklist-small-business",
     title: "The AI Readiness Checklist: 10 Questions Every Small Business Should Answer Before Investing in AI",
+    description: "Before you spend a dollar on AI tools, answer these 10 questions. They'll tell you exactly where to start — and what to avoid.",
     excerpt: "Before you spend a dollar on AI tools, answer these 10 questions. They'll tell you exactly where to start — and what to avoid.",
     date: "2025-02-03",
     author: "AIMS Team",
@@ -288,16 +303,58 @@ const POSTS: BlogPost[] = [
   },
 ]
 
+// ============ MDX FILE-BASED POSTS ============
+
+function estimateReadTime(content: string): number {
+  const words = content.split(/\s+/).length
+  return Math.max(1, Math.round(words / 200))
+}
+
+function getMdxPosts(): BlogPost[] {
+  if (!fs.existsSync(BLOG_DIR)) return []
+
+  const files = fs.readdirSync(BLOG_DIR).filter((f) => f.endsWith(".mdx"))
+
+  return files.map((file) => {
+    const raw = fs.readFileSync(path.join(BLOG_DIR, file), "utf8")
+    const { data, content } = matter(raw)
+
+    return {
+      slug: file.replace(/\.mdx$/, ""),
+      title: data.title ?? "Untitled",
+      description: data.description ?? "",
+      excerpt: data.description ?? "",
+      date: data.date ?? "2026-01-01",
+      author: data.author ?? "AIMS Team",
+      category: data.category ?? "General",
+      readTime: estimateReadTime(content),
+      image: data.image,
+      content,
+      sections: [],
+      source: "mdx" as const,
+    }
+  })
+}
+
+// ============ PUBLIC API ============
+
 export function getAllPosts(): BlogPost[] {
-  return POSTS.sort(
+  const hardcoded: BlogPost[] = HARDCODED_POSTS.map((p) => ({
+    ...p,
+    source: "hardcoded" as const,
+  }))
+
+  const mdx = getMdxPosts()
+
+  return [...hardcoded, ...mdx].sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   )
 }
 
 export function getPostBySlug(slug: string): BlogPost | undefined {
-  return POSTS.find((p) => p.slug === slug)
+  return getAllPosts().find((p) => p.slug === slug)
 }
 
 export function getAllSlugs(): string[] {
-  return POSTS.map((p) => p.slug)
+  return getAllPosts().map((p) => p.slug)
 }

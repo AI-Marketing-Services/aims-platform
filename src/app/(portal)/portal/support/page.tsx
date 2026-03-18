@@ -10,7 +10,9 @@ import {
   Send,
   RefreshCw,
   ChevronDown,
+  LifeBuoy,
 } from "lucide-react"
+import { EmptyState } from "@/components/shared/EmptyState"
 
 // ─── Status config ────────────────────────────────────────────────────────────
 
@@ -315,12 +317,16 @@ export default function SupportPage() {
       <div className="space-y-3">
         <h2 className="text-sm font-semibold text-foreground">Your Tickets</h2>
         {tickets.length === 0 ? (
-          <div className="rounded-2xl border border-border bg-card text-center py-16">
-            <MessageSquare className="w-10 h-10 mx-auto mb-3 text-muted-foreground opacity-30" />
-            <p className="font-medium text-foreground">No support tickets yet</p>
-            <p className="text-sm text-muted-foreground mt-1">
-              Open a ticket above and our team will respond within 2 hours.
-            </p>
+          <div className="rounded-2xl border border-border bg-card">
+            <EmptyState
+              icon={LifeBuoy}
+              title="No support tickets yet"
+              description="Open a ticket above and our team will respond within 2 business hours."
+              action={{
+                label: "New Ticket",
+                onClick: () => setShowNew(true),
+              }}
+            />
           </div>
         ) : (
           tickets.map((ticket) => {

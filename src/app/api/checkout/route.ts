@@ -113,11 +113,16 @@ export async function POST(req: Request) {
       unitAmount: number // in cents, from DB
     }[] = []
 
+    // Batch load all service arms + tiers to avoid N+1 queries
+    const slugs = items.map((i) => i.slug)
+    const serviceArms = await db.serviceArm.findMany({
+      where: { slug: { in: slugs } },
+      include: { tiers: true },
+    })
+    const serviceArmMap = new Map(serviceArms.map((s) => [s.slug, s]))
+
     for (const item of items) {
-      const serviceArm = await db.serviceArm.findUnique({
-        where: { slug: item.slug },
-        include: { tiers: true },
-      })
+      const serviceArm = serviceArmMap.get(item.slug)
 
       if (!serviceArm) {
         return NextResponse.json({ error: `Service not found: ${item.slug}` }, { status: 400 })
@@ -183,9 +188,9 @@ export async function POST(req: Request) {
       }
     })
 
-    const slugs    = resolvedItems.map((i) => i.slug).join(",")
-    const tierIds  = resolvedItems.map((i) => i.tierId ?? "").join(",")
-    const amounts  = resolvedItems.map((i) => i.unitAmount).join(",")
+    const slugsStr  = resolvedItems.map((i) => i.slug).join(",")
+    const tierIds   = resolvedItems.map((i) => i.tierId ?? "").join(",")
+    const amounts   = resolvedItems.map((i) => i.unitAmount).join(",")
 
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
       mode: "subscription",
@@ -197,7 +202,7 @@ export async function POST(req: Request) {
       customer_email: !stripeCustomerId ? customerEmail : undefined,
       metadata: {
         source: "cart",
-        slugs,
+        slugs: slugsStr,
         tierIds,
         amounts,
         ...(dbUserId ? { userId: dbUserId } : {}),
@@ -205,7 +210,7 @@ export async function POST(req: Request) {
       subscription_data: {
         metadata: {
           source: "cart",
-          slugs,
+          slugs: slugsStr,
           tierIds,
           amounts,
           ...(dbUserId ? { userId: dbUserId } : {}),

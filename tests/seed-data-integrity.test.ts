@@ -99,7 +99,21 @@ describe("Seed file integrity", () => {
 
   it("all status values are valid", () => {
     const statuses = seedContent.match(/status:\s*"([^"]+)"/g) ?? []
-    const validStatuses = ["ACTIVE", "BETA", "COMING_SOON", "DEPRECATED"]
+    const validStatuses = [
+      // ServiceStatus
+      "ACTIVE", "BETA", "COMING_SOON", "DEPRECATED", "INTERNAL_ONLY",
+      // SubStatus
+      "CANCELLED", "PAST_DUE", "PAUSED", "TRIALING",
+      // FulfillmentStatus
+      "PENDING_SETUP", "IN_PROGRESS", "ACTIVE_MANAGED", "NEEDS_ATTENTION", "COMPLETED", "ON_HOLD",
+      // FulfillmentTask / ticket status (lowercase)
+      "todo", "in_progress", "in_review", "done", "blocked",
+      "open", "resolved", "closed",
+      // InternStatus
+      "ONBOARDING",
+      // SprintGoal
+      "active",
+    ]
     for (const match of statuses) {
       const status = match.replace(/status:\s*"/, "").replace(/"$/, "")
       expect(validStatuses, `Invalid status: ${status}`).toContain(status)

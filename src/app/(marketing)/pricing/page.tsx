@@ -6,6 +6,10 @@ import { FinalCTA } from "@/components/marketing/FinalCTA"
 export const metadata: Metadata = {
   title: "Pricing — Transparent Plans Starting at $97/mo",
   description: "Simple, transparent pricing for AI-powered marketing and sales infrastructure. No long-term contracts.",
+  openGraph: {
+    title: "Pricing | AIMS",
+    description: "Simple, transparent pricing for AI-powered marketing and sales infrastructure. No long-term contracts.",
+  },
 }
 
 export default function PricingPage() {

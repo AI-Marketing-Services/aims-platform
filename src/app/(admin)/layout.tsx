@@ -17,10 +17,10 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-gray-50 text-gray-900">
       {/* Mobile top header — only visible on mobile */}
-      <div className="lg:hidden flex items-center justify-between h-14 px-4 bg-background border-b border-border sticky top-0 z-40">
-        <span className="text-base font-bold tracking-tight text-foreground">AIMS Admin</span>
+      <div className="lg:hidden flex items-center justify-between h-14 px-4 bg-white border-b border-gray-200 sticky top-0 z-40">
+        <span className="text-base font-bold tracking-tight text-gray-900">AIMS Admin</span>
         <div className="flex items-center gap-2">
           {/* Notification bell or user avatar can go here */}
         </div>

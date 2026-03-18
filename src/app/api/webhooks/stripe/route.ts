@@ -88,32 +88,46 @@ export async function POST(req: Request) {
         await db.user.update({
           where: { id: userId },
           data: { stripeCustomerId: session.customer as string },
-        }).catch(() => {})
+        }).catch((err) => console.error(`Failed to update stripeCustomerId for user ${userId}:`, err))
 
         // Parse cart items from metadata
         const slugsArr = (session.metadata?.slugs ?? "").split(",").filter(Boolean)
         const tierIdsArr = (session.metadata?.tierIds ?? "").split(",")
         const amountsArr = (session.metadata?.amounts ?? "").split(",").map(Number)
 
+        // Idempotency: if subscription records already exist for this Stripe subscription, skip
+        const existingSub = await db.subscription.findUnique({
+          where: { stripeSubId: session.subscription as string },
+        })
+        if (existingSub) {
+          console.log(`Subscription ${session.subscription} already exists, skipping duplicate cart processing`)
+          break
+        }
+
         const user = await db.user.findUnique({ where: { id: userId } })
+
+        // Batch load all service arms + tiers to avoid N+1 queries
+        const allServiceArms = await db.serviceArm.findMany({
+          where: { slug: { in: slugsArr } },
+          include: { tiers: true },
+        })
+        const serviceArmMap = new Map(allServiceArms.map((s) => [s.slug, s]))
 
         for (let i = 0; i < slugsArr.length; i++) {
           const slug = slugsArr[i]
           const tierId = tierIdsArr[i] || undefined
           const monthlyAmount = (amountsArr[i] ?? 0) / 100
 
-          const serviceArm = await db.serviceArm.findUnique({ where: { slug } })
+          const serviceArm = serviceArmMap.get(slug)
           if (!serviceArm) {
             console.warn(`No service arm found for slug: ${slug}`)
             continue
           }
 
-          // Resolve tier name from DB
+          // Resolve tier name from map
           let tierName: string | undefined
           if (tierId) {
-            const tier = await db.serviceTier.findFirst({
-              where: { serviceArmId: serviceArm.id, slug: tierId },
-            })
+            const tier = serviceArm.tiers.find((t) => t.slug === tierId)
             tierName = tier?.name
           }
 
@@ -132,9 +146,8 @@ export async function POST(req: Request) {
               currentPeriodStart: new Date(),
               currentPeriodEnd: new Date(Date.now() + 30 * 86400000),
             },
-          }).catch((e) => {
-            // May already exist from subscription.created event — that's fine
-            if (!e.message?.includes("Unique constraint")) console.error(e)
+          }).catch((err) => {
+            console.error(`Failed to create subscription for ${slug} (stripeSubId: ${session.subscription}):`, err)
             return null
           })
 
@@ -201,7 +214,7 @@ export async function POST(req: Request) {
                 status: "active",
                 activatedAt: new Date(),
               },
-            }).catch(() => {})
+            }).catch((err) => console.error(`Failed to create dealServiceArm for deal ${deal.id}:`, err))
           }
 
           // Notifications + welcome email + post-purchase sequence for first item only
@@ -246,6 +259,15 @@ export async function POST(req: Request) {
 
         const serviceArm = await db.serviceArm.findUnique({ where: { slug: serviceArmSlug } })
         if (!serviceArm) break
+
+        // Idempotency: check if subscription already exists before creating
+        const existingLegacySub = await db.subscription.findUnique({
+          where: { stripeSubId: sub.id },
+        })
+        if (existingLegacySub) {
+          console.log(`Subscription ${sub.id} already exists, skipping duplicate creation`)
+          break
+        }
 
         const amount = (sub.items.data[0]?.price?.unit_amount ?? 0) / 100
 

@@ -1,6 +1,14 @@
 const ASANA_BASE = "https://app.asana.com/api/1.0";
-const PAT = process.env.ASANA_PAT!;
-const WORKSPACE_GID = process.env.ASANA_WORKSPACE_GID!;
+const PAT = process.env.ASANA_PAT;
+const WORKSPACE_GID = process.env.ASANA_WORKSPACE_GID;
+
+function isConfigured(): boolean {
+  if (!PAT || !WORKSPACE_GID) {
+    console.warn("[Asana] Missing ASANA_PAT or ASANA_WORKSPACE_GID — skipping Asana API call");
+    return false;
+  }
+  return true;
+}
 
 function asanaHeaders() {
   return {
@@ -33,11 +41,13 @@ async function asanaPost(path: string, body: object) {
 }
 
 export async function listWorkspaceUsers(): Promise<Array<{ gid: string; name: string; email: string }>> {
+  if (!isConfigured()) return [];
   const data = await asanaGet(`/workspaces/${WORKSPACE_GID}/users?opt_fields=gid,name,email`);
   return data.data ?? [];
 }
 
 export async function listWorkspaceProjects(): Promise<Array<{ gid: string; name: string }>> {
+  if (!isConfigured()) return [];
   const data = await asanaGet(`/projects?workspace=${WORKSPACE_GID}&opt_fields=gid,name&limit=100`);
   return data.data ?? [];
 }
@@ -52,6 +62,8 @@ export interface CreateTaskParams {
 }
 
 export async function createAsanaTask(params: CreateTaskParams) {
+  if (!isConfigured()) return null;
+
   const task = await asanaPost("/tasks", {
     name: params.name,
     notes: params.notes,
@@ -95,6 +107,8 @@ export interface FulfillmentContext {
 }
 
 export async function createFulfillmentTask(ctx: FulfillmentContext) {
+  if (!isConfigured()) return null;
+
   const taskName = ctx.asanaTaskTemplate?.name
     ? ctx.asanaTaskTemplate.name
         .replace("{{client}}", ctx.clientName)

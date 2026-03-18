@@ -72,9 +72,9 @@ export function SubmissionsByTypeChart({
           contentStyle={{
             fontSize: 12,
             borderRadius: 8,
-            background: "#1a1d24",
-            border: "1px solid #2a2d35",
-            color: "#e2e8f0",
+            background: "#ffffff",
+            border: "1px solid #e5e7eb",
+            color: "#111827",
           }}
           formatter={(v: number) => [v, "Submissions"]}
         />
@@ -127,9 +127,9 @@ export function SubmissionsOverTimeChart({
           contentStyle={{
             fontSize: 12,
             borderRadius: 8,
-            background: "#1a1d24",
-            border: "1px solid #2a2d35",
-            color: "#e2e8f0",
+            background: "#ffffff",
+            border: "1px solid #e5e7eb",
+            color: "#111827",
           }}
           formatter={(v: number) => [v, "Submissions"]}
         />
@@ -173,9 +173,9 @@ export function VendorComparisonChart({
           contentStyle={{
             fontSize: 12,
             borderRadius: 8,
-            background: "#1a1d24",
-            border: "1px solid #2a2d35",
-            color: "#e2e8f0",
+            background: "#ffffff",
+            border: "1px solid #e5e7eb",
+            color: "#111827",
           }}
           formatter={(v: number, name: string) => [
             `$${v.toLocaleString()}/mo`,

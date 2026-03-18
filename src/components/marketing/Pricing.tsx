@@ -180,7 +180,7 @@ export function Pricing() {
                         : "border border-border text-foreground hover:bg-secondary"
                     }`}
                   >
-                    {inCart ? "Added to Cart ✓" : <><ShoppingCart className="w-3.5 h-3.5" /> {tier.cta}</>}
+                    {inCart ? <><Check className="w-3.5 h-3.5" /> Added to Cart</> : <><ShoppingCart className="w-3.5 h-3.5" /> {tier.cta}</>}
                   </button>
                 )
               })()}

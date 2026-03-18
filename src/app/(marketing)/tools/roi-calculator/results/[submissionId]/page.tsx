@@ -142,6 +142,57 @@ export default async function ROIResultsPage({ params }: Props) {
           </div>
         </div>
 
+        {/* Start Saving — Recommended Services */}
+        <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-6 shadow-sm">
+          <h3 className="font-semibold text-gray-900 mb-1">Start Saving — Recommended Services</h3>
+          <p className="text-sm text-gray-500 mb-4">These AIMS services deliver the fastest path to capturing your ${monthlySavings.toLocaleString()}/mo in savings.</p>
+          <div className="space-y-3">
+            <div className="border border-gray-200 rounded-xl p-4 hover:border-gray-300 transition-colors">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1">
+                  <h4 className="font-semibold text-gray-900 text-sm">Cold Outbound Engine</h4>
+                  <p className="text-xs text-gray-500 mt-1">Automated outbound sends thousands of personalized emails monthly, filling your pipeline without adding headcount.</p>
+                  <p className="text-xs text-gray-400 mt-2">from $297/mo</p>
+                </div>
+                <Link href="/marketplace" className="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 bg-[#DC2626] text-white text-xs font-semibold rounded-lg hover:bg-[#B91C1C] transition-colors">
+                  View <ArrowRight className="w-3 h-3" />
+                </Link>
+              </div>
+            </div>
+            <div className="border border-gray-200 rounded-xl p-4 hover:border-gray-300 transition-colors">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1">
+                  <h4 className="font-semibold text-gray-900 text-sm">RevOps Pipeline Automation</h4>
+                  <p className="text-xs text-gray-500 mt-1">Systemize your sales process — automated follow-ups, deal routing, and pipeline dashboards that close revenue faster.</p>
+                  <p className="text-xs text-gray-400 mt-2">from $197/mo</p>
+                </div>
+                <Link href="/marketplace" className="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 bg-[#DC2626] text-white text-xs font-semibold rounded-lg hover:bg-[#B91C1C] transition-colors">
+                  View <ArrowRight className="w-3 h-3" />
+                </Link>
+              </div>
+            </div>
+            {hoursReclaimed > 20 && (
+              <div className="border border-gray-200 rounded-xl p-4 hover:border-gray-300 transition-colors">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1">
+                    <h4 className="font-semibold text-gray-900 text-sm">AI Voice Agents</h4>
+                    <p className="text-xs text-gray-500 mt-1">Reclaim {hoursReclaimed}+ hours per month — AI answers calls, qualifies leads, and books meetings without human intervention.</p>
+                    <p className="text-xs text-gray-400 mt-2">Custom pricing</p>
+                  </div>
+                  <Link href="/marketplace" className="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 bg-[#DC2626] text-white text-xs font-semibold rounded-lg hover:bg-[#B91C1C] transition-colors">
+                    View <ArrowRight className="w-3 h-3" />
+                  </Link>
+                </div>
+              </div>
+            )}
+          </div>
+          <div className="mt-4 text-center">
+            <Link href="/solutions" className="text-sm text-[#DC2626] hover:underline font-medium">
+              View all solution packages
+            </Link>
+          </div>
+        </div>
+
         {/* Share */}
         <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-6 shadow-sm">
           <h3 className="font-semibold text-gray-900 mb-1">Share your results</h3>

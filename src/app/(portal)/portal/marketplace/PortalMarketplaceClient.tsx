@@ -41,10 +41,10 @@ const PILLAR_TABS = [
 ]
 
 const PILLAR_PILL: Record<Pillar, string> = {
-  MARKETING: "bg-green-500/10 text-green-400 border-green-500/20",
-  SALES: "bg-blue-500/10 text-blue-400 border-blue-500/20",
-  OPERATIONS: "bg-orange-500/10 text-orange-400 border-orange-500/20",
-  FINANCE: "bg-purple-500/10 text-purple-400 border-purple-500/20",
+  MARKETING: "bg-green-50 text-green-700 border-green-200",
+  SALES: "bg-blue-50 text-blue-700 border-blue-200",
+  OPERATIONS: "bg-orange-50 text-orange-700 border-orange-200",
+  FINANCE: "bg-purple-50 text-purple-700 border-purple-200",
 }
 
 const TOOL_MAP: Record<string, { name: string; domain: string }[]> = {
@@ -298,7 +298,7 @@ export function PortalMarketplaceClient({ services, subscribedIds, subscribedSer
                 {isSubscribed ? (
                   <Link
                     href={`/portal/services/${svc.id}`}
-                    className="w-full flex items-center justify-center gap-2 py-2.5 bg-white/5 text-foreground text-xs font-medium rounded-lg hover:bg-white/10 transition-colors border border-border"
+                    className="w-full flex items-center justify-center gap-2 py-2.5 bg-gray-100 text-foreground text-xs font-medium rounded-lg hover:bg-gray-200 transition-colors border border-border"
                   >
                     View Service
                     <ArrowRight className="h-3.5 w-3.5" />

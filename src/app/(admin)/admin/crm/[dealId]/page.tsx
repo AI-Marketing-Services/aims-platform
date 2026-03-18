@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server"
 import { redirect, notFound } from "next/navigation"
 import { getDealById } from "@/lib/db/queries"
-import { ArrowLeft, DollarSign } from "lucide-react"
+import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { DealDetailClient } from "./DealDetailClient"
 
@@ -19,16 +19,16 @@ const STAGE_OPTIONS = [
 ]
 
 const STAGE_COLORS: Record<string, string> = {
-  NEW_LEAD: "text-gray-400 bg-muted border-border",
-  QUALIFIED: "text-blue-400 bg-blue-500/10 border-blue-500/20",
-  DEMO_BOOKED: "text-purple-400 bg-purple-500/10 border-purple-500/20",
-  PROPOSAL_SENT: "text-yellow-400 bg-yellow-500/10 border-yellow-500/20",
-  NEGOTIATION: "text-orange-400 bg-orange-500/10 border-orange-500/20",
-  ACTIVE_CLIENT: "text-green-400 bg-green-500/10 border-green-500/20",
-  UPSELL_OPPORTUNITY: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
-  AT_RISK: "text-red-400 bg-red-500/10 border-red-500/20",
-  CHURNED: "text-gray-500 bg-muted border-border",
-  LOST: "text-gray-600 bg-white/3 border-white/5",
+  NEW_LEAD: "text-gray-600 bg-gray-100 border-gray-200",
+  QUALIFIED: "text-blue-700 bg-blue-50 border-blue-200",
+  DEMO_BOOKED: "text-purple-700 bg-purple-50 border-purple-200",
+  PROPOSAL_SENT: "text-yellow-800 bg-yellow-50 border-yellow-200",
+  NEGOTIATION: "text-orange-700 bg-orange-50 border-orange-200",
+  ACTIVE_CLIENT: "text-green-700 bg-green-50 border-green-200",
+  UPSELL_OPPORTUNITY: "text-emerald-700 bg-emerald-50 border-emerald-200",
+  AT_RISK: "text-red-700 bg-red-50 border-red-200",
+  CHURNED: "text-gray-500 bg-gray-100 border-gray-200",
+  LOST: "text-gray-500 bg-gray-100 border-gray-200",
 }
 
 export default async function AdminDealDetailPage({ params }: { params: Promise<{ dealId: string }> }) {
@@ -59,46 +59,26 @@ export default async function AdminDealDetailPage({ params }: { params: Promise<
   const serviceArms = deal.serviceArms.map((sa) => ({
     id: sa.id,
     name: sa.serviceArm.name,
+    tier: sa.tier ?? null,
     monthlyPrice: sa.monthlyPrice ?? null,
     status: sa.status,
+    activatedAt: sa.activatedAt ? sa.activatedAt.toISOString() : null,
   }))
 
   const stageColor = STAGE_COLORS[deal.stage] ?? STAGE_COLORS.NEW_LEAD
   const stageLabel = STAGE_OPTIONS.find((s) => s.value === deal.stage)?.label ?? deal.stage
 
+  const daysInPipeline = Math.max(0, Math.floor((Date.now() - new Date(deal.createdAt).getTime()) / 86_400_000))
+
   return (
     <div className="max-w-7xl">
-      {/* Back */}
       <Link
         href="/admin/crm"
-        className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
+        className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors mb-6"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to CRM
       </Link>
-
-      {/* Header summary bar */}
-      <div className="flex items-center gap-4 mb-6 pb-4 border-b border-border">
-        <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#DC2626]/10 border border-[#DC2626]/20 text-[#DC2626] font-bold text-base flex-shrink-0">
-          {deal.contactName.charAt(0).toUpperCase()}
-        </div>
-        <div className="min-w-0 flex-1">
-          <h1 className="text-xl font-bold text-foreground leading-tight truncate">{deal.contactName}</h1>
-          {deal.company && <p className="text-sm text-muted-foreground">{deal.company}</p>}
-        </div>
-        <div className="flex items-center gap-2 flex-shrink-0">
-          <div className="flex items-center gap-1.5 text-sm">
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-            <span className="font-bold text-foreground">${deal.mrr.toLocaleString()}</span>
-            <span className="text-muted-foreground">/mo</span>
-          </div>
-          <span
-            className={`text-xs px-2 py-1 rounded-lg border font-medium ${stageColor}`}
-          >
-            {stageLabel}
-          </span>
-        </div>
-      </div>
 
       <DealDetailClient
         dealId={deal.id}
@@ -117,9 +97,13 @@ export default async function AdminDealDetailPage({ params }: { params: Promise<
         industry={deal.industry}
         closeLeadId={(deal as { closeLeadId?: string | null }).closeLeadId}
         leadScore={deal.leadScore}
+        leadScoreTier={deal.leadScoreTier}
         priority={deal.priority}
         assignedTo={deal.assignedTo}
         serviceArms={serviceArms}
+        value={deal.value}
+        mrr={deal.mrr}
+        daysInPipeline={daysInPipeline}
         source={deal.source}
         sourceDetail={deal.sourceDetail}
         channelTag={deal.channelTag}

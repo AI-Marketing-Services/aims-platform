@@ -38,7 +38,8 @@ export async function POST(req: Request) {
     })
 
     return NextResponse.json({ ok: true })
-  } catch {
+  } catch (err) {
+    console.error("Referral tracking failed:", err)
     return NextResponse.json({ error: "Internal error" }, { status: 500 })
   }
 }

@@ -22,11 +22,16 @@ export async function POST(req: Request) {
     }
   }
 
-  const user = await db.user.findUnique({ where: { clerkId } })
-  if (!user?.stripeCustomerId) {
-    return NextResponse.json({ error: "No billing account found" }, { status: 404 })
-  }
+  try {
+    const user = await db.user.findUnique({ where: { clerkId } })
+    if (!user?.stripeCustomerId) {
+      return NextResponse.json({ error: "No billing account found" }, { status: 404 })
+    }
 
-  const url = await getCustomerPortalUrl(user.stripeCustomerId, safeReturnUrl)
-  return NextResponse.json({ url })
+    const url = await getCustomerPortalUrl(user.stripeCustomerId, safeReturnUrl)
+    return NextResponse.json({ url })
+  } catch (err) {
+    console.error("Failed to create billing portal session:", err)
+    return NextResponse.json({ error: "Failed to create billing session" }, { status: 500 })
+  }
 }

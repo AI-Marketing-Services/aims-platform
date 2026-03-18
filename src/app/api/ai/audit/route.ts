@@ -33,13 +33,16 @@ const auditSchema = z.object({
     }, "URL must be a publicly accessible address"),
 })
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
-
 export async function POST(req: Request) {
   if (auditRatelimit) {
     const { success } = await auditRatelimit.limit(getIp(req))
     if (!success) return NextResponse.json({ error: "Too many requests" }, { status: 429 })
   }
+
+  if (!process.env.ANTHROPIC_API_KEY) {
+    return NextResponse.json({ error: "AI audit not configured" }, { status: 503 })
+  }
+  const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
   try {
     const body = await req.json()
@@ -58,6 +61,9 @@ export async function POST(req: Request) {
     let metaDesc = ""
 
     try {
+      if (!process.env.TAVILY_API_KEY) {
+        throw new Error("Tavily API key not configured — skipping extract")
+      }
       const extractRes = await fetch("https://api.tavily.com/extract", {
         method: "POST",
         headers: {
@@ -76,13 +82,16 @@ export async function POST(req: Request) {
         }
       }
       await logApiCost({ provider: "tavily", model: "extract", endpoint: "/extract", tokens: 0, cost: 0.02, serviceArm: "website-audit" }).catch(() => {})
-    } catch {
-      // Fallback — proceed with limited data
+    } catch (err) {
+      console.error("Tavily extract failed, proceeding with limited data:", err)
     }
 
     // 2. Search for company info + SEO signals
     let competitorContext = ""
     try {
+      if (!process.env.TAVILY_API_KEY) {
+        throw new Error("Tavily API key not configured — skipping search")
+      }
       const searchRes = await fetch("https://api.tavily.com/search", {
         method: "POST",
         headers: {
@@ -104,7 +113,9 @@ export async function POST(req: Request) {
           .join("\n") ?? ""
       }
       await logApiCost({ provider: "tavily", model: "search", endpoint: "/search", tokens: 0, cost: 0.01, serviceArm: "website-audit" }).catch(() => {})
-    } catch {}
+    } catch (err) {
+      console.error("Tavily search failed, proceeding without competitor context:", err)
+    }
 
     // 3. AI analysis
     const prompt = `You are an expert digital marketing and conversion rate optimization analyst. Audit the following website and return a JSON analysis.

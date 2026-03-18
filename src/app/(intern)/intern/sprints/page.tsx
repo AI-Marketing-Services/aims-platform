@@ -89,7 +89,7 @@ export default async function InternSprintsPage() {
             {activeGoal.tasks.map((task) => {
               const Icon = TASK_STATUS_ICON[task.status] ?? Clock
               return (
-                <div key={task.id} className="flex items-center gap-3 py-2 border-b border-white/5 last:border-0">
+                <div key={task.id} className="flex items-center gap-3 py-2 border-b border-gray-200 last:border-0">
                   <Icon className={cn("h-4 w-4 flex-shrink-0", TASK_STATUS_COLOR[task.status])} />
                   <span className={cn("text-sm flex-1", task.status === "DONE" ? "line-through text-muted-foreground" : "text-foreground")}>
                     {task.title}

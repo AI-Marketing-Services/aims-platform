@@ -7,13 +7,6 @@ export const metadata = { title: "Revenue" }
 
 const MRR_TARGET = 100_000
 
-// Hardcoded cost estimates per service arm slug
-const SERVICE_COSTS: Record<string, { label: string; cost: number }> = {
-  "ai-growth-engine": { label: "AI Growth Engine", cost: 150 },
-  "ai-sales-engine":  { label: "AI Sales Engine",  cost: 200 },
-  "ai-ops-engine":    { label: "AI Ops Engine",     cost: 100 },
-}
-
 export default async function AdminRevenuePage() {
   const { userId, sessionClaims } = await auth()
   if (!userId) redirect("/sign-in")
@@ -36,6 +29,12 @@ export default async function AdminRevenuePage() {
       },
     })
   } catch {}
+
+  // ── Service arm costs from DB ───────────────────────────────────────────
+  const serviceArms = await db.serviceArm.findMany({
+    select: { slug: true, name: true, deliveryCost: true },
+  })
+  const serviceCostMap = new Map(serviceArms.map(s => [s.slug, { label: s.name, cost: s.deliveryCost ?? 0 }]))
 
   // ── Active client deals (for channel breakdown) ────────────────────────────
   let activeDeals: { channelTag: string | null }[] = []
@@ -91,13 +90,13 @@ export default async function AdminRevenuePage() {
 
   // ── 10x Margin tracker ────────────────────────────────────────────────────
   const marginRows = revenueByService
-    .filter((s) => SERVICE_COSTS[s.slug])
+    .filter((s) => serviceCostMap.has(s.slug) && (serviceCostMap.get(s.slug)?.cost ?? 0) > 0)
     .map((s) => {
-      const cost = SERVICE_COSTS[s.slug].cost
+      const cost = serviceCostMap.get(s.slug)!.cost
       const margin = s.revenue > 0 ? s.revenue / cost : 0
       return {
         slug: s.slug,
-        label: SERVICE_COSTS[s.slug].label,
+        label: serviceCostMap.get(s.slug)!.label,
         revenue: s.revenue,
         cost,
         margin,
@@ -151,7 +150,7 @@ export default async function AdminRevenuePage() {
       <div className="bg-card border border-border rounded-xl p-6 mt-8">
         <h3 className="font-semibold text-foreground mb-1">10x Margin Tracker</h3>
         <p className="text-xs text-gray-500 mb-5">
-          Service revenue vs estimated delivery cost. Green = 10x+, Yellow = 5–10x, Red = below 5x.
+          Service revenue vs estimated delivery cost. Green = 10x+, Yellow = 5-10x, Red = below 5x.
         </p>
         {marginRows.length === 0 ? (
           <p className="text-gray-500 text-sm">No matched service data yet.</p>
@@ -167,30 +166,30 @@ export default async function AdminRevenuePage() {
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5">
+              <tbody className="divide-y divide-gray-100">
                 {marginRows.map((row) => {
                   const bg =
                     row.margin >= 10
-                      ? "bg-green-950/40"
+                      ? "bg-green-50"
                       : row.margin >= 5
-                      ? "bg-yellow-950/40"
+                      ? "bg-yellow-50"
                       : "bg-red-50"
                   const multipleColor =
                     row.margin >= 10
-                      ? "text-green-400"
+                      ? "text-green-600"
                       : row.margin >= 5
-                      ? "text-yellow-400"
-                      : "text-red-400"
+                      ? "text-yellow-600"
+                      : "text-red-600"
                   return (
                     <tr key={row.slug} className={bg}>
                       <td className="px-3 py-3 text-foreground font-medium">{row.label}</td>
-                      <td className="px-3 py-3 font-mono text-gray-300">
+                      <td className="px-3 py-3 font-mono text-gray-700">
                         ${row.revenue.toLocaleString()}/mo
                       </td>
                       <td className="px-3 py-3 font-mono text-gray-500">
                         ${row.cost}/mo
                       </td>
-                      <td className="px-3 py-3 font-mono text-gray-300">
+                      <td className="px-3 py-3 font-mono text-gray-700">
                         {row.revenue > 0
                           ? `${((row.revenue - row.cost) / row.revenue * 100).toFixed(0)}%`
                           : "—"}
@@ -207,18 +206,18 @@ export default async function AdminRevenuePage() {
         )}
 
         {/* Services not yet in the tracker */}
-        {Object.entries(SERVICE_COSTS)
-          .filter(([slug]) => !marginRows.find((r) => r.slug === slug))
+        {Array.from(serviceCostMap.entries())
+          .filter(([slug, { cost }]) => cost > 0 && !marginRows.find((r) => r.slug === slug))
           .length > 0 && (
           <div className="mt-4 pt-4 border-t border-border">
             <p className="text-xs text-gray-600 mb-2">Services with no active subscriptions:</p>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <tbody className="divide-y divide-white/5">
-                  {Object.entries(SERVICE_COSTS)
-                    .filter(([slug]) => !marginRows.find((r) => r.slug === slug))
+                <tbody className="divide-y divide-gray-100">
+                  {Array.from(serviceCostMap.entries())
+                    .filter(([slug, { cost }]) => cost > 0 && !marginRows.find((r) => r.slug === slug))
                     .map(([slug, { label, cost }]) => (
-                      <tr key={slug} className="bg-white/[0.01]">
+                      <tr key={slug} className="bg-gray-50">
                         <td className="px-3 py-2 text-gray-500">{label}</td>
                         <td className="px-3 py-2 font-mono text-gray-600">$0/mo</td>
                         <td className="px-3 py-2 font-mono text-gray-600">${cost}/mo</td>

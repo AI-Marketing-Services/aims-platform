@@ -342,6 +342,30 @@ export default function VendingpreneursPage() {
         </div>
       </section>
 
+      {/* Recommended Solution Package */}
+      <section className="py-16 px-4 bg-[#FAFAFA]">
+        <div className="max-w-3xl mx-auto">
+          <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm">
+            <p className="text-xs font-semibold uppercase tracking-wider text-[#DC2626] mb-2">Recommended Package</p>
+            <h2 className="text-2xl font-bold text-gray-900 mb-1">AI Growth Engine</h2>
+            <p className="text-sm text-gray-500 mb-4">The full-stack lead generation and conversion bundle designed for operators who want more locations without more hours. Website, outbound, voice agents, and SEO — all working together.</p>
+            <div className="flex flex-wrap gap-2 mb-5">
+              {["Website + CRM + Chatbot", "Cold Outbound Engine", "AI Voice Agents", "SEO/AEO"].map((s) => (
+                <span key={s} className="inline-flex items-center gap-1 px-2.5 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full">
+                  <Check className="w-3 h-3 text-green-600" />{s}
+                </span>
+              ))}
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-semibold text-gray-900">from $497/mo</span>
+              <Link href="/solutions" className="inline-flex items-center gap-1 text-sm text-[#DC2626] font-medium hover:underline">
+                View all solutions <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Social proof quote */}
       <section className="py-20 bg-background">
         <div className="mx-auto max-w-3xl px-4 text-center">

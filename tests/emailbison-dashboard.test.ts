@@ -133,7 +133,10 @@ describe("Admin global aggregation", () => {
   })
 
   it("handles null totals gracefully", () => {
-    const clients = [
+    const clients: Array<{
+      totals: { emailsSent: number; peopleContacted: number; replies: number; bounced: number } | null
+      campaigns: Array<{ id: number }>
+    }> = [
       { totals: null, campaigns: [] },
       { totals: null, campaigns: [] },
     ]

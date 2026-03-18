@@ -136,7 +136,7 @@ describe("Checkout route security", () => {
     // Should NOT accept price/amount from client
     expect(content).toContain("never trust client")
     // Should resolve from DB
-    expect(content).toContain("db.serviceArm.findUnique")
+    expect(content).toContain("db.serviceArm.findMany")
   })
 
   it("checkout route validates redirect URLs", () => {

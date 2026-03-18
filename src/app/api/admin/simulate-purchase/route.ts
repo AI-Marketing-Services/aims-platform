@@ -35,86 +35,91 @@ export async function POST(req: Request) {
 
   const { serviceArmId, tier, clientName, clientEmail, monthlyAmount } = parsed.data
 
-  // Find or create user
-  let user = await db.user.findUnique({ where: { email: clientEmail } })
-  if (!user) {
-    user = await db.user.create({
+  try {
+    // Find or create user
+    let user = await db.user.findUnique({ where: { email: clientEmail } })
+    if (!user) {
+      user = await db.user.create({
+        data: {
+          clerkId: `simulated_${Date.now()}`,
+          email: clientEmail,
+          name: clientName,
+          role: "CLIENT",
+        },
+      })
+    }
+
+    // Create subscription
+    const subscription = await db.subscription.create({
       data: {
-        clerkId: `simulated_${Date.now()}`,
-        email: clientEmail,
-        name: clientName,
-        role: "CLIENT",
+        userId: user.id,
+        serviceArmId,
+        tier,
+        monthlyAmount,
+        status: "ACTIVE",
+        fulfillmentStatus: "PENDING_SETUP",
       },
     })
-  }
 
-  // Create subscription
-  const subscription = await db.subscription.create({
-    data: {
+    // Generate onboarding tasks
+    await generateOnboardingTasks({
+      id: subscription.id,
       userId: user.id,
       serviceArmId,
       tier,
-      monthlyAmount,
-      status: "ACTIVE",
-      fulfillmentStatus: "PENDING_SETUP",
-    },
-  })
+    })
 
-  // Generate onboarding tasks
-  await generateOnboardingTasks({
-    id: subscription.id,
-    userId: user.id,
-    serviceArmId,
-    tier,
-  })
-
-  // Create a deal as ACTIVE_CLIENT
-  const serviceArm = await db.serviceArm.findUnique({ where: { id: serviceArmId }, select: { name: true } })
-  const deal = await db.deal.create({
-    data: {
-      contactName: clientName,
-      contactEmail: clientEmail,
-      stage: "ACTIVE_CLIENT",
-      source: "simulate-purchase",
-      sourceDetail: `Simulated purchase of ${serviceArm?.name ?? "service"}`,
-      mrr: monthlyAmount,
-      value: monthlyAmount,
-    },
-  })
-
-  // Count tasks created
-  const taskCount = await db.fulfillmentTask.count({ where: { subscriptionId: subscription.id } })
-
-  // Fire notification
-  let notificationId: string | null = null
-  try {
-    const notif = await db.notification.create({
+    // Create a deal as ACTIVE_CLIENT
+    const serviceArm = await db.serviceArm.findUnique({ where: { id: serviceArmId }, select: { name: true } })
+    const deal = await db.deal.create({
       data: {
-        type: "new_purchase",
-        title: `[SIMULATED] New Purchase — ${serviceArm?.name ?? "Service"}`,
-        message: `${clientName} (${clientEmail}) subscribed at $${monthlyAmount}/mo`,
-        channel: "IN_APP",
+        contactName: clientName,
+        contactEmail: clientEmail,
+        stage: "ACTIVE_CLIENT",
+        source: "simulate-purchase",
+        sourceDetail: `Simulated purchase of ${serviceArm?.name ?? "service"}`,
+        mrr: monthlyAmount,
+        value: monthlyAmount,
       },
     })
-    notificationId = notif.id
-    await notifyNewPurchase({
-      clientName,
-      serviceName: `[SIMULATED] ${serviceArm?.name ?? "service"}`,
-      amount: monthlyAmount,
-      userId: user.id,
-    }).catch((err) => console.error("Notification failed:", err))
-  } catch (err) {
-    console.error("Failed to create simulation notification:", err)
-  }
 
-  return NextResponse.json({
-    success: true,
-    userId: user.id,
-    subscriptionId: subscription.id,
-    dealId: deal.id,
-    taskCount,
-    notificationId,
-    serviceName: serviceArm?.name,
-    message: `Onboarding tasks generated for ${clientName}`,
-  }, { status: 201 })
+    // Count tasks created
+    const taskCount = await db.fulfillmentTask.count({ where: { subscriptionId: subscription.id } })
+
+    // Fire notification
+    let notificationId: string | null = null
+    try {
+      const notif = await db.notification.create({
+        data: {
+          type: "new_purchase",
+          title: `[SIMULATED] New Purchase — ${serviceArm?.name ?? "Service"}`,
+          message: `${clientName} (${clientEmail}) subscribed at $${monthlyAmount}/mo`,
+          channel: "IN_APP",
+        },
+      })
+      notificationId = notif.id
+      await notifyNewPurchase({
+        clientName,
+        serviceName: `[SIMULATED] ${serviceArm?.name ?? "service"}`,
+        amount: monthlyAmount,
+        userId: user.id,
+      }).catch((err) => console.error("Simulate-purchase notification delivery failed:", err))
+    } catch (err) {
+      console.error("Failed to create simulation notification:", err)
+    }
+
+    return NextResponse.json({
+      success: true,
+      userId: user.id,
+      subscriptionId: subscription.id,
+      dealId: deal.id,
+      taskCount,
+      notificationId,
+      serviceName: serviceArm?.name,
+      message: `Onboarding tasks generated for ${clientName}`,
+    }, { status: 201 })
+  } catch (err) {
+    console.error("Simulate purchase failed:", err)
+    return NextResponse.json({ error: "Failed to simulate purchase" }, { status: 500 })
+  }
 }

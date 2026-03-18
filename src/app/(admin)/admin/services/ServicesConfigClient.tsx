@@ -115,10 +115,10 @@ export default function ServicesConfigClient() {
           <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-400">
             {pillar.replace(/_/g, " ")}
           </h2>
-          <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
+          <div className="overflow-hidden rounded-xl border border-border bg-card">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-100 bg-gray-50 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
+                <tr className="border-b border-gray-100 bg-muted text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
                   <th className="px-4 py-3">Service</th>
                   <th className="px-4 py-3">CTA URL</th>
                   <th className="px-4 py-3">Asana Project</th>
@@ -154,7 +154,7 @@ export default function ServicesConfigClient() {
                               placeholder="https://..."
                               value={(getVal(svc, "ctaUrl") as string) ?? ""}
                               onChange={(e) => setEdit(svc.id, "ctaUrl", e.target.value)}
-                              className="w-48 rounded-md border border-gray-200 px-2.5 py-1.5 text-xs focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+                              className="w-48 rounded-md border border-gray-200 px-2.5 py-1.5 text-xs focus:border-[#DC2626] focus:outline-none focus:ring-1 focus:ring-[#DC2626]/20"
                             />
                             {getVal(svc, "ctaUrl") && (
                               <a href={getVal(svc, "ctaUrl") as string} target="_blank" rel="noopener noreferrer">
@@ -169,7 +169,7 @@ export default function ServicesConfigClient() {
                           <select
                             value={(getVal(svc, "asanaProjectGid") as string) ?? ""}
                             onChange={(e) => setEdit(svc.id, "asanaProjectGid", e.target.value)}
-                            className="w-48 rounded-md border border-gray-200 px-2.5 py-1.5 text-xs focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+                            className="w-48 rounded-md border border-gray-200 px-2.5 py-1.5 text-xs focus:border-[#DC2626] focus:outline-none focus:ring-1 focus:ring-[#DC2626]/20"
                           >
                             <option value="">— No project —</option>
                             {projects.map((p) => (
@@ -183,7 +183,7 @@ export default function ServicesConfigClient() {
                           <select
                             value={(getVal(svc, "asanaAssigneeGid") as string) ?? ""}
                             onChange={(e) => setEdit(svc.id, "asanaAssigneeGid", e.target.value)}
-                            className="w-44 rounded-md border border-gray-200 px-2.5 py-1.5 text-xs focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+                            className="w-44 rounded-md border border-gray-200 px-2.5 py-1.5 text-xs focus:border-[#DC2626] focus:outline-none focus:ring-1 focus:ring-[#DC2626]/20"
                           >
                             <option value="">— Unassigned —</option>
                             {users.map((u) => (
@@ -209,7 +209,7 @@ export default function ServicesConfigClient() {
 
                       {/* Expanded: Task Template */}
                       {isExpanded && (
-                        <tr key={`${svc.id}-expanded`} className="bg-green-50">
+                        <tr key={`${svc.id}-expanded`} className="bg-muted">
                           <td colSpan={5} className="px-4 py-4">
                             <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500">
                               Asana Task Template <span className="ml-2 font-normal normal-case text-gray-400">Variables: {"{{client}}"}, {"{{service}}"}, {"{{tier}}"}, {"{{email}}"}, {"{{amount}}"}</span>
@@ -222,7 +222,7 @@ export default function ServicesConfigClient() {
                                   placeholder="New Client: {{client}} — {{service}}"
                                   value={template?.name ?? ""}
                                   onChange={(e) => setEdit(svc.id, "asanaTaskTemplate", { ...template, name: e.target.value })}
-                                  className="w-full rounded-md border border-gray-200 px-2.5 py-1.5 text-xs focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+                                  className="w-full rounded-md border border-gray-200 px-2.5 py-1.5 text-xs focus:border-[#DC2626] focus:outline-none focus:ring-1 focus:ring-[#DC2626]/20"
                                 />
                               </div>
                               <div>
@@ -232,7 +232,7 @@ export default function ServicesConfigClient() {
                                   placeholder={"Client: {{client}}\nEmail: {{email}}\nService: {{service}}"}
                                   value={template?.notes ?? ""}
                                   onChange={(e) => setEdit(svc.id, "asanaTaskTemplate", { ...template, notes: e.target.value })}
-                                  className="w-full rounded-md border border-gray-200 px-2.5 py-1.5 text-xs focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+                                  className="w-full rounded-md border border-gray-200 px-2.5 py-1.5 text-xs focus:border-[#DC2626] focus:outline-none focus:ring-1 focus:ring-[#DC2626]/20"
                                 />
                               </div>
                               <div>
@@ -245,7 +245,7 @@ export default function ServicesConfigClient() {
                                     ...template,
                                     subtasks: e.target.value.split("\n").filter(Boolean),
                                   })}
-                                  className="w-full rounded-md border border-gray-200 px-2.5 py-1.5 text-xs focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+                                  className="w-full rounded-md border border-gray-200 px-2.5 py-1.5 text-xs focus:border-[#DC2626] focus:outline-none focus:ring-1 focus:ring-[#DC2626]/20"
                                 />
                               </div>
                             </div>

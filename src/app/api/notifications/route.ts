@@ -22,16 +22,21 @@ export async function GET(req: Request) {
 
   const whereClause = isAdmin ? {} : { userId: dbUserId }
 
-  const [notifications, unreadCount] = await Promise.all([
-    db.notification.findMany({
-      where: whereClause,
-      orderBy: { sentAt: "desc" },
-      take: limit,
-    }),
-    db.notification.count({
-      where: { ...whereClause, read: false },
-    }),
-  ])
+  try {
+    const [notifications, unreadCount] = await Promise.all([
+      db.notification.findMany({
+        where: whereClause,
+        orderBy: { sentAt: "desc" },
+        take: limit,
+      }),
+      db.notification.count({
+        where: { ...whereClause, read: false },
+      }),
+    ])
 
-  return NextResponse.json({ notifications, unreadCount })
+    return NextResponse.json({ notifications, unreadCount })
+  } catch (err) {
+    console.error("Failed to fetch notifications:", err)
+    return NextResponse.json({ error: "Failed to fetch notifications" }, { status: 500 })
+  }
 }

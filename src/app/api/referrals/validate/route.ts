@@ -8,19 +8,24 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Missing code" }, { status: 400 })
   }
 
-  const referral = await db.referral.findUnique({
-    where: { code },
-    select: {
-      code: true,
-      tier: true,
-      landingPageSlug: true,
-      referrer: { select: { name: true, company: true } },
-    },
-  })
+  try {
+    const referral = await db.referral.findUnique({
+      where: { code },
+      select: {
+        code: true,
+        tier: true,
+        landingPageSlug: true,
+        referrer: { select: { name: true, company: true } },
+      },
+    })
 
-  if (!referral) {
-    return NextResponse.json({ valid: false }, { status: 404 })
+    if (!referral) {
+      return NextResponse.json({ valid: false }, { status: 404 })
+    }
+
+    return NextResponse.json({ valid: true, referral })
+  } catch (err) {
+    console.error("Referral validation failed:", err)
+    return NextResponse.json({ error: "Failed to validate referral" }, { status: 500 })
   }
-
-  return NextResponse.json({ valid: true, referral })
 }

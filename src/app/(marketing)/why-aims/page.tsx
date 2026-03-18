@@ -5,6 +5,10 @@ import Link from "next/link"
 export const metadata: Metadata = {
   title: "Why AIMS — The Smarter Way to Grow",
   description: "See exactly why 500+ businesses chose AIMS over traditional agencies. AI-powered execution. Transparent pricing. Results in 14 days.",
+  openGraph: {
+    title: "Why AIMS | The Smarter Way to Grow",
+    description: "See exactly why 500+ businesses chose AIMS over traditional agencies. AI-powered execution. Transparent pricing. Results in 14 days.",
+  },
 }
 
 const oldWay = [

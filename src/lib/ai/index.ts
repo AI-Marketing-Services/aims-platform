@@ -1,9 +1,12 @@
 import Anthropic from "@anthropic-ai/sdk"
 import { db } from "@/lib/db"
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-})
+function getAnthropicClient() {
+  if (!process.env.ANTHROPIC_API_KEY) {
+    throw new Error("ANTHROPIC_API_KEY is not configured")
+  }
+  return new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+}
 
 // ============ COST TRACKING ============
 
@@ -43,6 +46,7 @@ export async function analyzeWithClaude(params: {
   clientId?: string
 }) {
   const model = params.model ?? "claude-haiku-4-5-20251001"
+  const anthropic = getAnthropicClient()
 
   const response = await anthropic.messages.create({
     model,

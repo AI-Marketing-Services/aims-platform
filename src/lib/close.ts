@@ -102,6 +102,60 @@ export async function updateCloseLeadStatus(
   }
 }
 
+// Reverse mapping: Close status ID → label (for looking up current status)
+const CLOSE_STATUS_ID_TO_LABEL: Record<string, string> = Object.entries(CLOSE_STATUS_MAP).reduce(
+  (acc, [stage, statusId]) => {
+    if (statusId) acc[statusId] = stage
+    return acc
+  },
+  {} as Record<string, string>
+)
+
+/**
+ * Sync a deal stage change FROM AIMS TO Close CRM.
+ * Call this whenever a deal stage is changed in the AIMS CRM Kanban.
+ */
+export async function syncDealStageToClose(
+  closeLeadId: string,
+  newStage: string,
+  previousStage?: string
+): Promise<boolean> {
+  const headers = closeHeaders()
+  if (!headers) return false
+
+  const statusId = CLOSE_STATUS_MAP[newStage]
+  if (!statusId) {
+    console.warn(`syncDealStageToClose: no Close status mapping for stage "${newStage}"`)
+    return false
+  }
+
+  try {
+    // Update the lead status in Close
+    const res = await fetch(`${CLOSE_API_BASE}/lead/${closeLeadId}/`, {
+      method: "PUT",
+      headers,
+      body: JSON.stringify({ status_id: statusId }),
+    })
+
+    if (!res.ok) {
+      console.error("Close stage sync failed:", await res.text())
+      return false
+    }
+
+    // Add a note documenting the change
+    const noteText = previousStage
+      ? `Stage changed in AIMS: ${previousStage} -> ${newStage}`
+      : `Stage set in AIMS: ${newStage}`
+
+    await addCloseNote(closeLeadId, noteText)
+
+    return true
+  } catch (err) {
+    console.error("Close API error (syncDealStageToClose):", err)
+    return false
+  }
+}
+
 export async function addCloseNote(
   closeLeadId: string,
   note: string

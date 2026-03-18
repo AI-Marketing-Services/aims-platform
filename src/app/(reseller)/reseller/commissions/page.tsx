@@ -83,9 +83,14 @@ export default async function ResellerCommissionsPage() {
             <p className="text-muted-foreground">Payments via ACH or Stripe Connect</p>
           </div>
           {!referral?.stripeConnectId && (
-            <div className="mt-4 rounded-lg border border-yellow-500/20 bg-yellow-500/5 p-4">
-              <p className="text-sm text-yellow-400 font-medium">Connect Stripe to receive payouts</p>
-              <p className="text-xs text-muted-foreground mt-1">Contact your account manager to set up Stripe Connect.</p>
+            <div className="mt-4 rounded-lg border border-amber-300/30 bg-amber-50 p-4">
+              <p className="text-sm text-amber-800 font-medium">Stripe Connect setup required for direct payouts</p>
+              <p className="text-xs text-amber-700/80 mt-1">
+                Once your account reaches the $50 minimum, our team will send you a Stripe Connect
+                onboarding link. After connecting, payouts are processed automatically on the 15th of
+                each month via ACH direct deposit. Until then, you can request a manual payout by
+                emailing <a href="mailto:partners@aimseos.com" className="underline font-medium">partners@aimseos.com</a>.
+              </p>
             </div>
           )}
         </div>

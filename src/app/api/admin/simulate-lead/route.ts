@@ -63,7 +63,7 @@ export async function POST(req: Request) {
           channel: "IN_APP",
         },
       })
-      .catch(() => {})
+      .catch((err) => console.error("Simulate-lead notification creation failed:", err))
 
     return NextResponse.json({ success: true, submission, deal }, { status: 201 })
   } catch (e) {

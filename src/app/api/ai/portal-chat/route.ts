@@ -5,6 +5,7 @@ import { auth } from "@clerk/nextjs/server"
 import { db } from "@/lib/db"
 import { chatRatelimit, getIp } from "@/lib/ratelimit"
 import { logApiCost, estimateAnthropicCost } from "@/lib/ai"
+import { AIMS_KNOWLEDGE_BASE } from "@/lib/ai/knowledge-base"
 
 export const maxDuration = 30
 
@@ -14,7 +15,7 @@ const MAX_MESSAGE_LENGTH = 2000
 const PORTAL_SYSTEM_PROMPT = `You are the AIMS Client Support Assistant. You help existing AIMS clients with their services, billing, and account questions.
 
 CAPABILITIES:
-- Explain what each service includes and how it works
+- Explain what each service includes, how it works, and what it costs — use the knowledge base below for accurate details
 - Help with billing questions (direct to /portal/billing for payment changes)
 - Recommend additional services based on what they already have
 - Create support tickets for issues you can't resolve
@@ -26,12 +27,21 @@ UPSELL AWARENESS (only when relevant, never pushy):
 - Has Cold Outbound → "Voice Agents following up calls + emails closes 3x more deals"
 - Has Voice Agents → "Audience Targeting lets you know WHO to call before they raise their hand"
 - Has SEO → "Content Production gives you 4x the content output with half the team time"
+- Has Pixel Intelligence → "Audience Targeting turns that visitor data into high-converting ad campaigns"
+- Has AI Content Engine → "AI Reputation Engine amplifies that content by generating reviews and managing your brand presence"
+- Has Lead Reactivation → "RevOps Pipeline keeps those reactivated leads organized and moving through your funnel"
 
 BEHAVIOR:
 - Be warm, professional, and direct
 - If you can't resolve something, use the create_ticket tool
 - Always direct billing changes to /portal/billing
-- Keep responses concise`
+- Keep responses concise
+- When a client asks about a service they already have, reference their active subscription and tier
+- When a client asks about a new service, recommend based on synergy with their current services
+- Use exact pricing from the knowledge base — never guess at prices
+- Direct clients to /portal/marketplace to browse and purchase new services
+
+${AIMS_KNOWLEDGE_BASE}`
 
 export async function POST(req: Request) {
   const { userId } = await auth()
@@ -89,11 +99,27 @@ export async function POST(req: Request) {
     })
 
     if (user) {
-      const services = user.subscriptions.map((s) => s.serviceArm.name).join(", ")
+      const serviceDetails = user.subscriptions.map(
+        (s) => `- ${s.serviceArm.name} ($${s.monthlyAmount}/mo, ${s.tier ?? "standard"} tier)`
+      )
       const mrr = user.subscriptions.reduce((sum, s) => sum + s.monthlyAmount, 0)
-      clientContext = `\n\nCLIENT CONTEXT:\nName: ${user.name || "Unknown"}\nActive services: ${services || "None yet"}\nMonthly spend: $${mrr}/mo\nOpen tickets: ${user.supportTickets.filter((t) => t.status === "open").length}`
+      const openTickets = user.supportTickets.filter((t) => t.status === "open")
+      const ticketSummary = openTickets.length > 0
+        ? `\nOpen tickets:\n${openTickets.map((t) => `- ${t.subject} (${t.priority})`).join("\n")}`
+        : "\nNo open tickets."
+
+      clientContext = `\n\nCLIENT CONTEXT:
+Name: ${user.name || "Unknown"}
+Active services (${user.subscriptions.length}):
+${serviceDetails.length > 0 ? serviceDetails.join("\n") : "None yet — they haven't subscribed to any services."}
+Total monthly spend: $${mrr}/mo
+${ticketSummary}
+
+IMPORTANT: If this client asks about a service they already have, acknowledge their active subscription and offer to help with it. If they ask about a service they don't have, suggest how it complements their existing services.`
     }
-  } catch {}
+  } catch (err) {
+    console.error("Failed to fetch portal chat client context:", err)
+  }
 
   const result = streamText({
     model: anthropic("claude-haiku-4-5-20251001"),
@@ -122,7 +148,8 @@ export async function POST(req: Request) {
               })
             }
             return { success: true, message: "Support ticket created. Our team will follow up within 24 hours." }
-          } catch {
+          } catch (err) {
+            console.error("Portal chat create_ticket tool failed:", err)
             return { success: false, message: "Ticket creation failed. Please try /portal/support directly." }
           }
         },

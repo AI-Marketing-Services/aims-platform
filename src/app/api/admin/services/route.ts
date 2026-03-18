@@ -14,41 +14,51 @@ export async function GET() {
   if (!(await requireAdmin())) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
-  const services = await db.serviceArm.findMany({
-    orderBy: [{ pillar: "asc" }, { sortOrder: "asc" }],
-    select: {
-      id: true,
-      slug: true,
-      name: true,
-      pillar: true,
-      status: true,
-      asanaProjectGid: true,
-      asanaAssigneeGid: true,
-      asanaTaskTemplate: true,
-      ctaUrl: true,
-      defaultAssignee: true,
-    },
-  });
-  return NextResponse.json(services);
+  try {
+    const services = await db.serviceArm.findMany({
+      orderBy: [{ pillar: "asc" }, { sortOrder: "asc" }],
+      select: {
+        id: true,
+        slug: true,
+        name: true,
+        pillar: true,
+        status: true,
+        asanaProjectGid: true,
+        asanaAssigneeGid: true,
+        asanaTaskTemplate: true,
+        ctaUrl: true,
+        defaultAssignee: true,
+      },
+    });
+    return NextResponse.json(services);
+  } catch (err) {
+    console.error("Failed to fetch service arms:", err);
+    return NextResponse.json({ error: "Failed to fetch services" }, { status: 500 });
+  }
 }
 
 export async function PATCH(req: NextRequest) {
   if (!(await requireAdmin())) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
-  const body = await req.json();
-  const { id, asanaProjectGid, asanaAssigneeGid, asanaTaskTemplate, ctaUrl, defaultAssignee } = body;
-  if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
+  try {
+    const body = await req.json();
+    const { id, asanaProjectGid, asanaAssigneeGid, asanaTaskTemplate, ctaUrl, defaultAssignee } = body;
+    if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
 
-  const updated = await db.serviceArm.update({
-    where: { id },
-    data: {
-      asanaProjectGid: asanaProjectGid || null,
-      asanaAssigneeGid: asanaAssigneeGid || null,
-      asanaTaskTemplate: asanaTaskTemplate || null,
-      ctaUrl: ctaUrl || null,
-      defaultAssignee: defaultAssignee || null,
-    },
-  });
-  return NextResponse.json(updated);
+    const updated = await db.serviceArm.update({
+      where: { id },
+      data: {
+        asanaProjectGid: asanaProjectGid || null,
+        asanaAssigneeGid: asanaAssigneeGid || null,
+        asanaTaskTemplate: asanaTaskTemplate || null,
+        ctaUrl: ctaUrl || null,
+        defaultAssignee: defaultAssignee || null,
+      },
+    });
+    return NextResponse.json(updated);
+  } catch (err) {
+    console.error("Failed to update service arm:", err);
+    return NextResponse.json({ error: "Failed to update service" }, { status: 500 });
+  }
 }

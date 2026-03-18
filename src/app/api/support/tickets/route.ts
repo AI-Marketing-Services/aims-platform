@@ -22,31 +22,41 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid data", details: parsed.error.flatten() }, { status: 400 })
   }
 
-  const ticket = await db.supportTicket.create({
-    data: {
-      userId: dbUser.id,
-      subject: parsed.data.subject,
-      message: parsed.data.message,
-      priority: parsed.data.priority,
-      status: "open",
-    },
-  })
+  try {
+    const ticket = await db.supportTicket.create({
+      data: {
+        userId: dbUser.id,
+        subject: parsed.data.subject,
+        message: parsed.data.message,
+        priority: parsed.data.priority,
+        status: "open",
+      },
+    })
 
-  return NextResponse.json({ id: ticket.id }, { status: 201 })
+    return NextResponse.json({ id: ticket.id }, { status: 201 })
+  } catch (err) {
+    console.error("Failed to create support ticket:", err)
+    return NextResponse.json({ error: "Failed to create ticket" }, { status: 500 })
+  }
 }
 
 export async function GET(req: Request) {
   const { userId: clerkId } = await auth()
   if (!clerkId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
-  const dbUser = await db.user.findUnique({ where: { clerkId } })
-  if (!dbUser) return NextResponse.json([], { status: 200 })
+  try {
+    const dbUser = await db.user.findUnique({ where: { clerkId } })
+    if (!dbUser) return NextResponse.json([], { status: 200 })
 
-  const tickets = await db.supportTicket.findMany({
-    where: { userId: dbUser.id },
-    orderBy: { createdAt: "desc" },
-    include: { responses: { select: { id: true } } },
-  })
+    const tickets = await db.supportTicket.findMany({
+      where: { userId: dbUser.id },
+      orderBy: { createdAt: "desc" },
+      include: { responses: { select: { id: true } } },
+    })
 
-  return NextResponse.json(tickets)
+    return NextResponse.json(tickets)
+  } catch (err) {
+    console.error("Failed to fetch support tickets:", err)
+    return NextResponse.json({ error: "Failed to fetch tickets" }, { status: 500 })
+  }
 }

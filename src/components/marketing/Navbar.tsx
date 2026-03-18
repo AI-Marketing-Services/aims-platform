@@ -19,6 +19,7 @@ const TOOLS_LINKS = [
 ]
 
 const INDUSTRIES_LINKS = [
+  { label: "All Industries", href: "/industries" },
   { label: "Vendingpreneurs", href: "/industries/vendingpreneurs" },
   { label: "Car Dealerships", href: "/industries/car-dealerships" },
   { label: "Small Business", href: "/industries/small-business" },
@@ -128,6 +129,19 @@ export function Navbar() {
               )}
             >
               Services
+            </Link>
+
+            {/* Solutions */}
+            <Link
+              href="/solutions"
+              className={cn(
+                "px-3.5 py-1.5 text-sm font-medium rounded-lg transition-colors",
+                pathname === "/solutions"
+                  ? "text-foreground bg-gray-100"
+                  : "text-muted-foreground hover:text-foreground hover:bg-gray-100/70"
+              )}
+            >
+              Solutions
             </Link>
 
             {/* Tools dropdown */}
@@ -257,6 +271,10 @@ export function Navbar() {
             <div className="px-4 py-4 space-y-1">
               <Link href="/marketplace" className="flex items-center px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors">
                 Services
+              </Link>
+
+              <Link href="/solutions" className="flex items-center px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors">
+                Solutions
               </Link>
 
               {/* Mobile Tools */}

@@ -9,7 +9,9 @@ import {
   ArrowRight,
   BarChart3,
   RefreshCw,
+  Megaphone,
 } from "lucide-react"
+import { EmptyState } from "@/components/shared/EmptyState"
 import { cn } from "@/lib/utils"
 
 interface CampaignData {
@@ -273,8 +275,12 @@ export function CampaignsDashboardClient() {
             <tbody>
               {campaigns.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-4 py-8 text-center text-sm italic text-muted-foreground">
-                    No campaigns found in this workspace.
+                  <td colSpan={7}>
+                    <EmptyState
+                      icon={Megaphone}
+                      title="No campaigns found"
+                      description="No campaigns are running in this workspace yet. Create one in your email tool to see live metrics here."
+                    />
                   </td>
                 </tr>
               )}

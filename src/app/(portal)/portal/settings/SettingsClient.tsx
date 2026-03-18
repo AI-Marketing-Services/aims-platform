@@ -239,13 +239,21 @@ export function PortalSettingsClient({ clerkUser, dbUser }: Props) {
     heardAbout: "",
   })
 
-  // Notification state
+  // Notification state — channels
   const [emailNotifs, setEmailNotifs] = useState(dbUser?.emailNotifs ?? true)
   const [slackNotifs, setSlackNotifs] = useState(dbUser?.slackNotifs ?? false)
-  const [notifFeatureAnnouncements, setNotifFeatureAnnouncements] = useState(true)
-  const [notifWeeklySummary, setNotifWeeklySummary] = useState(true)
-  const [notifServiceStatus, setNotifServiceStatus] = useState(true)
-  const [notifBillingReminders, setNotifBillingReminders] = useState(true)
+  const [inAppNotifs, setInAppNotifs] = useState(true) // Always on by default
+
+  // Notification state — per event type
+  const [notifNewPurchase, setNotifNewPurchase] = useState(true)
+  const [notifFulfillmentUpdate, setNotifFulfillmentUpdate] = useState(true)
+  const [notifSupportReply, setNotifSupportReply] = useState(true)
+  const [notifBillingAlert, setNotifBillingAlert] = useState(true)
+  const [notifMarketingDigest, setNotifMarketingDigest] = useState(true)
+
+  // Saving state for notification preferences
+  const [notifSaving, setNotifSaving] = useState(false)
+  const [notifSaved, setNotifSaved] = useState(false)
 
   const [deleteConfirm, setDeleteConfirm] = useState(false)
   const [deleting, setDeleting] = useState(false)
@@ -277,6 +285,24 @@ export function PortalSettingsClient({ clerkUser, dbUser }: Props) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ [field]: value }),
     }).catch(console.error)
+  }
+
+  async function saveNotificationPreferences() {
+    setNotifSaving(true)
+    await fetch("/api/user/preferences", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        notifNewPurchase,
+        notifFulfillmentUpdate,
+        notifSupportReply,
+        notifBillingAlert,
+        notifMarketingDigest,
+      }),
+    }).catch(console.error)
+    setNotifSaving(false)
+    setNotifSaved(true)
+    setTimeout(() => setNotifSaved(false), 2000)
   }
 
   async function handleDelete() {
@@ -390,44 +416,76 @@ export function PortalSettingsClient({ clerkUser, dbUser }: Props) {
           <h2 className="text-base font-semibold text-foreground">Notification Preferences</h2>
         </div>
         <div className="space-y-4">
-          <NotifToggle
-            label="Email Notifications"
-            description="Service updates, billing alerts, reports"
-            value={emailNotifs}
-            onChange={(v) => handleToggle("emailNotifs", v)}
-          />
-          <NotifToggle
-            label="Slack Notifications"
-            description="Get notified in your team Slack"
-            value={slackNotifs}
-            onChange={(v) => handleToggle("slackNotifs", v)}
-          />
-          <div className="pt-2 border-t border-border space-y-4">
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Email Notification Types</p>
+          {/* Channel toggles */}
+          <div className="space-y-4">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Channels</p>
             <NotifToggle
-              label="New feature announcements"
-              description="Be the first to know about new AIMS services and features"
-              value={notifFeatureAnnouncements}
-              onChange={setNotifFeatureAnnouncements}
+              label="Email Notifications"
+              description="Receive notification emails for important events"
+              value={emailNotifs}
+              onChange={(v) => handleToggle("emailNotifs", v)}
             />
             <NotifToggle
-              label="Weekly performance summary"
-              description="A weekly digest of your campaign and service performance"
-              value={notifWeeklySummary}
-              onChange={setNotifWeeklySummary}
+              label="In-App Notifications"
+              description="See notifications in the bell icon dropdown"
+              value={inAppNotifs}
+              onChange={setInAppNotifs}
             />
             <NotifToggle
-              label="Service status changes"
-              description="Get notified when your service status changes"
-              value={notifServiceStatus}
-              onChange={setNotifServiceStatus}
+              label="Slack Notifications"
+              description="Get notified in your team Slack workspace"
+              value={slackNotifs}
+              onChange={(v) => handleToggle("slackNotifs", v)}
+            />
+          </div>
+
+          {/* Event type toggles */}
+          <div className="pt-4 border-t border-border space-y-4">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Event Types</p>
+            <NotifToggle
+              label="New Purchase"
+              description="Get notified when a new subscription or purchase is made"
+              value={notifNewPurchase}
+              onChange={setNotifNewPurchase}
             />
             <NotifToggle
-              label="Billing reminders"
-              description="Upcoming renewals and payment confirmations"
-              value={notifBillingReminders}
-              onChange={setNotifBillingReminders}
+              label="Fulfillment Updates"
+              description="Status changes on your service setup and deliverables"
+              value={notifFulfillmentUpdate}
+              onChange={setNotifFulfillmentUpdate}
             />
+            <NotifToggle
+              label="Support Replies"
+              description="Responses to your support tickets"
+              value={notifSupportReply}
+              onChange={setNotifSupportReply}
+            />
+            <NotifToggle
+              label="Billing Alerts"
+              description="Upcoming renewals, payment confirmations, and invoice reminders"
+              value={notifBillingAlert}
+              onChange={setNotifBillingAlert}
+            />
+            <NotifToggle
+              label="Marketing Digest"
+              description="Weekly performance summaries and feature announcements"
+              value={notifMarketingDigest}
+              onChange={setNotifMarketingDigest}
+            />
+          </div>
+
+          {/* Save button */}
+          <div className="pt-4 border-t border-border flex items-center gap-3">
+            <button
+              onClick={saveNotificationPreferences}
+              disabled={notifSaving}
+              className="rounded-lg bg-[#DC2626] px-4 py-2 text-sm font-medium text-white hover:bg-[#B91C1C] disabled:opacity-50 transition-colors"
+            >
+              {notifSaving ? "Saving..." : "Save Preferences"}
+            </button>
+            {notifSaved && (
+              <span className="text-xs text-green-600 font-medium">Preferences saved</span>
+            )}
           </div>
         </div>
       </div>

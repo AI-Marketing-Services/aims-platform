@@ -10,6 +10,9 @@ import {
   Layers,
   Package,
   Zap,
+  Circle,
+  ClipboardList,
+  User,
 } from "lucide-react"
 import Link from "next/link"
 import { db } from "@/lib/db"
@@ -95,7 +98,12 @@ export default async function PortalServicesPage() {
       where: { clerkId },
       include: {
         subscriptions: {
-          include: { serviceArm: true },
+          include: {
+            serviceArm: true,
+            fulfillmentTasks: {
+              orderBy: { createdAt: "asc" },
+            },
+          },
           orderBy: { createdAt: "desc" },
         },
       },
@@ -293,11 +301,83 @@ export default async function PortalServicesPage() {
                   {nextBilling && <span>Next billing: {nextBilling}</span>}
                 </div>
 
+                {/* Fulfillment tasks checklist */}
+                {svc.fulfillmentTasks.length > 0 && (
+                  <div className="mb-4 border border-gray-100 rounded-lg overflow-hidden">
+                    <div className="px-4 py-2 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
+                      <ClipboardList className="w-3.5 h-3.5 text-gray-500" />
+                      <span className="text-xs font-medium text-gray-600">
+                        Setup Tasks ({svc.fulfillmentTasks.filter((t) => t.status === "done").length}/{svc.fulfillmentTasks.length})
+                      </span>
+                    </div>
+                    <div className="divide-y divide-gray-50">
+                      {svc.fulfillmentTasks.map((task) => {
+                        const isDone = task.status === "done"
+                        return (
+                          <div
+                            key={task.id}
+                            className="flex items-center gap-3 px-4 py-2.5"
+                          >
+                            {isDone ? (
+                              <CheckCircle className="w-4 h-4 text-green-600 shrink-0" />
+                            ) : (
+                              <Circle className="w-4 h-4 text-gray-300 shrink-0" />
+                            )}
+                            <span
+                              className={`text-sm flex-1 ${
+                                isDone
+                                  ? "text-gray-400 line-through"
+                                  : "text-gray-900"
+                              }`}
+                            >
+                              {task.title}
+                            </span>
+                            <span
+                              className={`text-xs px-2 py-0.5 rounded-full ${
+                                isDone
+                                  ? "bg-green-50 text-green-700"
+                                  : task.status === "in_progress"
+                                  ? "bg-blue-50 text-blue-700"
+                                  : "bg-gray-100 text-gray-500"
+                              }`}
+                            >
+                              {task.status === "done"
+                                ? "Done"
+                                : task.status === "in_progress"
+                                ? "In Progress"
+                                : "To Do"}
+                            </span>
+                            {task.assignedTo && (
+                              <span className="flex items-center gap-1 text-xs text-gray-400">
+                                <User className="w-3 h-3" />
+                                {task.assignedTo}
+                              </span>
+                            )}
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )}
+
                 {/* Actions */}
                 <div className="flex flex-wrap gap-2">
+                  {!svc.onboardingCompletedAt &&
+                    svc.serviceArm.onboardingFormSchema && (
+                      <Link
+                        href={`/portal/onboarding/${svc.id}`}
+                        className="px-4 py-1.5 text-sm font-medium rounded-lg bg-[#DC2626] text-white hover:bg-[#B91C1C] transition-colors"
+                      >
+                        Complete Onboarding
+                      </Link>
+                    )}
                   <Link
                     href={`/portal/services/${svc.id}`}
-                    className="px-4 py-1.5 text-sm font-medium rounded-lg bg-[#DC2626] text-white hover:bg-[#B91C1C] transition-colors"
+                    className={`px-4 py-1.5 text-sm font-medium rounded-lg transition-colors ${
+                      !svc.onboardingCompletedAt && svc.serviceArm.onboardingFormSchema
+                        ? "border border-border text-gray-700 hover:bg-gray-50"
+                        : "bg-[#DC2626] text-white hover:bg-[#B91C1C]"
+                    }`}
                   >
                     View Details
                   </Link>

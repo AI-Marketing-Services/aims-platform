@@ -37,10 +37,14 @@ export async function GET(
   }
 
   const { dealId } = await params
-  const deal = await getDealById(dealId)
-  if (!deal) return NextResponse.json({ error: "Not found" }, { status: 404 })
-
-  return NextResponse.json(deal)
+  try {
+    const deal = await getDealById(dealId)
+    if (!deal) return NextResponse.json({ error: "Not found" }, { status: 404 })
+    return NextResponse.json(deal)
+  } catch (err) {
+    console.error(`Failed to fetch deal ${dealId}:`, err)
+    return NextResponse.json({ error: "Failed to fetch deal" }, { status: 500 })
+  }
 }
 
 export async function PATCH(
@@ -63,27 +67,34 @@ export async function PATCH(
     return NextResponse.json({ error: "Invalid data", details: parsed.error.flatten() }, { status: 400 })
   }
 
-  const { stage, ...rest } = parsed.data
+  try {
+    const { stage, ...rest } = parsed.data
 
-  // If stage change, use the helper that logs activity
-  if (stage) {
-    const deal = await updateDealStage(dealId, stage, userId)
-    if (Object.keys(rest).length > 0) {
-      await db.deal.update({ where: { id: dealId }, data: rest })
+    // If stage change, use the helper that logs activity
+    if (stage) {
+      const deal = await updateDealStage(dealId, stage, userId)
+      if (Object.keys(rest).length > 0) {
+        await db.deal.update({ where: { id: dealId }, data: rest })
+      }
+      // Sync stage to Close CRM (fire-and-forget)
+      if (deal.closeLeadId) {
+        updateCloseLeadStatus(deal.closeLeadId, stage).catch((err) =>
+          console.error(`Failed to sync deal ${dealId} stage to Close CRM:`, err)
+        )
+      }
+      return NextResponse.json(deal)
     }
-    // Sync stage to Close CRM (fire-and-forget)
-    if (deal.closeLeadId) {
-      updateCloseLeadStatus(deal.closeLeadId, stage).catch(console.error)
-    }
+
+    const deal = await db.deal.update({
+      where: { id: dealId },
+      data: rest,
+    })
+
     return NextResponse.json(deal)
+  } catch (err) {
+    console.error(`Failed to update deal ${dealId}:`, err)
+    return NextResponse.json({ error: "Failed to update deal" }, { status: 500 })
   }
-
-  const deal = await db.deal.update({
-    where: { id: dealId },
-    data: rest,
-  })
-
-  return NextResponse.json(deal)
 }
 
 export async function DELETE(
@@ -99,7 +110,11 @@ export async function DELETE(
   }
 
   const { dealId } = await params
-  await db.deal.delete({ where: { id: dealId } })
-
-  return NextResponse.json({ deleted: true })
+  try {
+    await db.deal.delete({ where: { id: dealId } })
+    return NextResponse.json({ deleted: true })
+  } catch (err) {
+    console.error(`Failed to delete deal ${dealId}:`, err)
+    return NextResponse.json({ error: "Failed to delete deal" }, { status: 500 })
+  }
 }

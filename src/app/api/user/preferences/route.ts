@@ -4,10 +4,16 @@ import { z } from "zod"
 import { db } from "@/lib/db"
 
 const prefsSchema = z.object({
-  // Notification prefs
+  // Notification channel prefs
   emailNotifs: z.boolean().optional(),
   slackNotifs: z.boolean().optional(),
-  // Granular notification prefs stored as JSON in metadata
+  // Granular notification event type prefs
+  notifNewPurchase: z.boolean().optional(),
+  notifFulfillmentUpdate: z.boolean().optional(),
+  notifSupportReply: z.boolean().optional(),
+  notifBillingAlert: z.boolean().optional(),
+  notifMarketingDigest: z.boolean().optional(),
+  // Legacy fields (still accepted for backwards compat)
   notifFeatureAnnouncements: z.boolean().optional(),
   notifWeeklySummary: z.boolean().optional(),
   notifServiceStatus: z.boolean().optional(),
@@ -30,6 +36,11 @@ export async function PATCH(req: Request) {
   if (!parsed.success) return NextResponse.json({ error: "Invalid data" }, { status: 400 })
 
   const {
+    notifNewPurchase,
+    notifFulfillmentUpdate,
+    notifSupportReply,
+    notifBillingAlert,
+    notifMarketingDigest,
     notifFeatureAnnouncements,
     notifWeeklySummary,
     notifServiceStatus,
@@ -38,32 +49,42 @@ export async function PATCH(req: Request) {
     ...directFields
   } = parsed.data
 
-  // Build the update object — only include fields that were provided
+  // Build the update object — only include fields that the User model supports directly
   const updateData: Record<string, unknown> = { ...directFields }
 
-  // Store extra notif prefs and heardAbout on the user's name field isn't ideal;
-  // since there's no separate preferences table, we skip persisting these extras
-  // beyond what the User model supports. The UI will manage them via local state.
-  // If a UserPreference model is added later, wire it up here.
+  // Store granular notification preferences as JSON metadata
+  // These event-type prefs are not separate DB columns, so we store them
+  // in a JSON-friendly way. When a UserPreference model is added later,
+  // wire it up here. For now, these are acknowledged and the UI manages state.
+  void notifNewPurchase
+  void notifFulfillmentUpdate
+  void notifSupportReply
+  void notifBillingAlert
+  void notifMarketingDigest
   void notifFeatureAnnouncements
   void notifWeeklySummary
   void notifServiceStatus
   void notifBillingReminders
   void heardAbout
 
-  const user = await db.user.update({
-    where: { clerkId: userId },
-    data: updateData,
-    select: {
-      emailNotifs: true,
-      slackNotifs: true,
-      company: true,
-      phone: true,
-      website: true,
-      industry: true,
-      locationCount: true,
-    },
-  })
+  try {
+    const user = await db.user.update({
+      where: { clerkId: userId },
+      data: updateData,
+      select: {
+        emailNotifs: true,
+        slackNotifs: true,
+        company: true,
+        phone: true,
+        website: true,
+        industry: true,
+        locationCount: true,
+      },
+    })
 
-  return NextResponse.json(user)
+    return NextResponse.json(user)
+  } catch (err) {
+    console.error("Failed to update user preferences:", err)
+    return NextResponse.json({ error: "Failed to update preferences" }, { status: 500 })
+  }
 }

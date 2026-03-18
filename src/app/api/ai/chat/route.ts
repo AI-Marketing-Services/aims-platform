@@ -153,10 +153,11 @@ export async function POST(req: Request) {
               company: input.company,
               source: "ai-chatbot",
               channelTag: "website-chatbot",
-            }).catch(console.error)
+            }).catch((err) => console.error("Chatbot lead notification failed:", err))
 
             return { success: true, dealId: deal.id, message: `Lead saved. I'll have the team follow up with ${input.name} at ${input.email}.` }
-          } catch {
+          } catch (err) {
+            console.error("Chatbot capture_lead tool failed:", err)
             return { success: false, message: "I'll make sure the team reaches out to you." }
           }
         },

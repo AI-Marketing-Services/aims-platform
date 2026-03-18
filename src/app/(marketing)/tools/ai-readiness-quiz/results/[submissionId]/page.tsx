@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation"
 import { db } from "@/lib/db"
-import { CheckCircle, AlertCircle, XCircle, Zap, ArrowRight, ChevronRight } from "lucide-react"
+import { CheckCircle, AlertCircle, XCircle, Zap, ArrowRight } from "lucide-react"
 import Link from "next/link"
 import { ShareButtons } from "./ShareButtons"
 
@@ -132,14 +132,38 @@ export default async function ResultsPage({ params }: Props) {
 
         {/* Recommended services */}
         <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-6 shadow-sm">
-          <h3 className="font-semibold text-gray-900 mb-4">Recommended Services</h3>
+          <h3 className="font-semibold text-gray-900 mb-1">Services That Fix These Gaps</h3>
+          <p className="text-sm text-gray-500 mb-4">Tailored to your {category.label} profile — here is where to start.</p>
           <div className="space-y-3">
-            {category.recommended.map((rec) => (
-              <div key={rec} className={`flex items-center gap-3 p-3 ${category.bgClass} rounded-lg`}>
-                <ChevronRight className="w-4 h-4 text-[#DC2626] flex-shrink-0" />
-                <span className="text-gray-800 font-medium text-sm">{rec}</span>
-              </div>
-            ))}
+            {category.recommended.map((rec) => {
+              const serviceDetails: Record<string, { desc: string; price: string }> = {
+                "Website + CRM + Chatbot Bundle": { desc: "AI-powered website with built-in CRM and chatbot that captures leads 24/7", price: "from $97/mo" },
+                "Cold Outbound System": { desc: "Automated outbound engine sending thousands of personalized emails monthly", price: "from $297/mo" },
+                "AI Voice Agents": { desc: "Never miss a call — AI answers, qualifies, and books meetings for you", price: "Custom" },
+                "SEO + AEO Strategy": { desc: "Rank in search and get cited by AI assistants like ChatGPT and Perplexity", price: "from $197/mo" },
+                "Audience Targeting": { desc: "Precision B2B audiences built from 100M+ contacts for your outbound campaigns", price: "from $147/mo" },
+                "AI Tool Tracker": { desc: "Monitor AI tool spend, usage, and ROI across your entire organization", price: "from $97/mo" },
+                "Pixel Intelligence": { desc: "Identify anonymous website visitors and route them into automated follow-up", price: "from $197/mo" },
+                "Finance Automation": { desc: "Automated P&L reporting, invoice processing, and financial dashboards", price: "from $247/mo" },
+                "Vending Placement Visualizer": { desc: "AI-powered location scouting and placement optimization for vending operators", price: "Custom" },
+                "Custom AI Builds": { desc: "Forward-deployed engineers build and deploy custom AI solutions you own forever", price: "Custom" },
+              }
+              const details = serviceDetails[rec] ?? { desc: "AI-powered solution tailored to your business needs", price: "Custom" }
+              return (
+                <div key={rec} className="border border-gray-200 rounded-xl p-4 hover:border-gray-300 transition-colors">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-gray-900 text-sm">{rec}</h4>
+                      <p className="text-xs text-gray-500 mt-1">{details.desc}</p>
+                      <p className="text-xs text-gray-400 mt-2">{details.price}</p>
+                    </div>
+                    <Link href="/marketplace" className="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 bg-[#DC2626] text-white text-xs font-semibold rounded-lg hover:bg-[#B91C1C] transition-colors">
+                      View <ArrowRight className="w-3 h-3" />
+                    </Link>
+                  </div>
+                </div>
+              )
+            })}
           </div>
         </div>
 

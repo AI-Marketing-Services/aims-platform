@@ -3,6 +3,7 @@ import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
 import {
   Users,
+  Check,
   CheckSquare,
   DollarSign,
   FileText,
@@ -273,7 +274,7 @@ export default async function AdminInternOpsPage() {
                         key={i}
                         className="text-xs text-muted-foreground flex items-start gap-1.5"
                       >
-                        <span className="text-green-500 mt-0.5 flex-shrink-0">✓</span>
+                        <Check className="h-3 w-3 text-green-500 mt-0.5 flex-shrink-0" />
                         {item}
                       </li>
                     ))}

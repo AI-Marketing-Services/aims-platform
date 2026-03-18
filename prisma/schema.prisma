@@ -192,6 +192,7 @@ model ServiceArm {
 
   pricingModel  PricingModel  @default(MONTHLY)
   basePrice     Float?
+  deliveryCost  Float?
   tiers         ServiceTier[]
 
   iconName      String?
@@ -217,6 +218,7 @@ model ServiceArm {
   asanaProjectGid   String?
   asanaAssigneeGid  String?
   asanaTaskTemplate Json?     // { name: string, notes: string, subtasks: string[] }
+  onboardingFormSchema Json?  // Dynamic form fields per service
   ctaUrl            String?   // 1:1 button link for this service
 
   createdAt     DateTime      @default(now())
@@ -297,6 +299,7 @@ model Subscription {
   fulfillmentTasks  FulfillmentTask[]
   assignedTeamMember String?
 
+  onboardingData        Json?
   onboardingCompletedAt DateTime?
   currentPeriodStart    DateTime?
   currentPeriodEnd      DateTime?

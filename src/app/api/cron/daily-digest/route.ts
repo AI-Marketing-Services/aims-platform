@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { notify } from "@/lib/notifications"
+import { logCronExecution } from "@/lib/cron-log"
 
 export const maxDuration = 60
 
@@ -10,6 +11,9 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
+  const startTime = Date.now()
+
+  try {
   const now = new Date()
   const yesterday = new Date(now.getTime() - 86400000)
   const lastMonth = new Date(now.getTime() - 30 * 86400000)
@@ -117,6 +121,9 @@ export async function GET(req: Request) {
     urgency: "low",
   })
 
+  const duration = Date.now() - startTime
+  await logCronExecution("daily-digest", "success", `MRR: $${currentMrr}, Leads: ${newLeadsYesterday}, Subs: ${newSubsYesterday}`, duration)
+
   return NextResponse.json({
     sent: true,
     mrr: currentMrr,
@@ -125,4 +132,11 @@ export async function GET(req: Request) {
     activeClients,
     overdueCount: overdueTasks.length,
   })
+  } catch (err) {
+    const duration = Date.now() - startTime
+    const errorMessage = err instanceof Error ? err.message : "Unknown error"
+    await logCronExecution("daily-digest", "error", errorMessage, duration)
+    console.error("Daily digest cron failed:", err)
+    return NextResponse.json({ error: "Daily digest failed" }, { status: 500 })
+  }
 }

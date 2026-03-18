@@ -11,15 +11,20 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   }
 
-  const { searchParams } = new URL(req.url)
-  const section = searchParams.get("section")
+  try {
+    const { searchParams } = new URL(req.url)
+    const section = searchParams.get("section")
 
-  if (section === "api-costs") {
-    const days = parseInt(searchParams.get("days") ?? "30")
-    const costs = await getApiCostSummary(days)
-    return NextResponse.json(costs)
+    if (section === "api-costs") {
+      const days = parseInt(searchParams.get("days") ?? "30")
+      const costs = await getApiCostSummary(days)
+      return NextResponse.json(costs)
+    }
+
+    const metrics = await getAdminMetrics()
+    return NextResponse.json(metrics)
+  } catch (err) {
+    console.error("Failed to fetch admin metrics:", err)
+    return NextResponse.json({ error: "Failed to fetch metrics" }, { status: 500 })
   }
-
-  const metrics = await getAdminMetrics()
-  return NextResponse.json(metrics)
 }

@@ -23,10 +23,13 @@ async function getDashboardData() {
   const sixtyDaysAgo = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000)
 
   // MRR: sum monthlyAmount for active subscriptions
+  // Delta: compare new MRR added in last 30d vs new MRR added 30-60d ago
   let mrr = 0
-  let mrrPrev = 0
+  let mrrDeltaCurrentPeriod = 0
+  let mrrDeltaPrevPeriod = 0
   let activeClients = 0
-  let activeClientsPrev = 0
+  let newClientsCurrentPeriod = 0
+  let newClientsPrevPeriod = 0
 
   try {
     const activeSubs = await db.subscription.findMany({
@@ -36,17 +39,25 @@ async function getDashboardData() {
     mrr = activeSubs.reduce((s, sub) => s + sub.monthlyAmount, 0)
     activeClients = new Set(activeSubs.map((s) => s.userId)).size
 
-    // Prev period: subs active before 30d ago
-    const prevSubs = activeSubs.filter((s) => s.createdAt <= thirtyDaysAgo)
-    mrrPrev = prevSubs.reduce((s, sub) => s + sub.monthlyAmount, 0)
-    activeClientsPrev = new Set(prevSubs.map((s) => s.userId)).size
+    // New MRR added in the current period (last 30 days)
+    const currentPeriodSubs = activeSubs.filter((s) => s.createdAt > thirtyDaysAgo)
+    mrrDeltaCurrentPeriod = currentPeriodSubs.reduce((s, sub) => s + sub.monthlyAmount, 0)
+    newClientsCurrentPeriod = new Set(currentPeriodSubs.map((s) => s.userId)).size
+
+    // New MRR added in the previous period (30-60 days ago)
+    const prevPeriodSubs = activeSubs.filter(
+      (s) => s.createdAt > sixtyDaysAgo && s.createdAt <= thirtyDaysAgo
+    )
+    mrrDeltaPrevPeriod = prevPeriodSubs.reduce((s, sub) => s + sub.monthlyAmount, 0)
+    newClientsPrevPeriod = new Set(prevPeriodSubs.map((s) => s.userId)).size
   } catch {
     // model may not be populated yet
   }
 
   // Pipeline value
   let pipelineValue = 0
-  let pipelineValuePrev = 0
+  let pipelineValueCurrentPeriod = 0
+  let pipelineValuePrevPeriod = 0
 
   try {
     const pipelineDeals = await db.deal.findMany({
@@ -58,8 +69,14 @@ async function getDashboardData() {
       select: { value: true, createdAt: true },
     })
     pipelineValue = pipelineDeals.reduce((s, d) => s + d.value, 0)
-    const prevDeals = pipelineDeals.filter((d) => d.createdAt <= thirtyDaysAgo)
-    pipelineValuePrev = prevDeals.reduce((s, d) => s + d.value, 0)
+
+    // Pipeline delta: deals created in last 30d vs deals created 30-60d ago
+    const currentPeriodDeals = pipelineDeals.filter((d) => d.createdAt > thirtyDaysAgo)
+    pipelineValueCurrentPeriod = currentPeriodDeals.reduce((s, d) => s + d.value, 0)
+    const prevPeriodDeals = pipelineDeals.filter(
+      (d) => d.createdAt > sixtyDaysAgo && d.createdAt <= thirtyDaysAgo
+    )
+    pipelineValuePrevPeriod = prevPeriodDeals.reduce((s, d) => s + d.value, 0)
   } catch {
     // model may not be populated
   }
@@ -257,10 +274,10 @@ async function getDashboardData() {
     // model may not be populated
   }
 
-  // MRR trend delta
-  const mrrDelta = mrr - mrrPrev
-  const clientDelta = activeClients - activeClientsPrev
-  const pipelineDelta = pipelineValue - pipelineValuePrev
+  // MRR trend delta — true month-over-month: current 30d period vs previous 30d period
+  const mrrDelta = mrrDeltaCurrentPeriod - mrrDeltaPrevPeriod
+  const clientDelta = newClientsCurrentPeriod - newClientsPrevPeriod
+  const pipelineDelta = pipelineValueCurrentPeriod - pipelineValuePrevPeriod
   const mrrPct = Math.round((mrr / MRR_TARGET) * 100)
 
   return {

@@ -43,23 +43,28 @@ export async function PATCH(
     return NextResponse.json({ error: "Task not found" }, { status: 404 })
   }
 
-  const updateData: Record<string, unknown> = {}
-  if (parsed.data.status) updateData.status = parsed.data.status
-  if (parsed.data.actualHours !== undefined) updateData.actualHours = parsed.data.actualHours
-  if (parsed.data.status === "DONE") updateData.completedAt = new Date()
+  try {
+    const updateData: Record<string, unknown> = {}
+    if (parsed.data.status) updateData.status = parsed.data.status
+    if (parsed.data.actualHours !== undefined) updateData.actualHours = parsed.data.actualHours
+    if (parsed.data.status === "DONE") updateData.completedAt = new Date()
 
-  const updated = await db.internTask.update({
-    where: { id },
-    data: updateData,
-  })
-
-  // If completed, increment intern's tasksCompleted count
-  if (parsed.data.status === "DONE" && task.status !== "DONE") {
-    await db.internProfile.update({
-      where: { id: intern.id },
-      data: { tasksCompleted: { increment: 1 } },
+    const updated = await db.internTask.update({
+      where: { id },
+      data: updateData,
     })
-  }
 
-  return NextResponse.json({ task: updated })
+    // If completed, increment intern's tasksCompleted count
+    if (parsed.data.status === "DONE" && task.status !== "DONE") {
+      await db.internProfile.update({
+        where: { id: intern.id },
+        data: { tasksCompleted: { increment: 1 } },
+      })
+    }
+
+    return NextResponse.json({ task: updated })
+  } catch (err) {
+    console.error(`Failed to update intern task ${id}:`, err)
+    return NextResponse.json({ error: "Failed to update task" }, { status: 500 })
+  }
 }

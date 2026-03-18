@@ -158,6 +158,30 @@ export default function EnterprisePage() {
         </div>
       </section>
 
+      {/* Recommended Solution Package */}
+      <section className="py-16 px-4 bg-[#FAFAFA]">
+        <div className="max-w-3xl mx-auto">
+          <div className="bg-white border-2 border-[#DC2626] rounded-2xl p-8 shadow-sm">
+            <p className="text-xs font-semibold uppercase tracking-wider text-[#DC2626] mb-2">Recommended Package</p>
+            <h2 className="text-2xl font-bold text-gray-900 mb-1">Enterprise AI Transformation</h2>
+            <p className="text-sm text-gray-500 mb-4">Our forward-deployed engineers audit your operations and build custom AI solutions you own forever. From assessment to production in 30 days.</p>
+            <div className="flex flex-wrap gap-2 mb-5">
+              {["Custom AI Audit", "Solution Architecture", "Implementation", "Training & Handoff"].map((s) => (
+                <span key={s} className="inline-flex items-center gap-1 px-2.5 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full">
+                  <CheckCircle2 className="w-3 h-3 text-green-600" />{s}
+                </span>
+              ))}
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-semibold text-gray-900">Custom pricing</span>
+              <Link href="/solutions" className="inline-flex items-center gap-1 text-sm text-[#DC2626] font-medium hover:underline">
+                View all solutions <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="py-16 px-4 bg-[#DC2626]">
         <div className="max-w-2xl mx-auto text-center text-white">

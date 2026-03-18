@@ -26,12 +26,18 @@ const isPublicRoute = createRouteMatcher([
   "/api/ai/audit(.*)",
   "/api/intake(.*)",
   "/api/admin/bootstrap(.*)",
+  "/api/health(.*)",
 ])
 
 const isAdminRoute = createRouteMatcher(["/admin(.*)"])
 const isInternRoute = createRouteMatcher(["/intern(.*)"])
 const isResellerRoute = createRouteMatcher(["/reseller(.*)"])
 const isPortalRoute = createRouteMatcher(["/portal(.*)"])
+
+// API route matchers for defense-in-depth protection
+const isAdminApiRoute = createRouteMatcher(["/api/admin(.*)"])
+const isInternApiRoute = createRouteMatcher(["/api/intern(.*)"])
+const isPortalApiRoute = createRouteMatcher(["/api/portal(.*)"])
 
 export default clerkMiddleware(async (auth, req) => {
   if (isPublicRoute(req)) return NextResponse.next()
@@ -57,6 +63,14 @@ export default clerkMiddleware(async (auth, req) => {
 
   if (isResellerRoute(req) && !["RESELLER", "ADMIN", "SUPER_ADMIN"].includes(role)) {
     return NextResponse.redirect(new URL("/portal/dashboard", req.url))
+  }
+
+  // Defense-in-depth: protect API routes by role (routes still check auth internally)
+  if (isAdminApiRoute(req) && !["ADMIN", "SUPER_ADMIN"].includes(role)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+  }
+  if (isInternApiRoute(req) && !["INTERN", "ADMIN", "SUPER_ADMIN"].includes(role)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   }
 
   return NextResponse.next()
