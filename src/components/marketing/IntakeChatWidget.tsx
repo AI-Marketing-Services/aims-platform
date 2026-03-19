@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, useMemo } from "react"
 import { X, Send, Loader2 } from "lucide-react"
 import { useChat } from "@ai-sdk/react"
 import { TextStreamChatTransport, type UIMessage } from "ai"
@@ -8,6 +8,14 @@ import Image from "next/image"
 
 const WELCOME_TEXT =
   "What's the biggest bottleneck in your business right now? We help companies embed AI to remove growth ceilings."
+
+const INITIAL_MESSAGES: UIMessage[] = [
+  {
+    id: "welcome",
+    role: "assistant" as const,
+    parts: [{ type: "text" as const, text: WELCOME_TEXT }],
+  },
+]
 
 function getMessageText(parts: { type: string; text?: string }[]): string {
   return parts
@@ -22,15 +30,14 @@ export function IntakeChatWidget() {
   const [hasAutoOpened, setHasAutoOpened] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
+  const transport = useMemo(
+    () => new TextStreamChatTransport({ api: "/api/ai/intake-chat" }),
+    []
+  )
+
   const { messages, sendMessage, status, error } = useChat<UIMessage>({
-    transport: new TextStreamChatTransport({ api: "/api/ai/intake-chat" }),
-    messages: [
-      {
-        id: "welcome",
-        role: "assistant" as const,
-        parts: [{ type: "text" as const, text: WELCOME_TEXT }],
-      },
-    ],
+    transport,
+    initialMessages: INITIAL_MESSAGES,
   })
 
   useEffect(() => {

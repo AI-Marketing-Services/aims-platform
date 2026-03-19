@@ -210,16 +210,16 @@ function DashboardView() {
     <div className="flex-1 min-w-0 bg-deep/40 overflow-hidden">
       {/* Metric row — 5 cols on desktop, 2 on mobile */}
       <div className="grid grid-cols-2 sm:grid-cols-5 border-b border-border">
-        <div className="bg-card px-3 py-3 border-r border-border">
+        <div className="bg-card px-3 py-3 border-r border-border text-center">
           <p className="text-[9px] font-semibold uppercase tracking-wide text-muted-foreground">New Leads</p>
           <p className="mt-0.5 text-xl font-extrabold text-foreground"><AnimNum value={847} delay={0.5} /></p>
-          <motion.p className="flex items-center gap-1 text-[9px] text-green-400 font-medium mt-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2 }}><TrendingUp className="h-2 w-2" /> 23% vs last week</motion.p>
+          <motion.p className="flex items-center justify-center gap-1 text-[9px] text-green-400 font-medium mt-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2 }}><TrendingUp className="h-2 w-2" /> 23% vs last week</motion.p>
           <p className="mt-1.5 text-[9px] text-primary cursor-pointer hover:underline">Revenue report →</p>
         </div>
-        <div className="bg-card px-3 py-3 border-r border-border">
+        <div className="bg-card px-3 py-3 border-r border-border text-center">
           <p className="text-[9px] font-semibold uppercase tracking-wide text-muted-foreground">Total Revenue</p>
           <p className="mt-0.5 text-xl font-extrabold text-foreground"><AnimNum value={45} delay={0.6} format={(v) => `$${(v / 10).toFixed(1)}M`} /></p>
-          <motion.p className="flex items-center gap-1 text-[9px] text-green-400 font-medium mt-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.3 }}><TrendingUp className="h-2 w-2" /> 32% vs last year</motion.p>
+          <motion.p className="flex items-center justify-center gap-1 text-[9px] text-green-400 font-medium mt-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.3 }}><TrendingUp className="h-2 w-2" /> 32% vs last year</motion.p>
           <p className="mt-1.5 text-[9px] text-primary cursor-pointer hover:underline">All deals →</p>
         </div>
         <div className="bg-card px-3 py-3 border-r border-border flex flex-col items-center justify-center">
@@ -1059,8 +1059,8 @@ export function Hero() {
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55, delay: 0.1 }}
             className="font-serif max-w-4xl text-[2.75rem] font-light leading-[1.1] tracking-tight text-foreground sm:text-5xl md:text-[3.6rem]"
           >
-            Your business isn&apos;t capped on <em className="text-primary">talent</em>.{" "}
-            It&apos;s capped on <em className="text-primary">bandwidth</em>.
+            Your Business Isn&apos;t Capped On <em className="text-primary">Talent</em>.{" "}
+            It&apos;s Capped On <em className="text-primary">Bandwidth</em>.
           </motion.h1>
 
           <motion.p
