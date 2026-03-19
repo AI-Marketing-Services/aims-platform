@@ -165,14 +165,14 @@ export default function IndustriesPage() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link
                 href="/get-started"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-white hover:bg-primary/90 transition-colors"
+                className="inline-flex items-center justify-center gap-2 rounded-sm bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
               >
                 Book a Strategy Call
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
                 href="/solutions"
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-border px-6 py-3 text-sm font-semibold text-foreground hover:bg-surface transition-colors"
+                className="inline-flex items-center justify-center gap-2 rounded-sm border border-border px-6 py-3 text-sm font-semibold text-foreground hover:bg-surface transition-colors"
               >
                 View Solution Packages
               </Link>

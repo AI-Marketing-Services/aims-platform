@@ -30,8 +30,7 @@ export default async function ResellerLayout({
       {/* Mobile top header */}
       <div className="lg:hidden flex items-center justify-between h-14 px-4 bg-deep border-b border-border sticky top-0 z-40">
         <Link href="/reseller/dashboard" className="flex items-center gap-2">
-          <Image src="/logo.png" alt="AIMS" width={28} height={28} className="object-contain" />
-          <span className="text-base font-bold">AIMS</span>
+          <Image src="/logo.png" alt="AIMS" width={80} height={32} className="object-contain h-7 w-auto" />
           <span className="text-[10px] font-medium text-amber-500 uppercase tracking-wider">Partner</span>
         </Link>
         <UserButton afterSignOutUrl="/" />
@@ -41,11 +40,8 @@ export default async function ResellerLayout({
         <aside className="hidden lg:flex w-64 flex-col border-r border-border bg-deep">
           <div className="flex h-16 items-center px-4 border-b border-border">
             <Link href="/reseller/dashboard" className="flex items-center gap-2.5">
-              <Image src="/logo.png" alt="AIMS" width={32} height={32} className="object-contain" />
-              <div>
-                <span className="text-lg font-bold">AIMS</span>
-                <span className="ml-1.5 text-[10px] font-medium text-amber-500 uppercase tracking-wider">Partner</span>
-              </div>
+              <Image src="/logo.png" alt="AIMS" width={100} height={40} className="object-contain h-8 w-auto" />
+              <span className="text-[10px] font-medium text-amber-500 uppercase tracking-wider">Partner</span>
             </Link>
           </div>
           <nav className="flex-1 py-4 px-2 space-y-0.5">

@@ -51,7 +51,7 @@ function OutboundDemo() {
           )}
         </motion.div>
       ))}
-      <div className="mt-2 rounded-lg bg-primary/10 border border-primary/20 px-3 py-2 flex items-center gap-2">
+      <div className="mt-2 rounded-sm bg-primary/10 border border-primary/20 px-3 py-2 flex items-center gap-2">
         <TrendingUp className="h-3.5 w-3.5 text-primary" />
         <span className="text-[11px] font-semibold text-primary">47 qualified meetings booked this month</span>
       </div>
@@ -103,7 +103,7 @@ function RevOpsDemo() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -6 }}
           transition={{ duration: 0.25 }}
-          className="rounded-xl border border-border bg-card/70 p-3"
+          className="rounded-sm border border-border bg-card/70 p-3"
         >
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
@@ -301,7 +301,7 @@ function ContentDemo() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -6 }}
           transition={{ duration: 0.2 }}
-          className="rounded-xl border border-border p-3"
+          className="rounded-sm border border-border p-3"
           style={{ backgroundColor: post.bg }}
         >
           <div className="flex items-center gap-2 mb-2">
@@ -361,7 +361,7 @@ function ReactivationDemo() {
         <RefreshCw className="h-3.5 w-3.5 text-primary" />
         <span className="text-[11px] font-semibold text-foreground">Dead CRM contacts scanned</span>
       </div>
-      <div className="rounded-xl border border-border bg-card/70 p-3">
+      <div className="rounded-sm border border-border bg-card/70 p-3">
         <div className="flex items-end gap-2">
           <span className="text-3xl font-extrabold text-foreground tabular-nums">{count.toLocaleString()}</span>
           <span className="text-sm text-muted-foreground mb-1">/ 2,783 contacts</span>
@@ -379,7 +379,7 @@ function ReactivationDemo() {
           <p className="text-xl font-extrabold text-green-400 tabular-nums">{replied}</p>
           <p className="text-[10px] text-green-500 font-medium">Replied positively</p>
         </div>
-        <div className="rounded-lg bg-primary/10 border border-primary/20 p-2.5">
+        <div className="rounded-sm bg-primary/10 border border-primary/20 p-2.5">
           <p className="text-xl font-extrabold text-primary">{pct}%</p>
           <p className="text-[10px] text-primary font-medium">Reactivation rate</p>
         </div>
@@ -422,7 +422,7 @@ function DatabaseDemo() {
           : <span className="ml-auto text-[10px] text-green-400 font-semibold">Complete</span>
         }
       </div>
-      <div className="rounded-xl border border-border bg-card/70 p-2.5">
+      <div className="rounded-sm border border-border bg-card/70 p-2.5">
         <div className="flex items-center justify-between mb-1.5">
           <span className="text-[10px] text-muted-foreground">Analyzing 8,430 records</span>
           <span className="text-[10px] font-bold text-foreground">{progress}%</span>
@@ -551,7 +551,7 @@ function ServiceCard({ service, index }: { service: ServiceCard; index: number }
       <div className="flex flex-col flex-1 p-5">
         {/* Header */}
         <div className="flex items-start justify-between mb-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-deep text-muted-foreground flex-shrink-0">
+          <div className="flex h-9 w-9 items-center justify-center rounded-sm bg-deep text-muted-foreground flex-shrink-0">
             {service.icon}
           </div>
           <div className="flex items-center gap-1.5">

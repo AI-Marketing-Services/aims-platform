@@ -129,7 +129,7 @@ export function WhyAIMS() {
             <div className="flex animate-ticker whitespace-nowrap items-end pb-1">
               {[...TOOLS, ...TOOLS].map((tool, i) => (
                 <div key={i} className="mx-6 inline-flex flex-col items-center gap-2 flex-shrink-0">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-border bg-card shadow-sm">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-sm border border-border bg-card shadow-sm">
                     <ToolLogo domain={tool.domain} name={tool.name} size={28} />
                   </div>
                   <span className="text-[10px] text-muted-foreground text-center leading-tight whitespace-nowrap">{tool.name}</span>

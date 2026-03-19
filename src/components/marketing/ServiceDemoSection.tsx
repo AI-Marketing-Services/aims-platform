@@ -29,7 +29,7 @@ function OutboundDemo() {
           key={i}
           animate={{ opacity: i <= step ? 1 : 0.25, x: i === step ? 4 : 0 }}
           transition={{ duration: 0.3 }}
-          className="flex items-center gap-3 rounded-xl bg-card border border-border px-4 py-3"
+          className="flex items-center gap-3 rounded-sm bg-card border border-border px-4 py-3"
         >
           <div className="h-8 w-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: `${s.color}15` }}>
             <Image src={s.tool} alt="" width={18} height={18} className="object-contain" />
@@ -94,7 +94,7 @@ function RevOpsDemo() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -6 }}
           transition={{ duration: 0.25 }}
-          className="rounded-xl border border-border bg-card p-4"
+          className="rounded-sm border border-border bg-card p-4"
         >
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-3">
@@ -117,7 +117,7 @@ function RevOpsDemo() {
       </AnimatePresence>
       <div className="grid grid-cols-3 gap-2">
         {[["$47.2K", "Pipeline"], ["82%", "Win Rate"], ["4 days", "Avg. Close"]].map(([val, lbl]) => (
-          <div key={lbl} className="rounded-xl bg-deep border border-border px-3 py-2.5 text-center">
+          <div key={lbl} className="rounded-sm bg-deep border border-border px-3 py-2.5 text-center">
             <p className="text-base font-bold text-foreground">{val}</p>
             <p className="text-xs text-muted-foreground">{lbl}</p>
           </div>
@@ -219,7 +219,7 @@ const CRM_TABS = [
     label: "Website",
     content: () => (
       <div className="space-y-3">
-        <div className="rounded-xl border border-border bg-deep overflow-hidden">
+        <div className="rounded-sm border border-border bg-deep overflow-hidden">
           <div className="h-2.5 w-full bg-primary flex items-center gap-1 px-2">
             {[1,2,3].map(d => <div key={d} className="h-1.5 w-1.5 rounded-full bg-card/50" />)}
           </div>
@@ -227,7 +227,7 @@ const CRM_TABS = [
             <div className="h-4 w-1/2 rounded bg-surface" />
             <div className="h-3 w-3/4 rounded bg-surface" />
             <div className="h-3 w-2/3 rounded bg-surface" />
-            <div className="mt-3 h-7 w-28 rounded-lg bg-primary" />
+            <div className="mt-3 h-7 w-28 rounded-sm bg-primary" />
           </div>
         </div>
         <p className="text-xs text-muted-foreground text-center">GHL-powered site — live in 3 days</p>
@@ -243,7 +243,7 @@ const CRM_TABS = [
           { name: "Vertex Inc", stage: "Demo Booked", val: "$5,200", color: "#2563EB" },
           { name: "Prism LLC", stage: "Proposal", val: "$12,000", color: "#EA580C" },
         ].map((d) => (
-          <div key={d.name} className="flex items-center gap-3 rounded-xl bg-card border border-border px-3 py-2.5">
+          <div key={d.name} className="flex items-center gap-3 rounded-sm bg-card border border-border px-3 py-2.5">
             <div className="h-7 w-7 rounded-full bg-deep flex items-center justify-center text-xs font-bold text-muted-foreground">{d.name[0]}</div>
             <div className="flex-1 min-w-0">
               <p className="text-xs font-semibold text-foreground">{d.name}</p>
@@ -280,7 +280,7 @@ const CRM_TABS = [
       <div className="space-y-3">
         <div className="grid grid-cols-3 gap-2">
           {[["1,240", "Visitors"], ["68", "Leads"], ["5.5%", "CVR"]].map(([v, l]) => (
-            <div key={l} className="rounded-xl bg-deep border border-border px-2 py-2.5 text-center">
+            <div key={l} className="rounded-sm bg-deep border border-border px-2 py-2.5 text-center">
               <p className="text-sm font-bold text-foreground">{v}</p>
               <p className="text-[10px] text-muted-foreground">{l}</p>
             </div>
@@ -369,7 +369,7 @@ function FinanceDemo() {
           </button>
         </div>
       </div>
-      <div className="rounded-xl border border-border bg-card overflow-hidden">
+      <div className="rounded-sm border border-border bg-card overflow-hidden">
         <div className="grid grid-cols-2 border-b border-border bg-deep px-3 py-1.5 text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">
           <span>Line Item</span>
           <span className="text-right">{showAfter ? "Cleaned" : "Your data"}</span>
@@ -444,7 +444,7 @@ function AudienceDemo() {
         <Search className="h-4 w-4 text-blue-500" />
         <span className="text-sm font-semibold text-foreground">Audience Intelligence Search</span>
       </div>
-      <div className="rounded-xl border border-border bg-card px-3 py-2.5 flex items-center gap-2">
+      <div className="rounded-sm border border-border bg-card px-3 py-2.5 flex items-center gap-2">
         <Search className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
         <span className="text-sm text-foreground flex-1">
           {typed}
@@ -455,7 +455,7 @@ function AudienceDemo() {
         {showResults && (
           <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-1.5">
             {AUDIENCE_RESULTS.slice(0, 3).map((r) => (
-              <div key={r.label} className="flex items-center gap-3 rounded-xl bg-deep border border-border px-3 py-2.5">
+              <div key={r.label} className="flex items-center gap-3 rounded-sm bg-deep border border-border px-3 py-2.5">
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-medium text-foreground leading-tight">{r.label}</p>
                   <p className="text-[10px] text-muted-foreground">{r.count} matched</p>
@@ -504,7 +504,7 @@ function ContentDemo() {
         AI Content Generator
         <motion.div animate={{ opacity: [1,0,1] }} transition={{ repeat: Infinity, duration: 0.9 }} className="h-2 w-2 rounded-full bg-green-400 ml-auto" />
       </div>
-      <div className="min-h-[64px] rounded-xl border border-border bg-card p-4">
+      <div className="min-h-[64px] rounded-sm border border-border bg-card p-4">
         <p className="text-base font-semibold text-foreground leading-snug">
           {typed}
           <motion.span animate={{ opacity: [1,0,1] }} transition={{ repeat: Infinity, duration: 0.5 }} className="inline-block w-0.5 h-4 bg-foreground ml-0.5 align-middle" />
@@ -512,7 +512,7 @@ function ContentDemo() {
       </div>
       <div className="grid grid-cols-3 gap-2">
         {[["4.8/5", "Hook Score"], ["94%", "Open Rate"], ["2.1x", "CTR Lift"]].map(([val, lbl]) => (
-          <div key={lbl} className="rounded-xl bg-deep border border-border px-3 py-2.5 text-center">
+          <div key={lbl} className="rounded-sm bg-deep border border-border px-3 py-2.5 text-center">
             <p className="text-base font-bold text-foreground">{val}</p>
             <p className="text-xs text-muted-foreground">{lbl}</p>
           </div>
@@ -548,7 +548,7 @@ function ReactivationDemo() {
         <RefreshCw className="h-4 w-4 text-primary" />
         <span className="text-sm font-semibold text-foreground">Dead CRM contacts scanned</span>
       </div>
-      <div className="rounded-xl border border-border bg-card p-4">
+      <div className="rounded-sm border border-border bg-card p-4">
         <div className="flex items-end gap-2">
           <span className="text-3xl font-extrabold text-foreground tabular-nums">{count.toLocaleString()}</span>
           <span className="text-sm text-muted-foreground mb-1">/ 2,783 contacts</span>
@@ -606,7 +606,7 @@ function DatabaseDemo() {
           : <span className="ml-auto text-xs text-green-400 font-semibold">Complete</span>
         }
       </div>
-      <div className="rounded-xl border border-border bg-card p-4">
+      <div className="rounded-sm border border-border bg-card p-4">
         <div className="flex items-center justify-between mb-2">
           <span className="text-xs text-muted-foreground">Analyzing 8,430 records</span>
           <span className="text-xs font-bold text-foreground">{progress}%</span>
@@ -623,7 +623,7 @@ function DatabaseDemo() {
         {!scanning && (
           <motion.div initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} className="space-y-1.5">
             {DB_FIELDS.map((f) => (
-              <div key={f.label} className="flex items-center gap-3 rounded-xl bg-deep border border-border px-3 py-2.5">
+              <div key={f.label} className="flex items-center gap-3 rounded-sm bg-deep border border-border px-3 py-2.5">
                 <div className="h-2.5 w-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: f.color }} />
                 <span className="text-xs text-muted-foreground flex-1">{f.label}</span>
                 <span className="text-xs font-bold text-foreground">{f.count}</span>

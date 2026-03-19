@@ -298,7 +298,7 @@ export default function CRMOnboardingPage() {
             ].map((video) => (
               <div
                 key={video.label}
-                className="rounded-xl border border-border bg-card p-6 flex flex-col"
+                className="rounded-sm border border-border bg-card p-6 flex flex-col"
               >
                 <div className="flex items-center gap-2 mb-3">
                   <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
@@ -318,7 +318,7 @@ export default function CRMOnboardingPage() {
                   href={video.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-5 inline-flex items-center justify-center gap-2 rounded-lg bg-primary text-white px-5 py-2.5 text-sm font-semibold hover:bg-primary/90 transition-colors"
+                  className="mt-5 inline-flex items-center justify-center gap-2 rounded-sm bg-primary text-white px-5 py-2.5 text-sm font-semibold hover:bg-primary/90 transition-colors"
                 >
                   <Play className="h-4 w-4" />
                   {video.buttonText}
@@ -380,7 +380,7 @@ export default function CRMOnboardingPage() {
                 href={dns.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-xl border border-border bg-card p-5 flex flex-col items-center gap-3 hover:border-primary/30 hover:shadow-sm transition-all"
+                className="rounded-sm border border-border bg-card p-5 flex flex-col items-center gap-3 hover:border-primary/30 hover:shadow-sm transition-all"
               >
                 <Globe className="h-8 w-8 text-primary" />
                 <p className="text-sm font-semibold text-foreground">
@@ -395,7 +395,7 @@ export default function CRMOnboardingPage() {
           </div>
 
           {/* DNS Reference */}
-          <div className="mt-8 rounded-xl border border-border bg-deep p-5">
+          <div className="mt-8 rounded-sm border border-border bg-deep p-5">
             <p className="text-sm font-semibold text-foreground mb-3">
               DNS Records Reference
             </p>
@@ -435,9 +435,9 @@ export default function CRMOnboardingPage() {
             {FEATURES.map(({ icon: Icon, title, description }) => (
               <div
                 key={title}
-                className="rounded-xl border border-border bg-card p-5"
+                className="rounded-sm border border-border bg-card p-5"
               >
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                <div className="flex h-10 w-10 items-center justify-center rounded-sm bg-primary/10">
                   <Icon className="h-5 w-5 text-primary" />
                 </div>
                 <h3 className="mt-4 text-sm font-semibold text-foreground">
@@ -535,7 +535,7 @@ export default function CRMOnboardingPage() {
           <h2 className="text-2xl font-bold text-foreground text-center">
             Frequently Asked Questions
           </h2>
-          <div className="mt-10 divide-y divide-border rounded-xl border border-border bg-card overflow-hidden">
+          <div className="mt-10 divide-y divide-border rounded-sm border border-border bg-card overflow-hidden">
             {FAQS.map((faq, i) => (
               <details key={i} className="group">
                 <summary className="flex items-center justify-between px-5 py-4 cursor-pointer list-none hover:bg-surface transition-colors">
@@ -568,7 +568,7 @@ export default function CRMOnboardingPage() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <a
               href={`mailto:${SUPPORT_EMAIL_1}`}
-              className="rounded-xl border border-border bg-card p-5 text-center hover:border-primary/30 hover:shadow-sm transition-all"
+              className="rounded-sm border border-border bg-card p-5 text-center hover:border-primary/30 hover:shadow-sm transition-all"
             >
               <Mail className="h-8 w-8 text-primary mx-auto" />
               <p className="mt-3 text-sm font-semibold text-foreground">
@@ -583,7 +583,7 @@ export default function CRMOnboardingPage() {
             </a>
             <a
               href={`mailto:${SUPPORT_EMAIL_2}`}
-              className="rounded-xl border border-border bg-card p-5 text-center hover:border-primary/30 hover:shadow-sm transition-all"
+              className="rounded-sm border border-border bg-card p-5 text-center hover:border-primary/30 hover:shadow-sm transition-all"
             >
               <Mail className="h-8 w-8 text-primary mx-auto" />
               <p className="mt-3 text-sm font-semibold text-foreground">Adam</p>
@@ -592,7 +592,7 @@ export default function CRMOnboardingPage() {
                 {SUPPORT_EMAIL_2}
               </p>
             </a>
-            <div className="rounded-xl border border-border bg-card p-5 text-center">
+            <div className="rounded-sm border border-border bg-card p-5 text-center">
               <Bot className="h-8 w-8 text-primary mx-auto" />
               <p className="mt-3 text-sm font-semibold text-foreground">
                 AI Help Agent
@@ -605,7 +605,7 @@ export default function CRMOnboardingPage() {
           </div>
 
           {/* When to reach out */}
-          <div className="mt-8 rounded-xl border border-border bg-card p-5">
+          <div className="mt-8 rounded-sm border border-border bg-card p-5">
             <p className="text-sm font-semibold text-foreground mb-3">
               When to reach out:
             </p>

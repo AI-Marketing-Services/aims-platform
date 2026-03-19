@@ -73,7 +73,7 @@ export default function VPSnapshotPage() {
           <div className="mt-10 flex flex-col gap-4 sm:flex-row">
             <Link
               href="/get-started?feature=vp-snapshot"
-              className="inline-flex items-center gap-2 rounded-xl bg-primary px-8 py-4 text-base font-semibold text-white hover:bg-primary/90 transition shadow-md"
+              className="inline-flex items-center gap-2 rounded-sm bg-primary px-8 py-4 text-base font-semibold text-white hover:bg-primary/90 transition shadow-md"
             >
               Get Access — Book a Call <ArrowRight className="h-5 w-5" />
             </Link>
@@ -113,7 +113,7 @@ export default function VPSnapshotPage() {
                 key={feature.title}
                 className="rounded-2xl border border-border bg-card p-7"
               >
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 mb-5">
+                <div className="flex h-11 w-11 items-center justify-center rounded-sm bg-primary/10 mb-5">
                   <feature.icon className="h-5 w-5 text-primary" />
                 </div>
                 <h3 className="text-base font-bold text-foreground mb-2">{feature.title}</h3>

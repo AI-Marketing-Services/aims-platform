@@ -56,7 +56,7 @@ export function Integrations() {
             </ul>
             <Link
               href="/get-started"
-              className="mt-8 inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-white hover:bg-primary/80 transition shadow-md shadow-primary/20"
+              className="mt-8 inline-flex items-center gap-2 rounded-sm bg-primary px-6 py-3 text-sm font-semibold text-white hover:bg-primary/80 transition shadow-md shadow-primary/20"
             >
               Get Started Now <ArrowRight className="h-4 w-4" />
             </Link>
@@ -104,7 +104,7 @@ export function Integrations() {
                     >
                       {/* Counter-rotate so logos stay upright */}
                       <motion.div
-                        className="flex h-12 w-12 items-center justify-center rounded-xl bg-card shadow-md border border-border"
+                        className="flex h-12 w-12 items-center justify-center rounded-sm bg-card shadow-md border border-border"
                         animate={{ rotate: -360 }}
                         transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
                       >

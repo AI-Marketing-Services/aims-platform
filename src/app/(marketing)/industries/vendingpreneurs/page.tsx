@@ -155,13 +155,13 @@ export default function VendingpreneursPage() {
           <div className="mt-10 flex flex-col gap-4 sm:flex-row">
             <Link
               href="/get-started?ref=vendingpreneurs"
-              className="inline-flex items-center gap-2 rounded-xl bg-primary px-8 py-4 text-base font-semibold text-white hover:bg-primary/90 transition shadow-md shadow-primary/20"
+              className="inline-flex items-center gap-2 rounded-sm bg-primary px-8 py-4 text-base font-semibold text-primary-foreground hover:bg-primary/90 transition shadow-md shadow-primary/20"
             >
               Get Your Free Strategy Call <ArrowRight className="h-5 w-5" />
             </Link>
             <Link
               href="/tools/website-audit?ref=vendingpreneurs"
-              className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-8 py-4 text-base font-semibold text-foreground hover:bg-muted transition"
+              className="inline-flex items-center gap-2 rounded-sm border border-border bg-card px-8 py-4 text-base font-semibold text-foreground hover:bg-muted transition"
             >
               Free Site Audit
             </Link>
@@ -206,7 +206,7 @@ export default function VendingpreneursPage() {
             {PAIN_POINTS.map((item) => (
               <div key={item.pain} className="rounded-2xl border border-border bg-background p-6">
                 <div className="flex items-start gap-4">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-sm bg-primary/10">
                     <item.icon className="h-5 w-5 text-primary" />
                   </div>
                   <div>
@@ -291,7 +291,7 @@ export default function VendingpreneursPage() {
               >
                 {tier.popular && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <span className="rounded-full bg-primary px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
+                    <span className="rounded-full bg-primary px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-primary-foreground">
                       Most Popular
                     </span>
                   </div>
@@ -322,7 +322,7 @@ export default function VendingpreneursPage() {
                   href={`/get-started?ref=vp-${tier.id}`}
                   className={`w-full text-center rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors ${
                     tier.popular
-                      ? "bg-primary text-white hover:bg-primary/90"
+                      ? "bg-primary text-primary-foreground hover:bg-primary/90"
                       : "border border-border bg-background text-foreground hover:bg-muted"
                   }`}
                 >
@@ -352,7 +352,7 @@ export default function VendingpreneursPage() {
             <div className="flex flex-wrap gap-2 mb-5">
               {["Website + CRM + Chatbot", "Cold Outbound Engine", "AI Voice Agents", "SEO/AEO"].map((s) => (
                 <span key={s} className="inline-flex items-center gap-1 px-2.5 py-1 bg-deep text-foreground text-xs font-medium rounded-full">
-                  <Check className="w-3 h-3 text-green-400" />{s}
+                  <Check className="w-3 h-3 text-primary" />{s}
                 </span>
               ))}
             </div>
@@ -381,22 +381,22 @@ export default function VendingpreneursPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-24 bg-primary">
+      <section className="py-24 bg-deep">
         <div className="mx-auto max-w-2xl px-4 text-center">
-          <TrendingUp className="mx-auto h-10 w-10 text-primary-foreground/70 mb-6" />
-          <h2 className="text-3xl font-bold text-white sm:text-4xl">
+          <TrendingUp className="mx-auto h-10 w-10 text-primary/70 mb-6" />
+          <h2 className="text-3xl font-bold text-foreground sm:text-4xl">
             Ready to add 10 locations this quarter?
           </h2>
-          <p className="mt-4 text-primary-foreground/80 text-lg">
+          <p className="mt-4 text-muted-foreground text-lg">
             Book a free 30-minute call. We&apos;ll audit your current lead flow and build a custom plan for your operation.
           </p>
           <Link
             href="/get-started?ref=vendingpreneurs"
-            className="mt-8 inline-flex items-center gap-2 rounded-xl bg-card px-10 py-4 text-base font-semibold text-primary hover:bg-primary/10 transition shadow-lg"
+            className="mt-8 inline-flex items-center gap-2 rounded-sm bg-primary px-10 py-4 text-base font-semibold text-primary-foreground hover:bg-primary/90 transition shadow-lg"
           >
             Book Your Free Strategy Call <ArrowRight className="h-5 w-5" />
           </Link>
-          <p className="mt-4 text-primary-foreground/70 text-sm">
+          <p className="mt-4 text-muted-foreground text-sm">
             No retainer required · Cancel anytime · Results in 14 days
           </p>
         </div>

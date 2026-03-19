@@ -49,9 +49,8 @@ export function PortalSidebar({ totalMrr = 0, hasUnread = false }: PortalSidebar
     >
       {/* Logo */}
       <div className="flex h-16 items-center px-4 border-b border-border">
-        <Link href="/" className="flex items-center gap-2.5">
-          <Image src="/logo.png" alt="AIMS" width={32} height={32} className="shrink-0 object-contain" />
-          {!collapsed && <span className="text-lg font-bold tracking-tight">AIMS</span>}
+        <Link href="/" className="flex items-center">
+          <Image src="/logo.png" alt="AIMS" width={collapsed ? 32 : 100} height={40} className={`shrink-0 object-contain ${collapsed ? "h-8 w-8" : "h-8 w-auto"}`} />
         </Link>
       </div>
 

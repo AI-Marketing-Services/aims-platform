@@ -14,7 +14,7 @@ function CalBooking() {
         <h2 className="text-2xl font-bold text-foreground">Request submitted!</h2>
         <p className="mt-2 text-muted-foreground">Pick a time that works best for your strategy call below.</p>
       </div>
-      <div className="rounded-xl border border-border overflow-hidden">
+      <div className="rounded-sm border border-border overflow-hidden">
         <iframe
           src="https://cal.com/adamwolfe/aims?embed=true&layout=month_view&theme=light&brandColor=%23DC2626&hideEventTypeDetails=true"
           width="100%"
@@ -169,7 +169,7 @@ export function GetStartedClient() {
               <button
                 onClick={() => setStep(2)}
                 disabled={form.services.length === 0}
-                className="mt-6 w-full rounded-lg bg-primary py-3.5 font-semibold text-white disabled:opacity-50 hover:bg-primary/90 transition flex items-center justify-center gap-2"
+                className="mt-6 w-full rounded-sm bg-primary py-3.5 font-semibold text-white disabled:opacity-50 hover:bg-primary/90 transition flex items-center justify-center gap-2"
               >
                 Continue <ArrowRight className="h-4 w-4" />
               </button>
@@ -264,7 +264,7 @@ export function GetStartedClient() {
                 <button
                   onClick={() => setStep(3)}
                   disabled={!form.name || !form.email || !form.company}
-                  className="flex-1 rounded-lg bg-primary py-3 font-semibold text-white disabled:opacity-50 hover:bg-primary/90 transition flex items-center justify-center gap-2"
+                  className="flex-1 rounded-sm bg-primary py-3 font-semibold text-white disabled:opacity-50 hover:bg-primary/90 transition flex items-center justify-center gap-2"
                 >
                   Continue <ArrowRight className="h-4 w-4" />
                 </button>
@@ -302,7 +302,7 @@ export function GetStartedClient() {
               </p>
 
               {submitError && (
-                <div className="mt-4 rounded-lg bg-primary/10 border border-primary/30 px-4 py-3 text-sm text-primary">
+                <div className="mt-4 rounded-sm bg-primary/10 border border-primary/30 px-4 py-3 text-sm text-primary">
                   {submitError}
                 </div>
               )}
@@ -318,7 +318,7 @@ export function GetStartedClient() {
                 <button
                   onClick={handleSubmit}
                   disabled={submitting}
-                  className="flex-1 rounded-lg bg-primary py-3 font-semibold text-white hover:bg-primary/90 transition disabled:opacity-60"
+                  className="flex-1 rounded-sm bg-primary py-3 font-semibold text-white hover:bg-primary/90 transition disabled:opacity-60"
                 >
                   {submitting ? "Submitting..." : "Submit & Book Call"}
                 </button>

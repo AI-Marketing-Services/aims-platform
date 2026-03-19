@@ -58,13 +58,13 @@ export default function CarDealershipsPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero */}
-      <section className="bg-gradient-to-b from-primary to-primary/90 text-white py-20 px-4">
+      <section className="bg-gradient-to-b from-background to-deep py-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-card/20 text-white/90 text-sm font-medium rounded-full mb-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary text-sm font-medium rounded-full mb-6">
             <Zap className="w-3.5 h-3.5" />
             Built for Automotive Dealerships
           </div>
-          <h1 className="text-4xl sm:text-5xl font-bold mb-6 leading-tight">
+          <h1 className="text-4xl sm:text-5xl font-bold mb-6 leading-tight text-foreground">
             AI Systems That Fill Your<br />
             <span className="text-primary">Showroom and Service Lane</span>
           </h1>
@@ -74,14 +74,14 @@ export default function CarDealershipsPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/get-started"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 transition-colors"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-primary-foreground font-semibold rounded-xl hover:bg-primary/90 transition-colors"
             >
               Get a Free Strategy Call
               <ArrowRight className="w-5 h-5" />
             </Link>
             <Link
               href="/tools/website-audit"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-card/10 text-white font-semibold rounded-xl hover:bg-card/20 transition-colors border border-white/20"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-card text-foreground font-semibold rounded-xl hover:bg-card/80 transition-colors border border-border"
             >
               Free Website Audit
             </Link>
@@ -118,8 +118,8 @@ export default function CarDealershipsPage() {
                   <p className="text-sm font-medium text-foreground">{pain}</p>
                 </div>
                 <div className="flex items-start gap-2 pl-11">
-                  <CheckCircle2 className="w-4 h-4 text-green-400 flex-shrink-0 mt-0.5" />
-                  <p className="text-sm text-green-400">{fix}</p>
+                  <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+                  <p className="text-sm text-primary">{fix}</p>
                 </div>
               </div>
             ))}
@@ -168,7 +168,7 @@ export default function CarDealershipsPage() {
             <div className="flex flex-wrap gap-2 mb-5">
               {["RevOps Pipeline", "Sales Team Enablement", "AI Tool Tracker", "P&L Finance Automation"].map((s) => (
                 <span key={s} className="inline-flex items-center gap-1 px-2.5 py-1 bg-deep text-foreground text-xs font-medium rounded-full">
-                  <CheckCircle2 className="w-3 h-3 text-green-400" />{s}
+                  <CheckCircle2 className="w-3 h-3 text-primary" />{s}
                 </span>
               ))}
             </div>
@@ -183,15 +183,15 @@ export default function CarDealershipsPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-16 px-4 bg-primary">
-        <div className="max-w-2xl mx-auto text-center text-white">
-          <h2 className="text-3xl font-bold mb-4">Ready to automate your dealership&apos;s growth?</h2>
+      <section className="py-16 px-4 bg-deep">
+        <div className="max-w-2xl mx-auto text-center">
+          <h2 className="text-3xl font-bold mb-4 text-foreground">Ready to automate your dealership&apos;s growth?</h2>
           <p className="text-muted-foreground mb-8">
             Book a free 30-minute strategy call. We&apos;ll audit your current lead flow and show you exactly where AI can add the most revenue.
           </p>
           <Link
             href="/get-started"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-card text-primary font-semibold rounded-xl hover:bg-primary/10 transition-colors"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-primary-foreground font-semibold rounded-xl hover:bg-primary/90 transition-colors"
           >
             Book Free Strategy Call
             <ArrowRight className="w-5 h-5" />

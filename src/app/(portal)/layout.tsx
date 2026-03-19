@@ -52,9 +52,8 @@ export default async function PortalLayout({
     <div className="min-h-screen bg-background text-foreground">
       {/* Mobile top header — only visible on mobile */}
       <div className="lg:hidden flex items-center justify-between h-14 px-4 bg-deep border-b border-border sticky top-0 z-40">
-        <Link href="/" className="flex items-center gap-2">
-          <Image src="/logo.png" alt="AIMS" width={28} height={28} className="object-contain" />
-          <span className="text-base font-bold tracking-tight">AIMS</span>
+        <Link href="/" className="flex items-center">
+          <Image src="/logo.png" alt="AIMS" width={80} height={32} className="object-contain h-7 w-auto" />
         </Link>
         <div className="flex items-center gap-2">
           {unreadCount > 0 && <span className="h-2 w-2 rounded-full bg-primary" />}

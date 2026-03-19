@@ -42,9 +42,8 @@ export function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-6 gap-8 py-12 lg:py-16">
           {/* Brand column */}
           <div className="col-span-2">
-            <Link href="/" className="flex items-center gap-2.5">
-              <Image src="/logo.png" alt="AIMS" width={32} height={32} className="object-contain" />
-              <span className="text-lg font-bold tracking-tight">AIMS</span>
+            <Link href="/" className="flex items-center">
+              <Image src="/logo.png" alt="AIMS" width={100} height={40} className="object-contain h-8 w-auto" />
             </Link>
             <p className="mt-4 max-w-xs text-sm text-muted-foreground leading-relaxed">
               AI-powered business infrastructure. Built once. Runs forever.

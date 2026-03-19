@@ -330,7 +330,7 @@ function DashboardView() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.92, y: 8 }}
                 transition={{ duration: 0.18 }}
-                className="absolute left-4 bottom-10 z-20 w-48 rounded-xl border border-border bg-card shadow-xl p-3"
+                className="absolute left-4 bottom-10 z-20 w-48 rounded-sm border border-border bg-card shadow-xl p-3"
               >
                 <div className="flex items-center justify-between mb-2">
                   <p className="text-[10px] font-semibold text-foreground">Revenue Breakdown</p>
@@ -442,7 +442,7 @@ function LeadsView() {
     <div className="flex-1 bg-card p-4 overflow-hidden">
       <div className="flex items-center justify-between mb-2">
         <p className="text-[11px] font-semibold text-foreground">All Leads</p>
-        <button className="flex items-center gap-1 text-[9px] px-2 py-1 rounded-lg bg-primary text-white font-semibold hover:bg-primary/80 transition-colors">
+        <button className="flex items-center gap-1 text-[9px] px-2 py-1 rounded-sm bg-primary text-white font-semibold hover:bg-primary/80 transition-colors">
           <Plus className="h-2.5 w-2.5" />
           Add Lead +
         </button>
@@ -549,7 +549,7 @@ function CampaignsView() {
     <div className="flex-1 bg-card p-4 overflow-hidden">
       <div className="flex items-center justify-between mb-2">
         <p className="text-[11px] font-semibold text-foreground">Active Campaigns</p>
-        <button className="flex items-center gap-1 text-[9px] px-2 py-1 rounded-lg bg-primary text-white font-semibold hover:bg-primary/80 transition-colors">
+        <button className="flex items-center gap-1 text-[9px] px-2 py-1 rounded-sm bg-primary text-white font-semibold hover:bg-primary/80 transition-colors">
           <Plus className="h-2.5 w-2.5" />
           New Campaign +
         </button>
@@ -622,7 +622,7 @@ function PipelineView() {
     <div className="flex-1 bg-card p-4 overflow-hidden">
       <div className="flex items-center justify-between mb-3">
         <p className="text-[11px] font-semibold text-foreground">Pipeline Board</p>
-        <button className="flex items-center gap-1 text-[9px] px-2 py-1 rounded-lg bg-primary text-white font-semibold hover:bg-primary/80 transition-colors">
+        <button className="flex items-center gap-1 text-[9px] px-2 py-1 rounded-sm bg-primary text-white font-semibold hover:bg-primary/80 transition-colors">
           <Plus className="h-2.5 w-2.5" />
           Add Deal +
         </button>
@@ -631,7 +631,7 @@ function PipelineView() {
       {/* Kanban mini board — 3 columns */}
       <div className="grid grid-cols-3 gap-2 mb-3">
         {KANBAN_COLUMNS.map((col, ci) => (
-          <div key={col.label} className="rounded-xl bg-deep border border-border p-2">
+          <div key={col.label} className="rounded-sm bg-deep border border-border p-2">
             <p className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">{col.label}</p>
             {col.deals.map((deal, di) => (
               <motion.div
@@ -653,7 +653,7 @@ function PipelineView() {
         ))}
       </div>
 
-      <div className="rounded-xl bg-deep px-4 py-3 flex items-center justify-between">
+      <div className="rounded-sm bg-deep px-4 py-3 flex items-center justify-between">
         <span className="text-[10px] text-muted-foreground">Total Pipeline Value</span>
         <span className="text-sm font-bold text-foreground">$905,000</span>
       </div>
@@ -790,7 +790,7 @@ function ReportsView() {
       {/* Main chart area: MRR (60%) + Lead Sources (40%) */}
       <div className="grid grid-cols-5 gap-2 mb-2">
         {/* MRR Growth area chart */}
-        <div className="col-span-3 rounded-xl border border-border p-2">
+        <div className="col-span-3 rounded-sm border border-border p-2">
           <p className="text-[9px] font-semibold text-muted-foreground mb-1">MRR Growth</p>
           <div className="flex gap-1">
             <div className="flex flex-col justify-between pr-1 text-right">
@@ -831,7 +831,7 @@ function ReportsView() {
         </div>
 
         {/* Lead Sources horizontal bar chart */}
-        <div className="col-span-2 rounded-xl border border-border p-2">
+        <div className="col-span-2 rounded-sm border border-border p-2">
           <p className="text-[9px] font-semibold text-muted-foreground mb-1.5">Lead Sources</p>
           <div className="space-y-1.5">
             {LEAD_SOURCES.map((s, i) => (
@@ -854,7 +854,7 @@ function ReportsView() {
       </div>
 
       {/* Conversion funnel */}
-      <div className="rounded-xl border border-border px-3 py-2 mb-2">
+      <div className="rounded-sm border border-border px-3 py-2 mb-2">
         <p className="text-[9px] font-semibold text-muted-foreground mb-1.5">Conversion Funnel</p>
         <div className="flex items-center gap-1 flex-wrap">
           {funnelSteps.map((step, i) => (
@@ -880,14 +880,14 @@ function ReportsView() {
       </div>
 
       {/* Activity heatmap */}
-      <div className="rounded-xl border border-border px-3 py-2">
+      <div className="rounded-sm border border-border px-3 py-2">
         <p className="text-[9px] font-semibold text-muted-foreground mb-1.5">Response Rate by Day</p>
         <div className="flex items-end gap-2">
           {HEATMAP_DAYS.map((d, i) => (
             <div key={`${d.day}-${i}`} className="flex flex-col items-center gap-0.5">
               <motion.div
                 className="h-5 w-5 rounded-full"
-                style={{ background: `rgba(220, 38, 38, ${d.pct / 100})` }}
+                style={{ background: `rgba(196, 151, 42, ${d.pct / 100})` }}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.5 + i * 0.07 }}
@@ -926,7 +926,7 @@ function SettingsView() {
       <p className="text-[11px] font-semibold text-foreground mb-3">Settings</p>
 
       {/* Profile section */}
-      <div className="rounded-xl border border-border px-3 py-2.5 mb-3 flex items-center gap-2.5">
+      <div className="rounded-sm border border-border px-3 py-2.5 mb-3 flex items-center gap-2.5">
         <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-[10px] font-bold text-white flex-shrink-0">SA</div>
         <div className="flex-1 min-w-0">
           <p className="text-[11px] font-semibold text-foreground leading-none">Sam Altman</p>
@@ -937,7 +937,7 @@ function SettingsView() {
 
       <div className="space-y-2 mb-3">
         {toggleItems.map((item) => (
-          <div key={item.label} className="flex items-center justify-between rounded-xl border border-border px-3 py-2">
+          <div key={item.label} className="flex items-center justify-between rounded-sm border border-border px-3 py-2">
             <div>
               <p className="text-[10px] font-semibold text-foreground">{item.label}</p>
               <p className="text-[9px] text-muted-foreground">{item.sub}</p>
@@ -957,7 +957,7 @@ function SettingsView() {
       </div>
 
       {/* Integrations */}
-      <div className="rounded-xl border border-border px-3 py-2.5 mb-3">
+      <div className="rounded-sm border border-border px-3 py-2.5 mb-3">
         <p className="text-[10px] font-semibold text-foreground mb-2">Integrations</p>
         <div className="flex flex-wrap gap-1.5">
           {integrations.map((intg) => (
@@ -970,20 +970,20 @@ function SettingsView() {
       </div>
 
       {/* Team Members */}
-      <div className="rounded-xl border border-border px-3 py-2.5 mb-3">
+      <div className="rounded-sm border border-border px-3 py-2.5 mb-3">
         <p className="text-[10px] font-semibold text-foreground mb-1.5">Team Members</p>
         <div className="flex -space-x-2">
           {["#C4972A", "#8B6914", "#7F1D1D", "#A17D22"].map((c, i) => (
-            <div key={i} className="h-6 w-6 rounded-full border-2 border-white flex items-center justify-center text-[8px] font-bold text-white" style={{ background: c }}>
+            <div key={i} className="h-6 w-6 rounded-full border-2 border-card flex items-center justify-center text-[8px] font-bold text-white" style={{ background: c }}>
               {["A", "B", "C", "D"][i]}
             </div>
           ))}
-          <div className="h-6 w-6 rounded-full border-2 border-white bg-deep flex items-center justify-center text-[8px] text-muted-foreground">+3</div>
+          <div className="h-6 w-6 rounded-full border-2 border-card bg-deep flex items-center justify-center text-[8px] text-muted-foreground">+3</div>
         </div>
       </div>
 
       {/* Billing */}
-      <div className="rounded-xl border border-border px-3 py-2.5 flex items-center justify-between">
+      <div className="rounded-sm border border-border px-3 py-2.5 flex items-center justify-between">
         <div>
           <p className="text-[10px] font-semibold text-foreground">Billing</p>
           <p className="text-[9px] text-muted-foreground">Pro Plan · $297/mo</p>
@@ -1028,7 +1028,7 @@ export function Hero() {
       {FLOAT_LOGOS.map((logo) => (
         <motion.div
           key={logo.label}
-          className="absolute z-10 hidden lg:flex h-[72px] w-[72px] items-center justify-center rounded-2xl bg-card shadow-lg shadow-gray-200/60 border border-border"
+          className="absolute z-10 hidden lg:flex h-[72px] w-[72px] items-center justify-center rounded-2xl bg-surface shadow-lg shadow-black/30 border border-border"
           style={logo.style as React.CSSProperties}
           initial={{ opacity: 0, scale: 0.7 }}
           animate={{
@@ -1054,7 +1054,7 @@ export function Hero() {
             <span className="inline-flex items-center gap-2.5 rounded-full border border-primary/30 bg-card px-4 py-1.5 text-sm font-medium text-foreground shadow-sm">
               <span className="flex -space-x-1.5">
                 {["#C4972A", "#8B6914", "#7F1D1D"].map((c, i) => (
-                  <span key={i} className="flex h-5 w-5 items-center justify-center rounded-full border-2 border-white text-[8px] font-bold text-white" style={{ background: c }}>{["A", "B", "C"][i]}</span>
+                  <span key={i} className="flex h-5 w-5 items-center justify-center rounded-full border-2 border-card text-[8px] font-bold text-primary-foreground" style={{ background: c }}>{["A", "B", "C"][i]}</span>
                 ))}
               </span>
               Trusted by 1M+ users
@@ -1074,7 +1074,9 @@ export function Hero() {
             initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}
             className="mx-auto mt-5 max-w-xl text-lg text-muted-foreground leading-relaxed"
           >
-            AI-powered outbound, voice agents, and reactivation systems -- fully managed so your team can close, not chase.{" "}
+            AI-powered outbound, voice agents, and reactivation systems —
+            fully managed so your team can close, not chase.
+            <br />
             <strong className="text-foreground">More meetings. Zero overhead.</strong>
           </motion.p>
 
@@ -1103,9 +1105,8 @@ export function Hero() {
 
                 {/* DESKTOP SIDEBAR — hidden on mobile */}
                 <div className="hidden sm:flex w-40 flex-shrink-0 border-r border-border bg-card flex-col">
-                  <div className="flex items-center gap-2 px-3 py-3.5 border-b border-border">
-                    <Image src="/logo.png" alt="AIMS" width={22} height={22} className="object-contain" />
-                    <span className="text-sm font-bold text-foreground">AIMS</span>
+                  <div className="flex items-center px-3 py-3.5 border-b border-border">
+                    <Image src="/logo.png" alt="AIMS" width={80} height={32} className="object-contain h-6 w-auto" />
                   </div>
                   <div className="px-2.5 py-2">
                     <div className="flex items-center gap-1.5 rounded-lg bg-deep px-2 py-1.5">
@@ -1144,9 +1145,8 @@ export function Hero() {
                 {/* MOBILE TAB BAR — visible only on mobile */}
                 <div className="sm:hidden flex items-center border-b border-border bg-card overflow-x-auto scrollbar-hide shrink-0">
                   <div className="flex items-center gap-0.5 px-2 py-1.5 min-w-max">
-                    <div className="flex items-center gap-1 px-2 py-1 mr-2 border-r border-border">
-                      <Image src="/logo.png" alt="AIMS" width={16} height={16} className="object-contain" />
-                      <span className="text-xs font-bold text-foreground">AIMS</span>
+                    <div className="flex items-center px-2 py-1 mr-2 border-r border-border">
+                      <Image src="/logo.png" alt="AIMS" width={60} height={24} className="object-contain h-5 w-auto" />
                     </div>
                     {NAV_ITEMS.map((item) => (
                       <motion.button

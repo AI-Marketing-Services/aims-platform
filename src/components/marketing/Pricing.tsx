@@ -200,7 +200,7 @@ export function Pricing() {
           </div>
           <Link
             href="/get-started?ref=pricing-enterprise"
-            className="shrink-0 rounded-lg bg-primary text-white px-6 py-2.5 text-sm font-semibold hover:bg-primary/80 transition"
+            className="shrink-0 rounded-sm bg-primary text-white px-6 py-2.5 text-sm font-semibold hover:bg-primary/80 transition"
           >
             Book a Strategy Call →
           </Link>
@@ -217,7 +217,7 @@ export function Pricing() {
               { name: "AI Voice Agent Platform", desc: "Handle inbound calls 24/7 while you sleep", href: "/get-started?service=voice-agents", badge: "Custom pricing" },
               { name: "SEO & AEO Automation", desc: "Rank on Google and get cited by AI search", href: "/marketplace#seo-aeo", badge: "From $497/mo" },
             ].map((item) => (
-              <div key={item.name} className="rounded-xl border border-border bg-card p-5 flex flex-col gap-3">
+              <div key={item.name} className="rounded-sm border border-border bg-card p-5 flex flex-col gap-3">
                 <div>
                   <p className="font-semibold text-foreground text-sm">{item.name}</p>
                   <p className="text-xs text-muted-foreground mt-1">{item.desc}</p>

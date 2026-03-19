@@ -110,9 +110,8 @@ export function Navbar() {
         <div className="flex h-16 items-center justify-between gap-6">
 
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 flex-shrink-0">
-            <Image src="/logo.png" alt="AIMS" width={28} height={28} className="object-contain" priority />
-            <span className="text-[15px] font-bold tracking-tight text-foreground font-serif">AIMS</span>
+          <Link href="/" className="flex items-center flex-shrink-0">
+            <Image src="/logo.png" alt="AIMS" width={100} height={40} className="object-contain h-8 w-auto" priority />
           </Link>
 
           {/* Desktop nav */}
@@ -216,19 +215,6 @@ export function Navbar() {
 
           {/* Desktop auth */}
           <div className="hidden md:flex items-center gap-3 flex-shrink-0">
-            <button
-              onClick={openCart}
-              className="relative p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-              aria-label="Open cart"
-            >
-              <ShoppingCart className="w-5 h-5" />
-              {items.length > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white">
-                  {items.length}
-                </span>
-              )}
-            </button>
-
             <SignedIn>
               <Link href="/portal/dashboard" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
                 Dashboard
@@ -241,11 +227,23 @@ export function Navbar() {
               </Link>
               <Link
                 href="/get-started"
-                className="text-xs font-bold rounded-lg bg-primary text-white px-5 py-2 uppercase tracking-wider hover:bg-primary/80 transition-colors"
+                className="text-xs font-bold rounded-sm bg-primary text-primary-foreground px-5 py-2 uppercase tracking-wider hover:bg-primary/80 transition-colors"
               >
                 Get started
               </Link>
             </SignedOut>
+            <button
+              onClick={openCart}
+              className="relative p-2 rounded-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors ml-1"
+              aria-label="Open cart"
+            >
+              <ShoppingCart className="w-5 h-5" />
+              {items.length > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+                  {items.length}
+                </span>
+              )}
+            </button>
           </div>
 
           {/* Mobile toggle */}
@@ -366,7 +364,7 @@ export function Navbar() {
                 </SignedOut>
                 <Link
                   href="/get-started"
-                  className="block w-full text-center rounded-lg bg-primary text-white text-xs font-bold px-4 py-2.5 uppercase tracking-wider"
+                  className="block w-full text-center rounded-sm bg-primary text-white text-xs font-bold px-4 py-2.5 uppercase tracking-wider"
                 >
                   Get started
                 </Link>

@@ -540,7 +540,7 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
                 <div className="mt-8 flex flex-col gap-4 sm:flex-row">
                   <Link
                     href={`/get-started?service=${slug}`}
-                    className="inline-flex items-center gap-2 rounded-lg bg-primary px-8 py-3.5 font-semibold text-white hover:bg-primary/90 transition"
+                    className="inline-flex items-center gap-2 rounded-sm bg-primary px-8 py-3.5 font-semibold text-white hover:bg-primary/90 transition"
                   >
                     Get Started <ArrowRight className="h-4 w-4" />
                   </Link>
@@ -570,7 +570,7 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
               <div className="mt-8 flex flex-col gap-4 sm:flex-row">
                 <Link
                   href={`/get-started?service=${slug}`}
-                  className="inline-flex items-center gap-2 rounded-lg bg-primary px-8 py-3.5 font-semibold text-white hover:bg-primary/90 transition"
+                  className="inline-flex items-center gap-2 rounded-sm bg-primary px-8 py-3.5 font-semibold text-white hover:bg-primary/90 transition"
                 >
                   Get Started <ArrowRight className="h-4 w-4" />
                 </Link>
@@ -596,7 +596,7 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
             <h2 className="text-2xl font-bold text-foreground mb-8">What&rsquo;s Included</h2>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {service.features.map((feature) => (
-                <div key={feature} className="flex items-center gap-3 rounded-xl border border-border bg-deep p-4">
+                <div key={feature} className="flex items-center gap-3 rounded-sm border border-border bg-deep p-4">
                   <Check className="h-5 w-5 shrink-0 text-primary" />
                   <span className="text-sm font-medium text-foreground">{feature}</span>
                 </div>
@@ -613,7 +613,7 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
             <h2 className="text-2xl font-bold text-foreground mb-8">Results By Industry</h2>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
               {service.useCases.map((uc) => (
-                <div key={uc.industry} className="rounded-xl border border-border bg-card p-6 text-center shadow-sm">
+                <div key={uc.industry} className="rounded-sm border border-border bg-card p-6 text-center shadow-sm">
                   <div className="text-sm font-semibold text-muted-foreground mb-2">{uc.industry}</div>
                   <div className="text-lg font-bold text-primary">{uc.result}</div>
                 </div>
@@ -680,7 +680,7 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
               </p>
               <Link
                 href={`/get-started?service=${slug}`}
-                className="inline-flex items-center gap-2 rounded-lg bg-primary px-8 py-3.5 font-semibold text-white hover:bg-primary/90 transition"
+                className="inline-flex items-center gap-2 rounded-sm bg-primary px-8 py-3.5 font-semibold text-white hover:bg-primary/90 transition"
               >
                 Get a Custom Quote <ArrowRight className="h-4 w-4" />
               </Link>
@@ -696,7 +696,7 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
           <p className="mt-3 text-muted-foreground">Book a strategy call and we&rsquo;ll build your custom plan.</p>
           <Link
             href="/get-started"
-            className="mt-8 inline-flex items-center gap-2 rounded-lg bg-primary px-8 py-3.5 font-semibold text-white hover:bg-primary/90 transition"
+            className="mt-8 inline-flex items-center gap-2 rounded-sm bg-primary px-8 py-3.5 font-semibold text-white hover:bg-primary/90 transition"
           >
             Book a Strategy Call <ArrowRight className="h-4 w-4" />
           </Link>

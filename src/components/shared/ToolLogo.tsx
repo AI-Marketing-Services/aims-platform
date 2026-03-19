@@ -44,7 +44,7 @@ const LOCAL_LOGOS: Record<string, string> = {
   "excel.com": "/integrations/excel.svg",
   "stripe.com": "/integrations/stripe.svg",
   "quickbooks.com": "/integrations/excel.svg",
-  "rb2b.com": "/integrations/firecrawl-logo.webp",
+  "rb2b.com": "/integrations/firecrawl-logo.webp", // placeholder
   // New logos
   "twilio.com": "/integrations/twilio.svg",
   "zapier.com": "/integrations/zapier.svg",
@@ -53,14 +53,9 @@ const LOCAL_LOGOS: Record<string, string> = {
   "mailgun.com": "/integrations/mailgun.svg",
   "resend.com": "/integrations/resend.svg",
   "googlebusiness.com": "/integrations/googlebusiness.svg",
-  // Aliases — point to distinct logos (no duplicates)
+  // Aliases — use fallback initials for tools without distinct logos
   "gohighlevel.com": "/integrations/hubspot-svgrepo-com.svg",
-  "perplexity.ai": "/integrations/search-console-icon-2025-1.svg",
-  "surferseo.com": "/integrations/search-console-icon-2025-1.svg",
-  "surfer.com": "/integrations/search-console-icon-2025-1.svg",
   "ramp.com": "/integrations/excel.svg",
-  "clay.com": "/integrations/linear.svg",
-  "trytrackr.com": "/integrations/linear.svg",
 }
 
 interface ToolLogoProps {
@@ -87,6 +82,10 @@ export function ToolLogo({ domain, name, size = 20, className = "" }: ToolLogoPr
     )
   }
 
+  // Dark SVGs that need inversion on dark backgrounds
+  const DARK_LOGOS = ["github.com", "x.com", "twitter.com", "notion.so", "openai.com", "anthropic.com"]
+  const needsInvert = DARK_LOGOS.includes(domain)
+
   return (
     <span className={`relative inline-block flex-shrink-0 ${sizeClass} ${className}`}>
       <Image
@@ -94,7 +93,7 @@ export function ToolLogo({ domain, name, size = 20, className = "" }: ToolLogoPr
         alt={name}
         fill
         sizes={`${size}px`}
-        className="object-contain"
+        className={`object-contain ${needsInvert ? "invert brightness-200" : ""}`}
         onError={() => setFailed(true)}
       />
     </span>

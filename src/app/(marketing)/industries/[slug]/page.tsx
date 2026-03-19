@@ -127,7 +127,7 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
           <div className="flex flex-wrap gap-2 mb-5">
             {solution.services.map((s) => (
               <span key={s} className="inline-flex items-center gap-1 px-2.5 py-1 bg-deep text-foreground text-xs font-medium rounded-full">
-                <Check className="w-3 h-3 text-green-400" />{s}
+                <Check className="w-3 h-3 text-primary" />{s}
               </span>
             ))}
           </div>
@@ -149,7 +149,7 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
               href="/get-started"
-              className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-white hover:bg-primary/90 transition-colors"
+              className="inline-flex items-center justify-center gap-2 rounded-sm bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
             >
               Book a Strategy Call <ArrowRight className="h-4 w-4" />
             </Link>

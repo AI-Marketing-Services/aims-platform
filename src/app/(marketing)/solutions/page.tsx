@@ -147,7 +147,7 @@ export default function SolutionsPage() {
                 <div className="mt-6">
                   <Link
                     href="/get-started"
-                    className="inline-flex items-center justify-center gap-2 w-full rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white hover:bg-primary/90 transition-colors"
+                    className="inline-flex items-center justify-center gap-2 w-full rounded-sm bg-primary px-5 py-3 text-sm font-semibold text-white hover:bg-primary/90 transition-colors"
                   >
                     Get Started
                     <ArrowRight className="w-4 h-4" />
@@ -199,7 +199,7 @@ export default function SolutionsPage() {
                   </p>
                   <Link
                     href="/get-started"
-                    className="inline-flex items-center justify-center gap-2 w-full rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-white hover:bg-primary/90 transition-colors"
+                    className="inline-flex items-center justify-center gap-2 w-full rounded-sm bg-primary px-6 py-3 text-sm font-semibold text-white hover:bg-primary/90 transition-colors"
                   >
                     Talk to Us
                     <ArrowRight className="w-4 h-4" />
@@ -226,14 +226,14 @@ export default function SolutionsPage() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link
                 href="/tools/ai-readiness-quiz"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-white hover:bg-primary/90 transition-colors"
+                className="inline-flex items-center justify-center gap-2 rounded-sm bg-primary px-6 py-3 text-sm font-semibold text-white hover:bg-primary/90 transition-colors"
               >
                 Take the Free Quiz
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
                 href="/marketplace"
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-border px-6 py-3 text-sm font-semibold text-foreground hover:bg-surface transition-colors"
+                className="inline-flex items-center justify-center gap-2 rounded-sm border border-border px-6 py-3 text-sm font-semibold text-foreground hover:bg-surface transition-colors"
               >
                 Browse All Services
               </Link>

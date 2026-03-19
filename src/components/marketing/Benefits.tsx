@@ -97,7 +97,7 @@ export function Benefits() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.4, delay: i * 0.1 }}
-                  className="rounded-xl border border-border bg-card p-5 shadow-sm"
+                  className="rounded-sm border border-border bg-card p-5 shadow-sm"
                 >
                   <div className="text-3xl font-extrabold text-foreground">{m.value}</div>
                   <div className="mt-1 text-xs text-muted-foreground leading-snug">{m.label}</div>
@@ -117,7 +117,7 @@ export function Benefits() {
               {track.map((benefit, i) => (
                 <div
                   key={i}
-                  className="flex gap-4 rounded-xl border border-border bg-card px-5 py-4 shadow-sm flex-shrink-0"
+                  className="flex gap-4 rounded-sm border border-border bg-card px-5 py-4 shadow-sm flex-shrink-0"
                 >
                   <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
                   <div>

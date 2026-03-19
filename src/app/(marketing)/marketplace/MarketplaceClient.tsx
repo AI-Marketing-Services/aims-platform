@@ -546,7 +546,7 @@ function ServiceCard({ service }: { service: AIMSService }) {
   }
 
   return (
-    <div className="bg-card border border-border rounded-2xl overflow-hidden flex flex-col hover:shadow-md transition-shadow duration-200">
+    <div className="bg-card border border-border rounded-2xl overflow-hidden flex flex-col h-full hover:shadow-md transition-shadow duration-200">
       {/* Card header */}
       <div className="px-5 pt-5 pb-4">
         <div className="flex items-center justify-between mb-3">
@@ -594,7 +594,7 @@ function ServiceCard({ service }: { service: AIMSService }) {
       </div>
 
       {/* Tier selector — always reserve the same height */}
-      <div className="px-5 pb-3 min-h-[48px]">
+      <div className="px-5 pb-3 min-h-[48px] mt-auto">
         {hasTiers && pricing?.tiers && (
           <div className="flex gap-1.5 flex-wrap">
             {pricing.tiers.map((tier) => (
@@ -711,11 +711,12 @@ export function MarketplaceClient() {
           Showing {filtered.length} of {SERVICES.length} services
         </p>
         <AnimatePresence mode="popLayout">
-          <motion.div layout className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <motion.div layout className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
             {filtered.map((service) => (
               <motion.div
                 key={service.id}
                 layout
+                className="h-full"
                 initial={{ opacity: 0, scale: 0.96 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.96 }}

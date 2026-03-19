@@ -104,14 +104,14 @@ export default async function PartnerLandingPage({ params, searchParams }: Props
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link
             href={`/get-started?ref=${refCode}`}
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-8 py-4 text-lg font-semibold text-white hover:bg-primary/90 transition-colors"
+            className="inline-flex items-center justify-center gap-2 rounded-sm bg-primary px-8 py-4 text-lg font-semibold text-white hover:bg-primary/90 transition-colors"
           >
             Get Started Free
             <ArrowRight className="h-5 w-5" />
           </Link>
           <Link
             href={`/marketplace?ref=${refCode}`}
-            className="inline-flex items-center justify-center gap-2 rounded-xl border border-border bg-card px-8 py-4 text-lg font-semibold text-foreground hover:bg-surface transition-colors"
+            className="inline-flex items-center justify-center gap-2 rounded-sm border border-border bg-card px-8 py-4 text-lg font-semibold text-foreground hover:bg-surface transition-colors"
           >
             Browse Services
           </Link>
@@ -159,7 +159,7 @@ export default async function PartnerLandingPage({ params, searchParams }: Props
         </p>
         <Link
           href={`/get-started?ref=${refCode}`}
-          className="inline-flex items-center gap-2 rounded-xl bg-primary px-8 py-4 text-base font-semibold text-white hover:bg-primary/90 transition-colors"
+          className="inline-flex items-center gap-2 rounded-sm bg-primary px-8 py-4 text-base font-semibold text-white hover:bg-primary/90 transition-colors"
         >
           Book Your Free Strategy Call
           <ArrowRight className="h-4 w-4" />

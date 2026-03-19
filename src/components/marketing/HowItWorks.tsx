@@ -78,7 +78,7 @@ export function HowItWorks() {
         </div>
 
         {/* Timeline bar */}
-        <div className="mt-10 flex items-center gap-0 overflow-hidden rounded-xl border border-border bg-card">
+        <div className="mt-10 flex items-center gap-0 overflow-hidden rounded-sm border border-border bg-card">
           {[
             { week: "Week 1–2", label: "Strategy & Setup", color: "bg-[#E8C46A]" },
             { week: "Week 2–3", label: "Build & Launch", color: "bg-primary" },
