@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 
 export const dynamic = "force-dynamic"
+export const runtime = "nodejs"
 
 export async function GET() {
   const start = Date.now()
@@ -10,14 +11,20 @@ export async function GET() {
   try {
     await db.$queryRaw`SELECT 1`
     dbOk = true
-  } catch (err) {
-    console.error("[health] DB check failed:", err)
+  } catch {
+    // DB unreachable
   }
 
-  return NextResponse.json({
-    status: dbOk ? "ok" : "degraded",
-    db: dbOk,
-    timestamp: new Date().toISOString(),
-    latency: Date.now() - start,
-  }, { status: dbOk ? 200 : 503 })
+  const status = dbOk ? "ok" : "degraded"
+  const code = dbOk ? 200 : 503
+
+  return NextResponse.json(
+    {
+      status,
+      db: dbOk,
+      timestamp: new Date().toISOString(),
+      latencyMs: Date.now() - start,
+    },
+    { status: code }
+  )
 }

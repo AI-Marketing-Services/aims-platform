@@ -1,25 +1,28 @@
 import Link from "next/link"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, Search } from "lucide-react"
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center justify-center px-4 text-center">
-      <p className="text-[120px] sm:text-[160px] font-bold leading-none tracking-tighter text-[#DC2626]">
-        404
-      </p>
-      <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900 mt-2 mb-3">
-        Page not found
-      </h1>
-      <p className="text-gray-500 text-sm sm:text-base max-w-md mb-8">
-        The page you are looking for does not exist or has been moved. Check the URL or head back to the homepage.
-      </p>
-      <Link
-        href="/"
-        className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#DC2626] hover:bg-[#B91C1C] text-white text-sm font-medium rounded-lg transition-colors"
-      >
-        <ArrowLeft className="w-4 h-4" />
-        Back to homepage
-      </Link>
+    <div className="flex min-h-screen items-center justify-center bg-background p-6">
+      <div className="max-w-md text-center space-y-6">
+        <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-red-50">
+          <Search className="h-10 w-10 text-[#DC2626]" />
+        </div>
+        <div className="space-y-2">
+          <h1 className="text-6xl font-black text-[#DC2626]">404</h1>
+          <h2 className="text-xl font-bold text-foreground">Page Not Found</h2>
+          <p className="text-sm text-muted-foreground">
+            The page you&apos;re looking for doesn&apos;t exist or has been moved.
+          </p>
+        </div>
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 rounded-lg bg-[#DC2626] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#B91C1C] transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to Home
+        </Link>
+      </div>
     </div>
   )
 }
