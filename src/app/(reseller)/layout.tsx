@@ -27,8 +27,18 @@ export default async function ResellerLayout({
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900">
-      <div className="flex h-screen overflow-hidden">
-        <aside className="w-64 flex flex-col border-r border-gray-200 bg-white">
+      {/* Mobile top header */}
+      <div className="lg:hidden flex items-center justify-between h-14 px-4 bg-white border-b border-gray-200 sticky top-0 z-40">
+        <Link href="/reseller/dashboard" className="flex items-center gap-2">
+          <Image src="/logo.png" alt="AIMS" width={28} height={28} className="object-contain" />
+          <span className="text-base font-bold">AIMS</span>
+          <span className="text-[10px] font-medium text-amber-500 uppercase tracking-wider">Partner</span>
+        </Link>
+        <UserButton afterSignOutUrl="/" />
+      </div>
+
+      <div className="flex h-[calc(100dvh-3.5rem)] lg:h-screen overflow-hidden">
+        <aside className="hidden lg:flex w-64 flex-col border-r border-gray-200 bg-white">
           <div className="flex h-16 items-center px-4 border-b border-gray-200">
             <Link href="/reseller/dashboard" className="flex items-center gap-2.5">
               <Image src="/logo.png" alt="AIMS" width={32} height={32} className="object-contain" />
@@ -55,9 +65,23 @@ export default async function ResellerLayout({
           </div>
         </aside>
         <main className="flex-1 overflow-y-auto custom-scrollbar">
-          <div className="p-6 lg:p-8">{children}</div>
+          <div className="p-4 pb-20 lg:p-6 lg:pb-8 xl:p-8">{children}</div>
         </main>
       </div>
+
+      {/* Mobile bottom nav */}
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 flex items-center justify-around h-16 px-2 safe-area-pb">
+        {RESELLER_NAV.map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            className="flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg min-w-0 flex-1 text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            <item.icon className="h-5 w-5" />
+            <span className="text-[10px] font-medium truncate">{item.label}</span>
+          </Link>
+        ))}
+      </nav>
     </div>
   )
 }

@@ -322,10 +322,8 @@ export default function SupportPage() {
               icon={LifeBuoy}
               title="No support tickets yet"
               description="Open a ticket above and our team will respond within 2 business hours."
-              action={{
-                label: "New Ticket",
-                onClick: () => setShowNew(true),
-              }}
+              actionLabel="New Ticket"
+              onAction={() => setShowNew(true)}
             />
           </div>
         ) : (
