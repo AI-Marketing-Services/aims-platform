@@ -130,6 +130,11 @@
     animation: ticker-seamless 34s linear infinite;
     will-change: transform;
   }
+  @media (max-width: 639px) {
+    .animate-ticker-seamless {
+      animation-duration: 18s;
+    }
+  }
   /* Legacy alias */
   @keyframes ticker-scroll {
     0% { transform: translateX(0); }

@@ -5,124 +5,274 @@ import Image from "next/image"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   CheckCircle2, TrendingUp, PhoneCall, RefreshCw, Database,
-  LayoutDashboard, BarChart2, Search, GripVertical,
+  LayoutDashboard, BarChart2, Search, GripVertical, DollarSign,
+  Shield, AlertTriangle, Target, Rocket,
 } from "lucide-react"
 
-// ─── Outbound Demo ────────────────────────────────────────────────────────────
-const OUTBOUND_STEPS = [
-  { tool: "/integrations/google-drive-svgrepo-com.svg", label: "Scrape ICP list", sub: "Clay → 2,400 contacts", color: "#4285F4" },
-  { tool: "/integrations/openai-svgrepo-com.svg", label: "AI personalization", sub: "GPT-4 writes 1:1 copy", color: "#10A37F" },
-  { tool: "/integrations/icons8-microsoft-teams.svg", label: "Multi-step sequence", sub: "Email D1 → D3 → D7 → D14", color: "#6264A7" },
-  { tool: "/integrations/slack.png", label: "Reply routed to Slack", sub: "Hot lead alert fired", color: "#4A154B" },
+// ─── Wild Ducks Demo ──────────────────────────────────────────────────────────
+const WD_DEPARTMENTS = [
+  { label: "Sales", sinks: [{ task: "Manual lead qualification", hrs: 12 }, { task: "CRM data entry", hrs: 8 }, { task: "Proposal formatting", hrs: 6 }] },
+  { label: "Marketing", sinks: [{ task: "Content repurposing", hrs: 10 }, { task: "Campaign reporting", hrs: 7 }, { task: "Social scheduling", hrs: 5 }] },
+  { label: "Ops", sinks: [{ task: "Vendor follow-ups", hrs: 14 }, { task: "Invoice reconciliation", hrs: 9 }, { task: "Status update meetings", hrs: 6 }] },
+  { label: "Finance", sinks: [{ task: "Expense categorization", hrs: 11 }, { task: "P&L assembly", hrs: 8 }, { task: "Renewal tracking", hrs: 4 }] },
 ]
 
-function OutboundDemo() {
-  const [step, setStep] = useState(0)
+const WD_OPPORTUNITY_MAP = [
+  { name: "AI Lead Scoring", impact: 94, dept: "Sales", effort: "Low" },
+  { name: "Auto-Invoice Pipeline", impact: 89, dept: "Ops", effort: "Med" },
+  { name: "Content Repurpose Agent", impact: 85, dept: "Marketing", effort: "Low" },
+  { name: "Expense Auto-Categorizer", impact: 82, dept: "Finance", effort: "Low" },
+  { name: "EOS Meeting Automator", impact: 78, dept: "Ops", effort: "Med" },
+]
+
+function WildDucksDemo() {
+  const [tab, setTab] = useState(0)
+  const [phase, setPhase] = useState<"scan" | "map" | "deploy">("scan")
+  const [scanProgress, setScanProgress] = useState(0)
+  const [deployed, setDeployed] = useState(false)
+
   useEffect(() => {
-    const t = setInterval(() => setStep((s) => (s + 1) % OUTBOUND_STEPS.length), 1400)
+    setScanProgress(0)
+    const t = setInterval(() => {
+      setScanProgress((p) => {
+        if (p >= 100) { clearInterval(t); return 100 }
+        return p + 2
+      })
+    }, 35)
     return () => clearInterval(t)
-  }, [])
+  }, [tab])
+
+  const dept = WD_DEPARTMENTS[tab]
+  const totalHrs = dept.sinks.reduce((a, s) => a + s.hrs, 0)
+
   return (
     <div className="space-y-3">
-      {OUTBOUND_STEPS.map((s, i) => (
-        <motion.div
-          key={i}
-          animate={{ opacity: i <= step ? 1 : 0.25, x: i === step ? 4 : 0 }}
-          transition={{ duration: 0.3 }}
-          className="flex items-center gap-3 rounded-sm bg-card border border-border px-4 py-3"
-        >
-          <div className="h-8 w-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: `${s.color}15` }}>
-            <Image src={s.tool} alt="" width={18} height={18} className="object-contain" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-foreground leading-none">{s.label}</p>
-            <p className="text-xs text-muted-foreground mt-0.5">{s.sub}</p>
-          </div>
-          {i < step && <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0" />}
-          {i === step && (
+      {/* Department tabs */}
+      <div className="flex gap-1">
+        {WD_DEPARTMENTS.map((d, i) => (
+          <button
+            key={d.label}
+            onClick={() => { setTab(i); setPhase("scan"); setDeployed(false) }}
+            className="flex-1 rounded-lg px-1 py-2 text-center transition-all text-[11px] font-semibold"
+            style={{ backgroundColor: tab === i ? "#C4972A" : "#141923", color: tab === i ? "white" : "#9CA3AF" }}
+          >
+            {d.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Scan phase — time sinks + opportunity score */}
+      {phase === "scan" && (
+        <AnimatePresence mode="wait">
+          <motion.div key={tab} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.25 }}>
+            <div className="rounded-sm border border-border bg-card p-3 mb-2">
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-[10px] text-muted-foreground uppercase tracking-wide font-semibold">AI Opportunity Score</span>
+                <span className="text-[10px] font-bold text-foreground">{scanProgress}%</span>
+              </div>
+              <div className="h-1.5 rounded-full bg-deep overflow-hidden">
+                <motion.div animate={{ width: `${scanProgress}%` }} transition={{ duration: 0.05 }} className="h-full bg-gradient-to-r from-primary to-[#E8C46A] rounded-full" />
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              {dept.sinks.map((sink) => (
+                <div key={sink.task} className="flex items-center gap-3 rounded-sm bg-deep border border-border px-3 py-2.5">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[11px] font-medium text-foreground">{sink.task}</p>
+                  </div>
+                  <span className="text-[11px] font-bold text-red-400">{sink.hrs}h/wk</span>
+                </div>
+              ))}
+            </div>
+            <div className="rounded-xl bg-red-950/20 border border-red-800/40 px-3 py-2.5 flex items-center gap-2 mt-2">
+              <span className="text-[11px] font-semibold text-red-400">{totalHrs}h/wk wasted in {dept.label}</span>
+            </div>
+            <button
+              onClick={() => setPhase("map")}
+              className="mt-2 w-full rounded-lg bg-surface border border-border px-3 py-2 text-[11px] font-semibold text-muted-foreground hover:text-primary transition-colors text-center"
+            >
+              View Opportunity Map
+            </button>
+          </motion.div>
+        </AnimatePresence>
+      )}
+
+      {/* Map phase — prioritized findings */}
+      {phase === "map" && (
+        <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }} className="space-y-1.5">
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wide font-semibold mb-1">Top 5 Findings — Ranked by Impact</p>
+          {WD_OPPORTUNITY_MAP.map((opp, i) => (
+            <div key={opp.name} className="flex items-center gap-2 rounded-sm bg-deep border border-border px-3 py-2">
+              <span className="text-[10px] font-bold text-primary w-4">{i + 1}</span>
+              <div className="flex-1 min-w-0">
+                <p className="text-[11px] font-semibold text-foreground leading-tight">{opp.name}</p>
+                <p className="text-[10px] text-muted-foreground">{opp.dept} · {opp.effort} effort</p>
+              </div>
+              <div className="flex-shrink-0 text-right">
+                <div className="text-[11px] font-bold text-primary">{opp.impact}</div>
+                <div className="text-[9px] text-muted-foreground">score</div>
+              </div>
+            </div>
+          ))}
+          <button
+            onClick={() => { setPhase("deploy"); setDeployed(false); setTimeout(() => setDeployed(true), 1800) }}
+            className="mt-2 w-full flex items-center justify-center gap-2 rounded-lg bg-primary text-white px-3 py-2.5 text-[11px] font-semibold hover:bg-primary/90 transition-colors"
+          >
+            <Rocket className="h-3.5 w-3.5" /> Deploy Solutions
+          </button>
+        </motion.div>
+      )}
+
+      {/* Deploy phase — solutions installing */}
+      {phase === "deploy" && (
+        <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }} className="space-y-2">
+          {["EOS Agent", "Process Automator", "Spend Challenger", "AI Copilot", "Report Generator"].map((sol, i) => (
             <motion.div
-              animate={{ opacity: [1, 0.3, 1] }}
-              transition={{ repeat: Infinity, duration: 0.8 }}
-              className="h-2 w-2 rounded-full bg-primary/100 flex-shrink-0"
-            />
+              key={sol}
+              initial={{ opacity: 0, x: -8 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: i * 0.3, duration: 0.3 }}
+              className="flex items-center gap-3 rounded-sm bg-card border border-border px-3 py-2.5"
+            >
+              <div className="flex-1 min-w-0">
+                <p className="text-[11px] font-semibold text-foreground">{sol}</p>
+              </div>
+              {deployed ? (
+                <CheckCircle2 className="h-3.5 w-3.5 text-green-500 flex-shrink-0" />
+              ) : (
+                <motion.div animate={{ opacity: [1, 0.3, 1] }} transition={{ repeat: Infinity, duration: 0.8 }} className="h-2 w-2 rounded-full bg-primary flex-shrink-0" />
+              )}
+            </motion.div>
+          ))}
+          {deployed && (
+            <motion.div initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} className="rounded-xl bg-green-950/20 border border-green-800/40 px-3 py-2.5 flex items-center gap-2">
+              <CheckCircle2 className="h-4 w-4 text-green-400 flex-shrink-0" />
+              <span className="text-[11px] font-semibold text-green-400">All solutions deployed — 40% efficiency gain in 90 days</span>
+            </motion.div>
           )}
         </motion.div>
-      ))}
-      <div className="rounded-xl bg-primary/10 border border-primary/20 px-4 py-3 flex items-center gap-2 mt-2">
-        <TrendingUp className="h-4 w-4 text-primary" />
-        <span className="text-sm font-semibold text-primary">47 qualified meetings booked this month</span>
-      </div>
+      )}
     </div>
   )
 }
 
-// ─── RevOps Demo ──────────────────────────────────────────────────────────────
-const PIPELINE_STAGES = ["New Lead", "Qualified", "Demo", "Proposal", "Closed"]
-const PIPELINE_DEALS = [
-  { name: "Apex Corp", value: "$8,400", stage: 0 },
-  { name: "Vertex Inc", value: "$5,200", stage: 1 },
-  { name: "Prism LLC", value: "$12,000", stage: 2 },
-  { name: "Orbit Co", value: "$3,800", stage: 3 },
-  { name: "Nexus AI", value: "$9,100", stage: 4 },
+// ─── Steel Trap Demo ─────────────────────────────────────────────────────────
+const TRAP_STAGES = ["First Contact", "Qualified", "Demo", "Proposal", "Close"]
+const TRAP_TIMESTAMPS = ["Mar 3 9:14a", "Mar 5 2:31p", "Mar 9 11:00a", "Mar 12 3:45p", "Mar 15 10:22a"]
+const TRAP_TOUCHES = [1, 3, 4, 5, 7]
+const LOSS_REASONS = [
+  { reason: "Pricing objection", pct: 67, reco: "Recommend messaging review — value prop not landing" },
+  { reason: "No decision-maker access", pct: 18, reco: "Route to BTC closer for multi-thread strategy" },
+  { reason: "Went dark after demo", pct: 11, reco: "Enforce 7x rule — avg. only 3.2 touches before cold" },
 ]
 
-function RevOpsDemo() {
-  const [active, setActive] = useState(0)
+function SteelTrapDemo() {
+  const [stage, setStage] = useState(0)
+  const [showLoss, setShowLoss] = useState(false)
   useEffect(() => {
-    const t = setInterval(() => setActive((s) => (s + 1) % PIPELINE_STAGES.length), 1200)
+    const t = setInterval(() => {
+      setStage((s) => {
+        if (s < TRAP_STAGES.length - 1) return s + 1
+        setShowLoss(true)
+        return s
+      })
+    }, 1400)
     return () => clearInterval(t)
   }, [])
-  const stageDeal = PIPELINE_DEALS[active]
+
+  const touchCount = TRAP_TOUCHES[stage]
+  const sevenXPct = Math.round((touchCount / 7) * 100)
+
   return (
     <div className="space-y-3">
+      {/* Pipeline stage bar */}
       <div className="flex gap-1">
-        {PIPELINE_STAGES.map((stage, i) => (
-          <button
+        {TRAP_STAGES.map((s, i) => (
+          <motion.div
             key={i}
-            onClick={() => setActive(i)}
-            className="flex-1 rounded-lg px-1 py-2 text-center transition-all"
-            style={{ backgroundColor: active === i ? "#C4972A" : "#141923", color: active === i ? "white" : "#9CA3AF" }}
+            animate={{ backgroundColor: i <= stage ? "#2563EB" : "#141923", color: i <= stage ? "#fff" : "#6B7280" }}
+            transition={{ duration: 0.3 }}
+            className="flex-1 rounded-lg px-1 py-2 text-center"
           >
-            <span className="text-[10px] font-semibold leading-none block">{stage}</span>
-          </button>
+            <span className="text-[10px] font-semibold leading-none block">{s}</span>
+          </motion.div>
         ))}
       </div>
+
+      {/* Animated lead card */}
       <AnimatePresence mode="wait">
         <motion.div
-          key={active}
-          initial={{ opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -6 }}
-          transition={{ duration: 0.25 }}
+          key={stage}
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -20 }}
+          transition={{ duration: 0.3 }}
           className="rounded-sm border border-border bg-card p-4"
         >
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-3">
-              <div className="h-8 w-8 rounded-full bg-deep flex items-center justify-center text-sm font-bold text-muted-foreground">
-                {stageDeal.name.charAt(0)}
+              <div className="h-8 w-8 rounded-full bg-blue-950/40 flex items-center justify-center">
+                <Shield className="h-4 w-4 text-blue-400" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-foreground">{stageDeal.name}</p>
-                <p className="text-xs text-muted-foreground">Stage: {PIPELINE_STAGES[stageDeal.stage]}</p>
+                <p className="text-sm font-semibold text-foreground">Apex Corp — $12,400</p>
+                <p className="text-xs text-muted-foreground">{TRAP_TIMESTAMPS[stage]}</p>
               </div>
             </div>
-            <span className="text-sm font-bold text-green-400">{stageDeal.value}</span>
+            <span className="text-xs font-bold text-blue-400">Touch {touchCount}/7</span>
           </div>
           <div className="flex gap-1">
-            {PIPELINE_STAGES.map((_, i) => (
-              <div key={i} className="flex-1 h-1.5 rounded-full" style={{ backgroundColor: i <= active ? "#C4972A" : "rgba(255,255,255,0.07)" }} />
+            {TRAP_STAGES.map((_, i) => (
+              <div key={i} className="flex-1 h-1.5 rounded-full" style={{ backgroundColor: i <= stage ? "#2563EB" : "rgba(255,255,255,0.07)" }} />
             ))}
           </div>
         </motion.div>
       </AnimatePresence>
-      <div className="grid grid-cols-3 gap-2">
-        {[["$47.2K", "Pipeline"], ["82%", "Win Rate"], ["4 days", "Avg. Close"]].map(([val, lbl]) => (
-          <div key={lbl} className="rounded-sm bg-deep border border-border px-3 py-2.5 text-center">
-            <p className="text-base font-bold text-foreground">{val}</p>
-            <p className="text-xs text-muted-foreground">{lbl}</p>
+
+      {/* 7x Rule + Forecast gauge */}
+      <div className="grid grid-cols-2 gap-2">
+        <div className="rounded-sm bg-deep border border-border px-3 py-2.5">
+          <div className="flex items-center gap-1.5 mb-1">
+            <Target className="h-3 w-3 text-blue-400" />
+            <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">7x Rule</span>
           </div>
-        ))}
+          <div className="h-1.5 rounded-full bg-card overflow-hidden">
+            <motion.div
+              animate={{ width: `${sevenXPct}%` }}
+              transition={{ duration: 0.4 }}
+              className="h-full rounded-full"
+              style={{ backgroundColor: sevenXPct >= 100 ? "#16A34A" : sevenXPct >= 57 ? "#C4972A" : "#EF4444" }}
+            />
+          </div>
+          <p className="text-[10px] text-muted-foreground mt-1">{touchCount}/7 contacts made</p>
+        </div>
+        <div className="rounded-sm bg-deep border border-border px-3 py-2.5 text-center">
+          <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-1">90-Day Forecast</p>
+          <p className="text-lg font-extrabold text-foreground">87%</p>
+          <p className="text-[10px] text-green-400 font-medium">Accuracy</p>
+        </div>
       </div>
+
+      {/* AI Loss Reason Panel */}
+      <AnimatePresence>
+        {showLoss && (
+          <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="space-y-1.5">
+            <div className="flex items-center gap-1.5 mb-1">
+              <AlertTriangle className="h-3 w-3 text-orange-400" />
+              <span className="text-[10px] font-semibold text-orange-400 uppercase tracking-wide">AI Loss Pattern Detection</span>
+            </div>
+            {LOSS_REASONS.map((l) => (
+              <div key={l.reason} className="rounded-sm bg-card border border-border px-3 py-2">
+                <div className="flex items-center justify-between mb-0.5">
+                  <span className="text-xs font-semibold text-foreground">{l.reason}</span>
+                  <span className="text-xs font-bold text-orange-400">{l.pct}%</span>
+                </div>
+                <p className="text-[10px] text-muted-foreground leading-snug">{l.reco}</p>
+              </div>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
@@ -636,10 +786,151 @@ function DatabaseDemo() {
   )
 }
 
+// ─── Money Page Demo ─────────────────────────────────────────────────────────
+const MOIC_CHANNELS = [
+  { name: "Referral", moic: 8.4, color: "#16A34A" },
+  { name: "Cold Email", moic: 5.1, color: "#2563EB" },
+  { name: "Google Ads", moic: 3.2, color: "#EA580C" },
+  { name: "LinkedIn", moic: 1.8, color: "#9333EA" },
+]
+
+const MONEY_TABS = ["C.O.M.", "MOIC", "Recovery"] as const
+
+function MoneyPageDemo() {
+  const [tab, setTab] = useState(0)
+  const [comValue, setComValue] = useState(0)
+  const [hoursFreed, setHoursFreed] = useState(0)
+  const [spendCut, setSpendCut] = useState(0)
+  const [revRecovered, setRevRecovered] = useState(0)
+
+  useEffect(() => {
+    const t = setInterval(() => setTab((s) => (s + 1) % MONEY_TABS.length), 3600)
+    return () => clearInterval(t)
+  }, [])
+
+  useEffect(() => {
+    setComValue(0); setHoursFreed(0); setSpendCut(0); setRevRecovered(0)
+    let frame = 0
+    const t = setInterval(() => {
+      frame++
+      const progress = Math.min(frame / 50, 1)
+      const ease = 1 - Math.pow(1 - progress, 3)
+      if (tab === 0) setComValue(Math.floor(ease * 127))
+      if (tab === 2) {
+        setHoursFreed(Math.floor(ease * 340))
+        setSpendCut(Math.floor(ease * 18400))
+        setRevRecovered(Math.floor(ease * 142000))
+      }
+      if (progress >= 1) clearInterval(t)
+    }, 25)
+    return () => clearInterval(t)
+  }, [tab])
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center gap-2 mb-1">
+        <DollarSign className="h-4 w-4 text-primary" />
+        <span className="text-sm font-semibold text-foreground">Money Page</span>
+        <span className="ml-auto text-[10px] text-muted-foreground">Q1 2026</span>
+      </div>
+      <div className="flex gap-1">
+        {MONEY_TABS.map((t, i) => (
+          <button
+            key={t}
+            onClick={() => setTab(i)}
+            className="flex-1 rounded-lg px-1 py-2 text-center transition-all text-[11px] font-semibold"
+            style={{ backgroundColor: tab === i ? "#C4972A" : "#141923", color: tab === i ? "white" : "#9CA3AF" }}
+          >
+            {t}
+          </button>
+        ))}
+      </div>
+      <AnimatePresence mode="wait">
+        {tab === 0 && (
+          <motion.div key="com" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.25 }} className="space-y-2">
+            <div className="rounded-sm border border-border bg-card p-4">
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">Cost of Media (SG&A / Net New Leads)</p>
+              <div className="flex items-end gap-2">
+                <span className="text-3xl font-extrabold text-foreground tabular-nums">${comValue}</span>
+                <span className="text-sm text-muted-foreground mb-1">per lead</span>
+              </div>
+              <div className="mt-2 grid grid-cols-2 gap-2 text-center">
+                <div className="rounded-lg bg-deep border border-border px-2 py-1.5">
+                  <p className="text-xs font-bold text-foreground">$84,200</p>
+                  <p className="text-[10px] text-muted-foreground">Total SG&A</p>
+                </div>
+                <div className="rounded-lg bg-deep border border-border px-2 py-1.5">
+                  <p className="text-xs font-bold text-foreground">663</p>
+                  <p className="text-[10px] text-muted-foreground">Net New Leads</p>
+                </div>
+              </div>
+            </div>
+            <div className="rounded-xl bg-primary/10 border border-primary/20 px-3 py-2 flex items-center gap-2">
+              <TrendingUp className="h-3.5 w-3.5 text-primary" />
+              <span className="text-[11px] font-semibold text-primary">18% lower C.O.M. than industry avg.</span>
+            </div>
+          </motion.div>
+        )}
+        {tab === 1 && (
+          <motion.div key="moic" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.25 }} className="space-y-2">
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wide">MOIC by Channel — Return on Invested Capital</p>
+            {MOIC_CHANNELS.map((ch, i) => (
+              <div key={ch.name} className="flex items-center gap-2 rounded-sm bg-card border border-border px-3 py-2">
+                <span className="text-[11px] text-muted-foreground w-16 flex-shrink-0">{ch.name}</span>
+                <div className="flex-1 h-4 bg-deep rounded-full overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${(ch.moic / 10) * 100}%` }}
+                    transition={{ duration: 0.8, delay: i * 0.12, ease: "easeOut" }}
+                    className="h-full rounded-full"
+                    style={{ backgroundColor: ch.color }}
+                  />
+                </div>
+                <span className="text-xs font-bold text-foreground w-10 text-right tabular-nums">{ch.moic}x</span>
+              </div>
+            ))}
+            <div className="rounded-xl bg-green-900/15 border border-green-800 px-3 py-2 text-center">
+              <span className="text-[11px] font-semibold text-green-400">Referral + Cold Email = 78% of closed revenue</span>
+            </div>
+          </motion.div>
+        )}
+        {tab === 2 && (
+          <motion.div key="recovery" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.25 }} className="space-y-2">
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wide">AI Recovery Metric — This Quarter</p>
+            <div className="grid grid-cols-3 gap-2">
+              <div className="rounded-xl bg-blue-950/30 border border-blue-800 p-2.5 text-center">
+                <p className="text-lg font-extrabold text-blue-400 tabular-nums">{hoursFreed}</p>
+                <p className="text-[10px] text-blue-400 font-medium">Hours freed</p>
+              </div>
+              <div className="rounded-xl bg-green-900/15 border border-green-800 p-2.5 text-center">
+                <p className="text-lg font-extrabold text-green-400 tabular-nums">${(spendCut / 1000).toFixed(1)}K</p>
+                <p className="text-[10px] text-green-400 font-medium">Spend cut</p>
+              </div>
+              <div className="rounded-xl bg-primary/10 border border-primary/20 p-2.5 text-center">
+                <p className="text-lg font-extrabold text-primary tabular-nums">${(revRecovered / 1000).toFixed(0)}K</p>
+                <p className="text-[10px] text-primary font-medium">Recovered</p>
+              </div>
+            </div>
+            <div className="rounded-sm border border-border bg-card p-3">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-[10px] text-muted-foreground">AI Impact Score</span>
+                <span className="text-xs font-bold text-foreground">92 / 100</span>
+              </div>
+              <div className="h-2 rounded-full bg-deep overflow-hidden">
+                <motion.div initial={{ width: 0 }} animate={{ width: "92%" }} transition={{ duration: 1, ease: "easeOut" }} className="h-full bg-gradient-to-r from-primary to-[#E8C46A] rounded-full" />
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
+
 // ─── Slug → Demo Map ──────────────────────────────────────────────────────────
 const DEMO_MAP: Record<string, React.ComponentType> = {
-  "cold-outbound": OutboundDemo,
-  "revops-pipeline": RevOpsDemo,
+  "cold-outbound": WildDucksDemo,
+  "revops-pipeline": SteelTrapDemo,
   "voice-agents": AICallingDemo,
   "content-production": ContentDemo,
   "lead-reactivation": ReactivationDemo,
@@ -647,6 +938,7 @@ const DEMO_MAP: Record<string, React.ComponentType> = {
   "website-crm-chatbot": WebsiteCRMDemo,
   "finance-automation": FinanceDemo,
   "audience-targeting": AudienceDemo,
+  "seo-aeo": MoneyPageDemo,
 }
 
 // Bare widget — rendered inline inside the hero column

@@ -4,134 +4,161 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { motion, AnimatePresence } from "framer-motion"
-import { ArrowUpRight, Play, Phone, PhoneCall, Zap, TrendingUp, RefreshCw, Database, CheckCircle2, ChevronRight } from "lucide-react"
+import { ArrowUpRight, Play, Phone, PhoneCall, Zap, TrendingUp, RefreshCw, Database, CheckCircle2, ChevronRight, Shield, AlertTriangle, Target, DollarSign, Rocket } from "lucide-react"
 
-// ─── Outbound Demo ────────────────────────────────────────────────────────────
-const OUTBOUND_STEPS = [
-  { tool: "/integrations/apollo.svg", label: "Build ICP list", sub: "Clay → Apollo → 2,400 contacts", color: "#C4972A" },
-  { tool: "/integrations/openai-svgrepo-com.svg", label: "AI personalization", sub: "Claude writes 1:1 copy", color: "#10A37F" },
-  { tool: "/integrations/instantly.webp", label: "Multi-step sequence", sub: "Email D1 → D3 → D7 → D14", color: "#6264A7" },
-  { tool: "/integrations/slack.png", label: "Reply routed to Slack", sub: "Hot lead alert fired", color: "#4A154B" },
+// ─── Wild Ducks Demo ──────────────────────────────────────────────────────────
+const WD_GRID_DEPTS = [
+  { label: "Sales", sinks: [{ task: "Lead qualification", hrs: 12 }, { task: "CRM entry", hrs: 8 }] },
+  { label: "Marketing", sinks: [{ task: "Content repurposing", hrs: 10 }, { task: "Reporting", hrs: 7 }] },
+  { label: "Ops", sinks: [{ task: "Vendor follow-ups", hrs: 14 }, { task: "Invoice recon", hrs: 9 }] },
+  { label: "Finance", sinks: [{ task: "Expense sorting", hrs: 11 }, { task: "P&L assembly", hrs: 8 }] },
 ]
 
-function OutboundDemo() {
-  const [step, setStep] = useState(0)
+function WildDucksDemo() {
+  const [tab, setTab] = useState(0)
+  const [scanProgress, setScanProgress] = useState(0)
 
   useEffect(() => {
-    const t = setInterval(() => setStep((s) => (s + 1) % OUTBOUND_STEPS.length), 1400)
+    setScanProgress(0)
+    const t = setInterval(() => {
+      setScanProgress((p) => {
+        if (p >= 100) { clearInterval(t); return 100 }
+        return p + 3
+      })
+    }, 35)
     return () => clearInterval(t)
-  }, [])
+  }, [tab])
+
+  const dept = WD_GRID_DEPTS[tab]
+  const totalHrs = dept.sinks.reduce((a, s) => a + s.hrs, 0)
 
   return (
     <div className="space-y-2">
-      {OUTBOUND_STEPS.map((s, i) => (
-        <motion.div
-          key={i}
-          animate={{ opacity: i <= step ? 1 : 0.25, x: i === step ? 4 : 0 }}
-          transition={{ duration: 0.3 }}
-          className="flex items-center gap-2.5 rounded-lg bg-card/60 border border-border px-3 py-2"
-        >
-          <div
-            className="h-6 w-6 rounded-md flex items-center justify-center flex-shrink-0"
-            style={{ backgroundColor: `${s.color}15` }}
+      <div className="flex gap-1">
+        {WD_GRID_DEPTS.map((d, i) => (
+          <button
+            key={d.label}
+            onClick={() => setTab(i)}
+            className="flex-1 rounded-md px-1 py-1.5 text-center transition-all text-[10px] font-semibold"
+            style={{ backgroundColor: tab === i ? "#C4972A" : "#141923", color: tab === i ? "white" : "#9CA3AF" }}
           >
-            <Image src={s.tool} alt="" width={14} height={14} className="object-contain" />
+            {d.label}
+          </button>
+        ))}
+      </div>
+      <AnimatePresence mode="wait">
+        <motion.div key={tab} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.2 }}>
+          <div className="rounded-sm border border-border bg-card/70 p-2.5 mb-1.5">
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-[9px] text-muted-foreground uppercase tracking-wide font-semibold">AI Opportunity Score</span>
+              <span className="text-[9px] font-bold text-foreground">{scanProgress}%</span>
+            </div>
+            <div className="h-1 rounded-full bg-deep overflow-hidden">
+              <motion.div animate={{ width: `${scanProgress}%` }} transition={{ duration: 0.05 }} className="h-full bg-gradient-to-r from-primary to-[#E8C46A] rounded-full" />
+            </div>
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-[11px] font-semibold text-foreground leading-none">{s.label}</p>
-            <p className="text-[10px] text-muted-foreground mt-0.5">{s.sub}</p>
+          {dept.sinks.map((sink) => (
+            <div key={sink.task} className="flex items-center gap-2 rounded-lg bg-deep border border-border px-2.5 py-1.5 mb-1">
+              <p className="text-[10px] font-medium text-foreground flex-1">{sink.task}</p>
+              <span className="text-[10px] font-bold text-red-400">{sink.hrs}h/wk</span>
+            </div>
+          ))}
+          <div className="rounded-sm bg-red-950/20 border border-red-800/40 px-2.5 py-1.5 mt-1.5">
+            <span className="text-[10px] font-semibold text-red-400">{totalHrs}h/wk wasted in {dept.label}</span>
           </div>
-          {i < step && <CheckCircle2 className="h-3.5 w-3.5 text-green-500 flex-shrink-0" />}
-          {i === step && (
-            <motion.div
-              animate={{ opacity: [1, 0.3, 1] }}
-              transition={{ repeat: Infinity, duration: 0.8 }}
-              className="h-1.5 w-1.5 rounded-full bg-primary/100 flex-shrink-0"
-            />
-          )}
         </motion.div>
-      ))}
-      <div className="mt-2 rounded-sm bg-primary/10 border border-primary/20 px-3 py-2 flex items-center gap-2">
+      </AnimatePresence>
+      <div className="mt-1 rounded-sm bg-primary/10 border border-primary/20 px-3 py-2 flex items-center gap-2">
         <TrendingUp className="h-3.5 w-3.5 text-primary" />
-        <span className="text-[11px] font-semibold text-primary">47 qualified meetings booked this month</span>
+        <span className="text-[11px] font-semibold text-primary">40% avg. efficiency gain in 90 days</span>
       </div>
     </div>
   )
 }
 
-// ─── RevOps Demo ──────────────────────────────────────────────────────────────
-const PIPELINE_STAGES = ["New Lead", "Qualified", "Demo", "Proposal", "Closed"]
-const PIPELINE_DEALS = [
-  { name: "Apex Corp", value: "$8,400", stage: 0 },
-  { name: "Vertex Inc", value: "$5,200", stage: 1 },
-  { name: "Prism LLC", value: "$12,000", stage: 2 },
-  { name: "Orbit Co", value: "$3,800", stage: 3 },
-  { name: "Nexus AI", value: "$9,100", stage: 4 },
-]
+// ─── Steel Trap Demo ─────────────────────────────────────────────────────────
+const TRAP_STAGES_GRID = ["1st Contact", "Qualified", "Demo", "Proposal", "Close"]
+const TRAP_TOUCHES_GRID = [1, 3, 4, 5, 7]
 
-function RevOpsDemo() {
-  const [active, setActive] = useState(0)
+function SteelTrapDemo() {
+  const [stage, setStage] = useState(0)
+  const [showLoss, setShowLoss] = useState(false)
 
   useEffect(() => {
-    const t = setInterval(() => setActive((s) => (s + 1) % PIPELINE_STAGES.length), 1200)
+    const t = setInterval(() => {
+      setStage((s) => {
+        if (s < TRAP_STAGES_GRID.length - 1) return s + 1
+        setShowLoss(true)
+        return s
+      })
+    }, 1300)
     return () => clearInterval(t)
   }, [])
 
-  const stageDeal = PIPELINE_DEALS[active]
+  const touches = TRAP_TOUCHES_GRID[stage]
+  const sevenXPct = Math.round((touches / 7) * 100)
 
   return (
     <div className="space-y-2">
-      <div className="flex gap-1">
-        {PIPELINE_STAGES.map((stage, i) => (
-          <button
+      {/* Stage bar */}
+      <div className="flex gap-0.5">
+        {TRAP_STAGES_GRID.map((s, i) => (
+          <motion.div
             key={i}
-            onClick={() => setActive(i)}
-            className="flex-1 rounded-md px-1 py-1.5 text-center transition-all"
-            style={{
-              backgroundColor: active === i ? "#C4972A" : "#141923",
-              color: active === i ? "white" : "#9CA3AF",
-            }}
+            animate={{ backgroundColor: i <= stage ? "#2563EB" : "#141923", color: i <= stage ? "#fff" : "#6B7280" }}
+            transition={{ duration: 0.3 }}
+            className="flex-1 rounded-md px-0.5 py-1.5 text-center"
           >
-            <span className="text-[9px] font-semibold leading-none block">{stage}</span>
-          </button>
+            <span className="text-[9px] font-semibold leading-none block">{s}</span>
+          </motion.div>
         ))}
       </div>
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={active}
-          initial={{ opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -6 }}
-          transition={{ duration: 0.25 }}
-          className="rounded-sm border border-border bg-card/70 p-3"
-        >
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2">
-              <div className="h-7 w-7 rounded-full bg-deep flex items-center justify-center text-[11px] font-bold text-muted-foreground">
-                {stageDeal.name.charAt(0)}
-              </div>
-              <div>
-                <p className="text-xs font-semibold text-foreground">{stageDeal.name}</p>
-                <p className="text-[10px] text-muted-foreground">Stage: {PIPELINE_STAGES[stageDeal.stage]}</p>
-              </div>
+
+      {/* Lead card */}
+      <div className="rounded-sm border border-border bg-card/70 p-2.5">
+        <div className="flex items-center justify-between mb-1.5">
+          <div className="flex items-center gap-2">
+            <Shield className="h-3.5 w-3.5 text-blue-400" />
+            <span className="text-[11px] font-semibold text-foreground">Apex Corp — $12.4K</span>
+          </div>
+          <span className="text-[10px] font-bold text-blue-400">Touch {touches}/7</span>
+        </div>
+        <div className="flex gap-0.5">
+          {TRAP_STAGES_GRID.map((_, i) => (
+            <div key={i} className="flex-1 h-1 rounded-full" style={{ backgroundColor: i <= stage ? "#2563EB" : "rgba(255,255,255,0.07)" }} />
+          ))}
+        </div>
+      </div>
+
+      {/* 7x Rule + Forecast */}
+      <div className="grid grid-cols-2 gap-1.5">
+        <div className="rounded-lg bg-deep border border-border px-2 py-1.5">
+          <div className="flex items-center gap-1 mb-1">
+            <Target className="h-2.5 w-2.5 text-blue-400" />
+            <span className="text-[9px] font-semibold text-muted-foreground">7x Rule</span>
+          </div>
+          <div className="h-1 rounded-full bg-card overflow-hidden">
+            <motion.div animate={{ width: `${sevenXPct}%` }} className="h-full rounded-full" style={{ backgroundColor: sevenXPct >= 100 ? "#16A34A" : "#C4972A" }} />
+          </div>
+        </div>
+        <div className="rounded-lg bg-deep border border-border px-2 py-1.5 text-center">
+          <p className="text-sm font-bold text-foreground">87%</p>
+          <p className="text-[9px] text-muted-foreground">Forecast Acc.</p>
+        </div>
+      </div>
+
+      {/* AI Loss Pattern */}
+      <AnimatePresence>
+        {showLoss && (
+          <motion.div initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} className="rounded-sm bg-orange-950/20 border border-orange-800/40 px-2.5 py-2">
+            <div className="flex items-center gap-1 mb-1">
+              <AlertTriangle className="h-2.5 w-2.5 text-orange-400" />
+              <span className="text-[9px] font-semibold text-orange-400">AI Loss Pattern</span>
             </div>
-            <span className="text-xs font-bold text-green-400">{stageDeal.value}</span>
-          </div>
-          <div className="flex gap-1">
-            {PIPELINE_STAGES.map((_, i) => (
-              <div key={i} className="flex-1 h-1 rounded-full" style={{ backgroundColor: i <= active ? "#C4972A" : "rgba(255,255,255,0.07)" }} />
-            ))}
-          </div>
-        </motion.div>
+            <p className="text-[10px] text-foreground leading-snug">67% cite &quot;pricing&quot; — recommend messaging review</p>
+          </motion.div>
+        )}
       </AnimatePresence>
-      <div className="grid grid-cols-3 gap-1.5">
-        {[["$47.2K", "Pipeline"], ["82%", "Win Rate"], ["4 days", "Avg. Close"]].map(([val, lbl]) => (
-          <div key={lbl} className="rounded-lg bg-deep border border-border px-2 py-1.5 text-center">
-            <p className="text-sm font-bold text-foreground">{val}</p>
-            <p className="text-[9px] text-muted-foreground">{lbl}</p>
-          </div>
-        ))}
-      </div>
     </div>
   )
 }
@@ -452,6 +479,44 @@ function DatabaseDemo() {
   )
 }
 
+// ─── Money Page Demo ─────────────────────────────────────────────────────────
+const MOIC_CHANNELS = [
+  { name: "Referral", moic: 8.4, color: "#16A34A" },
+  { name: "Cold Email", moic: 5.1, color: "#2563EB" },
+  { name: "Google Ads", moic: 3.2, color: "#EA580C" },
+  { name: "LinkedIn", moic: 1.8, color: "#9333EA" },
+]
+
+function MoneyPageGridDemo() {
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center gap-2 mb-1">
+        <DollarSign className="h-3.5 w-3.5 text-primary" />
+        <span className="text-[11px] font-semibold text-foreground">MOIC by Channel</span>
+      </div>
+      {MOIC_CHANNELS.map((ch, i) => (
+        <div key={ch.name} className="flex items-center gap-2 rounded-lg bg-card/60 border border-border px-2.5 py-1.5">
+          <span className="text-[10px] text-muted-foreground w-14 flex-shrink-0">{ch.name}</span>
+          <div className="flex-1 h-3 bg-deep rounded-full overflow-hidden">
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${(ch.moic / 10) * 100}%` }}
+              transition={{ duration: 0.8, delay: i * 0.12, ease: "easeOut" }}
+              className="h-full rounded-full"
+              style={{ backgroundColor: ch.color }}
+            />
+          </div>
+          <span className="text-[10px] font-bold text-foreground w-8 text-right tabular-nums">{ch.moic}x</span>
+        </div>
+      ))}
+      <div className="mt-2 rounded-sm bg-primary/10 border border-primary/20 px-3 py-2 flex items-center gap-2">
+        <TrendingUp className="h-3.5 w-3.5 text-primary" />
+        <span className="text-[11px] font-semibold text-primary">$127 C.O.M. — 18% below avg.</span>
+      </div>
+    </div>
+  )
+}
+
 // ─── Service Card ─────────────────────────────────────────────────────────────
 interface ServiceCard {
   slug: string
@@ -469,24 +534,24 @@ const SERVICES: ServiceCard[] = [
   {
     slug: "cold-outbound",
     name: "Wild Ducks",
-    desc: "Multi-domain email infra, AI SDR reply handling, auto-enrichment, and deliverability monitoring — all managed end-to-end.",
-    outcome: "Avg. 47 qualified meetings / mo",
+    desc: "Forward-deployed engineers that embed in your org, find AI opportunities, and deploy production solutions.",
+    outcome: "40% operational efficiency gain in 90 days",
     icon: <Zap className="h-5 w-5" />,
-    tools: ["/integrations/instantly.webp", "/integrations/apollo.svg", "/integrations/hubspot-svgrepo-com.svg"],
-    Demo: OutboundDemo,
+    tools: ["/integrations/openai-svgrepo-com.svg", "/integrations/notion.svg", "/integrations/slack.png"],
+    Demo: WildDucksDemo,
     accentColor: "#C4972A",
-    tags: ["Email Sequences", "AI SDR", "Lead Enrichment"],
+    tags: ["Time Intelligence", "Dept Discovery", "Opportunity Map", "AI Deployment"],
   },
   {
     slug: "revops-pipeline",
     name: "Steel Trap",
-    desc: "CRM architecture, lead routing, attribution, conversion dashboards, and rep coaching — built for revenue teams.",
-    outcome: "Full pipeline visibility in 7 days",
-    icon: <TrendingUp className="h-5 w-5" />,
-    tools: ["/integrations/hubspot-svgrepo-com.svg", "/integrations/salesforce.svg", "/integrations/slack.png"],
-    Demo: RevOpsDemo,
+    desc: "Closed-loop sales data architecture tracking every lead, touch, and loss reason with deterministic fidelity.",
+    outcome: "Zero-leak pipeline with BTC closing integration",
+    icon: <Shield className="h-5 w-5" />,
+    tools: ["/integrations/hubspot-svgrepo-com.svg", "/integrations/slack.png", "/integrations/openai-svgrepo-com.svg"],
+    Demo: SteelTrapDemo,
     accentColor: "#2563EB",
-    tags: ["CRM Build", "Attribution", "Routing"],
+    tags: ["Lead Lifecycle", "Loss Patterns", "7x Rule"],
   },
   {
     slug: "voice-agents",
@@ -531,6 +596,17 @@ const SERVICES: ServiceCard[] = [
     Demo: DatabaseDemo,
     accentColor: "#9333EA",
     tags: ["CRM Audit", "Enrichment", "Dedup"],
+  },
+  {
+    slug: "seo-aeo",
+    name: "Money Page",
+    desc: "Revenue intelligence that shows which channels multiply your investment and which quietly destroy it.",
+    outcome: "Complete financial visibility into marketing ROI",
+    icon: <DollarSign className="h-5 w-5" />,
+    tools: ["/integrations/openai-svgrepo-com.svg", "/integrations/hubspot-svgrepo-com.svg", "/integrations/slack.png"],
+    Demo: MoneyPageGridDemo,
+    accentColor: "#C4972A",
+    tags: ["C.O.M.", "MOIC", "AI Recovery", "Elasticity"],
   },
 ]
 

@@ -1143,22 +1143,27 @@ export function Hero() {
                 </div>
 
                 {/* MOBILE TAB BAR — visible only on mobile */}
-                <div className="sm:hidden flex items-center border-b border-border bg-card overflow-x-auto scrollbar-hide shrink-0">
-                  <div className="flex items-center gap-0.5 px-2 py-1.5 min-w-max">
-                    <div className="flex items-center px-2 py-1 mr-2 border-r border-border">
-                      <Image src="/logo.png" alt="AIMS" width={60} height={24} className="object-contain h-5 w-auto" />
+                <div className="sm:hidden relative border-b border-border bg-card shrink-0">
+                  {/* Scroll fade indicators */}
+                  <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-8 bg-gradient-to-l from-card to-transparent" />
+                  <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-8 bg-gradient-to-r from-card to-transparent" />
+                  <div className="flex items-center overflow-x-auto scrollbar-hide">
+                    <div className="flex items-center gap-1 px-3 py-2 min-w-max">
+                      <div className="flex items-center px-2 py-1 mr-2 border-r border-border">
+                        <Image src="/logo.png" alt="AIMS" width={60} height={24} className="object-contain h-5 w-auto" />
+                      </div>
+                      {NAV_ITEMS.map((item) => (
+                        <motion.button
+                          key={item.id}
+                          onClick={() => setActiveView(item.id)}
+                          className={`flex items-center gap-1.5 rounded-lg px-3 min-h-[44px] text-xs font-medium transition-colors whitespace-nowrap cursor-pointer ${activeView === item.id ? "bg-primary/15 text-primary border border-primary/20" : "text-muted-foreground hover:bg-surface"}`}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          <item.icon className="h-3.5 w-3.5 flex-shrink-0" />
+                          <span>{item.label}</span>
+                        </motion.button>
+                      ))}
                     </div>
-                    {NAV_ITEMS.map((item) => (
-                      <motion.button
-                        key={item.id}
-                        onClick={() => setActiveView(item.id)}
-                        className={`flex items-center gap-1 rounded-lg px-2 py-1.5 text-[11px] font-medium transition-colors whitespace-nowrap cursor-pointer ${activeView === item.id ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-surface"}`}
-                        whileTap={{ scale: 0.95 }}
-                      >
-                        <item.icon className="h-3 w-3 flex-shrink-0" />
-                        <span>{item.label}</span>
-                      </motion.button>
-                    ))}
                   </div>
                 </div>
 

@@ -52,7 +52,7 @@ export function LogoTicker() {
               return (
                 <div
                   key={i}
-                  className="mx-12 inline-flex flex-shrink-0 items-center justify-center brightness-0 invert opacity-40 hover:opacity-70 transition-opacity"
+                  className="mx-6 sm:mx-12 inline-flex flex-shrink-0 items-center justify-center brightness-0 invert opacity-40 hover:opacity-70 transition-opacity scale-[0.65] sm:scale-100"
                   style={{ width: size.w, height: size.h }}
                 >
                   <Image

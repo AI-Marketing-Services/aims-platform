@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import { ClerkProvider } from "@clerk/nextjs"
 import { Cormorant_Garamond, DM_Sans, DM_Mono } from "next/font/google"
 import { Toaster } from "sonner"
-import Script from "next/script"
+
 import "./globals.css"
 
 const cormorant = Cormorant_Garamond({
@@ -99,9 +99,6 @@ export default function RootLayout({
               },
             }}
           />
-          <Script id="crisp-chat" strategy="afterInteractive">
-            {`window.$crisp=[];window.CRISP_WEBSITE_ID="25695ffa-8ffa-4b59-b5ad-5a509107c9c1";(function(){d=document;s=d.createElement("script");s.src="https://client.crisp.chat/l.js";s.async=1;d.getElementsByTagName("head")[0].appendChild(s);})();`}
-          </Script>
         </body>
       </html>
     </ClerkProvider>

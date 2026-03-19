@@ -2,6 +2,7 @@ import { Navbar } from "@/components/marketing/Navbar"
 import { Footer } from "@/components/marketing/Footer"
 import { CartProvider } from "@/components/shared/CartContext"
 import { CartDrawer } from "@/components/shared/CartDrawer"
+import { IntakeChatWidget } from "@/components/marketing/IntakeChatWidget"
 
 export default function MarketingLayout({
   children,
@@ -15,6 +16,7 @@ export default function MarketingLayout({
         <main className="flex-1 pt-16">{children}</main>
         <Footer />
         <CartDrawer />
+        <IntakeChatWidget />
       </div>
     </CartProvider>
   )

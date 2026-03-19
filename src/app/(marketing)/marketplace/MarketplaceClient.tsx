@@ -21,6 +21,7 @@ interface AIMSService {
   pricing: string
   priceFrom?: string
   isBeta?: boolean
+  featured?: boolean
   tools: { name: string; domain: string }[]
   deliverables: string[]
   outcome: string
@@ -53,24 +54,25 @@ const SERVICES: AIMSService[] = [
   {
     id: "s2",
     slug: "cold-outbound",
-    pillar: "SALES",
-    name: "Cold Outbound Engine",
-    desc: "Multi-domain email infrastructure with AI SDR sequences and bi-directional CRM sync",
-    setupTime: "5–7 days",
+    pillar: "OPERATIONS",
+    name: "Wild Ducks",
+    featured: true,
+    desc: "Forward-deployed engineering division that goes into your organization, installs time intelligence, and deploys AI solutions",
+    setupTime: "5–10 days",
     pricing: "custom",
     tools: [
-      { name: "Instantly", domain: "instantly.ai" },
-      { name: "Clay", domain: "clay.com" },
-      { name: "Apollo", domain: "apollo.io" },
-      { name: "HubSpot", domain: "hubspot.com" },
+      { name: "Anthropic", domain: "anthropic.com" },
+      { name: "Notion", domain: "notion.so" },
+      { name: "Slack", domain: "slack.com" },
+      { name: "Zapier", domain: "zapier.com" },
     ],
     deliverables: [
-      "Multi-domain email infrastructure (3–5 domains, warmed and ready)",
-      "ICP modeling + list building via Clay enrichment",
-      "AI-written sequences personalized to each prospect's context",
-      "Reply handling + CRM sync + Slack alerts for positive responses",
+      "Time intelligence software installation",
+      "Department-by-department discovery sessions",
+      "Prioritized AI opportunity map",
+      "Production AI deployments (EOS Agent, automation, etc.)",
     ],
-    outcome: "Personalized cold email sequences running at scale with 30%+ open rates within 14 days",
+    outcome: "AI-native team with forward-deployed engineers removing growth ceilings — avg 40% operational efficiency gain in 90 days",
   },
   {
     id: "s3",
@@ -98,23 +100,24 @@ const SERVICES: AIMSService[] = [
     id: "s4",
     slug: "seo-aeo",
     pillar: "MARKETING",
-    name: "SEO & AEO Automation",
-    desc: "Search engine and AI answer engine optimization with monthly content and reporting",
-    setupTime: "3–5 hours",
+    name: "Money Page",
+    featured: true,
+    desc: "Revenue intelligence diagnostic that tracks Cost of Media, MOIC by channel, elasticity curves, and AI recovery metrics",
+    setupTime: "3–5 days",
     pricing: "contact",
     tools: [
-      { name: "Perplexity", domain: "perplexity.ai" },
-      { name: "Surfer SEO", domain: "surferseo.com" },
-      { name: "Notion", domain: "notion.so" },
-      { name: "Search Console", domain: "search.google.com" },
+      { name: "HubSpot", domain: "hubspot.com" },
+      { name: "OpenAI", domain: "openai.com" },
+      { name: "Stripe", domain: "stripe.com" },
+      { name: "Slack", domain: "slack.com" },
     ],
     deliverables: [
-      "Keyword gap analysis + topic cluster map",
-      "AI-generated content calendar (4 articles/mo minimum)",
-      "FAQ schema markup for AI search engine visibility",
-      "Monthly ranking report with traffic and position tracking",
+      "C.O.M. baseline + channel efficiency scoring",
+      "MOIC tracking at campaign and funnel level",
+      "Elasticity curve analysis per channel",
+      "AI Recovery metric dashboard",
     ],
-    outcome: "Automated content pipeline ranking on Google and showing up in ChatGPT / Perplexity answers",
+    outcome: "Complete financial visibility into marketing ROI — know exactly which channels produce profitable business vs. waste budget",
   },
   {
     id: "s5",
@@ -296,24 +299,25 @@ const SERVICES: AIMSService[] = [
   {
     id: "s13",
     slug: "revops-pipeline",
-    pillar: "OPERATIONS",
-    name: "RevOps Pipeline",
-    desc: "CRM architecture, lead routing, attribution, conversion dashboards, and rep coaching — built for revenue teams",
+    pillar: "SALES",
+    name: "Steel Trap",
+    featured: true,
+    desc: "Deterministic sales data architecture with complete lead lifecycle tracking, AI-extracted loss patterns, and BTC closing integration",
     setupTime: "3–5 days",
     pricing: "custom",
     tools: [
       { name: "HubSpot", domain: "hubspot.com" },
-      { name: "Salesforce", domain: "salesforce.com" },
-      { name: "Apollo", domain: "apollo.io" },
       { name: "Slack", domain: "slack.com" },
+      { name: "Anthropic", domain: "anthropic.com" },
+      { name: "Zoom", domain: "zoom.us" },
     ],
     deliverables: [
-      "CRM audit and full rebuild with stage definitions and playbooks",
-      "Lead routing and assignment rules with round-robin logic",
-      "Attribution and conversion tracking across all channels",
-      "Sales rep coaching dashboard + revenue forecasting model",
+      "Complete lead lifecycle tracking infrastructure",
+      "AI-extracted loss reason pattern analysis",
+      "7x contact rule enforcement system",
+      "Pipeline accuracy scoring + 90-day forecast",
     ],
-    outcome: "Full pipeline visibility with automated routing and reporting — live in under 7 days",
+    outcome: "Zero-leak sales pipeline revealing whether you have a sales problem or a pipeline problem — with BTC closing partners to fix it",
   },
   {
     id: "s14",
@@ -501,9 +505,9 @@ const SERVICES: AIMSService[] = [
 
 const PILLAR_STYLES: Record<Pillar, string> = {
   MARKETING: "text-green-400 bg-green-900/15 border-green-800",
-  SALES: "text-blue-400 bg-blue-50 border-blue-800",
-  OPERATIONS: "text-orange-400 bg-orange-50 border-orange-800",
-  FINANCE: "text-purple-400 bg-purple-50 border-purple-800",
+  SALES: "text-blue-400 bg-blue-900/15 border-blue-800",
+  OPERATIONS: "text-orange-400 bg-orange-900/15 border-orange-800",
+  FINANCE: "text-purple-400 bg-purple-900/15 border-purple-800",
 }
 
 
@@ -546,11 +550,17 @@ function ServiceCard({ service }: { service: AIMSService }) {
   }
 
   return (
-    <div className="bg-card border border-border rounded-2xl overflow-hidden flex flex-col h-full hover:shadow-md transition-shadow duration-200">
+    <div className={cn(
+      "bg-card border rounded-2xl overflow-hidden flex flex-col h-full hover:shadow-md transition-shadow duration-200",
+      service.featured ? "border-primary/40 ring-1 ring-primary/20" : "border-border"
+    )}>
       {/* Card header */}
       <div className="px-5 pt-5 pb-4">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
+            {service.featured && (
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-sm bg-primary/15 text-primary border border-primary/30 uppercase tracking-wider">Featured</span>
+            )}
             <span className={cn("text-xs font-semibold px-2 py-0.5 rounded-full border", PILLAR_STYLES[service.pillar])}>
               {service.pillar.charAt(0) + service.pillar.slice(1).toLowerCase()}
             </span>
@@ -656,7 +666,7 @@ export function MarketplaceClient() {
   const [search, setSearch] = useState("")
 
   const filtered = useMemo(() => {
-    return SERVICES.filter((s) => {
+    const result = SERVICES.filter((s) => {
       const matchPillar = pillar === "ALL" || s.pillar === pillar
       const matchSearch =
         !search ||
@@ -664,6 +674,8 @@ export function MarketplaceClient() {
         s.desc.toLowerCase().includes(search.toLowerCase())
       return matchPillar && matchSearch
     })
+    // Featured services always appear first
+    return result.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0))
   }, [pillar, search])
 
   return (
