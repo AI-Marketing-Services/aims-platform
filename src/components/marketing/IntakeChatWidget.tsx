@@ -44,6 +44,13 @@ export function IntakeChatWidget() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages])
 
+  // Listen for global open-chatbot events
+  useEffect(() => {
+    const handler = () => setOpen(true)
+    window.addEventListener("open-intake-chat", handler)
+    return () => window.removeEventListener("open-intake-chat", handler)
+  }, [])
+
   // Auto-open after 5 seconds
   useEffect(() => {
     if (hasAutoOpened) return

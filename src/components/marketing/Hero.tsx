@@ -1075,10 +1075,10 @@ export function Hero() {
             initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}
             className="mt-8 flex flex-col items-center gap-3 sm:flex-row"
           >
-            <Link href="/get-started" className="inline-flex items-center gap-2 bg-primary px-8 py-3.5 text-xs font-bold uppercase tracking-widest text-white shadow-md shadow-primary/20 transition hover:bg-primary/80 hover:shadow-lg">
+            <button onClick={() => window.dispatchEvent(new Event("open-intake-chat"))} className="inline-flex items-center gap-2 bg-primary px-8 py-3.5 text-xs font-bold uppercase tracking-widest text-white shadow-md shadow-primary/20 transition hover:bg-primary/80 hover:shadow-lg">
               Speak with Our Intake Agent
               <ArrowRight className="h-4 w-4" />
-            </Link>
+            </button>
             <Link href="/marketplace" className="inline-flex items-center gap-2 border border-border px-8 py-3.5 text-xs font-bold uppercase tracking-widest text-foreground transition hover:border-primary/50 hover:text-primary">
               Explore Our Engagements
             </Link>
