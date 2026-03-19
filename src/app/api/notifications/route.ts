@@ -9,7 +9,7 @@ export async function GET(req: Request) {
   const role = (sessionClaims?.metadata as { role?: string })?.role
   const isAdmin = role === "ADMIN" || role === "SUPER_ADMIN"
   const { searchParams } = new URL(req.url)
-  const limit = parseInt(searchParams.get("limit") ?? "20")
+  const limit = Math.min(parseInt(searchParams.get("limit") ?? "20") || 20, 100)
 
   // Cache user lookup — used for both findMany and count below
   const dbUserId = isAdmin

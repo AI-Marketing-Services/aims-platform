@@ -95,6 +95,14 @@ export async function POST(req: Request) {
         const tierIdsArr = (session.metadata?.tierIds ?? "").split(",")
         const amountsArr = (session.metadata?.amounts ?? "").split(",").map(Number)
 
+        // Validate array lengths match to prevent out-of-bounds access
+        if (slugsArr.length === 0 || tierIdsArr.length < slugsArr.length || amountsArr.length < slugsArr.length) {
+          console.error("checkout.session.completed: metadata array length mismatch", {
+            slugs: slugsArr.length, tiers: tierIdsArr.length, amounts: amountsArr.length,
+          })
+          break
+        }
+
         // Idempotency: if subscription records already exist for this Stripe subscription, skip
         const existingSub = await db.subscription.findUnique({
           where: { stripeSubId: session.subscription as string },

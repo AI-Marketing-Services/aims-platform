@@ -11,7 +11,10 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   }
 
-  const body = await req.json()
+  let body
+  try { body = await req.json() } catch {
+    return NextResponse.json({ error: "Invalid request body" }, { status: 400 })
+  }
 
   if (!body.vendorName || typeof body.monthlyCost !== "number" || !body.category) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 })

@@ -21,7 +21,10 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "User not found" }, { status: 404 })
   }
 
-  const body = await req.json()
+  let body
+  try { body = await req.json() } catch {
+    return NextResponse.json({ error: "Invalid request body" }, { status: 400 })
+  }
   const parsed = checkoutSchema.safeParse(body)
   if (!parsed.success) {
     return NextResponse.json({ error: "Invalid data" }, { status: 400 })

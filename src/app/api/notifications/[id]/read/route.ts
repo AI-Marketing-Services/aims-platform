@@ -23,8 +23,11 @@ export async function PATCH(_req: Request, { params }: { params: Promise<{ id: s
     return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   }
 
-  await db.notification.update({ where: { id }, data: { read: true } }).catch((err) =>
+  try {
+    await db.notification.update({ where: { id }, data: { read: true } })
+    return NextResponse.json({ ok: true })
+  } catch (err) {
     console.error(`Failed to mark notification ${id} as read:`, err)
-  )
-  return NextResponse.json({ ok: true })
+    return NextResponse.json({ error: "Failed to update" }, { status: 500 })
+  }
 }
