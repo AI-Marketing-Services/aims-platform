@@ -31,7 +31,7 @@ export function ShareButtons({ shareUrl, shareText }: Props) {
         href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center gap-2 px-4 py-2 bg-[#C4972A] text-white rounded-lg text-sm font-medium hover:bg-[#A17D22] transition-colors"
+        className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors"
       >
         Share on X
       </a>

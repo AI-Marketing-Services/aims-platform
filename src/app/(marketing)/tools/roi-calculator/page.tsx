@@ -43,7 +43,7 @@ function Slider({
         step={step}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="w-full h-2 bg-surface rounded-full appearance-none cursor-pointer accent-[#C4972A]"
+        className="w-full h-2 bg-surface rounded-full appearance-none cursor-pointer accent-primary"
       />
       <div className="flex justify-between text-xs text-muted-foreground mt-1">
         <span>{format(min)}</span>
@@ -118,7 +118,7 @@ export default function ROICalculatorPage() {
       {/* Header */}
       <div className="border-b border-border bg-card">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center gap-3">
-          <div className="w-8 h-8 bg-[#C4972A] rounded-lg flex items-center justify-center">
+          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
             <Calculator className="w-4 h-4 text-white" />
           </div>
           <span className="font-semibold text-foreground">AIMS ROI Calculator</span>
@@ -127,7 +127,7 @@ export default function ROICalculatorPage() {
 
       <div className="max-w-6xl mx-auto px-4 py-12">
         <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-[#C4972A] text-sm font-medium rounded-full mb-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary text-sm font-medium rounded-full mb-4">
             <TrendingUp className="w-3.5 h-3.5" />
             Free ROI Calculator
           </div>
@@ -197,7 +197,7 @@ export default function ROICalculatorPage() {
                 </div>
                 <div className="text-sm text-muted-foreground mt-1">/month from new clients</div>
               </div>
-              <div className="bg-[#C4972A] rounded-2xl p-6 text-white">
+              <div className="bg-primary rounded-2xl p-6 text-white">
                 <div className="text-sm text-muted-foreground mb-1">With AIMS</div>
                 <div className="text-3xl font-bold">
                   {formatCurrency(results.aimsRevenue)}
@@ -252,7 +252,7 @@ export default function ROICalculatorPage() {
               !emailGate ? (
                 <button
                   onClick={() => setEmailGate(true)}
-                  className="w-full py-4 bg-[#C4972A] text-white font-semibold rounded-xl hover:bg-[#A17D22] transition-colors flex items-center justify-center gap-2"
+                  className="w-full py-4 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 transition-colors flex items-center justify-center gap-2"
                 >
                   Get My Full ROI Report
                   <ArrowRight className="w-5 h-5" />
@@ -266,11 +266,11 @@ export default function ROICalculatorPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="your@email.com"
-                    className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C4972A] text-foreground"
+                    className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-foreground"
                   />
                   <button
                     type="submit"
-                    className="w-full py-3 bg-[#C4972A] text-white font-semibold rounded-lg hover:bg-[#A17D22] transition-colors"
+                    className="w-full py-3 bg-primary text-white font-semibold rounded-lg hover:bg-primary/90 transition-colors"
                   >
                     Send My Report
                   </button>
@@ -281,7 +281,7 @@ export default function ROICalculatorPage() {
                 <div className="text-green-400 font-semibold mb-2">Report sent to {email}</div>
                 <a
                   href="/get-started"
-                  className="inline-flex items-center gap-2 text-[#C4972A] font-medium hover:underline"
+                  className="inline-flex items-center gap-2 text-primary font-medium hover:underline"
                 >
                   Book a strategy call to review it together <ArrowRight className="w-4 h-4" />
                 </a>

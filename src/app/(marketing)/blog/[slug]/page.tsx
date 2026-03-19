@@ -161,7 +161,7 @@ export default async function BlogPostPage({ params }: Props) {
 
           {/* Content */}
           {post.source === "mdx" && post.content ? (
-            <div className="prose prose-gray max-w-none prose-headings:text-foreground prose-headings:font-bold prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4 prose-p:text-muted-foreground prose-p:leading-relaxed prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-strong:text-foreground prose-li:text-muted-foreground prose-ul:space-y-1 prose-ol:space-y-2 prose-blockquote:border-l-[#C4972A] prose-blockquote:text-muted-foreground">
+            <div className="prose prose-gray max-w-none prose-headings:text-foreground prose-headings:font-bold prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4 prose-p:text-muted-foreground prose-p:leading-relaxed prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-strong:text-foreground prose-li:text-muted-foreground prose-ul:space-y-1 prose-ol:space-y-2 prose-blockquote:border-l-primary prose-blockquote:text-muted-foreground">
               <ReactMarkdown>{post.content}</ReactMarkdown>
             </div>
           ) : (

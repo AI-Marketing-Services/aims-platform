@@ -95,7 +95,7 @@ export default function SegmentExplorerPage() {
       <div className="max-w-4xl mx-auto px-4 py-12">
         {/* Header */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-[#C4972A] text-sm font-medium rounded-full mb-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary text-sm font-medium rounded-full mb-6">
             <Target className="w-3.5 h-3.5" />
             Free Audience Intelligence Tool
           </div>
@@ -117,7 +117,7 @@ export default function SegmentExplorerPage() {
                 value={query}
                 onChange={(e) => handleSearch(e.target.value)}
                 placeholder="Search segments, industries, roles..."
-                className="w-full pl-10 pr-4 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#C4972A] focus:border-transparent text-foreground"
+                className="w-full pl-10 pr-4 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-foreground"
               />
             </div>
             <button
@@ -125,7 +125,7 @@ export default function SegmentExplorerPage() {
               className={cn(
                 "flex items-center gap-2 px-4 py-2.5 border rounded-lg text-sm font-medium transition-colors",
                 showFilters
-                  ? "border-[#C4972A] text-[#C4972A] bg-primary/10"
+                  ? "border-primary text-primary bg-primary/10"
                   : "border-border text-muted-foreground hover:bg-surface"
               )}
             >
@@ -165,7 +165,7 @@ export default function SegmentExplorerPage() {
                   <select
                     value={seniority}
                     onChange={(e) => setSeniority(e.target.value)}
-                    className="px-3 py-1.5 border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#C4972A]"
+                    className="px-3 py-1.5 border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                   >
                     {ALL_SENIORITIES.map((s) => (
                       <option key={s} value={s}>{s === "All" ? "All Seniority" : s}</option>
@@ -176,7 +176,7 @@ export default function SegmentExplorerPage() {
                   <select
                     value={intentMin}
                     onChange={(e) => setIntentMin(Number(e.target.value))}
-                    className="px-3 py-1.5 border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#C4972A]"
+                    className="px-3 py-1.5 border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                   >
                     {INTENT_FILTERS.map((f) => (
                       <option key={f.label} value={f.min}>{f.label === "All" ? "All Intent" : f.label}</option>
@@ -257,7 +257,7 @@ export default function SegmentExplorerPage() {
                 {unlocked && (
                   <a
                     href="/get-started"
-                    className="flex-shrink-0 inline-flex items-center gap-1.5 px-4 py-2 bg-[#C4972A] text-white text-sm font-medium rounded-lg hover:bg-[#A17D22] transition-colors"
+                    className="flex-shrink-0 inline-flex items-center gap-1.5 px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors"
                   >
                     Build Campaign
                     <ArrowRight className="w-3.5 h-3.5" />
@@ -290,7 +290,7 @@ export default function SegmentExplorerPage() {
                 >
                   <div className="text-center mb-6">
                     <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Lock className="w-5 h-5 text-[#C4972A]" />
+                      <Lock className="w-5 h-5 text-primary" />
                     </div>
                     <h3 className="text-xl font-bold text-foreground mb-2">
                       Unlock All {filtered.length} Segments
@@ -306,7 +306,7 @@ export default function SegmentExplorerPage() {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Your name"
-                      className="w-full px-4 py-3 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#C4972A] text-foreground"
+                      className="w-full px-4 py-3 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary text-foreground"
                     />
                     <input
                       type="email"
@@ -314,12 +314,12 @@ export default function SegmentExplorerPage() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="Work email"
-                      className="w-full px-4 py-3 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#C4972A] text-foreground"
+                      className="w-full px-4 py-3 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary text-foreground"
                     />
                     <button
                       type="submit"
                       disabled={submitting}
-                      className="w-full py-3 bg-[#C4972A] text-white font-semibold rounded-lg hover:bg-[#A17D22] transition-colors disabled:opacity-70 flex items-center justify-center gap-2"
+                      className="w-full py-3 bg-primary text-white font-semibold rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-70 flex items-center justify-center gap-2"
                     >
                       {submitting ? "Unlocking..." : <>Unlock All Segments <ArrowRight className="w-4 h-4" /></>}
                     </button>
@@ -336,7 +336,7 @@ export default function SegmentExplorerPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mt-10 bg-[#C4972A] rounded-2xl p-8 text-center text-white"
+            className="mt-10 bg-primary rounded-2xl p-8 text-center text-white"
           >
             <h3 className="text-2xl font-bold mb-3">Ready to target one of these segments?</h3>
             <p className="text-muted-foreground mb-6">
@@ -344,7 +344,7 @@ export default function SegmentExplorerPage() {
             </p>
             <a
               href="/get-started"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-card text-[#C4972A] font-semibold rounded-xl hover:bg-primary/10 transition-colors"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-card text-primary font-semibold rounded-xl hover:bg-primary/10 transition-colors"
             >
               Build My Campaign
               <ArrowRight className="w-5 h-5" />

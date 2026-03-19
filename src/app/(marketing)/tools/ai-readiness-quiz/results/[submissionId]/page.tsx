@@ -94,7 +94,7 @@ export default async function ResultsPage({ params }: Props) {
 
         {/* Header banner */}
         <div className="mb-8 text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-[#C4972A] text-sm font-medium rounded-full mb-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary text-sm font-medium rounded-full mb-4">
             <Zap className="w-3.5 h-3.5" />
             AI Readiness Assessment Results
           </div>
@@ -116,7 +116,7 @@ export default async function ResultsPage({ params }: Props) {
           <div className="max-w-xs mx-auto mb-6">
             <div className="h-3 bg-deep rounded-full overflow-hidden">
               <div
-                className="h-3 bg-[#C4972A] rounded-full transition-all duration-700"
+                className="h-3 bg-primary rounded-full transition-all duration-700"
                 style={{ width: `${score}%` }}
               />
             </div>
@@ -157,7 +157,7 @@ export default async function ResultsPage({ params }: Props) {
                       <p className="text-xs text-muted-foreground mt-1">{details.desc}</p>
                       <p className="text-xs text-muted-foreground mt-2">{details.price}</p>
                     </div>
-                    <Link href="/marketplace" className="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 bg-[#C4972A] text-white text-xs font-semibold rounded-lg hover:bg-[#A17D22] transition-colors">
+                    <Link href="/marketplace" className="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 bg-primary text-white text-xs font-semibold rounded-lg hover:bg-primary/90 transition-colors">
                       View <ArrowRight className="w-3 h-3" />
                     </Link>
                   </div>
@@ -177,14 +177,14 @@ export default async function ResultsPage({ params }: Props) {
         </div>
 
         {/* CTA */}
-        <div className="bg-[#C4972A] rounded-2xl p-8 text-center text-white mb-6">
+        <div className="bg-primary rounded-2xl p-8 text-center text-white mb-6">
           <h3 className="text-2xl font-bold mb-3">Ready to close the gap?</h3>
           <p className="text-muted-foreground mb-6">
             Book a free 30-minute strategy call. We&apos;ll walk through your score and build a custom AI roadmap.
           </p>
           <Link
             href="/get-started"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-card text-[#C4972A] font-semibold rounded-xl hover:bg-primary/10 transition-colors"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-card text-primary font-semibold rounded-xl hover:bg-primary/10 transition-colors"
           >
             Book Your Strategy Call
             <ArrowRight className="w-5 h-5" />
@@ -194,7 +194,7 @@ export default async function ResultsPage({ params }: Props) {
         {/* Retake */}
         <p className="text-center text-sm text-muted-foreground">
           Want to see your score?{" "}
-          <Link href="/tools/ai-readiness-quiz" className="text-[#C4972A] hover:underline font-medium">
+          <Link href="/tools/ai-readiness-quiz" className="text-primary hover:underline font-medium">
             Take the quiz
           </Link>
         </p>
