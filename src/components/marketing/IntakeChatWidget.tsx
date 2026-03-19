@@ -37,8 +37,8 @@ export function IntakeChatWidget() {
 
   const { messages, sendMessage, status, error } = useChat<UIMessage>({
     transport,
-    initialMessages: INITIAL_MESSAGES,
-  })
+    messages: INITIAL_MESSAGES,
+  } as Parameters<typeof useChat>[0])
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
