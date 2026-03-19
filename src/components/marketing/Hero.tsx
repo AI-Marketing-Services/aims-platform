@@ -1059,7 +1059,8 @@ export function Hero() {
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55, delay: 0.1 }}
             className="font-serif max-w-4xl text-[2.75rem] font-light leading-[1.1] tracking-tight text-foreground sm:text-5xl md:text-[3.6rem]"
           >
-            Your Business Isn&apos;t Capped On <em className="text-primary">Talent</em>.{" "}
+            Your Business Isn&apos;t Capped On <em className="text-primary">Talent</em>.
+            <br />
             It&apos;s Capped On <em className="text-primary">Bandwidth</em>.
           </motion.h1>
 
