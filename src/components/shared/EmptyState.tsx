@@ -1,54 +1,52 @@
+"use client"
+
+import { type LucideIcon, Inbox } from "lucide-react"
 import Link from "next/link"
-import { type LucideIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface EmptyStateProps {
-  icon: LucideIcon
+  icon?: LucideIcon
   title: string
-  description: string
-  action?: {
-    label: string
-    href?: string
-    onClick?: () => void
-  }
+  description?: string
+  actionLabel?: string
+  actionHref?: string
+  onAction?: () => void
   className?: string
 }
 
 export function EmptyState({
-  icon: Icon,
+  icon: Icon = Inbox,
   title,
   description,
-  action,
+  actionLabel,
+  actionHref,
+  onAction,
   className,
 }: EmptyStateProps) {
   return (
-    <div
-      className={cn(
-        "flex flex-col items-center justify-center py-16 text-center",
-        className
-      )}
-    >
-      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 mb-4">
-        <Icon className="h-6 w-6 text-gray-400" />
+    <div className={cn("flex flex-col items-center justify-center py-12 px-4 text-center", className)}>
+      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gray-100 mb-4">
+        <Icon className="h-6 w-6 text-muted-foreground" />
       </div>
-      <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
-      <p className="text-sm text-gray-500 max-w-sm mt-1">{description}</p>
-      {action && (
-        <div className="mt-5">
-          {action.href ? (
+      <h3 className="text-sm font-semibold text-foreground mb-1">{title}</h3>
+      {description && (
+        <p className="text-sm text-muted-foreground max-w-sm">{description}</p>
+      )}
+      {actionLabel && (actionHref || onAction) && (
+        <div className="mt-4">
+          {actionHref ? (
             <Link
-              href={action.href}
-              className="bg-[#DC2626] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#B91C1C] transition-colors"
+              href={actionHref}
+              className="inline-flex items-center gap-2 rounded-lg bg-[#DC2626] px-4 py-2 text-sm font-semibold text-white hover:bg-[#B91C1C] transition-colors"
             >
-              {action.label}
+              {actionLabel}
             </Link>
           ) : (
             <button
-              type="button"
-              onClick={action.onClick}
-              className="bg-[#DC2626] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#B91C1C] transition-colors"
+              onClick={onAction}
+              className="inline-flex items-center gap-2 rounded-lg bg-[#DC2626] px-4 py-2 text-sm font-semibold text-white hover:bg-[#B91C1C] transition-colors"
             >
-              {action.label}
+              {actionLabel}
             </button>
           )}
         </div>
