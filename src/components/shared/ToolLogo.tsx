@@ -80,7 +80,7 @@ export function ToolLogo({ domain, name, size = 20, className = "" }: ToolLogoPr
   if (failed || !localSrc) {
     return (
       <span
-        className={`inline-flex items-center justify-center rounded bg-gray-100 text-[9px] font-bold text-gray-500 flex-shrink-0 ${sizeClass} ${className}`}
+        className={`inline-flex items-center justify-center rounded bg-deep text-[9px] font-bold text-muted-foreground flex-shrink-0 ${sizeClass} ${className}`}
       >
         {initial}
       </span>

@@ -4,82 +4,66 @@
 
 @layer base {
   :root {
-    /* Background */
-    --background: 0 0% 98%;
-    --foreground: 0 0% 4%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 4%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 4%;
+    /* Named tokens */
+    --gold: 42 67% 47%;
+    --gold-lt: 42 60% 62%;
+    --gold-dim: 42 30% 35%;
+    --cream: 36 27% 91%;
+    --ink: 222 25% 4%;
+    --deep: 221 25% 8%;
+    --surface: 220 22% 11%;
+    --panel: 219 22% 14%;
+    --line: 220 15% 15%;
+    --line-hover: 220 15% 22%;
 
-    /* AIMS Crimson */
-    --primary: 0 84% 50%;
-    --primary-foreground: 0 0% 100%;
+    /* Background */
+    --background: 222 25% 4%;
+    --foreground: 36 27% 91%;
+    --card: 220 22% 11%;
+    --card-foreground: 36 27% 91%;
+    --popover: 219 22% 14%;
+    --popover-foreground: 36 27% 91%;
+
+    /* Primary — Gold */
+    --primary: 42 67% 47%;
+    --primary-foreground: 222 25% 4%;
 
     /* Secondary */
-    --secondary: 220 14% 96%;
-    --secondary-foreground: 220 9% 46%;
+    --secondary: 221 25% 8%;
+    --secondary-foreground: 36 20% 60%;
 
     /* Muted */
-    --muted: 220 14% 96%;
-    --muted-foreground: 220 9% 46%;
+    --muted: 221 25% 8%;
+    --muted-foreground: 36 20% 60%;
 
     /* Accent */
-    --accent: 220 14% 96%;
-    --accent-foreground: 220 9% 46%;
+    --accent: 219 22% 14%;
+    --accent-foreground: 36 27% 91%;
 
     /* Destructive */
     --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive-foreground: 36 27% 91%;
 
     /* Border / Input / Ring */
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 0 84% 50%;
+    --border: 220 15% 15%;
+    --input: 220 15% 15%;
+    --ring: 42 67% 47%;
 
     /* Radius */
-    --radius: 0.25rem;
+    --radius: 0.125rem;
 
-    /* Pillar colors — all red variants */
-    --pillar-marketing: 0 84% 50%;
-    --pillar-sales: 0 72% 42%;
-    --pillar-operations: 0 90% 38%;
-    --pillar-finance: 350 75% 50%;
+    /* Pillar colors — gold variants */
+    --pillar-marketing: 42 67% 47%;
+    --pillar-sales: 42 50% 38%;
+    --pillar-operations: 42 80% 40%;
+    --pillar-finance: 36 55% 50%;
 
-    /* Chart colors — red palette */
-    --chart-1: 0 84% 50%;
-    --chart-2: 0 72% 42%;
-    --chart-3: 0 60% 60%;
-    --chart-4: 0 84% 72%;
-    --chart-5: 0 45% 38%;
-  }
-
-  .dark {
-    --background: 224 25% 5%;
-    --foreground: 210 40% 98%;
-    --card: 224 22% 8%;
-    --card-foreground: 210 40% 98%;
-    --popover: 224 22% 8%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 0 84% 50%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 224 22% 12%;
-    --secondary-foreground: 210 40% 80%;
-
-    --muted: 224 22% 12%;
-    --muted-foreground: 215 20% 55%;
-
-    --accent: 224 22% 14%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 224 15% 15%;
-    --input: 224 15% 15%;
-    --ring: 0 84% 50%;
+    /* Chart colors — gold palette */
+    --chart-1: 42 67% 47%;
+    --chart-2: 42 50% 38%;
+    --chart-3: 42 45% 58%;
+    --chart-4: 42 67% 68%;
+    --chart-5: 42 35% 32%;
   }
 }
 
@@ -103,7 +87,7 @@
   .aims-gradient {
     background: radial-gradient(
       ellipse at 50% 0%,
-      hsl(0 84% 50% / 0.08) 0%,
+      hsl(42 67% 47% / 0.08) 0%,
       transparent 60%
     );
   }
@@ -111,13 +95,13 @@
   .aims-gradient-hero {
     background: radial-gradient(
       ellipse at 50% 50%,
-      hsl(0 84% 50% / 0.06) 0%,
+      hsl(42 67% 47% / 0.06) 0%,
       transparent 70%
     );
   }
 
   .glass {
-    background: rgba(255, 255, 255, 0.7);
+    background: rgba(14, 18, 25, 0.8);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
   }
@@ -134,7 +118,7 @@
   }
   .card-hover:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.08), 0 4px 10px -6px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 8px 25px -5px rgba(196, 151, 42, 0.15), 0 4px 10px -6px rgba(0, 0, 0, 0.3);
   }
 
   /* Logo ticker — triple content, translate 1/3 for seamless infinite loop */
@@ -203,10 +187,10 @@
     transition: box-shadow 0.3s ease, border-color 0.3s ease;
   }
   .animated-glow-card:hover {
-    border-color: rgba(220, 38, 38, 0.3);
+    border-color: rgba(196, 151, 42, 0.3);
     box-shadow:
-      0 0 0 1px rgba(220, 38, 38, 0.1),
-      0 4px 20px -4px rgba(220, 38, 38, 0.15),
+      0 0 0 1px rgba(196, 151, 42, 0.1),
+      0 4px 20px -4px rgba(196, 151, 42, 0.15),
       0 8px 32px -8px rgba(0, 0, 0, 0.1);
   }
   .animated-glow-card::after {
@@ -215,7 +199,7 @@
     inset: -1px;
     border-radius: inherit;
     padding: 1px;
-    background: linear-gradient(135deg, rgba(220, 38, 38, 0), rgba(220, 38, 38, 0));
+    background: linear-gradient(135deg, rgba(196, 151, 42, 0), rgba(196, 151, 42, 0));
     mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     mask-composite: exclude;
     -webkit-mask-composite: xor;
@@ -223,7 +207,7 @@
     transition: background 0.3s ease;
   }
   .animated-glow-card:hover::after {
-    background: linear-gradient(135deg, rgba(220, 38, 38, 0.4), rgba(220, 38, 38, 0.1), rgba(220, 38, 38, 0.3));
+    background: linear-gradient(135deg, rgba(196, 151, 42, 0.4), rgba(196, 151, 42, 0.1), rgba(196, 151, 42, 0.3));
   }
 
   /* Scrollbar styling for portals */
@@ -239,5 +223,41 @@
   }
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background: hsl(var(--muted-foreground) / 0.3);
+  }
+
+  /* Grain overlay */
+  .grain-overlay::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    opacity: 0.03;
+    pointer-events: none;
+    z-index: 9999;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  }
+
+  /* Grid background */
+  .grid-bg {
+    background-image:
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 80px),
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 80px);
+  }
+
+  /* Eyebrow label */
+  .eyebrow {
+    font-family: var(--font-dm-mono), monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.75rem;
+    color: hsl(var(--gold));
+  }
+
+  /* Fade-up animation */
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(32px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fade-up {
+    animation: fade-up 0.6s ease-out forwards;
   }
 }

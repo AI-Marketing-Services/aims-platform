@@ -128,11 +128,11 @@ export function OnboardingChecklist() {
           <span className="text-sm font-medium text-foreground">
             {completedItems} of {totalItems} tasks complete
           </span>
-          <span className="text-sm font-bold text-[#DC2626]">{progressPct}%</span>
+          <span className="text-sm font-bold text-primary">{progressPct}%</span>
         </div>
-        <div className="h-3 rounded-full bg-gray-100 overflow-hidden">
+        <div className="h-3 rounded-full bg-deep overflow-hidden">
           <div
-            className="h-full rounded-full bg-[#DC2626] transition-all duration-500"
+            className="h-full rounded-full bg-primary transition-all duration-500"
             style={{ width: `${progressPct}%` }}
           />
         </div>
@@ -146,18 +146,18 @@ export function OnboardingChecklist() {
             <div
               key={pi}
               className={cn(
-                "rounded-xl border bg-white overflow-hidden transition-colors",
-                phaseComplete ? "border-green-200" : "border-gray-200"
+                "rounded-xl border bg-card overflow-hidden transition-colors",
+                phaseComplete ? "border-green-800" : "border-border"
               )}
             >
-              <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+              <div className="px-5 py-4 border-b border-border flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div
                     className={cn(
                       "flex h-8 w-8 items-center justify-center rounded-lg text-sm font-bold",
                       phaseComplete
-                        ? "bg-green-50 text-green-600"
-                        : "bg-[#DC2626]/10 text-[#DC2626]"
+                        ? "bg-green-900/15 text-green-400"
+                        : "bg-primary/10 text-primary"
                     )}
                   >
                     {phaseComplete ? <Check className="h-4 w-4" /> : pi + 1}
@@ -171,7 +171,7 @@ export function OnboardingChecklist() {
                   {phase.items.filter((_, ii) => checked[`${pi}-${ii}`]).length}/{phase.items.length}
                 </span>
               </div>
-              <div className="divide-y divide-gray-50">
+              <div className="divide-y divide-border">
                 {phase.items.map((item, ii) => {
                   const key = `${pi}-${ii}`
                   const done = !!checked[key]
@@ -179,14 +179,14 @@ export function OnboardingChecklist() {
                     <button
                       key={key}
                       onClick={() => toggle(key)}
-                      className="w-full flex items-start gap-3 px-5 py-3 text-left hover:bg-gray-50 transition-colors"
+                      className="w-full flex items-start gap-3 px-5 py-3 text-left hover:bg-surface transition-colors"
                     >
                       <div
                         className={cn(
                           "mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded border transition-colors",
                           done
-                            ? "bg-green-500 border-green-500"
-                            : "border-gray-300 bg-white"
+                            ? "bg-green-400 border-green-500"
+                            : "border-border bg-card"
                         )}
                       >
                         {done && <Check className="h-3 w-3 text-white" />}

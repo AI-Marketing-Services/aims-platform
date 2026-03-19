@@ -29,7 +29,7 @@ export function HowItWorks() {
       <div className="mx-auto max-w-6xl px-4">
         {/* Header */}
         <div className="mb-16 max-w-xl">
-          <span className="inline-block rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">
+          <span className="inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary mb-4">
             How It Works
           </span>
           <h2 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
@@ -48,10 +48,10 @@ export function HowItWorks() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.12 }}
-              className="relative rounded-2xl border border-border bg-background p-7 hover:border-gray-300 transition-colors"
+              className="relative rounded-2xl border border-border bg-background p-7 hover:border-primary/30 transition-colors"
             >
               {/* Step number */}
-              <span className="text-[4rem] font-black leading-none text-gray-300 select-none">
+              <span className="text-[4rem] font-black leading-none text-muted-foreground/20 select-none">
                 {step.num}
               </span>
 
@@ -61,8 +61,8 @@ export function HowItWorks() {
               <ul className="mt-6 space-y-2.5">
                 {step.items.map((item) => (
                   <li key={item} className="flex items-center gap-2.5 text-sm text-foreground/80">
-                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-50">
-                      <span className="h-1.5 w-1.5 rounded-full bg-[#DC2626]" />
+                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10">
+                      <span className="h-1.5 w-1.5 rounded-full bg-primary" />
                     </span>
                     {item}
                   </li>
@@ -71,7 +71,7 @@ export function HowItWorks() {
 
               {/* Connector */}
               {i < STEPS.length - 1 && (
-                <div className="absolute hidden md:block top-[4.5rem] left-full w-4 h-px bg-gray-200 z-10" />
+                <div className="absolute hidden md:block top-[4.5rem] left-full w-4 h-px bg-border z-10" />
               )}
             </motion.div>
           ))}
@@ -80,9 +80,9 @@ export function HowItWorks() {
         {/* Timeline bar */}
         <div className="mt-10 flex items-center gap-0 overflow-hidden rounded-xl border border-border bg-card">
           {[
-            { week: "Week 1–2", label: "Strategy & Setup", color: "bg-[#FCA5A5]" },
-            { week: "Week 2–3", label: "Build & Launch", color: "bg-[#DC2626]" },
-            { week: "Week 4+", label: "Optimize & Scale", color: "bg-[#991B1B]" },
+            { week: "Week 1–2", label: "Strategy & Setup", color: "bg-[#E8C46A]" },
+            { week: "Week 2–3", label: "Build & Launch", color: "bg-primary" },
+            { week: "Week 4+", label: "Optimize & Scale", color: "bg-[#8B6914]" },
           ].map((phase, i) => (
             <div key={phase.label} className="flex-1 border-r border-border last:border-r-0 px-5 py-3.5">
               <div className={`mb-1.5 h-1 w-8 rounded-full ${phase.color}`} />

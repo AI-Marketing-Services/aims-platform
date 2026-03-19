@@ -106,7 +106,7 @@ function buildEmailContent(
   const wrap = (content: string) => `<!DOCTYPE html><html><head><meta charset="UTF-8"/></head>
 <body style="margin:0;padding:32px 16px;background:#F5F5F5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
 <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;">
-<tr><td style="background:#DC2626;padding:20px 32px;">
+<tr><td style="background:#C4972A;padding:20px 32px;">
   <span style="font-size:18px;font-weight:800;color:#fff;">AIMS</span>
   <span style="float:right;font-size:11px;color:#fca5a5;text-transform:uppercase;letter-spacing:0.05em;">AI Managing Services</span>
 </td></tr>
@@ -120,7 +120,7 @@ function buildEmailContent(
   const marketplaceUrl = `${baseUrl}/marketplace`
   const resellerUrl = `${baseUrl}/reseller/dashboard`
   const cta = (text: string, url: string) =>
-    `<a href="${url}" style="display:inline-block;background:#DC2626;color:#fff;padding:13px 28px;border-radius:6px;text-decoration:none;font-weight:700;font-size:13px;text-transform:uppercase;margin:8px 0;">${text}</a>`
+    `<a href="${url}" style="display:inline-block;background:#C4972A;color:#fff;padding:13px 28px;border-radius:6px;text-decoration:none;font-weight:700;font-size:13px;text-transform:uppercase;margin:8px 0;">${text}</a>`
 
   // ── post-quiz sequence ──────────────────────────────────────────────────────
   if (sequenceKey === "post-quiz") {
@@ -130,13 +130,13 @@ function buildEmailContent(
           subject: `Your AI Readiness Score: ${score ?? "Ready"}/100`,
           html: wrap(`
             <h1 style="font-size:24px;font-weight:800;color:#111827;margin:0 0 16px;">Hey ${name} — your AI readiness results are in</h1>
-            ${score ? `<div style="background:#FEF2F2;border-left:4px solid #DC2626;border-radius:6px;padding:20px;margin:0 0 24px;">
-              <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#DC2626;text-transform:uppercase;">Your Score</p>
+            ${score ? `<div style="background:#FEF2F2;border-left:4px solid #C4972A;border-radius:6px;padding:20px;margin:0 0 24px;">
+              <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#C4972A;text-transform:uppercase;">Your Score</p>
               <p style="margin:0;font-size:48px;font-weight:800;color:#111827;line-height:1;">${score}<span style="font-size:20px;color:#6B7280;">/100</span></p>
             </div>` : ""}
             <p style="font-size:15px;color:#4B5563;line-height:1.7;margin:0 0 16px;">We analyzed your inputs and identified your biggest AI growth opportunities. Your full breakdown is ready to view.</p>
             ${cta("View Full Results →", `${strategyUrl}?ref=quiz-email`)}
-            <p style="font-size:14px;color:#6B7280;margin:24px 0 0;">Want to talk through your results? <a href="${strategyUrl}" style="color:#DC2626;font-weight:600;">Book a free strategy call →</a></p>
+            <p style="font-size:14px;color:#6B7280;margin:24px 0 0;">Want to talk through your results? <a href="${strategyUrl}" style="color:#C4972A;font-weight:600;">Book a free strategy call →</a></p>
           `),
         }
       case 1:
@@ -205,13 +205,13 @@ function buildEmailContent(
           subject: monthlySavings ? `You could save $${monthlySavings.toLocaleString()}/month with AI` : "Your custom AI ROI report is ready",
           html: wrap(`
             <h1 style="font-size:24px;font-weight:800;color:#111827;margin:0 0 16px;">Hey ${name} — here's your custom ROI report</h1>
-            ${monthlySavings ? `<div style="background:#FEF2F2;border-left:4px solid #DC2626;border-radius:6px;padding:20px;margin:0 0 24px;">
-              <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#DC2626;text-transform:uppercase;">Projected Monthly Savings</p>
+            ${monthlySavings ? `<div style="background:#FEF2F2;border-left:4px solid #C4972A;border-radius:6px;padding:20px;margin:0 0 24px;">
+              <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#C4972A;text-transform:uppercase;">Projected Monthly Savings</p>
               <p style="margin:0;font-size:42px;font-weight:800;color:#111827;line-height:1;">$${monthlySavings.toLocaleString()}<span style="font-size:16px;color:#6B7280;">/mo</span></p>
             </div>` : ""}
             <p style="font-size:15px;color:#4B5563;line-height:1.7;margin:0 0 16px;">Based on your inputs, we built a personalized ROI model showing exactly where AI automation pays off fastest for your business.</p>
             ${cta("View Your ROI Report →", `${strategyUrl}?ref=calc-email`)}
-            <p style="font-size:14px;color:#6B7280;margin:24px 0 0;">Every month you wait costs you. <a href="${strategyUrl}" style="color:#DC2626;font-weight:600;">Let's rebuild your ROI model live →</a></p>
+            <p style="font-size:14px;color:#6B7280;margin:24px 0 0;">Every month you wait costs you. <a href="${strategyUrl}" style="color:#C4972A;font-weight:600;">Let's rebuild your ROI model live →</a></p>
           `),
         }
       case 1: {
@@ -285,13 +285,13 @@ function buildEmailContent(
           subject: auditScore !== undefined ? `Your website scored ${auditScore}/100 — here are the fixes` : "Your website audit is complete — here are the fixes",
           html: wrap(`
             <h1 style="font-size:24px;font-weight:800;color:#111827;margin:0 0 16px;">Hey ${name} — your website audit is complete</h1>
-            ${auditScore !== undefined ? `<div style="background:#FEF2F2;border-left:4px solid #DC2626;border-radius:6px;padding:20px;margin:0 0 24px;">
-              <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#DC2626;text-transform:uppercase;">Website Score</p>
+            ${auditScore !== undefined ? `<div style="background:#FEF2F2;border-left:4px solid #C4972A;border-radius:6px;padding:20px;margin:0 0 24px;">
+              <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#C4972A;text-transform:uppercase;">Website Score</p>
               <p style="margin:0;font-size:48px;font-weight:800;color:#111827;line-height:1;">${auditScore}<span style="font-size:20px;color:#6B7280;">/100</span></p>
             </div>` : ""}
             <p style="font-size:15px;color:#4B5563;line-height:1.7;margin:0 0 16px;">We identified the critical issues hurting your SEO, conversions, and AI search visibility. Your full audit report with prioritized fixes is ready.</p>
             ${cta("View Full Audit Report →", `${strategyUrl}?ref=audit-email`)}
-            <p style="font-size:14px;color:#6B7280;margin:24px 0 0;">We can fix everything on your report starting at $97/mo. <a href="${marketplaceUrl}" style="color:#DC2626;font-weight:600;">See how →</a></p>
+            <p style="font-size:14px;color:#6B7280;margin:24px 0 0;">We can fix everything on your report starting at $97/mo. <a href="${marketplaceUrl}" style="color:#C4972A;font-weight:600;">See how →</a></p>
           `),
         }
       case 1:
@@ -353,7 +353,7 @@ function buildEmailContent(
             <ol style="margin:0 0 24px;padding-left:20px;color:#4B5563;line-height:2;font-size:15px;">
               <li>Our team begins setup within <strong style="color:#111827;">24 hours</strong></li>
               <li>You'll receive a setup guide and onboarding call invite</li>
-              <li>Track progress in your <a href="${portalUrl}" style="color:#DC2626;">AIMS portal</a></li>
+              <li>Track progress in your <a href="${portalUrl}" style="color:#C4972A;">AIMS portal</a></li>
             </ol>
             ${cta("Go to Your Portal →", portalUrl)}
             <p style="font-size:14px;color:#6B7280;margin:24px 0 0;">Questions? Reply to this email — we respond within 2 business hours.</p>
@@ -421,7 +421,7 @@ function buildEmailContent(
             <p style="font-size:15px;color:#4B5563;line-height:1.7;margin:0 0 16px;">Log into your portal to review your 30-day performance summary. You will see exactly what AIMS has delivered, how it compares to your baseline, and where the biggest opportunities are for month two and beyond.</p>
             <p style="font-size:15px;color:#4B5563;line-height:1.7;margin:0 0 16px;">If you are ready to expand, we can map out a growth plan that builds on your momentum. If you want to keep things steady, that works too — we will keep optimizing what is already running.</p>
             ${cta("Review Your 30-Day Results →", portalUrl)}
-            <p style="font-size:14px;color:#6B7280;margin:24px 0 0;">Want to discuss your growth plan? <a href="${strategyUrl}" style="color:#DC2626;font-weight:600;">Book a quick call with our team →</a></p>
+            <p style="font-size:14px;color:#6B7280;margin:24px 0 0;">Want to discuss your growth plan? <a href="${strategyUrl}" style="color:#C4972A;font-weight:600;">Book a quick call with our team →</a></p>
           `),
         }
     }

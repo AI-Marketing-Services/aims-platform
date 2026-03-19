@@ -51,16 +51,16 @@ const CASE_STUDIES = [
 
 export default function CaseStudiesPage() {
   return (
-    <div className="min-h-screen bg-[#FAFAFA]">
+    <div className="min-h-screen bg-deep">
       <div className="max-w-5xl mx-auto px-4 py-16">
         {/* Header */}
         <div className="text-center mb-14">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-red-50 text-[#DC2626] text-sm font-medium rounded-full mb-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary text-sm font-medium rounded-full mb-6">
             <TrendingUp className="w-3.5 h-3.5" />
             Client Results
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Case Studies</h1>
-          <p className="text-lg text-gray-500 max-w-2xl mx-auto">
+          <h1 className="text-4xl font-bold text-foreground mb-4">Case Studies</h1>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Real businesses. Real results. See how AIMS builds AI systems that generate measurable revenue.
           </p>
         </div>
@@ -71,33 +71,33 @@ export default function CaseStudiesPage() {
             <Link
               key={cs.slug}
               href={`/case-studies/${cs.slug}`}
-              className="block bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-md hover:border-gray-300 transition-all group"
+              className="block bg-card border border-border rounded-2xl p-8 hover:shadow-md hover:border-border transition-all group"
             >
               <div className="flex flex-col sm:flex-row sm:items-start gap-6">
                 <div className="flex-1">
                   <div className="flex flex-wrap gap-2 mb-3">
                     {cs.tags.map((tag) => (
-                      <span key={tag} className="text-xs font-medium px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full">
+                      <span key={tag} className="text-xs font-medium px-2 py-0.5 bg-deep text-muted-foreground rounded-full">
                         {tag}
                       </span>
                     ))}
                   </div>
-                  <h2 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-[#DC2626] transition-colors">
+                  <h2 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
                     {cs.headline}
                   </h2>
-                  <p className="text-sm text-gray-500 mb-4">{cs.summary}</p>
-                  <p className="text-xs text-gray-400 font-medium uppercase tracking-wide">{cs.client} · {cs.industry}</p>
+                  <p className="text-sm text-muted-foreground mb-4">{cs.summary}</p>
+                  <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">{cs.client} · {cs.industry}</p>
                 </div>
                 <div className="flex sm:flex-col gap-6 sm:gap-4 sm:text-right">
                   {cs.metrics.map((m) => (
                     <div key={m.label}>
-                      <div className="text-2xl font-black text-[#DC2626]">{m.value}</div>
-                      <div className="text-xs text-gray-500">{m.label}</div>
+                      <div className="text-2xl font-black text-primary">{m.value}</div>
+                      <div className="text-xs text-muted-foreground">{m.label}</div>
                     </div>
                   ))}
                 </div>
               </div>
-              <div className="mt-4 flex items-center gap-1 text-sm font-medium text-[#DC2626]">
+              <div className="mt-4 flex items-center gap-1 text-sm font-medium text-primary">
                 Read case study <ArrowRight className="w-4 h-4" />
               </div>
             </Link>
@@ -105,14 +105,14 @@ export default function CaseStudiesPage() {
         </div>
 
         {/* CTA */}
-        <div className="mt-14 bg-[#DC2626] rounded-2xl p-10 text-center text-white">
+        <div className="mt-14 bg-primary rounded-2xl p-10 text-center text-white">
           <h2 className="text-2xl font-bold mb-3">Want results like these?</h2>
-          <p className="text-red-100 mb-6">
+          <p className="text-muted-foreground mb-6">
             Book a free strategy call and we&apos;ll show you exactly what AIMS would build for your business — with projected timelines and ROI.
           </p>
           <Link
             href="/get-started"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-white text-[#DC2626] font-semibold rounded-xl hover:bg-red-50 transition-colors"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-card text-primary font-semibold rounded-xl hover:bg-primary/10 transition-colors"
           >
             Book Free Strategy Call
             <ArrowRight className="w-5 h-5" />

@@ -47,17 +47,17 @@ function DropdownMenu({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -4 }}
       transition={{ duration: 0.12 }}
-      className="absolute top-full left-1/2 -translate-x-1/2 mt-2 bg-white border border-gray-200 rounded-xl shadow-lg py-2 z-50 min-w-[200px]"
+      className="absolute top-full left-1/2 -translate-x-1/2 mt-2 bg-panel border border-border rounded-xl shadow-lg py-2 z-50 min-w-[200px]"
     >
       {items.map((item) => (
         <Link
           key={item.href}
           href={item.href}
-          className="flex flex-col px-4 py-2.5 hover:bg-gray-50 transition-colors"
+          className="flex flex-col px-4 py-2.5 hover:bg-surface transition-colors"
         >
-          <span className="text-sm font-medium text-gray-800">{item.label}</span>
+          <span className="text-sm font-medium text-foreground">{item.label}</span>
           {withDesc && item.desc && (
-            <span className="text-xs text-gray-400 mt-0.5">{item.desc}</span>
+            <span className="text-xs text-muted-foreground mt-0.5">{item.desc}</span>
           )}
         </Link>
       ))}
@@ -112,7 +112,7 @@ export function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 flex-shrink-0">
             <Image src="/logo.png" alt="AIMS" width={28} height={28} className="object-contain" priority />
-            <span className="text-[15px] font-bold tracking-tight text-foreground">AIMS</span>
+            <span className="text-[15px] font-bold tracking-tight text-foreground font-serif">AIMS</span>
           </Link>
 
           {/* Desktop nav */}
@@ -124,8 +124,8 @@ export function Navbar() {
               className={cn(
                 "px-3.5 py-1.5 text-sm font-medium rounded-lg transition-colors",
                 pathname === "/marketplace"
-                  ? "text-foreground bg-gray-100"
-                  : "text-muted-foreground hover:text-foreground hover:bg-gray-100/70"
+                  ? "text-foreground bg-muted"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted/70"
               )}
             >
               Services
@@ -137,8 +137,8 @@ export function Navbar() {
               className={cn(
                 "px-3.5 py-1.5 text-sm font-medium rounded-lg transition-colors",
                 pathname === "/solutions"
-                  ? "text-foreground bg-gray-100"
-                  : "text-muted-foreground hover:text-foreground hover:bg-gray-100/70"
+                  ? "text-foreground bg-muted"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted/70"
               )}
             >
               Solutions
@@ -151,8 +151,8 @@ export function Navbar() {
                 className={cn(
                   "flex items-center gap-1 px-3.5 py-1.5 text-sm font-medium rounded-lg transition-colors",
                   dropdown === "tools"
-                    ? "text-foreground bg-gray-100"
-                    : "text-muted-foreground hover:text-foreground hover:bg-gray-100/70"
+                    ? "text-foreground bg-muted"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted/70"
                 )}
               >
                 Free Tools
@@ -170,8 +170,8 @@ export function Navbar() {
                 className={cn(
                   "flex items-center gap-1 px-3.5 py-1.5 text-sm font-medium rounded-lg transition-colors",
                   dropdown === "industries"
-                    ? "text-foreground bg-gray-100"
-                    : "text-muted-foreground hover:text-foreground hover:bg-gray-100/70"
+                    ? "text-foreground bg-muted"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted/70"
                 )}
               >
                 Industries
@@ -189,8 +189,8 @@ export function Navbar() {
                 className={cn(
                   "flex items-center gap-1 px-3.5 py-1.5 text-sm font-medium rounded-lg transition-colors",
                   dropdown === "resources"
-                    ? "text-foreground bg-gray-100"
-                    : "text-muted-foreground hover:text-foreground hover:bg-gray-100/70"
+                    ? "text-foreground bg-muted"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted/70"
                 )}
               >
                 Resources
@@ -206,8 +206,8 @@ export function Navbar() {
               className={cn(
                 "px-3.5 py-1.5 text-sm font-medium rounded-lg transition-colors",
                 pathname === "/pricing"
-                  ? "text-foreground bg-gray-100"
-                  : "text-muted-foreground hover:text-foreground hover:bg-gray-100/70"
+                  ? "text-foreground bg-muted"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted/70"
               )}
             >
               Pricing
@@ -218,12 +218,12 @@ export function Navbar() {
           <div className="hidden md:flex items-center gap-3 flex-shrink-0">
             <button
               onClick={openCart}
-              className="relative p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-gray-100 transition-colors"
+              className="relative p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
               aria-label="Open cart"
             >
               <ShoppingCart className="w-5 h-5" />
               {items.length > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#DC2626] text-[10px] font-bold text-white">
+                <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white">
                   {items.length}
                 </span>
               )}
@@ -241,7 +241,7 @@ export function Navbar() {
               </Link>
               <Link
                 href="/get-started"
-                className="text-xs font-bold rounded-lg bg-[#DC2626] text-white px-5 py-2 uppercase tracking-wider hover:bg-[#B91C1C] transition-colors"
+                className="text-xs font-bold rounded-lg bg-primary text-white px-5 py-2 uppercase tracking-wider hover:bg-primary/80 transition-colors"
               >
                 Get started
               </Link>
@@ -251,7 +251,7 @@ export function Navbar() {
           {/* Mobile toggle */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-gray-100 transition-colors"
+            className="md:hidden p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
           >
             {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
@@ -349,7 +349,7 @@ export function Navbar() {
                   <ShoppingCart className="w-4 h-4" />
                   Cart
                   {items.length > 0 && (
-                    <span className="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-[#DC2626] text-[10px] font-bold text-white">
+                    <span className="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white">
                       {items.length}
                     </span>
                   )}
@@ -366,7 +366,7 @@ export function Navbar() {
                 </SignedOut>
                 <Link
                   href="/get-started"
-                  className="block w-full text-center rounded-lg bg-[#DC2626] text-white text-xs font-bold px-4 py-2.5 uppercase tracking-wider"
+                  className="block w-full text-center rounded-lg bg-primary text-white text-xs font-bold px-4 py-2.5 uppercase tracking-wider"
                 >
                   Get started
                 </Link>

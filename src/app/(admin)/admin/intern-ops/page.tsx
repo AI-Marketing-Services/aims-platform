@@ -83,7 +83,7 @@ export default async function AdminInternOpsPage() {
     { key: "IN_PROGRESS", label: "In Progress", color: "text-yellow-400" },
     { key: "IN_REVIEW", label: "In Review", color: "text-blue-400" },
     { key: "DONE", label: "Done", color: "text-green-400" },
-    { key: "BLOCKED", label: "Blocked", color: "text-red-400" },
+    { key: "BLOCKED", label: "Blocked", color: "text-primary" },
   ]
 
   // Serialize for client components
@@ -285,8 +285,8 @@ export default async function AdminInternOpsPage() {
                     )}
                   </ul>
                   {blockers.length > 0 && (
-                    <div className="mt-2 rounded-lg bg-red-500/5 border border-red-500/10 px-3 py-2">
-                      <p className="text-xs text-red-400 font-medium">
+                    <div className="mt-2 rounded-lg bg-primary/100/5 border border-primary/10 px-3 py-2">
+                      <p className="text-xs text-primary font-medium">
                         Blocker: {blockers[0]}
                       </p>
                     </div>

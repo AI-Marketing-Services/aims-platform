@@ -12,9 +12,9 @@ const CATEGORIES = [
   {
     label: "AI Laggard",
     range: [0, 39] as [number, number],
-    colorClass: "text-red-500",
-    bgClass: "bg-red-50",
-    borderClass: "border-red-200",
+    colorClass: "text-primary",
+    bgClass: "bg-primary/10",
+    borderClass: "border-primary/30",
     headline: "You're leaving serious revenue on the table",
     description:
       "Your competitors are running AI-powered outbound 24/7 while your team is still doing things manually. The good news: there's massive upside waiting, and AIMS can unlock it fast.",
@@ -25,7 +25,7 @@ const CATEGORIES = [
     range: [40, 59] as [number, number],
     colorClass: "text-orange-500",
     bgClass: "bg-orange-50",
-    borderClass: "border-orange-200",
+    borderClass: "border-orange-800",
     headline: "You have the foundation — now it's time to scale",
     description:
       "You've made some smart moves but your systems aren't working together. A few strategic automations could 2-3x your output without adding headcount.",
@@ -36,7 +36,7 @@ const CATEGORIES = [
     range: [60, 79] as [number, number],
     colorClass: "text-yellow-500",
     bgClass: "bg-yellow-50",
-    borderClass: "border-yellow-200",
+    borderClass: "border-yellow-800",
     headline: "You're ahead of most — let's optimize for growth",
     description:
       "Your infrastructure is solid and you understand the game. The next level is fine-tuning your AI stack and adding intelligence layers that compound over time.",
@@ -46,8 +46,8 @@ const CATEGORIES = [
     label: "AI Leader",
     range: [80, 100] as [number, number],
     colorClass: "text-green-500",
-    bgClass: "bg-green-50",
-    borderClass: "border-green-200",
+    bgClass: "bg-green-900/15",
+    borderClass: "border-green-800",
     headline: "You're operating at the top 10% — let's keep it that way",
     description:
       "You've built a real machine. The risk now is standing still while the landscape shifts. AIMS can help you stay ahead with custom AI builds and white-glove strategy.",
@@ -56,7 +56,7 @@ const CATEGORIES = [
 ]
 
 function getCategoryIcon(label: string) {
-  if (label === "AI Laggard") return <XCircle className="w-10 h-10 text-red-500" />
+  if (label === "AI Laggard") return <XCircle className="w-10 h-10 text-primary" />
   if (label === "Early Adopter") return <AlertCircle className="w-10 h-10 text-orange-500" />
   if (label === "AI Ready") return <Zap className="w-10 h-10 text-yellow-500" />
   return <CheckCircle className="w-10 h-10 text-green-500" />
@@ -89,51 +89,51 @@ export default async function ResultsPage({ params }: Props) {
   const shareText = `I scored ${score}/100 on the AIMS AI Readiness Quiz — ${category.label}. See where your business stands:`
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA]">
+    <div className="min-h-screen bg-deep">
       <div className="max-w-2xl mx-auto px-4 py-12">
 
         {/* Header banner */}
         <div className="mb-8 text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-red-50 text-[#DC2626] text-sm font-medium rounded-full mb-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-[#C4972A] text-sm font-medium rounded-full mb-4">
             <Zap className="w-3.5 h-3.5" />
             AI Readiness Assessment Results
           </div>
           {submission.name && (
-            <p className="text-gray-500 text-sm">
-              Results for <span className="font-medium text-gray-700">{submission.name}</span>
+            <p className="text-muted-foreground text-sm">
+              Results for <span className="font-medium text-foreground">{submission.name}</span>
               {submission.company && <> · {submission.company}</>}
             </p>
           )}
         </div>
 
         {/* Score card */}
-        <div className="bg-white border border-gray-200 rounded-2xl p-8 text-center mb-6 shadow-sm">
+        <div className="bg-card border border-border rounded-2xl p-8 text-center mb-6 shadow-sm">
           <div className="flex justify-center mb-4">{getCategoryIcon(category.label)}</div>
-          <div className="text-7xl font-black text-gray-900 mb-1">{score}</div>
-          <div className="text-gray-400 text-sm mb-3">AI Readiness Score</div>
+          <div className="text-7xl font-black text-foreground mb-1">{score}</div>
+          <div className="text-muted-foreground text-sm mb-3">AI Readiness Score</div>
           <div className={`text-xl font-bold mb-6 ${category.colorClass}`}>{category.label}</div>
 
           <div className="max-w-xs mx-auto mb-6">
-            <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
+            <div className="h-3 bg-deep rounded-full overflow-hidden">
               <div
-                className="h-3 bg-[#DC2626] rounded-full transition-all duration-700"
+                className="h-3 bg-[#C4972A] rounded-full transition-all duration-700"
                 style={{ width: `${score}%` }}
               />
             </div>
-            <div className="flex justify-between text-xs text-gray-400 mt-1">
+            <div className="flex justify-between text-xs text-muted-foreground mt-1">
               <span>Laggard</span>
               <span>Leader</span>
             </div>
           </div>
 
-          <h2 className="text-xl font-bold text-gray-900 mb-2">{category.headline}</h2>
-          <p className="text-gray-600 leading-relaxed">{category.description}</p>
+          <h2 className="text-xl font-bold text-foreground mb-2">{category.headline}</h2>
+          <p className="text-muted-foreground leading-relaxed">{category.description}</p>
         </div>
 
         {/* Recommended services */}
-        <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-6 shadow-sm">
-          <h3 className="font-semibold text-gray-900 mb-1">Services That Fix These Gaps</h3>
-          <p className="text-sm text-gray-500 mb-4">Tailored to your {category.label} profile — here is where to start.</p>
+        <div className="bg-card border border-border rounded-2xl p-6 mb-6 shadow-sm">
+          <h3 className="font-semibold text-foreground mb-1">Services That Fix These Gaps</h3>
+          <p className="text-sm text-muted-foreground mb-4">Tailored to your {category.label} profile — here is where to start.</p>
           <div className="space-y-3">
             {category.recommended.map((rec) => {
               const serviceDetails: Record<string, { desc: string; price: string }> = {
@@ -150,14 +150,14 @@ export default async function ResultsPage({ params }: Props) {
               }
               const details = serviceDetails[rec] ?? { desc: "AI-powered solution tailored to your business needs", price: "Custom" }
               return (
-                <div key={rec} className="border border-gray-200 rounded-xl p-4 hover:border-gray-300 transition-colors">
+                <div key={rec} className="border border-border rounded-xl p-4 hover:border-border transition-colors">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
-                      <h4 className="font-semibold text-gray-900 text-sm">{rec}</h4>
-                      <p className="text-xs text-gray-500 mt-1">{details.desc}</p>
-                      <p className="text-xs text-gray-400 mt-2">{details.price}</p>
+                      <h4 className="font-semibold text-foreground text-sm">{rec}</h4>
+                      <p className="text-xs text-muted-foreground mt-1">{details.desc}</p>
+                      <p className="text-xs text-muted-foreground mt-2">{details.price}</p>
                     </div>
-                    <Link href="/marketplace" className="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 bg-[#DC2626] text-white text-xs font-semibold rounded-lg hover:bg-[#B91C1C] transition-colors">
+                    <Link href="/marketplace" className="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 bg-[#C4972A] text-white text-xs font-semibold rounded-lg hover:bg-[#A17D22] transition-colors">
                       View <ArrowRight className="w-3 h-3" />
                     </Link>
                   </div>
@@ -168,23 +168,23 @@ export default async function ResultsPage({ params }: Props) {
         </div>
 
         {/* Share */}
-        <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-6 shadow-sm">
-          <h3 className="font-semibold text-gray-900 mb-1">Share your score</h3>
-          <p className="text-sm text-gray-500 mb-4">
+        <div className="bg-card border border-border rounded-2xl p-6 mb-6 shadow-sm">
+          <h3 className="font-semibold text-foreground mb-1">Share your score</h3>
+          <p className="text-sm text-muted-foreground mb-4">
             Challenge your network to see how they compare.
           </p>
           <ShareButtons shareUrl={shareUrl} shareText={shareText} />
         </div>
 
         {/* CTA */}
-        <div className="bg-[#DC2626] rounded-2xl p-8 text-center text-white mb-6">
+        <div className="bg-[#C4972A] rounded-2xl p-8 text-center text-white mb-6">
           <h3 className="text-2xl font-bold mb-3">Ready to close the gap?</h3>
-          <p className="text-red-100 mb-6">
+          <p className="text-muted-foreground mb-6">
             Book a free 30-minute strategy call. We&apos;ll walk through your score and build a custom AI roadmap.
           </p>
           <Link
             href="/get-started"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-white text-[#DC2626] font-semibold rounded-xl hover:bg-red-50 transition-colors"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-card text-[#C4972A] font-semibold rounded-xl hover:bg-primary/10 transition-colors"
           >
             Book Your Strategy Call
             <ArrowRight className="w-5 h-5" />
@@ -192,9 +192,9 @@ export default async function ResultsPage({ params }: Props) {
         </div>
 
         {/* Retake */}
-        <p className="text-center text-sm text-gray-400">
+        <p className="text-center text-sm text-muted-foreground">
           Want to see your score?{" "}
-          <Link href="/tools/ai-readiness-quiz" className="text-[#DC2626] hover:underline font-medium">
+          <Link href="/tools/ai-readiness-quiz" className="text-[#C4972A] hover:underline font-medium">
             Take the quiz
           </Link>
         </p>

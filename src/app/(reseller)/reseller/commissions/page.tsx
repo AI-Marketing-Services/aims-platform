@@ -28,10 +28,10 @@ export default async function ResellerCommissionsPage() {
       </div>
 
       {/* Tier card */}
-      <div className="rounded-xl border border-[#DC2626]/20 bg-gradient-to-r from-[#DC2626]/10 to-[#DC2626]/5 p-6">
+      <div className="rounded-xl border border-[#C4972A]/20 bg-gradient-to-r from-[#C4972A]/10 to-[#C4972A]/5 p-6">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-xs font-semibold text-[#DC2626] uppercase tracking-wider mb-1">Your Tier</p>
+            <p className="text-xs font-semibold text-[#C4972A] uppercase tracking-wider mb-1">Your Tier</p>
             <p className="text-2xl font-bold text-foreground capitalize">{tier.replace(/_/g, " ")}</p>
             <p className="text-sm text-muted-foreground mt-1">
               Earn <span className="text-foreground font-semibold">{commissionRate}</span> on every client you refer
@@ -83,9 +83,9 @@ export default async function ResellerCommissionsPage() {
             <p className="text-muted-foreground">Payments via ACH or Stripe Connect</p>
           </div>
           {!referral?.stripeConnectId && (
-            <div className="mt-4 rounded-lg border border-amber-300/30 bg-amber-50 p-4">
-              <p className="text-sm text-amber-800 font-medium">Stripe Connect setup required for direct payouts</p>
-              <p className="text-xs text-amber-700/80 mt-1">
+            <div className="mt-4 rounded-lg border border-amber-800 bg-amber-900/20 p-4">
+              <p className="text-sm text-amber-400 font-medium">Stripe Connect setup required for direct payouts</p>
+              <p className="text-xs text-amber-400/80 mt-1">
                 Once your account reaches the $50 minimum, our team will send you a Stripe Connect
                 onboarding link. After connecting, payouts are processed automatically on the 15th of
                 each month via ACH direct deposit. Until then, you can request a manual payout by

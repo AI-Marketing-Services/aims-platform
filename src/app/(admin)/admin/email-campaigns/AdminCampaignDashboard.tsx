@@ -140,7 +140,7 @@ export function AdminCampaignDashboard() {
       </div>
 
       {error && (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-lg border border-primary/30 bg-primary/10 px-4 py-3 text-sm text-primary">
           {error}
         </div>
       )}
@@ -150,7 +150,7 @@ export function AdminCampaignDashboard() {
         <div className="rounded-xl border border-border bg-card p-4">
           <div className="flex items-center justify-between mb-2">
             <p className="text-xs text-muted-foreground">Total Emails Sent</p>
-            <Mail className="h-3.5 w-3.5 text-[#DC2626]" />
+            <Mail className="h-3.5 w-3.5 text-[#C4972A]" />
           </div>
           <p className="text-xl font-bold text-foreground font-mono">
             {globalTotals.emailsSent.toLocaleString()}
@@ -159,7 +159,7 @@ export function AdminCampaignDashboard() {
         <div className="rounded-xl border border-border bg-card p-4">
           <div className="flex items-center justify-between mb-2">
             <p className="text-xs text-muted-foreground">People Contacted</p>
-            <Users className="h-3.5 w-3.5 text-blue-600" />
+            <Users className="h-3.5 w-3.5 text-blue-400" />
           </div>
           <p className="text-xl font-bold text-foreground font-mono">
             {globalTotals.peopleContacted.toLocaleString()}
@@ -168,7 +168,7 @@ export function AdminCampaignDashboard() {
         <div className="rounded-xl border border-border bg-card p-4">
           <div className="flex items-center justify-between mb-2">
             <p className="text-xs text-muted-foreground">Total Replies</p>
-            <MessageSquare className="h-3.5 w-3.5 text-green-600" />
+            <MessageSquare className="h-3.5 w-3.5 text-green-400" />
           </div>
           <p className="text-xl font-bold text-foreground font-mono">
             {globalTotals.replies.toLocaleString()}
@@ -178,7 +178,7 @@ export function AdminCampaignDashboard() {
         <div className="rounded-xl border border-border bg-card p-4">
           <div className="flex items-center justify-between mb-2">
             <p className="text-xs text-muted-foreground">Bounced</p>
-            <TrendingUp className="h-3.5 w-3.5 text-orange-600" />
+            <TrendingUp className="h-3.5 w-3.5 text-orange-400" />
           </div>
           <p className="text-xl font-bold text-foreground font-mono">
             {globalTotals.bounced.toLocaleString()}
@@ -258,10 +258,10 @@ export function AdminCampaignDashboard() {
                                     <span className={cn(
                                       "text-xs px-1.5 py-0.5 rounded border font-medium",
                                       campaign.status === "active" || campaign.status === "running"
-                                        ? "text-green-700 bg-green-50 border-green-200"
+                                        ? "text-green-400 bg-green-900/15 border-green-800"
                                         : campaign.status === "paused"
-                                        ? "text-yellow-700 bg-yellow-50 border-yellow-200"
-                                        : "text-gray-600 bg-gray-50 border-gray-200"
+                                        ? "text-yellow-400 bg-yellow-900/20 border-yellow-800"
+                                        : "text-muted-foreground bg-deep border-border"
                                     )}>
                                       {campaign.status}
                                     </span>
@@ -291,7 +291,7 @@ export function AdminCampaignDashboard() {
                                     <div className="flex items-center gap-2">
                                       <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
                                         <div
-                                          className="h-full bg-[#DC2626] rounded-full"
+                                          className="h-full bg-[#C4972A] rounded-full"
                                           style={{ width: `${Math.min(campaign.completion_percentage, 100)}%` }}
                                         />
                                       </div>

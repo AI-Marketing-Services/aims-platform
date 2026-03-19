@@ -88,18 +88,18 @@ const SOLUTION_PACKAGES = [
 
 export default function SolutionsPage() {
   return (
-    <div className="min-h-screen bg-[#FAFAFA]">
+    <div className="min-h-screen bg-deep">
       {/* Hero */}
       <section className="pt-28 pb-16 px-4">
         <div className="max-w-4xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-red-50 text-[#DC2626] text-sm font-medium rounded-full mb-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary text-sm font-medium rounded-full mb-6">
             <Sparkles className="w-3.5 h-3.5" />
             Solution Packages
           </div>
-          <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-gray-900 mb-4">
+          <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-foreground mb-4">
             AI Solutions Built For Your Business
           </h1>
-          <p className="text-lg text-gray-500 max-w-2xl mx-auto">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Stop buying one-off tools. Each package bundles the right AIMS
             services for a specific outcome — so everything works together from
             day one.
@@ -114,40 +114,40 @@ export default function SolutionsPage() {
             {SOLUTION_PACKAGES.filter((p) => !p.isCustom).map((pkg) => (
               <div
                 key={pkg.name}
-                className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col"
+                className="bg-card border border-border rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col"
               >
                 <div className="flex-1">
-                  <h2 className="text-xl font-bold text-gray-900 mb-1">
+                  <h2 className="text-xl font-bold text-foreground mb-1">
                     {pkg.name}
                   </h2>
-                  <p className="text-sm font-medium text-[#DC2626] mb-3">
+                  <p className="text-sm font-medium text-primary mb-3">
                     {pkg.tagline}
                   </p>
-                  <p className="text-sm text-gray-600 mb-5">
+                  <p className="text-sm text-muted-foreground mb-5">
                     {pkg.description}
                   </p>
                   <div className="flex flex-wrap gap-2 mb-5">
                     {pkg.services.map((s) => (
                       <span
                         key={s}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 bg-deep text-foreground text-xs font-medium rounded-full"
                       >
-                        <Check className="w-3 h-3 text-green-600" />
+                        <Check className="w-3 h-3 text-green-400" />
                         {s}
                       </span>
                     ))}
                   </div>
-                  <p className="text-xs text-gray-500 mb-1">
+                  <p className="text-xs text-muted-foreground mb-1">
                     Ideal for: {pkg.idealFor}
                   </p>
-                  <p className="text-sm font-semibold text-gray-900">
+                  <p className="text-sm font-semibold text-foreground">
                     {pkg.startingPrice}
                   </p>
                 </div>
                 <div className="mt-6">
                   <Link
                     href="/get-started"
-                    className="inline-flex items-center justify-center gap-2 w-full rounded-xl bg-[#DC2626] px-5 py-3 text-sm font-semibold text-white hover:bg-[#B91C1C] transition-colors"
+                    className="inline-flex items-center justify-center gap-2 w-full rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white hover:bg-primary/90 transition-colors"
                   >
                     Get Started
                     <ArrowRight className="w-4 h-4" />
@@ -161,45 +161,45 @@ export default function SolutionsPage() {
           {SOLUTION_PACKAGES.filter((p) => p.isCustom).map((pkg) => (
             <div
               key={pkg.name}
-              className="mt-6 bg-white border-2 border-[#DC2626] rounded-2xl p-8 shadow-sm"
+              className="mt-6 bg-card border-2 border-primary rounded-2xl p-8 shadow-sm"
             >
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
                 <div className="flex-1">
-                  <div className="inline-flex items-center gap-2 px-2.5 py-1 bg-red-50 text-[#DC2626] text-xs font-semibold rounded-full mb-3">
+                  <div className="inline-flex items-center gap-2 px-2.5 py-1 bg-primary/10 text-primary text-xs font-semibold rounded-full mb-3">
                     <Building2 className="w-3 h-3" />
                     Enterprise
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-1">
+                  <h2 className="text-2xl font-bold text-foreground mb-1">
                     {pkg.name}
                   </h2>
-                  <p className="text-sm font-medium text-[#DC2626] mb-3">
+                  <p className="text-sm font-medium text-primary mb-3">
                     {pkg.tagline}
                   </p>
-                  <p className="text-sm text-gray-600 mb-4">
+                  <p className="text-sm text-muted-foreground mb-4">
                     {pkg.description}
                   </p>
                   <div className="flex flex-wrap gap-2 mb-4">
                     {pkg.services.map((s) => (
                       <span
                         key={s}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 bg-deep text-foreground text-xs font-medium rounded-full"
                       >
-                        <Check className="w-3 h-3 text-green-600" />
+                        <Check className="w-3 h-3 text-green-400" />
                         {s}
                       </span>
                     ))}
                   </div>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-muted-foreground">
                     Ideal for: {pkg.idealFor}
                   </p>
                 </div>
                 <div className="flex flex-col items-center gap-3 md:min-w-[200px]">
-                  <p className="text-lg font-bold text-gray-900">
+                  <p className="text-lg font-bold text-foreground">
                     {pkg.startingPrice}
                   </p>
                   <Link
                     href="/get-started"
-                    className="inline-flex items-center justify-center gap-2 w-full rounded-xl bg-[#DC2626] px-6 py-3 text-sm font-semibold text-white hover:bg-[#B91C1C] transition-colors"
+                    className="inline-flex items-center justify-center gap-2 w-full rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-white hover:bg-primary/90 transition-colors"
                   >
                     Talk to Us
                     <ArrowRight className="w-4 h-4" />
@@ -214,11 +214,11 @@ export default function SolutionsPage() {
       {/* Bottom CTA */}
       <section className="pb-20 px-4">
         <div className="max-w-2xl mx-auto">
-          <div className="bg-white border border-gray-200 rounded-2xl p-8 text-center shadow-sm">
-            <h2 className="text-xl font-bold text-gray-900 mb-2">
+          <div className="bg-card border border-border rounded-2xl p-8 text-center shadow-sm">
+            <h2 className="text-xl font-bold text-foreground mb-2">
               Not sure which solution fits?
             </h2>
-            <p className="text-sm text-gray-500 mb-6">
+            <p className="text-sm text-muted-foreground mb-6">
               Take our free AI Readiness Quiz. In 2 minutes you will get a
               personalized score and a recommended solution package matched to
               your business.
@@ -226,14 +226,14 @@ export default function SolutionsPage() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link
                 href="/tools/ai-readiness-quiz"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#DC2626] px-6 py-3 text-sm font-semibold text-white hover:bg-[#B91C1C] transition-colors"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-white hover:bg-primary/90 transition-colors"
               >
                 Take the Free Quiz
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
                 href="/marketplace"
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-200 px-6 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-border px-6 py-3 text-sm font-semibold text-foreground hover:bg-surface transition-colors"
               >
                 Browse All Services
               </Link>

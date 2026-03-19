@@ -9,54 +9,54 @@ export const metadata: Metadata = {
 
 export default function PLAutomationCaseStudy() {
   return (
-    <div className="min-h-screen bg-[#FAFAFA]">
+    <div className="min-h-screen bg-deep">
       <div className="max-w-3xl mx-auto px-4 py-16">
 
-        <div className="flex items-center gap-2 text-sm text-gray-400 mb-8">
-          <Link href="/case-studies" className="hover:text-[#DC2626] transition-colors">Case Studies</Link>
+        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-8">
+          <Link href="/case-studies" className="hover:text-primary transition-colors">Case Studies</Link>
           <span>/</span>
-          <span className="text-gray-600">P&L Automation</span>
+          <span className="text-muted-foreground">P&L Automation</span>
         </div>
 
         <div className="flex flex-wrap gap-2 mb-4">
           {["SaaS", "Cold Outbound", "CRM Setup", "Pipeline Growth"].map((tag) => (
-            <span key={tag} className="text-xs font-medium px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full">{tag}</span>
+            <span key={tag} className="text-xs font-medium px-2 py-0.5 bg-deep text-muted-foreground rounded-full">{tag}</span>
           ))}
         </div>
 
-        <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+        <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
           3x Pipeline in 60 Days — From Zero Outbound to Full System
         </h1>
-        <p className="text-lg text-gray-500 mb-10">
+        <p className="text-lg text-muted-foreground mb-10">
           How a B2B SaaS company built its first outbound motion from scratch, targeting CFOs and VP Finance at mid-market companies — and tripled its pipeline in two months.
         </p>
 
-        <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-10 grid grid-cols-3 gap-4 text-center shadow-sm">
+        <div className="bg-card border border-border rounded-2xl p-6 mb-10 grid grid-cols-3 gap-4 text-center shadow-sm">
           {[
             { value: "3x", label: "Pipeline growth" },
             { value: "60 days", label: "From launch to results" },
             { value: "12%", label: "Lead-to-meeting rate" },
           ].map((m) => (
             <div key={m.label}>
-              <div className="text-3xl font-black text-[#DC2626] mb-1">{m.value}</div>
-              <div className="text-xs text-gray-500">{m.label}</div>
+              <div className="text-3xl font-black text-primary mb-1">{m.value}</div>
+              <div className="text-xs text-muted-foreground">{m.label}</div>
             </div>
           ))}
         </div>
 
         <div className="prose prose-gray max-w-none space-y-8">
           <section>
-            <h2 className="text-xl font-bold text-gray-900 mb-3">The Challenge</h2>
-            <p className="text-gray-600 leading-relaxed">
+            <h2 className="text-xl font-bold text-foreground mb-3">The Challenge</h2>
+            <p className="text-muted-foreground leading-relaxed">
               P&L Automation is a B2B SaaS platform that helps mid-market finance teams automate month-end close and reporting. Their product was strong, their NPS was high — but their pipeline was 100% dependent on inbound, referrals, and founder-led sales. They had tried to hire an SDR but the results were inconsistent and the cost-per-pipeline-dollar was unsustainable.
             </p>
-            <p className="text-gray-600 leading-relaxed mt-3">
+            <p className="text-muted-foreground leading-relaxed mt-3">
               The VP of Sales framed it clearly: &quot;We knew our ICP. We knew what messaging worked. We just couldn&apos;t run outbound at scale without burning out our team or hiring 3 more people.&quot;
             </p>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-gray-900 mb-3">What AIMS Built</h2>
+            <h2 className="text-xl font-bold text-foreground mb-3">What AIMS Built</h2>
             <div className="space-y-3">
               {[
                 "ICP research and ideal account list: 1,200 accounts matching CFO / VP Finance profile at companies with 50-500 employees in professional services and SaaS",
@@ -66,28 +66,28 @@ export default function PLAutomationCaseStudy() {
                 "Weekly A/B testing cadence: subject lines, value props, and calls-to-action rotated every 7 days based on reply rate data",
               ].map((item) => (
                 <div key={item} className="flex items-start gap-3">
-                  <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
-                  <p className="text-gray-600 text-sm">{item}</p>
+                  <CheckCircle2 className="w-4 h-4 text-green-400 flex-shrink-0 mt-0.5" />
+                  <p className="text-muted-foreground text-sm">{item}</p>
                 </div>
               ))}
             </div>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-gray-900 mb-3">The Timeline</h2>
+            <h2 className="text-xl font-bold text-foreground mb-3">The Timeline</h2>
             <div className="space-y-3">
               {[
                 { icon: Clock, time: "Week 1-2", desc: "Account list built, sequences written and reviewed, CRM configured and connected to outbound tooling." },
                 { icon: Target, time: "Week 3", desc: "First sequences live. Early replies coming in — 3 booked demos in first 7 days of sending." },
                 { icon: TrendingUp, time: "Day 60", desc: "Pipeline: $847K in qualified opportunities. Lead-to-meeting rate holding at 12% across all channels." },
               ].map(({ icon: Icon, time, desc }) => (
-                <div key={time} className="flex items-start gap-4 bg-white border border-gray-200 rounded-xl p-4">
-                  <div className="w-8 h-8 bg-red-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Icon className="w-4 h-4 text-[#DC2626]" />
+                <div key={time} className="flex items-start gap-4 bg-card border border-border rounded-xl p-4">
+                  <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Icon className="w-4 h-4 text-primary" />
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-900 text-sm">{time}</p>
-                    <p className="text-sm text-gray-500">{desc}</p>
+                    <p className="font-semibold text-foreground text-sm">{time}</p>
+                    <p className="text-sm text-muted-foreground">{desc}</p>
                   </div>
                 </div>
               ))}
@@ -95,8 +95,8 @@ export default function PLAutomationCaseStudy() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-gray-900 mb-3">Results After 60 Days</h2>
-            <div className="bg-green-50 border border-green-200 rounded-xl p-6 space-y-3">
+            <h2 className="text-xl font-bold text-foreground mb-3">Results After 60 Days</h2>
+            <div className="bg-green-900/15 border border-green-800 rounded-xl p-6 space-y-3">
               {[
                 "Pipeline grew from $280K to $847K — a 3x increase in 60 days",
                 "12% lead-to-meeting rate — well above industry average of 3-5% for cold outbound",
@@ -105,7 +105,7 @@ export default function PLAutomationCaseStudy() {
                 "SDR team now uses AI-generated first lines and sequences as templates — saving 8+ hours per rep per week",
               ].map((item) => (
                 <div key={item} className="flex items-start gap-3">
-                  <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-4 h-4 text-green-400 flex-shrink-0 mt-0.5" />
                   <p className="text-green-800 text-sm">{item}</p>
                 </div>
               ))}
@@ -113,14 +113,14 @@ export default function PLAutomationCaseStudy() {
           </section>
         </div>
 
-        <div className="mt-14 bg-[#DC2626] rounded-2xl p-8 text-center text-white">
+        <div className="mt-14 bg-primary rounded-2xl p-8 text-center text-white">
           <h2 className="text-2xl font-bold mb-3">Running a B2B SaaS company?</h2>
-          <p className="text-red-100 mb-6">
+          <p className="text-muted-foreground mb-6">
             Book a free strategy call. We&apos;ll audit your current pipeline, identify the fastest path to outbound, and show you what an AIMS-built system would look like for your ICP.
           </p>
           <Link
             href="/get-started"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-white text-[#DC2626] font-semibold rounded-xl hover:bg-red-50 transition-colors"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-card text-primary font-semibold rounded-xl hover:bg-primary/10 transition-colors"
           >
             Book Free Strategy Call
             <ArrowRight className="w-5 h-5" />
@@ -128,7 +128,7 @@ export default function PLAutomationCaseStudy() {
         </div>
 
         <div className="mt-8 text-center">
-          <Link href="/case-studies" className="text-sm text-gray-400 hover:text-[#DC2626] transition-colors">
+          <Link href="/case-studies" className="text-sm text-muted-foreground hover:text-primary transition-colors">
             ← Back to all case studies
           </Link>
         </div>

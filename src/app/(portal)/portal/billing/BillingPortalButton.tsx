@@ -30,7 +30,7 @@ export function BillingPortalButton() {
     <button
       onClick={handleClick}
       disabled={loading}
-      className="flex items-center gap-2 px-4 py-2 bg-white hover:bg-gray-50 text-gray-700 text-sm rounded-lg transition-colors border border-gray-200 whitespace-nowrap disabled:opacity-60"
+      className="flex items-center gap-2 px-4 py-2 bg-card hover:bg-surface text-foreground text-sm rounded-lg transition-colors border border-border whitespace-nowrap disabled:opacity-60"
     >
       {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ExternalLink className="w-3.5 h-3.5" />}
       Open Portal

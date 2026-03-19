@@ -69,8 +69,8 @@ export function VendorAddDialog({ onAdded }: { onAdded?: () => void }) {
           className={cn(
             "fixed bottom-5 right-5 z-[100] flex items-center gap-3 rounded-xl border px-4 py-3 text-sm shadow-xl",
             toast.type === "success"
-              ? "border-green-500/30 bg-green-500/10 text-green-400"
-              : "border-red-500/30 bg-red-500/10 text-red-400"
+              ? "border-green-500/30 bg-green-400/10 text-green-400"
+              : "border-primary/30 bg-primary/100/10 text-primary"
           )}
         >
           {toast.msg}
@@ -82,7 +82,7 @@ export function VendorAddDialog({ onAdded }: { onAdded?: () => void }) {
 
       <button
         onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-2 rounded-lg bg-[#DC2626] px-4 py-2 text-sm font-medium text-white hover:bg-[#b91c1c] transition-colors"
+        className="inline-flex items-center gap-2 rounded-lg bg-[#C4972A] px-4 py-2 text-sm font-medium text-white hover:bg-[#A17D22] transition-colors"
       >
         <Plus className="h-4 w-4" />
         Add Vendor
@@ -110,7 +110,7 @@ export function VendorAddDialog({ onAdded }: { onAdded?: () => void }) {
             <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
               <div>
                 <label className="block text-xs font-medium text-muted-foreground mb-1.5">
-                  Vendor Name <span className="text-[#DC2626]">*</span>
+                  Vendor Name <span className="text-[#C4972A]">*</span>
                 </label>
                 <input
                   required
@@ -118,14 +118,14 @@ export function VendorAddDialog({ onAdded }: { onAdded?: () => void }) {
                   value={form.vendorName}
                   onChange={(e) => setForm((f) => ({ ...f, vendorName: e.target.value }))}
                   placeholder="e.g. HubSpot"
-                  className="w-full h-9 rounded-lg border border-border bg-muted px-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-[#DC2626]/50"
+                  className="w-full h-9 rounded-lg border border-border bg-muted px-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-[#C4972A]/50"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-medium text-muted-foreground mb-1.5">
-                    Monthly Cost ($) <span className="text-[#DC2626]">*</span>
+                    Monthly Cost ($) <span className="text-[#C4972A]">*</span>
                   </label>
                   <input
                     required
@@ -135,7 +135,7 @@ export function VendorAddDialog({ onAdded }: { onAdded?: () => void }) {
                     value={form.monthlyCost}
                     onChange={(e) => setForm((f) => ({ ...f, monthlyCost: e.target.value }))}
                     placeholder="299"
-                    className="w-full h-9 rounded-lg border border-border bg-muted px-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-[#DC2626]/50"
+                    className="w-full h-9 rounded-lg border border-border bg-muted px-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-[#C4972A]/50"
                   />
                 </div>
                 <div>
@@ -149,14 +149,14 @@ export function VendorAddDialog({ onAdded }: { onAdded?: () => void }) {
                     value={form.projectedSavings}
                     onChange={(e) => setForm((f) => ({ ...f, projectedSavings: e.target.value }))}
                     placeholder="200"
-                    className="w-full h-9 rounded-lg border border-border bg-muted px-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-[#DC2626]/50"
+                    className="w-full h-9 rounded-lg border border-border bg-muted px-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-[#C4972A]/50"
                   />
                 </div>
               </div>
 
               <div>
                 <label className="block text-xs font-medium text-muted-foreground mb-1.5">
-                  Category <span className="text-[#DC2626]">*</span>
+                  Category <span className="text-[#C4972A]">*</span>
                 </label>
                 <input
                   required
@@ -164,7 +164,7 @@ export function VendorAddDialog({ onAdded }: { onAdded?: () => void }) {
                   value={form.category}
                   onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
                   placeholder="e.g. CRM, Email, Analytics"
-                  className="w-full h-9 rounded-lg border border-border bg-muted px-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-[#DC2626]/50"
+                  className="w-full h-9 rounded-lg border border-border bg-muted px-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-[#C4972A]/50"
                 />
               </div>
 
@@ -177,7 +177,7 @@ export function VendorAddDialog({ onAdded }: { onAdded?: () => void }) {
                   value={form.replacementName}
                   onChange={(e) => setForm((f) => ({ ...f, replacementName: e.target.value }))}
                   placeholder="e.g. AIMS CRM Module"
-                  className="w-full h-9 rounded-lg border border-border bg-muted px-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-[#DC2626]/50"
+                  className="w-full h-9 rounded-lg border border-border bg-muted px-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-[#C4972A]/50"
                 />
               </div>
 
@@ -190,7 +190,7 @@ export function VendorAddDialog({ onAdded }: { onAdded?: () => void }) {
                   value={form.notes}
                   onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
                   placeholder="Any relevant notes…"
-                  className="w-full rounded-lg border border-border bg-muted px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-[#DC2626]/50 resize-none"
+                  className="w-full rounded-lg border border-border bg-muted px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-[#C4972A]/50 resize-none"
                 />
               </div>
 
@@ -205,7 +205,7 @@ export function VendorAddDialog({ onAdded }: { onAdded?: () => void }) {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex-1 h-9 rounded-lg bg-[#DC2626] text-sm font-medium text-white hover:bg-[#b91c1c] disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+                  className="flex-1 h-9 rounded-lg bg-[#C4972A] text-sm font-medium text-white hover:bg-[#A17D22] disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
                 >
                   {loading ? "Adding…" : "Add Vendor"}
                 </button>

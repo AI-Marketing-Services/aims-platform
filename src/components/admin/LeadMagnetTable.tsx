@@ -14,7 +14,7 @@ const TYPE_LABEL: Record<string, string> = {
 
 const TYPE_COLOR: Record<string, string> = {
   AI_READINESS_QUIZ: "text-blue-400 bg-blue-500/10 border-blue-500/20",
-  ROI_CALCULATOR: "text-green-400 bg-green-500/10 border-green-500/20",
+  ROI_CALCULATOR: "text-green-400 bg-green-400/10 border-green-500/20",
   WEBSITE_AUDIT: "text-purple-400 bg-purple-500/10 border-purple-500/20",
   SEGMENT_EXPLORER: "text-orange-400 bg-orange-500/10 border-orange-500/20",
   STACK_CONFIGURATOR: "text-yellow-400 bg-yellow-500/10 border-yellow-500/20",
@@ -89,9 +89,9 @@ export function LeadMagnetTable({
   function SortIcon({ k }: { k: SortKey }) {
     if (sortKey !== k) return <ChevronDown className="h-3 w-3 opacity-30 inline ml-1" />
     return sortDir === "asc" ? (
-      <ChevronUp className="h-3 w-3 inline ml-1 text-[#DC2626]" />
+      <ChevronUp className="h-3 w-3 inline ml-1 text-[#C4972A]" />
     ) : (
-      <ChevronDown className="h-3 w-3 inline ml-1 text-[#DC2626]" />
+      <ChevronDown className="h-3 w-3 inline ml-1 text-[#C4972A]" />
     )
   }
 
@@ -107,7 +107,7 @@ export function LeadMagnetTable({
             placeholder="Search name or email…"
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(0) }}
-            className="h-8 pl-8 pr-3 text-xs rounded-lg bg-muted border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-[#DC2626]/50 w-56"
+            className="h-8 pl-8 pr-3 text-xs rounded-lg bg-muted border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-[#C4972A]/50 w-56"
           />
         </div>
       </div>
@@ -179,7 +179,7 @@ export function LeadMagnetTable({
                           <span
                             className={cn(
                               "text-xs font-medium",
-                              sub.convertedToDeal ? "text-green-600" : "text-muted-foreground"
+                              sub.convertedToDeal ? "text-green-400" : "text-muted-foreground"
                             )}
                           >
                             {sub.convertedToDeal ? <><Check className="inline h-3 w-3" /> Yes</> : <><X className="inline h-3 w-3" /> No</>}
@@ -211,7 +211,7 @@ export function LeadMagnetTable({
                                   Deal:{" "}
                                   <a
                                     href={`/admin/crm/${sub.dealId}`}
-                                    className="text-[#DC2626] hover:underline"
+                                    className="text-[#C4972A] hover:underline"
                                     onClick={(e) => e.stopPropagation()}
                                   >
                                     View deal →

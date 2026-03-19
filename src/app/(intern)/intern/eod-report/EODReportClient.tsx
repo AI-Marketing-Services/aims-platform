@@ -78,9 +78,9 @@ export function EODReportClient({ internId, recentReports, recentCompletedTasks 
 
   if (submitted) {
     return (
-      <div className="rounded-xl border border-green-500/20 bg-green-500/5 p-8 text-center">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-500/10 mx-auto mb-4">
-          <Send className="h-6 w-6 text-green-600" />
+      <div className="rounded-xl border border-green-500/20 bg-green-400/5 p-8 text-center">
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-400/10 mx-auto mb-4">
+          <Send className="h-6 w-6 text-green-400" />
         </div>
         <h3 className="text-lg font-semibold text-foreground">Report Submitted</h3>
         <p className="text-sm text-muted-foreground mt-1">
@@ -95,7 +95,7 @@ export function EODReportClient({ internId, recentReports, recentCompletedTasks 
       {/* Completed today */}
       <div className="rounded-xl border border-border bg-card p-6">
         <label className="block text-sm font-semibold text-foreground mb-3">
-          What did you complete today? <span className="text-[#DC2626]">*</span>
+          What did you complete today? <span className="text-[#C4972A]">*</span>
         </label>
         <div className="space-y-2 mb-3">
           {completed.map((item, i) => (
@@ -132,11 +132,11 @@ export function EODReportClient({ internId, recentReports, recentCompletedTasks 
               if (e.key === "Enter") addItem(completed, setCompleted, completedInput, setCompletedInput)
             }}
             placeholder="What did you build/complete?"
-            className="flex-1 px-3 py-2 bg-muted border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#DC2626]/30"
+            className="flex-1 px-3 py-2 bg-muted border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C4972A]/30"
           />
           <button
             onClick={() => addItem(completed, setCompleted, completedInput, setCompletedInput)}
-            className="flex items-center gap-1.5 px-3 py-2 bg-[#DC2626] text-white text-sm font-medium rounded-lg hover:bg-[#B91C1C] transition-colors"
+            className="flex items-center gap-1.5 px-3 py-2 bg-[#C4972A] text-white text-sm font-medium rounded-lg hover:bg-[#A17D22] transition-colors"
           >
             <Plus className="h-4 w-4" />
           </button>
@@ -167,7 +167,7 @@ export function EODReportClient({ internId, recentReports, recentCompletedTasks 
               if (e.key === "Enter") addItem(nextItems, setNextItems, nextInput, setNextInput)
             }}
             placeholder="What's most important tomorrow?"
-            className="flex-1 px-3 py-2 bg-muted border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#DC2626]/30"
+            className="flex-1 px-3 py-2 bg-muted border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C4972A]/30"
           />
           <button
             onClick={() => addItem(nextItems, setNextItems, nextInput, setNextInput)}
@@ -186,7 +186,7 @@ export function EODReportClient({ internId, recentReports, recentCompletedTasks 
         </label>
         <div className="space-y-2 mb-3">
           {blockers.map((item, i) => (
-            <div key={i} className="flex items-center gap-2 text-sm bg-red-500/5 border border-red-500/10 rounded-lg px-3 py-2">
+            <div key={i} className="flex items-center gap-2 text-sm bg-primary/100/5 border border-primary/10 rounded-lg px-3 py-2">
               <span className="flex-1 text-foreground">{item}</span>
               <button onClick={() => removeItem(blockers, setBlockers, i)} className="text-muted-foreground hover:text-foreground">
                 <X className="h-3.5 w-3.5" />
@@ -202,7 +202,7 @@ export function EODReportClient({ internId, recentReports, recentCompletedTasks 
               if (e.key === "Enter") addItem(blockers, setBlockers, blockerInput, setBlockerInput)
             }}
             placeholder="Any blockers or dependencies?"
-            className="flex-1 px-3 py-2 bg-muted border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#DC2626]/30"
+            className="flex-1 px-3 py-2 bg-muted border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C4972A]/30"
           />
           <button
             onClick={() => addItem(blockers, setBlockers, blockerInput, setBlockerInput)}
@@ -229,7 +229,7 @@ export function EODReportClient({ internId, recentReports, recentCompletedTasks 
             max="24"
             step="0.5"
             placeholder="e.g. 4.5"
-            className="w-32 px-3 py-2 bg-muted border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#DC2626]/30"
+            className="w-32 px-3 py-2 bg-muted border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C4972A]/30"
           />
           <span className="text-sm text-muted-foreground">hours</span>
         </div>
@@ -239,7 +239,7 @@ export function EODReportClient({ internId, recentReports, recentCompletedTasks 
       <button
         onClick={handleSubmit}
         disabled={completed.length === 0 || loading || !internId}
-        className="w-full flex items-center justify-center gap-2 py-3 bg-[#DC2626] text-white font-semibold rounded-xl hover:bg-[#B91C1C] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        className="w-full flex items-center justify-center gap-2 py-3 bg-[#C4972A] text-white font-semibold rounded-xl hover:bg-[#A17D22] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
       >
         <Send className="h-4 w-4" />
         {loading ? "Submitting…" : "Submit EOD Report"}
@@ -272,7 +272,7 @@ export function EODReportClient({ internId, recentReports, recentCompletedTasks 
                     <ul className="space-y-1">
                       {items.slice(0, 3).map((item, i) => (
                         <li key={i} className="text-xs text-muted-foreground flex items-start gap-1.5">
-                          <Check className="h-3.5 w-3.5 text-green-600 mt-0.5" />
+                          <Check className="h-3.5 w-3.5 text-green-400 mt-0.5" />
                           {item}
                         </li>
                       ))}

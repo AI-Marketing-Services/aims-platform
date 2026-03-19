@@ -216,7 +216,7 @@ export function AnimatedPercent({
 
 export function AnimatedProgressBar({
   percentage,
-  className = "bg-red-600",
+  className = "bg-primary",
   delay = 0.3,
 }: {
   percentage: number

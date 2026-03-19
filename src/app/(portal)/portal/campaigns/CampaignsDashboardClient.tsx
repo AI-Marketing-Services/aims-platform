@@ -143,13 +143,13 @@ export function CampaignsDashboardClient() {
               <a
                 key={name}
                 href={href}
-                className="rounded-xl border border-border bg-card p-4 hover:border-[#DC2626]/40 transition-all group flex items-center justify-between"
+                className="rounded-xl border border-border bg-card p-4 hover:border-[#C4972A]/40 transition-all group flex items-center justify-between"
               >
                 <div>
                   <p className="text-sm font-semibold text-foreground">{name}</p>
                   <p className="text-xs text-muted-foreground mt-0.5">Custom pricing</p>
                 </div>
-                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-[#DC2626] transition-colors flex-shrink-0" />
+                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-[#C4972A] transition-colors flex-shrink-0" />
               </a>
             ))}
           </div>
@@ -186,9 +186,9 @@ export function CampaignsDashboardClient() {
             <RefreshCw className={cn("h-3.5 w-3.5", refreshing && "animate-spin")} />
             Refresh
           </button>
-          <div className="flex items-center gap-2 rounded-full border border-green-200 bg-green-50 px-3 py-1.5">
-            <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-            <span className="text-xs font-medium text-green-700">Connected</span>
+          <div className="flex items-center gap-2 rounded-full border border-green-800 bg-green-900/15 px-3 py-1.5">
+            <span className="h-2 w-2 rounded-full bg-green-400 animate-pulse" />
+            <span className="text-xs font-medium text-green-400">Connected</span>
           </div>
         </div>
       </div>
@@ -198,8 +198,8 @@ export function CampaignsDashboardClient() {
         <div className="rounded-xl border border-border bg-card p-5">
           <div className="flex items-center justify-between mb-3">
             <p className="text-xs text-muted-foreground">Emails Sent</p>
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-red-50">
-              <Mail className="h-3.5 w-3.5 text-[#DC2626]" />
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10">
+              <Mail className="h-3.5 w-3.5 text-[#C4972A]" />
             </div>
           </div>
           <p className="text-2xl font-bold text-foreground font-mono">
@@ -210,8 +210,8 @@ export function CampaignsDashboardClient() {
         <div className="rounded-xl border border-border bg-card p-5">
           <div className="flex items-center justify-between mb-3">
             <p className="text-xs text-muted-foreground">People Contacted</p>
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-50">
-              <Users className="h-3.5 w-3.5 text-blue-600" />
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-900/20">
+              <Users className="h-3.5 w-3.5 text-blue-400" />
             </div>
           </div>
           <p className="text-2xl font-bold text-foreground font-mono">
@@ -222,8 +222,8 @@ export function CampaignsDashboardClient() {
         <div className="rounded-xl border border-border bg-card p-5">
           <div className="flex items-center justify-between mb-3">
             <p className="text-xs text-muted-foreground">Reply Rate</p>
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-green-50">
-              <MessageSquare className="h-3.5 w-3.5 text-green-600" />
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-green-900/15">
+              <MessageSquare className="h-3.5 w-3.5 text-green-400" />
             </div>
           </div>
           <p className="text-2xl font-bold text-foreground font-mono">
@@ -237,8 +237,8 @@ export function CampaignsDashboardClient() {
         <div className="rounded-xl border border-border bg-card p-5">
           <div className="flex items-center justify-between mb-3">
             <p className="text-xs text-muted-foreground">Bounce Rate</p>
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-orange-50">
-              <TrendingUp className="h-3.5 w-3.5 text-orange-600" />
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-orange-900/20">
+              <TrendingUp className="h-3.5 w-3.5 text-orange-400" />
             </div>
           </div>
           <p className="text-2xl font-bold text-foreground font-mono">
@@ -302,13 +302,13 @@ export function CampaignsDashboardClient() {
                     <td className="px-4 py-3">
                       <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium ${
                         campaign.status === "active" || campaign.status === "running"
-                          ? "border-green-200 bg-green-50 text-green-700"
+                          ? "border-green-800 bg-green-900/15 text-green-400"
                           : campaign.status === "paused"
-                          ? "border-yellow-200 bg-yellow-50 text-yellow-700"
-                          : "border-gray-200 bg-gray-50 text-gray-600"
+                          ? "border-yellow-800 bg-yellow-900/20 text-yellow-400"
+                          : "border-border bg-deep text-muted-foreground"
                       }`}>
                         {campaign.status === "active" || campaign.status === "running" ? (
-                          <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
+                          <span className="h-1.5 w-1.5 rounded-full bg-green-400" />
                         ) : null}
                         {campaign.status}
                       </span>
@@ -330,7 +330,7 @@ export function CampaignsDashboardClient() {
                       <div className="flex items-center gap-2">
                         <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
                           <div
-                            className="h-full bg-[#DC2626] rounded-full transition-all"
+                            className="h-full bg-[#C4972A] rounded-full transition-all"
                             style={{ width: `${Math.min(campaign.completion_percentage, 100)}%` }}
                           />
                         </div>

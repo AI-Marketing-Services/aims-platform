@@ -105,14 +105,14 @@ const INDUSTRIES = [
 
 export default function IndustriesPage() {
   return (
-    <div className="min-h-screen bg-[#FAFAFA]">
+    <div className="min-h-screen bg-deep">
       {/* Hero */}
       <section className="pt-28 pb-16 px-4">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-gray-900 mb-4">
+          <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-foreground mb-4">
             AI Solutions For Every Industry
           </h1>
-          <p className="text-lg text-gray-500 max-w-2xl mx-auto">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             No matter your vertical, AIMS builds and runs AI systems that
             generate leads, close deals, and automate operations — tailored to
             how your industry actually works.
@@ -128,22 +128,22 @@ export default function IndustriesPage() {
               <Link
                 key={industry.slug}
                 href={`/industries/${industry.slug}`}
-                className="group bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-gray-300 transition-all flex flex-col"
+                className="group bg-card border border-border rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-border transition-all flex flex-col"
               >
-                <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center mb-4 group-hover:bg-red-50 transition-colors">
-                  <industry.icon className="w-5 h-5 text-gray-600 group-hover:text-[#DC2626] transition-colors" />
+                <div className="w-10 h-10 rounded-xl bg-deep flex items-center justify-center mb-4 group-hover:bg-primary/10 transition-colors">
+                  <industry.icon className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
                 </div>
-                <h2 className="text-base font-bold text-gray-900 mb-1">
+                <h2 className="text-base font-bold text-foreground mb-1">
                   {industry.name}
                 </h2>
-                <p className="text-sm text-gray-500 mb-4 flex-1">
+                <p className="text-sm text-muted-foreground mb-4 flex-1">
                   {industry.description}
                 </p>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-gray-400">
+                  <span className="text-xs text-muted-foreground">
                     Recommended: {industry.solution}
                   </span>
-                  <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-[#DC2626] transition-colors" />
+                  <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
                 </div>
               </Link>
             ))}
@@ -154,25 +154,25 @@ export default function IndustriesPage() {
       {/* Bottom CTA */}
       <section className="pb-20 px-4">
         <div className="max-w-2xl mx-auto">
-          <div className="bg-white border border-gray-200 rounded-2xl p-8 text-center shadow-sm">
-            <h2 className="text-xl font-bold text-gray-900 mb-2">
+          <div className="bg-card border border-border rounded-2xl p-8 text-center shadow-sm">
+            <h2 className="text-xl font-bold text-foreground mb-2">
               Don&apos;t see your industry?
             </h2>
-            <p className="text-sm text-gray-500 mb-6">
+            <p className="text-sm text-muted-foreground mb-6">
               AIMS solutions work for any B2B or B2C business. Book a free
               strategy call and we will build a custom plan for your vertical.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link
                 href="/get-started"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#DC2626] px-6 py-3 text-sm font-semibold text-white hover:bg-[#B91C1C] transition-colors"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-white hover:bg-primary/90 transition-colors"
               >
                 Book a Strategy Call
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
                 href="/solutions"
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-200 px-6 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-border px-6 py-3 text-sm font-semibold text-foreground hover:bg-surface transition-colors"
               >
                 View Solution Packages
               </Link>

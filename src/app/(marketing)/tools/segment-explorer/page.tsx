@@ -27,9 +27,9 @@ const INTENT_FILTERS = [
 const VISIBLE_FREE = 5
 
 function intentColor(score: number) {
-  if (score >= 85) return "text-green-600 bg-green-50"
-  if (score >= 70) return "text-yellow-600 bg-yellow-50"
-  return "text-orange-600 bg-orange-50"
+  if (score >= 85) return "text-green-400 bg-green-900/15"
+  if (score >= 70) return "text-yellow-400 bg-yellow-50"
+  return "text-orange-400 bg-orange-50"
 }
 
 export default function SegmentExplorerPage() {
@@ -91,33 +91,33 @@ export default function SegmentExplorerPage() {
   const locked = !unlocked && filtered.length > VISIBLE_FREE
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA]">
+    <div className="min-h-screen bg-deep">
       <div className="max-w-4xl mx-auto px-4 py-12">
         {/* Header */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-red-50 text-[#DC2626] text-sm font-medium rounded-full mb-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-[#C4972A] text-sm font-medium rounded-full mb-6">
             <Target className="w-3.5 h-3.5" />
             Free Audience Intelligence Tool
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          <h1 className="text-4xl font-bold text-foreground mb-4">
             Explore 100+ B2B Audience Segments
           </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Browse pre-built audience segments with intent scores and estimated reach. Find your ideal buyers and see exactly how AIMS would target them.
           </p>
         </div>
 
         {/* Search + Filters */}
-        <div className="bg-white border border-gray-200 rounded-2xl p-4 mb-6 space-y-3">
+        <div className="bg-card border border-border rounded-2xl p-4 mb-6 space-y-3">
           <div className="flex gap-3">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <input
                 type="text"
                 value={query}
                 onChange={(e) => handleSearch(e.target.value)}
                 placeholder="Search segments, industries, roles..."
-                className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#DC2626] focus:border-transparent text-gray-900"
+                className="w-full pl-10 pr-4 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#C4972A] focus:border-transparent text-foreground"
               />
             </div>
             <button
@@ -125,8 +125,8 @@ export default function SegmentExplorerPage() {
               className={cn(
                 "flex items-center gap-2 px-4 py-2.5 border rounded-lg text-sm font-medium transition-colors",
                 showFilters
-                  ? "border-[#DC2626] text-[#DC2626] bg-red-50"
-                  : "border-gray-200 text-gray-600 hover:bg-gray-50"
+                  ? "border-[#C4972A] text-[#C4972A] bg-primary/10"
+                  : "border-border text-muted-foreground hover:bg-surface"
               )}
             >
               <Filter className="w-3.5 h-3.5" />
@@ -144,7 +144,7 @@ export default function SegmentExplorerPage() {
               >
                 <div className="flex flex-wrap gap-3 pt-1">
                   {/* Classification */}
-                  <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+                  <div className="flex items-center gap-1 bg-deep rounded-lg p-1">
                     {(["All", "B2B", "B2C"] as const).map((c) => (
                       <button
                         key={c}
@@ -152,8 +152,8 @@ export default function SegmentExplorerPage() {
                         className={cn(
                           "px-3 py-1 rounded-md text-sm font-medium transition-colors",
                           classification === c
-                            ? "bg-white shadow text-gray-900"
-                            : "text-gray-500 hover:text-gray-700"
+                            ? "bg-card shadow text-foreground"
+                            : "text-muted-foreground hover:text-foreground"
                         )}
                       >
                         {c}
@@ -165,7 +165,7 @@ export default function SegmentExplorerPage() {
                   <select
                     value={seniority}
                     onChange={(e) => setSeniority(e.target.value)}
-                    className="px-3 py-1.5 border border-gray-200 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#DC2626]"
+                    className="px-3 py-1.5 border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#C4972A]"
                   >
                     {ALL_SENIORITIES.map((s) => (
                       <option key={s} value={s}>{s === "All" ? "All Seniority" : s}</option>
@@ -176,7 +176,7 @@ export default function SegmentExplorerPage() {
                   <select
                     value={intentMin}
                     onChange={(e) => setIntentMin(Number(e.target.value))}
-                    className="px-3 py-1.5 border border-gray-200 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#DC2626]"
+                    className="px-3 py-1.5 border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#C4972A]"
                   >
                     {INTENT_FILTERS.map((f) => (
                       <option key={f.label} value={f.min}>{f.label === "All" ? "All Intent" : f.label}</option>
@@ -190,22 +190,22 @@ export default function SegmentExplorerPage() {
 
         {/* Results count */}
         <div className="flex items-center justify-between mb-4">
-          <p className="text-sm text-gray-500">
-            <span className="font-semibold text-gray-900">{filtered.length}</span> segments found
+          <p className="text-sm text-muted-foreground">
+            <span className="font-semibold text-foreground">{filtered.length}</span> segments found
             {!unlocked && filtered.length > VISIBLE_FREE && (
               <span> — showing {VISIBLE_FREE} of {filtered.length}</span>
             )}
           </p>
-          <p className="text-xs text-gray-400">Sorted by intent score</p>
+          <p className="text-xs text-muted-foreground">Sorted by intent score</p>
         </div>
 
         {/* Segment Cards */}
         <div className="space-y-3 relative">
           {filtered.length === 0 && (
-            <div className="bg-white border border-gray-200 rounded-2xl p-12 text-center">
-              <Users className="w-8 h-8 text-gray-300 mx-auto mb-3" />
-              <p className="text-gray-500 font-medium">No segments match your filters</p>
-              <p className="text-sm text-gray-400 mt-1">Try adjusting your search or filters</p>
+            <div className="bg-card border border-border rounded-2xl p-12 text-center">
+              <Users className="w-8 h-8 text-muted-foreground mx-auto mb-3" />
+              <p className="text-muted-foreground font-medium">No segments match your filters</p>
+              <p className="text-sm text-muted-foreground mt-1">Try adjusting your search or filters</p>
             </div>
           )}
 
@@ -215,13 +215,13 @@ export default function SegmentExplorerPage() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.03 }}
-              className="bg-white border border-gray-200 rounded-xl p-5 hover:border-gray-300 hover:shadow-sm transition-all"
+              className="bg-card border border-border rounded-xl p-5 hover:border-border hover:shadow-sm transition-all"
             >
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap mb-1">
-                    <h3 className="font-semibold text-gray-900">{seg.name}</h3>
-                    <span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full">
+                    <h3 className="font-semibold text-foreground">{seg.name}</h3>
+                    <span className="text-xs px-2 py-0.5 bg-deep text-muted-foreground rounded-full">
                       {seg.category}
                     </span>
                     <span className="text-xs px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full">
@@ -232,7 +232,7 @@ export default function SegmentExplorerPage() {
                     </span>
                   </div>
                   <div className="flex items-center gap-4 mt-2">
-                    <div className="flex items-center gap-1.5 text-sm text-gray-500">
+                    <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
                       <Users className="w-3.5 h-3.5" />
                       {seg.estimatedCount.toLocaleString()} contacts
                     </div>
@@ -242,14 +242,14 @@ export default function SegmentExplorerPage() {
                     </div>
                   </div>
                   {/* Intent bar */}
-                  <div className="mt-3 h-1.5 bg-gray-100 rounded-full max-w-xs">
+                  <div className="mt-3 h-1.5 bg-deep rounded-full max-w-xs">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${seg.intentScore}%` }}
                       transition={{ duration: 0.6, delay: idx * 0.03 }}
                       className={cn(
                         "h-1.5 rounded-full",
-                        seg.intentScore >= 85 ? "bg-green-500" : seg.intentScore >= 70 ? "bg-yellow-500" : "bg-orange-400"
+                        seg.intentScore >= 85 ? "bg-green-400" : seg.intentScore >= 70 ? "bg-yellow-500" : "bg-orange-400"
                       )}
                     />
                   </div>
@@ -257,7 +257,7 @@ export default function SegmentExplorerPage() {
                 {unlocked && (
                   <a
                     href="/get-started"
-                    className="flex-shrink-0 inline-flex items-center gap-1.5 px-4 py-2 bg-[#DC2626] text-white text-sm font-medium rounded-lg hover:bg-[#B91C1C] transition-colors"
+                    className="flex-shrink-0 inline-flex items-center gap-1.5 px-4 py-2 bg-[#C4972A] text-white text-sm font-medium rounded-lg hover:bg-[#A17D22] transition-colors"
                   >
                     Build Campaign
                     <ArrowRight className="w-3.5 h-3.5" />
@@ -272,12 +272,12 @@ export default function SegmentExplorerPage() {
             <div className="relative">
               {/* Blurred preview cards */}
               {filtered.slice(VISIBLE_FREE, VISIBLE_FREE + 3).map((seg) => (
-                <div key={seg.id} className="bg-white border border-gray-200 rounded-xl p-5 mb-3 select-none pointer-events-none" style={{ filter: "blur(4px)", opacity: 0.5 }}>
+                <div key={seg.id} className="bg-card border border-border rounded-xl p-5 mb-3 select-none pointer-events-none" style={{ filter: "blur(4px)", opacity: 0.5 }}>
                   <div className="flex items-center gap-2 mb-1">
-                    <div className="h-5 bg-gray-200 rounded w-48" />
-                    <div className="h-5 bg-gray-100 rounded w-20" />
+                    <div className="h-5 bg-surface rounded w-48" />
+                    <div className="h-5 bg-deep rounded w-20" />
                   </div>
-                  <div className="h-4 bg-gray-100 rounded w-32 mt-2" />
+                  <div className="h-4 bg-deep rounded w-32 mt-2" />
                 </div>
               ))}
 
@@ -286,16 +286,16 @@ export default function SegmentExplorerPage() {
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="bg-white border border-gray-200 rounded-2xl p-8 shadow-xl max-w-md w-full mx-4"
+                  className="bg-card border border-border rounded-2xl p-8 shadow-xl max-w-md w-full mx-4"
                 >
                   <div className="text-center mb-6">
-                    <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Lock className="w-5 h-5 text-[#DC2626]" />
+                    <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Lock className="w-5 h-5 text-[#C4972A]" />
                     </div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">
+                    <h3 className="text-xl font-bold text-foreground mb-2">
                       Unlock All {filtered.length} Segments
                     </h3>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-muted-foreground">
                       Enter your details to see the full list plus estimated reach and intent scores for every segment.
                     </p>
                   </div>
@@ -306,7 +306,7 @@ export default function SegmentExplorerPage() {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Your name"
-                      className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#DC2626] text-gray-900"
+                      className="w-full px-4 py-3 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#C4972A] text-foreground"
                     />
                     <input
                       type="email"
@@ -314,16 +314,16 @@ export default function SegmentExplorerPage() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="Work email"
-                      className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#DC2626] text-gray-900"
+                      className="w-full px-4 py-3 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#C4972A] text-foreground"
                     />
                     <button
                       type="submit"
                       disabled={submitting}
-                      className="w-full py-3 bg-[#DC2626] text-white font-semibold rounded-lg hover:bg-[#B91C1C] transition-colors disabled:opacity-70 flex items-center justify-center gap-2"
+                      className="w-full py-3 bg-[#C4972A] text-white font-semibold rounded-lg hover:bg-[#A17D22] transition-colors disabled:opacity-70 flex items-center justify-center gap-2"
                     >
                       {submitting ? "Unlocking..." : <>Unlock All Segments <ArrowRight className="w-4 h-4" /></>}
                     </button>
-                    <p className="text-xs text-center text-gray-400">No spam. Unsubscribe anytime.</p>
+                    <p className="text-xs text-center text-muted-foreground">No spam. Unsubscribe anytime.</p>
                   </form>
                 </motion.div>
               </div>
@@ -336,15 +336,15 @@ export default function SegmentExplorerPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mt-10 bg-[#DC2626] rounded-2xl p-8 text-center text-white"
+            className="mt-10 bg-[#C4972A] rounded-2xl p-8 text-center text-white"
           >
             <h3 className="text-2xl font-bold mb-3">Ready to target one of these segments?</h3>
-            <p className="text-red-100 mb-6">
+            <p className="text-muted-foreground mb-6">
               AIMS builds custom AI outbound systems that reach your exact audience — qualified leads delivered to your calendar.
             </p>
             <a
               href="/get-started"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-white text-[#DC2626] font-semibold rounded-xl hover:bg-red-50 transition-colors"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-card text-[#C4972A] font-semibold rounded-xl hover:bg-primary/10 transition-colors"
             >
               Build My Campaign
               <ArrowRight className="w-5 h-5" />

@@ -48,11 +48,12 @@ npx prisma studio    # DB GUI
 - Mobile-first responsive design
 
 ## Design System
-- Primary: #DC2626 (AIMS crimson)
-- Background: #FAFAFA (light), #0D0F14 (dark for portals)
-- Font: Geist via next/font
-- Pillar colors: Marketing=#16A34A, Sales=#2563EB, Operations=#EA580C, Finance=#9333EA
-- Cards: white bg, subtle border, 12px radius, hover lift
+- Primary: #C4972A (AIMS gold)
+- Background: #08090D (ink)
+- Card: #141923 (surface)
+- Text: #F0EBE0 (cream)
+- Font: DM Sans (body), Cormorant Garamond (headings), DM Mono (code/labels)
+- Cards: dark surface bg, subtle border, 2px radius, hover lift with gold glow
 - Animations: Framer Motion, fade-up on scroll, stagger grids
 
 ## Key Patterns

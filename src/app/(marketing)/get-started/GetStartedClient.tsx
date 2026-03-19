@@ -8,13 +8,13 @@ function CalBooking() {
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-green-100 mb-4">
-          <Check className="h-6 w-6 text-green-600" />
+        <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-green-900/20 mb-4">
+          <Check className="h-6 w-6 text-green-400" />
         </div>
-        <h2 className="text-2xl font-bold text-gray-900">Request submitted!</h2>
-        <p className="mt-2 text-gray-500">Pick a time that works best for your strategy call below.</p>
+        <h2 className="text-2xl font-bold text-foreground">Request submitted!</h2>
+        <p className="mt-2 text-muted-foreground">Pick a time that works best for your strategy call below.</p>
       </div>
-      <div className="rounded-xl border border-gray-200 overflow-hidden">
+      <div className="rounded-xl border border-border overflow-hidden">
         <iframe
           src="https://cal.com/adamwolfe/aims?embed=true&layout=month_view&theme=light&brandColor=%23DC2626&hideEventTypeDetails=true"
           width="100%"
@@ -135,17 +135,17 @@ export function GetStartedClient() {
         <div className="mb-10 flex items-center">
           {[1, 2, 3].map((s, i) => (
             <div key={s} className="flex items-center flex-1 last:flex-none">
-              <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-semibold transition-colors ${step >= s ? "bg-[#DC2626] text-white" : "bg-gray-100 text-gray-400"}`}>
+              <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-semibold transition-colors ${step >= s ? "bg-primary text-white" : "bg-deep text-muted-foreground"}`}>
                 {step > s ? <Check className="h-4 w-4" /> : s}
               </div>
               {i < 2 && (
-                <div className={`h-px flex-1 mx-2 transition-colors ${step > s ? "bg-[#DC2626]" : "bg-gray-200"}`} />
+                <div className={`h-px flex-1 mx-2 transition-colors ${step > s ? "bg-primary" : "bg-surface"}`} />
               )}
             </div>
           ))}
         </div>
 
-        <div className="border border-gray-200 bg-white p-8 shadow-sm">
+        <div className="border border-border bg-card p-8 shadow-sm">
           {/* Step 1: Services */}
           {step === 1 && (
             <div>
@@ -158,7 +158,7 @@ export function GetStartedClient() {
                     <button
                       key={service.slug}
                       onClick={() => toggleService(service.slug)}
-                      className={`w-full flex items-center justify-between rounded-xl border-2 p-4 text-left transition ${selected ? "border-[#DC2626] bg-red-50" : "border-border hover:border-muted-foreground"}`}
+                      className={`w-full flex items-center justify-between rounded-xl border-2 p-4 text-left transition ${selected ? "border-primary bg-primary/10" : "border-border hover:border-muted-foreground"}`}
                     >
                       <span className="font-medium text-foreground">{service.name}</span>
                       <span className="text-sm text-muted-foreground">{service.price}</span>
@@ -169,7 +169,7 @@ export function GetStartedClient() {
               <button
                 onClick={() => setStep(2)}
                 disabled={form.services.length === 0}
-                className="mt-6 w-full rounded-lg bg-[#DC2626] py-3.5 font-semibold text-white disabled:opacity-50 hover:bg-[#B91C1C] transition flex items-center justify-center gap-2"
+                className="mt-6 w-full rounded-lg bg-primary py-3.5 font-semibold text-white disabled:opacity-50 hover:bg-primary/90 transition flex items-center justify-center gap-2"
               >
                 Continue <ArrowRight className="h-4 w-4" />
               </button>
@@ -188,7 +188,7 @@ export function GetStartedClient() {
                       value={form.name}
                       onChange={(e) => setForm({ ...form, name: e.target.value })}
                       placeholder="Adam Wolfe"
-                      className="w-full rounded-lg border border-border px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#DC2626]/20 focus:border-[#DC2626]"
+                      className="w-full rounded-lg border border-border px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                     />
                   </div>
                   <div>
@@ -197,7 +197,7 @@ export function GetStartedClient() {
                       value={form.company}
                       onChange={(e) => setForm({ ...form, company: e.target.value })}
                       placeholder="ACME Corp"
-                      className="w-full rounded-lg border border-border px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#DC2626]/20 focus:border-[#DC2626]"
+                      className="w-full rounded-lg border border-border px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                     />
                   </div>
                 </div>
@@ -208,7 +208,7 @@ export function GetStartedClient() {
                     value={form.email}
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
                     placeholder="you@company.com"
-                    className="w-full rounded-lg border border-border px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#DC2626]/20 focus:border-[#DC2626]"
+                    className="w-full rounded-lg border border-border px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                   />
                 </div>
                 <div>
@@ -217,7 +217,7 @@ export function GetStartedClient() {
                     value={form.website}
                     onChange={(e) => setForm({ ...form, website: e.target.value })}
                     placeholder="https://yoursite.com"
-                    className="w-full rounded-lg border border-border px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#DC2626]/20 focus:border-[#DC2626]"
+                    className="w-full rounded-lg border border-border px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
@@ -226,7 +226,7 @@ export function GetStartedClient() {
                     <select
                       value={form.industry}
                       onChange={(e) => setForm({ ...form, industry: e.target.value })}
-                      className="w-full rounded-lg border border-border px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#DC2626]/20 focus:border-[#DC2626]"
+                      className="w-full rounded-lg border border-border px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                     >
                       <option value="">Select industry</option>
                       {INDUSTRIES.map((i) => <option key={i} value={i}>{i}</option>)}
@@ -239,7 +239,7 @@ export function GetStartedClient() {
                       min="1"
                       value={form.locations}
                       onChange={(e) => setForm({ ...form, locations: e.target.value })}
-                      className="w-full rounded-lg border border-border px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#DC2626]/20 focus:border-[#DC2626]"
+                      className="w-full rounded-lg border border-border px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                     />
                   </div>
                 </div>
@@ -250,7 +250,7 @@ export function GetStartedClient() {
                     onChange={(e) => setForm({ ...form, goal: e.target.value })}
                     rows={3}
                     placeholder="e.g. Book 20 demos per month, reactivate old leads, build a cold email system..."
-                    className="w-full rounded-lg border border-border px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#DC2626]/20 focus:border-[#DC2626] resize-none"
+                    className="w-full rounded-lg border border-border px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none"
                   />
                 </div>
               </div>
@@ -264,7 +264,7 @@ export function GetStartedClient() {
                 <button
                   onClick={() => setStep(3)}
                   disabled={!form.name || !form.email || !form.company}
-                  className="flex-1 rounded-lg bg-[#DC2626] py-3 font-semibold text-white disabled:opacity-50 hover:bg-[#B91C1C] transition flex items-center justify-center gap-2"
+                  className="flex-1 rounded-lg bg-primary py-3 font-semibold text-white disabled:opacity-50 hover:bg-primary/90 transition flex items-center justify-center gap-2"
                 >
                   Continue <ArrowRight className="h-4 w-4" />
                 </button>
@@ -302,7 +302,7 @@ export function GetStartedClient() {
               </p>
 
               {submitError && (
-                <div className="mt-4 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+                <div className="mt-4 rounded-lg bg-primary/10 border border-primary/30 px-4 py-3 text-sm text-primary">
                   {submitError}
                 </div>
               )}
@@ -318,7 +318,7 @@ export function GetStartedClient() {
                 <button
                   onClick={handleSubmit}
                   disabled={submitting}
-                  className="flex-1 rounded-lg bg-[#DC2626] py-3 font-semibold text-white hover:bg-[#B91C1C] transition disabled:opacity-60"
+                  className="flex-1 rounded-lg bg-primary py-3 font-semibold text-white hover:bg-primary/90 transition disabled:opacity-60"
                 >
                   {submitting ? "Submitting..." : "Submit & Book Call"}
                 </button>

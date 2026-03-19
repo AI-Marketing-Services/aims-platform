@@ -23,11 +23,11 @@ import { getWorkspaceDashboard } from "@/lib/emailbison"
 export const metadata: Metadata = { title: "Dashboard" }
 
 const statusColors: Record<string, string> = {
-  ACTIVE: "bg-green-100 text-green-700",
-  TRIALING: "bg-blue-100 text-blue-700",
-  PAST_DUE: "bg-orange-100 text-orange-700",
-  PAUSED: "bg-gray-100 text-gray-600",
-  CANCELLED: "bg-red-100 text-red-700",
+  ACTIVE: "bg-green-900/20 text-green-400",
+  TRIALING: "bg-blue-900/20 text-blue-400",
+  PAST_DUE: "bg-orange-900/20 text-orange-400",
+  PAUSED: "bg-deep text-muted-foreground",
+  CANCELLED: "bg-primary/15 text-primary",
 }
 
 function timeAgo(date: Date): string {
@@ -178,7 +178,7 @@ export default async function PortalDashboard({
     <div className="space-y-8">
       {/* Checkout success banner */}
       {checkout === "success" && (
-        <div className="rounded-xl border border-green-200 bg-green-50 px-5 py-4 text-sm text-green-800 font-medium">
+        <div className="rounded-xl border border-green-800 bg-green-900/15 px-5 py-4 text-sm text-green-800 font-medium">
           Your subscription is active. Our team will begin setup within 24 hours — check your email for next steps.
         </div>
       )}
@@ -210,7 +210,7 @@ export default async function PortalDashboard({
             </div>
             <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
               <div
-                className="h-full rounded-full bg-[#DC2626] transition-all"
+                className="h-full rounded-full bg-[#C4972A] transition-all"
                 style={{ width: `${progressPct}%` }}
               />
             </div>
@@ -227,12 +227,12 @@ export default async function PortalDashboard({
                   <div
                     className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${
                       item.checked
-                        ? "border-green-500 bg-green-50"
+                        ? "border-green-500 bg-green-900/15"
                         : "border-border bg-muted"
                     }`}
                   >
                     {item.checked && (
-                      <Check className="h-3 w-3 text-green-600" />
+                      <Check className="h-3 w-3 text-green-400" />
                     )}
                   </div>
                   <span
@@ -248,7 +248,7 @@ export default async function PortalDashboard({
                 {!item.checked && item.href && (
                   <Link
                     href={item.href}
-                    className="shrink-0 flex items-center gap-1 text-sm font-medium text-[#DC2626] hover:text-[#B91C1C] transition-colors"
+                    className="shrink-0 flex items-center gap-1 text-sm font-medium text-[#C4972A] hover:text-[#A17D22] transition-colors"
                   >
                     Go <ArrowRight className="h-3.5 w-3.5" />
                   </Link>
@@ -289,12 +289,12 @@ export default async function PortalDashboard({
             <div key={label} className="rounded-2xl border border-border bg-card p-5">
               <div className="flex items-center justify-between mb-3">
                 <p className="text-sm text-muted-foreground">{label}</p>
-                <div className="w-9 h-9 rounded-xl bg-red-50 flex items-center justify-center">
-                  <Icon className="h-4 w-4 text-[#DC2626]" />
+                <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <Icon className="h-4 w-4 text-[#C4972A]" />
                 </div>
               </div>
               <p className="text-3xl font-bold font-mono text-foreground">{value}</p>
-              <p className={`mt-1 text-xs font-medium ${active ? "text-green-600" : "text-muted-foreground"}`}>
+              <p className={`mt-1 text-xs font-medium ${active ? "text-green-400" : "text-muted-foreground"}`}>
                 {active ? "↑ Active" : "—"}
               </p>
             </div>
@@ -313,7 +313,7 @@ export default async function PortalDashboard({
           <Link
             key={label}
             href={href}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border bg-card text-sm font-medium text-muted-foreground hover:text-foreground hover:border-gray-300 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border bg-card text-sm font-medium text-muted-foreground hover:text-foreground hover:border-border transition-colors"
           >
             <Icon className="h-4 w-4" />
             {label}
@@ -337,7 +337,7 @@ export default async function PortalDashboard({
             </p>
             <Link
               href="/portal/marketplace"
-              className="inline-flex items-center gap-2 rounded-lg bg-[#DC2626] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#B91C1C] transition"
+              className="inline-flex items-center gap-2 rounded-lg bg-[#C4972A] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#A17D22] transition"
             >
               Browse Services <ArrowRight className="h-4 w-4" />
             </Link>
@@ -345,7 +345,7 @@ export default async function PortalDashboard({
         ) : (
           <div className="space-y-3">
             {subs.map((sub) => {
-              const statusClass = statusColors[sub.status] ?? "bg-gray-100 text-gray-600"
+              const statusClass = statusColors[sub.status] ?? "bg-deep text-muted-foreground"
               const renewsAt = sub.currentPeriodEnd
                 ? new Date(sub.currentPeriodEnd).toLocaleDateString("en-US", {
                     month: "short",
@@ -390,7 +390,7 @@ export default async function PortalDashboard({
         <div className="rounded-2xl border border-border bg-card overflow-hidden">
           <div className="px-5 py-4 border-b border-border flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Mail className="h-4 w-4 text-[#DC2626]" />
+              <Mail className="h-4 w-4 text-[#C4972A]" />
               <h2 className="text-lg font-semibold">Email Campaigns</h2>
               {emailWorkspaceName && (
                 <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
@@ -407,31 +407,31 @@ export default async function PortalDashboard({
                 label: "Emails Sent",
                 value: emailCampaignData.totals.emailsSent.toLocaleString(),
                 icon: Mail,
-                color: "text-blue-600",
-                bg: "bg-blue-50",
+                color: "text-blue-400",
+                bg: "bg-blue-900/20",
               },
               {
                 label: "People Contacted",
                 value: emailCampaignData.totals.peopleContacted.toLocaleString(),
                 icon: Users,
-                color: "text-purple-600",
-                bg: "bg-purple-50",
+                color: "text-purple-400",
+                bg: "bg-purple-900/20",
               },
               {
                 label: "Replies",
                 value: `${emailCampaignData.totals.replies.toLocaleString()}`,
                 sub: `${emailCampaignData.replyRate}% rate`,
                 icon: MessageSquare,
-                color: "text-green-600",
-                bg: "bg-green-50",
+                color: "text-green-400",
+                bg: "bg-green-900/15",
               },
               {
                 label: "Bounced",
                 value: `${emailCampaignData.totals.bounced.toLocaleString()}`,
                 sub: `${emailCampaignData.bounceRate}% rate`,
                 icon: AlertTriangle,
-                color: "text-orange-600",
-                bg: "bg-orange-50",
+                color: "text-orange-400",
+                bg: "bg-orange-900/20",
               },
             ].map(({ label, value, sub, icon: Icon, color, bg }) => (
               <div key={label} className="px-5 py-4">
@@ -468,7 +468,7 @@ export default async function PortalDashboard({
                         <div className="flex items-center gap-2">
                           <div className="w-24 h-1.5 rounded-full bg-muted overflow-hidden">
                             <div
-                              className="h-full rounded-full bg-[#DC2626] transition-all"
+                              className="h-full rounded-full bg-[#C4972A] transition-all"
                               style={{ width: `${Math.min(c.completion_percentage, 100)}%` }}
                             />
                           </div>
@@ -481,7 +481,7 @@ export default async function PortalDashboard({
                       <span
                         className={`text-xs px-2 py-0.5 rounded-full font-medium ${
                           c.status === "active"
-                            ? "bg-green-50 text-green-700 border border-green-200"
+                            ? "bg-green-900/15 text-green-400 border border-green-800"
                             : "bg-muted text-muted-foreground border border-border"
                         }`}
                       >
@@ -497,10 +497,10 @@ export default async function PortalDashboard({
       )}
 
       {/* ── SMART UPSELL BANNER ── */}
-      <div className="border border-border rounded-2xl bg-card p-5 border-l-4 border-l-[#DC2626]">
+      <div className="border border-border rounded-2xl bg-card p-5 border-l-4 border-l-[#C4972A]">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-[#DC2626] mb-1">
+            <p className="text-xs font-semibold uppercase tracking-widest text-[#C4972A] mb-1">
               Recommended for you
             </p>
             <p className="font-semibold text-foreground">{upsellService}</p>
@@ -509,7 +509,7 @@ export default async function PortalDashboard({
           </div>
           <Link
             href="/portal/marketplace"
-            className="shrink-0 inline-flex items-center gap-1.5 rounded-lg bg-[#DC2626] px-4 py-2 text-sm font-semibold text-white hover:bg-[#B91C1C] transition whitespace-nowrap"
+            className="shrink-0 inline-flex items-center gap-1.5 rounded-lg bg-[#C4972A] px-4 py-2 text-sm font-semibold text-white hover:bg-[#A17D22] transition whitespace-nowrap"
           >
             Add to Plan <ArrowRight className="h-3.5 w-3.5" />
           </Link>

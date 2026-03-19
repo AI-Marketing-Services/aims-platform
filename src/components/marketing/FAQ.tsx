@@ -55,7 +55,7 @@ export function FAQ() {
                 className="flex w-full items-center justify-between px-6 py-5 text-left"
               >
                 <span className="pr-4 font-medium text-foreground">{faq.q}</span>
-                <span className="shrink-0 text-[#DC2626]">
+                <span className="shrink-0 text-primary">
                   {open === i ? <Minus className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
                 </span>
               </button>

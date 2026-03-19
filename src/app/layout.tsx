@@ -1,18 +1,25 @@
 import type { Metadata } from "next"
 import { ClerkProvider } from "@clerk/nextjs"
-import { Geist, Geist_Mono } from "next/font/google"
+import { Cormorant_Garamond, DM_Sans, DM_Mono } from "next/font/google"
 import { Toaster } from "sonner"
 import Script from "next/script"
 import "./globals.css"
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const cormorant = Cormorant_Garamond({
+  variable: "--font-cormorant",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+})
+
+const dmSans = DM_Sans({
+  variable: "--font-dm-sans",
   subsets: ["latin"],
 })
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const dmMono = DM_Mono({
+  variable: "--font-dm-mono",
   subsets: ["latin"],
+  weight: ["400", "500"],
 })
 
 
@@ -58,28 +65,35 @@ export default function RootLayout({
           logoLinkUrl: "https://aimseos.com",
         },
         variables: {
-          colorPrimary: "#DC2626",
-          colorBackground: "#ffffff",
-          colorText: "#111827",
-          colorInputBackground: "#f9fafb",
-          colorInputText: "#111827",
-          borderRadius: "0.375rem",
+          colorPrimary: "#C4972A",
+          colorBackground: "#0E1219",
+          colorText: "#F0EBE0",
+          colorInputBackground: "#141923",
+          colorInputText: "#F0EBE0",
+          borderRadius: "0.25rem",
         },
         elements: {
-          card: "shadow-lg border border-gray-100",
-          headerTitle: "font-bold text-gray-900",
-          headerSubtitle: "text-gray-500",
-          formButtonPrimary: "bg-[#DC2626] hover:bg-[#B91C1C] text-white font-semibold uppercase tracking-wider text-xs",
-          footerActionLink: "text-[#DC2626] hover:text-[#B91C1C]",
+          card: "shadow-lg border border-[rgba(255,255,255,0.07)]",
+          headerTitle: "font-bold text-[#F0EBE0]",
+          headerSubtitle: "text-[#F0EBE0]/60",
+          formButtonPrimary: "bg-[#C4972A] hover:bg-[#A17D22] text-[#08090D] font-semibold uppercase tracking-wider text-xs",
+          footerActionLink: "text-[#C4972A] hover:text-[#E8C46A]",
         },
       }}
     >
-      <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
-        <body className="min-h-screen bg-background font-sans antialiased">
+      <html lang="en" className={`${cormorant.variable} ${dmSans.variable} ${dmMono.variable}`}>
+        <body className="min-h-screen bg-background font-sans antialiased grain-overlay">
           {children}
           <Toaster
             position="bottom-right"
-            toastOptions={{ style: { borderRadius: '0.75rem' } }}
+            toastOptions={{
+              style: {
+                borderRadius: '0.125rem',
+                background: '#141923',
+                color: '#F0EBE0',
+                border: '1px solid rgba(255,255,255,0.07)',
+              },
+            }}
           />
           <Script id="crisp-chat" strategy="afterInteractive">
             {`window.$crisp=[];window.CRISP_WEBSITE_ID="25695ffa-8ffa-4b59-b5ad-5a509107c9c1";(function(){d=document;s=d.createElement("script");s.src="https://client.crisp.chat/l.js";s.async=1;d.getElementsByTagName("head")[0].appendChild(s);})();`}

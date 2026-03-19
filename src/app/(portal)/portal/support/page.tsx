@@ -20,25 +20,25 @@ const statusConfig = {
   open: {
     icon: AlertCircle,
     label: "Open",
-    className: "text-red-700 bg-red-50 border-red-200",
+    className: "text-primary bg-primary/10 border-primary/30",
   },
   in_progress: {
     icon: Clock,
     label: "In Progress",
-    className: "text-amber-700 bg-amber-50 border-amber-200",
+    className: "text-amber-400 bg-amber-900/20 border-amber-800",
   },
   resolved: {
     icon: CheckCircle,
     label: "Resolved",
-    className: "text-green-700 bg-green-50 border-green-200",
+    className: "text-green-400 bg-green-900/15 border-green-800",
   },
 }
 
 const priorityConfig: Record<string, string> = {
-  low: "text-gray-500",
-  normal: "text-blue-600",
-  high: "text-orange-600",
-  urgent: "text-red-600",
+  low: "text-muted-foreground",
+  normal: "text-blue-400",
+  high: "text-orange-400",
+  urgent: "text-primary",
 }
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -218,7 +218,7 @@ export default function SupportPage() {
           </button>
           <button
             onClick={() => setShowNew(!showNew)}
-            className="flex items-center gap-2 px-4 py-2 bg-[#DC2626] text-white text-sm font-medium rounded-lg hover:bg-[#B91C1C] transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-[#C4972A] text-white text-sm font-medium rounded-lg hover:bg-[#A17D22] transition-colors"
           >
             <Plus className="w-4 h-4" />
             New Ticket
@@ -241,7 +241,7 @@ export default function SupportPage() {
               <select
                 value={serviceContext}
                 onChange={(e) => setServiceContext(e.target.value)}
-                className="w-full px-4 py-3 bg-background border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#DC2626]/20 focus:border-[#DC2626]"
+                className="w-full px-4 py-3 bg-background border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#C4972A]/20 focus:border-[#C4972A]"
               >
                 <option value="">General / Other</option>
                 {services.map((s) => (
@@ -263,7 +263,7 @@ export default function SupportPage() {
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
                 placeholder="Brief description of your issue"
-                className="w-full px-4 py-3 bg-background border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#DC2626]/20 focus:border-[#DC2626]"
+                className="w-full px-4 py-3 bg-background border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C4972A]/20 focus:border-[#C4972A]"
               />
             </div>
 
@@ -278,14 +278,14 @@ export default function SupportPage() {
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="Describe the issue in detail. Include any relevant context..."
-                className="w-full px-4 py-3 bg-background border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#DC2626]/20 focus:border-[#DC2626] resize-none"
+                className="w-full px-4 py-3 bg-background border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C4972A]/20 focus:border-[#C4972A] resize-none"
               />
             </div>
 
             <div className="flex gap-3">
               <button
                 type="submit"
-                className="flex items-center gap-2 px-5 py-2.5 bg-[#DC2626] text-white text-sm font-medium rounded-lg hover:bg-[#B91C1C] transition-colors"
+                className="flex items-center gap-2 px-5 py-2.5 bg-[#C4972A] text-white text-sm font-medium rounded-lg hover:bg-[#A17D22] transition-colors"
               >
                 <Send className="w-4 h-4" />
                 Submit Ticket
@@ -304,7 +304,7 @@ export default function SupportPage() {
 
       {/* Success banner */}
       {submitted && (
-        <div className="flex items-center gap-3 p-4 bg-green-50 border border-green-200 rounded-xl text-green-700 text-sm">
+        <div className="flex items-center gap-3 p-4 bg-green-900/15 border border-green-800 rounded-xl text-green-400 text-sm">
           <CheckCircle className="w-4 h-4 flex-shrink-0" />
           Your ticket has been submitted. Our team typically responds within 2 business hours.
         </div>
@@ -396,14 +396,14 @@ export default function SupportPage() {
             Email:{" "}
             <a
               href="mailto:support@aimseos.com"
-              className="text-foreground font-medium hover:text-[#DC2626] transition-colors"
+              className="text-foreground font-medium hover:text-[#C4972A] transition-colors"
             >
               support@aimseos.com
             </a>
           </div>
           <div>
             Response time:{" "}
-            <span className="text-green-600 font-medium">
+            <span className="text-green-400 font-medium">
               Under 2 hours (business days)
             </span>
           </div>

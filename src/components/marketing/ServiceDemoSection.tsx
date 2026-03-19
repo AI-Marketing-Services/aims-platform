@@ -29,28 +29,28 @@ function OutboundDemo() {
           key={i}
           animate={{ opacity: i <= step ? 1 : 0.25, x: i === step ? 4 : 0 }}
           transition={{ duration: 0.3 }}
-          className="flex items-center gap-3 rounded-xl bg-white border border-gray-100 px-4 py-3"
+          className="flex items-center gap-3 rounded-xl bg-card border border-border px-4 py-3"
         >
           <div className="h-8 w-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: `${s.color}15` }}>
             <Image src={s.tool} alt="" width={18} height={18} className="object-contain" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-gray-800 leading-none">{s.label}</p>
-            <p className="text-xs text-gray-400 mt-0.5">{s.sub}</p>
+            <p className="text-sm font-semibold text-foreground leading-none">{s.label}</p>
+            <p className="text-xs text-muted-foreground mt-0.5">{s.sub}</p>
           </div>
           {i < step && <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0" />}
           {i === step && (
             <motion.div
               animate={{ opacity: [1, 0.3, 1] }}
               transition={{ repeat: Infinity, duration: 0.8 }}
-              className="h-2 w-2 rounded-full bg-red-500 flex-shrink-0"
+              className="h-2 w-2 rounded-full bg-primary/100 flex-shrink-0"
             />
           )}
         </motion.div>
       ))}
-      <div className="rounded-xl bg-red-50 border border-red-100 px-4 py-3 flex items-center gap-2 mt-2">
-        <TrendingUp className="h-4 w-4 text-red-600" />
-        <span className="text-sm font-semibold text-red-700">47 qualified meetings booked this month</span>
+      <div className="rounded-xl bg-primary/10 border border-primary/20 px-4 py-3 flex items-center gap-2 mt-2">
+        <TrendingUp className="h-4 w-4 text-primary" />
+        <span className="text-sm font-semibold text-primary">47 qualified meetings booked this month</span>
       </div>
     </div>
   )
@@ -81,7 +81,7 @@ function RevOpsDemo() {
             key={i}
             onClick={() => setActive(i)}
             className="flex-1 rounded-lg px-1 py-2 text-center transition-all"
-            style={{ backgroundColor: active === i ? "#DC2626" : "#F3F4F6", color: active === i ? "white" : "#6B7280" }}
+            style={{ backgroundColor: active === i ? "#C4972A" : "#141923", color: active === i ? "white" : "#9CA3AF" }}
           >
             <span className="text-[10px] font-semibold leading-none block">{stage}</span>
           </button>
@@ -94,32 +94,32 @@ function RevOpsDemo() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -6 }}
           transition={{ duration: 0.25 }}
-          className="rounded-xl border border-gray-100 bg-white p-4"
+          className="rounded-xl border border-border bg-card p-4"
         >
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-3">
-              <div className="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center text-sm font-bold text-gray-600">
+              <div className="h-8 w-8 rounded-full bg-deep flex items-center justify-center text-sm font-bold text-muted-foreground">
                 {stageDeal.name.charAt(0)}
               </div>
               <div>
-                <p className="text-sm font-semibold text-gray-800">{stageDeal.name}</p>
-                <p className="text-xs text-gray-400">Stage: {PIPELINE_STAGES[stageDeal.stage]}</p>
+                <p className="text-sm font-semibold text-foreground">{stageDeal.name}</p>
+                <p className="text-xs text-muted-foreground">Stage: {PIPELINE_STAGES[stageDeal.stage]}</p>
               </div>
             </div>
-            <span className="text-sm font-bold text-green-600">{stageDeal.value}</span>
+            <span className="text-sm font-bold text-green-400">{stageDeal.value}</span>
           </div>
           <div className="flex gap-1">
             {PIPELINE_STAGES.map((_, i) => (
-              <div key={i} className="flex-1 h-1.5 rounded-full" style={{ backgroundColor: i <= active ? "#DC2626" : "#E5E7EB" }} />
+              <div key={i} className="flex-1 h-1.5 rounded-full" style={{ backgroundColor: i <= active ? "#C4972A" : "rgba(255,255,255,0.07)" }} />
             ))}
           </div>
         </motion.div>
       </AnimatePresence>
       <div className="grid grid-cols-3 gap-2">
         {[["$47.2K", "Pipeline"], ["82%", "Win Rate"], ["4 days", "Avg. Close"]].map(([val, lbl]) => (
-          <div key={lbl} className="rounded-xl bg-gray-50 border border-gray-100 px-3 py-2.5 text-center">
-            <p className="text-base font-bold text-gray-800">{val}</p>
-            <p className="text-xs text-gray-400">{lbl}</p>
+          <div key={lbl} className="rounded-xl bg-deep border border-border px-3 py-2.5 text-center">
+            <p className="text-base font-bold text-foreground">{val}</p>
+            <p className="text-xs text-muted-foreground">{lbl}</p>
           </div>
         ))}
       </div>
@@ -156,13 +156,13 @@ function AICallingDemo() {
         <motion.div
           animate={playing && shown < VOICE_TRANSCRIPT.length ? { scale: [1, 1.15, 1] } : {}}
           transition={{ repeat: Infinity, duration: 1.2 }}
-          className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center"
+          className="h-8 w-8 rounded-full bg-green-950/30 flex items-center justify-center"
         >
-          <PhoneCall className="h-4 w-4 text-green-600" />
+          <PhoneCall className="h-4 w-4 text-green-400" />
         </motion.div>
         <div>
-          <p className="text-sm font-semibold text-gray-800">AI Voice Agent — Ford Dealership</p>
-          <p className="text-xs text-gray-400">Recall follow-up · 247 calls/day handled</p>
+          <p className="text-sm font-semibold text-foreground">AI Voice Agent — Ford Dealership</p>
+          <p className="text-xs text-muted-foreground">Recall follow-up · 247 calls/day handled</p>
         </div>
         {playing && shown < VOICE_TRANSCRIPT.length && (
           <div className="ml-auto flex gap-0.5">
@@ -177,7 +177,7 @@ function AICallingDemo() {
           </div>
         )}
         {shown >= VOICE_TRANSCRIPT.length && (
-          <button onClick={restart} className="ml-auto text-xs font-medium text-gray-400 hover:text-gray-600 flex items-center gap-1">
+          <button onClick={restart} className="ml-auto text-xs font-medium text-muted-foreground hover:text-muted-foreground flex items-center gap-1">
             <RefreshCw className="h-3 w-3" /> Replay
           </button>
         )}
@@ -194,8 +194,8 @@ function AICallingDemo() {
             <div
               className="max-w-[82%] rounded-xl px-3 py-2 text-xs leading-snug"
               style={{
-                backgroundColor: line.role === "agent" ? "#EFF6FF" : "#F0FDF4",
-                color: line.role === "agent" ? "#1D4ED8" : "#166534",
+                backgroundColor: line.role === "agent" ? "rgba(59,130,246,0.15)" : "rgba(34,197,94,0.15)",
+                color: line.role === "agent" ? "#93C5FD" : "#86EFAC",
               }}
             >
               {line.text}
@@ -204,9 +204,9 @@ function AICallingDemo() {
         ))}
       </div>
       {shown >= VOICE_TRANSCRIPT.length && (
-        <motion.div initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} className="rounded-xl bg-green-50 border border-green-100 px-4 py-3 flex items-center gap-2">
-          <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0" />
-          <span className="text-xs font-semibold text-green-700">Appointment booked · CRM updated · Confirmation SMS sent</span>
+        <motion.div initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} className="rounded-xl bg-green-950/30 border border-green-800 px-4 py-3 flex items-center gap-2">
+          <CheckCircle2 className="h-4 w-4 text-green-400 flex-shrink-0" />
+          <span className="text-xs font-semibold text-green-400">Appointment booked · CRM updated · Confirmation SMS sent</span>
         </motion.div>
       )}
     </div>
@@ -219,18 +219,18 @@ const CRM_TABS = [
     label: "Website",
     content: () => (
       <div className="space-y-3">
-        <div className="rounded-xl border border-gray-100 bg-gray-50 overflow-hidden">
-          <div className="h-2.5 w-full bg-[#DC2626] flex items-center gap-1 px-2">
-            {[1,2,3].map(d => <div key={d} className="h-1.5 w-1.5 rounded-full bg-white/50" />)}
+        <div className="rounded-xl border border-border bg-deep overflow-hidden">
+          <div className="h-2.5 w-full bg-primary flex items-center gap-1 px-2">
+            {[1,2,3].map(d => <div key={d} className="h-1.5 w-1.5 rounded-full bg-card/50" />)}
           </div>
           <div className="p-3 space-y-2">
-            <div className="h-4 w-1/2 rounded bg-gray-200" />
-            <div className="h-3 w-3/4 rounded bg-gray-200" />
-            <div className="h-3 w-2/3 rounded bg-gray-200" />
-            <div className="mt-3 h-7 w-28 rounded-lg bg-[#DC2626]" />
+            <div className="h-4 w-1/2 rounded bg-surface" />
+            <div className="h-3 w-3/4 rounded bg-surface" />
+            <div className="h-3 w-2/3 rounded bg-surface" />
+            <div className="mt-3 h-7 w-28 rounded-lg bg-primary" />
           </div>
         </div>
-        <p className="text-xs text-gray-500 text-center">GHL-powered site — live in 3 days</p>
+        <p className="text-xs text-muted-foreground text-center">GHL-powered site — live in 3 days</p>
       </div>
     ),
   },
@@ -243,11 +243,11 @@ const CRM_TABS = [
           { name: "Vertex Inc", stage: "Demo Booked", val: "$5,200", color: "#2563EB" },
           { name: "Prism LLC", stage: "Proposal", val: "$12,000", color: "#EA580C" },
         ].map((d) => (
-          <div key={d.name} className="flex items-center gap-3 rounded-xl bg-white border border-gray-100 px-3 py-2.5">
-            <div className="h-7 w-7 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-600">{d.name[0]}</div>
+          <div key={d.name} className="flex items-center gap-3 rounded-xl bg-card border border-border px-3 py-2.5">
+            <div className="h-7 w-7 rounded-full bg-deep flex items-center justify-center text-xs font-bold text-muted-foreground">{d.name[0]}</div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-semibold text-gray-800">{d.name}</p>
-              <p className="text-xs text-gray-400">{d.stage}</p>
+              <p className="text-xs font-semibold text-foreground">{d.name}</p>
+              <p className="text-xs text-muted-foreground">{d.stage}</p>
             </div>
             <span className="text-xs font-bold" style={{ color: d.color }}>{d.val}</span>
           </div>
@@ -266,7 +266,7 @@ const CRM_TABS = [
           { role: "user", text: "Sure, Thursday works." },
         ].map((m, i) => (
           <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
-            <div className={`max-w-[78%] rounded-xl px-3 py-2 text-xs leading-snug ${m.role === "bot" ? "bg-blue-50 text-blue-800" : "bg-[#DC2626] text-white"}`}>
+            <div className={`max-w-[78%] rounded-xl px-3 py-2 text-xs leading-snug ${m.role === "bot" ? "bg-blue-950/30 text-blue-300" : "bg-primary text-white"}`}>
               {m.text}
             </div>
           </div>
@@ -280,18 +280,18 @@ const CRM_TABS = [
       <div className="space-y-3">
         <div className="grid grid-cols-3 gap-2">
           {[["1,240", "Visitors"], ["68", "Leads"], ["5.5%", "CVR"]].map(([v, l]) => (
-            <div key={l} className="rounded-xl bg-gray-50 border border-gray-100 px-2 py-2.5 text-center">
-              <p className="text-sm font-bold text-gray-800">{v}</p>
-              <p className="text-[10px] text-gray-400">{l}</p>
+            <div key={l} className="rounded-xl bg-deep border border-border px-2 py-2.5 text-center">
+              <p className="text-sm font-bold text-foreground">{v}</p>
+              <p className="text-[10px] text-muted-foreground">{l}</p>
             </div>
           ))}
         </div>
         <div className="flex items-end gap-1 h-16">
           {[30, 45, 28, 60, 52, 70, 65].map((h, i) => (
-            <div key={i} className="flex-1 rounded-t bg-[#DC2626] opacity-70" style={{ height: `${h}%` }} />
+            <div key={i} className="flex-1 rounded-t bg-primary opacity-70" style={{ height: `${h}%` }} />
           ))}
         </div>
-        <p className="text-xs text-gray-400 text-center">Leads captured last 7 days</p>
+        <p className="text-xs text-muted-foreground text-center">Leads captured last 7 days</p>
       </div>
     ),
   },
@@ -312,7 +312,7 @@ function WebsiteCRMDemo() {
             key={i}
             onClick={() => setTab(i)}
             className="flex-1 rounded-lg px-1 py-2 text-center transition-all text-[11px] font-semibold"
-            style={{ backgroundColor: tab === i ? "#DC2626" : "#F3F4F6", color: tab === i ? "white" : "#6B7280" }}
+            style={{ backgroundColor: tab === i ? "#C4972A" : "#141923", color: tab === i ? "white" : "#9CA3AF" }}
           >
             {t.label}
           </button>
@@ -353,33 +353,33 @@ function FinanceDemo() {
     <div className="space-y-3">
       <div className="flex items-center gap-2 mb-1">
         <BarChart2 className="h-4 w-4 text-purple-600" />
-        <span className="text-sm font-semibold text-gray-700">P&L Automation</span>
+        <span className="text-sm font-semibold text-foreground">P&L Automation</span>
         <div className="ml-auto flex gap-1">
           <button
             onClick={() => setShowAfter(false)}
-            className={`text-[11px] font-semibold px-2 py-0.5 rounded-full transition ${!showAfter ? "bg-red-100 text-red-700" : "text-gray-400"}`}
+            className={`text-[11px] font-semibold px-2 py-0.5 rounded-full transition ${!showAfter ? "bg-primary/15 text-primary" : "text-muted-foreground"}`}
           >
             Raw
           </button>
           <button
             onClick={() => setShowAfter(true)}
-            className={`text-[11px] font-semibold px-2 py-0.5 rounded-full transition ${showAfter ? "bg-green-100 text-green-700" : "text-gray-400"}`}
+            className={`text-[11px] font-semibold px-2 py-0.5 rounded-full transition ${showAfter ? "bg-green-950/30 text-green-400" : "text-muted-foreground"}`}
           >
             AIMS Clean
           </button>
         </div>
       </div>
-      <div className="rounded-xl border border-gray-100 bg-white overflow-hidden">
-        <div className="grid grid-cols-2 border-b border-gray-100 bg-gray-50 px-3 py-1.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wide">
+      <div className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="grid grid-cols-2 border-b border-border bg-deep px-3 py-1.5 text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">
           <span>Line Item</span>
           <span className="text-right">{showAfter ? "Cleaned" : "Your data"}</span>
         </div>
         <AnimatePresence mode="wait">
           <motion.div key={showAfter ? "after" : "before"} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
             {PL_ROWS.map((row) => (
-              <div key={row.label} className="grid grid-cols-2 px-3 py-2 border-b border-gray-50 last:border-0">
-                <span className="text-xs text-gray-600 font-medium">{row.label}</span>
-                <span className={`text-xs text-right font-semibold ${showAfter ? (row.changed ? "text-green-700" : "text-gray-700") : "text-red-500"}`}>
+              <div key={row.label} className="grid grid-cols-2 px-3 py-2 border-b border-border/50 last:border-0">
+                <span className="text-xs text-muted-foreground font-medium">{row.label}</span>
+                <span className={`text-xs text-right font-semibold ${showAfter ? (row.changed ? "text-green-400" : "text-foreground") : "text-primary"}`}>
                   {showAfter ? row.after : row.before}
                 </span>
               </div>
@@ -388,9 +388,9 @@ function FinanceDemo() {
         </AnimatePresence>
       </div>
       {showAfter && (
-        <motion.div initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} className="rounded-xl bg-green-50 border border-green-100 px-3 py-2.5 flex items-center gap-2">
-          <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0" />
-          <span className="text-xs font-semibold text-green-700">Clean P&L ready — auto-synced from QuickBooks</span>
+        <motion.div initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} className="rounded-xl bg-green-900/15 border border-green-800 px-3 py-2.5 flex items-center gap-2">
+          <CheckCircle2 className="h-4 w-4 text-green-400 flex-shrink-0" />
+          <span className="text-xs font-semibold text-green-400">Clean P&L ready — auto-synced from QuickBooks</span>
         </motion.div>
       )}
     </div>
@@ -442,32 +442,32 @@ function AudienceDemo() {
     <div className="space-y-3">
       <div className="flex items-center gap-2 mb-1">
         <Search className="h-4 w-4 text-blue-500" />
-        <span className="text-sm font-semibold text-gray-700">Audience Intelligence Search</span>
+        <span className="text-sm font-semibold text-foreground">Audience Intelligence Search</span>
       </div>
-      <div className="rounded-xl border border-gray-200 bg-white px-3 py-2.5 flex items-center gap-2">
-        <Search className="h-3.5 w-3.5 text-gray-300 flex-shrink-0" />
-        <span className="text-sm text-gray-700 flex-1">
+      <div className="rounded-xl border border-border bg-card px-3 py-2.5 flex items-center gap-2">
+        <Search className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
+        <span className="text-sm text-foreground flex-1">
           {typed}
-          <motion.span animate={{ opacity: [1, 0, 1] }} transition={{ repeat: Infinity, duration: 0.6 }} className="inline-block w-0.5 h-3.5 bg-gray-500 ml-0.5 align-middle" />
+          <motion.span animate={{ opacity: [1, 0, 1] }} transition={{ repeat: Infinity, duration: 0.6 }} className="inline-block w-0.5 h-3.5 bg-deep0 ml-0.5 align-middle" />
         </span>
       </div>
       <AnimatePresence>
         {showResults && (
           <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-1.5">
             {AUDIENCE_RESULTS.slice(0, 3).map((r) => (
-              <div key={r.label} className="flex items-center gap-3 rounded-xl bg-gray-50 border border-gray-100 px-3 py-2.5">
+              <div key={r.label} className="flex items-center gap-3 rounded-xl bg-deep border border-border px-3 py-2.5">
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-medium text-gray-700 leading-tight">{r.label}</p>
-                  <p className="text-[10px] text-gray-400">{r.count} matched</p>
+                  <p className="text-xs font-medium text-foreground leading-tight">{r.label}</p>
+                  <p className="text-[10px] text-muted-foreground">{r.count} matched</p>
                 </div>
                 <div className="flex-shrink-0 text-right">
-                  <div className="text-xs font-bold text-[#DC2626]">{r.score}%</div>
-                  <div className="text-[10px] text-gray-400">match</div>
+                  <div className="text-xs font-bold text-primary">{r.score}%</div>
+                  <div className="text-[10px] text-muted-foreground">match</div>
                 </div>
               </div>
             ))}
-            <div className="rounded-xl bg-blue-50 border border-blue-100 px-3 py-2 text-center">
-              <span className="text-xs font-semibold text-blue-700">9,044 total contacts identified · Export to CRM</span>
+            <div className="rounded-xl bg-blue-950/30 border border-blue-800 px-3 py-2 text-center">
+              <span className="text-xs font-semibold text-blue-400">9,044 total contacts identified · Export to CRM</span>
             </div>
           </motion.div>
         )}
@@ -499,22 +499,22 @@ function ContentDemo() {
   }, [idx])
   return (
     <div className="space-y-3">
-      <div className="flex items-center gap-2 text-sm text-gray-500 font-medium">
+      <div className="flex items-center gap-2 text-sm text-muted-foreground font-medium">
         <Image src="/integrations/openai-svgrepo-com.svg" alt="AI" width={16} height={16} />
         AI Content Generator
-        <motion.div animate={{ opacity: [1,0,1] }} transition={{ repeat: Infinity, duration: 0.9 }} className="h-2 w-2 rounded-full bg-green-500 ml-auto" />
+        <motion.div animate={{ opacity: [1,0,1] }} transition={{ repeat: Infinity, duration: 0.9 }} className="h-2 w-2 rounded-full bg-green-400 ml-auto" />
       </div>
-      <div className="min-h-[64px] rounded-xl border border-gray-100 bg-white p-4">
-        <p className="text-base font-semibold text-gray-800 leading-snug">
+      <div className="min-h-[64px] rounded-xl border border-border bg-card p-4">
+        <p className="text-base font-semibold text-foreground leading-snug">
           {typed}
-          <motion.span animate={{ opacity: [1,0,1] }} transition={{ repeat: Infinity, duration: 0.5 }} className="inline-block w-0.5 h-4 bg-gray-700 ml-0.5 align-middle" />
+          <motion.span animate={{ opacity: [1,0,1] }} transition={{ repeat: Infinity, duration: 0.5 }} className="inline-block w-0.5 h-4 bg-foreground ml-0.5 align-middle" />
         </p>
       </div>
       <div className="grid grid-cols-3 gap-2">
         {[["4.8/5", "Hook Score"], ["94%", "Open Rate"], ["2.1x", "CTR Lift"]].map(([val, lbl]) => (
-          <div key={lbl} className="rounded-xl bg-gray-50 border border-gray-100 px-3 py-2.5 text-center">
-            <p className="text-base font-bold text-gray-800">{val}</p>
-            <p className="text-xs text-gray-400">{lbl}</p>
+          <div key={lbl} className="rounded-xl bg-deep border border-border px-3 py-2.5 text-center">
+            <p className="text-base font-bold text-foreground">{val}</p>
+            <p className="text-xs text-muted-foreground">{lbl}</p>
           </div>
         ))}
       </div>
@@ -545,30 +545,30 @@ function ReactivationDemo() {
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2 mb-1">
-        <RefreshCw className="h-4 w-4 text-red-500" />
-        <span className="text-sm font-semibold text-gray-700">Dead CRM contacts scanned</span>
+        <RefreshCw className="h-4 w-4 text-primary" />
+        <span className="text-sm font-semibold text-foreground">Dead CRM contacts scanned</span>
       </div>
-      <div className="rounded-xl border border-gray-100 bg-white p-4">
+      <div className="rounded-xl border border-border bg-card p-4">
         <div className="flex items-end gap-2">
-          <span className="text-3xl font-extrabold text-gray-900 tabular-nums">{count.toLocaleString()}</span>
-          <span className="text-sm text-gray-400 mb-1">/ 2,783 contacts</span>
+          <span className="text-3xl font-extrabold text-foreground tabular-nums">{count.toLocaleString()}</span>
+          <span className="text-sm text-muted-foreground mb-1">/ 2,783 contacts</span>
         </div>
-        <div className="mt-2 h-2 rounded-full bg-gray-100 overflow-hidden">
+        <div className="mt-2 h-2 rounded-full bg-deep overflow-hidden">
           <motion.div
             animate={{ width: `${(count / 2783) * 100}%` }}
             transition={{ duration: 0.05 }}
-            className="h-full bg-gradient-to-r from-red-500 to-red-400 rounded-full"
+            className="h-full bg-gradient-to-r from-primary to-[#E8C46A] rounded-full"
           />
         </div>
       </div>
       <div className="grid grid-cols-2 gap-2">
-        <div className="rounded-xl bg-green-50 border border-green-100 p-3">
-          <p className="text-2xl font-extrabold text-green-700 tabular-nums">{replied}</p>
-          <p className="text-xs text-green-600 font-medium">Replied positively</p>
+        <div className="rounded-xl bg-green-900/15 border border-green-800 p-3">
+          <p className="text-2xl font-extrabold text-green-400 tabular-nums">{replied}</p>
+          <p className="text-xs text-green-400 font-medium">Replied positively</p>
         </div>
-        <div className="rounded-xl bg-red-50 border border-red-100 p-3">
-          <p className="text-2xl font-extrabold text-red-700">{pct}%</p>
-          <p className="text-xs text-red-600 font-medium">Reactivation rate</p>
+        <div className="rounded-xl bg-primary/10 border border-primary/20 p-3">
+          <p className="text-2xl font-extrabold text-primary">{pct}%</p>
+          <p className="text-xs text-primary font-medium">Reactivation rate</p>
         </div>
       </div>
     </div>
@@ -600,18 +600,18 @@ function DatabaseDemo() {
     <div className="space-y-3">
       <div className="flex items-center gap-2 mb-1">
         <Database className="h-4 w-4 text-blue-500" />
-        <span className="text-sm font-semibold text-gray-700">CRM Health Scanner</span>
+        <span className="text-sm font-semibold text-foreground">CRM Health Scanner</span>
         {scanning
           ? <motion.div animate={{ opacity: [1,0,1] }} transition={{ repeat: Infinity, duration: 0.7 }} className="ml-auto text-xs text-orange-500 font-medium">Scanning…</motion.div>
-          : <span className="ml-auto text-xs text-green-600 font-semibold">Complete</span>
+          : <span className="ml-auto text-xs text-green-400 font-semibold">Complete</span>
         }
       </div>
-      <div className="rounded-xl border border-gray-100 bg-white p-4">
+      <div className="rounded-xl border border-border bg-card p-4">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-xs text-gray-500">Analyzing 8,430 records</span>
-          <span className="text-xs font-bold text-gray-700">{progress}%</span>
+          <span className="text-xs text-muted-foreground">Analyzing 8,430 records</span>
+          <span className="text-xs font-bold text-foreground">{progress}%</span>
         </div>
-        <div className="h-2 rounded-full bg-gray-100 overflow-hidden">
+        <div className="h-2 rounded-full bg-deep overflow-hidden">
           <motion.div
             animate={{ width: `${progress}%` }}
             transition={{ duration: 0.05 }}
@@ -623,10 +623,10 @@ function DatabaseDemo() {
         {!scanning && (
           <motion.div initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} className="space-y-1.5">
             {DB_FIELDS.map((f) => (
-              <div key={f.label} className="flex items-center gap-3 rounded-xl bg-gray-50 border border-gray-100 px-3 py-2.5">
+              <div key={f.label} className="flex items-center gap-3 rounded-xl bg-deep border border-border px-3 py-2.5">
                 <div className="h-2.5 w-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: f.color }} />
-                <span className="text-xs text-gray-600 flex-1">{f.label}</span>
-                <span className="text-xs font-bold text-gray-800">{f.count}</span>
+                <span className="text-xs text-muted-foreground flex-1">{f.label}</span>
+                <span className="text-xs font-bold text-foreground">{f.count}</span>
               </div>
             ))}
           </motion.div>
@@ -654,7 +654,7 @@ export function ServiceDemoWidget({ slug }: { slug: string }) {
   const Demo = DEMO_MAP[slug]
   if (!Demo) return null
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-md">
+    <div className="bg-card rounded-2xl border border-border p-6 shadow-md">
       <Demo />
     </div>
   )
@@ -666,11 +666,11 @@ export function ServiceDemoSection({ slug }: { slug: string }) {
   if (!Demo) return null
 
   return (
-    <section className="py-20 bg-[#F5F5F5]">
+    <section className="py-20 bg-deep">
       <div className="container mx-auto max-w-4xl px-4">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">See It In Action</h2>
-        <p className="text-gray-500 mb-8">Live interactive preview — this is what we build for you.</p>
-        <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm max-w-lg mx-auto">
+        <h2 className="text-2xl font-bold text-foreground mb-2">See It In Action</h2>
+        <p className="text-muted-foreground mb-8">Live interactive preview — this is what we build for you.</p>
+        <div className="bg-card rounded-2xl border border-border p-8 shadow-sm max-w-lg mx-auto">
           <Demo />
         </div>
       </div>

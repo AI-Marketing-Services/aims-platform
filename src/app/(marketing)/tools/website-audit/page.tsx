@@ -41,7 +41,7 @@ function ScoreRing({ score, label, size = 80 }: { score: number; label: string; 
   const radius = (size - 12) / 2
   const circumference = 2 * Math.PI * radius
   const fill = (score / 100) * circumference
-  const color = score >= 70 ? "#16A34A" : score >= 50 ? "#EA580C" : "#DC2626"
+  const color = score >= 70 ? "#16A34A" : score >= 50 ? "#EA580C" : "#C4972A"
 
   return (
     <div className="flex flex-col items-center gap-1">
@@ -57,7 +57,7 @@ function ScoreRing({ score, label, size = 80 }: { score: number; label: string; 
         />
         <text x={size / 2} y={size / 2 + 5} textAnchor="middle" fontSize={16} fontWeight={700} fill={color}>{score}</text>
       </svg>
-      <span className="text-xs text-gray-500 font-medium text-center leading-tight">{label}</span>
+      <span className="text-xs text-muted-foreground font-medium text-center leading-tight">{label}</span>
     </div>
   )
 }
@@ -149,18 +149,18 @@ export default function WebsiteAuditPage() {
     setPhase("results")
   }
 
-  const scoreColor = (s: number) => s >= 70 ? "text-green-600" : s >= 50 ? "text-orange-500" : "text-red-500"
+  const scoreColor = (s: number) => s >= 70 ? "text-green-400" : s >= 50 ? "text-orange-500" : "text-primary"
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA]">
+    <div className="min-h-screen bg-deep">
       {/* Header */}
-      <div className="border-b border-gray-200 bg-white sticky top-0 z-10">
+      <div className="border-b border-border bg-card sticky top-0 z-10">
         <div className="max-w-3xl mx-auto px-4 py-4 flex items-center gap-3">
-          <div className="w-8 h-8 bg-[#DC2626] rounded-lg flex items-center justify-center">
+          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
             <Search className="w-4 h-4 text-white" />
           </div>
-          <span className="font-semibold text-gray-900">AIMS Website Audit</span>
-          <span className="ml-auto text-xs text-gray-400 bg-gray-100 px-2.5 py-1 rounded-full">Free · Instant</span>
+          <span className="font-semibold text-foreground">AIMS Website Audit</span>
+          <span className="ml-auto text-xs text-muted-foreground bg-deep px-2.5 py-1 rounded-full">Free · Instant</span>
         </div>
       </div>
 
@@ -176,38 +176,38 @@ export default function WebsiteAuditPage() {
               exit={{ opacity: 0, y: -16 }}
               className="text-center"
             >
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-red-50 text-[#DC2626] text-sm font-medium rounded-full mb-6">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary text-sm font-medium rounded-full mb-6">
                 <Zap className="w-3.5 h-3.5" />
                 AI-Powered Website Audit
               </div>
-              <h1 className="text-4xl font-bold text-gray-900 mb-4 leading-tight">
+              <h1 className="text-4xl font-bold text-foreground mb-4 leading-tight">
                 Is Your Website Costing You Leads?
               </h1>
-              <p className="text-lg text-gray-600 mb-10">
+              <p className="text-lg text-muted-foreground mb-10">
                 Enter your URL and we&apos;ll scan your site for SEO gaps, conversion problems, and AI-answer readiness in under 30 seconds.
               </p>
 
-              <form onSubmit={startAudit} className="bg-white border border-gray-200 rounded-2xl p-6">
+              <form onSubmit={startAudit} className="bg-card border border-border rounded-2xl p-6">
                 <div className="flex gap-3">
                   <div className="flex-1 relative">
-                    <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <input
                       type="text"
                       required
                       value={url}
                       onChange={(e) => setUrl(e.target.value)}
                       placeholder="yourwebsite.com"
-                      className="w-full pl-10 pr-4 py-3.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#DC2626] focus:border-transparent text-gray-900 font-medium"
+                      className="w-full pl-10 pr-4 py-3.5 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-foreground font-medium"
                     />
                   </div>
                   <button
                     type="submit"
-                    className="px-6 py-3.5 bg-[#DC2626] text-white font-semibold rounded-xl hover:bg-[#B91C1C] transition-colors whitespace-nowrap"
+                    className="px-6 py-3.5 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 transition-colors whitespace-nowrap"
                   >
                     Audit My Site
                   </button>
                 </div>
-                <p className="mt-3 text-xs text-gray-400">No account required. Results in ~20 seconds.</p>
+                <p className="mt-3 text-xs text-muted-foreground">No account required. Results in ~20 seconds.</p>
               </form>
 
               {/* What we check */}
@@ -218,11 +218,11 @@ export default function WebsiteAuditPage() {
                   { icon: TrendingDown, label: "Conversion Gaps", desc: "CTAs, forms, and funnel leaks" },
                   { icon: Shield, label: "Technical Health", desc: "Schema, mobile, accessibility" },
                 ].map((item) => (
-                  <div key={item.label} className="bg-white border border-gray-200 rounded-xl p-4 flex items-start gap-3">
-                    <item.icon className="w-4 h-4 text-[#DC2626] mt-0.5 flex-shrink-0" />
+                  <div key={item.label} className="bg-card border border-border rounded-xl p-4 flex items-start gap-3">
+                    <item.icon className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
                     <div>
-                      <div className="text-sm font-semibold text-gray-900">{item.label}</div>
-                      <div className="text-xs text-gray-500">{item.desc}</div>
+                      <div className="text-sm font-semibold text-foreground">{item.label}</div>
+                      <div className="text-xs text-muted-foreground">{item.desc}</div>
                     </div>
                   </div>
                 ))}
@@ -239,28 +239,28 @@ export default function WebsiteAuditPage() {
               exit={{ opacity: 0, y: -16 }}
             >
               <div className="text-center mb-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">Scanning {url}</h2>
-                <p className="text-gray-500 text-sm">AI analyzing your site across 6 dimensions</p>
+                <h2 className="text-2xl font-bold text-foreground mb-2">Scanning {url}</h2>
+                <p className="text-muted-foreground text-sm">AI analyzing your site across 6 dimensions</p>
               </div>
 
               {/* Progress indicator */}
               <div className="mb-6">
-                <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                <div className="h-1.5 bg-surface rounded-full overflow-hidden">
                   <motion.div
-                    className="h-1.5 bg-[#DC2626] rounded-full"
+                    className="h-1.5 bg-primary rounded-full"
                     initial={{ width: "0%" }}
                     animate={{ width: `${(completedSteps.length / AUDIT_STEPS.length) * 100}%` }}
                     transition={{ duration: 0.4 }}
                   />
                 </div>
-                <div className="flex justify-between text-xs text-gray-400 mt-1">
+                <div className="flex justify-between text-xs text-muted-foreground mt-1">
                   <span>{completedSteps.length} of {AUDIT_STEPS.length} complete</span>
                   <span>{Math.round((completedSteps.length / AUDIT_STEPS.length) * 100)}%</span>
                 </div>
               </div>
 
               {/* Steps list */}
-              <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
+              <div className="bg-card border border-border rounded-2xl overflow-hidden">
                 {AUDIT_STEPS.map((step, i) => {
                   const isDone = completedSteps.includes(i)
                   const isActive = currentStep === i && !isDone
@@ -270,19 +270,19 @@ export default function WebsiteAuditPage() {
                     <div
                       key={step.id}
                       className={cn(
-                        "flex items-center gap-4 px-5 py-4 border-b border-gray-100 last:border-0 transition-colors",
-                        isActive && "bg-red-50/50"
+                        "flex items-center gap-4 px-5 py-4 border-b border-border last:border-0 transition-colors",
+                        isActive && "bg-primary/10/50"
                       )}
                     >
                       <div className="w-6 h-6 flex-shrink-0 flex items-center justify-center">
                         {isDone && <CheckCircle2 className="w-5 h-5 text-green-500" />}
-                        {isActive && <Loader2 className="w-5 h-5 text-[#DC2626] animate-spin" />}
-                        {isPending && <div className="w-2 h-2 rounded-full bg-gray-300" />}
+                        {isActive && <Loader2 className="w-5 h-5 text-primary animate-spin" />}
+                        {isPending && <div className="w-2 h-2 rounded-full bg-muted-foreground" />}
                       </div>
                       <div className="flex-1">
                         <div className={cn(
                           "text-sm font-medium",
-                          isDone ? "text-gray-400 line-through" : isActive ? "text-gray-900" : "text-gray-400"
+                          isDone ? "text-muted-foreground line-through" : isActive ? "text-foreground" : "text-muted-foreground"
                         )}>
                           {step.label}
                         </div>
@@ -290,7 +290,7 @@ export default function WebsiteAuditPage() {
                           <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            className="text-xs text-[#DC2626] mt-0.5"
+                            className="text-xs text-primary mt-0.5"
                           >
                             {step.detail}
                           </motion.div>
@@ -315,33 +315,33 @@ export default function WebsiteAuditPage() {
               exit={{ opacity: 0 }}
               className="text-center"
             >
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <CheckCircle2 className="w-8 h-8 text-green-600" />
+              <div className="w-16 h-16 bg-green-900/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <CheckCircle2 className="w-8 h-8 text-green-400" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-3">Audit complete — see your results</h2>
-              <p className="text-gray-500 mb-8 text-sm">
-                We found issues on <span className="font-semibold text-gray-700">{url}</span>. Enter your email to unlock the full report.
+              <h2 className="text-2xl font-bold text-foreground mb-3">Audit complete — see your results</h2>
+              <p className="text-muted-foreground mb-8 text-sm">
+                We found issues on <span className="font-semibold text-foreground">{url}</span>. Enter your email to unlock the full report.
               </p>
-              <form onSubmit={handleEmailSubmit} className="bg-white border border-gray-200 rounded-2xl p-8 text-left space-y-4">
+              <form onSubmit={handleEmailSubmit} className="bg-card border border-border rounded-2xl p-8 text-left space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Work Email</label>
+                  <label className="block text-sm font-medium text-foreground mb-1.5">Work Email</label>
                   <input
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@company.com"
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#DC2626] text-gray-900"
+                    className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-foreground"
                   />
                 </div>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full py-4 bg-[#DC2626] text-white font-semibold rounded-xl hover:bg-[#B91C1C] transition-colors disabled:opacity-70 flex items-center justify-center gap-2"
+                  className="w-full py-4 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 transition-colors disabled:opacity-70 flex items-center justify-center gap-2"
                 >
                   {submitting ? "Processing..." : <>View Full Report <ArrowRight className="w-4 h-4" /></>}
                 </button>
-                <p className="text-xs text-center text-gray-400">We&apos;ll email you a copy. No spam.</p>
+                <p className="text-xs text-center text-muted-foreground">We&apos;ll email you a copy. No spam.</p>
               </form>
             </motion.div>
           )}
@@ -355,15 +355,15 @@ export default function WebsiteAuditPage() {
               className="space-y-6"
             >
               {/* Overall score */}
-              <div className="bg-white border border-gray-200 rounded-2xl p-8 text-center">
-                <h2 className="text-lg font-semibold text-gray-700 mb-4">Overall Website Score</h2>
+              <div className="bg-card border border-border rounded-2xl p-8 text-center">
+                <h2 className="text-lg font-semibold text-foreground mb-4">Overall Website Score</h2>
                 <div className="flex justify-center mb-4">
                   <ScoreRing score={scores.overall} label="Overall" size={100} />
                 </div>
                 <div className={cn("text-xl font-bold mb-2", scoreColor(scores.overall))}>
                   {scores.overall < 50 ? "Needs Significant Work" : scores.overall < 70 ? "Room for Improvement" : "Good Foundation"}
                 </div>
-                <p className="text-gray-500 text-sm">
+                <p className="text-muted-foreground text-sm">
                   {analysis?.summary ?? (scores.overall < 50
                     ? "Your site has major gaps that are costing you leads daily. AIMS can address all of these within 2 weeks."
                     : "You're above average but leaving leads on the table. Let's close the gaps.")}
@@ -371,8 +371,8 @@ export default function WebsiteAuditPage() {
               </div>
 
               {/* Score breakdown */}
-              <div className="bg-white border border-gray-200 rounded-2xl p-6">
-                <h3 className="font-semibold text-gray-900 mb-5">Score Breakdown</h3>
+              <div className="bg-card border border-border rounded-2xl p-6">
+                <h3 className="font-semibold text-foreground mb-5">Score Breakdown</h3>
                 <div className="flex justify-around">
                   <ScoreRing score={scores.seo} label="SEO & AEO" size={80} />
                   <ScoreRing score={scores.speed} label="Page Speed" size={80} />
@@ -388,15 +388,15 @@ export default function WebsiteAuditPage() {
                     <Zap className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
                     <div>
                       <div className="text-sm font-semibold text-amber-900 mb-1">Top Opportunity</div>
-                      <div className="text-sm text-amber-800">{analysis.topOpportunity}</div>
+                      <div className="text-sm text-amber-400">{analysis.topOpportunity}</div>
                     </div>
                   </div>
                 </div>
               )}
 
               {/* Top issues */}
-              <div className="bg-white border border-gray-200 rounded-2xl p-6">
-                <h3 className="font-semibold text-gray-900 mb-4">Issues Found</h3>
+              <div className="bg-card border border-border rounded-2xl p-6">
+                <h3 className="font-semibold text-foreground mb-4">Issues Found</h3>
                 <div className="space-y-3">
                   {(analysis?.issues ?? [
                     { severity: "critical", issue: "No FAQ schema markup — invisible to AI search engines", fix: "AIMS adds structured FAQ schema within 48 hours" },
@@ -404,11 +404,11 @@ export default function WebsiteAuditPage() {
                     { severity: "high", issue: "Page load time exceeds 3.2s — above Google's recommended threshold", fix: "Technical SEO sprint to optimize Core Web Vitals" },
                     { severity: "medium", issue: "No lead capture widget on highest-traffic pages", fix: "AI chatbot + form placement optimization" },
                   ]).map((item, i) => (
-                    <div key={i} className="flex gap-3 p-4 rounded-xl bg-gray-50 border border-gray-100">
-                      <AlertCircle className={cn("w-4 h-4 flex-shrink-0 mt-0.5", item.severity === "critical" ? "text-red-500" : item.severity === "high" ? "text-orange-500" : "text-yellow-500")} />
+                    <div key={i} className="flex gap-3 p-4 rounded-xl bg-deep border border-border">
+                      <AlertCircle className={cn("w-4 h-4 flex-shrink-0 mt-0.5", item.severity === "critical" ? "text-primary" : item.severity === "high" ? "text-orange-500" : "text-yellow-500")} />
                       <div>
-                        <div className="text-sm font-medium text-gray-900">{item.issue}</div>
-                        <div className="text-xs text-[#DC2626] mt-0.5 flex items-center gap-1">
+                        <div className="text-sm font-medium text-foreground">{item.issue}</div>
+                        <div className="text-xs text-primary mt-0.5 flex items-center gap-1">
                           <Zap className="w-3 h-3" />
                           AIMS Fix: {item.fix}
                         </div>
@@ -420,12 +420,12 @@ export default function WebsiteAuditPage() {
 
               {/* Strengths */}
               {analysis?.strengths && analysis.strengths.length > 0 && (
-                <div className="bg-green-50 border border-green-200 rounded-2xl p-6">
+                <div className="bg-green-900/15 border border-green-800 rounded-2xl p-6">
                   <h3 className="font-semibold text-green-900 mb-3">What&apos;s Working</h3>
                   <ul className="space-y-2">
                     {analysis.strengths.map((s, i) => (
                       <li key={i} className="flex items-start gap-2 text-sm text-green-800">
-                        <CheckCircle2 className="w-4 h-4 text-green-600 shrink-0 mt-0.5" />
+                        <CheckCircle2 className="w-4 h-4 text-green-400 shrink-0 mt-0.5" />
                         {s}
                       </li>
                     ))}
@@ -434,12 +434,12 @@ export default function WebsiteAuditPage() {
               )}
 
               {/* CTA */}
-              <div className="bg-[#DC2626] rounded-2xl p-8 text-center text-white">
+              <div className="bg-primary rounded-2xl p-8 text-center text-white">
                 <h3 className="text-2xl font-bold mb-3">Let AIMS fix this for you</h3>
-                <p className="text-red-100 mb-6 text-sm">Book a 30-min call. We&apos;ll walk through your audit and build a fix plan on the spot.</p>
+                <p className="text-primary-foreground/80 mb-6 text-sm">Book a 30-min call. We&apos;ll walk through your audit and build a fix plan on the spot.</p>
                 <a
                   href="/get-started"
-                  className="inline-flex items-center gap-2 px-8 py-4 bg-white text-[#DC2626] font-semibold rounded-xl hover:bg-red-50 transition-colors"
+                  className="inline-flex items-center gap-2 px-8 py-4 bg-card text-primary font-semibold rounded-xl hover:bg-primary/10 transition-colors"
                 >
                   Book Strategy Call
                   <ArrowRight className="w-5 h-5" />

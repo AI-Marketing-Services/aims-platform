@@ -58,7 +58,7 @@ const TIERS = [
     ],
     cta: "Get Started",
     popular: true,
-    color: "border-[#DC2626]",
+    color: "border-primary",
   },
   {
     name: "Elite",
@@ -99,7 +99,7 @@ export function Pricing() {
             <button
               onClick={() => setAnnual(false)}
               className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
-                !annual ? "bg-[#DC2626] text-white" : "text-muted-foreground hover:text-foreground"
+                !annual ? "bg-primary text-white" : "text-muted-foreground hover:text-foreground"
               }`}
             >
               Monthly
@@ -107,11 +107,11 @@ export function Pricing() {
             <button
               onClick={() => setAnnual(true)}
               className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
-                annual ? "bg-[#DC2626] text-white" : "text-muted-foreground hover:text-foreground"
+                annual ? "bg-primary text-white" : "text-muted-foreground hover:text-foreground"
               }`}
             >
               Annual
-              <span className="ml-1.5 rounded-full bg-red-100 px-1.5 py-0.5 text-[10px] font-semibold text-red-700">
+              <span className="ml-1.5 rounded-full bg-primary/15 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
                 Save 15%
               </span>
             </button>
@@ -133,7 +133,7 @@ export function Pricing() {
             >
               {tier.popular && (
                 <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                  <span className="rounded-full bg-[#DC2626] px-3 py-1 text-xs font-semibold text-white">
+                  <span className="rounded-full bg-primary px-3 py-1 text-xs font-semibold text-white">
                     Most Popular
                   </span>
                 </div>
@@ -153,7 +153,7 @@ export function Pricing() {
               <ul className="mt-6 flex-1 space-y-2.5">
                 {tier.features.map((feature) => (
                   <li key={feature} className="flex items-start gap-2 text-sm text-foreground">
-                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#DC2626]" />
+                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
                     {feature}
                   </li>
                 ))}
@@ -174,9 +174,9 @@ export function Pricing() {
                     })}
                     className={`mt-8 w-full flex items-center justify-center gap-2 rounded-lg py-3 text-sm font-semibold transition ${
                       inCart
-                        ? "bg-green-50 text-green-700 border border-green-200"
+                        ? "bg-green-950/30 text-green-400 border border-green-800"
                         : tier.popular
-                        ? "bg-[#DC2626] text-white hover:bg-[#B91C1C]"
+                        ? "bg-primary text-white hover:bg-primary/80"
                         : "border border-border text-foreground hover:bg-secondary"
                     }`}
                   >
@@ -193,14 +193,14 @@ export function Pricing() {
         </p>
 
         {/* Enterprise row */}
-        <div className="mt-6 rounded-2xl border border-border bg-gray-50 px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="mt-6 rounded-2xl border border-border bg-deep px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
             <p className="font-semibold text-foreground">Need a custom solution?</p>
             <p className="text-sm text-muted-foreground">Multi-location, white-label, or full RevOps build — let&apos;s scope it together.</p>
           </div>
           <Link
             href="/get-started?ref=pricing-enterprise"
-            className="shrink-0 rounded-lg bg-[#DC2626] text-white px-6 py-2.5 text-sm font-semibold hover:bg-[#B91C1C] transition"
+            className="shrink-0 rounded-lg bg-primary text-white px-6 py-2.5 text-sm font-semibold hover:bg-primary/80 transition"
           >
             Book a Strategy Call →
           </Link>
@@ -224,7 +224,7 @@ export function Pricing() {
                 </div>
                 <div className="flex items-center justify-between mt-auto">
                   <span className="text-xs text-muted-foreground">{item.badge}</span>
-                  <Link href={item.href} className="text-xs font-semibold text-[#DC2626] hover:underline">
+                  <Link href={item.href} className="text-xs font-semibold text-primary hover:underline">
                     Learn more →
                   </Link>
                 </div>

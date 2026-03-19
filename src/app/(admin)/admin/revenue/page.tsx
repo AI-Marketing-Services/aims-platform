@@ -109,11 +109,11 @@ export default async function AdminRevenuePage() {
       <div className="bg-card border border-border rounded-2xl p-8 mb-8">
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-4">
           <div>
-            <p className="text-sm text-gray-500 mb-1">Monthly Recurring Revenue</p>
+            <p className="text-sm text-muted-foreground mb-1">Monthly Recurring Revenue</p>
             <p className="text-5xl font-mono font-bold text-foreground">
               ${currentMRR.toLocaleString()}
             </p>
-            <p className="text-sm text-gray-500 mt-2">
+            <p className="text-sm text-muted-foreground mt-2">
               ARR projection:{" "}
               <span className="text-foreground font-mono font-semibold">
                 ${arr.toLocaleString()}
@@ -121,8 +121,8 @@ export default async function AdminRevenuePage() {
             </p>
           </div>
           <div className="text-right">
-            <p className="text-xs text-gray-500 mb-1">Target: $100,000/mo</p>
-            <p className="text-2xl font-mono font-bold text-[#DC2626]">
+            <p className="text-xs text-muted-foreground mb-1">Target: $100,000/mo</p>
+            <p className="text-2xl font-mono font-bold text-[#C4972A]">
               {mrrProgress.toFixed(1)}%
             </p>
           </div>
@@ -130,11 +130,11 @@ export default async function AdminRevenuePage() {
         {/* Progress bar */}
         <div className="h-2 bg-muted rounded-full overflow-hidden">
           <div
-            className="h-2 bg-[#DC2626] rounded-full transition-all"
+            className="h-2 bg-[#C4972A] rounded-full transition-all"
             style={{ width: `${mrrProgress}%` }}
           />
         </div>
-        <p className="text-xs text-gray-600 mt-2">
+        <p className="text-xs text-muted-foreground mt-2">
           ${(MRR_TARGET - currentMRR).toLocaleString()} remaining to target
         </p>
       </div>
@@ -149,47 +149,47 @@ export default async function AdminRevenuePage() {
       {/* ── 10x Margin Tracker ────────────────────────────────────────────── */}
       <div className="bg-card border border-border rounded-xl p-6 mt-8">
         <h3 className="font-semibold text-foreground mb-1">10x Margin Tracker</h3>
-        <p className="text-xs text-gray-500 mb-5">
+        <p className="text-xs text-muted-foreground mb-5">
           Service revenue vs estimated delivery cost. Green = 10x+, Yellow = 5-10x, Red = below 5x.
         </p>
         {marginRows.length === 0 ? (
-          <p className="text-gray-500 text-sm">No matched service data yet.</p>
+          <p className="text-muted-foreground text-sm">No matched service data yet.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border">
                   {["Service", "Revenue", "Est. Cost", "Margin", "Multiple"].map((h) => (
-                    <th key={h} className="text-left text-xs text-gray-500 font-medium px-3 py-2">
+                    <th key={h} className="text-left text-xs text-muted-foreground font-medium px-3 py-2">
                       {h}
                     </th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-border">
                 {marginRows.map((row) => {
                   const bg =
                     row.margin >= 10
-                      ? "bg-green-50"
+                      ? "bg-green-900/15"
                       : row.margin >= 5
-                      ? "bg-yellow-50"
-                      : "bg-red-50"
+                      ? "bg-yellow-900/20"
+                      : "bg-primary/10"
                   const multipleColor =
                     row.margin >= 10
-                      ? "text-green-600"
+                      ? "text-green-400"
                       : row.margin >= 5
-                      ? "text-yellow-600"
-                      : "text-red-600"
+                      ? "text-yellow-400"
+                      : "text-primary"
                   return (
                     <tr key={row.slug} className={bg}>
                       <td className="px-3 py-3 text-foreground font-medium">{row.label}</td>
-                      <td className="px-3 py-3 font-mono text-gray-700">
+                      <td className="px-3 py-3 font-mono text-foreground">
                         ${row.revenue.toLocaleString()}/mo
                       </td>
-                      <td className="px-3 py-3 font-mono text-gray-500">
+                      <td className="px-3 py-3 font-mono text-muted-foreground">
                         ${row.cost}/mo
                       </td>
-                      <td className="px-3 py-3 font-mono text-gray-700">
+                      <td className="px-3 py-3 font-mono text-foreground">
                         {row.revenue > 0
                           ? `${((row.revenue - row.cost) / row.revenue * 100).toFixed(0)}%`
                           : "—"}
@@ -210,19 +210,19 @@ export default async function AdminRevenuePage() {
           .filter(([slug, { cost }]) => cost > 0 && !marginRows.find((r) => r.slug === slug))
           .length > 0 && (
           <div className="mt-4 pt-4 border-t border-border">
-            <p className="text-xs text-gray-600 mb-2">Services with no active subscriptions:</p>
+            <p className="text-xs text-muted-foreground mb-2">Services with no active subscriptions:</p>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <tbody className="divide-y divide-gray-100">
+                <tbody className="divide-y divide-border">
                   {Array.from(serviceCostMap.entries())
                     .filter(([slug, { cost }]) => cost > 0 && !marginRows.find((r) => r.slug === slug))
                     .map(([slug, { label, cost }]) => (
-                      <tr key={slug} className="bg-gray-50">
-                        <td className="px-3 py-2 text-gray-500">{label}</td>
-                        <td className="px-3 py-2 font-mono text-gray-600">$0/mo</td>
-                        <td className="px-3 py-2 font-mono text-gray-600">${cost}/mo</td>
-                        <td className="px-3 py-2 text-gray-600">—</td>
-                        <td className="px-3 py-2 text-gray-600">—</td>
+                      <tr key={slug} className="bg-deep">
+                        <td className="px-3 py-2 text-muted-foreground">{label}</td>
+                        <td className="px-3 py-2 font-mono text-muted-foreground">$0/mo</td>
+                        <td className="px-3 py-2 font-mono text-muted-foreground">${cost}/mo</td>
+                        <td className="px-3 py-2 text-muted-foreground">—</td>
+                        <td className="px-3 py-2 text-muted-foreground">—</td>
                       </tr>
                     ))}
                 </tbody>

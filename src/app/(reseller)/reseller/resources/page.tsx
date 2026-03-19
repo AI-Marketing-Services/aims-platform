@@ -120,7 +120,7 @@ export default async function ResellerResourcesPage() {
                 href={res.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#DC2626] text-sm font-medium hover:underline"
+                className="text-[#C4972A] text-sm font-medium hover:underline"
               >
                 {res.type === "Call" ? "Book" : "Watch"}
               </a>
@@ -141,7 +141,7 @@ export default async function ResellerResourcesPage() {
         </p>
         <a
           href="mailto:partners@aimseos.com?subject=Custom%20Materials%20Request"
-          className="inline-flex items-center gap-2 rounded-lg bg-[#DC2626] px-4 py-2 text-sm font-medium text-white hover:bg-[#DC2626]/90 transition-colors"
+          className="inline-flex items-center gap-2 rounded-lg bg-[#C4972A] px-4 py-2 text-sm font-medium text-white hover:bg-[#C4972A]/90 transition-colors"
         >
           <Mail className="h-4 w-4" />
           Request Materials

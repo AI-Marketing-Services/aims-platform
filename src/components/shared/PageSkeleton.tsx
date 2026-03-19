@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils"
 
 function Pulse({ className }: { className?: string }) {
-  return <div className={cn("animate-pulse rounded-lg bg-gray-200", className)} />
+  return <div className={cn("animate-pulse rounded-lg bg-surface", className)} />
 }
 
 /** Dashboard-style skeleton: KPI cards + chart + table */

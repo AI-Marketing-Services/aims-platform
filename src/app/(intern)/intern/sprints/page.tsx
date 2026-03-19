@@ -11,7 +11,7 @@ const TASK_STATUS_COLOR: Record<string, string> = {
   IN_PROGRESS: "text-blue-400",
   IN_REVIEW: "text-yellow-400",
   DONE: "text-green-400",
-  BLOCKED: "text-red-400",
+  BLOCKED: "text-primary",
 }
 
 const TASK_STATUS_ICON: Record<string, React.FC<{ className?: string }>> = {
@@ -60,9 +60,9 @@ export default async function InternSprintsPage() {
 
       {/* Active sprint */}
       {activeGoal ? (
-        <div className="rounded-xl border border-[#DC2626]/20 bg-[#DC2626]/5 p-6">
+        <div className="rounded-xl border border-[#C4972A]/20 bg-[#C4972A]/5 p-6">
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs font-semibold text-[#DC2626] uppercase tracking-wider">Active Sprint</span>
+            <span className="text-xs font-semibold text-[#C4972A] uppercase tracking-wider">Active Sprint</span>
           </div>
           <h2 className="text-lg font-bold text-foreground mb-1">{activeGoal.title}</h2>
           <div className="text-xs text-muted-foreground mb-4">
@@ -79,7 +79,7 @@ export default async function InternSprintsPage() {
                   <span className="font-mono text-foreground">{pct}%</span>
                 </div>
                 <div className="h-2 w-full bg-muted rounded-full overflow-hidden mb-5">
-                  <div className="h-full rounded-full bg-[#DC2626] transition-all" style={{ width: `${pct}%` }} />
+                  <div className="h-full rounded-full bg-[#C4972A] transition-all" style={{ width: `${pct}%` }} />
                 </div>
               </>
             )
@@ -89,7 +89,7 @@ export default async function InternSprintsPage() {
             {activeGoal.tasks.map((task) => {
               const Icon = TASK_STATUS_ICON[task.status] ?? Clock
               return (
-                <div key={task.id} className="flex items-center gap-3 py-2 border-b border-gray-200 last:border-0">
+                <div key={task.id} className="flex items-center gap-3 py-2 border-b border-border last:border-0">
                   <Icon className={cn("h-4 w-4 flex-shrink-0", TASK_STATUS_COLOR[task.status])} />
                   <span className={cn("text-sm flex-1", task.status === "DONE" ? "line-through text-muted-foreground" : "text-foreground")}>
                     {task.title}

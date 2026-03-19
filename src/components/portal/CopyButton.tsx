@@ -27,7 +27,7 @@ export function CopyButton({ text }: { text: string }) {
   return (
     <button
       onClick={handleCopy}
-      className="flex items-center gap-2 px-4 py-3 bg-[#DC2626] text-white text-sm font-medium rounded-lg hover:bg-[#B91C1C] transition-colors whitespace-nowrap"
+      className="flex items-center gap-2 px-4 py-3 bg-[#C4972A] text-white text-sm font-medium rounded-lg hover:bg-[#A17D22] transition-colors whitespace-nowrap"
     >
       {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
       {copied ? "Copied!" : "Copy Link"}

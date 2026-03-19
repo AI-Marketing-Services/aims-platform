@@ -24,7 +24,7 @@ export interface RevenueByServiceEntry {
 
 // ─── Pipeline Funnel Chart ─────────────────────────────────────────────────────
 
-const FUNNEL_COLORS = ["#FCA5A5", "#F87171", "#EF4444", "#DC2626", "#B91C1C"]
+const FUNNEL_COLORS = ["#E8C46A", "#F87171", "#EF4444", "#C4972A", "#A17D22"]
 
 export function PipelineFunnelChart({ data }: { data: PipelineFunnelEntry[] }) {
   return (
@@ -76,12 +76,12 @@ export function PipelineFunnelChart({ data }: { data: PipelineFunnelEntry[] }) {
 // ─── Revenue by Service Arm Chart ─────────────────────────────────────────────
 
 const SERVICE_COLORS = [
-  "#DC2626",
-  "#B91C1C",
-  "#991B1B",
+  "#C4972A",
+  "#A17D22",
+  "#8B6914",
   "#EF4444",
   "#F87171",
-  "#FCA5A5",
+  "#E8C46A",
 ]
 
 export function RevenueByServiceChart({

@@ -485,10 +485,10 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
   }
 
   const pillarColors: Record<string, string> = {
-    MARKETING: "bg-red-50 text-red-700 border-red-200",
-    SALES: "bg-red-50 text-red-700 border-red-200",
-    OPERATIONS: "bg-red-50 text-red-700 border-red-200",
-    FINANCE: "bg-red-50 text-red-700 border-red-200",
+    MARKETING: "bg-primary/10 text-primary border-primary/30",
+    SALES: "bg-primary/10 text-primary border-primary/30",
+    OPERATIONS: "bg-primary/10 text-primary border-primary/30",
+    FINANCE: "bg-primary/10 text-primary border-primary/30",
   }
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://aimseos.com"
@@ -524,29 +524,29 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-card">
       {/* Hero — two-column when demo exists, full-width otherwise */}
-      <section className="border-b border-gray-100 bg-white py-20">
+      <section className="border-b border-border bg-card py-20">
         <div className={`container mx-auto px-4 ${hasDemo ? "max-w-6xl" : "max-w-4xl"}`}>
           {hasDemo ? (
             <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
               {/* Left: copy */}
               <div>
-                <span className={`inline-block rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-wider mb-4 ${pillarColors[service.pillar] ?? "bg-gray-100 text-gray-600 border-gray-200"}`}>
+                <span className={`inline-block rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-wider mb-4 ${pillarColors[service.pillar] ?? "bg-deep text-muted-foreground border-border"}`}>
                   {service.pillar}
                 </span>
-                <h1 className="text-4xl font-bold tracking-tight text-gray-900 md:text-5xl">{service.name}</h1>
-                <p className="mt-4 text-xl text-gray-500">{service.longDesc ?? service.shortDesc}</p>
+                <h1 className="text-4xl font-bold tracking-tight text-foreground md:text-5xl">{service.name}</h1>
+                <p className="mt-4 text-xl text-muted-foreground">{service.longDesc ?? service.shortDesc}</p>
                 <div className="mt-8 flex flex-col gap-4 sm:flex-row">
                   <Link
                     href={`/get-started?service=${slug}`}
-                    className="inline-flex items-center gap-2 rounded-lg bg-[#DC2626] px-8 py-3.5 font-semibold text-white hover:bg-[#B91C1C] transition"
+                    className="inline-flex items-center gap-2 rounded-lg bg-primary px-8 py-3.5 font-semibold text-white hover:bg-primary/90 transition"
                   >
                     Get Started <ArrowRight className="h-4 w-4" />
                   </Link>
                   <Link
                     href="/get-started"
-                    className="inline-flex items-center gap-2 rounded-lg border border-gray-200 px-8 py-3.5 font-semibold text-gray-700 hover:bg-gray-50 transition"
+                    className="inline-flex items-center gap-2 rounded-lg border border-border px-8 py-3.5 font-semibold text-foreground hover:bg-surface transition"
                   >
                     Book a Call
                   </Link>
@@ -554,7 +554,7 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
               </div>
               {/* Right: live demo */}
               <div>
-                <p className="mb-3 text-[11px] font-semibold uppercase tracking-widest text-gray-400">
+                <p className="mb-3 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
                   Live Demo — Interactive Preview
                 </p>
                 <ServiceDemoWidget slug={slug} />
@@ -562,21 +562,21 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
             </div>
           ) : (
             <>
-              <span className={`inline-block rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-wider mb-4 ${pillarColors[service.pillar] ?? "bg-gray-100 text-gray-600 border-gray-200"}`}>
+              <span className={`inline-block rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-wider mb-4 ${pillarColors[service.pillar] ?? "bg-deep text-muted-foreground border-border"}`}>
                 {service.pillar}
               </span>
-              <h1 className="text-4xl font-bold tracking-tight text-gray-900 md:text-5xl">{service.name}</h1>
-              <p className="mt-4 text-xl text-gray-500 max-w-2xl">{service.longDesc ?? service.shortDesc}</p>
+              <h1 className="text-4xl font-bold tracking-tight text-foreground md:text-5xl">{service.name}</h1>
+              <p className="mt-4 text-xl text-muted-foreground max-w-2xl">{service.longDesc ?? service.shortDesc}</p>
               <div className="mt-8 flex flex-col gap-4 sm:flex-row">
                 <Link
                   href={`/get-started?service=${slug}`}
-                  className="inline-flex items-center gap-2 rounded-lg bg-[#DC2626] px-8 py-3.5 font-semibold text-white hover:bg-[#B91C1C] transition"
+                  className="inline-flex items-center gap-2 rounded-lg bg-primary px-8 py-3.5 font-semibold text-white hover:bg-primary/90 transition"
                 >
                   Get Started <ArrowRight className="h-4 w-4" />
                 </Link>
                 <Link
                   href="/get-started"
-                  className="inline-flex items-center gap-2 rounded-lg border border-gray-200 px-8 py-3.5 font-semibold text-gray-700 hover:bg-gray-50 transition"
+                  className="inline-flex items-center gap-2 rounded-lg border border-border px-8 py-3.5 font-semibold text-foreground hover:bg-surface transition"
                 >
                   Book a Call
                 </Link>
@@ -591,14 +591,14 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
 
       {/* Features */}
       {service.features.length > 0 && (
-        <section className="py-20 bg-white">
+        <section className="py-20 bg-card">
           <div className="container mx-auto max-w-4xl px-4">
-            <h2 className="text-2xl font-bold text-gray-900 mb-8">What&rsquo;s Included</h2>
+            <h2 className="text-2xl font-bold text-foreground mb-8">What&rsquo;s Included</h2>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {service.features.map((feature) => (
-                <div key={feature} className="flex items-center gap-3 rounded-xl border border-gray-100 bg-gray-50 p-4">
-                  <Check className="h-5 w-5 shrink-0 text-[#DC2626]" />
-                  <span className="text-sm font-medium text-gray-800">{feature}</span>
+                <div key={feature} className="flex items-center gap-3 rounded-xl border border-border bg-deep p-4">
+                  <Check className="h-5 w-5 shrink-0 text-primary" />
+                  <span className="text-sm font-medium text-foreground">{feature}</span>
                 </div>
               ))}
             </div>
@@ -608,14 +608,14 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
 
       {/* Use Cases */}
       {service.useCases.length > 0 && (
-        <section className="py-20 bg-gray-50">
+        <section className="py-20 bg-deep">
           <div className="container mx-auto max-w-4xl px-4">
-            <h2 className="text-2xl font-bold text-gray-900 mb-8">Results By Industry</h2>
+            <h2 className="text-2xl font-bold text-foreground mb-8">Results By Industry</h2>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
               {service.useCases.map((uc) => (
-                <div key={uc.industry} className="rounded-xl border border-gray-100 bg-white p-6 text-center shadow-sm">
-                  <div className="text-sm font-semibold text-gray-500 mb-2">{uc.industry}</div>
-                  <div className="text-lg font-bold text-[#DC2626]">{uc.result}</div>
+                <div key={uc.industry} className="rounded-xl border border-border bg-card p-6 text-center shadow-sm">
+                  <div className="text-sm font-semibold text-muted-foreground mb-2">{uc.industry}</div>
+                  <div className="text-lg font-bold text-primary">{uc.result}</div>
                 </div>
               ))}
             </div>
@@ -625,32 +625,32 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
 
       {/* Pricing */}
       {service.tiers.length > 0 && (
-        <section className="py-20 bg-white">
+        <section className="py-20 bg-card">
           <div className="container mx-auto max-w-4xl px-4">
-            <h2 className="text-2xl font-bold text-gray-900 mb-8">Pricing</h2>
+            <h2 className="text-2xl font-bold text-foreground mb-8">Pricing</h2>
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {service.tiers.map((tier) => (
                 <div
                   key={tier.id}
-                  className={`rounded-xl border-2 bg-white p-6 ${tier.isPopular ? "border-[#DC2626] shadow-lg" : "border-gray-100"}`}
+                  className={`rounded-xl border-2 bg-card p-6 ${tier.isPopular ? "border-primary shadow-lg" : "border-border"}`}
                 >
                   {tier.isPopular && (
                     <div className="mb-3">
-                      <span className="rounded-full bg-[#DC2626] px-2 py-0.5 text-[10px] font-semibold text-white">
+                      <span className="rounded-full bg-primary px-2 py-0.5 text-[10px] font-semibold text-white">
                         Most Popular
                       </span>
                     </div>
                   )}
-                  <div className="text-lg font-bold text-gray-900">{tier.name}</div>
-                  <div className="mt-2 text-3xl font-black text-gray-900">
+                  <div className="text-lg font-bold text-foreground">{tier.name}</div>
+                  <div className="mt-2 text-3xl font-black text-foreground">
                     ${(tier.price / 100).toLocaleString()}
-                    <span className="text-sm font-normal text-gray-500">/{tier.interval}</span>
+                    <span className="text-sm font-normal text-muted-foreground">/{tier.interval}</span>
                   </div>
                   {tier.features.length > 0 && (
                     <ul className="mt-4 space-y-2">
                       {tier.features.map((f) => (
-                        <li key={f} className="flex items-start gap-2 text-xs text-gray-500">
-                          <Check className="mt-0.5 h-3 w-3 shrink-0 text-[#DC2626]" />
+                        <li key={f} className="flex items-start gap-2 text-xs text-muted-foreground">
+                          <Check className="mt-0.5 h-3 w-3 shrink-0 text-primary" />
                           {f}
                         </li>
                       ))}
@@ -658,7 +658,7 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
                   )}
                   <Link
                     href={`/get-started?service=${slug}&tier=${tier.slug}`}
-                    className={`mt-5 block rounded-lg py-2.5 text-center text-sm font-semibold transition ${tier.isPopular ? "bg-[#DC2626] text-white hover:bg-[#B91C1C]" : "border border-gray-200 text-gray-700 hover:bg-gray-50"}`}
+                    className={`mt-5 block rounded-lg py-2.5 text-center text-sm font-semibold transition ${tier.isPopular ? "bg-primary text-white hover:bg-primary/90" : "border border-border text-foreground hover:bg-surface"}`}
                   >
                     Get Started
                   </Link>
@@ -671,16 +671,16 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
 
       {/* Custom pricing fallback */}
       {service.tiers.length === 0 && (
-        <section className="py-20 bg-gray-50">
+        <section className="py-20 bg-deep">
           <div className="container mx-auto max-w-4xl px-4">
-            <div className="rounded-2xl border border-gray-100 bg-white p-10 text-center shadow-sm">
-              <h2 className="text-2xl font-bold text-gray-900 mb-3">Custom Pricing</h2>
-              <p className="text-gray-500 mb-6 max-w-lg mx-auto">
+            <div className="rounded-2xl border border-border bg-card p-10 text-center shadow-sm">
+              <h2 className="text-2xl font-bold text-foreground mb-3">Custom Pricing</h2>
+              <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
                 Pricing for {service.name} is tailored to your business size, goals, and scope. Book a call and we&rsquo;ll build your plan.
               </p>
               <Link
                 href={`/get-started?service=${slug}`}
-                className="inline-flex items-center gap-2 rounded-lg bg-[#DC2626] px-8 py-3.5 font-semibold text-white hover:bg-[#B91C1C] transition"
+                className="inline-flex items-center gap-2 rounded-lg bg-primary px-8 py-3.5 font-semibold text-white hover:bg-primary/90 transition"
               >
                 Get a Custom Quote <ArrowRight className="h-4 w-4" />
               </Link>
@@ -690,13 +690,13 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
       )}
 
       {/* CTA */}
-      <section className="py-20 bg-[#DC2626]">
+      <section className="py-20 bg-primary">
         <div className="container mx-auto max-w-2xl px-4 text-center">
           <h2 className="text-3xl font-bold text-white">Ready to get started?</h2>
-          <p className="mt-3 text-red-100">Book a strategy call and we&rsquo;ll build your custom plan.</p>
+          <p className="mt-3 text-muted-foreground">Book a strategy call and we&rsquo;ll build your custom plan.</p>
           <Link
             href="/get-started"
-            className="mt-8 inline-flex items-center gap-2 rounded-lg bg-[#DC2626] px-8 py-3.5 font-semibold text-white hover:bg-[#B91C1C] transition"
+            className="mt-8 inline-flex items-center gap-2 rounded-lg bg-primary px-8 py-3.5 font-semibold text-white hover:bg-primary/90 transition"
           >
             Book a Strategy Call <ArrowRight className="h-4 w-4" />
           </Link>

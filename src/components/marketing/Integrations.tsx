@@ -20,7 +20,7 @@ export function Integrations() {
   const count = ORBIT_LOGOS.length
 
   return (
-    <section className="py-24 bg-[#F5F5F5]">
+    <section className="py-24 bg-deep">
       <div className="mx-auto max-w-6xl px-4">
         <div className="grid grid-cols-1 gap-16 lg:grid-cols-2 items-center">
 
@@ -31,13 +31,13 @@ export function Integrations() {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <span className="inline-block rounded-full border border-red-200 bg-red-50 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-red-700 mb-4">
+            <span className="inline-block rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary mb-4">
               Integrations
             </span>
-            <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+            <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
               Plugs Into Your Existing Stack
             </h2>
-            <p className="mt-4 text-lg text-gray-500">
+            <p className="mt-4 text-lg text-muted-foreground">
               AIMS connects directly into the tools your team already uses. No ripping and replacing — we
               wire everything together and make it work automatically.
             </p>
@@ -48,15 +48,15 @@ export function Integrations() {
                 "Connects in minutes, not weeks",
                 "No IT setup required",
               ].map((item) => (
-                <li key={item} className="flex items-center gap-2 text-sm text-gray-700">
-                  <div className="h-1.5 w-1.5 rounded-full bg-[#DC2626] flex-shrink-0" />
+                <li key={item} className="flex items-center gap-2 text-sm text-foreground">
+                  <div className="h-1.5 w-1.5 rounded-full bg-primary flex-shrink-0" />
                   {item}
                 </li>
               ))}
             </ul>
             <Link
               href="/get-started"
-              className="mt-8 inline-flex items-center gap-2 rounded-lg bg-[#DC2626] px-6 py-3 text-sm font-semibold text-white hover:bg-[#B91C1C] transition shadow-md shadow-red-200"
+              className="mt-8 inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-white hover:bg-primary/80 transition shadow-md shadow-primary/20"
             >
               Get Started Now <ArrowRight className="h-4 w-4" />
             </Link>
@@ -72,12 +72,12 @@ export function Integrations() {
           >
             <div className="relative flex items-center justify-center" style={{ width: 320, height: 320 }}>
               {/* Glow rings */}
-              <div className="absolute inset-0 rounded-full" style={{ background: "radial-gradient(circle, rgba(220,38,38,0.18) 0%, rgba(220,38,38,0.06) 40%, transparent 70%)" }} />
-              <div className="absolute rounded-full border border-gray-200/80" style={{ inset: 24 }} />
-              <div className="absolute rounded-full border border-gray-200/40" style={{ inset: 0 }} />
+              <div className="absolute inset-0 rounded-full" style={{ background: "radial-gradient(circle, rgba(196,151,42,0.18) 0%, rgba(196,151,42,0.06) 40%, transparent 70%)" }} />
+              <div className="absolute rounded-full border border-border/80" style={{ inset: 24 }} />
+              <div className="absolute rounded-full border border-border/40" style={{ inset: 0 }} />
 
               {/* Center AIMS logo */}
-              <div className="relative z-10 flex h-16 w-16 items-center justify-center rounded-2xl bg-white shadow-xl border border-gray-100">
+              <div className="relative z-10 flex h-16 w-16 items-center justify-center rounded-2xl bg-card shadow-xl border border-border">
                 <Image src="/logo.png" alt="AIMS" width={36} height={36} className="object-contain" />
               </div>
 
@@ -104,7 +104,7 @@ export function Integrations() {
                     >
                       {/* Counter-rotate so logos stay upright */}
                       <motion.div
-                        className="flex h-12 w-12 items-center justify-center rounded-xl bg-white shadow-md border border-gray-100"
+                        className="flex h-12 w-12 items-center justify-center rounded-xl bg-card shadow-md border border-border"
                         animate={{ rotate: -360 }}
                         transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
                       >
@@ -122,7 +122,7 @@ export function Integrations() {
               </motion.div>
 
               {/* Orbit ring circle */}
-              <div className="absolute rounded-full border border-dashed border-red-100/60" style={{ inset: "30px" }} />
+              <div className="absolute rounded-full border border-dashed border-primary/20" style={{ inset: "30px" }} />
             </div>
           </motion.div>
         </div>

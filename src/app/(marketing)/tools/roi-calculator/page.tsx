@@ -33,8 +33,8 @@ function Slider({
   return (
     <div>
       <div className="flex justify-between items-baseline mb-2">
-        <label className="text-sm font-medium text-gray-700">{label}</label>
-        <span className="text-lg font-bold text-gray-900">{format(value)}</span>
+        <label className="text-sm font-medium text-foreground">{label}</label>
+        <span className="text-lg font-bold text-foreground">{format(value)}</span>
       </div>
       <input
         type="range"
@@ -43,13 +43,13 @@ function Slider({
         step={step}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="w-full h-2 bg-gray-200 rounded-full appearance-none cursor-pointer accent-[#DC2626]"
+        className="w-full h-2 bg-surface rounded-full appearance-none cursor-pointer accent-[#C4972A]"
       />
-      <div className="flex justify-between text-xs text-gray-400 mt-1">
+      <div className="flex justify-between text-xs text-muted-foreground mt-1">
         <span>{format(min)}</span>
         <span>{format(max)}</span>
       </div>
-      {hint && <p className="text-xs text-gray-400 mt-1">{hint}</p>}
+      {hint && <p className="text-xs text-muted-foreground mt-1">{hint}</p>}
     </div>
   )
 }
@@ -114,35 +114,35 @@ export default function ROICalculatorPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA]">
+    <div className="min-h-screen bg-deep">
       {/* Header */}
-      <div className="border-b border-gray-200 bg-white">
+      <div className="border-b border-border bg-card">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center gap-3">
-          <div className="w-8 h-8 bg-[#DC2626] rounded-lg flex items-center justify-center">
+          <div className="w-8 h-8 bg-[#C4972A] rounded-lg flex items-center justify-center">
             <Calculator className="w-4 h-4 text-white" />
           </div>
-          <span className="font-semibold text-gray-900">AIMS ROI Calculator</span>
+          <span className="font-semibold text-foreground">AIMS ROI Calculator</span>
         </div>
       </div>
 
       <div className="max-w-6xl mx-auto px-4 py-12">
         <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-red-50 text-[#DC2626] text-sm font-medium rounded-full mb-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-[#C4972A] text-sm font-medium rounded-full mb-4">
             <TrendingUp className="w-3.5 h-3.5" />
             Free ROI Calculator
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          <h1 className="text-4xl font-bold text-foreground mb-4">
             What Would AIMS Return on Your Investment?
           </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Adjust the sliders to match your current numbers and see the projected revenue impact of adding AIMS to your growth stack.
           </p>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8">
           {/* Inputs */}
-          <div className="bg-white border border-gray-200 rounded-2xl p-8 space-y-8">
-            <h2 className="text-lg font-bold text-gray-900">Your Current Numbers</h2>
+          <div className="bg-card border border-border rounded-2xl p-8 space-y-8">
+            <h2 className="text-lg font-bold text-foreground">Your Current Numbers</h2>
 
             <Slider
               label="New leads per month"
@@ -190,32 +190,32 @@ export default function ROICalculatorPage() {
           <div className="space-y-4">
             {/* Current vs Projected */}
             <div className="grid grid-cols-2 gap-4">
-              <div className="bg-white border border-gray-200 rounded-2xl p-6">
-                <div className="text-sm text-gray-500 mb-1">Current Revenue</div>
-                <div className="text-3xl font-bold text-gray-900">
+              <div className="bg-card border border-border rounded-2xl p-6">
+                <div className="text-sm text-muted-foreground mb-1">Current Revenue</div>
+                <div className="text-3xl font-bold text-foreground">
                   {formatCurrency(results.currentRevenue)}
                 </div>
-                <div className="text-sm text-gray-400 mt-1">/month from new clients</div>
+                <div className="text-sm text-muted-foreground mt-1">/month from new clients</div>
               </div>
-              <div className="bg-[#DC2626] rounded-2xl p-6 text-white">
-                <div className="text-sm text-red-200 mb-1">With AIMS</div>
+              <div className="bg-[#C4972A] rounded-2xl p-6 text-white">
+                <div className="text-sm text-muted-foreground mb-1">With AIMS</div>
                 <div className="text-3xl font-bold">
                   {formatCurrency(results.aimsRevenue)}
                 </div>
-                <div className="text-sm text-red-200 mt-1">/month projected</div>
+                <div className="text-sm text-muted-foreground mt-1">/month projected</div>
               </div>
             </div>
 
             {/* Key metrics */}
-            <div className="bg-white border border-gray-200 rounded-2xl p-6">
-              <h3 className="font-semibold text-gray-900 mb-5">Projected Impact</h3>
+            <div className="bg-card border border-border rounded-2xl p-6">
+              <h3 className="font-semibold text-foreground mb-5">Projected Impact</h3>
               <div className="space-y-4">
                 {[
                   {
-                    icon: <TrendingUp className="w-4 h-4 text-green-600" />,
+                    icon: <TrendingUp className="w-4 h-4 text-green-400" />,
                     label: "Additional monthly revenue",
                     value: formatCurrency(results.additionalRevenue),
-                    color: "text-green-600",
+                    color: "text-green-400",
                   },
                   {
                     icon: <Users className="w-4 h-4 text-blue-600" />,
@@ -227,11 +227,11 @@ export default function ROICalculatorPage() {
                     icon: <DollarSign className="w-4 h-4 text-purple-600" />,
                     label: "Estimated ROI",
                     value: `${results.roi > 0 ? "+" : ""}${Math.round(results.roi)}%`,
-                    color: results.roi > 0 ? "text-green-600" : "text-red-500",
+                    color: results.roi > 0 ? "text-green-400" : "text-primary",
                   },
                 ].map((m) => (
                   <div key={m.label} className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       {m.icon}
                       {m.label}
                     </div>
@@ -242,7 +242,7 @@ export default function ROICalculatorPage() {
             </div>
 
             {/* Assumptions note */}
-            <div className="flex gap-2 p-4 bg-blue-50 rounded-xl text-sm text-blue-700">
+            <div className="flex gap-2 p-4 bg-blue-50 rounded-xl text-sm text-blue-400">
               <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
               <span>Projections based on 2.8x lead volume increase and 40% close rate improvement — typical AIMS client results after 60 days.</span>
             </div>
@@ -252,36 +252,36 @@ export default function ROICalculatorPage() {
               !emailGate ? (
                 <button
                   onClick={() => setEmailGate(true)}
-                  className="w-full py-4 bg-[#DC2626] text-white font-semibold rounded-xl hover:bg-[#B91C1C] transition-colors flex items-center justify-center gap-2"
+                  className="w-full py-4 bg-[#C4972A] text-white font-semibold rounded-xl hover:bg-[#A17D22] transition-colors flex items-center justify-center gap-2"
                 >
                   Get My Full ROI Report
                   <ArrowRight className="w-5 h-5" />
                 </button>
               ) : (
-                <form onSubmit={handleSubmit} className="bg-white border border-gray-200 rounded-2xl p-6 space-y-3">
-                  <h4 className="font-semibold text-gray-900">Send me the full report</h4>
+                <form onSubmit={handleSubmit} className="bg-card border border-border rounded-2xl p-6 space-y-3">
+                  <h4 className="font-semibold text-foreground">Send me the full report</h4>
                   <input
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="your@email.com"
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#DC2626] text-gray-900"
+                    className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C4972A] text-foreground"
                   />
                   <button
                     type="submit"
-                    className="w-full py-3 bg-[#DC2626] text-white font-semibold rounded-lg hover:bg-[#B91C1C] transition-colors"
+                    className="w-full py-3 bg-[#C4972A] text-white font-semibold rounded-lg hover:bg-[#A17D22] transition-colors"
                   >
                     Send My Report
                   </button>
                 </form>
               )
             ) : (
-              <div className="bg-green-50 border border-green-200 rounded-2xl p-6 text-center">
-                <div className="text-green-700 font-semibold mb-2">Report sent to {email}</div>
+              <div className="bg-green-900/15 border border-green-800 rounded-2xl p-6 text-center">
+                <div className="text-green-400 font-semibold mb-2">Report sent to {email}</div>
                 <a
                   href="/get-started"
-                  className="inline-flex items-center gap-2 text-[#DC2626] font-medium hover:underline"
+                  className="inline-flex items-center gap-2 text-[#C4972A] font-medium hover:underline"
                 >
                   Book a strategy call to review it together <ArrowRight className="w-4 h-4" />
                 </a>

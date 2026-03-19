@@ -18,42 +18,42 @@ import Link from "next/link"
 import { db } from "@/lib/db"
 
 const PILLAR_COLORS: Record<string, string> = {
-  MARKETING: "bg-green-100 text-green-700",
-  SALES: "bg-blue-100 text-blue-700",
-  OPERATIONS: "bg-orange-100 text-orange-700",
-  FINANCE: "bg-purple-100 text-purple-700",
+  MARKETING: "bg-green-900/20 text-green-400",
+  SALES: "bg-blue-900/20 text-blue-400",
+  OPERATIONS: "bg-orange-900/20 text-orange-400",
+  FINANCE: "bg-purple-900/20 text-purple-400",
 }
 
 const statusConfig = {
   ACTIVE: {
     icon: CheckCircle,
     label: "Active",
-    class: "text-green-700 bg-green-50 border-green-200",
+    class: "text-green-400 bg-green-900/15 border-green-800",
   },
   TRIALING: {
     icon: CheckCircle,
     label: "Trial",
-    class: "text-blue-700 bg-blue-50 border-blue-200",
+    class: "text-blue-400 bg-blue-900/20 border-blue-800",
   },
   PENDING_SETUP: {
     icon: Clock,
     label: "Setting Up",
-    class: "text-yellow-700 bg-yellow-50 border-yellow-200",
+    class: "text-yellow-400 bg-yellow-900/20 border-yellow-800",
   },
   PAST_DUE: {
     icon: AlertCircle,
     label: "Needs Attention",
-    class: "text-red-700 bg-red-50 border-red-200",
+    class: "text-primary bg-primary/10 border-primary/30",
   },
   PAUSED: {
     icon: PauseCircle,
     label: "Paused",
-    class: "text-gray-500 bg-gray-50 border-gray-200",
+    class: "text-muted-foreground bg-deep border-border",
   },
   CANCELLED: {
     icon: PauseCircle,
     label: "Cancelled",
-    class: "text-gray-500 bg-gray-50 border-gray-200",
+    class: "text-muted-foreground bg-deep border-border",
   },
 }
 
@@ -126,47 +126,47 @@ export default async function PortalServicesPage() {
   return (
     <div className="max-w-4xl">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-1">My Services</h1>
-        <p className="text-gray-500">Active subscriptions and service status</p>
+        <h1 className="text-2xl font-bold text-foreground mb-1">My Services</h1>
+        <p className="text-muted-foreground">Active subscriptions and service status</p>
       </div>
 
       {/* Metric cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-        <div className="bg-white border border-border rounded-2xl p-5 flex items-start gap-4">
-          <div className="w-9 h-9 rounded-xl bg-red-50 flex items-center justify-center shrink-0">
-            <DollarSign className="w-4 h-4 text-[#DC2626]" />
+        <div className="bg-card border border-border rounded-2xl p-5 flex items-start gap-4">
+          <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+            <DollarSign className="w-4 h-4 text-[#C4972A]" />
           </div>
           <div>
-            <div className="text-sm text-gray-500 mb-1">Monthly Investment</div>
-            <div className="text-2xl font-bold text-gray-900">
+            <div className="text-sm text-muted-foreground mb-1">Monthly Investment</div>
+            <div className="text-2xl font-bold text-foreground">
               ${totalMRR.toLocaleString()}
-              <span className="text-sm text-gray-500 font-normal ml-1">/month</span>
+              <span className="text-sm text-muted-foreground font-normal ml-1">/month</span>
             </div>
           </div>
         </div>
 
-        <div className="bg-white border border-border rounded-2xl p-5 flex items-start gap-4">
-          <div className="w-9 h-9 rounded-xl bg-red-50 flex items-center justify-center shrink-0">
-            <Layers className="w-4 h-4 text-[#DC2626]" />
+        <div className="bg-card border border-border rounded-2xl p-5 flex items-start gap-4">
+          <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+            <Layers className="w-4 h-4 text-[#C4972A]" />
           </div>
           <div>
-            <div className="text-sm text-gray-500 mb-1">Active Services</div>
-            <div className="text-2xl font-bold text-gray-900">
+            <div className="text-sm text-muted-foreground mb-1">Active Services</div>
+            <div className="text-2xl font-bold text-foreground">
               {activeCount}
-              <span className="text-sm text-gray-500 font-normal ml-1">running</span>
+              <span className="text-sm text-muted-foreground font-normal ml-1">running</span>
             </div>
           </div>
         </div>
 
-        <div className="bg-white border border-border rounded-2xl p-5 flex items-start gap-4">
-          <div className="w-9 h-9 rounded-xl bg-red-50 flex items-center justify-center shrink-0">
-            <Package className="w-4 h-4 text-[#DC2626]" />
+        <div className="bg-card border border-border rounded-2xl p-5 flex items-start gap-4">
+          <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+            <Package className="w-4 h-4 text-[#C4972A]" />
           </div>
           <div>
-            <div className="text-sm text-gray-500 mb-1">Total Services</div>
-            <div className="text-2xl font-bold text-gray-900">
+            <div className="text-sm text-muted-foreground mb-1">Total Services</div>
+            <div className="text-2xl font-bold text-foreground">
               {subs.length}
-              <span className="text-sm text-gray-500 font-normal ml-1">subscriptions</span>
+              <span className="text-sm text-muted-foreground font-normal ml-1">subscriptions</span>
             </div>
           </div>
         </div>
@@ -174,12 +174,12 @@ export default async function PortalServicesPage() {
 
       {/* Services list */}
       {subs.length === 0 ? (
-        <div className="rounded-2xl border border-border bg-white p-10">
+        <div className="rounded-2xl border border-border bg-card p-10">
           <div className="mb-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-1">
+            <h2 className="text-lg font-semibold text-foreground mb-1">
               Start building your AI stack
             </h2>
-            <p className="text-gray-500 text-sm">
+            <p className="text-muted-foreground text-sm">
               Most businesses start with one service and add more as they grow.
               Here are the 3 most popular starting points:
             </p>
@@ -190,18 +190,18 @@ export default async function PortalServicesPage() {
               <Link
                 key={svc.name}
                 href="/portal/marketplace"
-                className="rounded-xl border border-border bg-card p-4 hover:border-[#DC2626]/40 transition-all cursor-pointer group"
+                className="rounded-xl border border-border bg-card p-4 hover:border-[#C4972A]/40 transition-all cursor-pointer group"
               >
                 <div className="flex items-start justify-between gap-2 mb-2">
-                  <span className="font-semibold text-gray-900 text-sm leading-snug">
+                  <span className="font-semibold text-foreground text-sm leading-snug">
                     {svc.name}
                   </span>
-                  <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-[#DC2626] transition-colors shrink-0 mt-0.5" />
+                  <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-[#C4972A] transition-colors shrink-0 mt-0.5" />
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-sm text-muted-foreground">{svc.price}</span>
                   {svc.badge && (
-                    <span className="text-xs px-1.5 py-0.5 rounded-full bg-[#DC2626]/10 text-[#DC2626] font-medium">
+                    <span className="text-xs px-1.5 py-0.5 rounded-full bg-[#C4972A]/10 text-[#C4972A] font-medium">
                       {svc.badge}
                     </span>
                   )}
@@ -210,11 +210,11 @@ export default async function PortalServicesPage() {
             ))}
           </div>
 
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-muted-foreground">
             Or{" "}
             <Link
               href="/portal/marketplace"
-              className="text-[#DC2626] font-medium hover:underline"
+              className="text-[#C4972A] font-medium hover:underline"
             >
               browse all 21 AI services &rarr;
             </Link>
@@ -239,7 +239,7 @@ export default async function PortalServicesPage() {
               statusConfig.PENDING_SETUP
 
             const pillarColor =
-              PILLAR_COLORS[svc.serviceArm.pillar] ?? "bg-gray-100 text-gray-600"
+              PILLAR_COLORS[svc.serviceArm.pillar] ?? "bg-deep text-muted-foreground"
 
             const progress = getFulfillmentProgress(
               svc.status,
@@ -257,13 +257,13 @@ export default async function PortalServicesPage() {
             return (
               <div
                 key={svc.id}
-                className="bg-white border border-border rounded-2xl p-6"
+                className="bg-card border border-border rounded-2xl p-6"
               >
                 {/* Header row */}
                 <div className="flex flex-wrap items-center gap-3 mb-3">
-                  <h3 className="text-gray-900 font-semibold">{svc.serviceArm.name}</h3>
+                  <h3 className="text-foreground font-semibold">{svc.serviceArm.name}</h3>
                   {svc.tier && (
-                    <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 font-medium">
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-deep text-muted-foreground font-medium">
                       {svc.tier}
                     </span>
                   )}
@@ -281,21 +281,21 @@ export default async function PortalServicesPage() {
 
                 {/* Progress bar */}
                 <div className="mb-3">
-                  <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
+                  <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
                     <span>Fulfillment progress</span>
                     <span>{progress}%</span>
                   </div>
-                  <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                  <div className="w-full h-1.5 bg-deep rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-[#DC2626] rounded-full transition-all"
+                      className="h-full bg-[#C4972A] rounded-full transition-all"
                       style={{ width: `${progress}%` }}
                     />
                   </div>
                 </div>
 
                 {/* Meta row */}
-                <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-4">
-                  <span className="font-medium text-gray-900">
+                <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-4">
+                  <span className="font-medium text-foreground">
                     ${svc.monthlyAmount.toLocaleString()}/mo
                   </span>
                   {nextBilling && <span>Next billing: {nextBilling}</span>}
@@ -303,14 +303,14 @@ export default async function PortalServicesPage() {
 
                 {/* Fulfillment tasks checklist */}
                 {svc.fulfillmentTasks.length > 0 && (
-                  <div className="mb-4 border border-gray-100 rounded-lg overflow-hidden">
-                    <div className="px-4 py-2 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
-                      <ClipboardList className="w-3.5 h-3.5 text-gray-500" />
-                      <span className="text-xs font-medium text-gray-600">
+                  <div className="mb-4 border border-border rounded-lg overflow-hidden">
+                    <div className="px-4 py-2 bg-deep border-b border-border flex items-center gap-2">
+                      <ClipboardList className="w-3.5 h-3.5 text-muted-foreground" />
+                      <span className="text-xs font-medium text-muted-foreground">
                         Setup Tasks ({svc.fulfillmentTasks.filter((t) => t.status === "done").length}/{svc.fulfillmentTasks.length})
                       </span>
                     </div>
-                    <div className="divide-y divide-gray-50">
+                    <div className="divide-y divide-border">
                       {svc.fulfillmentTasks.map((task) => {
                         const isDone = task.status === "done"
                         return (
@@ -319,15 +319,15 @@ export default async function PortalServicesPage() {
                             className="flex items-center gap-3 px-4 py-2.5"
                           >
                             {isDone ? (
-                              <CheckCircle className="w-4 h-4 text-green-600 shrink-0" />
+                              <CheckCircle className="w-4 h-4 text-green-400 shrink-0" />
                             ) : (
-                              <Circle className="w-4 h-4 text-gray-300 shrink-0" />
+                              <Circle className="w-4 h-4 text-muted-foreground shrink-0" />
                             )}
                             <span
                               className={`text-sm flex-1 ${
                                 isDone
-                                  ? "text-gray-400 line-through"
-                                  : "text-gray-900"
+                                  ? "text-muted-foreground line-through"
+                                  : "text-foreground"
                               }`}
                             >
                               {task.title}
@@ -335,10 +335,10 @@ export default async function PortalServicesPage() {
                             <span
                               className={`text-xs px-2 py-0.5 rounded-full ${
                                 isDone
-                                  ? "bg-green-50 text-green-700"
+                                  ? "bg-green-900/15 text-green-400"
                                   : task.status === "in_progress"
-                                  ? "bg-blue-50 text-blue-700"
-                                  : "bg-gray-100 text-gray-500"
+                                  ? "bg-blue-900/20 text-blue-400"
+                                  : "bg-deep text-muted-foreground"
                               }`}
                             >
                               {task.status === "done"
@@ -348,7 +348,7 @@ export default async function PortalServicesPage() {
                                 : "To Do"}
                             </span>
                             {task.assignedTo && (
-                              <span className="flex items-center gap-1 text-xs text-gray-400">
+                              <span className="flex items-center gap-1 text-xs text-muted-foreground">
                                 <User className="w-3 h-3" />
                                 {task.assignedTo}
                               </span>
@@ -366,7 +366,7 @@ export default async function PortalServicesPage() {
                     svc.serviceArm.onboardingFormSchema && (
                       <Link
                         href={`/portal/onboarding/${svc.id}`}
-                        className="px-4 py-1.5 text-sm font-medium rounded-lg bg-[#DC2626] text-white hover:bg-[#B91C1C] transition-colors"
+                        className="px-4 py-1.5 text-sm font-medium rounded-lg bg-[#C4972A] text-white hover:bg-[#A17D22] transition-colors"
                       >
                         Complete Onboarding
                       </Link>
@@ -375,21 +375,21 @@ export default async function PortalServicesPage() {
                     href={`/portal/services/${svc.id}`}
                     className={`px-4 py-1.5 text-sm font-medium rounded-lg transition-colors ${
                       !svc.onboardingCompletedAt && svc.serviceArm.onboardingFormSchema
-                        ? "border border-border text-gray-700 hover:bg-gray-50"
-                        : "bg-[#DC2626] text-white hover:bg-[#B91C1C]"
+                        ? "border border-border text-foreground hover:bg-surface"
+                        : "bg-[#C4972A] text-white hover:bg-[#A17D22]"
                     }`}
                   >
                     View Details
                   </Link>
                   <Link
                     href="/portal/billing"
-                    className="px-4 py-1.5 text-sm font-medium rounded-lg border border-border text-gray-700 hover:bg-gray-50 transition-colors"
+                    className="px-4 py-1.5 text-sm font-medium rounded-lg border border-border text-foreground hover:bg-surface transition-colors"
                   >
                     Manage
                   </Link>
                   <Link
                     href="/portal/support"
-                    className="px-4 py-1.5 text-sm font-medium rounded-lg border border-border text-gray-700 hover:bg-gray-50 transition-colors"
+                    className="px-4 py-1.5 text-sm font-medium rounded-lg border border-border text-foreground hover:bg-surface transition-colors"
                   >
                     Get Help
                   </Link>
@@ -401,20 +401,20 @@ export default async function PortalServicesPage() {
       )}
 
       {/* Upsell banner */}
-      <div className="mt-8 border-l-4 border-l-[#DC2626] border border-border rounded-2xl bg-card p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="mt-8 border-l-4 border-l-[#C4972A] border border-border rounded-2xl bg-card p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <Zap className="w-4 h-4 text-[#DC2626]" />
-            <span className="font-bold text-[#DC2626]">AIMS</span>
-            <span className="text-gray-900 font-semibold">Ready to scale further?</span>
+            <Zap className="w-4 h-4 text-[#C4972A]" />
+            <span className="font-bold text-[#C4972A]">AIMS</span>
+            <span className="text-foreground font-semibold">Ready to scale further?</span>
           </div>
-          <p className="text-gray-500 text-sm">
+          <p className="text-muted-foreground text-sm">
             Plug more AI services directly into your existing stack.
           </p>
         </div>
         <Link
           href="/portal/marketplace"
-          className="px-5 py-2.5 bg-[#DC2626] text-white text-sm font-medium rounded-lg hover:bg-[#B91C1C] transition-colors whitespace-nowrap shrink-0"
+          className="px-5 py-2.5 bg-[#C4972A] text-white text-sm font-medium rounded-lg hover:bg-[#A17D22] transition-colors whitespace-nowrap shrink-0"
         >
           Browse 21 AI Services &rarr;
         </Link>

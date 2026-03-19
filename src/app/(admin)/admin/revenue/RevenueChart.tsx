@@ -38,7 +38,7 @@ interface Props {
   revenueByChannel: ChannelPoint[]
 }
 
-const PIE_COLORS = ["#DC2626", "#EF4444", "#F87171", "#FCA5A5", "#FECACA", "#FEE2E2"]
+const PIE_COLORS = ["#C4972A", "#EF4444", "#F87171", "#E8C46A", "#FECACA", "rgba(196,151,42,0.15)"]
 
 const tooltipStyle = {
   backgroundColor: "#ffffff",
@@ -55,10 +55,10 @@ export function RevenueCharts({ mrrOverTime, revenueByService, revenueByChannel 
       {/* ── MRR Over Time ──────────────────────────────────────────────────── */}
       <div className="bg-card border border-border rounded-xl p-6">
         <h3 className="font-semibold text-foreground mb-1">MRR Over Time</h3>
-        <p className="text-xs text-gray-500 mb-5">Cumulative MRR from active subscriptions by signup month</p>
+        <p className="text-xs text-muted-foreground mb-5">Cumulative MRR from active subscriptions by signup month</p>
 
         {!hasEnoughMrrData ? (
-          <div className="flex items-center justify-center h-48 text-gray-500 text-sm border border-dashed border-border rounded-lg">
+          <div className="flex items-center justify-center h-48 text-muted-foreground text-sm border border-dashed border-border rounded-lg">
             More data needed for trend (need 3+ months)
           </div>
         ) : (
@@ -67,7 +67,7 @@ export function RevenueCharts({ mrrOverTime, revenueByService, revenueByChannel 
               <defs>
                 <linearGradient id="mrrGrad" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#7F1D1D" stopOpacity={0.6} />
-                  <stop offset="95%" stopColor="#DC2626" stopOpacity={0} />
+                  <stop offset="95%" stopColor="#C4972A" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" />
@@ -86,17 +86,17 @@ export function RevenueCharts({ mrrOverTime, revenueByService, revenueByChannel 
               <Tooltip
                 contentStyle={tooltipStyle}
                 labelStyle={labelStyle}
-                itemStyle={{ color: "#DC2626", fontWeight: 600 }}
+                itemStyle={{ color: "#C4972A", fontWeight: 600 }}
                 formatter={(v: number) => [`$${v.toLocaleString()}`, "MRR"]}
               />
               <Area
                 type="monotone"
                 dataKey="mrr"
-                stroke="#DC2626"
+                stroke="#C4972A"
                 strokeWidth={2}
                 fill="url(#mrrGrad)"
                 dot={false}
-                activeDot={{ r: 4, fill: "#DC2626" }}
+                activeDot={{ r: 4, fill: "#C4972A" }}
               />
             </AreaChart>
           </ResponsiveContainer>
@@ -108,10 +108,10 @@ export function RevenueCharts({ mrrOverTime, revenueByService, revenueByChannel 
         {/* Revenue by Service Arm */}
         <div className="bg-card border border-border rounded-xl p-6">
           <h3 className="font-semibold text-foreground mb-1">Revenue by Service Arm</h3>
-          <p className="text-xs text-gray-500 mb-5">Active subscription MRR per service</p>
+          <p className="text-xs text-muted-foreground mb-5">Active subscription MRR per service</p>
 
           {revenueByService.length === 0 ? (
-            <div className="flex items-center justify-center h-48 text-gray-500 text-sm border border-dashed border-border rounded-lg">
+            <div className="flex items-center justify-center h-48 text-muted-foreground text-sm border border-dashed border-border rounded-lg">
               No active subscriptions yet
             </div>
           ) : (
@@ -140,10 +140,10 @@ export function RevenueCharts({ mrrOverTime, revenueByService, revenueByChannel 
                 <Tooltip
                   contentStyle={tooltipStyle}
                   labelStyle={labelStyle}
-                  itemStyle={{ color: "#DC2626", fontWeight: 600 }}
+                  itemStyle={{ color: "#C4972A", fontWeight: 600 }}
                   formatter={(v: number) => [`$${v.toLocaleString()}`, "MRR"]}
                 />
-                <Bar dataKey="revenue" fill="#DC2626" radius={[0, 4, 4, 0]} maxBarSize={24} />
+                <Bar dataKey="revenue" fill="#C4972A" radius={[0, 4, 4, 0]} maxBarSize={24} />
               </BarChart>
             </ResponsiveContainer>
           )}
@@ -152,10 +152,10 @@ export function RevenueCharts({ mrrOverTime, revenueByService, revenueByChannel 
         {/* Revenue by Source Channel */}
         <div className="bg-card border border-border rounded-xl p-6">
           <h3 className="font-semibold text-foreground mb-1">Active Clients by Channel</h3>
-          <p className="text-xs text-gray-500 mb-5">Source breakdown of ACTIVE_CLIENT deals</p>
+          <p className="text-xs text-muted-foreground mb-5">Source breakdown of ACTIVE_CLIENT deals</p>
 
           {revenueByChannel.length === 0 ? (
-            <div className="flex items-center justify-center h-48 text-gray-500 text-sm border border-dashed border-border rounded-lg">
+            <div className="flex items-center justify-center h-48 text-muted-foreground text-sm border border-dashed border-border rounded-lg">
               No active client deals yet
             </div>
           ) : (

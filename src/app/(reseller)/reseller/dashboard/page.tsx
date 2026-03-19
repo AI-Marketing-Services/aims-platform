@@ -35,12 +35,12 @@ export default async function ResellerDashboardPage() {
         <div className="rounded-xl border border-border bg-card p-5">
           <p className="text-xs text-muted-foreground mb-2 font-medium uppercase tracking-wider">Your Referral Link</p>
           <div className="flex items-center gap-3">
-            <code className="flex-1 text-sm font-mono text-[#DC2626] bg-muted px-3 py-2 rounded-lg overflow-x-auto">
+            <code className="flex-1 text-sm font-mono text-[#C4972A] bg-muted px-3 py-2 rounded-lg overflow-x-auto">
               {process.env.NEXT_PUBLIC_APP_URL ?? "https://aimseos.com"}/for/{referral.landingPageSlug ?? referral.code}?ref={referral.code}
             </code>
             <Link
               href={`/reseller/resources`}
-              className="px-4 py-2 bg-[#DC2626] text-white text-sm font-medium rounded-lg hover:bg-[#B91C1C] transition-colors whitespace-nowrap"
+              className="px-4 py-2 bg-[#C4972A] text-white text-sm font-medium rounded-lg hover:bg-[#A17D22] transition-colors whitespace-nowrap"
             >
               Copy & Share
             </Link>
@@ -73,7 +73,7 @@ export default async function ResellerDashboardPage() {
 
       {/* Pending payout */}
       {referral && referral.pendingPayout > 0 && (
-        <div className="rounded-xl border border-green-500/20 bg-green-500/5 p-5 flex items-center justify-between">
+        <div className="rounded-xl border border-green-500/20 bg-green-400/5 p-5 flex items-center justify-between">
           <div>
             <p className="text-sm font-semibold text-foreground">Pending Payout</p>
             <p className="text-2xl font-bold text-green-400 font-mono mt-1">
@@ -82,7 +82,7 @@ export default async function ResellerDashboardPage() {
           </div>
           <Link
             href="/reseller/commissions"
-            className="px-4 py-2 bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-medium rounded-lg hover:bg-green-500/20 transition-colors"
+            className="px-4 py-2 bg-green-400/10 border border-green-500/20 text-green-400 text-sm font-medium rounded-lg hover:bg-green-400/20 transition-colors"
           >
             View Details
           </Link>

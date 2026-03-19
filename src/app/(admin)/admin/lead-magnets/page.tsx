@@ -233,9 +233,9 @@ export default async function AdminLeadMagnetsPage() {
 
       {/* Insight card */}
       {bestType && (
-        <div className="rounded-xl border border-[#DC2626]/20 bg-[#DC2626]/5 p-5">
+        <div className="rounded-xl border border-[#C4972A]/20 bg-[#C4972A]/5 p-5">
           <p className="text-sm text-foreground">
-            <span className="font-semibold text-[#DC2626]">Insight: </span>
+            <span className="font-semibold text-[#C4972A]">Insight: </span>
             Your highest-converting tool is{" "}
             <span className="font-semibold">{TYPE_LABEL[bestType] ?? bestType}</span> at{" "}
             <span className="font-semibold text-green-400">{bestConvRate}% conversion</span>.{" "}

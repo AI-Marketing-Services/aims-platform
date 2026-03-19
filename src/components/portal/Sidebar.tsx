@@ -43,12 +43,12 @@ export function PortalSidebar({ totalMrr = 0, hasUnread = false }: PortalSidebar
   return (
     <aside
       className={cn(
-        "relative hidden lg:flex flex-col border-r border-gray-200 bg-white transition-all duration-200",
+        "relative hidden lg:flex flex-col border-r border-border bg-deep transition-all duration-200",
         collapsed ? "w-16" : "w-64"
       )}
     >
       {/* Logo */}
-      <div className="flex h-16 items-center px-4 border-b border-gray-200">
+      <div className="flex h-16 items-center px-4 border-b border-border">
         <Link href="/" className="flex items-center gap-2.5">
           <Image src="/logo.png" alt="AIMS" width={32} height={32} className="shrink-0 object-contain" />
           {!collapsed && <span className="text-lg font-bold tracking-tight">AIMS</span>}
@@ -66,16 +66,16 @@ export function PortalSidebar({ totalMrr = 0, hasUnread = false }: PortalSidebar
               className={cn(
                 "flex items-center gap-3 rounded-lg py-2.5 text-sm font-medium transition-colors",
                 isActive
-                  ? "bg-red-50 text-[#DC2626] border-l-2 border-[#DC2626] pl-[10px]"
-                  : "text-gray-500 hover:text-gray-900 hover:bg-gray-100 pl-3"
+                  ? "bg-primary/10 text-primary border-l-2 border-primary pl-[10px]"
+                  : "text-muted-foreground hover:text-foreground hover:bg-surface pl-3"
               )}
             >
-              <item.icon className={cn("h-4.5 w-4.5 shrink-0", isActive && "text-red-500")} />
+              <item.icon className={cn("h-4.5 w-4.5 shrink-0", isActive && "text-primary")} />
               {!collapsed && (
                 <span className="flex-1">{item.label}</span>
               )}
               {!collapsed && item.label === "Dashboard" && hasUnread && (
-                <span className="ml-auto h-2 w-2 rounded-full bg-[#DC2626]" />
+                <span className="ml-auto h-2 w-2 rounded-full bg-primary" />
               )}
             </Link>
           )
@@ -85,7 +85,7 @@ export function PortalSidebar({ totalMrr = 0, hasUnread = false }: PortalSidebar
       {/* Collapse toggle */}
       <button
         onClick={() => setCollapsed(!collapsed)}
-        className="absolute -right-3 top-20 flex h-6 w-6 items-center justify-center rounded-full border border-gray-200 bg-white shadow-sm hover:bg-gray-100 transition-colors"
+        className="absolute -right-3 top-20 flex h-6 w-6 items-center justify-center rounded-full border border-border bg-card shadow-sm hover:bg-surface transition-colors"
       >
         {collapsed ? (
           <ChevronRight className="h-3 w-3" />
@@ -103,12 +103,12 @@ export function PortalSidebar({ totalMrr = 0, hasUnread = false }: PortalSidebar
       )}
 
       {/* User */}
-      <div className="border-t border-gray-200 p-4">
+      <div className="border-t border-border p-4">
         <div className="flex items-center gap-2">
           <UserButton afterSignOutUrl="/" />
           {!collapsed && (
             <>
-              <span className="text-sm text-gray-500 truncate flex-1">My Account</span>
+              <span className="text-sm text-muted-foreground truncate flex-1">My Account</span>
               <NotificationBell variant="light" />
             </>
           )}

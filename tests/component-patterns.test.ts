@@ -159,6 +159,6 @@ describe("Portal CampaignsDashboardClient — auto-refresh pattern", () => {
 
   it("shows connected badge when connected", () => {
     expect(content).toContain("Connected")
-    expect(content).toContain("bg-green-500")
+    expect(content).toContain("bg-green-400")
   })
 })

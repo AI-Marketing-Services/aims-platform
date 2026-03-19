@@ -95,50 +95,50 @@ export function AddDealModal({ stage, onClose, onCreated }: Props) {
 
         <form onSubmit={handleSubmit} className="space-y-3">
           <div>
-            <label className="text-xs text-gray-400 mb-1 block">Name *</label>
+            <label className="text-xs text-muted-foreground mb-1 block">Name *</label>
             <input
               value={form.contactName}
               onChange={(e) => set("contactName", e.target.value)}
               required
               placeholder="Sarah Chen"
-              className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-gray-400"
+              className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-border"
             />
           </div>
           <div>
-            <label className="text-xs text-gray-400 mb-1 block">Email *</label>
+            <label className="text-xs text-muted-foreground mb-1 block">Email *</label>
             <input
               type="email"
               value={form.contactEmail}
               onChange={(e) => set("contactEmail", e.target.value)}
               required
               placeholder="sarah@company.com"
-              className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-gray-400"
+              className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-border"
             />
           </div>
           <div>
-            <label className="text-xs text-gray-400 mb-1 block">Company</label>
+            <label className="text-xs text-muted-foreground mb-1 block">Company</label>
             <input
               value={form.company}
               onChange={(e) => set("company", e.target.value)}
               placeholder="TechFlow Inc"
-              className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-gray-400"
+              className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-border"
             />
           </div>
           <div>
-            <label className="text-xs text-gray-400 mb-1 block">Phone</label>
+            <label className="text-xs text-muted-foreground mb-1 block">Phone</label>
             <input
               value={form.phone}
               onChange={(e) => set("phone", e.target.value)}
               placeholder="+1 (555) 000-0000"
-              className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-gray-400"
+              className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-border"
             />
           </div>
           <div>
-            <label className="text-xs text-gray-400 mb-1 block">Source</label>
+            <label className="text-xs text-muted-foreground mb-1 block">Source</label>
             <select
               value={form.source}
               onChange={(e) => set("source", e.target.value)}
-              className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-gray-400"
+              className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-border"
             >
               {["direct", "referral", "reseller", "partner", "ai-readiness-quiz", "roi-calculator", "website-audit", "cold-email", "inbound"].map((s) => (
                 <option key={s} value={s}>{s}</option>
@@ -146,7 +146,7 @@ export function AddDealModal({ stage, onClose, onCreated }: Props) {
             </select>
           </div>
 
-          {error && <p className="text-xs text-red-400">{error}</p>}
+          {error && <p className="text-xs text-primary">{error}</p>}
 
           <div className="flex gap-3 pt-2">
             <button
@@ -159,7 +159,7 @@ export function AddDealModal({ stage, onClose, onCreated }: Props) {
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 px-4 py-2.5 rounded-lg bg-[#DC2626] text-sm font-medium text-white hover:bg-[#B91C1C] transition-colors disabled:opacity-50"
+              className="flex-1 px-4 py-2.5 rounded-lg bg-[#C4972A] text-sm font-medium text-white hover:bg-[#A17D22] transition-colors disabled:opacity-50"
             >
               {loading ? "Creating..." : "Create Deal"}
             </button>

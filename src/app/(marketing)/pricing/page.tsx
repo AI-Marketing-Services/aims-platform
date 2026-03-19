@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 export default function PricingPage() {
   return (
     <div className="pt-20">
-      <div className="py-16 text-center border-b border-border bg-white">
+      <div className="py-16 text-center border-b border-border bg-card">
         <h1 className="text-5xl font-bold tracking-tight">Simple, Transparent Pricing</h1>
         <p className="mt-4 text-xl text-muted-foreground max-w-xl mx-auto">
           Start with what you need. Scale as you grow. No long-term contracts.

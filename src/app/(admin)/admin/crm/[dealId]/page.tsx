@@ -19,16 +19,16 @@ const STAGE_OPTIONS = [
 ]
 
 const STAGE_COLORS: Record<string, string> = {
-  NEW_LEAD: "text-gray-600 bg-gray-100 border-gray-200",
-  QUALIFIED: "text-blue-700 bg-blue-50 border-blue-200",
-  DEMO_BOOKED: "text-purple-700 bg-purple-50 border-purple-200",
-  PROPOSAL_SENT: "text-yellow-800 bg-yellow-50 border-yellow-200",
-  NEGOTIATION: "text-orange-700 bg-orange-50 border-orange-200",
-  ACTIVE_CLIENT: "text-green-700 bg-green-50 border-green-200",
-  UPSELL_OPPORTUNITY: "text-emerald-700 bg-emerald-50 border-emerald-200",
-  AT_RISK: "text-red-700 bg-red-50 border-red-200",
-  CHURNED: "text-gray-500 bg-gray-100 border-gray-200",
-  LOST: "text-gray-500 bg-gray-100 border-gray-200",
+  NEW_LEAD: "text-muted-foreground bg-deep border-border",
+  QUALIFIED: "text-blue-400 bg-blue-900/20 border-blue-800",
+  DEMO_BOOKED: "text-purple-400 bg-purple-900/20 border-purple-800",
+  PROPOSAL_SENT: "text-yellow-400 bg-yellow-900/20 border-yellow-800",
+  NEGOTIATION: "text-orange-400 bg-orange-900/20 border-orange-800",
+  ACTIVE_CLIENT: "text-green-400 bg-green-900/15 border-green-800",
+  UPSELL_OPPORTUNITY: "text-emerald-400 bg-emerald-900/20 border-emerald-800",
+  AT_RISK: "text-primary bg-primary/10 border-primary/30",
+  CHURNED: "text-muted-foreground bg-deep border-border",
+  LOST: "text-muted-foreground bg-deep border-border",
 }
 
 export default async function AdminDealDetailPage({ params }: { params: Promise<{ dealId: string }> }) {
@@ -74,7 +74,7 @@ export default async function AdminDealDetailPage({ params }: { params: Promise<
     <div className="max-w-7xl">
       <Link
         href="/admin/crm"
-        className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors mb-6"
+        className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to CRM

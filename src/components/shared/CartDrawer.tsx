@@ -102,15 +102,15 @@ export function CartDrawer() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 28, stiffness: 300 }}
-              className="fixed right-0 top-0 bottom-0 z-50 w-full sm:max-w-[420px] bg-white shadow-2xl flex flex-col"
+              className="fixed right-0 top-0 bottom-0 z-50 w-full sm:max-w-[420px] bg-card shadow-2xl flex flex-col"
             >
               {/* Header */}
-              <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+              <div className="flex items-center justify-between px-5 py-4 border-b border-border">
                 <div className="flex items-center gap-2">
-                  <ShoppingCart className="w-5 h-5 text-gray-900" />
-                  <span className="text-base font-bold text-gray-900">Your Cart</span>
+                  <ShoppingCart className="w-5 h-5 text-foreground" />
+                  <span className="text-base font-bold text-foreground">Your Cart</span>
                   {items.length > 0 && (
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#DC2626] text-[11px] font-bold text-white">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[11px] font-bold text-primary-foreground">
                       {items.length}
                     </span>
                   )}
@@ -118,7 +118,7 @@ export function CartDrawer() {
                 <button
                   onClick={closeCart}
                   aria-label="Close cart"
-                  className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+                  className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-surface transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -128,24 +128,24 @@ export function CartDrawer() {
               <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3">
                 {items.length === 0 ? (
                   <div className="flex flex-col items-center justify-center h-full text-center py-16">
-                    <ShoppingCart className="w-10 h-10 text-gray-200 mb-3" />
-                    <p className="text-sm font-medium text-gray-500">Your cart is empty</p>
-                    <p className="mt-1 text-xs text-gray-400">Add services from the marketplace to get started.</p>
+                    <ShoppingCart className="w-10 h-10 text-muted-foreground mb-3" />
+                    <p className="text-sm font-medium text-muted-foreground">Your cart is empty</p>
+                    <p className="mt-1 text-xs text-muted-foreground">Add services from the marketplace to get started.</p>
                   </div>
                 ) : (
                   <>
                     {items.map((item) => (
-                      <div key={item.serviceId} className="flex items-start gap-3 p-3.5 bg-gray-50 rounded-xl border border-gray-100">
+                      <div key={item.serviceId} className="flex items-start gap-3 p-3.5 bg-surface rounded-xl border border-border">
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-semibold text-gray-900 leading-snug">{item.name}</p>
+                          <p className="text-sm font-semibold text-foreground leading-snug">{item.name}</p>
                           {item.tierName && (
-                            <p className="mt-0.5 text-xs text-gray-500">{item.tierName} plan</p>
+                            <p className="mt-0.5 text-xs text-muted-foreground">{item.tierName} plan</p>
                           )}
-                          <p className="mt-1.5 text-sm font-bold text-[#DC2626]">{formatPrice(item.priceMonthly)}</p>
+                          <p className="mt-1.5 text-sm font-bold text-primary">{formatPrice(item.priceMonthly)}</p>
                         </div>
                         <button
                           onClick={() => removeItem(item.serviceId)}
-                          className="p-1.5 rounded-lg text-gray-300 hover:text-red-500 hover:bg-red-50 transition-colors flex-shrink-0"
+                          className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors flex-shrink-0"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -154,13 +154,13 @@ export function CartDrawer() {
 
                     {/* Context-aware upsell */}
                     {upsell && (
-                      <div className="p-3.5 bg-red-50 rounded-xl border border-red-100">
-                        <p className="text-xs font-semibold text-[#DC2626] uppercase tracking-wide mb-1">Add-on suggestion</p>
-                        <p className="text-xs text-gray-700 mb-2">{upsell.message}</p>
+                      <div className="p-3.5 bg-primary/10 rounded-xl border border-primary/15">
+                        <p className="text-xs font-semibold text-primary uppercase tracking-wide mb-1">Add-on suggestion</p>
+                        <p className="text-xs text-foreground mb-2">{upsell.message}</p>
                         <Link
                           href={upsell.href}
                           onClick={closeCart}
-                          className="flex items-center gap-1 text-xs font-semibold text-[#DC2626] hover:underline"
+                          className="flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
                         >
                           <Phone className="w-3 h-3" /> Book a call to add it
                         </Link>
@@ -172,18 +172,18 @@ export function CartDrawer() {
 
               {/* Footer — sticky at bottom */}
               {items.length > 0 && (
-                <div className="px-5 py-4 border-t border-gray-100 space-y-3 bg-white">
+                <div className="px-5 py-4 border-t border-border space-y-3 bg-card">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-500">Monthly total</span>
-                    <span className="text-lg font-bold text-gray-900">{formatPrice(total)}</span>
+                    <span className="text-sm text-muted-foreground">Monthly total</span>
+                    <span className="text-lg font-bold text-foreground">{formatPrice(total)}</span>
                   </div>
 
-                  <p className="text-xs text-gray-400 leading-relaxed">
+                  <p className="text-xs text-muted-foreground leading-relaxed">
                     Billed monthly. Cancel anytime. Final scoping confirmed on your onboarding call.
                   </p>
 
                   {error && (
-                    <div className="rounded-lg bg-red-50 border border-red-200 px-3 py-2.5 text-xs text-red-700 font-medium">
+                    <div className="rounded-lg bg-destructive/10 border border-destructive/20 px-3 py-2.5 text-xs text-destructive font-medium">
                       {error}
                     </div>
                   )}
@@ -191,7 +191,7 @@ export function CartDrawer() {
                   <button
                     onClick={handleCheckout}
                     disabled={loading}
-                    className="w-full flex items-center justify-center gap-2 py-3.5 bg-[#DC2626] text-white text-sm font-bold rounded-xl hover:bg-[#B91C1C] disabled:opacity-60 transition-colors active:scale-95"
+                    className="w-full flex items-center justify-center gap-2 py-3.5 bg-primary text-primary-foreground text-sm font-bold rounded-xl hover:bg-primary/90 disabled:opacity-60 transition-colors active:scale-95"
                   >
                     {loading ? (
                       <><Loader2 className="w-4 h-4 animate-spin" /> Processing…</>
@@ -203,7 +203,7 @@ export function CartDrawer() {
                   <Link
                     href="/get-started"
                     onClick={closeCart}
-                    className="block w-full text-center text-xs text-gray-400 hover:text-gray-600 transition-colors py-1"
+                    className="block w-full text-center text-xs text-muted-foreground hover:text-foreground transition-colors py-1"
                   >
                     Need custom pricing? Book a strategy call →
                   </Link>

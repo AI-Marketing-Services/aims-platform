@@ -500,10 +500,10 @@ const SERVICES: AIMSService[] = [
 ]
 
 const PILLAR_STYLES: Record<Pillar, string> = {
-  MARKETING: "text-green-700 bg-green-50 border-green-200",
-  SALES: "text-blue-700 bg-blue-50 border-blue-200",
-  OPERATIONS: "text-orange-700 bg-orange-50 border-orange-200",
-  FINANCE: "text-purple-700 bg-purple-50 border-purple-200",
+  MARKETING: "text-green-400 bg-green-900/15 border-green-800",
+  SALES: "text-blue-400 bg-blue-50 border-blue-800",
+  OPERATIONS: "text-orange-400 bg-orange-50 border-orange-800",
+  FINANCE: "text-purple-400 bg-purple-50 border-purple-800",
 }
 
 
@@ -555,7 +555,7 @@ function ServiceCard({ service }: { service: AIMSService }) {
               {service.pillar.charAt(0) + service.pillar.slice(1).toLowerCase()}
             </span>
             {service.isBeta && (
-              <span className="text-xs font-semibold px-2 py-0.5 rounded-full border border-gray-300 text-muted-foreground">BETA</span>
+              <span className="text-xs font-semibold px-2 py-0.5 rounded-full border border-border text-muted-foreground">BETA</span>
             )}
           </div>
           <span className="text-xs text-muted-foreground">{service.setupTime} setup</span>
@@ -580,7 +580,7 @@ function ServiceCard({ service }: { service: AIMSService }) {
         <ul className="space-y-2">
           {service.deliverables.slice(0, 3).map((d, i) => (
             <li key={i} className="flex items-start gap-2 text-sm text-foreground/80">
-              <span className="text-gray-300 mt-0.5 flex-shrink-0">—</span>
+              <span className="text-muted-foreground mt-0.5 flex-shrink-0">—</span>
               <span className="line-clamp-1">{d}</span>
             </li>
           ))}
@@ -604,8 +604,8 @@ function ServiceCard({ service }: { service: AIMSService }) {
                 className={cn(
                   "px-3 py-1 rounded-lg text-xs font-semibold border transition-colors",
                   selectedTier === tier.id
-                    ? "bg-[#DC2626] text-white border-[#DC2626]"
-                    : "bg-white text-gray-600 border-gray-200 hover:border-gray-400 cursor-pointer"
+                    ? "bg-primary text-white border-primary"
+                    : "bg-card text-muted-foreground border-border hover:border-line-hover cursor-pointer"
                 )}
               >
                 {tier.name} — ${tier.priceMonthly / 100}/mo
@@ -619,7 +619,7 @@ function ServiceCard({ service }: { service: AIMSService }) {
       <div className="px-5 pb-5">
         <div className="flex items-center justify-between mb-3">
           <span className="text-sm font-bold text-foreground">{displayPrice()}</span>
-          <Link href={`/services/${service.slug}`} className="text-xs text-muted-foreground hover:text-[#DC2626] transition-colors">
+          <Link href={`/services/${service.slug}`} className="text-xs text-muted-foreground hover:text-primary transition-colors">
             Learn more →
           </Link>
         </div>
@@ -628,8 +628,8 @@ function ServiceCard({ service }: { service: AIMSService }) {
           className={cn(
             "w-full flex items-center justify-center gap-2 py-3 text-sm font-semibold rounded-xl transition-colors",
             inCart
-              ? "bg-green-50 text-green-700 border border-green-200 hover:bg-green-100"
-              : "bg-[#DC2626] text-white hover:bg-[#B91C1C]"
+              ? "bg-green-900/15 text-green-400 border border-green-800 hover:bg-green-900/20"
+              : "bg-primary text-white hover:bg-primary/90"
           )}
         >
           {inCart ? (
@@ -682,7 +682,7 @@ export function MarketplaceClient() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search services..."
-                className="w-full pl-10 pr-4 py-2.5 border border-border rounded-xl bg-card text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#DC2626]/20 focus:border-[#DC2626]"
+                className="w-full pl-10 pr-4 py-2.5 border border-border rounded-xl bg-card text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
               />
             </div>
             <div className="flex flex-wrap gap-2">
@@ -693,8 +693,8 @@ export function MarketplaceClient() {
                   className={cn(
                     "px-4 py-1.5 rounded-full text-sm font-medium border transition-colors",
                     pillar === tab.value
-                      ? "bg-[#DC2626] text-white border-[#DC2626]"
-                      : "bg-card text-muted-foreground border-border hover:border-gray-400 hover:text-foreground"
+                      ? "bg-primary text-white border-primary"
+                      : "bg-card text-muted-foreground border-border hover:border-line-hover hover:text-foreground"
                   )}
                 >
                   {tab.label}
@@ -732,7 +732,7 @@ export function MarketplaceClient() {
             <p className="text-muted-foreground">No services match your search.</p>
             <button
               onClick={() => { setPillar("ALL"); setSearch("") }}
-              className="mt-4 text-sm font-medium text-[#DC2626] hover:underline"
+              className="mt-4 text-sm font-medium text-primary hover:underline"
             >
               Clear filters
             </button>

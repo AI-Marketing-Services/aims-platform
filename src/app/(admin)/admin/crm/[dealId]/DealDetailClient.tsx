@@ -123,10 +123,10 @@ const ACTIVITY_TYPE_OPTIONS: { value: ActivityType; label: string }[] = [
 const PRIORITY_OPTIONS = ["LOW", "MEDIUM", "HIGH", "URGENT"]
 
 const PRIORITY_COLORS: Record<string, string> = {
-  LOW: "text-gray-600 bg-gray-100",
-  MEDIUM: "text-blue-700 bg-blue-50",
-  HIGH: "text-orange-700 bg-orange-50",
-  URGENT: "text-red-700 bg-red-50",
+  LOW: "text-muted-foreground bg-deep",
+  MEDIUM: "text-blue-400 bg-blue-900/20",
+  HIGH: "text-orange-400 bg-orange-900/20",
+  URGENT: "text-primary bg-primary/10",
 }
 
 function timeAgo(isoDate: string) {
@@ -145,10 +145,10 @@ function leadScoreBadge(score: number | null | undefined, tier: string | null | 
   const label = tier ?? (score >= 70 ? "hot" : score >= 40 ? "warm" : "cold")
   const colors =
     label === "hot"
-      ? "text-red-700 bg-red-50 border-red-200"
+      ? "text-primary bg-primary/10 border-primary/30"
       : label === "warm"
-        ? "text-amber-700 bg-amber-50 border-amber-200"
-        : "text-gray-600 bg-gray-100 border-gray-200"
+        ? "text-amber-400 bg-amber-900/20 border-amber-800"
+        : "text-muted-foreground bg-deep border-border"
   return { label, colors }
 }
 
@@ -179,7 +179,7 @@ function InlineField({
   if (editing) {
     return (
       <div className="flex items-center gap-2">
-        <span className="text-xs text-gray-500 w-16 flex-shrink-0">{label}</span>
+        <span className="text-xs text-muted-foreground w-16 flex-shrink-0">{label}</span>
         <input
           ref={inputRef}
           type={type}
@@ -191,7 +191,7 @@ function InlineField({
             if (e.key === "Escape") setDraft(value ?? "")
           }}
           autoFocus
-          className="flex-1 bg-white border border-gray-300 rounded px-2 py-0.5 text-sm text-gray-900 focus:outline-none focus:border-[#DC2626] focus:ring-1 focus:ring-[#DC2626]/20"
+          className="flex-1 bg-card border border-border rounded px-2 py-0.5 text-sm text-foreground focus:outline-none focus:border-[#C4972A] focus:ring-1 focus:ring-[#C4972A]/20"
         />
       </div>
     )
@@ -199,22 +199,22 @@ function InlineField({
 
   return (
     <div className="flex items-center gap-2">
-      <span className="text-xs text-gray-500 w-16 flex-shrink-0">{label}</span>
+      <span className="text-xs text-muted-foreground w-16 flex-shrink-0">{label}</span>
       {value ? (
         href ? (
           <a
             href={href}
             target={href.startsWith("http") ? "_blank" : undefined}
             rel="noopener noreferrer"
-            className="flex-1 text-sm text-blue-600 hover:underline truncate"
+            className="flex-1 text-sm text-blue-400 hover:underline truncate"
           >
             {value}
           </a>
         ) : (
-          <span className="flex-1 text-sm text-gray-900 truncate">{value}</span>
+          <span className="flex-1 text-sm text-foreground truncate">{value}</span>
         )
       ) : (
-        <span className="flex-1 text-sm text-gray-400 italic">--</span>
+        <span className="flex-1 text-sm text-muted-foreground italic">--</span>
       )}
     </div>
   )
@@ -408,16 +408,16 @@ export function DealDetailClient({
     stage === currentStage
       ? stageColor
       : {
-          NEW_LEAD: "text-gray-600 bg-gray-100 border-gray-200",
-          QUALIFIED: "text-blue-700 bg-blue-50 border-blue-200",
-          DEMO_BOOKED: "text-purple-700 bg-purple-50 border-purple-200",
-          PROPOSAL_SENT: "text-yellow-800 bg-yellow-50 border-yellow-200",
-          NEGOTIATION: "text-orange-700 bg-orange-50 border-orange-200",
-          ACTIVE_CLIENT: "text-green-700 bg-green-50 border-green-200",
-          UPSELL_OPPORTUNITY: "text-emerald-700 bg-emerald-50 border-emerald-200",
-          AT_RISK: "text-red-700 bg-red-50 border-red-200",
-          CHURNED: "text-gray-500 bg-gray-100 border-gray-200",
-          LOST: "text-gray-500 bg-gray-100 border-gray-200",
+          NEW_LEAD: "text-muted-foreground bg-deep border-border",
+          QUALIFIED: "text-blue-400 bg-blue-900/20 border-blue-800",
+          DEMO_BOOKED: "text-purple-400 bg-purple-900/20 border-purple-800",
+          PROPOSAL_SENT: "text-yellow-400 bg-yellow-900/20 border-yellow-800",
+          NEGOTIATION: "text-orange-400 bg-orange-900/20 border-orange-800",
+          ACTIVE_CLIENT: "text-green-400 bg-green-900/20 border-green-800",
+          UPSELL_OPPORTUNITY: "text-emerald-400 bg-emerald-900/20 border-emerald-800",
+          AT_RISK: "text-primary bg-primary/10 border-primary/30",
+          CHURNED: "text-muted-foreground bg-deep border-border",
+          LOST: "text-muted-foreground bg-deep border-border",
         }[stage] ?? stageColor
 
   const scoreBadge = leadScoreBadge(leadScore, leadScoreTier)
@@ -425,23 +425,23 @@ export function DealDetailClient({
   return (
     <div className="space-y-6">
       {/* ── HEADER ── */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6">
+      <div className="bg-card border border-border rounded-xl p-6">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div className="flex items-start gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#DC2626]/10 text-[#DC2626] font-bold text-lg flex-shrink-0">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#C4972A]/10 text-[#C4972A] font-bold text-lg flex-shrink-0">
               {contactName.charAt(0).toUpperCase()}
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 leading-tight">{contactName}</h1>
-              {company && <p className="text-sm text-gray-500 mt-0.5">{company}</p>}
+              <h1 className="text-2xl font-bold text-foreground leading-tight">{contactName}</h1>
+              {company && <p className="text-sm text-muted-foreground mt-0.5">{company}</p>}
               <div className="flex flex-wrap items-center gap-2 mt-2">
                 {email && (
-                  <a href={`mailto:${email}`} className="inline-flex items-center gap-1 text-xs text-gray-500 hover:text-gray-900">
+                  <a href={`mailto:${email}`} className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground">
                     <Mail className="w-3 h-3" /> {email}
                   </a>
                 )}
                 {phone && (
-                  <a href={`tel:${phone}`} className="inline-flex items-center gap-1 text-xs text-gray-500 hover:text-gray-900">
+                  <a href={`tel:${phone}`} className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground">
                     <Phone className="w-3 h-3" /> {phone}
                   </a>
                 )}
@@ -462,8 +462,8 @@ export function DealDetailClient({
               className={cn(
                 "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors",
                 isEditingContact
-                  ? "border-[#DC2626] text-[#DC2626] bg-red-50"
-                  : "border-gray-200 text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                  ? "border-[#C4972A] text-[#C4972A] bg-primary/10"
+                  : "border-border text-muted-foreground hover:text-foreground hover:bg-surface"
               )}
             >
               {isEditingContact ? <Check className="w-3 h-3" /> : <Pencil className="w-3 h-3" />}
@@ -474,7 +474,7 @@ export function DealDetailClient({
                 href={`https://app.close.com/lead/${closeLeadId}/`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-surface transition-colors"
               >
                 <ExternalLink className="h-3 w-3" />
                 Open in Close
@@ -485,7 +485,7 @@ export function DealDetailClient({
 
         {/* Editable contact fields */}
         {isEditingContact && (
-          <div className="mt-4 pt-4 border-t border-gray-200 grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="mt-4 pt-4 border-t border-border grid grid-cols-1 sm:grid-cols-2 gap-3">
             <InlineField label="Name" value={contactName} editing onSave={async (v) => { setContactName(v); await patchDeal({ contactName: v }) }} />
             <InlineField label="Company" value={company} editing onSave={async (v) => { setCompany(v); await patchDeal({ company: v }) }} />
             <InlineField label="Email" value={email} editing type="email" onSave={async (v) => { setEmail(v); await patchDeal({ contactEmail: v }) }} />
@@ -504,12 +504,12 @@ export function DealDetailClient({
           { label: "Days in Pipeline", value: daysInPipeline.toString(), icon: Calendar },
           { label: "Source / Channel", value: channelTag ?? source ?? "--", icon: Tag },
         ].map((m) => (
-          <div key={m.label} className="bg-white border border-gray-200 rounded-xl px-4 py-3">
+          <div key={m.label} className="bg-card border border-border rounded-xl px-4 py-3">
             <div className="flex items-center gap-2 mb-1">
-              <m.icon className="w-3.5 h-3.5 text-gray-400" />
-              <span className="text-xs text-gray-500">{m.label}</span>
+              <m.icon className="w-3.5 h-3.5 text-muted-foreground" />
+              <span className="text-xs text-muted-foreground">{m.label}</span>
             </div>
-            <div className="text-lg font-bold font-mono text-gray-900">{m.value}</div>
+            <div className="text-lg font-bold font-mono text-foreground">{m.value}</div>
           </div>
         ))}
       </div>
@@ -519,30 +519,30 @@ export function DealDetailClient({
         <div className="lg:col-span-3 space-y-6">
 
           {/* Service Arms Section */}
-          <div className="bg-white border border-gray-200 rounded-xl p-5">
+          <div className="bg-card border border-border rounded-xl p-5">
             <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm font-semibold text-gray-900">Service Arms</h2>
-              <button className="flex items-center gap-1.5 text-xs text-[#DC2626] hover:text-[#B91C1C] font-medium transition-colors">
+              <h2 className="text-sm font-semibold text-foreground">Service Arms</h2>
+              <button className="flex items-center gap-1.5 text-xs text-[#C4972A] hover:text-[#A17D22] font-medium transition-colors">
                 <Plus className="w-3.5 h-3.5" />
                 Add Service
               </button>
             </div>
             {serviceArms.length === 0 ? (
-              <p className="text-sm text-gray-400 text-center py-4">No service arms attached</p>
+              <p className="text-sm text-muted-foreground text-center py-4">No service arms attached</p>
             ) : (
               <div className="space-y-2">
                 {serviceArms.map((sa) => (
                   <div
                     key={sa.id}
-                    className="flex items-center justify-between gap-3 rounded-lg bg-gray-50 border border-gray-200 px-4 py-3"
+                    className="flex items-center justify-between gap-3 rounded-lg bg-deep border border-border px-4 py-3"
                   >
                     <div>
-                      <span className="text-sm font-medium text-gray-900">{sa.name}</span>
-                      {sa.tier && <span className="ml-2 text-xs text-gray-500">({sa.tier})</span>}
+                      <span className="text-sm font-medium text-foreground">{sa.name}</span>
+                      {sa.tier && <span className="ml-2 text-xs text-muted-foreground">({sa.tier})</span>}
                     </div>
                     <div className="flex items-center gap-3">
                       {sa.monthlyPrice != null && (
-                        <span className="text-xs font-mono text-gray-600">
+                        <span className="text-xs font-mono text-muted-foreground">
                           ${sa.monthlyPrice.toLocaleString()}/mo
                         </span>
                       )}
@@ -550,14 +550,14 @@ export function DealDetailClient({
                         className={cn(
                           "text-xs px-2 py-0.5 rounded border font-medium",
                           sa.status === "active"
-                            ? "text-green-700 bg-green-50 border-green-200"
-                            : "text-gray-600 bg-gray-100 border-gray-200"
+                            ? "text-green-400 bg-green-900/20 border-green-800"
+                            : "text-muted-foreground bg-deep border-border"
                         )}
                       >
                         {sa.status}
                       </span>
                       {sa.activatedAt && (
-                        <span className="text-xs text-gray-400">
+                        <span className="text-xs text-muted-foreground">
                           {new Date(sa.activatedAt).toLocaleDateString()}
                         </span>
                       )}
@@ -569,15 +569,15 @@ export function DealDetailClient({
           </div>
 
           {/* Activity Timeline */}
-          <div className="bg-white border border-gray-200 rounded-xl p-5">
+          <div className="bg-card border border-border rounded-xl p-5">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
-                <Clock className="w-4 h-4 text-gray-400" />
+              <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                <Clock className="w-4 h-4 text-muted-foreground" />
                 Activity Timeline ({activities.length})
               </h2>
               <button
                 onClick={() => setAddActivityOpen(!addActivityOpen)}
-                className="flex items-center gap-1.5 text-xs text-[#DC2626] hover:text-[#B91C1C] font-medium transition-colors"
+                className="flex items-center gap-1.5 text-xs text-[#C4972A] hover:text-[#A17D22] font-medium transition-colors"
               >
                 <Plus className="w-3.5 h-3.5" />
                 Add Activity
@@ -585,11 +585,11 @@ export function DealDetailClient({
             </div>
 
             {addActivityOpen && (
-              <div className="mb-4 p-3 bg-gray-50 border border-gray-200 rounded-lg space-y-2">
+              <div className="mb-4 p-3 bg-deep border border-border rounded-lg space-y-2">
                 <select
                   value={newActivityType}
                   onChange={(e) => setNewActivityType(e.target.value as ActivityType)}
-                  className="w-full bg-white border border-gray-300 rounded px-2 py-1.5 text-sm text-gray-900 focus:outline-none focus:border-[#DC2626]"
+                  className="w-full bg-card border border-border rounded px-2 py-1.5 text-sm text-foreground focus:outline-none focus:border-[#C4972A]"
                 >
                   {ACTIVITY_TYPE_OPTIONS.map((opt) => (
                     <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -601,19 +601,19 @@ export function DealDetailClient({
                   onChange={(e) => setNewActivityDetail(e.target.value)}
                   placeholder="Activity detail..."
                   onKeyDown={(e) => e.key === "Enter" && handleAddActivity()}
-                  className="w-full bg-white border border-gray-300 rounded px-2 py-1.5 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#DC2626]"
+                  className="w-full bg-card border border-border rounded px-2 py-1.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-[#C4972A]"
                 />
                 <div className="flex gap-2">
                   <button
                     onClick={handleAddActivity}
                     disabled={!newActivityDetail.trim()}
-                    className="px-3 py-1.5 bg-[#DC2626] text-white text-xs font-medium rounded-lg hover:bg-[#B91C1C] disabled:opacity-40 transition-colors"
+                    className="px-3 py-1.5 bg-[#C4972A] text-white text-xs font-medium rounded-lg hover:bg-[#A17D22] disabled:opacity-40 transition-colors"
                   >
                     Add
                   </button>
                   <button
                     onClick={() => { setAddActivityOpen(false); setNewActivityDetail("") }}
-                    className="px-3 py-1.5 text-gray-500 hover:text-gray-900 text-xs transition-colors"
+                    className="px-3 py-1.5 text-muted-foreground hover:text-foreground text-xs transition-colors"
                   >
                     Cancel
                   </button>
@@ -622,25 +622,25 @@ export function DealDetailClient({
             )}
 
             {activities.length === 0 ? (
-              <p className="text-sm text-gray-400 text-center py-6">No activity yet</p>
+              <p className="text-sm text-muted-foreground text-center py-6">No activity yet</p>
             ) : (
               <div className="space-y-4">
                 {activities.map((act) => (
                   <div key={act.id} className="flex items-start gap-3">
-                    <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gray-100 text-gray-500 flex-shrink-0 mt-0.5">
+                    <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-deep text-muted-foreground flex-shrink-0 mt-0.5">
                       {ACTIVITY_ICONS[act.type] ?? <Globe className="w-3.5 h-3.5" />}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2">
-                        <p className="text-sm text-gray-900 font-medium capitalize">
+                        <p className="text-sm text-foreground font-medium capitalize">
                           {act.type.replace(/_/g, " ").toLowerCase()}
                         </p>
-                        <span className="text-xs text-gray-400 flex-shrink-0">
+                        <span className="text-xs text-muted-foreground flex-shrink-0">
                           {timeAgo(act.createdAt)}
                         </span>
                       </div>
                       {act.detail && (
-                        <p className="text-xs text-gray-500 mt-0.5">{act.detail}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">{act.detail}</p>
                       )}
                     </div>
                   </div>
@@ -650,9 +650,9 @@ export function DealDetailClient({
           </div>
 
           {/* Notes Section */}
-          <div className="bg-white border border-gray-200 rounded-xl p-5">
-            <h2 className="text-sm font-semibold text-gray-900 flex items-center gap-2 mb-4">
-              <StickyNote className="w-4 h-4 text-gray-400" />
+          <div className="bg-card border border-border rounded-xl p-5">
+            <h2 className="text-sm font-semibold text-foreground flex items-center gap-2 mb-4">
+              <StickyNote className="w-4 h-4 text-muted-foreground" />
               Notes ({notes.length})
             </h2>
 
@@ -662,17 +662,17 @@ export function DealDetailClient({
                 onChange={(e) => setNoteText(e.target.value)}
                 placeholder="Add a note..."
                 rows={3}
-                className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder:text-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-[#DC2626]/20 focus:border-[#DC2626]"
+                className="w-full px-3 py-2.5 bg-deep border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-[#C4972A]/20 focus:border-[#C4972A]"
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleAddNote()
                 }}
               />
               <div className="flex items-center justify-between">
-                <span className="text-xs text-gray-400">Cmd+Enter to save</span>
+                <span className="text-xs text-muted-foreground">Cmd+Enter to save</span>
                 <button
                   onClick={handleAddNote}
                   disabled={!noteText.trim()}
-                  className="flex items-center gap-2 px-4 py-1.5 bg-[#DC2626] text-white text-sm font-medium rounded-lg hover:bg-[#B91C1C] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                  className="flex items-center gap-2 px-4 py-1.5 bg-[#C4972A] text-white text-sm font-medium rounded-lg hover:bg-[#A17D22] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                 >
                   <Send className="h-3.5 w-3.5" />
                   Save Note
@@ -682,15 +682,15 @@ export function DealDetailClient({
 
             {notes.length === 0 ? (
               <div className="flex flex-col items-center py-6 gap-2">
-                <FileText className="h-8 w-8 text-gray-300" />
-                <p className="text-sm text-gray-400">No notes yet</p>
+                <FileText className="h-8 w-8 text-muted-foreground" />
+                <p className="text-sm text-muted-foreground">No notes yet</p>
               </div>
             ) : (
               <div className="space-y-3">
                 {notes.map((note) => (
-                  <div key={note.id} className="rounded-lg bg-gray-50 border border-gray-200 p-4">
-                    <p className="text-sm text-gray-900 whitespace-pre-wrap">{note.content}</p>
-                    <p className="text-xs text-gray-400 mt-2">{timeAgo(note.createdAt)}</p>
+                  <div key={note.id} className="rounded-lg bg-deep border border-border p-4">
+                    <p className="text-sm text-foreground whitespace-pre-wrap">{note.content}</p>
+                    <p className="text-xs text-muted-foreground mt-2">{timeAgo(note.createdAt)}</p>
                   </div>
                 ))}
               </div>
@@ -702,22 +702,22 @@ export function DealDetailClient({
         <div className="lg:col-span-2 space-y-6">
 
           {/* Actions */}
-          <div className="bg-white border border-gray-200 rounded-xl p-5">
-            <h2 className="text-sm font-semibold text-gray-900 mb-3">Actions</h2>
+          <div className="bg-card border border-border rounded-xl p-5">
+            <h2 className="text-sm font-semibold text-foreground mb-3">Actions</h2>
 
             {/* Stage */}
             <div className="mb-3">
-              <label className="text-xs text-gray-500 mb-1 block">Stage</label>
+              <label className="text-xs text-muted-foreground mb-1 block">Stage</label>
               <div className="relative">
                 <button
                   onClick={() => setStageDropdown(!stageDropdown)}
-                  className="flex items-center gap-1.5 w-full px-3 py-2 rounded-lg border border-gray-200 bg-white text-sm text-gray-900 hover:bg-gray-50 transition-colors"
+                  className="flex items-center gap-1.5 w-full px-3 py-2 rounded-lg border border-border bg-card text-sm text-foreground hover:bg-surface transition-colors"
                 >
                   <span className="flex-1 text-left truncate">{currentLabel}</span>
-                  <ChevronDown className="h-3.5 w-3.5 text-gray-400 flex-shrink-0" />
+                  <ChevronDown className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
                 </button>
                 {stageDropdown && (
-                  <div className="absolute left-0 top-full mt-1 z-20 w-full rounded-xl border border-gray-200 bg-white shadow-lg py-1 max-h-64 overflow-y-auto">
+                  <div className="absolute left-0 top-full mt-1 z-20 w-full rounded-xl border border-border bg-card shadow-lg py-1 max-h-64 overflow-y-auto">
                     {stageOptions.map((opt) => (
                       <button
                         key={opt.value}
@@ -725,8 +725,8 @@ export function DealDetailClient({
                         className={cn(
                           "w-full text-left px-4 py-2 text-sm transition-colors",
                           opt.value === stage
-                            ? "text-gray-900 bg-gray-100 font-medium"
-                            : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                            ? "text-foreground bg-deep font-medium"
+                            : "text-muted-foreground hover:text-foreground hover:bg-surface"
                         )}
                       >
                         {opt.label}
@@ -739,14 +739,14 @@ export function DealDetailClient({
 
             {/* Priority */}
             <div className="mb-3">
-              <label className="text-xs text-gray-500 mb-1 block">Priority</label>
+              <label className="text-xs text-muted-foreground mb-1 block">Priority</label>
               <select
                 value={priority}
                 onChange={async (e) => {
                   setPriority(e.target.value)
                   await patchDeal({ priority: e.target.value })
                 }}
-                className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-[#DC2626]"
+                className="w-full bg-card border border-border rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-[#C4972A]"
               >
                 {PRIORITY_OPTIONS.map((p) => (
                   <option key={p} value={p}>{p[0] + p.slice(1).toLowerCase()}</option>
@@ -756,42 +756,42 @@ export function DealDetailClient({
 
             {/* Assigned To */}
             <div className="mb-4">
-              <label className="text-xs text-gray-500 mb-1 block">Assigned To</label>
+              <label className="text-xs text-muted-foreground mb-1 block">Assigned To</label>
               <input
                 type="text"
                 value={assignedTo}
                 onChange={(e) => setAssignedTo(e.target.value)}
                 onBlur={async () => await patchDeal({ assignedTo: assignedTo || null })}
                 placeholder="Enter assignee..."
-                className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#DC2626]"
+                className="w-full bg-card border border-border rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-[#C4972A]"
               />
             </div>
 
-            {isPending && <p className="text-xs text-gray-400 mb-2">Saving...</p>}
+            {isPending && <p className="text-xs text-muted-foreground mb-2">Saving...</p>}
 
             {/* Delete */}
-            <div className="pt-3 border-t border-gray-200">
+            <div className="pt-3 border-t border-border">
               {!deleteConfirm ? (
                 <button
                   onClick={() => setDeleteConfirm(true)}
-                  className="flex items-center gap-1.5 text-xs text-red-600 hover:text-red-700 font-medium transition-colors"
+                  className="flex items-center gap-1.5 text-xs text-primary hover:text-primary font-medium transition-colors"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                   Delete Deal
                 </button>
               ) : (
                 <div className="flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 text-red-500 flex-shrink-0" />
-                  <span className="text-xs text-red-600">Are you sure?</span>
+                  <AlertTriangle className="w-4 h-4 text-primary flex-shrink-0" />
+                  <span className="text-xs text-primary">Are you sure?</span>
                   <button
                     onClick={handleDeleteDeal}
-                    className="px-2 py-1 bg-red-600 text-white text-xs font-medium rounded hover:bg-red-700 transition-colors"
+                    className="px-2 py-1 bg-primary text-white text-xs font-medium rounded hover:bg-primary transition-colors"
                   >
                     Delete
                   </button>
                   <button
                     onClick={() => setDeleteConfirm(false)}
-                    className="px-2 py-1 text-gray-500 text-xs hover:text-gray-900 transition-colors"
+                    className="px-2 py-1 text-muted-foreground text-xs hover:text-foreground transition-colors"
                   >
                     Cancel
                   </button>
@@ -801,17 +801,17 @@ export function DealDetailClient({
           </div>
 
           {/* Score & Priority Card */}
-          <div className="bg-white border border-gray-200 rounded-xl p-5">
-            <h2 className="text-sm font-semibold text-gray-900 mb-3">Lead Score</h2>
+          <div className="bg-card border border-border rounded-xl p-5">
+            <h2 className="text-sm font-semibold text-foreground mb-3">Lead Score</h2>
             <div className="text-center py-2">
               <p className={cn(
                 "text-4xl font-bold font-mono",
-                leadScore == null ? "text-gray-300" : leadScore >= 70 ? "text-red-600" : leadScore >= 40 ? "text-amber-600" : "text-gray-500"
+                leadScore == null ? "text-muted-foreground" : leadScore >= 70 ? "text-primary" : leadScore >= 40 ? "text-amber-400" : "text-muted-foreground"
               )}>
                 {leadScore ?? "--"}
               </p>
               {leadScore != null && (
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-muted-foreground mt-1">
                   out of 100
                 </p>
               )}
@@ -825,51 +825,51 @@ export function DealDetailClient({
 
           {/* Attribution */}
           {(source || channelTag || utmSource || utmMedium || utmCampaign || createdAt) && (
-            <div className="bg-white border border-gray-200 rounded-xl p-5">
-              <h2 className="text-sm font-semibold text-gray-900 mb-3">Attribution</h2>
+            <div className="bg-card border border-border rounded-xl p-5">
+              <h2 className="text-sm font-semibold text-foreground mb-3">Attribution</h2>
               <div className="space-y-2 text-xs">
                 {source && (
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-500">Source</span>
-                    <span className="px-2 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded font-medium">
+                    <span className="text-muted-foreground">Source</span>
+                    <span className="px-2 py-0.5 bg-blue-900/20 text-blue-400 border border-blue-800 rounded font-medium">
                       {source}
                     </span>
                   </div>
                 )}
                 {sourceDetail && (
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-500">Detail</span>
-                    <span className="text-gray-900">{sourceDetail}</span>
+                    <span className="text-muted-foreground">Detail</span>
+                    <span className="text-foreground">{sourceDetail}</span>
                   </div>
                 )}
                 {channelTag && (
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-500">Channel</span>
-                    <span className="text-gray-900">{channelTag}</span>
+                    <span className="text-muted-foreground">Channel</span>
+                    <span className="text-foreground">{channelTag}</span>
                   </div>
                 )}
                 {utmSource && (
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-500">UTM Source</span>
-                    <span className="text-gray-900">{utmSource}</span>
+                    <span className="text-muted-foreground">UTM Source</span>
+                    <span className="text-foreground">{utmSource}</span>
                   </div>
                 )}
                 {utmMedium && (
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-500">UTM Medium</span>
-                    <span className="text-gray-900">{utmMedium}</span>
+                    <span className="text-muted-foreground">UTM Medium</span>
+                    <span className="text-foreground">{utmMedium}</span>
                   </div>
                 )}
                 {utmCampaign && (
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-500">UTM Campaign</span>
-                    <span className="text-gray-900">{utmCampaign}</span>
+                    <span className="text-muted-foreground">UTM Campaign</span>
+                    <span className="text-foreground">{utmCampaign}</span>
                   </div>
                 )}
                 {createdAt && (
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-500">Created</span>
-                    <span className="text-gray-900">
+                    <span className="text-muted-foreground">Created</span>
+                    <span className="text-foreground">
                       {new Date(createdAt).toLocaleDateString()}
                     </span>
                   </div>

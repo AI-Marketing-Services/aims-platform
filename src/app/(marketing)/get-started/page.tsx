@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default function GetStartedPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#FAFAFA]" />}>
+    <Suspense fallback={<div className="min-h-screen bg-deep" />}>
       <GetStartedClient />
     </Suspense>
   )

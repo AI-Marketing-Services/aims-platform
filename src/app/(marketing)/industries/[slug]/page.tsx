@@ -112,50 +112,50 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
   const solution = SOLUTION_DETAILS[solutionName] ?? SOLUTION_DETAILS["AI Growth Engine"]
 
   return (
-    <div className="min-h-screen pt-24 pb-16 bg-[#FAFAFA]">
+    <div className="min-h-screen pt-24 pb-16 bg-deep">
       <div className="max-w-4xl mx-auto px-4">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold tracking-tight text-gray-900">{title}</h1>
-          <p className="mt-4 text-lg text-gray-500 max-w-2xl mx-auto">{description}</p>
+          <h1 className="text-4xl font-bold tracking-tight text-foreground">{title}</h1>
+          <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">{description}</p>
         </div>
 
         {/* Recommended Solution */}
-        <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm mb-8">
-          <p className="text-xs font-semibold uppercase tracking-wider text-[#DC2626] mb-2">Recommended Package</p>
-          <h2 className="text-2xl font-bold text-gray-900 mb-1">{solutionName}</h2>
-          <p className="text-sm text-gray-500 mb-4">{solution.tagline}</p>
+        <div className="bg-card border border-border rounded-2xl p-8 shadow-sm mb-8">
+          <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-2">Recommended Package</p>
+          <h2 className="text-2xl font-bold text-foreground mb-1">{solutionName}</h2>
+          <p className="text-sm text-muted-foreground mb-4">{solution.tagline}</p>
           <div className="flex flex-wrap gap-2 mb-5">
             {solution.services.map((s) => (
-              <span key={s} className="inline-flex items-center gap-1 px-2.5 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full">
-                <Check className="w-3 h-3 text-green-600" />{s}
+              <span key={s} className="inline-flex items-center gap-1 px-2.5 py-1 bg-deep text-foreground text-xs font-medium rounded-full">
+                <Check className="w-3 h-3 text-green-400" />{s}
               </span>
             ))}
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-sm font-semibold text-gray-900">{solution.price}</span>
-            <Link href="/solutions" className="inline-flex items-center gap-1 text-sm text-[#DC2626] font-medium hover:underline">
+            <span className="text-sm font-semibold text-foreground">{solution.price}</span>
+            <Link href="/solutions" className="inline-flex items-center gap-1 text-sm text-primary font-medium hover:underline">
               View all solutions <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
         </div>
 
-        <div className="rounded-2xl border border-gray-200 bg-white p-12 text-center shadow-sm">
-          <p className="text-lg font-semibold text-gray-900 mb-2">
+        <div className="rounded-2xl border border-border bg-card p-12 text-center shadow-sm">
+          <p className="text-lg font-semibold text-foreground mb-2">
             Ready to see what AI can do for your business?
           </p>
-          <p className="text-gray-500 mb-6">
+          <p className="text-muted-foreground mb-6">
             Book a free 30-minute strategy call and we&apos;ll build a custom growth plan for your industry.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
               href="/get-started"
-              className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#DC2626] px-6 py-3 text-sm font-semibold text-white hover:bg-[#B91C1C] transition-colors"
+              className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-white hover:bg-primary/90 transition-colors"
             >
               Book a Strategy Call <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
               href="/marketplace"
-              className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-200 px-6 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+              className="inline-flex items-center justify-center gap-2 rounded-lg border border-border px-6 py-3 text-sm font-semibold text-foreground hover:bg-surface transition-colors"
             >
               Browse All Services
             </Link>

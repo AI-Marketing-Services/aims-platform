@@ -140,7 +140,7 @@ export default async function AdminClientDetailPage({ params }: { params: Promis
     <div className="max-w-7xl">
       <Link
         href="/admin/clients"
-        className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors mb-6"
+        className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to Clients

@@ -86,14 +86,14 @@ export default function OnboardingForm({
 
   if (completed) {
     return (
-      <div className="bg-white border border-gray-200 rounded-2xl p-10 text-center">
+      <div className="bg-card border border-border rounded-2xl p-10 text-center">
         <div className="flex justify-center mb-4">
-          <CheckCircle className="w-12 h-12 text-green-600" />
+          <CheckCircle className="w-12 h-12 text-green-400" />
         </div>
-        <h2 className="text-xl font-semibold text-gray-900 mb-2">
+        <h2 className="text-xl font-semibold text-foreground mb-2">
           Onboarding Complete
         </h2>
-        <p className="text-gray-500 text-sm">
+        <p className="text-muted-foreground text-sm">
           Thank you for completing your onboarding for {serviceName}. Our team
           will begin setting up your service right away.
         </p>
@@ -103,11 +103,11 @@ export default function OnboardingForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="bg-white border border-gray-200 rounded-2xl p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-1">
+      <div className="bg-card border border-border rounded-2xl p-6">
+        <h2 className="text-lg font-semibold text-foreground mb-1">
           {serviceName} Onboarding
         </h2>
-        <p className="text-sm text-gray-500 mb-6">
+        <p className="text-sm text-muted-foreground mb-6">
           Please fill out the information below so our team can get your service
           set up.
         </p>
@@ -117,11 +117,11 @@ export default function OnboardingForm({
             <div key={field.name}>
               <label
                 htmlFor={field.name}
-                className="block text-sm font-medium text-gray-900 mb-1"
+                className="block text-sm font-medium text-foreground mb-1"
               >
                 {field.label}
                 {field.required && (
-                  <span className="text-[#DC2626] ml-0.5">*</span>
+                  <span className="text-[#C4972A] ml-0.5">*</span>
                 )}
               </label>
 
@@ -132,14 +132,14 @@ export default function OnboardingForm({
                   onChange={(e) => handleChange(field.name, e.target.value)}
                   placeholder={field.placeholder}
                   rows={4}
-                  className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#DC2626]/20 focus:border-[#DC2626]"
+                  className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C4972A]/20 focus:border-[#C4972A]"
                 />
               ) : field.type === "select" ? (
                 <select
                   id={field.name}
                   value={formData[field.name] ?? ""}
                   onChange={(e) => handleChange(field.name, e.target.value)}
-                  className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#DC2626]/20 focus:border-[#DC2626]"
+                  className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#C4972A]/20 focus:border-[#C4972A]"
                 >
                   <option value="">Select an option</option>
                   {field.options?.map((opt) => (
@@ -157,9 +157,9 @@ export default function OnboardingForm({
                     onChange={(e) =>
                       handleChange(field.name, e.target.checked ? "true" : "false")
                     }
-                    className="h-4 w-4 rounded border-gray-300 text-[#DC2626] focus:ring-[#DC2626]"
+                    className="h-4 w-4 rounded border-border text-[#C4972A] focus:ring-[#C4972A]"
                   />
-                  <span className="text-sm text-gray-600">
+                  <span className="text-sm text-muted-foreground">
                     {field.placeholder || "Yes"}
                   </span>
                 </div>
@@ -170,16 +170,16 @@ export default function OnboardingForm({
                   value={formData[field.name] ?? ""}
                   onChange={(e) => handleChange(field.name, e.target.value)}
                   placeholder={field.placeholder}
-                  className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#DC2626]/20 focus:border-[#DC2626]"
+                  className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C4972A]/20 focus:border-[#C4972A]"
                 />
               )}
 
               {field.helpText && (
-                <p className="mt-1 text-xs text-gray-400">{field.helpText}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{field.helpText}</p>
               )}
 
               {errors[field.name] && (
-                <p className="mt-1 text-xs text-[#DC2626]">
+                <p className="mt-1 text-xs text-[#C4972A]">
                   {errors[field.name]}
                 </p>
               )}
@@ -191,7 +191,7 @@ export default function OnboardingForm({
       <button
         type="submit"
         disabled={submitting}
-        className="w-full flex items-center justify-center gap-2 rounded-lg bg-[#DC2626] px-5 py-3 text-sm font-medium text-white hover:bg-[#B91C1C] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full flex items-center justify-center gap-2 rounded-lg bg-[#C4972A] px-5 py-3 text-sm font-medium text-white hover:bg-[#A17D22] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {submitting ? (
           <>

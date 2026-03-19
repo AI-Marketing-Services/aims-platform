@@ -30,7 +30,7 @@ export function MobileAdminNav() {
             href={item.href}
             className={cn(
               "flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg min-w-0 flex-1 transition-colors",
-              isActive ? "text-red-500" : "text-muted-foreground hover:text-foreground"
+              isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
             )}
           >
             <item.icon className="h-5 w-5" />

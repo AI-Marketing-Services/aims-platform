@@ -66,7 +66,7 @@ export function NotificationBell({ variant = "light" }: { variant?: "light" | "d
     }
   }
 
-  const iconClass = "text-gray-500 hover:text-gray-900"
+  const iconClass = "text-muted-foreground hover:text-foreground"
 
   return (
     <div className="relative" ref={panelRef}>
@@ -74,13 +74,13 @@ export function NotificationBell({ variant = "light" }: { variant?: "light" | "d
         onClick={() => setOpen(!open)}
         className={cn(
           "relative p-2 rounded-lg transition-colors",
-          "hover:bg-gray-100"
+          "hover:bg-surface"
         )}
         aria-label="Notifications"
       >
         <Bell className={cn("h-4 w-4", iconClass)} />
         {unread > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#DC2626] text-[9px] font-bold text-white">
+          <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[9px] font-bold text-primary-foreground">
             {unread > 9 ? "9+" : unread}
           </span>
         )}

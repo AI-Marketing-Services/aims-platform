@@ -77,7 +77,7 @@ function emailLayout(content: string, preheader = "") {
             <td style="background:#F9FAFB;border-radius:0 0 12px 12px;padding:24px 40px;border-top:1px solid #F0F0F0;">
               <p style="margin:0 0 8px;font-size:12px;color:#6B7280;">
                 Questions? Reply to this email or reach us at
-                <a href="mailto:${REPLY_TO}" style="color:#DC2626;text-decoration:none;">${REPLY_TO}</a>
+                <a href="mailto:${REPLY_TO}" style="color:#C4972A;text-decoration:none;">${REPLY_TO}</a>
               </p>
               <p style="margin:0;font-size:11px;color:#9CA3AF;">
                 AIMS · AI-Powered Business Infrastructure ·
@@ -95,7 +95,7 @@ function emailLayout(content: string, preheader = "") {
 }
 
 function btn(text: string, url: string) {
-  return `<a href="${url}" style="display:inline-block;background:#DC2626;color:#ffffff;padding:13px 28px;border-radius:6px;text-decoration:none;font-weight:700;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;margin:8px 0;">${text}</a>`
+  return `<a href="${url}" style="display:inline-block;background:#C4972A;color:#ffffff;padding:13px 28px;border-radius:6px;text-decoration:none;font-weight:700;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;margin:8px 0;">${text}</a>`
 }
 
 function h1(text: string) {
@@ -158,8 +158,8 @@ export async function sendLeadMagnetResults(params: {
   const body = `
     ${h1(`${params.name ? `Hey ${params.name} —` : "Hey —"} your results are ready`)}
     ${params.score ? `
-      <div style="background:#FEF2F2;border-left:4px solid #DC2626;border-radius:6px;padding:20px 24px;margin:0 0 24px;">
-        <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#DC2626;text-transform:uppercase;letter-spacing:0.08em;">Your Score</p>
+      <div style="background:#FEF2F2;border-left:4px solid #C4972A;border-radius:6px;padding:20px 24px;margin:0 0 24px;">
+        <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#C4972A;text-transform:uppercase;letter-spacing:0.08em;">Your Score</p>
         <p style="margin:0;font-size:48px;font-weight:800;color:#111827;line-height:1;">${params.score}<span style="font-size:20px;color:#6B7280;">/100</span></p>
       </div>
     ` : ""}
@@ -167,7 +167,7 @@ export async function sendLeadMagnetResults(params: {
     ${btn("View Full Results →", params.resultsUrl)}
     ${divider()}
     ${p(`Want to talk through your results with our team? We'll map the right AIMS services to your exact gaps — no pitch, just a working session.`)}
-    <a href="https://aimseos.com/get-started" style="font-size:14px;color:#DC2626;font-weight:600;text-decoration:none;">
+    <a href="https://aimseos.com/get-started" style="font-size:14px;color:#C4972A;font-weight:600;text-decoration:none;">
       Book a free strategy call →
     </a>
   `
@@ -225,9 +225,9 @@ export async function sendInternalNotification(params: {
   urgency?: "low" | "normal" | "high"
 }) {
   const urgencyBar = params.urgency === "high"
-    ? `<div style="background:#DC2626;color:#ffffff;padding:10px 16px;border-radius:6px;font-size:13px;font-weight:700;margin-bottom:20px;">⚠ HIGH PRIORITY</div>`
+    ? `<div style="background:#C4972A;color:#ffffff;padding:10px 16px;border-radius:6px;font-size:13px;font-weight:700;margin-bottom:20px;">⚠ HIGH PRIORITY</div>`
     : params.urgency === "normal"
-    ? `<div style="background:#FEF2F2;color:#DC2626;padding:10px 16px;border-radius:6px;font-size:13px;font-weight:600;margin-bottom:20px;">Notification</div>`
+    ? `<div style="background:#FEF2F2;color:#C4972A;padding:10px 16px;border-radius:6px;font-size:13px;font-weight:600;margin-bottom:20px;">Notification</div>`
     : ""
 
   const body = `

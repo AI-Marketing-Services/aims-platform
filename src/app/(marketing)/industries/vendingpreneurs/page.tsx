@@ -135,8 +135,8 @@ export default function VendingpreneursPage() {
       <section className="pt-28 pb-20 bg-background">
         <div className="mx-auto max-w-5xl px-4">
           <div className="flex items-center gap-2 mb-6">
-            <span className="inline-flex items-center gap-2 rounded-full border border-red-200 bg-red-50 px-4 py-1.5 text-sm font-medium text-[#DC2626]">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#DC2626] animate-pulse" />
+            <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary">
+              <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
               Built for the Vendingpreneur Community
             </span>
           </div>
@@ -144,7 +144,7 @@ export default function VendingpreneursPage() {
           <h1 className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl md:text-6xl max-w-4xl leading-[1.1]">
             More locations.
             <br />
-            <span className="text-[#DC2626]">Zero extra hours.</span>
+            <span className="text-primary">Zero extra hours.</span>
           </h1>
 
           <p className="mt-6 text-xl text-muted-foreground max-w-2xl leading-relaxed">
@@ -155,7 +155,7 @@ export default function VendingpreneursPage() {
           <div className="mt-10 flex flex-col gap-4 sm:flex-row">
             <Link
               href="/get-started?ref=vendingpreneurs"
-              className="inline-flex items-center gap-2 rounded-xl bg-[#DC2626] px-8 py-4 text-base font-semibold text-white hover:bg-[#B91C1C] transition shadow-md shadow-red-100"
+              className="inline-flex items-center gap-2 rounded-xl bg-primary px-8 py-4 text-base font-semibold text-white hover:bg-primary/90 transition shadow-md shadow-primary/20"
             >
               Get Your Free Strategy Call <ArrowRight className="h-5 w-5" />
             </Link>
@@ -180,9 +180,9 @@ export default function VendingpreneursPage() {
             {RESULTS.map((r) => (
               <div
                 key={r.value}
-                className="rounded-2xl border-2 border-[#DC2626] bg-white px-6 py-5 text-center shadow-sm"
+                className="rounded-2xl border-2 border-primary bg-card px-6 py-5 text-center shadow-sm"
               >
-                <div className="text-3xl font-black text-[#DC2626] font-mono">{r.value}</div>
+                <div className="text-3xl font-black text-primary font-mono">{r.value}</div>
                 <div className="mt-1.5 text-xs text-muted-foreground leading-snug">{r.label}</div>
               </div>
             ))}
@@ -194,7 +194,7 @@ export default function VendingpreneursPage() {
       <section className="py-24 bg-card">
         <div className="mx-auto max-w-5xl px-4">
           <div className="mb-14">
-            <span className="inline-block rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">
+            <span className="inline-block rounded-full bg-deep px-3 py-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">
               Built for Operators Like You
             </span>
             <h2 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
@@ -206,13 +206,13 @@ export default function VendingpreneursPage() {
             {PAIN_POINTS.map((item) => (
               <div key={item.pain} className="rounded-2xl border border-border bg-background p-6">
                 <div className="flex items-start gap-4">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-red-50">
-                    <item.icon className="h-5 w-5 text-[#DC2626]" />
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10">
+                    <item.icon className="h-5 w-5 text-primary" />
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground line-through mb-1.5">{item.pain}</p>
                     <p className="text-sm font-medium text-foreground flex items-start gap-2">
-                      <CheckCircle2 className="h-4 w-4 shrink-0 text-[#DC2626] mt-0.5" />
+                      <CheckCircle2 className="h-4 w-4 shrink-0 text-primary mt-0.5" />
                       {item.fix}
                     </p>
                   </div>
@@ -227,7 +227,7 @@ export default function VendingpreneursPage() {
       <section className="py-24 bg-background">
         <div className="mx-auto max-w-5xl px-4">
           <div className="mb-14">
-            <span className="inline-block rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">
+            <span className="inline-block rounded-full bg-deep px-3 py-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">
               AIMS for Vending Operators
             </span>
             <h2 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
@@ -240,21 +240,21 @@ export default function VendingpreneursPage() {
               <Link
                 key={service.slug}
                 href={`/services/${service.slug}?ref=vendingpreneurs`}
-                className="group rounded-2xl border border-border bg-card p-7 hover:border-[#DC2626]/40 hover:shadow-md transition-all"
+                className="group rounded-2xl border border-border bg-card p-7 hover:border-primary/40 hover:shadow-md transition-all"
               >
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-xs font-semibold text-muted-foreground">{service.price}</span>
                   {service.badge && (
-                    <span className="rounded-full bg-red-50 border border-red-200 px-2.5 py-0.5 text-[10px] font-semibold text-[#DC2626]">
+                    <span className="rounded-full bg-primary/10 border border-primary/30 px-2.5 py-0.5 text-[10px] font-semibold text-primary">
                       {service.badge}
                     </span>
                   )}
                 </div>
-                <h3 className="text-lg font-bold text-foreground group-hover:text-[#DC2626] transition-colors mb-2">
+                <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors mb-2">
                   {service.name}
                 </h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">{service.desc}</p>
-                <div className="mt-5 flex items-center gap-2 text-sm font-semibold text-[#DC2626]">
+                <div className="mt-5 flex items-center gap-2 text-sm font-semibold text-primary">
                   Learn more <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </div>
               </Link>
@@ -267,7 +267,7 @@ export default function VendingpreneursPage() {
       <section className="py-24 bg-card">
         <div className="mx-auto max-w-6xl px-4">
           <div className="mb-4">
-            <span className="inline-block rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">
+            <span className="inline-block rounded-full bg-deep px-3 py-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">
               VP Operator Toolkit
             </span>
             <h2 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
@@ -285,13 +285,13 @@ export default function VendingpreneursPage() {
                 key={tier.id}
                 className={`relative flex flex-col rounded-2xl border bg-background p-6 ${
                   tier.popular
-                    ? "border-[#DC2626] shadow-md"
+                    ? "border-primary shadow-md"
                     : "border-border"
                 }`}
               >
                 {tier.popular && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <span className="rounded-full bg-[#DC2626] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
+                    <span className="rounded-full bg-primary px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
                       Most Popular
                     </span>
                   </div>
@@ -309,7 +309,7 @@ export default function VendingpreneursPage() {
                 <ul className="flex-1 space-y-3 mb-6">
                   {tier.features.map((f) => (
                     <li key={f.name} className="flex items-start gap-2">
-                      <Check className={`h-3.5 w-3.5 shrink-0 mt-0.5 ${f.desc === "" ? "text-muted-foreground" : "text-[#DC2626]"}`} />
+                      <Check className={`h-3.5 w-3.5 shrink-0 mt-0.5 ${f.desc === "" ? "text-muted-foreground" : "text-primary"}`} />
                       <div>
                         <p className={`text-xs font-semibold ${f.desc === "" ? "text-muted-foreground" : "text-foreground"}`}>{f.name}</p>
                         {f.desc && <p className="text-[11px] text-muted-foreground leading-snug mt-0.5">{f.desc}</p>}
@@ -322,7 +322,7 @@ export default function VendingpreneursPage() {
                   href={`/get-started?ref=vp-${tier.id}`}
                   className={`w-full text-center rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors ${
                     tier.popular
-                      ? "bg-[#DC2626] text-white hover:bg-[#B91C1C]"
+                      ? "bg-primary text-white hover:bg-primary/90"
                       : "border border-border bg-background text-foreground hover:bg-muted"
                   }`}
                 >
@@ -334,7 +334,7 @@ export default function VendingpreneursPage() {
 
           <p className="mt-6 text-center text-sm text-muted-foreground">
             Not sure which tier fits your operation?{" "}
-            <Link href="/get-started?ref=vp-consult" className="text-[#DC2626] font-medium hover:underline">
+            <Link href="/get-started?ref=vp-consult" className="text-primary font-medium hover:underline">
               Book a free 30-min call
             </Link>{" "}
             and we&apos;ll recommend the right starting point.
@@ -343,22 +343,22 @@ export default function VendingpreneursPage() {
       </section>
 
       {/* Recommended Solution Package */}
-      <section className="py-16 px-4 bg-[#FAFAFA]">
+      <section className="py-16 px-4 bg-deep">
         <div className="max-w-3xl mx-auto">
-          <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm">
-            <p className="text-xs font-semibold uppercase tracking-wider text-[#DC2626] mb-2">Recommended Package</p>
-            <h2 className="text-2xl font-bold text-gray-900 mb-1">AI Growth Engine</h2>
-            <p className="text-sm text-gray-500 mb-4">The full-stack lead generation and conversion bundle designed for operators who want more locations without more hours. Website, outbound, voice agents, and SEO — all working together.</p>
+          <div className="bg-card border border-border rounded-2xl p-8 shadow-sm">
+            <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-2">Recommended Package</p>
+            <h2 className="text-2xl font-bold text-foreground mb-1">AI Growth Engine</h2>
+            <p className="text-sm text-muted-foreground mb-4">The full-stack lead generation and conversion bundle designed for operators who want more locations without more hours. Website, outbound, voice agents, and SEO — all working together.</p>
             <div className="flex flex-wrap gap-2 mb-5">
               {["Website + CRM + Chatbot", "Cold Outbound Engine", "AI Voice Agents", "SEO/AEO"].map((s) => (
-                <span key={s} className="inline-flex items-center gap-1 px-2.5 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full">
-                  <Check className="w-3 h-3 text-green-600" />{s}
+                <span key={s} className="inline-flex items-center gap-1 px-2.5 py-1 bg-deep text-foreground text-xs font-medium rounded-full">
+                  <Check className="w-3 h-3 text-green-400" />{s}
                 </span>
               ))}
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm font-semibold text-gray-900">from $497/mo</span>
-              <Link href="/solutions" className="inline-flex items-center gap-1 text-sm text-[#DC2626] font-medium hover:underline">
+              <span className="text-sm font-semibold text-foreground">from $497/mo</span>
+              <Link href="/solutions" className="inline-flex items-center gap-1 text-sm text-primary font-medium hover:underline">
                 View all solutions <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
@@ -381,22 +381,22 @@ export default function VendingpreneursPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-24 bg-[#DC2626]">
+      <section className="py-24 bg-primary">
         <div className="mx-auto max-w-2xl px-4 text-center">
-          <TrendingUp className="mx-auto h-10 w-10 text-red-200 mb-6" />
+          <TrendingUp className="mx-auto h-10 w-10 text-primary-foreground/70 mb-6" />
           <h2 className="text-3xl font-bold text-white sm:text-4xl">
             Ready to add 10 locations this quarter?
           </h2>
-          <p className="mt-4 text-red-100 text-lg">
+          <p className="mt-4 text-primary-foreground/80 text-lg">
             Book a free 30-minute call. We&apos;ll audit your current lead flow and build a custom plan for your operation.
           </p>
           <Link
             href="/get-started?ref=vendingpreneurs"
-            className="mt-8 inline-flex items-center gap-2 rounded-xl bg-white px-10 py-4 text-base font-semibold text-[#DC2626] hover:bg-red-50 transition shadow-lg"
+            className="mt-8 inline-flex items-center gap-2 rounded-xl bg-card px-10 py-4 text-base font-semibold text-primary hover:bg-primary/10 transition shadow-lg"
           >
             Book Your Free Strategy Call <ArrowRight className="h-5 w-5" />
           </Link>
-          <p className="mt-4 text-red-200 text-sm">
+          <p className="mt-4 text-primary-foreground/70 text-sm">
             No retainer required · Cancel anytime · Results in 14 days
           </p>
         </div>

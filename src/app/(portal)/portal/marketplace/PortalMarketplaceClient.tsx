@@ -41,10 +41,10 @@ const PILLAR_TABS = [
 ]
 
 const PILLAR_PILL: Record<Pillar, string> = {
-  MARKETING: "bg-green-50 text-green-700 border-green-200",
-  SALES: "bg-blue-50 text-blue-700 border-blue-200",
-  OPERATIONS: "bg-orange-50 text-orange-700 border-orange-200",
-  FINANCE: "bg-purple-50 text-purple-700 border-purple-200",
+  MARKETING: "bg-green-900/15 text-green-400 border-green-800",
+  SALES: "bg-blue-900/20 text-blue-400 border-blue-800",
+  OPERATIONS: "bg-orange-900/20 text-orange-400 border-orange-800",
+  FINANCE: "bg-purple-900/20 text-purple-400 border-purple-800",
 }
 
 const TOOL_MAP: Record<string, { name: string; domain: string }[]> = {
@@ -204,7 +204,7 @@ export function PortalMarketplaceClient({ services, subscribedIds, subscribedSer
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search services..."
-            className="w-full pl-9 pr-4 py-2 bg-card border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#DC2626]/30 focus:border-[#DC2626]"
+            className="w-full pl-9 pr-4 py-2 bg-card border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C4972A]/30 focus:border-[#C4972A]"
           />
         </div>
         <div className="flex flex-wrap gap-1.5">
@@ -215,7 +215,7 @@ export function PortalMarketplaceClient({ services, subscribedIds, subscribedSer
               className={cn(
                 "px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors",
                 pillar === tab.value
-                  ? "bg-[#DC2626] text-white border-[#DC2626]"
+                  ? "bg-[#C4972A] text-white border-[#C4972A]"
                   : "bg-card text-muted-foreground border-border hover:text-foreground hover:border-border/80"
               )}
             >
@@ -251,7 +251,7 @@ export function PortalMarketplaceClient({ services, subscribedIds, subscribedSer
                 <div className="flex items-start justify-between mb-3 gap-2">
                   <div className="flex flex-col gap-1">
                     {isRecommended && (
-                      <span className="self-start bg-red-50 text-[#DC2626] border border-red-200 text-[10px] font-bold uppercase tracking-wider rounded-full px-2 py-0.5">
+                      <span className="self-start bg-primary/10 text-[#C4972A] border border-primary/30 text-[10px] font-bold uppercase tracking-wider rounded-full px-2 py-0.5">
                         Recommended for you
                       </span>
                     )}
@@ -264,7 +264,7 @@ export function PortalMarketplaceClient({ services, subscribedIds, subscribedSer
 
                   <div className="flex flex-col items-end gap-1 flex-shrink-0">
                     {isSubscribed && (
-                      <span className="bg-green-50 text-green-700 border border-green-200 text-xs font-semibold rounded-full px-2 py-0.5">
+                      <span className="bg-green-900/15 text-green-400 border border-green-800 text-xs font-semibold rounded-full px-2 py-0.5">
                         Active
                       </span>
                     )}
@@ -298,7 +298,7 @@ export function PortalMarketplaceClient({ services, subscribedIds, subscribedSer
                 {isSubscribed ? (
                   <Link
                     href={`/portal/services/${svc.id}`}
-                    className="w-full flex items-center justify-center gap-2 py-2.5 bg-gray-100 text-foreground text-xs font-medium rounded-lg hover:bg-gray-200 transition-colors border border-border"
+                    className="w-full flex items-center justify-center gap-2 py-2.5 bg-deep text-foreground text-xs font-medium rounded-lg hover:bg-surface transition-colors border border-border"
                   >
                     View Service
                     <ArrowRight className="h-3.5 w-3.5" />
@@ -306,7 +306,7 @@ export function PortalMarketplaceClient({ services, subscribedIds, subscribedSer
                 ) : custom ? (
                   <button
                     onClick={() => router.push(`/get-started?service=${svc.slug}`)}
-                    className="w-full flex items-center justify-center gap-2 py-2.5 bg-[#DC2626] text-white text-xs font-semibold rounded-lg hover:bg-[#B91C1C] transition-colors"
+                    className="w-full flex items-center justify-center gap-2 py-2.5 bg-[#C4972A] text-white text-xs font-semibold rounded-lg hover:bg-[#A17D22] transition-colors"
                   >
                     Request Quote
                     <ArrowRight className="h-3.5 w-3.5" />
@@ -314,7 +314,7 @@ export function PortalMarketplaceClient({ services, subscribedIds, subscribedSer
                 ) : (
                   <Link
                     href={`/marketplace?highlight=${svc.slug}`}
-                    className="w-full flex items-center justify-center gap-2 py-2.5 bg-[#DC2626] text-white text-xs font-semibold rounded-lg hover:bg-[#B91C1C] transition-colors"
+                    className="w-full flex items-center justify-center gap-2 py-2.5 bg-[#C4972A] text-white text-xs font-semibold rounded-lg hover:bg-[#A17D22] transition-colors"
                   >
                     Add to Plan
                     <ArrowRight className="h-3.5 w-3.5" />
@@ -331,7 +331,7 @@ export function PortalMarketplaceClient({ services, subscribedIds, subscribedSer
           <p className="text-muted-foreground text-sm">No services match your search.</p>
           <button
             onClick={() => { setPillar("ALL"); setSearch("") }}
-            className="mt-3 text-sm font-medium text-[#DC2626] hover:underline"
+            className="mt-3 text-sm font-medium text-[#C4972A] hover:underline"
           >
             Clear filters
           </button>

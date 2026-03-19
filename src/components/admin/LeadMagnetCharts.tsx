@@ -47,7 +47,7 @@ export function SubmissionsByTypeChart({
   const chartData = data.map((d) => ({
     name: TYPE_SHORT[d.type] ?? d.type,
     count: d.count,
-    fill: TYPE_COLOR[d.type] ?? "#DC2626",
+    fill: TYPE_COLOR[d.type] ?? "#C4972A",
   }))
 
   return (
@@ -101,8 +101,8 @@ export function SubmissionsOverTimeChart({
       >
         <defs>
           <linearGradient id="submissionGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="#DC2626" stopOpacity={0.3} />
-            <stop offset="95%" stopColor="#DC2626" stopOpacity={0} />
+            <stop offset="5%" stopColor="#C4972A" stopOpacity={0.3} />
+            <stop offset="95%" stopColor="#C4972A" stopOpacity={0} />
           </linearGradient>
         </defs>
         <CartesianGrid
@@ -136,7 +136,7 @@ export function SubmissionsOverTimeChart({
         <Area
           type="monotone"
           dataKey="count"
-          stroke="#DC2626"
+          stroke="#C4972A"
           strokeWidth={2}
           fill="url(#submissionGradient)"
           dot={false}
@@ -182,7 +182,7 @@ export function VendorComparisonChart({
             name === "current" ? "Current Cost" : "After Replacement",
           ]}
         />
-        <Bar dataKey="current" fill="#DC2626" radius={[4, 4, 0, 0]} maxBarSize={24} name="current" />
+        <Bar dataKey="current" fill="#C4972A" radius={[4, 4, 0, 0]} maxBarSize={24} name="current" />
         <Bar dataKey="replacement" fill="#22C55E" radius={[4, 4, 0, 0]} maxBarSize={24} name="replacement" />
       </BarChart>
     </ResponsiveContainer>

@@ -21,12 +21,12 @@ const STATUS_CONFIG: Record<
 > = {
   completed: {
     label: "Deployed",
-    color: "text-green-400 bg-green-500/10 border-green-500/20",
+    color: "text-green-400 bg-green-400/10 border-green-500/20",
     icon: CheckCircle2,
   },
   deployed: {
     label: "Deployed",
-    color: "text-green-400 bg-green-500/10 border-green-500/20",
+    color: "text-green-400 bg-green-400/10 border-green-500/20",
     icon: CheckCircle2,
   },
   ready: {
@@ -128,8 +128,8 @@ export default async function AdminVendorSavingsPage() {
             <div className="rounded-xl border border-border bg-card p-6">
               <div className="flex items-center justify-between mb-4">
                 <p className="text-xs text-muted-foreground">Monthly Vendor Spend</p>
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-500/10">
-                  <DollarSign className="h-4 w-4 text-red-400" />
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/100/10">
+                  <DollarSign className="h-4 w-4 text-primary" />
                 </div>
               </div>
               <p className="text-3xl font-bold text-foreground font-mono">
@@ -157,10 +157,10 @@ export default async function AdminVendorSavingsPage() {
               </p>
             </div>
 
-            <div className="rounded-xl border border-green-500/20 bg-green-500/5 p-6">
+            <div className="rounded-xl border border-green-500/20 bg-green-400/5 p-6">
               <div className="flex items-center justify-between mb-4">
                 <p className="text-xs text-muted-foreground">Actual Savings Realized</p>
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-green-500/10">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-green-400/10">
                   <CheckCircle2 className="h-4 w-4 text-green-400" />
                 </div>
               </div>
@@ -289,10 +289,10 @@ export default async function AdminVendorSavingsPage() {
 
           {/* Insight card */}
           {nextBest && (
-            <div className="rounded-xl border border-[#DC2626]/20 bg-[#DC2626]/5 p-5 flex items-start gap-3">
-              <Lightbulb className="h-4 w-4 text-[#DC2626] mt-0.5 flex-shrink-0" />
+            <div className="rounded-xl border border-[#C4972A]/20 bg-[#C4972A]/5 p-5 flex items-start gap-3">
+              <Lightbulb className="h-4 w-4 text-[#C4972A] mt-0.5 flex-shrink-0" />
               <p className="text-sm text-foreground">
-                <span className="font-semibold text-[#DC2626]">Next highest-impact replacement: </span>
+                <span className="font-semibold text-[#C4972A]">Next highest-impact replacement: </span>
                 <span className="font-semibold">{nextBest.vendorName}</span> at{" "}
                 <span className="font-semibold text-green-400">
                   ${nextBest.projectedSavings.toLocaleString()}/mo savings

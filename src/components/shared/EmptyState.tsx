@@ -25,7 +25,7 @@ export function EmptyState({
 }: EmptyStateProps) {
   return (
     <div className={cn("flex flex-col items-center justify-center py-12 px-4 text-center", className)}>
-      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gray-100 mb-4">
+      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-deep mb-4">
         <Icon className="h-6 w-6 text-muted-foreground" />
       </div>
       <h3 className="text-sm font-semibold text-foreground mb-1">{title}</h3>
@@ -37,14 +37,14 @@ export function EmptyState({
           {actionHref ? (
             <Link
               href={actionHref}
-              className="inline-flex items-center gap-2 rounded-lg bg-[#DC2626] px-4 py-2 text-sm font-semibold text-white hover:bg-[#B91C1C] transition-colors"
+              className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
             >
               {actionLabel}
             </Link>
           ) : (
             <button
               onClick={onAction}
-              className="inline-flex items-center gap-2 rounded-lg bg-[#DC2626] px-4 py-2 text-sm font-semibold text-white hover:bg-[#B91C1C] transition-colors"
+              className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
             >
               {actionLabel}
             </button>

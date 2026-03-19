@@ -59,10 +59,18 @@ const config = {
         },
         // AIMS custom
         aims: {
-          red: "#DC2626",
-          "red-dark": "#B91C1C",
-          "red-light": "#FEE2E2",
+          gold: "#C4972A",
+          "gold-dark": "#A17D22",
+          "gold-light": "#E8C46A",
         },
+        ink: "#08090D",
+        deep: "#0E1219",
+        surface: "#141923",
+        panel: "#1A2030",
+        cream: "#F0EBE0",
+        "gold-dim": "#6B5A2E",
+        line: "rgba(255,255,255,0.07)",
+        "line-hover": "rgba(255,255,255,0.14)",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -70,8 +78,9 @@ const config = {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        sans: ["var(--font-geist-sans)", "system-ui", "sans-serif"],
-        mono: ["var(--font-geist-mono)", "monospace"],
+        sans: ["var(--font-dm-sans)", "system-ui", "sans-serif"],
+        mono: ["var(--font-dm-mono)", "monospace"],
+        serif: ["var(--font-cormorant)", "Georgia", "serif"],
       },
       keyframes: {
         "accordion-down": {
@@ -82,10 +91,15 @@ const config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        "fade-up": {
+          from: { opacity: "0", transform: "translateY(32px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "fade-up": "fade-up 0.6s ease-out forwards",
       },
     },
   },

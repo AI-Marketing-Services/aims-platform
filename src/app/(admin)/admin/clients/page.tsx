@@ -83,10 +83,10 @@ export default async function AdminClientsPage() {
         ].map((s) => (
           <div
             key={s.label}
-            className="bg-white border border-gray-200 rounded-xl px-4 py-3"
+            className="bg-card border border-border rounded-xl px-4 py-3"
           >
-            <div className="text-xs text-gray-500 mb-1">{s.label}</div>
-            <div className="text-lg font-bold font-mono text-gray-900">{s.value}</div>
+            <div className="text-xs text-muted-foreground mb-1">{s.label}</div>
+            <div className="text-lg font-bold font-mono text-foreground">{s.value}</div>
           </div>
         ))}
       </div>

@@ -47,7 +47,7 @@ type Deal = {
 }
 
 const KANBAN_STAGES: { key: DealStage; label: string; color: string }[] = [
-  { key: "NEW_LEAD", label: "New Lead", color: "border-gray-500" },
+  { key: "NEW_LEAD", label: "New Lead", color: "border-muted-foreground" },
   { key: "QUALIFIED", label: "Qualified", color: "border-blue-500" },
   { key: "DEMO_BOOKED", label: "Demo Booked", color: "border-purple-500" },
   { key: "PROPOSAL_SENT", label: "Proposal Sent", color: "border-yellow-500" },
@@ -56,8 +56,8 @@ const KANBAN_STAGES: { key: DealStage; label: string; color: string }[] = [
 ]
 
 const CLOSED_STAGES: { key: DealStage; label: string; color: string }[] = [
-  { key: "CHURNED", label: "Churned", color: "border-gray-600" },
-  { key: "LOST", label: "Lost", color: "border-red-900" },
+  { key: "CHURNED", label: "Churned", color: "border-muted-foreground" },
+  { key: "LOST", label: "Lost", color: "border-primary" },
 ]
 
 const SOURCE_OPTIONS = [
@@ -100,8 +100,8 @@ function LeadScoreDot({ score }: { score?: number }) {
   if (score >= 70) {
     return (
       <span className="flex items-center gap-1">
-        <span className="w-1.5 h-1.5 rounded-full bg-red-500 flex-shrink-0" />
-        <span className="text-xs text-red-400 font-mono">Hot</span>
+        <span className="w-1.5 h-1.5 rounded-full bg-primary/100 flex-shrink-0" />
+        <span className="text-xs text-primary font-mono">Hot</span>
       </span>
     )
   }
@@ -139,7 +139,7 @@ function DealCardInner({ deal, isDraggingOverlay = false }: { deal: Deal; isDrag
         )}
         {deal.assignedTo && (
           <div
-            className="flex-shrink-0 ml-2 w-6 h-6 rounded-full bg-[#DC2626]/20 border border-[#DC2626]/30 flex items-center justify-center text-[10px] font-bold text-[#DC2626]"
+            className="flex-shrink-0 ml-2 w-6 h-6 rounded-full bg-[#C4972A]/20 border border-[#C4972A]/30 flex items-center justify-center text-[10px] font-bold text-[#C4972A]"
             title={deal.assignedTo}
           >
             {getInitials(deal.assignedTo)}
@@ -149,11 +149,11 @@ function DealCardInner({ deal, isDraggingOverlay = false }: { deal: Deal; isDrag
 
       {/* Value badge */}
       <div className="flex items-center gap-2 mb-2 flex-wrap">
-        <span className="text-xs font-mono text-foreground bg-gray-100 px-1.5 py-0.5 rounded border border-gray-200">
+        <span className="text-xs font-mono text-foreground bg-deep px-1.5 py-0.5 rounded border border-border">
           ${deal.mrr.toLocaleString()}/mo
         </span>
         {deal.channelTag && (
-          <span className="text-xs px-1.5 py-0.5 bg-blue-50 text-blue-600 border border-blue-200 rounded">
+          <span className="text-xs px-1.5 py-0.5 bg-blue-900/20 text-blue-400 border border-blue-800 rounded">
             {deal.channelTag}
           </span>
         )}
@@ -162,7 +162,7 @@ function DealCardInner({ deal, isDraggingOverlay = false }: { deal: Deal; isDrag
       {/* Score + time row */}
       <div className="flex items-center justify-between gap-2">
         <LeadScoreDot score={deal.leadScore} />
-        <span className={cn("text-xs font-mono ml-auto", stale ? "text-red-400" : "text-gray-500")}>
+        <span className={cn("text-xs font-mono ml-auto", stale ? "text-primary" : "text-muted-foreground")}>
           {timeLabel}
         </span>
       </div>
@@ -170,12 +170,12 @@ function DealCardInner({ deal, isDraggingOverlay = false }: { deal: Deal; isDrag
       {deal.serviceArms.length > 0 && (
         <div className="flex flex-wrap gap-1 mt-2">
           {deal.serviceArms.slice(0, 2).map((arm) => (
-            <span key={arm} className="text-xs px-1.5 py-0.5 bg-muted text-gray-500 rounded">
+            <span key={arm} className="text-xs px-1.5 py-0.5 bg-muted text-muted-foreground rounded">
               {arm}
             </span>
           ))}
           {deal.serviceArms.length > 2 && (
-            <span className="text-xs px-1.5 py-0.5 bg-muted text-gray-500 rounded">
+            <span className="text-xs px-1.5 py-0.5 bg-muted text-muted-foreground rounded">
               +{deal.serviceArms.length - 2}
             </span>
           )}
@@ -203,7 +203,7 @@ function DraggableDealCard({ deal }: { deal: Deal }) {
       style={style}
       {...attributes}
       {...listeners}
-      className="bg-white border border-gray-200 rounded-xl p-3.5 hover:border-gray-400 hover:shadow-sm transition-all touch-none"
+      className="bg-card border border-border rounded-xl p-3.5 hover:border-border hover:shadow-sm transition-all touch-none"
     >
       <DealCardInner deal={deal} />
     </div>
@@ -231,10 +231,10 @@ function DroppableColumn({
       <div className={cn("border-t-2 pt-3 mb-3", stage.color)}>
         <div className="flex items-baseline justify-between gap-1">
           <span className="text-sm font-medium text-foreground truncate">{stage.label}</span>
-          <span className="text-xs font-mono text-gray-500 flex-shrink-0">({deals.length})</span>
+          <span className="text-xs font-mono text-muted-foreground flex-shrink-0">({deals.length})</span>
         </div>
         {stageMRR > 0 && (
-          <div className="text-xs font-mono text-gray-500 mt-0.5">${stageMRR.toLocaleString()}/mo</div>
+          <div className="text-xs font-mono text-muted-foreground mt-0.5">${stageMRR.toLocaleString()}/mo</div>
         )}
       </div>
 
@@ -243,9 +243,9 @@ function DroppableColumn({
         className={cn(
           "flex-1 space-y-2 overflow-y-auto pr-1 rounded-xl min-h-24 transition-all",
           isDragging && isOver
-            ? "bg-red-50 ring-1 ring-inset ring-red-200 border border-dashed border-red-300"
+            ? "bg-primary/10 ring-1 ring-inset ring-primary/30 border border-dashed border-primary/30"
             : isDragging
-            ? "bg-white/2 ring-1 ring-inset ring-white/5"
+            ? "bg-card/2 ring-1 ring-inset ring-white/5"
             : ""
         )}
       >
@@ -262,7 +262,7 @@ function DroppableColumn({
         ))}
         <button
           onClick={() => onAddDeal(stage.key)}
-          className="w-full flex items-center gap-2 py-2.5 px-3 text-gray-600 hover:text-gray-600 text-sm transition-colors rounded-xl hover:bg-white/3 border border-dashed border-border hover:border-gray-300"
+          className="w-full flex items-center gap-2 py-2.5 px-3 text-muted-foreground hover:text-muted-foreground text-sm transition-colors rounded-xl hover:bg-card/3 border border-dashed border-border hover:border-border"
         >
           <Plus className="w-3.5 h-3.5" />
           Add deal
@@ -362,7 +362,7 @@ export function CRMKanban({ initialDeals }: { initialDeals: Deal[] }) {
       <div className="flex flex-wrap items-center gap-3 mb-5">
         {/* Search */}
         <div className="relative flex-1 min-w-[160px] max-w-xs">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-500" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
           <input
             type="text"
             value={search}
@@ -377,13 +377,13 @@ export function CRMKanban({ initialDeals }: { initialDeals: Deal[] }) {
           <select
             value={sourceFilter}
             onChange={(e) => setSourceFilter(e.target.value)}
-            className="appearance-none pl-3 pr-8 py-2 bg-card border border-border rounded-lg text-sm text-gray-600 focus:outline-none focus:border-border cursor-pointer"
+            className="appearance-none pl-3 pr-8 py-2 bg-card border border-border rounded-lg text-sm text-muted-foreground focus:outline-none focus:border-border cursor-pointer"
           >
             {SOURCE_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>{o.label}</option>
             ))}
           </select>
-          <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-500 pointer-events-none" />
+          <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
         </div>
 
         {/* Score filter */}
@@ -391,29 +391,29 @@ export function CRMKanban({ initialDeals }: { initialDeals: Deal[] }) {
           <select
             value={scoreFilter}
             onChange={(e) => setScoreFilter(e.target.value)}
-            className="appearance-none pl-3 pr-8 py-2 bg-card border border-border rounded-lg text-sm text-gray-600 focus:outline-none focus:border-border cursor-pointer"
+            className="appearance-none pl-3 pr-8 py-2 bg-card border border-border rounded-lg text-sm text-muted-foreground focus:outline-none focus:border-border cursor-pointer"
           >
             {SCORE_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>{o.label}</option>
             ))}
           </select>
-          <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-500 pointer-events-none" />
+          <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
         </div>
 
         {/* Show Closed toggle */}
-        <label className="flex items-center gap-2 cursor-pointer text-sm text-gray-500 hover:text-gray-600 select-none">
+        <label className="flex items-center gap-2 cursor-pointer text-sm text-muted-foreground hover:text-muted-foreground select-none">
           <input
             type="checkbox"
             checked={showClosed}
             onChange={(e) => setShowClosed(e.target.checked)}
-            className="w-3.5 h-3.5 accent-[#DC2626] cursor-pointer"
+            className="w-3.5 h-3.5 accent-[#C4972A] cursor-pointer"
           />
           Show Closed
         </label>
 
         {/* Result count */}
         {(search || sourceFilter !== "all" || scoreFilter !== "all") && (
-          <span className="text-xs text-gray-500 font-mono">
+          <span className="text-xs text-muted-foreground font-mono">
             {filteredDeals.length} / {deals.length} deals
           </span>
         )}
@@ -421,7 +421,7 @@ export function CRMKanban({ initialDeals }: { initialDeals: Deal[] }) {
         {/* Add Deal button */}
         <button
           onClick={() => setAddingToStage("NEW_LEAD")}
-          className="ml-auto flex items-center gap-2 px-4 py-2 bg-[#DC2626] hover:bg-[#B91C1C] text-white text-sm font-medium rounded-lg transition-colors"
+          className="ml-auto flex items-center gap-2 px-4 py-2 bg-[#C4972A] hover:bg-[#A17D22] text-white text-sm font-medium rounded-lg transition-colors"
         >
           <Plus className="w-3.5 h-3.5" />
           Add Deal
@@ -444,7 +444,7 @@ export function CRMKanban({ initialDeals }: { initialDeals: Deal[] }) {
           </p>
           <button
             onClick={() => setAddingToStage("NEW_LEAD")}
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#DC2626] hover:bg-[#B91C1C] text-white text-sm font-medium rounded-lg transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#C4972A] hover:bg-[#A17D22] text-white text-sm font-medium rounded-lg transition-colors"
           >
             <Plus className="w-3.5 h-3.5" />
             Add Your First Deal
@@ -477,7 +477,7 @@ export function CRMKanban({ initialDeals }: { initialDeals: Deal[] }) {
 
         <DragOverlay dropAnimation={null}>
           {activeDeal && (
-            <div className="bg-white border border-gray-300 rounded-xl p-3.5 w-60 shadow-lg rotate-1">
+            <div className="bg-card border border-border rounded-xl p-3.5 w-60 shadow-lg rotate-1">
               <DealCardInner deal={activeDeal} isDraggingOverlay />
             </div>
           )}

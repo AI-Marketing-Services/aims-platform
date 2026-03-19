@@ -73,13 +73,13 @@ export default async function BillingPage() {
   return (
     <div className="w-full">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-1">Billing</h1>
-        <p className="text-gray-500">Manage your subscriptions and payment details</p>
+        <h1 className="text-2xl font-bold text-foreground mb-1">Billing</h1>
+        <p className="text-muted-foreground">Manage your subscriptions and payment details</p>
       </div>
 
       {/* Past-due alert */}
       {pastDueSubs.length > 0 && (
-        <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-xl mb-6 text-sm text-red-700">
+        <div className="flex items-start gap-3 p-4 bg-primary/10 border border-primary/30 rounded-xl mb-6 text-sm text-primary">
           <AlertTriangle className="w-4 h-4 mt-0.5 flex-shrink-0" />
           <span>
             {pastDueSubs.length === 1 ? "A payment" : `${pastDueSubs.length} payments`}{" "}
@@ -113,27 +113,27 @@ export default async function BillingPage() {
                 : null
 
               return (
-                <div key={sub.id} className="bg-white p-5">
+                <div key={sub.id} className="bg-card p-5">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
                       <div className="flex flex-wrap items-center gap-2 mb-1">
-                        <span className="font-semibold text-gray-900">
+                        <span className="font-semibold text-foreground">
                           {sub.serviceArm.name}
                         </span>
                         {sub.tier && (
-                          <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 font-medium">
+                          <span className="text-xs px-2 py-0.5 rounded-full bg-deep text-muted-foreground font-medium">
                             {sub.tier}
                           </span>
                         )}
                       </div>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm text-muted-foreground">
                         {activeSince && <span>Active since {activeSince}</span>}
                         {activeSince && nextBilling && <span> &middot; </span>}
                         {nextBilling && <span>Next billing: {nextBilling}</span>}
                       </div>
                     </div>
                     <div className="flex items-center gap-4 shrink-0">
-                      <span className="font-semibold text-gray-900">
+                      <span className="font-semibold text-foreground">
                         ${sub.monthlyAmount.toLocaleString()}/mo
                       </span>
                       <CancelSubscriptionButton
@@ -149,29 +149,29 @@ export default async function BillingPage() {
             {/* Totals row */}
             <div className="bg-muted/30 px-5 py-4 flex items-center justify-between">
               <div>
-                <div className="text-sm font-semibold text-gray-900">Total Monthly</div>
-                <div className="text-xs text-gray-500 mt-0.5">
+                <div className="text-sm font-semibold text-foreground">Total Monthly</div>
+                <div className="text-xs text-muted-foreground mt-0.5">
                   Annual equivalent: ${annualEquiv.toLocaleString()}/yr
                 </div>
               </div>
-              <span className="text-lg font-bold text-gray-900">
+              <span className="text-lg font-bold text-foreground">
                 ${totalMrr.toLocaleString()}/mo
               </span>
             </div>
           </div>
         </div>
       ) : (
-        <div className="bg-white border border-border rounded-2xl p-6 mb-6 text-center">
-          <div className="flex items-center justify-center gap-1.5 px-3 py-1.5 bg-gray-50 text-gray-500 text-sm font-medium rounded-full border border-border w-fit mx-auto mb-3">
+        <div className="bg-card border border-border rounded-2xl p-6 mb-6 text-center">
+          <div className="flex items-center justify-center gap-1.5 px-3 py-1.5 bg-deep text-muted-foreground text-sm font-medium rounded-full border border-border w-fit mx-auto mb-3">
             <Clock className="w-3.5 h-3.5" />
             No active subscriptions
           </div>
-          <p className="text-gray-500 text-sm mb-4">
+          <p className="text-muted-foreground text-sm mb-4">
             You don&apos;t have any active AIMS services yet.
           </p>
           <Link
             href="/portal/marketplace"
-            className="inline-flex items-center gap-2 rounded-lg bg-[#DC2626] px-5 py-2 text-sm font-semibold text-white hover:bg-[#B91C1C] transition"
+            className="inline-flex items-center gap-2 rounded-lg bg-[#C4972A] px-5 py-2 text-sm font-semibold text-white hover:bg-[#A17D22] transition"
           >
             Browse Services
           </Link>
@@ -179,35 +179,35 @@ export default async function BillingPage() {
       )}
 
       {/* Invoice history */}
-      <div className="rounded-2xl border border-border bg-white overflow-hidden mb-6">
+      <div className="rounded-2xl border border-border bg-card overflow-hidden mb-6">
         <div className="px-5 py-4 border-b border-border">
-          <h3 className="font-semibold text-gray-900">Recent Invoices</h3>
+          <h3 className="font-semibold text-foreground">Recent Invoices</h3>
         </div>
         <div className="divide-y divide-border">
           {/* Header row */}
-          <div className="grid grid-cols-4 px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide bg-muted/20">
+          <div className="grid grid-cols-4 px-5 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wide bg-muted/20">
             <span>Date</span>
             <span>Amount</span>
             <span>Status</span>
             <span>Action</span>
           </div>
           {invoices.length === 0 ? (
-            <div className="px-5 py-8 text-center text-sm text-gray-500">
+            <div className="px-5 py-8 text-center text-sm text-muted-foreground">
               {hasStripeCustomer ? "No invoices yet." : "Invoice history available once billing is connected."}
             </div>
           ) : (
             invoices.map((inv) => (
               <div key={inv.id} className="grid grid-cols-4 px-5 py-3 text-sm items-center">
-                <span className="text-gray-700">{inv.date}</span>
-                <span className="font-medium text-gray-900">{inv.amount}</span>
+                <span className="text-foreground">{inv.date}</span>
+                <span className="font-medium text-foreground">{inv.amount}</span>
                 <span>
                   <span
                     className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
                       inv.status === "paid"
-                        ? "bg-green-50 text-green-700"
+                        ? "bg-green-900/15 text-green-400"
                         : inv.status === "open"
-                          ? "bg-yellow-50 text-yellow-700"
-                          : "bg-gray-100 text-gray-600"
+                          ? "bg-yellow-900/20 text-yellow-400"
+                          : "bg-deep text-muted-foreground"
                     }`}
                   >
                     {inv.status}
@@ -233,15 +233,15 @@ export default async function BillingPage() {
       </div>
 
       {/* Payment method */}
-      <div className="bg-white border border-border rounded-2xl p-6 mb-6">
+      <div className="bg-card border border-border rounded-2xl p-6 mb-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold text-gray-900">Payment Method</h3>
+          <h3 className="font-semibold text-foreground">Payment Method</h3>
         </div>
         <div className="flex items-center gap-4">
-          <div className="w-12 h-8 bg-gray-100 rounded-md border border-border flex items-center justify-center shrink-0">
-            <CreditCard className="w-5 h-5 text-gray-400" />
+          <div className="w-12 h-8 bg-deep rounded-md border border-border flex items-center justify-center shrink-0">
+            <CreditCard className="w-5 h-5 text-muted-foreground" />
           </div>
-          <div className="text-sm text-gray-500 flex-1">
+          <div className="text-sm text-muted-foreground flex-1">
             {hasStripeCustomer
               ? "Card on file \u2014 managed via Stripe"
               : "No payment method on file"}
@@ -251,10 +251,10 @@ export default async function BillingPage() {
       </div>
 
       {/* Stripe portal */}
-      <div className="bg-gray-50 border border-border rounded-2xl p-5 mb-6 flex items-center justify-between gap-4">
+      <div className="bg-deep border border-border rounded-2xl p-5 mb-6 flex items-center justify-between gap-4">
         <div>
-          <div className="text-gray-900 font-medium mb-0.5">Manage Billing</div>
-          <div className="text-gray-500 text-sm">
+          <div className="text-foreground font-medium mb-0.5">Manage Billing</div>
+          <div className="text-muted-foreground text-sm">
             Update payment method, download invoices, or cancel in the Stripe billing portal
           </div>
         </div>
@@ -264,7 +264,7 @@ export default async function BillingPage() {
       </div>
 
       {/* Invoice note */}
-      <div className="flex items-start gap-3 p-4 bg-blue-50 border border-blue-100 rounded-xl text-sm text-blue-700 mb-6">
+      <div className="flex items-start gap-3 p-4 bg-blue-900/20 border border-blue-800 rounded-xl text-sm text-blue-400 mb-6">
         <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" />
         <span>
           Your invoice history and receipts are available in the{" "}
@@ -275,12 +275,12 @@ export default async function BillingPage() {
 
       {/* Add Service banner */}
       <div className="border border-border rounded-2xl bg-card p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <p className="text-gray-600 text-sm">
+        <p className="text-muted-foreground text-sm">
           Want to add more services? Browse our marketplace to expand your AI stack.
         </p>
         <Link
           href="/portal/marketplace"
-          className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#DC2626] text-white text-sm font-medium rounded-lg hover:bg-[#B91C1C] transition-colors whitespace-nowrap shrink-0"
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#C4972A] text-white text-sm font-medium rounded-lg hover:bg-[#A17D22] transition-colors whitespace-nowrap shrink-0"
         >
           Browse Marketplace
           <ArrowRight className="w-4 h-4" />

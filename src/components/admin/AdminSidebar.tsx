@@ -75,12 +75,12 @@ export function AdminSidebar() {
   return (
     <aside
       className={cn(
-        "relative hidden lg:flex flex-col border-r border-gray-200 bg-white transition-all duration-200",
+        "relative hidden lg:flex flex-col border-r border-border bg-deep transition-all duration-200",
         collapsed ? "w-16" : "w-64"
       )}
     >
       {/* Logo + Bell */}
-      <div className="flex h-16 items-center justify-between px-4 border-b border-gray-200">
+      <div className="flex h-16 items-center justify-between px-4 border-b border-border">
         <Link href="/admin/dashboard" className="flex items-center gap-2.5">
           <Image
             src="/logo.png"
@@ -92,7 +92,7 @@ export function AdminSidebar() {
           {!collapsed && (
             <div>
               <span className="text-lg font-bold tracking-tight">AIMS</span>
-              <span className="ml-1.5 text-[10px] font-medium text-red-500 uppercase tracking-wider">
+              <span className="ml-1.5 text-[10px] font-medium text-primary uppercase tracking-wider">
                 Admin
               </span>
             </div>
@@ -122,10 +122,10 @@ export function AdminSidebar() {
             {/* Section label divider */}
             {!collapsed && (
               <div className="flex items-center gap-2 px-4 mb-1.5">
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
                   {group.section}
                 </p>
-                <div className="flex-1 h-px bg-gray-200" />
+                <div className="flex-1 h-px bg-surface" />
               </div>
             )}
 
@@ -150,8 +150,8 @@ export function AdminSidebar() {
                       className={cn(
                         "flex items-center gap-3 rounded-lg py-2 text-sm font-medium transition-all duration-200",
                         isActive
-                          ? "border-l-2 border-red-500 pl-[10px] pr-3 bg-red-600/10 text-red-500"
-                          : "border-l-2 border-transparent pl-[10px] pr-3 text-gray-500 hover:text-gray-900 hover:bg-gray-100 hover:pl-[14px]"
+                          ? "border-l-2 border-primary pl-[10px] pr-3 bg-primary/10 text-primary"
+                          : "border-l-2 border-transparent pl-[10px] pr-3 text-muted-foreground hover:text-foreground hover:bg-surface hover:pl-[14px]"
                       )}
                     >
                       <item.icon className="h-4 w-4 shrink-0" />
@@ -172,7 +172,7 @@ export function AdminSidebar() {
             href="/"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 text-xs text-gray-500 hover:text-gray-900 transition-colors"
+            className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors"
           >
             <ExternalLink className="h-3 w-3" />
             View public site
@@ -183,7 +183,7 @@ export function AdminSidebar() {
       {/* Collapse toggle */}
       <button
         onClick={() => setCollapsed(!collapsed)}
-        className="absolute -right-3 top-20 flex h-6 w-6 items-center justify-center rounded-full border border-gray-200 bg-white shadow-sm hover:bg-gray-100 transition-colors"
+        className="absolute -right-3 top-20 flex h-6 w-6 items-center justify-center rounded-full border border-border bg-card shadow-sm hover:bg-surface transition-colors"
       >
         {collapsed ? (
           <ChevronRight className="h-3 w-3" />
@@ -193,12 +193,12 @@ export function AdminSidebar() {
       </button>
 
       {/* User */}
-      <div className="border-t border-gray-200 p-4">
+      <div className="border-t border-border p-4">
         <div className="flex items-center gap-2">
           <UserButton afterSignOutUrl="/" />
           {!collapsed && (
             <>
-              <span className="text-sm text-gray-500 truncate flex-1">
+              <span className="text-sm text-muted-foreground truncate flex-1">
                 Admin
               </span>
               <NotificationBell variant="light" />

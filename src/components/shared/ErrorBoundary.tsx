@@ -19,8 +19,8 @@ export function ErrorBoundary({
   return (
     <div className="flex min-h-[60vh] items-center justify-center p-6">
       <div className="max-w-md text-center space-y-6">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-50">
-          <AlertTriangle className="h-8 w-8 text-[#DC2626]" />
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+          <AlertTriangle className="h-8 w-8 text-primary" />
         </div>
         <div className="space-y-2">
           <h2 className="text-xl font-bold text-foreground">Something went wrong</h2>
@@ -37,7 +37,7 @@ export function ErrorBoundary({
         <div className="flex items-center justify-center gap-3">
           <button
             onClick={reset}
-            className="inline-flex items-center gap-2 rounded-lg bg-[#DC2626] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#B91C1C] transition-colors"
+            className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
           >
             <RotateCcw className="h-4 w-4" />
             Try Again

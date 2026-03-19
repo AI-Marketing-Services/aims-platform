@@ -26,9 +26,9 @@ export default async function ResellerLayout({
   if (!userId) redirect("/sign-in")
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900">
+    <div className="min-h-screen bg-background text-foreground">
       {/* Mobile top header */}
-      <div className="lg:hidden flex items-center justify-between h-14 px-4 bg-white border-b border-gray-200 sticky top-0 z-40">
+      <div className="lg:hidden flex items-center justify-between h-14 px-4 bg-deep border-b border-border sticky top-0 z-40">
         <Link href="/reseller/dashboard" className="flex items-center gap-2">
           <Image src="/logo.png" alt="AIMS" width={28} height={28} className="object-contain" />
           <span className="text-base font-bold">AIMS</span>
@@ -38,8 +38,8 @@ export default async function ResellerLayout({
       </div>
 
       <div className="flex h-[calc(100dvh-3.5rem)] lg:h-screen overflow-hidden">
-        <aside className="hidden lg:flex w-64 flex-col border-r border-gray-200 bg-white">
-          <div className="flex h-16 items-center px-4 border-b border-gray-200">
+        <aside className="hidden lg:flex w-64 flex-col border-r border-border bg-deep">
+          <div className="flex h-16 items-center px-4 border-b border-border">
             <Link href="/reseller/dashboard" className="flex items-center gap-2.5">
               <Image src="/logo.png" alt="AIMS" width={32} height={32} className="object-contain" />
               <div>
@@ -53,14 +53,14 @@ export default async function ResellerLayout({
               <Link
                 key={item.href}
                 href={item.href}
-                className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+                className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-surface transition-colors"
               >
                 <item.icon className="h-4 w-4" />
                 {item.label}
               </Link>
             ))}
           </nav>
-          <div className="border-t border-gray-200 p-4">
+          <div className="border-t border-border p-4">
             <UserButton afterSignOutUrl="/" />
           </div>
         </aside>
@@ -70,12 +70,12 @@ export default async function ResellerLayout({
       </div>
 
       {/* Mobile bottom nav */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 flex items-center justify-around h-16 px-2 safe-area-pb">
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border flex items-center justify-around h-16 px-2 safe-area-pb">
         {RESELLER_NAV.map((item) => (
           <Link
             key={item.href}
             href={item.href}
-            className="flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg min-w-0 flex-1 text-gray-400 hover:text-gray-600 transition-colors"
+            className="flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg min-w-0 flex-1 text-muted-foreground hover:text-foreground transition-colors"
           >
             <item.icon className="h-5 w-5" />
             <span className="text-[10px] font-medium truncate">{item.label}</span>

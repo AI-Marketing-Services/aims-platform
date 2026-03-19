@@ -22,7 +22,7 @@ type FulfillmentTask = {
 }
 
 const COLUMNS = [
-  { key: "todo", label: "Pending Setup", color: "border-gray-400" },
+  { key: "todo", label: "Pending Setup", color: "border-muted-foreground" },
   { key: "in_progress", label: "In Progress", color: "border-blue-500" },
   { key: "needs_attention", label: "Needs Attention", color: "border-orange-500" },
   { key: "in_review", label: "In Review", color: "border-purple-500" },
@@ -38,10 +38,10 @@ const STATUS_OPTIONS = [
 ]
 
 const PRIORITY_COLORS: Record<string, string> = {
-  urgent: "bg-red-100 text-red-700 border-red-200",
-  high: "bg-orange-100 text-orange-700 border-orange-200",
-  medium: "bg-yellow-100 text-yellow-700 border-yellow-200",
-  low: "bg-gray-100 text-gray-600 border-gray-200",
+  urgent: "bg-primary/15 text-primary border-primary/30",
+  high: "bg-orange-900/20 text-orange-400 border-orange-800",
+  medium: "bg-yellow-900/20 text-yellow-400 border-yellow-800",
+  low: "bg-deep text-muted-foreground border-border",
 }
 
 function PriorityBadge({ priority }: { priority: string }) {
@@ -89,20 +89,20 @@ function TaskCard({
   const overdue = task.status !== "done" && isOverdue(task.dueDate)
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-3.5 hover:border-gray-300 hover:shadow-sm transition-all">
+    <div className="bg-card border border-border rounded-xl p-3.5 hover:border-border hover:shadow-sm transition-all">
       {/* Title + assignee */}
       <div className="flex items-start justify-between mb-2">
         <div className="min-w-0 flex-1">
-          <div className="text-gray-900 font-semibold text-sm leading-tight truncate">
+          <div className="text-foreground font-semibold text-sm leading-tight truncate">
             {task.title}
           </div>
-          <div className="text-gray-500 text-xs mt-0.5 truncate">
+          <div className="text-muted-foreground text-xs mt-0.5 truncate">
             {task.clientName}
           </div>
         </div>
         {task.assignedTo && (
           <div
-            className="flex-shrink-0 ml-2 w-6 h-6 rounded-full bg-blue-100 border border-blue-200 flex items-center justify-center text-[10px] font-bold text-blue-700"
+            className="flex-shrink-0 ml-2 w-6 h-6 rounded-full bg-blue-900/20 border border-blue-800 flex items-center justify-center text-[10px] font-bold text-blue-400"
             title={task.assignedTo}
           >
             {getInitials(task.assignedTo)}
@@ -112,7 +112,7 @@ function TaskCard({
 
       {/* Service + priority */}
       <div className="flex items-center gap-2 mb-2 flex-wrap">
-        <span className="text-xs px-1.5 py-0.5 bg-gray-100 text-gray-600 border border-gray-200 rounded">
+        <span className="text-xs px-1.5 py-0.5 bg-deep text-muted-foreground border border-border rounded">
           {task.serviceName}
         </span>
         <PriorityBadge priority={task.priority} />
@@ -121,21 +121,21 @@ function TaskCard({
       {/* Due date + overdue indicator */}
       <div className="flex items-center justify-between gap-2 mb-2.5">
         <div className="flex items-center gap-1">
-          <Calendar className="h-3 w-3 text-gray-400" />
+          <Calendar className="h-3 w-3 text-muted-foreground" />
           <span
             className={cn(
               "text-xs font-mono",
-              overdue ? "text-red-600 font-semibold" : "text-gray-500"
+              overdue ? "text-primary font-semibold" : "text-muted-foreground"
             )}
           >
             {formatDate(task.dueDate)}
           </span>
-          {overdue && <AlertTriangle className="h-3 w-3 text-red-500" />}
+          {overdue && <AlertTriangle className="h-3 w-3 text-primary" />}
         </div>
         {task.assignedTo && (
           <div className="flex items-center gap-1">
-            <User className="h-3 w-3 text-gray-400" />
-            <span className="text-xs text-gray-500 truncate max-w-[80px]">
+            <User className="h-3 w-3 text-muted-foreground" />
+            <span className="text-xs text-muted-foreground truncate max-w-[80px]">
               {task.assignedTo}
             </span>
           </div>
@@ -147,7 +147,7 @@ function TaskCard({
         <select
           value={task.status}
           onChange={(e) => onStatusChange(task.id, e.target.value)}
-          className="w-full appearance-none pl-2.5 pr-7 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-700 focus:outline-none focus:border-gray-300 cursor-pointer"
+          className="w-full appearance-none pl-2.5 pr-7 py-1.5 bg-deep border border-border rounded-lg text-xs text-foreground focus:outline-none focus:border-border cursor-pointer"
         >
           {STATUS_OPTIONS.map((o) => (
             <option key={o.value} value={o.value}>
@@ -155,7 +155,7 @@ function TaskCard({
             </option>
           ))}
         </select>
-        <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-gray-400 pointer-events-none" />
+        <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground pointer-events-none" />
       </div>
     </div>
   )
@@ -223,13 +223,13 @@ export function FulfillmentPipeline({
       {/* Toolbar */}
       <div className="flex flex-wrap items-center gap-3 mb-5">
         <div className="relative flex-1 min-w-[160px] max-w-xs">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search tasks..."
-            className="w-full pl-9 pr-4 py-2 bg-white border border-gray-200 rounded-lg text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-gray-300"
+            className="w-full pl-9 pr-4 py-2 bg-card border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-border"
           />
         </div>
 
@@ -237,7 +237,7 @@ export function FulfillmentPipeline({
           <select
             value={priorityFilter}
             onChange={(e) => setPriorityFilter(e.target.value)}
-            className="appearance-none pl-3 pr-8 py-2 bg-white border border-gray-200 rounded-lg text-sm text-gray-700 focus:outline-none focus:border-gray-300 cursor-pointer"
+            className="appearance-none pl-3 pr-8 py-2 bg-card border border-border rounded-lg text-sm text-foreground focus:outline-none focus:border-border cursor-pointer"
           >
             <option value="all">All Priorities</option>
             <option value="urgent">Urgent</option>
@@ -245,11 +245,11 @@ export function FulfillmentPipeline({
             <option value="medium">Medium</option>
             <option value="low">Low</option>
           </select>
-          <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none" />
+          <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
         </div>
 
         {(search || priorityFilter !== "all") && (
-          <span className="text-xs text-gray-500 font-mono">
+          <span className="text-xs text-muted-foreground font-mono">
             {filteredTasks.length} / {tasks.length} tasks
           </span>
         )}
@@ -257,9 +257,9 @@ export function FulfillmentPipeline({
 
       {/* Empty state */}
       {tasks.length === 0 && (
-        <div className="rounded-xl border border-dashed border-gray-300 bg-gray-50 py-12 text-center mb-6">
-          <p className="text-lg font-semibold text-gray-900 mb-1">No fulfillment tasks yet</p>
-          <p className="text-sm text-gray-500">
+        <div className="rounded-xl border border-dashed border-border bg-deep py-12 text-center mb-6">
+          <p className="text-lg font-semibold text-foreground mb-1">No fulfillment tasks yet</p>
+          <p className="text-sm text-muted-foreground">
             Tasks will appear here when clients purchase subscriptions.
           </p>
         </div>
@@ -278,10 +278,10 @@ export function FulfillmentPipeline({
                 {/* Column header */}
                 <div className={cn("border-t-2 pt-3 mb-3", col.color)}>
                   <div className="flex items-baseline justify-between gap-1">
-                    <span className="text-sm font-medium text-gray-900 truncate">
+                    <span className="text-sm font-medium text-foreground truncate">
                       {col.label}
                     </span>
-                    <span className="text-xs font-mono text-gray-500 flex-shrink-0">
+                    <span className="text-xs font-mono text-muted-foreground flex-shrink-0">
                       ({colTasks.length})
                     </span>
                   </div>

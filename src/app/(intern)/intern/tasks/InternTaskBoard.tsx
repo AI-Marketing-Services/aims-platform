@@ -33,45 +33,45 @@ interface Task {
 }
 
 const COLUMNS: { key: TaskStatus; label: string; color: string; icon: React.FC<{ className?: string }> }[] = [
-  { key: "TODO", label: "To Do", color: "border-gray-500", icon: Clock },
+  { key: "TODO", label: "To Do", color: "border-muted-foreground", icon: Clock },
   { key: "IN_PROGRESS", label: "In Progress", color: "border-blue-500", icon: TrendingUp },
   { key: "IN_REVIEW", label: "In Review", color: "border-yellow-500", icon: Eye },
   { key: "DONE", label: "Done", color: "border-green-500", icon: CheckSquare },
-  { key: "BLOCKED", label: "Blocked", color: "border-red-500", icon: AlertCircle },
+  { key: "BLOCKED", label: "Blocked", color: "border-primary", icon: AlertCircle },
 ]
 
 const PRIORITY_COLOR: Record<string, string> = {
-  URGENT: "text-red-700 bg-red-50 border-red-200",
-  HIGH: "text-red-700 bg-red-50 border-red-200",
-  MEDIUM: "text-yellow-700 bg-yellow-50 border-yellow-200",
-  LOW: "text-gray-600 bg-gray-100 border-gray-200",
+  URGENT: "text-primary bg-primary/10 border-primary/30",
+  HIGH: "text-primary bg-primary/10 border-primary/30",
+  MEDIUM: "text-yellow-400 bg-yellow-900/20 border-yellow-800",
+  LOW: "text-muted-foreground bg-deep border-border",
 }
 
 function TaskCardInner({ task }: { task: Task }) {
   return (
     <>
       <div className="flex items-start justify-between gap-2 mb-2">
-        <p className="text-sm font-medium text-gray-900 leading-snug">{task.title}</p>
+        <p className="text-sm font-medium text-foreground leading-snug">{task.title}</p>
         <span className={cn("text-[10px] font-semibold px-1.5 py-0.5 rounded border flex-shrink-0", PRIORITY_COLOR[task.priority])}>
           {task.priority.charAt(0)}
         </span>
       </div>
       {task.description && (
-        <p className="text-xs text-gray-500 mb-2 line-clamp-2">{task.description}</p>
+        <p className="text-xs text-muted-foreground mb-2 line-clamp-2">{task.description}</p>
       )}
       <div className="flex flex-wrap items-center gap-2 mt-2">
         {task.sprintGoal && (
-          <span className="text-[10px] text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded truncate max-w-[120px]">
+          <span className="text-[10px] text-muted-foreground bg-deep px-1.5 py-0.5 rounded truncate max-w-[120px]">
             {task.sprintGoal}
           </span>
         )}
         {task.estimatedHours && (
-          <span className="text-[10px] text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">
+          <span className="text-[10px] text-muted-foreground bg-deep px-1.5 py-0.5 rounded">
             {task.estimatedHours}h
           </span>
         )}
         {task.dueDate && (
-          <span className="text-[10px] text-gray-500">
+          <span className="text-[10px] text-muted-foreground">
             Due {new Date(task.dueDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
           </span>
         )}
@@ -97,7 +97,7 @@ function DraggableTask({ task }: { task: Task }) {
       style={style}
       {...attributes}
       {...listeners}
-      className="bg-white border border-gray-200 rounded-xl p-4 cursor-grab active:cursor-grabbing hover:border-gray-300 transition-colors touch-none"
+      className="bg-card border border-border rounded-xl p-4 cursor-grab active:cursor-grabbing hover:border-border transition-colors touch-none"
     >
       <TaskCardInner task={task} />
     </div>
@@ -111,15 +111,15 @@ function DroppableColumn({ col, tasks }: { col: typeof COLUMNS[number]; tasks: T
   return (
     <div className="flex flex-col w-52 flex-shrink-0">
       <div className={cn("border-t-2 pt-3 mb-3 flex items-center gap-2", col.color)}>
-        <Icon className="h-3.5 w-3.5 text-gray-500" />
-        <span className="text-sm font-medium text-gray-900">{col.label}</span>
-        <span className="text-xs text-gray-500 ml-auto">{tasks.length}</span>
+        <Icon className="h-3.5 w-3.5 text-muted-foreground" />
+        <span className="text-sm font-medium text-foreground">{col.label}</span>
+        <span className="text-xs text-muted-foreground ml-auto">{tasks.length}</span>
       </div>
       <div
         ref={setNodeRef}
         className={cn(
           "flex-1 space-y-2 overflow-y-auto min-h-20 rounded-xl transition-colors",
-          isOver ? "bg-gray-50 ring-1 ring-inset ring-gray-200" : ""
+          isOver ? "bg-deep ring-1 ring-inset ring-gray-200" : ""
         )}
       >
         {tasks.map((task) => (
@@ -134,8 +134,8 @@ function DroppableColumn({ col, tasks }: { col: typeof COLUMNS[number]; tasks: T
           </motion.div>
         ))}
         {tasks.length === 0 && (
-          <div className="border border-dashed border-gray-200 rounded-xl h-16 flex items-center justify-center">
-            <p className="text-xs text-gray-600">Drop here</p>
+          <div className="border border-dashed border-border rounded-xl h-16 flex items-center justify-center">
+            <p className="text-xs text-muted-foreground">Drop here</p>
           </div>
         )}
       </div>
@@ -200,7 +200,7 @@ export function InternTaskBoard({ tasks: initialTasks }: { tasks: Task[] }) {
 
       <DragOverlay dropAnimation={null}>
         {activeTask && (
-          <div className="bg-white border border-gray-300 rounded-xl p-4 w-52 shadow-2xl shadow-gray-200 rotate-1">
+          <div className="bg-card border border-border rounded-xl p-4 w-52 shadow-2xl shadow-gray-200 rotate-1">
             <TaskCardInner task={activeTask} />
           </div>
         )}

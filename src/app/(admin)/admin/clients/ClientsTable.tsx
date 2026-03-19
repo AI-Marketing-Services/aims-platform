@@ -7,16 +7,16 @@ import Link from "next/link"
 import { cn } from "@/lib/utils"
 
 const STAGE_CONFIG: Record<string, { label: string; class: string }> = {
-  NEW_LEAD:        { label: "New Lead",       class: "text-gray-600 bg-gray-100 border-gray-200" },
-  QUALIFIED:       { label: "Qualified",      class: "text-blue-700 bg-blue-50 border-blue-200" },
-  DEMO_BOOKED:     { label: "Demo Booked",    class: "text-yellow-800 bg-yellow-50 border-yellow-200" },
-  PROPOSAL_SENT:   { label: "Proposal Sent",  class: "text-orange-700 bg-orange-50 border-orange-200" },
-  NEGOTIATION:     { label: "Negotiation",    class: "text-purple-700 bg-purple-50 border-purple-200" },
-  ACTIVE_CLIENT:   { label: "Active Client",  class: "text-green-700 bg-green-50 border-green-200" },
-  UPSELL_OPPORTUNITY: { label: "Upsell Opp", class: "text-emerald-700 bg-emerald-50 border-emerald-200" },
-  AT_RISK:         { label: "At Risk",        class: "text-amber-700 bg-amber-50 border-amber-200" },
-  CHURNED:         { label: "Churned",        class: "text-red-700 bg-red-50 border-red-200" },
-  LOST:            { label: "Lost",           class: "text-red-800 bg-red-100 border-red-200" },
+  NEW_LEAD:        { label: "New Lead",       class: "text-muted-foreground bg-deep border-border" },
+  QUALIFIED:       { label: "Qualified",      class: "text-blue-400 bg-blue-900/20 border-blue-800" },
+  DEMO_BOOKED:     { label: "Demo Booked",    class: "text-yellow-400 bg-yellow-900/20 border-yellow-800" },
+  PROPOSAL_SENT:   { label: "Proposal Sent",  class: "text-orange-400 bg-orange-900/20 border-orange-800" },
+  NEGOTIATION:     { label: "Negotiation",    class: "text-purple-400 bg-purple-900/20 border-purple-800" },
+  ACTIVE_CLIENT:   { label: "Active Client",  class: "text-green-400 bg-green-900/15 border-green-800" },
+  UPSELL_OPPORTUNITY: { label: "Upsell Opp", class: "text-emerald-400 bg-emerald-900/20 border-emerald-800" },
+  AT_RISK:         { label: "At Risk",        class: "text-amber-400 bg-amber-900/20 border-amber-800" },
+  CHURNED:         { label: "Churned",        class: "text-primary bg-primary/10 border-primary/30" },
+  LOST:            { label: "Lost",           class: "text-primary bg-primary/15 border-primary/30" },
 }
 
 const ALL_STAGES = Object.keys(STAGE_CONFIG)
@@ -54,10 +54,10 @@ function relativeDate(isoStr: string): string {
 }
 
 function scoreColor(score: number | null): string {
-  if (score === null) return "bg-gray-300"
-  if (score >= 70) return "bg-red-500"
-  if (score >= 40) return "bg-yellow-500"
-  return "bg-gray-400"
+  if (score === null) return "bg-muted-foreground"
+  if (score >= 70) return "bg-primary/100"
+  if (score >= 40) return "bg-yellow-900/200"
+  return "bg-muted-foreground"
 }
 
 const PAGE_SIZE = 25
@@ -140,9 +140,9 @@ export function ClientsTable({ rows }: Props) {
   function SortIcon({ field }: { field: SortField }) {
     if (sortField !== field) return <ChevronUp className="w-3 h-3 opacity-20" />
     return sortDir === "asc" ? (
-      <ChevronUp className="w-3 h-3 text-gray-900" />
+      <ChevronUp className="w-3 h-3 text-foreground" />
     ) : (
-      <ChevronDown className="w-3 h-3 text-gray-900" />
+      <ChevronDown className="w-3 h-3 text-foreground" />
     )
   }
 
@@ -150,15 +150,15 @@ export function ClientsTable({ rows }: Props) {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-1">Clients</h1>
-          <p className="text-gray-500 text-sm">
+          <h1 className="text-2xl font-bold text-foreground mb-1">Clients</h1>
+          <p className="text-muted-foreground text-sm">
             {rows.length} total deal{rows.length !== 1 ? "s" : ""}
             {filtered.length !== rows.length && ` - ${filtered.length} filtered`}
           </p>
         </div>
         <button
           onClick={exportCsv}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 text-sm font-medium rounded-lg transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-card hover:bg-surface border border-border text-foreground text-sm font-medium rounded-lg transition-colors"
         >
           <Download className="w-3.5 h-3.5" />
           Export CSV
@@ -168,19 +168,19 @@ export function ClientsTable({ rows }: Props) {
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3 mb-5">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
           <input
             type="text"
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1) }}
             placeholder="Search by name, email, or company..."
-            className="w-full pl-9 pr-4 py-2 bg-white border border-gray-200 rounded-lg text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#DC2626] focus:ring-1 focus:ring-[#DC2626]/20"
+            className="w-full pl-9 pr-4 py-2 bg-card border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-[#C4972A] focus:ring-1 focus:ring-[#C4972A]/20"
           />
         </div>
         <select
           value={stageFilter}
           onChange={(e) => { setStageFilter(e.target.value); setPage(1) }}
-          className="px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm text-gray-700 focus:outline-none focus:border-[#DC2626]"
+          className="px-3 py-2 bg-card border border-border rounded-lg text-sm text-foreground focus:outline-none focus:border-[#C4972A]"
         >
           <option value="all">All Stages</option>
           {ALL_STAGES.map((s) => (
@@ -192,7 +192,7 @@ export function ClientsTable({ rows }: Props) {
       {/* Table */}
       {sorted.length === 0 ? (
         <div className="bg-card border border-border rounded-xl p-12 text-center">
-          <p className="text-gray-400">
+          <p className="text-muted-foreground">
             {rows.length === 0 ? "No deals yet." : "No clients match your filters."}
           </p>
         </div>
@@ -201,7 +201,7 @@ export function ClientsTable({ rows }: Props) {
           <div className="overflow-x-auto">
             <table className="w-full min-w-[1000px]">
               <thead>
-                <tr className="border-b border-gray-200">
+                <tr className="border-b border-border">
                   {(
                     [
                       { label: "Name", field: "name" as SortField },
@@ -220,8 +220,8 @@ export function ClientsTable({ rows }: Props) {
                       key={label || `col-${idx}`}
                       onClick={field ? () => handleSort(field) : undefined}
                       className={cn(
-                        "text-left text-xs text-gray-500 font-medium px-4 py-3 whitespace-nowrap",
-                        field && "cursor-pointer hover:text-gray-900 select-none"
+                        "text-left text-xs text-muted-foreground font-medium px-4 py-3 whitespace-nowrap",
+                        field && "cursor-pointer hover:text-foreground select-none"
                       )}
                     >
                       <span className="inline-flex items-center gap-1">
@@ -234,18 +234,18 @@ export function ClientsTable({ rows }: Props) {
               </thead>
               <tbody className="divide-y divide-border">
                 {paginated.map((r) => {
-                  const sc = STAGE_CONFIG[r.stage] ?? { label: r.stage, class: "text-gray-600 bg-gray-100 border-gray-200" }
+                  const sc = STAGE_CONFIG[r.stage] ?? { label: r.stage, class: "text-muted-foreground bg-deep border-border" }
                   return (
                     <tr
                       key={r.dealId}
                       onClick={() => router.push(`/admin/crm/${r.dealId}`)}
-                      className="hover:bg-gray-50 transition-colors cursor-pointer"
+                      className="hover:bg-surface transition-colors cursor-pointer"
                     >
                       <td className="px-4 py-3">
-                        <span className="text-gray-900 font-semibold text-sm">{r.name || "--"}</span>
+                        <span className="text-foreground font-semibold text-sm">{r.name || "--"}</span>
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-500">{r.company || "--"}</td>
-                      <td className="px-4 py-3 text-sm text-gray-500">{r.email}</td>
+                      <td className="px-4 py-3 text-sm text-muted-foreground">{r.company || "--"}</td>
+                      <td className="px-4 py-3 text-sm text-muted-foreground">{r.email}</td>
                       <td className="px-4 py-3">
                         <span className={cn("text-xs px-2 py-0.5 rounded-full border", sc.class)}>
                           {sc.label}
@@ -253,46 +253,46 @@ export function ClientsTable({ rows }: Props) {
                       </td>
                       <td className="px-4 py-3">
                         {r.leadScore !== null ? (
-                          <span className="inline-flex items-center gap-1.5 text-sm font-mono text-gray-700">
+                          <span className="inline-flex items-center gap-1.5 text-sm font-mono text-foreground">
                             <span className={cn("w-2 h-2 rounded-full", scoreColor(r.leadScore))} />
                             {r.leadScore}
                           </span>
                         ) : (
-                          <span className="text-gray-400 text-xs">--</span>
+                          <span className="text-muted-foreground text-xs">--</span>
                         )}
                       </td>
                       <td className="px-4 py-3">
                         {r.mrr > 0 ? (
-                          <span className="text-gray-900 font-mono text-sm font-semibold">
+                          <span className="text-foreground font-mono text-sm font-semibold">
                             ${r.mrr.toLocaleString()}
                           </span>
                         ) : (
-                          <span className="text-gray-400 text-xs font-mono">--</span>
+                          <span className="text-muted-foreground text-xs font-mono">--</span>
                         )}
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex flex-wrap gap-1">
                           {r.services.length > 0 ? (
                             r.services.map((s) => (
-                              <span key={s} className="text-xs px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded">
+                              <span key={s} className="text-xs px-1.5 py-0.5 bg-deep text-muted-foreground rounded">
                                 {s}
                               </span>
                             ))
                           ) : (
-                            <span className="text-gray-400 text-xs">--</span>
+                            <span className="text-muted-foreground text-xs">--</span>
                           )}
                         </div>
                       </td>
                       <td className="px-4 py-3">
                         {r.source ? (
-                          <span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 rounded border border-gray-200">
+                          <span className="text-xs px-2 py-0.5 bg-deep text-muted-foreground rounded border border-border">
                             {r.source}
                           </span>
                         ) : (
-                          <span className="text-gray-400 text-xs">--</span>
+                          <span className="text-muted-foreground text-xs">--</span>
                         )}
                       </td>
-                      <td className="px-4 py-3 text-xs text-gray-500 whitespace-nowrap">
+                      <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">
                         {relativeDate(r.createdAt)}
                       </td>
                       <td className="px-4 py-3">
@@ -300,7 +300,7 @@ export function ClientsTable({ rows }: Props) {
                           <Link
                             href={`/admin/clients/${r.userId}`}
                             onClick={(e) => e.stopPropagation()}
-                            className="inline-flex items-center gap-1 text-xs text-gray-500 hover:text-[#DC2626] transition-colors"
+                            className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-[#C4972A] transition-colors"
                             title="View client profile"
                           >
                             <User className="w-3.5 h-3.5" />
@@ -316,23 +316,23 @@ export function ClientsTable({ rows }: Props) {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between px-5 py-3 border-t border-gray-200">
-              <span className="text-xs text-gray-500">
+            <div className="flex items-center justify-between px-5 py-3 border-t border-border">
+              <span className="text-xs text-muted-foreground">
                 {(page - 1) * PAGE_SIZE + 1}--{Math.min(page * PAGE_SIZE, sorted.length)} of {sorted.length}
               </span>
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page === 1}
-                  className="p-1.5 rounded bg-muted text-muted-foreground hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="p-1.5 rounded bg-muted text-muted-foreground hover:bg-surface disabled:opacity-30 disabled:cursor-not-allowed"
                 >
                   <ChevronLeft className="w-3.5 h-3.5" />
                 </button>
-                <span className="text-xs text-gray-500">{page} / {totalPages}</span>
+                <span className="text-xs text-muted-foreground">{page} / {totalPages}</span>
                 <button
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page === totalPages}
-                  className="p-1.5 rounded bg-muted text-muted-foreground hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="p-1.5 rounded bg-muted text-muted-foreground hover:bg-surface disabled:opacity-30 disabled:cursor-not-allowed"
                 >
                   <ChevronRight className="w-3.5 h-3.5" />
                 </button>

@@ -51,16 +51,16 @@ type StackRecommendation = {
 }
 
 const PILLAR_COLORS = {
-  marketing: "text-green-700 bg-green-50 border-green-200",
-  sales: "text-blue-700 bg-blue-50 border-blue-200",
-  operations: "text-orange-700 bg-orange-50 border-orange-200",
-  finance: "text-purple-700 bg-purple-50 border-purple-200",
+  marketing: "text-green-400 bg-green-900/15 border-green-800",
+  sales: "text-blue-400 bg-blue-50 border-blue-800",
+  operations: "text-orange-400 bg-orange-50 border-orange-800",
+  finance: "text-purple-400 bg-purple-50 border-purple-800",
 }
 
 const URGENCY_COLORS = {
-  critical: "text-red-600 bg-red-50",
-  recommended: "text-yellow-700 bg-yellow-50",
-  optional: "text-gray-600 bg-gray-100",
+  critical: "text-primary bg-primary/10",
+  recommended: "text-yellow-400 bg-yellow-50",
+  optional: "text-muted-foreground bg-deep",
 }
 
 function buildRecommendations(
@@ -194,19 +194,19 @@ export default function StackConfiguratorPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA]">
+    <div className="min-h-screen bg-deep">
       <div className="max-w-2xl mx-auto px-4 py-12">
         {/* Header */}
         {!unlocked && (
           <div className="text-center mb-10">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-red-50 text-[#DC2626] text-sm font-medium rounded-full mb-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary text-sm font-medium rounded-full mb-6">
               <Zap className="w-3.5 h-3.5" />
               Free AI Stack Builder
             </div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            <h1 className="text-4xl font-bold text-foreground mb-4">
               Build Your Custom AI Stack
             </h1>
-            <p className="text-lg text-gray-600">
+            <p className="text-lg text-muted-foreground">
               Answer 4 quick questions. Get a personalized stack of AIMS solutions ranked by impact for your business.
             </p>
           </div>
@@ -216,13 +216,13 @@ export default function StackConfiguratorPage() {
           <>
             {/* Progress */}
             <div className="mb-8">
-              <div className="flex justify-between text-sm text-gray-500 mb-2">
+              <div className="flex justify-between text-sm text-muted-foreground mb-2">
                 <span>{STEPS[step]}</span>
                 <span>Step {step + 1} of {STEPS.length}</span>
               </div>
-              <div className="h-2 bg-gray-200 rounded-full">
+              <div className="h-2 bg-surface rounded-full">
                 <div
-                  className="h-2 bg-[#DC2626] rounded-full transition-all duration-300"
+                  className="h-2 bg-primary rounded-full transition-all duration-300"
                   style={{ width: `${((step + 1) / STEPS.length) * 100}%` }}
                 />
               </div>
@@ -232,7 +232,7 @@ export default function StackConfiguratorPage() {
               {/* Step 0: Business Type */}
               {step === 0 && (
                 <motion.div key="step0" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-6">What type of business do you run?</h2>
+                  <h2 className="text-2xl font-bold text-foreground mb-6">What type of business do you run?</h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {BUSINESS_TYPES.map((bt) => (
                       <button
@@ -241,20 +241,20 @@ export default function StackConfiguratorPage() {
                         className={cn(
                           "p-4 rounded-xl border-2 text-left transition-all",
                           businessType === bt.id
-                            ? "border-[#DC2626] bg-red-50"
-                            : "border-gray-200 bg-white hover:border-gray-300"
+                            ? "border-primary bg-primary/10"
+                            : "border-border bg-card hover:border-border"
                         )}
                       >
                         <div className="flex items-start gap-3">
                           <div className={cn(
                             "w-5 h-5 rounded-full border-2 flex-shrink-0 mt-0.5 flex items-center justify-center transition-colors",
-                            businessType === bt.id ? "border-[#DC2626] bg-[#DC2626]" : "border-gray-300"
+                            businessType === bt.id ? "border-primary bg-primary" : "border-border"
                           )}>
                             {businessType === bt.id && <Check className="w-3 h-3 text-white" />}
                           </div>
                           <div>
-                            <p className="font-semibold text-gray-900 text-sm">{bt.label}</p>
-                            <p className="text-xs text-gray-500 mt-0.5">{bt.description}</p>
+                            <p className="font-semibold text-foreground text-sm">{bt.label}</p>
+                            <p className="text-xs text-muted-foreground mt-0.5">{bt.description}</p>
                           </div>
                         </div>
                       </button>
@@ -266,7 +266,7 @@ export default function StackConfiguratorPage() {
               {/* Step 1: Team Size */}
               {step === 1 && (
                 <motion.div key="step1" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-6">How big is your team?</h2>
+                  <h2 className="text-2xl font-bold text-foreground mb-6">How big is your team?</h2>
                   <div className="space-y-3">
                     {TEAM_SIZES.map((ts) => (
                       <button
@@ -275,20 +275,20 @@ export default function StackConfiguratorPage() {
                         className={cn(
                           "w-full p-4 rounded-xl border-2 text-left transition-all",
                           teamSize === ts.id
-                            ? "border-[#DC2626] bg-red-50"
-                            : "border-gray-200 bg-white hover:border-gray-300"
+                            ? "border-primary bg-primary/10"
+                            : "border-border bg-card hover:border-border"
                         )}
                       >
                         <div className="flex items-center gap-3">
                           <div className={cn(
                             "w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition-colors",
-                            teamSize === ts.id ? "border-[#DC2626] bg-[#DC2626]" : "border-gray-300"
+                            teamSize === ts.id ? "border-primary bg-primary" : "border-border"
                           )}>
                             {teamSize === ts.id && <Check className="w-3 h-3 text-white" />}
                           </div>
                           <div>
-                            <p className="font-semibold text-gray-900">{ts.label}</p>
-                            <p className="text-sm text-gray-500">{ts.description}</p>
+                            <p className="font-semibold text-foreground">{ts.label}</p>
+                            <p className="text-sm text-muted-foreground">{ts.description}</p>
                           </div>
                         </div>
                       </button>
@@ -300,8 +300,8 @@ export default function StackConfiguratorPage() {
               {/* Step 2: Goals */}
               {step === 2 && (
                 <motion.div key="step2" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">What are your top priorities? <span className="text-base font-normal text-gray-400">(pick all that apply)</span></h2>
-                  <p className="text-gray-500 mb-6">Select everything that matters — we'll weight your stack accordingly.</p>
+                  <h2 className="text-2xl font-bold text-foreground mb-2">What are your top priorities? <span className="text-base font-normal text-muted-foreground">(pick all that apply)</span></h2>
+                  <p className="text-muted-foreground mb-6">Select everything that matters — we'll weight your stack accordingly.</p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {GOALS.map((goal) => {
                       const selected = goals.includes(goal.id)
@@ -311,16 +311,16 @@ export default function StackConfiguratorPage() {
                           onClick={() => toggleGoal(goal.id)}
                           className={cn(
                             "p-4 rounded-xl border-2 text-left transition-all flex items-center gap-3",
-                            selected ? "border-[#DC2626] bg-red-50" : "border-gray-200 bg-white hover:border-gray-300"
+                            selected ? "border-primary bg-primary/10" : "border-border bg-card hover:border-border"
                           )}
                         >
                           <div className={cn(
                             "w-5 h-5 rounded border-2 flex-shrink-0 flex items-center justify-center transition-colors",
-                            selected ? "border-[#DC2626] bg-[#DC2626]" : "border-gray-300"
+                            selected ? "border-primary bg-primary" : "border-border"
                           )}>
                             {selected && <Check className="w-3 h-3 text-white" />}
                           </div>
-                          <p className="font-medium text-gray-900 text-sm">{goal.label}</p>
+                          <p className="font-medium text-foreground text-sm">{goal.label}</p>
                         </button>
                       )
                     })}
@@ -331,8 +331,8 @@ export default function StackConfiguratorPage() {
               {/* Step 3: Pain Points */}
               {step === 3 && (
                 <motion.div key="step3" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">Where are the gaps? <span className="text-base font-normal text-gray-400">(pick all that apply)</span></h2>
-                  <p className="text-gray-500 mb-6">Be honest — this helps us prioritize the highest-leverage fixes first.</p>
+                  <h2 className="text-2xl font-bold text-foreground mb-2">Where are the gaps? <span className="text-base font-normal text-muted-foreground">(pick all that apply)</span></h2>
+                  <p className="text-muted-foreground mb-6">Be honest — this helps us prioritize the highest-leverage fixes first.</p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {PAIN_POINTS.map((pain) => {
                       const selected = pains.includes(pain.id)
@@ -342,16 +342,16 @@ export default function StackConfiguratorPage() {
                           onClick={() => togglePain(pain.id)}
                           className={cn(
                             "p-4 rounded-xl border-2 text-left transition-all flex items-center gap-3",
-                            selected ? "border-[#DC2626] bg-red-50" : "border-gray-200 bg-white hover:border-gray-300"
+                            selected ? "border-primary bg-primary/10" : "border-border bg-card hover:border-border"
                           )}
                         >
                           <div className={cn(
                             "w-5 h-5 rounded border-2 flex-shrink-0 flex items-center justify-center transition-colors",
-                            selected ? "border-[#DC2626] bg-[#DC2626]" : "border-gray-300"
+                            selected ? "border-primary bg-primary" : "border-border"
                           )}>
                             {selected && <Check className="w-3 h-3 text-white" />}
                           </div>
-                          <p className="font-medium text-gray-900 text-sm">{pain.label}</p>
+                          <p className="font-medium text-foreground text-sm">{pain.label}</p>
                         </button>
                       )
                     })}
@@ -365,7 +365,7 @@ export default function StackConfiguratorPage() {
               {step > 0 ? (
                 <button
                   onClick={() => setStep(step - 1)}
-                  className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
                   ← Back
                 </button>
@@ -373,7 +373,7 @@ export default function StackConfiguratorPage() {
               <button
                 onClick={advance}
                 disabled={!canAdvance()}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-[#DC2626] text-white font-semibold rounded-xl hover:bg-[#B91C1C] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 {step < 3 ? "Next" : "Build My Stack"}
                 <ChevronRight className="w-4 h-4" />
@@ -387,16 +387,16 @@ export default function StackConfiguratorPage() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm"
+            className="bg-card border border-border rounded-2xl p-8 shadow-sm"
           >
             <div className="text-center mb-6">
-              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Zap className="w-6 h-6 text-green-600" />
+              <div className="w-12 h-12 bg-green-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Zap className="w-6 h-6 text-green-400" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Your Stack is Ready</h2>
-              <p className="text-gray-500">
-                We found <span className="font-semibold text-gray-900">{recommendations.length} solutions</span> for your profile, including{" "}
-                <span className="font-semibold text-red-600">{critical.length} critical</span> upgrades. Enter your details to unlock your custom AI stack.
+              <h2 className="text-2xl font-bold text-foreground mb-2">Your Stack is Ready</h2>
+              <p className="text-muted-foreground">
+                We found <span className="font-semibold text-foreground">{recommendations.length} solutions</span> for your profile, including{" "}
+                <span className="font-semibold text-primary">{critical.length} critical</span> upgrades. Enter your details to unlock your custom AI stack.
               </p>
             </div>
             <form onSubmit={handleUnlock} className="space-y-3">
@@ -406,7 +406,7 @@ export default function StackConfiguratorPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Full name"
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#DC2626] text-gray-900"
+                className="w-full px-4 py-3 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary text-foreground"
               />
               <input
                 type="email"
@@ -414,23 +414,23 @@ export default function StackConfiguratorPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Work email"
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#DC2626] text-gray-900"
+                className="w-full px-4 py-3 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary text-foreground"
               />
               <input
                 type="text"
                 value={company}
                 onChange={(e) => setCompany(e.target.value)}
                 placeholder="Company name (optional)"
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#DC2626] text-gray-900"
+                className="w-full px-4 py-3 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary text-foreground"
               />
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full py-3 bg-[#DC2626] text-white font-semibold rounded-xl hover:bg-[#B91C1C] transition-colors disabled:opacity-70 flex items-center justify-center gap-2"
+                className="w-full py-3 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 transition-colors disabled:opacity-70 flex items-center justify-center gap-2"
               >
                 {submitting ? "Building..." : <>View My Custom Stack <ArrowRight className="w-4 h-4" /></>}
               </button>
-              <p className="text-xs text-center text-gray-400">No spam. Unsubscribe anytime.</p>
+              <p className="text-xs text-center text-muted-foreground">No spam. Unsubscribe anytime.</p>
             </form>
           </motion.div>
         )}
@@ -443,8 +443,8 @@ export default function StackConfiguratorPage() {
             className="space-y-6"
           >
             <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">Your Custom AI Stack</h2>
-              <p className="text-gray-500">
+              <h2 className="text-3xl font-bold text-foreground mb-2">Your Custom AI Stack</h2>
+              <p className="text-muted-foreground">
                 {recommendations.length} solutions prioritized for your {BUSINESS_TYPES.find((b) => b.id === businessType)?.label ?? "business"}.
               </p>
             </div>
@@ -459,7 +459,7 @@ export default function StackConfiguratorPage() {
                   <span className={cn("text-xs font-semibold px-2 py-1 rounded-full", URGENCY_COLORS[urgency])}>
                     {urgency.toUpperCase()}
                   </span>
-                  <h3 className="font-semibold text-gray-900">{title}</h3>
+                  <h3 className="font-semibold text-foreground">{title}</h3>
                 </div>
                 <div className="space-y-3">
                   {list.map((rec, i) => (
@@ -468,20 +468,20 @@ export default function StackConfiguratorPage() {
                       initial={{ opacity: 0, y: 8 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: i * 0.05 }}
-                      className="bg-white border border-gray-200 rounded-xl p-5 flex items-start gap-4"
+                      className="bg-card border border-border rounded-xl p-5 flex items-start gap-4"
                     >
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
-                          <h4 className="font-semibold text-gray-900">{rec.name}</h4>
+                          <h4 className="font-semibold text-foreground">{rec.name}</h4>
                           <span className={cn("text-xs font-medium px-2 py-0.5 rounded-full border capitalize", PILLAR_COLORS[rec.pillar])}>
                             {rec.pillar}
                           </span>
                         </div>
-                        <p className="text-sm text-gray-500">{rec.description}</p>
+                        <p className="text-sm text-muted-foreground">{rec.description}</p>
                       </div>
                       <a
                         href="/get-started"
-                        className="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-[#DC2626] border border-[#DC2626]/30 rounded-lg hover:bg-red-50 transition-colors"
+                        className="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-primary border border-primary/30 rounded-lg hover:bg-primary/10 transition-colors"
                       >
                         Add to Plan
                         <ChevronRight className="w-3 h-3" />
@@ -492,14 +492,14 @@ export default function StackConfiguratorPage() {
               </div>
             ))}
 
-            <div className="bg-[#DC2626] rounded-2xl p-8 text-center text-white mt-8">
+            <div className="bg-primary rounded-2xl p-8 text-center text-white mt-8">
               <h3 className="text-2xl font-bold mb-3">Ready to deploy your stack?</h3>
-              <p className="text-red-100 mb-6">
+              <p className="text-primary-foreground/80 mb-6">
                 Book a free 30-minute strategy call. We'll finalize your roadmap, confirm priorities, and give you a fixed monthly price.
               </p>
               <a
                 href="/get-started"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-white text-[#DC2626] font-semibold rounded-xl hover:bg-red-50 transition-colors"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-card text-primary font-semibold rounded-xl hover:bg-primary/10 transition-colors"
               >
                 Book Strategy Call
                 <ArrowRight className="w-5 h-5" />

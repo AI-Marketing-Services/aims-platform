@@ -38,7 +38,7 @@ export function CancelSubscriptionButton({
 
   if (cancelled) {
     return (
-      <span className="text-sm text-orange-600 font-medium">
+      <span className="text-sm text-orange-400 font-medium">
         Cancels at period end
       </span>
     )
@@ -47,18 +47,18 @@ export function CancelSubscriptionButton({
   if (showConfirm) {
     return (
       <div className="flex items-center gap-2">
-        <span className="text-xs text-gray-500">Cancel {serviceName}?</span>
+        <span className="text-xs text-muted-foreground">Cancel {serviceName}?</span>
         <button
           onClick={handleCancel}
           disabled={loading}
-          className="text-sm text-red-600 border border-red-200 rounded-lg px-3 py-1.5 hover:bg-red-50 transition-colors disabled:opacity-60"
+          className="text-sm text-primary border border-primary/30 rounded-lg px-3 py-1.5 hover:bg-primary/10 transition-colors disabled:opacity-60"
         >
           {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : "Confirm"}
         </button>
         <button
           onClick={() => setShowConfirm(false)}
           disabled={loading}
-          className="text-sm text-gray-500 border border-border rounded-lg px-3 py-1.5 hover:bg-gray-50 transition-colors"
+          className="text-sm text-muted-foreground border border-border rounded-lg px-3 py-1.5 hover:bg-surface transition-colors"
         >
           Keep
         </button>
@@ -69,7 +69,7 @@ export function CancelSubscriptionButton({
   return (
     <button
       onClick={() => setShowConfirm(true)}
-      className="text-sm text-gray-500 border border-border rounded-lg px-3 py-1.5 hover:bg-gray-50 transition-colors"
+      className="text-sm text-muted-foreground border border-border rounded-lg px-3 py-1.5 hover:bg-surface transition-colors"
     >
       Cancel
     </button>

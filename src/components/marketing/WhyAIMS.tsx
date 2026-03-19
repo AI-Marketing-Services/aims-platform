@@ -48,7 +48,7 @@ export function WhyAIMS() {
 
         {/* Header */}
         <div className="mb-14 max-w-xl">
-          <span className="inline-block rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">
+          <span className="inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary mb-4">
             Why AIMS
           </span>
           <h2 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
@@ -77,7 +77,7 @@ export function WhyAIMS() {
             <ul className="space-y-3.5">
               {OLD_AGENCY.map((item) => (
                 <li key={item} className="flex items-center gap-3 text-sm text-muted-foreground">
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-gray-200">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-muted">
                     <X className="h-3 w-3 text-muted-foreground" />
                   </span>
                   {item}
@@ -92,18 +92,18 @@ export function WhyAIMS() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="rounded-2xl border border-red-200 bg-card p-8 shadow-sm"
+            className="rounded-2xl border border-primary/20 bg-card p-8 shadow-sm"
           >
             <div className="mb-6">
-              <span className="rounded-full border border-red-200 bg-red-50 px-3 py-1 text-xs font-semibold text-red-700">
+              <span className="rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
                 AIMS
               </span>
             </div>
             <ul className="space-y-3.5">
               {AIMS_PROS.map((item) => (
                 <li key={item} className="flex items-center gap-3 text-sm font-medium text-foreground">
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-50">
-                    <Check className="h-3 w-3 text-[#DC2626]" />
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10">
+                    <Check className="h-3 w-3 text-primary" />
                   </span>
                   {item}
                 </li>
@@ -124,15 +124,15 @@ export function WhyAIMS() {
             Your full tech stack, orchestrated by AIMS
           </p>
           <div className="relative overflow-hidden">
-            <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-20 bg-gradient-to-r from-white to-transparent" />
-            <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-20 bg-gradient-to-l from-white to-transparent" />
+            <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-20 bg-gradient-to-r from-[#08090D] to-transparent" />
+            <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-20 bg-gradient-to-l from-[#08090D] to-transparent" />
             <div className="flex animate-ticker whitespace-nowrap items-end pb-1">
               {[...TOOLS, ...TOOLS].map((tool, i) => (
                 <div key={i} className="mx-6 inline-flex flex-col items-center gap-2 flex-shrink-0">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-gray-100 bg-white shadow-sm">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-border bg-card shadow-sm">
                     <ToolLogo domain={tool.domain} name={tool.name} size={28} />
                   </div>
-                  <span className="text-[10px] text-gray-500 text-center leading-tight whitespace-nowrap">{tool.name}</span>
+                  <span className="text-[10px] text-muted-foreground text-center leading-tight whitespace-nowrap">{tool.name}</span>
                 </div>
               ))}
             </div>

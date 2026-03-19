@@ -54,15 +54,15 @@ export default function VPSnapshotPage() {
       {/* Hero */}
       <section className="pt-28 pb-20">
         <div className="mx-auto max-w-5xl px-4">
-          <span className="inline-flex items-center gap-2 rounded-full border border-red-200 bg-red-50 px-4 py-1.5 text-sm font-medium text-[#DC2626] mb-6">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#DC2626] animate-pulse" />
+          <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary mb-6">
+            <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
             Exclusive to AIMS Clients
           </span>
 
           <h1 className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl md:text-6xl max-w-4xl leading-[1.1]">
             The Ultimate
             <br />
-            <span className="text-[#DC2626]">Vendingpreneur Snapshot</span>
+            <span className="text-primary">Vendingpreneur Snapshot</span>
           </h1>
 
           <p className="mt-6 text-xl text-muted-foreground max-w-2xl leading-relaxed">
@@ -73,7 +73,7 @@ export default function VPSnapshotPage() {
           <div className="mt-10 flex flex-col gap-4 sm:flex-row">
             <Link
               href="/get-started?feature=vp-snapshot"
-              className="inline-flex items-center gap-2 rounded-xl bg-[#DC2626] px-8 py-4 text-base font-semibold text-white hover:bg-[#B91C1C] transition shadow-md"
+              className="inline-flex items-center gap-2 rounded-xl bg-primary px-8 py-4 text-base font-semibold text-white hover:bg-primary/90 transition shadow-md"
             >
               Get Access — Book a Call <ArrowRight className="h-5 w-5" />
             </Link>
@@ -113,8 +113,8 @@ export default function VPSnapshotPage() {
                 key={feature.title}
                 className="rounded-2xl border border-border bg-card p-7"
               >
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-red-50 mb-5">
-                  <feature.icon className="h-5 w-5 text-[#DC2626]" />
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 mb-5">
+                  <feature.icon className="h-5 w-5 text-primary" />
                 </div>
                 <h3 className="text-base font-bold text-foreground mb-2">{feature.title}</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">{feature.desc}</p>
@@ -137,7 +137,7 @@ export default function VPSnapshotPage() {
               { step: "3", title: "Wake up to your Snapshot", desc: "Every morning your dashboard updates with location pipeline, campaign stats, and AI action items." },
             ].map((item) => (
               <div key={item.step} className="text-center">
-                <div className="text-6xl font-black text-gray-100 mb-4 font-mono">{item.step}</div>
+                <div className="text-6xl font-black text-surface mb-4 font-mono">{item.step}</div>
                 <h3 className="text-base font-bold text-foreground mb-2">{item.title}</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
               </div>
@@ -164,7 +164,7 @@ export default function VPSnapshotPage() {
               "Dedicated AIMS success manager",
             ].map((item) => (
               <div key={item} className="flex items-center gap-3 rounded-lg border border-border bg-card p-4">
-                <CheckCircle2 className="h-5 w-5 shrink-0 text-[#DC2626]" />
+                <CheckCircle2 className="h-5 w-5 shrink-0 text-primary" />
                 <span className="text-sm font-medium text-foreground">{item}</span>
               </div>
             ))}
@@ -173,21 +173,21 @@ export default function VPSnapshotPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-24 bg-[#DC2626]">
+      <section className="py-24 bg-primary">
         <div className="mx-auto max-w-2xl px-4 text-center">
           <h2 className="text-3xl font-bold text-white sm:text-4xl">
             Get your Snapshot set up this week
           </h2>
-          <p className="mt-4 text-red-100 text-lg">
+          <p className="mt-4 text-muted-foreground text-lg">
             Limited onboarding spots available. Book now and we start building within 24 hours.
           </p>
           <Link
             href="/get-started?feature=vp-snapshot"
-            className="mt-8 inline-flex items-center gap-2 rounded-xl bg-white px-10 py-4 text-base font-semibold text-[#DC2626] hover:bg-red-50 transition shadow-lg"
+            className="mt-8 inline-flex items-center gap-2 rounded-xl bg-card px-10 py-4 text-base font-semibold text-primary hover:bg-primary/10 transition shadow-lg"
           >
             Book Your Free Strategy Call <ArrowRight className="h-5 w-5" />
           </Link>
-          <p className="mt-4 text-red-200 text-sm">
+          <p className="mt-4 text-muted-foreground text-sm">
             No credit card · Cancel anytime · Results in 14 days
           </p>
         </div>

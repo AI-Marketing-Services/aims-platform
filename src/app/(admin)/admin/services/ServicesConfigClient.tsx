@@ -101,7 +101,7 @@ export default function ServicesConfigClient() {
 
   if (loading) {
     return (
-      <div className="flex items-center gap-2 text-sm text-gray-400">
+      <div className="flex items-center gap-2 text-sm text-muted-foreground">
         <RefreshCw className="h-4 w-4 animate-spin" />
         Loading services and Asana data...
       </div>
@@ -112,13 +112,13 @@ export default function ServicesConfigClient() {
     <div className="space-y-8">
       {Object.entries(grouped).map(([pillar, svcs]) => (
         <div key={pillar}>
-          <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-400">
+          <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             {pillar.replace(/_/g, " ")}
           </h2>
           <div className="overflow-hidden rounded-xl border border-border bg-card">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-100 bg-muted text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
+                <tr className="border-b border-border bg-muted text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   <th className="px-4 py-3">Service</th>
                   <th className="px-4 py-3">CTA URL</th>
                   <th className="px-4 py-3">Asana Project</th>
@@ -126,7 +126,7 @@ export default function ServicesConfigClient() {
                   <th className="px-4 py-3 text-right">Save</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-50">
+              <tbody className="divide-y divide-border">
                 {svcs.map((svc) => {
                   const state = saveState[svc.id] ?? "idle";
                   const isExpanded = expandedId === svc.id;
@@ -134,15 +134,15 @@ export default function ServicesConfigClient() {
 
                   return (
                     <>
-                      <tr key={svc.id} className="group hover:bg-gray-50">
+                      <tr key={svc.id} className="group hover:bg-surface">
                         {/* Service name */}
                         <td className="px-4 py-3">
                           <button
                             onClick={() => setExpandedId(isExpanded ? null : svc.id)}
                             className="text-left"
                           >
-                            <p className="font-semibold text-gray-900">{svc.name}</p>
-                            <p className="text-xs text-gray-400">{svc.slug}</p>
+                            <p className="font-semibold text-foreground">{svc.name}</p>
+                            <p className="text-xs text-muted-foreground">{svc.slug}</p>
                           </button>
                         </td>
 
@@ -154,11 +154,11 @@ export default function ServicesConfigClient() {
                               placeholder="https://..."
                               value={(getVal(svc, "ctaUrl") as string) ?? ""}
                               onChange={(e) => setEdit(svc.id, "ctaUrl", e.target.value)}
-                              className="w-48 rounded-md border border-gray-200 px-2.5 py-1.5 text-xs focus:border-[#DC2626] focus:outline-none focus:ring-1 focus:ring-[#DC2626]/20"
+                              className="w-48 rounded-md border border-border px-2.5 py-1.5 text-xs focus:border-[#C4972A] focus:outline-none focus:ring-1 focus:ring-[#C4972A]/20"
                             />
                             {getVal(svc, "ctaUrl") && (
                               <a href={getVal(svc, "ctaUrl") as string} target="_blank" rel="noopener noreferrer">
-                                <ExternalLink className="h-3.5 w-3.5 text-gray-400 hover:text-green-600" />
+                                <ExternalLink className="h-3.5 w-3.5 text-muted-foreground hover:text-green-400" />
                               </a>
                             )}
                           </div>
@@ -169,7 +169,7 @@ export default function ServicesConfigClient() {
                           <select
                             value={(getVal(svc, "asanaProjectGid") as string) ?? ""}
                             onChange={(e) => setEdit(svc.id, "asanaProjectGid", e.target.value)}
-                            className="w-48 rounded-md border border-gray-200 px-2.5 py-1.5 text-xs focus:border-[#DC2626] focus:outline-none focus:ring-1 focus:ring-[#DC2626]/20"
+                            className="w-48 rounded-md border border-border px-2.5 py-1.5 text-xs focus:border-[#C4972A] focus:outline-none focus:ring-1 focus:ring-[#C4972A]/20"
                           >
                             <option value="">— No project —</option>
                             {projects.map((p) => (
@@ -183,7 +183,7 @@ export default function ServicesConfigClient() {
                           <select
                             value={(getVal(svc, "asanaAssigneeGid") as string) ?? ""}
                             onChange={(e) => setEdit(svc.id, "asanaAssigneeGid", e.target.value)}
-                            className="w-44 rounded-md border border-gray-200 px-2.5 py-1.5 text-xs focus:border-[#DC2626] focus:outline-none focus:ring-1 focus:ring-[#DC2626]/20"
+                            className="w-44 rounded-md border border-border px-2.5 py-1.5 text-xs focus:border-[#C4972A] focus:outline-none focus:ring-1 focus:ring-[#C4972A]/20"
                           >
                             <option value="">— Unassigned —</option>
                             {users.map((u) => (
@@ -211,32 +211,32 @@ export default function ServicesConfigClient() {
                       {isExpanded && (
                         <tr key={`${svc.id}-expanded`} className="bg-muted">
                           <td colSpan={5} className="px-4 py-4">
-                            <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500">
-                              Asana Task Template <span className="ml-2 font-normal normal-case text-gray-400">Variables: {"{{client}}"}, {"{{service}}"}, {"{{tier}}"}, {"{{email}}"}, {"{{amount}}"}</span>
+                            <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                              Asana Task Template <span className="ml-2 font-normal normal-case text-muted-foreground">Variables: {"{{client}}"}, {"{{service}}"}, {"{{tier}}"}, {"{{email}}"}, {"{{amount}}"}</span>
                             </p>
                             <div className="grid gap-3 lg:grid-cols-3">
                               <div>
-                                <label className="mb-1 block text-xs font-medium text-gray-600">Task Name</label>
+                                <label className="mb-1 block text-xs font-medium text-muted-foreground">Task Name</label>
                                 <input
                                   type="text"
                                   placeholder="New Client: {{client}} — {{service}}"
                                   value={template?.name ?? ""}
                                   onChange={(e) => setEdit(svc.id, "asanaTaskTemplate", { ...template, name: e.target.value })}
-                                  className="w-full rounded-md border border-gray-200 px-2.5 py-1.5 text-xs focus:border-[#DC2626] focus:outline-none focus:ring-1 focus:ring-[#DC2626]/20"
+                                  className="w-full rounded-md border border-border px-2.5 py-1.5 text-xs focus:border-[#C4972A] focus:outline-none focus:ring-1 focus:ring-[#C4972A]/20"
                                 />
                               </div>
                               <div>
-                                <label className="mb-1 block text-xs font-medium text-gray-600">Task Notes / Description</label>
+                                <label className="mb-1 block text-xs font-medium text-muted-foreground">Task Notes / Description</label>
                                 <textarea
                                   rows={3}
                                   placeholder={"Client: {{client}}\nEmail: {{email}}\nService: {{service}}"}
                                   value={template?.notes ?? ""}
                                   onChange={(e) => setEdit(svc.id, "asanaTaskTemplate", { ...template, notes: e.target.value })}
-                                  className="w-full rounded-md border border-gray-200 px-2.5 py-1.5 text-xs focus:border-[#DC2626] focus:outline-none focus:ring-1 focus:ring-[#DC2626]/20"
+                                  className="w-full rounded-md border border-border px-2.5 py-1.5 text-xs focus:border-[#C4972A] focus:outline-none focus:ring-1 focus:ring-[#C4972A]/20"
                                 />
                               </div>
                               <div>
-                                <label className="mb-1 block text-xs font-medium text-gray-600">Subtasks (one per line)</label>
+                                <label className="mb-1 block text-xs font-medium text-muted-foreground">Subtasks (one per line)</label>
                                 <textarea
                                   rows={3}
                                   placeholder={"Send welcome email\nSchedule kickoff call\nSet up tracking"}
@@ -245,7 +245,7 @@ export default function ServicesConfigClient() {
                                     ...template,
                                     subtasks: e.target.value.split("\n").filter(Boolean),
                                   })}
-                                  className="w-full rounded-md border border-gray-200 px-2.5 py-1.5 text-xs focus:border-[#DC2626] focus:outline-none focus:ring-1 focus:ring-[#DC2626]/20"
+                                  className="w-full rounded-md border border-border px-2.5 py-1.5 text-xs focus:border-[#C4972A] focus:outline-none focus:ring-1 focus:ring-[#C4972A]/20"
                                 />
                               </div>
                             </div>

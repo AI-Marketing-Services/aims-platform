@@ -9,54 +9,54 @@ export const metadata: Metadata = {
 
 export default function VendingpreneurCaseStudy() {
   return (
-    <div className="min-h-screen bg-[#FAFAFA]">
+    <div className="min-h-screen bg-deep">
       <div className="max-w-3xl mx-auto px-4 py-16">
 
-        <div className="flex items-center gap-2 text-sm text-gray-400 mb-8">
-          <Link href="/case-studies" className="hover:text-[#DC2626] transition-colors">Case Studies</Link>
+        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-8">
+          <Link href="/case-studies" className="hover:text-primary transition-colors">Case Studies</Link>
           <span>/</span>
-          <span className="text-gray-600">Multi-Route Vending Operator</span>
+          <span className="text-muted-foreground">Multi-Route Vending Operator</span>
         </div>
 
         <div className="flex flex-wrap gap-2 mb-4">
           {["Vending", "Cold Outbound", "Lead Generation", "Voice AI"].map((tag) => (
-            <span key={tag} className="text-xs font-medium px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full">{tag}</span>
+            <span key={tag} className="text-xs font-medium px-2 py-0.5 bg-deep text-muted-foreground rounded-full">{tag}</span>
           ))}
         </div>
 
-        <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+        <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
           47 New Locations in 90 Days — Without Hiring a Salesperson
         </h1>
-        <p className="text-lg text-gray-500 mb-10">
+        <p className="text-lg text-muted-foreground mb-10">
           How an owner-operator vending business scaled from manual prospecting to a fully automated location acquisition machine.
         </p>
 
-        <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-10 grid grid-cols-3 gap-4 text-center shadow-sm">
+        <div className="bg-card border border-border rounded-2xl p-6 mb-10 grid grid-cols-3 gap-4 text-center shadow-sm">
           {[
             { value: "47", label: "New locations secured" },
             { value: "90 days", label: "To results" },
             { value: "$284", label: "Cost per location" },
           ].map((m) => (
             <div key={m.label}>
-              <div className="text-3xl font-black text-[#DC2626] mb-1">{m.value}</div>
-              <div className="text-xs text-gray-500">{m.label}</div>
+              <div className="text-3xl font-black text-primary mb-1">{m.value}</div>
+              <div className="text-xs text-muted-foreground">{m.label}</div>
             </div>
           ))}
         </div>
 
         <div className="prose prose-gray max-w-none space-y-8">
           <section>
-            <h2 className="text-xl font-bold text-gray-900 mb-3">The Challenge</h2>
-            <p className="text-gray-600 leading-relaxed">
+            <h2 className="text-xl font-bold text-foreground mb-3">The Challenge</h2>
+            <p className="text-muted-foreground leading-relaxed">
               A vending operator managing 240+ machines across three states was growing, but slowly. Every new location was the result of a personal relationship, a referral, or hours spent cold-calling property managers from a spreadsheet. The operator was the only salesperson — and between restocking routes, machine maintenance, and accounting, there was almost no time left to prospect.
             </p>
-            <p className="text-gray-600 leading-relaxed mt-3">
+            <p className="text-muted-foreground leading-relaxed mt-3">
               The bottleneck was clear: &quot;I know exactly where my machines should go. I just can&apos;t find the time to pitch all of them.&quot;
             </p>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-gray-900 mb-3">What AIMS Built</h2>
+            <h2 className="text-xl font-bold text-foreground mb-3">What AIMS Built</h2>
             <div className="space-y-3">
               {[
                 "Cold email outbound system targeting 2,000+ property managers, facility directors, and office managers per month within the operator's target territories",
@@ -66,28 +66,28 @@ export default function VendingpreneurCaseStudy() {
                 "Lead reactivation campaign reaching 180 cold contacts from the operator's existing spreadsheet — converting 22 of them into new conversations",
               ].map((item) => (
                 <div key={item} className="flex items-start gap-3">
-                  <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
-                  <p className="text-gray-600 text-sm">{item}</p>
+                  <CheckCircle2 className="w-4 h-4 text-green-400 flex-shrink-0 mt-0.5" />
+                  <p className="text-muted-foreground text-sm">{item}</p>
                 </div>
               ))}
             </div>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-gray-900 mb-3">The Timeline</h2>
+            <h2 className="text-xl font-bold text-foreground mb-3">The Timeline</h2>
             <div className="space-y-3">
               {[
                 { icon: Clock, time: "Week 1-2", desc: "Cold outbound sequences built, tested, and sending. CRM configured with vending-specific pipeline stages." },
                 { icon: MapPin, time: "Week 3-4", desc: "First inbound calls coming through AI voice agent. Reactivation campaign launched to existing prospect list." },
                 { icon: TrendingUp, time: "Day 90", desc: "47 new locations secured. Operator running 287 machines across 4 states with zero additional sales headcount." },
               ].map(({ icon: Icon, time, desc }) => (
-                <div key={time} className="flex items-start gap-4 bg-white border border-gray-200 rounded-xl p-4">
-                  <div className="w-8 h-8 bg-red-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Icon className="w-4 h-4 text-[#DC2626]" />
+                <div key={time} className="flex items-start gap-4 bg-card border border-border rounded-xl p-4">
+                  <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Icon className="w-4 h-4 text-primary" />
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-900 text-sm">{time}</p>
-                    <p className="text-sm text-gray-500">{desc}</p>
+                    <p className="font-semibold text-foreground text-sm">{time}</p>
+                    <p className="text-sm text-muted-foreground">{desc}</p>
                   </div>
                 </div>
               ))}
@@ -95,8 +95,8 @@ export default function VendingpreneurCaseStudy() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-gray-900 mb-3">Results After 90 Days</h2>
-            <div className="bg-green-50 border border-green-200 rounded-xl p-6 space-y-3">
+            <h2 className="text-xl font-bold text-foreground mb-3">Results After 90 Days</h2>
+            <div className="bg-green-900/15 border border-green-800 rounded-xl p-6 space-y-3">
               {[
                 "47 new locations secured — 31 from cold outbound, 9 from voice agent inbound, 7 from reactivation",
                 "Average cost per secured location: $284 (vs. $1,800+ when sourcing through broker networks)",
@@ -105,7 +105,7 @@ export default function VendingpreneurCaseStudy() {
                 "Pipeline: 140 active prospects still in nurture — projected 30+ additional locations in next 60 days",
               ].map((item) => (
                 <div key={item} className="flex items-start gap-3">
-                  <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-4 h-4 text-green-400 flex-shrink-0 mt-0.5" />
                   <p className="text-green-800 text-sm">{item}</p>
                 </div>
               ))}
@@ -113,14 +113,14 @@ export default function VendingpreneurCaseStudy() {
           </section>
         </div>
 
-        <div className="mt-14 bg-[#DC2626] rounded-2xl p-8 text-center text-white">
+        <div className="mt-14 bg-primary rounded-2xl p-8 text-center text-white">
           <h2 className="text-2xl font-bold mb-3">Are you a vending operator?</h2>
-          <p className="text-red-100 mb-6">
+          <p className="text-muted-foreground mb-6">
             We&apos;ve built this exact system for vending operators across the country. Book a call and we&apos;ll show you what it would look like for your territory.
           </p>
           <Link
             href="/get-started"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-white text-[#DC2626] font-semibold rounded-xl hover:bg-red-50 transition-colors"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-card text-primary font-semibold rounded-xl hover:bg-primary/10 transition-colors"
           >
             Book Free Strategy Call
             <ArrowRight className="w-5 h-5" />
@@ -128,7 +128,7 @@ export default function VendingpreneurCaseStudy() {
         </div>
 
         <div className="mt-8 text-center">
-          <Link href="/case-studies" className="text-sm text-gray-400 hover:text-[#DC2626] transition-colors">
+          <Link href="/case-studies" className="text-sm text-muted-foreground hover:text-primary transition-colors">
             ← Back to all case studies
           </Link>
         </div>

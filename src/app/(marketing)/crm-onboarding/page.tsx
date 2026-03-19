@@ -198,21 +198,21 @@ const FAQS = [
 
 export default function CRMOnboardingPage() {
   return (
-    <div className="bg-white">
+    <div className="bg-card">
       {/* ───── SECTION 1: HERO ───── */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-[#DC2626] to-[#B91C1C] text-white py-24">
+      <section className="relative overflow-hidden bg-gradient-to-b from-primary to-primary/90 text-white py-24">
         <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
         <div className="container mx-auto max-w-4xl px-4 text-center relative">
           <h1 className="text-4xl sm:text-5xl font-black tracking-tight">
             Welcome to AIMS CRM
           </h1>
-          <p className="mt-4 text-lg text-red-100 max-w-2xl mx-auto leading-relaxed">
+          <p className="mt-4 text-lg text-primary-foreground/80 max-w-2xl mx-auto leading-relaxed">
             Your all-in-one vending business platform. Everything you need to
             launch, manage, and grow — set up and ready to go.
           </p>
           <a
             href="#setup-videos"
-            className="mt-8 inline-flex items-center gap-2 rounded-xl bg-white text-[#DC2626] px-8 py-3.5 text-sm font-semibold hover:bg-red-50 transition-colors"
+            className="mt-8 inline-flex items-center gap-2 rounded-xl bg-card text-primary px-8 py-3.5 text-sm font-semibold hover:bg-primary/10 transition-colors"
           >
             <Play className="h-4 w-4" />
             Watch the Setup Videos Below to Get Started
@@ -221,7 +221,7 @@ export default function CRMOnboardingPage() {
       </section>
 
       {/* ───── SECTION 2: HOW TO GET STARTED ───── */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20 bg-deep">
         <div className="container mx-auto max-w-5xl px-4">
           <h2 className="text-2xl font-bold text-foreground text-center">
             Get Set Up in 3 Steps
@@ -251,10 +251,10 @@ export default function CRMOnboardingPage() {
               },
             ].map(({ icon: Icon, step, title, description }) => (
               <div key={step} className="text-center">
-                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#DC2626]/10">
-                  <Icon className="h-6 w-6 text-[#DC2626]" />
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10">
+                  <Icon className="h-6 w-6 text-primary" />
                 </div>
-                <div className="mt-4 inline-flex h-7 w-7 items-center justify-center rounded-full bg-[#DC2626] text-white text-xs font-bold">
+                <div className="mt-4 inline-flex h-7 w-7 items-center justify-center rounded-full bg-primary text-white text-xs font-bold">
                   {step}
                 </div>
                 <h3 className="mt-3 text-base font-semibold text-foreground">
@@ -298,10 +298,10 @@ export default function CRMOnboardingPage() {
             ].map((video) => (
               <div
                 key={video.label}
-                className="rounded-xl border border-gray-200 bg-white p-6 flex flex-col"
+                className="rounded-xl border border-border bg-card p-6 flex flex-col"
               >
                 <div className="flex items-center gap-2 mb-3">
-                  <span className="text-xs font-bold text-[#DC2626] bg-[#DC2626]/10 px-2 py-0.5 rounded-full">
+                  <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
                     {video.label}
                   </span>
                   <span className="text-xs text-muted-foreground">
@@ -318,7 +318,7 @@ export default function CRMOnboardingPage() {
                   href={video.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-5 inline-flex items-center justify-center gap-2 rounded-lg bg-[#DC2626] text-white px-5 py-2.5 text-sm font-semibold hover:bg-[#B91C1C] transition-colors"
+                  className="mt-5 inline-flex items-center justify-center gap-2 rounded-lg bg-primary text-white px-5 py-2.5 text-sm font-semibold hover:bg-primary/90 transition-colors"
                 >
                   <Play className="h-4 w-4" />
                   {video.buttonText}
@@ -331,7 +331,7 @@ export default function CRMOnboardingPage() {
       </section>
 
       {/* ───── SECTION 4: ONBOARDING CHECKLIST ───── */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20 bg-deep">
         <div className="container mx-auto max-w-3xl px-4">
           <div className="text-center mb-10">
             <h2 className="text-2xl font-bold text-foreground">
@@ -380,13 +380,13 @@ export default function CRMOnboardingPage() {
                 href={dns.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-xl border border-gray-200 bg-white p-5 flex flex-col items-center gap-3 hover:border-[#DC2626]/30 hover:shadow-sm transition-all"
+                className="rounded-xl border border-border bg-card p-5 flex flex-col items-center gap-3 hover:border-primary/30 hover:shadow-sm transition-all"
               >
-                <Globe className="h-8 w-8 text-[#DC2626]" />
+                <Globe className="h-8 w-8 text-primary" />
                 <p className="text-sm font-semibold text-foreground">
                   {dns.registrar}
                 </p>
-                <span className="text-xs text-[#DC2626] font-medium flex items-center gap-1">
+                <span className="text-xs text-primary font-medium flex items-center gap-1">
                   {dns.buttonText}
                   <ExternalLink className="h-3 w-3" />
                 </span>
@@ -395,26 +395,26 @@ export default function CRMOnboardingPage() {
           </div>
 
           {/* DNS Reference */}
-          <div className="mt-8 rounded-xl border border-gray-200 bg-gray-50 p-5">
+          <div className="mt-8 rounded-xl border border-border bg-deep p-5">
             <p className="text-sm font-semibold text-foreground mb-3">
               DNS Records Reference
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div className="rounded-lg bg-white border border-gray-200 px-4 py-3">
-                <p className="text-xs font-bold text-[#DC2626] mb-1">
+              <div className="rounded-lg bg-card border border-border px-4 py-3">
+                <p className="text-xs font-bold text-primary mb-1">
                   A Record
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  Host: <code className="font-mono bg-gray-100 px-1 rounded">@</code> (or yourdomain.com)
+                  Host: <code className="font-mono bg-deep px-1 rounded">@</code> (or yourdomain.com)
                 </p>
                 <p className="text-xs text-muted-foreground">
                   Points to: IP address shown in GHL
                 </p>
               </div>
-              <div className="rounded-lg bg-white border border-gray-200 px-4 py-3">
-                <p className="text-xs font-bold text-[#DC2626] mb-1">CNAME</p>
+              <div className="rounded-lg bg-card border border-border px-4 py-3">
+                <p className="text-xs font-bold text-primary mb-1">CNAME</p>
                 <p className="text-xs text-muted-foreground">
-                  Host: <code className="font-mono bg-gray-100 px-1 rounded">www</code>
+                  Host: <code className="font-mono bg-deep px-1 rounded">www</code>
                 </p>
                 <p className="text-xs text-muted-foreground">
                   Points to: CNAME value shown in GHL
@@ -426,7 +426,7 @@ export default function CRMOnboardingPage() {
       </section>
 
       {/* ───── SECTION 6: WHAT'S INCLUDED ───── */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20 bg-deep">
         <div className="container mx-auto max-w-5xl px-4">
           <h2 className="text-2xl font-bold text-foreground text-center">
             What You Get
@@ -435,10 +435,10 @@ export default function CRMOnboardingPage() {
             {FEATURES.map(({ icon: Icon, title, description }) => (
               <div
                 key={title}
-                className="rounded-xl border border-gray-200 bg-white p-5"
+                className="rounded-xl border border-border bg-card p-5"
               >
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#DC2626]/10">
-                  <Icon className="h-5 w-5 text-[#DC2626]" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                  <Icon className="h-5 w-5 text-primary" />
                 </div>
                 <h3 className="mt-4 text-sm font-semibold text-foreground">
                   {title}
@@ -462,15 +462,15 @@ export default function CRMOnboardingPage() {
             {PLANS.map((plan) => (
               <div
                 key={plan.name}
-                className={`rounded-xl border-2 bg-white p-6 flex flex-col ${
+                className={`rounded-xl border-2 bg-card p-6 flex flex-col ${
                   plan.popular
-                    ? "border-[#DC2626] shadow-lg relative"
-                    : "border-gray-200"
+                    ? "border-primary shadow-lg relative"
+                    : "border-border"
                 }`}
               >
                 {plan.popular && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <span className="rounded-full bg-[#DC2626] px-3 py-1 text-xs font-semibold text-white">
+                    <span className="rounded-full bg-primary px-3 py-1 text-xs font-semibold text-white">
                       Most Popular
                     </span>
                   </div>
@@ -484,7 +484,7 @@ export default function CRMOnboardingPage() {
                       {f.included ? (
                         <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
                       ) : (
-                        <X className="h-4 w-4 text-gray-300 mt-0.5 flex-shrink-0" />
+                        <X className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
                       )}
                       <span
                         className={
@@ -503,7 +503,7 @@ export default function CRMOnboardingPage() {
       </section>
 
       {/* ───── SECTION 8: COMMON MISTAKES ───── */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20 bg-deep">
         <div className="container mx-auto max-w-3xl px-4">
           <h2 className="text-2xl font-bold text-foreground text-center">
             Avoid These Setup Mistakes
@@ -512,7 +512,7 @@ export default function CRMOnboardingPage() {
             {MISTAKES.map((mistake, i) => (
               <div
                 key={i}
-                className="rounded-xl border border-orange-200 bg-orange-50/50 px-5 py-4 flex items-start gap-3"
+                className="rounded-xl border border-orange-800 bg-orange-50/50 px-5 py-4 flex items-start gap-3"
               >
                 <AlertTriangle className="h-5 w-5 text-orange-500 mt-0.5 flex-shrink-0" />
                 <div>
@@ -535,10 +535,10 @@ export default function CRMOnboardingPage() {
           <h2 className="text-2xl font-bold text-foreground text-center">
             Frequently Asked Questions
           </h2>
-          <div className="mt-10 divide-y divide-gray-200 rounded-xl border border-gray-200 bg-white overflow-hidden">
+          <div className="mt-10 divide-y divide-border rounded-xl border border-border bg-card overflow-hidden">
             {FAQS.map((faq, i) => (
               <details key={i} className="group">
-                <summary className="flex items-center justify-between px-5 py-4 cursor-pointer list-none hover:bg-gray-50 transition-colors">
+                <summary className="flex items-center justify-between px-5 py-4 cursor-pointer list-none hover:bg-surface transition-colors">
                   <span className="text-sm font-medium text-foreground pr-4">
                     {faq.q}
                   </span>
@@ -556,7 +556,7 @@ export default function CRMOnboardingPage() {
       </section>
 
       {/* ───── SECTION 10: SUPPORT ───── */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20 bg-deep">
         <div className="container mx-auto max-w-4xl px-4">
           <div className="text-center mb-10">
             <h2 className="text-2xl font-bold text-foreground">Need Help?</h2>
@@ -568,32 +568,32 @@ export default function CRMOnboardingPage() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <a
               href={`mailto:${SUPPORT_EMAIL_1}`}
-              className="rounded-xl border border-gray-200 bg-white p-5 text-center hover:border-[#DC2626]/30 hover:shadow-sm transition-all"
+              className="rounded-xl border border-border bg-card p-5 text-center hover:border-primary/30 hover:shadow-sm transition-all"
             >
-              <Mail className="h-8 w-8 text-[#DC2626] mx-auto" />
+              <Mail className="h-8 w-8 text-primary mx-auto" />
               <p className="mt-3 text-sm font-semibold text-foreground">
                 Irtaza
               </p>
               <p className="text-xs text-muted-foreground">
                 Technical Support
               </p>
-              <p className="mt-2 text-xs text-[#DC2626] font-medium">
+              <p className="mt-2 text-xs text-primary font-medium">
                 {SUPPORT_EMAIL_1}
               </p>
             </a>
             <a
               href={`mailto:${SUPPORT_EMAIL_2}`}
-              className="rounded-xl border border-gray-200 bg-white p-5 text-center hover:border-[#DC2626]/30 hover:shadow-sm transition-all"
+              className="rounded-xl border border-border bg-card p-5 text-center hover:border-primary/30 hover:shadow-sm transition-all"
             >
-              <Mail className="h-8 w-8 text-[#DC2626] mx-auto" />
+              <Mail className="h-8 w-8 text-primary mx-auto" />
               <p className="mt-3 text-sm font-semibold text-foreground">Adam</p>
               <p className="text-xs text-muted-foreground">General Support</p>
-              <p className="mt-2 text-xs text-[#DC2626] font-medium">
+              <p className="mt-2 text-xs text-primary font-medium">
                 {SUPPORT_EMAIL_2}
               </p>
             </a>
-            <div className="rounded-xl border border-gray-200 bg-white p-5 text-center">
-              <Bot className="h-8 w-8 text-[#DC2626] mx-auto" />
+            <div className="rounded-xl border border-border bg-card p-5 text-center">
+              <Bot className="h-8 w-8 text-primary mx-auto" />
               <p className="mt-3 text-sm font-semibold text-foreground">
                 AI Help Agent
               </p>
@@ -605,7 +605,7 @@ export default function CRMOnboardingPage() {
           </div>
 
           {/* When to reach out */}
-          <div className="mt-8 rounded-xl border border-gray-200 bg-white p-5">
+          <div className="mt-8 rounded-xl border border-border bg-card p-5">
             <p className="text-sm font-semibold text-foreground mb-3">
               When to reach out:
             </p>
@@ -619,7 +619,7 @@ export default function CRMOnboardingPage() {
                 "General questions",
               ].map((item) => (
                 <div key={item} className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <ArrowRight className="h-3 w-3 text-[#DC2626] flex-shrink-0" />
+                  <ArrowRight className="h-3 w-3 text-primary flex-shrink-0" />
                   {item}
                 </div>
               ))}
@@ -629,12 +629,12 @@ export default function CRMOnboardingPage() {
       </section>
 
       {/* ───── SECTION 11: FOOTER ───── */}
-      <section className="py-12 bg-[#DC2626] text-white text-center">
+      <section className="py-12 bg-primary text-white text-center">
         <div className="container mx-auto max-w-4xl px-4">
           <p className="text-lg font-semibold">
             Welcome to the AIMS CRM family. Let&apos;s grow your vending business.
           </p>
-          <p className="mt-2 text-sm text-red-100">— The AIMS Creative Team</p>
+          <p className="mt-2 text-sm text-primary-foreground/80">— The AIMS Creative Team</p>
         </div>
       </section>
     </div>

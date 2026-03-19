@@ -91,7 +91,7 @@ interface DashboardData {
 
 function trendClass(n: number) {
   if (n > 0) return "text-green-500"
-  if (n < 0) return "text-red-400"
+  if (n < 0) return "text-primary"
   return "text-muted-foreground"
 }
 
@@ -169,7 +169,7 @@ export function AdminDashboardClient({ data }: { data: DashboardData }) {
               <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 MRR
               </p>
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-red-50 text-[#DC2626]">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-[#C4972A]">
                 <DollarSign className="h-4 w-4" />
               </div>
             </div>
@@ -196,7 +196,7 @@ export function AdminDashboardClient({ data }: { data: DashboardData }) {
               <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Active Clients
               </p>
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-red-50 text-[#DC2626]">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-[#C4972A]">
                 <Users className="h-4 w-4" />
               </div>
             </div>
@@ -220,7 +220,7 @@ export function AdminDashboardClient({ data }: { data: DashboardData }) {
               <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Pipeline Value
               </p>
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-red-50 text-[#DC2626]">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-[#C4972A]">
                 <Layers className="h-4 w-4" />
               </div>
             </div>
@@ -244,12 +244,12 @@ export function AdminDashboardClient({ data }: { data: DashboardData }) {
               <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Hot Leads
               </p>
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-red-50 text-[#DC2626] relative">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-[#C4972A] relative">
                 <Flame className="h-4 w-4" />
                 {hotLeads.length > 0 && (
                   <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
-                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500" />
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary/100" />
                   </span>
                 )}
               </div>
@@ -310,12 +310,12 @@ export function AdminDashboardClient({ data }: { data: DashboardData }) {
           <AnimatedCard glow className="bg-card border border-border rounded-lg p-5">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-sm font-semibold text-foreground flex items-center gap-1.5">
-                <Flame className="h-3.5 w-3.5 text-red-500" />
+                <Flame className="h-3.5 w-3.5 text-primary" />
                 Hot Leads
               </h2>
               <Link
                 href="/admin/crm"
-                className="text-xs text-red-500 hover:underline"
+                className="text-xs text-primary hover:underline"
               >
                 View all
               </Link>
@@ -346,12 +346,12 @@ export function AdminDashboardClient({ data }: { data: DashboardData }) {
                       )}
                     </div>
                     <div className="flex flex-col items-end gap-1 flex-shrink-0">
-                      <span className="rounded bg-red-50 border border-red-200 px-1.5 py-0.5 text-[11px] font-semibold text-[#DC2626]">
+                      <span className="rounded bg-primary/10 border border-primary/30 px-1.5 py-0.5 text-[11px] font-semibold text-[#C4972A]">
                         {lead.leadScore}
                       </span>
                       <Link
                         href={`/admin/crm/${lead.id}`}
-                        className="text-[11px] text-red-500 hover:underline"
+                        className="text-[11px] text-primary hover:underline"
                       >
                         View &rarr;
                       </Link>
@@ -365,7 +365,7 @@ export function AdminDashboardClient({ data }: { data: DashboardData }) {
           {/* Overdue Fulfillment */}
           <AnimatedCard glow className="bg-card border border-border rounded-lg p-5">
             <h2 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-1.5">
-              <AlertCircle className="h-3.5 w-3.5 text-red-500" />
+              <AlertCircle className="h-3.5 w-3.5 text-primary" />
               Overdue Fulfillment
             </h2>
 
@@ -392,7 +392,7 @@ export function AdminDashboardClient({ data }: { data: DashboardData }) {
                     task.subscription?.user?.email ??
                     "Unknown client"
                   return (
-                    <PopInItem key={task.id} className="border-l-2 border-red-600 pl-3">
+                    <PopInItem key={task.id} className="border-l-2 border-primary pl-3">
                       <p className="text-xs font-medium text-foreground truncate">
                         {task.title}
                       </p>
@@ -405,7 +405,7 @@ export function AdminDashboardClient({ data }: { data: DashboardData }) {
                             {task.assignedTo}
                           </span>
                         )}
-                        <span className="text-[10px] font-semibold text-red-400">
+                        <span className="text-[10px] font-semibold text-primary">
                           {daysOverdue}d overdue
                         </span>
                       </div>
@@ -484,7 +484,7 @@ export function AdminDashboardClient({ data }: { data: DashboardData }) {
                     key={member.assignedTo}
                     className={`rounded-lg border p-4 transition-shadow duration-200 hover:shadow-md ${
                       member.overdue > 0
-                        ? "border-red-200 bg-red-50"
+                        ? "border-primary/30 bg-primary/10"
                         : "border-border bg-muted/20"
                     }`}
                   >
@@ -498,7 +498,7 @@ export function AdminDashboardClient({ data }: { data: DashboardData }) {
                       open tasks
                     </p>
                     {member.overdue > 0 && (
-                      <p className="mt-1 text-[11px] font-semibold text-red-400">
+                      <p className="mt-1 text-[11px] font-semibold text-primary">
                         {member.overdue} overdue
                       </p>
                     )}

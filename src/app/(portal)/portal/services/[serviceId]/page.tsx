@@ -6,26 +6,26 @@ import Link from "next/link"
 import { cn } from "@/lib/utils"
 
 const PILLAR_PILL: Record<string, string> = {
-  MARKETING: "bg-green-50 text-green-700 border-green-200",
-  SALES: "bg-blue-50 text-blue-700 border-blue-200",
-  OPERATIONS: "bg-orange-50 text-orange-700 border-orange-200",
-  FINANCE: "bg-purple-50 text-purple-700 border-purple-200",
+  MARKETING: "bg-green-900/15 text-green-400 border-green-800",
+  SALES: "bg-blue-900/20 text-blue-400 border-blue-800",
+  OPERATIONS: "bg-orange-900/20 text-orange-400 border-orange-800",
+  FINANCE: "bg-purple-900/20 text-purple-400 border-purple-800",
 }
 
 const STATUS_CONFIG: Record<string, { icon: React.FC<{ className?: string }>; label: string; color: string }> = {
   done: { icon: CheckCircle2, label: "Complete", color: "text-green-400" },
   in_progress: { icon: Clock, label: "In Progress", color: "text-yellow-400" },
-  blocked: { icon: AlertCircle, label: "Blocked", color: "text-red-400" },
+  blocked: { icon: AlertCircle, label: "Blocked", color: "text-primary" },
   todo: { icon: Circle, label: "Pending", color: "text-muted-foreground" },
 }
 
 const FULFILLMENT_LABELS: Record<string, { label: string; color: string }> = {
-  PENDING_SETUP: { label: "Pending Setup", color: "text-yellow-700 bg-yellow-50 border-yellow-200" },
-  IN_PROGRESS: { label: "In Progress", color: "text-blue-700 bg-blue-50 border-blue-200" },
-  ACTIVE_MANAGED: { label: "Active", color: "text-green-700 bg-green-50 border-green-200" },
-  NEEDS_ATTENTION: { label: "Needs Attention", color: "text-red-700 bg-red-50 border-red-200" },
-  COMPLETED: { label: "Completed", color: "text-green-700 bg-green-50 border-green-200" },
-  ON_HOLD: { label: "On Hold", color: "text-gray-600 bg-gray-100 border-gray-200" },
+  PENDING_SETUP: { label: "Pending Setup", color: "text-yellow-400 bg-yellow-900/20 border-yellow-800" },
+  IN_PROGRESS: { label: "In Progress", color: "text-blue-400 bg-blue-900/20 border-blue-800" },
+  ACTIVE_MANAGED: { label: "Active", color: "text-green-400 bg-green-900/15 border-green-800" },
+  NEEDS_ATTENTION: { label: "Needs Attention", color: "text-primary bg-primary/10 border-primary/30" },
+  COMPLETED: { label: "Completed", color: "text-green-400 bg-green-900/15 border-green-800" },
+  ON_HOLD: { label: "On Hold", color: "text-muted-foreground bg-deep border-border" },
 }
 
 export default async function PortalServiceDetailPage({
@@ -126,7 +126,7 @@ export default async function PortalServiceDetailPage({
           {/* Progress bar */}
           <div className="mb-5 h-2 w-full rounded-full bg-muted overflow-hidden">
             <div
-              className="h-full rounded-full bg-[#DC2626] transition-all duration-500"
+              className="h-full rounded-full bg-[#C4972A] transition-all duration-500"
               style={{ width: `${progress}%` }}
             />
           </div>

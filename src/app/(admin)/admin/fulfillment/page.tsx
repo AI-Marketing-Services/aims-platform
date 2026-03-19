@@ -40,8 +40,8 @@ export default async function AdminFulfillmentPage() {
   return (
     <div className="h-[calc(100vh-4rem)] flex flex-col">
       <div className="mb-6 flex-shrink-0">
-        <h1 className="text-2xl font-bold text-gray-900 mb-1">Fulfillment Pipeline</h1>
-        <p className="text-gray-500">Manage client onboarding and service delivery tasks</p>
+        <h1 className="text-2xl font-bold text-foreground mb-1">Fulfillment Pipeline</h1>
+        <p className="text-muted-foreground">Manage client onboarding and service delivery tasks</p>
       </div>
       <FulfillmentPipeline initialTasks={initialTasks} />
     </div>

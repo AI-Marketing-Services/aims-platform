@@ -77,7 +77,7 @@ export function Benefits() {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <span className="inline-block rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-6">
+            <span className="inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary mb-6">
               Why AIMS Works
             </span>
             <h2 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
@@ -119,7 +119,7 @@ export function Benefits() {
                   key={i}
                   className="flex gap-4 rounded-xl border border-border bg-card px-5 py-4 shadow-sm flex-shrink-0"
                 >
-                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#DC2626]" />
+                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
                   <div>
                     <p className="text-sm font-semibold text-foreground">{benefit.title}</p>
                     <p className="mt-1 text-xs text-muted-foreground leading-relaxed">{benefit.desc}</p>

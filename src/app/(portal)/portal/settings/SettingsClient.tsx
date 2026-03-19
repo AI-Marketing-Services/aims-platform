@@ -77,12 +77,12 @@ function EditableField({
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="flex-1 rounded border border-border bg-background px-2 py-1 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-[#DC2626]/50"
+            className="flex-1 rounded border border-border bg-background px-2 py-1 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-[#C4972A]/50"
           />
           <button
             onClick={handleSave}
             disabled={saving}
-            className="flex h-6 w-6 items-center justify-center rounded bg-[#DC2626] text-white hover:bg-[#B91C1C] disabled:opacity-50 transition-colors"
+            className="flex h-6 w-6 items-center justify-center rounded bg-[#C4972A] text-white hover:bg-[#A17D22] disabled:opacity-50 transition-colors"
           >
             <Check className="h-3.5 w-3.5" />
           </button>
@@ -96,7 +96,7 @@ function EditableField({
       ) : (
         <div className="flex items-center gap-1.5 group">
           <p className="text-sm text-foreground">{value || "—"}</p>
-          {saved && <span className="text-[10px] text-green-600 font-medium">Saved</span>}
+          {saved && <span className="text-[10px] text-green-400 font-medium">Saved</span>}
           <button
             onClick={() => { setDraft(value); setEditing(true) }}
             className="opacity-0 group-hover:opacity-100 transition-opacity p-0.5 rounded hover:bg-muted"
@@ -146,7 +146,7 @@ function EditableSelectField({
           value={draft}
           onChange={(e) => { setDraft(e.target.value); handleSave(e.target.value) }}
           disabled={saving}
-          className="rounded border border-border bg-background px-2 py-1 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-[#DC2626]/50 disabled:opacity-50"
+          className="rounded border border-border bg-background px-2 py-1 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-[#C4972A]/50 disabled:opacity-50"
         >
           <option value="">Select...</option>
           {options.map((o) => (
@@ -156,7 +156,7 @@ function EditableSelectField({
       ) : (
         <div className="flex items-center gap-1.5 group">
           <p className="text-sm text-foreground">{value || "—"}</p>
-          {saved && <span className="text-[10px] text-green-600 font-medium">Saved</span>}
+          {saved && <span className="text-[10px] text-green-400 font-medium">Saved</span>}
           <button
             onClick={() => { setDraft(value); setEditing(true) }}
             className="opacity-0 group-hover:opacity-100 transition-opacity p-0.5 rounded hover:bg-muted"
@@ -216,10 +216,10 @@ function NotifToggle({
       </div>
       <button
         onClick={() => onChange(!value)}
-        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${value ? "bg-[#DC2626]" : "bg-muted"}`}
+        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${value ? "bg-[#C4972A]" : "bg-muted"}`}
       >
         <span
-          className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${value ? "translate-x-6" : "translate-x-1"}`}
+          className={`inline-block h-4 w-4 transform rounded-full bg-card shadow transition-transform ${value ? "translate-x-6" : "translate-x-1"}`}
         />
       </button>
     </div>
@@ -398,7 +398,7 @@ export function PortalSettingsClient({ clerkUser, dbUser }: Props) {
               href="https://accounts.clerk.dev/user"
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-2 text-sm font-medium text-[#DC2626] hover:underline"
+              className="inline-flex items-center gap-2 text-sm font-medium text-[#C4972A] hover:underline"
             >
               Edit profile in account settings
               <ExternalLink className="h-3.5 w-3.5" />
@@ -479,12 +479,12 @@ export function PortalSettingsClient({ clerkUser, dbUser }: Props) {
             <button
               onClick={saveNotificationPreferences}
               disabled={notifSaving}
-              className="rounded-lg bg-[#DC2626] px-4 py-2 text-sm font-medium text-white hover:bg-[#B91C1C] disabled:opacity-50 transition-colors"
+              className="rounded-lg bg-[#C4972A] px-4 py-2 text-sm font-medium text-white hover:bg-[#A17D22] disabled:opacity-50 transition-colors"
             >
               {notifSaving ? "Saving..." : "Save Preferences"}
             </button>
             {notifSaved && (
-              <span className="text-xs text-green-600 font-medium">Preferences saved</span>
+              <span className="text-xs text-green-400 font-medium">Preferences saved</span>
             )}
           </div>
         </div>
@@ -531,7 +531,7 @@ export function PortalSettingsClient({ clerkUser, dbUser }: Props) {
                 <span className="text-xs text-muted-foreground">Not connected</span>
                 <a
                   href={`/get-started?integration=${encodeURIComponent(integration.name.toLowerCase().replace(/\s+/g, "-"))}`}
-                  className="text-sm text-[#DC2626] font-medium hover:underline"
+                  className="text-sm text-[#C4972A] font-medium hover:underline"
                 >
                   Connect
                 </a>
@@ -542,33 +542,33 @@ export function PortalSettingsClient({ clerkUser, dbUser }: Props) {
       </div>
 
       {/* Danger Zone */}
-      <div className="rounded-xl border border-red-200 bg-red-50 p-6">
-        <h2 className="text-base font-semibold text-red-600 mb-1">Danger Zone</h2>
-        <p className="text-xs text-gray-500 mb-4">
+      <div className="rounded-xl border border-primary/30 bg-primary/10 p-6">
+        <h2 className="text-base font-semibold text-primary mb-1">Danger Zone</h2>
+        <p className="text-xs text-muted-foreground mb-4">
           Deleting your account will remove all your data permanently. This cannot be undone.
         </p>
         {!deleteConfirm ? (
           <button
             onClick={() => setDeleteConfirm(true)}
-            className="rounded-lg border border-red-300 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-100 transition-colors"
+            className="rounded-lg border border-primary/30 px-4 py-2 text-sm font-medium text-primary hover:bg-primary/15 transition-colors"
           >
             Delete Account
           </button>
         ) : (
           <div className="space-y-3">
-            <p className="text-sm text-red-600 font-medium">Are you sure? This is permanent.</p>
+            <p className="text-sm text-primary font-medium">Are you sure? This is permanent.</p>
             <div className="flex gap-3">
               <button
                 onClick={() => setDeleteConfirm(false)}
                 disabled={deleting}
-                className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-white transition-colors disabled:opacity-50"
+                className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-card transition-colors disabled:opacity-50"
               >
                 Cancel
               </button>
               <button
                 onClick={handleDelete}
                 disabled={deleting}
-                className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 transition-colors disabled:opacity-50"
+                className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary transition-colors disabled:opacity-50"
               >
                 {deleting ? "Deleting..." : "Yes, delete my account"}
               </button>

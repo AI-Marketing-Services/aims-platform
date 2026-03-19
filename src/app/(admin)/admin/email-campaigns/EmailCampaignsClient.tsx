@@ -94,7 +94,7 @@ export function EmailCampaignsClient({ users }: Props) {
   return (
     <div className="space-y-3">
       {error && (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-lg border border-primary/30 bg-primary/10 px-4 py-3 text-sm text-primary">
           {error}
         </div>
       )}
@@ -136,7 +136,7 @@ export function EmailCampaignsClient({ users }: Props) {
                               [user.id]: ws ? { id: ws.id, name: ws.name } : null,
                             }))
                           }}
-                          className="w-full appearance-none rounded-lg border border-border bg-background px-3 py-2 pr-8 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#DC2626]/20 focus:border-[#DC2626]"
+                          className="w-full appearance-none rounded-lg border border-border bg-background px-3 py-2 pr-8 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#C4972A]/20 focus:border-[#C4972A]"
                         >
                           <option value="">— No workspace —</option>
                           {workspaces.map((ws) => (
@@ -151,7 +151,7 @@ export function EmailCampaignsClient({ users }: Props) {
                   </td>
                   <td className="px-4 py-3">
                     {isConnected ? (
-                      <span className="inline-flex items-center gap-1.5 rounded-full bg-green-50 border border-green-200 px-2.5 py-1 text-xs font-medium text-green-700">
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-green-900/15 border border-green-800 px-2.5 py-1 text-xs font-medium text-green-400">
                         <Plug className="h-3 w-3" />
                         Connected
                       </span>
@@ -169,8 +169,8 @@ export function EmailCampaignsClient({ users }: Props) {
                       className={cn(
                         "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors",
                         isSaved
-                          ? "bg-green-50 text-green-700 border border-green-200"
-                          : "bg-[#DC2626] text-white hover:bg-[#B91C1C]"
+                          ? "bg-green-900/15 text-green-400 border border-green-800"
+                          : "bg-[#C4972A] text-white hover:bg-[#A17D22]"
                       )}
                     >
                       {isSaving ? (

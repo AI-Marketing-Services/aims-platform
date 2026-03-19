@@ -92,8 +92,8 @@ const CATEGORIES: ScoreCategory[] = [
   {
     label: "AI Laggard",
     range: [7, 14],
-    color: "text-red-500",
-    icon: <XCircle className="w-8 h-8 text-red-500" />,
+    color: "text-primary",
+    icon: <XCircle className="w-8 h-8 text-primary" />,
     headline: "You're leaving serious revenue on the table",
     description: "Your competitors are running AI-powered outbound 24/7 while your team is still doing things manually. The good news: there's massive upside waiting, and AIMS can unlock it fast.",
     recommended: ["Website + CRM + Chatbot Bundle", "Cold Outbound System", "AI Voice Agents"],
@@ -196,7 +196,7 @@ export default function AIReadinessQuizPage() {
     : "https://aimseos.com/tools/ai-readiness-quiz"
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA]">
+    <div className="min-h-screen bg-deep">
       <div className="max-w-2xl mx-auto px-4 py-12 pt-8">
         <AnimatePresence mode="wait">
 
@@ -209,17 +209,17 @@ export default function AIReadinessQuizPage() {
               exit={{ opacity: 0, y: -20 }}
               className="text-center"
             >
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-red-50 text-[#DC2626] text-sm font-medium rounded-full mb-6">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary text-sm font-medium rounded-full mb-6">
                 <Zap className="w-3.5 h-3.5" />
                 Free 2-Minute Assessment
               </div>
-              <h1 className="text-4xl font-bold text-gray-900 mb-4 leading-tight">
+              <h1 className="text-4xl font-bold text-foreground mb-4 leading-tight">
                 How AI-Ready Is Your Business?
               </h1>
-              <p className="text-lg text-gray-600 mb-8">
+              <p className="text-lg text-muted-foreground mb-8">
                 Answer 7 questions about your current sales and marketing stack. Get a personalized score and a roadmap for where AI can add the most leverage.
               </p>
-              <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-8 text-left">
+              <div className="bg-card border border-border rounded-2xl p-6 mb-8 text-left">
                 <div className="grid grid-cols-3 gap-4">
                   {[
                     { value: "7", label: "Questions" },
@@ -227,20 +227,20 @@ export default function AIReadinessQuizPage() {
                     { value: "Free", label: "Instant results" },
                   ].map((stat) => (
                     <div key={stat.label} className="text-center">
-                      <div className="text-2xl font-bold text-gray-900">{stat.value}</div>
-                      <div className="text-sm text-gray-500">{stat.label}</div>
+                      <div className="text-2xl font-bold text-foreground">{stat.value}</div>
+                      <div className="text-sm text-muted-foreground">{stat.label}</div>
                     </div>
                   ))}
                 </div>
               </div>
               <button
                 onClick={() => setStep("quiz")}
-                className="inline-flex items-center gap-2 px-8 py-4 bg-[#DC2626] text-white font-semibold rounded-xl hover:bg-[#B91C1C] transition-colors text-lg"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 transition-colors text-lg"
               >
                 Start the Quiz
                 <ArrowRight className="w-5 h-5" />
               </button>
-              <p className="mt-4 text-sm text-gray-400">No email required to begin</p>
+              <p className="mt-4 text-sm text-muted-foreground">No email required to begin</p>
             </motion.div>
           )}
 
@@ -255,19 +255,19 @@ export default function AIReadinessQuizPage() {
             >
               {/* Progress bar */}
               <div className="mb-8">
-                <div className="flex justify-between text-sm text-gray-500 mb-2">
+                <div className="flex justify-between text-sm text-muted-foreground mb-2">
                   <span>Question {currentQ + 1} of {QUESTIONS.length}</span>
                   <span>{Math.round(((currentQ) / QUESTIONS.length) * 100)}% complete</span>
                 </div>
-                <div className="h-2 bg-gray-200 rounded-full">
+                <div className="h-2 bg-surface rounded-full">
                   <div
-                    className="h-2 bg-[#DC2626] rounded-full transition-all duration-300"
+                    className="h-2 bg-primary rounded-full transition-all duration-300"
                     style={{ width: `${((currentQ) / QUESTIONS.length) * 100}%` }}
                   />
                 </div>
               </div>
 
-              <h2 className="text-2xl font-bold text-gray-900 mb-8">
+              <h2 className="text-2xl font-bold text-foreground mb-8">
                 {QUESTIONS[currentQ].question}
               </h2>
 
@@ -277,24 +277,24 @@ export default function AIReadinessQuizPage() {
                     key={i}
                     onClick={() => selectAnswer(opt.score)}
                     className={cn(
-                      "w-full text-left p-4 rounded-xl border-2 transition-all duration-150 bg-white hover:border-[#DC2626] hover:bg-red-50",
+                      "w-full text-left p-4 rounded-xl border-2 transition-all duration-150 bg-card hover:border-primary hover:bg-primary/10",
                       answers[currentQ] === opt.score
-                        ? "border-[#DC2626] bg-red-50"
-                        : "border-gray-200"
+                        ? "border-primary bg-primary/10"
+                        : "border-border"
                     )}
                   >
                     <div className="flex items-center gap-3">
                       <div className={cn(
                         "w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors",
                         answers[currentQ] === opt.score
-                          ? "border-[#DC2626] bg-[#DC2626]"
-                          : "border-gray-300"
+                          ? "border-primary bg-primary"
+                          : "border-border"
                       )}>
                         {answers[currentQ] === opt.score && (
-                          <div className="w-2.5 h-2.5 rounded-full bg-white" />
+                          <div className="w-2.5 h-2.5 rounded-full bg-card" />
                         )}
                       </div>
-                      <span className="text-gray-800 font-medium">{opt.label}</span>
+                      <span className="text-foreground font-medium">{opt.label}</span>
                     </div>
                   </button>
                 ))}
@@ -303,7 +303,7 @@ export default function AIReadinessQuizPage() {
               {currentQ > 0 && (
                 <button
                   onClick={() => setCurrentQ(currentQ - 1)}
-                  className="mt-6 text-sm text-gray-500 hover:text-gray-700 transition-colors"
+                  className="mt-6 text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
                   ← Back
                 </button>
@@ -320,56 +320,56 @@ export default function AIReadinessQuizPage() {
               exit={{ opacity: 0, y: -20 }}
               className="text-center"
             >
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <CheckCircle className="w-8 h-8 text-green-600" />
+              <div className="w-16 h-16 bg-green-900/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <CheckCircle className="w-8 h-8 text-green-400" />
               </div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-3">
+              <h2 className="text-3xl font-bold text-foreground mb-3">
                 Quiz complete! See your results.
               </h2>
-              <p className="text-gray-600 mb-8">
+              <p className="text-muted-foreground mb-8">
                 Enter your details below to unlock your AI Readiness Score and personalized recommendations.
               </p>
-              <form onSubmit={handleSubmit} className="bg-white border border-gray-200 rounded-2xl p-8 text-left space-y-4">
+              <form onSubmit={handleSubmit} className="bg-card border border-border rounded-2xl p-8 text-left space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Full Name</label>
+                  <label className="block text-sm font-medium text-foreground mb-1.5">Full Name</label>
                   <input
                     type="text"
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="John Smith"
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#DC2626] focus:border-transparent text-gray-900"
+                    className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-foreground"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Work Email</label>
+                  <label className="block text-sm font-medium text-foreground mb-1.5">Work Email</label>
                   <input
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@company.com"
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#DC2626] focus:border-transparent text-gray-900"
+                    className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-foreground"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Company Name</label>
+                  <label className="block text-sm font-medium text-foreground mb-1.5">Company Name</label>
                   <input
                     type="text"
                     value={company}
                     onChange={(e) => setCompany(e.target.value)}
                     placeholder="Acme Inc."
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#DC2626] focus:border-transparent text-gray-900"
+                    className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-foreground"
                   />
                 </div>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full py-4 bg-[#DC2626] text-white font-semibold rounded-xl hover:bg-[#B91C1C] transition-colors disabled:opacity-70 flex items-center justify-center gap-2"
+                  className="w-full py-4 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 transition-colors disabled:opacity-70 flex items-center justify-center gap-2"
                 >
                   {submitting ? "Processing..." : <>Reveal My Score <ArrowRight className="w-4 h-4" /></>}
                 </button>
-                <p className="text-xs text-center text-gray-400">
+                <p className="text-xs text-center text-muted-foreground">
                   No spam. We respect your privacy. Unsubscribe anytime.
                 </p>
               </form>
@@ -384,59 +384,59 @@ export default function AIReadinessQuizPage() {
               animate={{ opacity: 1, y: 0 }}
               className="space-y-6"
             >
-              <div className="bg-white border border-gray-200 rounded-2xl p-8 text-center">
+              <div className="bg-card border border-border rounded-2xl p-8 text-center">
                 <div className="mb-4">{category.icon}</div>
-                <div className="text-6xl font-bold text-gray-900 mb-1">{pct}</div>
-                <div className="text-gray-500 mb-3">AI Readiness Score</div>
+                <div className="text-6xl font-bold text-foreground mb-1">{pct}</div>
+                <div className="text-muted-foreground mb-3">AI Readiness Score</div>
                 <div className={cn("text-xl font-bold mb-2", category.color)}>
                   {category.label}
                 </div>
 
                 {/* Score bar */}
                 <div className="max-w-xs mx-auto mt-4 mb-6">
-                  <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
+                  <div className="h-3 bg-deep rounded-full overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${pct}%` }}
                       transition={{ duration: 1, delay: 0.3 }}
-                      className="h-3 bg-[#DC2626] rounded-full"
+                      className="h-3 bg-primary rounded-full"
                     />
                   </div>
-                  <div className="flex justify-between text-xs text-gray-400 mt-1">
+                  <div className="flex justify-between text-xs text-muted-foreground mt-1">
                     <span>Laggard</span>
                     <span>Leader</span>
                   </div>
                 </div>
 
-                <h3 className="text-xl font-bold text-gray-900 mb-2">{category.headline}</h3>
-                <p className="text-gray-600">{category.description}</p>
+                <h3 className="text-xl font-bold text-foreground mb-2">{category.headline}</h3>
+                <p className="text-muted-foreground">{category.description}</p>
               </div>
 
-              <div className="bg-white border border-gray-200 rounded-2xl p-6">
-                <h4 className="font-semibold text-gray-900 mb-4">Recommended Services for You</h4>
+              <div className="bg-card border border-border rounded-2xl p-6">
+                <h4 className="font-semibold text-foreground mb-4">Recommended Services for You</h4>
                 <div className="space-y-3">
                   {category.recommended.map((rec) => (
-                    <div key={rec} className="flex items-center gap-3 p-3 bg-red-50 rounded-lg">
-                      <ChevronRight className="w-4 h-4 text-[#DC2626] flex-shrink-0" />
-                      <span className="text-gray-800 font-medium">{rec}</span>
+                    <div key={rec} className="flex items-center gap-3 p-3 bg-primary/10 rounded-lg">
+                      <ChevronRight className="w-4 h-4 text-primary flex-shrink-0" />
+                      <span className="text-foreground font-medium">{rec}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
               {/* Share section */}
-              <div className="bg-white border border-gray-200 rounded-2xl p-6">
+              <div className="bg-card border border-border rounded-2xl p-6">
                 <div className="flex items-center gap-2 mb-4">
-                  <Share2 className="w-4 h-4 text-gray-500" />
-                  <h4 className="font-semibold text-gray-900">Share your score</h4>
+                  <Share2 className="w-4 h-4 text-muted-foreground" />
+                  <h4 className="font-semibold text-foreground">Share your score</h4>
                 </div>
-                <p className="text-sm text-gray-500 mb-4">
+                <p className="text-sm text-muted-foreground mb-4">
                   Challenge your network to see how they compare — or save your unique results link.
                 </p>
                 <div className="flex flex-wrap gap-3">
                   <button
                     onClick={copyShareLink}
-                    className="inline-flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                    className="inline-flex items-center gap-2 px-4 py-2 border border-border rounded-lg text-sm font-medium text-foreground hover:bg-surface transition-colors"
                   >
                     <Copy className="w-3.5 h-3.5" />
                     {copied ? "Copied!" : "Copy link"}
@@ -445,7 +445,7 @@ export default function AIReadinessQuizPage() {
                     href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-[#DC2626] text-white rounded-lg text-sm font-medium hover:bg-[#B91C1C] transition-colors"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors"
                   >
                     Share on X
                   </a>
@@ -460,14 +460,14 @@ export default function AIReadinessQuizPage() {
                 </div>
               </div>
 
-              <div className="bg-[#DC2626] rounded-2xl p-8 text-center text-white">
+              <div className="bg-primary rounded-2xl p-8 text-center text-white">
                 <h3 className="text-2xl font-bold mb-3">Ready to close the gap?</h3>
-                <p className="text-red-100 mb-6">
+                <p className="text-primary-foreground/80 mb-6">
                   Book a free 30-minute strategy call. We'll walk through your score in detail and build a custom AI roadmap for your business.
                 </p>
                 <a
                   href="/get-started"
-                  className="inline-flex items-center gap-2 px-8 py-4 bg-white text-[#DC2626] font-semibold rounded-xl hover:bg-red-50 transition-colors"
+                  className="inline-flex items-center gap-2 px-8 py-4 bg-card text-primary font-semibold rounded-xl hover:bg-primary/10 transition-colors"
                 >
                   Book Your Strategy Call
                   <ArrowRight className="w-5 h-5" />

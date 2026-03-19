@@ -18,11 +18,11 @@ export function SectionHeader({
   className,
 }: SectionHeaderProps) {
   const badgeColors: Record<string, string> = {
-    red: "bg-red-50 text-red-700 border-red-200",
-    green: "bg-red-50 text-red-700 border-red-200",
-    blue: "bg-red-50 text-red-700 border-red-200",
-    orange: "bg-red-50 text-red-700 border-red-200",
-    purple: "bg-red-50 text-red-700 border-red-200",
+    red: "bg-primary/10 text-primary border-primary/20",
+    green: "bg-primary/10 text-primary border-primary/20",
+    blue: "bg-primary/10 text-primary border-primary/20",
+    orange: "bg-primary/10 text-primary border-primary/20",
+    purple: "bg-primary/10 text-primary border-primary/20",
   }
 
   return (
@@ -31,11 +31,11 @@ export function SectionHeader({
         <div className={cn(centered && "flex justify-center", "mb-4")}>
           <span
             className={cn(
-              "inline-block rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-wider",
+              "eyebrow inline-block rounded-full border px-3 py-1",
               badgeColors[badgeColor] ?? badgeColors.red
             )}
           >
-            {badge}
+            // {badge}
           </span>
         </div>
       )}

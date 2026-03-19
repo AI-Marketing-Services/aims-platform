@@ -60,7 +60,7 @@ const LEAD_TYPES = [
 // ============ SHARED STYLES ============
 
 const inputCls =
-  "w-full bg-background border border-border rounded-lg px-3 py-2 text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#DC2626]"
+  "w-full bg-background border border-border rounded-lg px-3 py-2 text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C4972A]"
 
 // ============ PURCHASE PANEL ============
 
@@ -108,7 +108,7 @@ function PurchasePanel() {
     <div className="bg-card border border-border rounded-xl p-6 space-y-5">
       <div>
         <h2 className="text-base font-semibold text-foreground">Simulate New Client Purchase</h2>
-        <p className="text-xs text-gray-400 mt-1">
+        <p className="text-xs text-muted-foreground mt-1">
           Creates subscription, tasks, CRM deal, and notification.
         </p>
       </div>
@@ -116,7 +116,7 @@ function PurchasePanel() {
       <form onSubmit={handleSubmit} className="space-y-5">
         {/* Service radio cards */}
         <div>
-          <p className="text-xs text-gray-400 mb-2">Select Service</p>
+          <p className="text-xs text-muted-foreground mb-2">Select Service</p>
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             {SERVICES.map((s) => {
               const Icon = s.icon
@@ -126,7 +126,7 @@ function PurchasePanel() {
                   key={s.slug}
                   className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
                     active
-                      ? "border-[#DC2626] bg-[#DC2626]/10"
+                      ? "border-[#C4972A] bg-[#C4972A]/10"
                       : "border-border hover:border-border"
                   }`}
                 >
@@ -140,13 +140,13 @@ function PurchasePanel() {
                   />
                   <div
                     className="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0"
-                    style={{ background: active ? "#DC2626" : "#F3F4F6" }}
+                    style={{ background: active ? "#C4972A" : "#F3F4F6" }}
                   >
                     <Icon className="w-3.5 h-3.5 text-foreground" />
                   </div>
                   <div className="min-w-0">
                     <div className="text-xs font-semibold text-foreground truncate">{s.name}</div>
-                    <div className="text-[11px] text-gray-500 font-mono">${s.price}/mo</div>
+                    <div className="text-[11px] text-muted-foreground font-mono">${s.price}/mo</div>
                   </div>
                 </label>
               )
@@ -157,7 +157,7 @@ function PurchasePanel() {
         {/* Client fields */}
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs text-gray-400 mb-1.5">Client Name</label>
+            <label className="block text-xs text-muted-foreground mb-1.5">Client Name</label>
             <input
               required
               value={clientName}
@@ -167,7 +167,7 @@ function PurchasePanel() {
             />
           </div>
           <div>
-            <label className="block text-xs text-gray-400 mb-1.5">Email</label>
+            <label className="block text-xs text-muted-foreground mb-1.5">Email</label>
             <input
               required
               type="email"
@@ -181,15 +181,15 @@ function PurchasePanel() {
 
         {/* Error */}
         {result && !result.success && (
-          <div className="rounded-lg p-3 border flex items-start gap-3 bg-red-500/10 border-red-500/20">
-            <AlertCircle className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" />
-            <p className="text-xs text-red-300">{result.error}</p>
+          <div className="rounded-lg p-3 border flex items-start gap-3 bg-primary/100/10 border-primary/20">
+            <AlertCircle className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+            <p className="text-xs text-red-400">{result.error}</p>
           </div>
         )}
 
         {/* Success */}
         {result?.success && (
-          <div className="rounded-lg border border-green-500/20 bg-green-500/5 p-4 space-y-3">
+          <div className="rounded-lg border border-green-500/20 bg-green-400/5 p-4 space-y-3">
             <div className="flex items-center gap-2">
               <CheckCircle className="w-4 h-4 text-green-400" />
               <p className="text-xs font-semibold text-green-300">Purchase simulated</p>
@@ -209,14 +209,14 @@ function PurchasePanel() {
                     <AlertCircle className="w-3 h-3 text-yellow-400 flex-shrink-0" />
                   )}
                   <span className="text-xs text-foreground">{c.label}</span>
-                  {c.value && <span className="text-xs text-gray-500 font-mono ml-auto">{c.value}</span>}
+                  {c.value && <span className="text-xs text-muted-foreground font-mono ml-auto">{c.value}</span>}
                 </div>
               ))}
             </div>
             <div className="flex gap-3 pt-1 border-t border-border text-xs">
-              <a href="/admin/clients" className="text-[#DC2626] hover:underline">Clients →</a>
-              <a href="/admin/fulfillment" className="text-[#DC2626] hover:underline">Tasks →</a>
-              <a href="/admin/crm" className="text-[#DC2626] hover:underline">CRM →</a>
+              <a href="/admin/clients" className="text-[#C4972A] hover:underline">Clients →</a>
+              <a href="/admin/fulfillment" className="text-[#C4972A] hover:underline">Tasks →</a>
+              <a href="/admin/crm" className="text-[#C4972A] hover:underline">CRM →</a>
             </div>
           </div>
         )}
@@ -224,7 +224,7 @@ function PurchasePanel() {
         <button
           type="submit"
           disabled={submitting || !serviceSlug || !clientName || !clientEmail}
-          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-[#DC2626] hover:bg-[#B91C1C] disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-lg transition-colors"
+          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-[#C4972A] hover:bg-[#A17D22] disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-lg transition-colors"
         >
           {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
           {submitting ? "Simulating..." : "Simulate Purchase"}
@@ -245,10 +245,10 @@ function LeadMagnetPanel() {
   const [result, setResult] = useState<LeadResult | null>(null)
 
   const scoreColor =
-    score >= 70 ? "text-red-400" : score >= 40 ? "text-yellow-400" : "text-gray-400"
+    score >= 70 ? "text-primary" : score >= 40 ? "text-yellow-400" : "text-muted-foreground"
 
   const scoreThumbColor =
-    score >= 70 ? "#DC2626" : score >= 40 ? "#EAB308" : "#6B7280"
+    score >= 70 ? "#C4972A" : score >= 40 ? "#EAB308" : "#6B7280"
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -281,7 +281,7 @@ function LeadMagnetPanel() {
     <div className="bg-card border border-border rounded-xl p-6 space-y-5">
       <div>
         <h2 className="text-base font-semibold text-foreground">Simulate Lead Magnet Submission</h2>
-        <p className="text-xs text-gray-400 mt-1">
+        <p className="text-xs text-muted-foreground mt-1">
           Creates a lead submission, deal, and notification in the CRM.
         </p>
       </div>
@@ -289,7 +289,7 @@ function LeadMagnetPanel() {
       <form onSubmit={handleSubmit} className="space-y-5">
         {/* Type radio cards */}
         <div>
-          <p className="text-xs text-gray-400 mb-2">Lead Magnet Type</p>
+          <p className="text-xs text-muted-foreground mb-2">Lead Magnet Type</p>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
             {LEAD_TYPES.map((t) => {
               const Icon = t.icon
@@ -299,7 +299,7 @@ function LeadMagnetPanel() {
                   key={t.value}
                   className={`flex items-center gap-2 p-3 rounded-lg border cursor-pointer transition-colors ${
                     active
-                      ? "border-[#DC2626] bg-[#DC2626]/10"
+                      ? "border-[#C4972A] bg-[#C4972A]/10"
                       : "border-border hover:border-border"
                   }`}
                 >
@@ -311,7 +311,7 @@ function LeadMagnetPanel() {
                     onChange={() => setLeadType(t.value)}
                     className="sr-only"
                   />
-                  <Icon className={`w-3.5 h-3.5 flex-shrink-0 ${active ? "text-[#DC2626]" : "text-gray-500"}`} />
+                  <Icon className={`w-3.5 h-3.5 flex-shrink-0 ${active ? "text-[#C4972A]" : "text-muted-foreground"}`} />
                   <span className="text-xs font-medium text-foreground leading-tight">{t.label}</span>
                 </label>
               )
@@ -322,7 +322,7 @@ function LeadMagnetPanel() {
         {/* Name + email */}
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs text-gray-400 mb-1.5">Name</label>
+            <label className="block text-xs text-muted-foreground mb-1.5">Name</label>
             <input
               required
               value={name}
@@ -332,7 +332,7 @@ function LeadMagnetPanel() {
             />
           </div>
           <div>
-            <label className="block text-xs text-gray-400 mb-1.5">Email</label>
+            <label className="block text-xs text-muted-foreground mb-1.5">Email</label>
             <input
               required
               type="email"
@@ -347,7 +347,7 @@ function LeadMagnetPanel() {
         {/* Score slider */}
         <div>
           <div className="flex items-center justify-between mb-2">
-            <label className="text-xs text-gray-400">Lead Score</label>
+            <label className="text-xs text-muted-foreground">Lead Score</label>
             <span className={`text-sm font-mono font-bold ${scoreColor}`}>{score}</span>
           </div>
           <input
@@ -359,7 +359,7 @@ function LeadMagnetPanel() {
             style={{ accentColor: scoreThumbColor }}
             className="w-full h-2 rounded-full bg-background appearance-none cursor-pointer"
           />
-          <div className="flex justify-between text-[10px] text-gray-600 mt-1">
+          <div className="flex justify-between text-[10px] text-muted-foreground mt-1">
             <span>Cold</span>
             <span>Warm</span>
             <span>Hot</span>
@@ -368,15 +368,15 @@ function LeadMagnetPanel() {
 
         {/* Error */}
         {result && !result.success && (
-          <div className="rounded-lg p-3 border flex items-start gap-3 bg-red-500/10 border-red-500/20">
-            <AlertCircle className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" />
-            <p className="text-xs text-red-300">{result.error}</p>
+          <div className="rounded-lg p-3 border flex items-start gap-3 bg-primary/100/10 border-primary/20">
+            <AlertCircle className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+            <p className="text-xs text-red-400">{result.error}</p>
           </div>
         )}
 
         {/* Success */}
         {result?.success && (
-          <div className="rounded-lg border border-green-500/20 bg-green-500/5 p-4 space-y-3">
+          <div className="rounded-lg border border-green-500/20 bg-green-400/5 p-4 space-y-3">
             <div className="flex items-center gap-2">
               <CheckCircle className="w-4 h-4 text-green-400" />
               <p className="text-xs font-semibold text-green-300">Lead submission created</p>
@@ -401,11 +401,11 @@ function LeadMagnetPanel() {
                     <AlertCircle className="w-3 h-3 text-yellow-400 flex-shrink-0" />
                   )}
                   <span className="text-xs text-foreground">{c.label}</span>
-                  {c.value && <span className="text-xs text-gray-500 font-mono ml-auto">{c.value}</span>}
+                  {c.value && <span className="text-xs text-muted-foreground font-mono ml-auto">{c.value}</span>}
                 </div>
               ))}
             </div>
-            <a href="/admin/crm" className="block text-xs text-[#DC2626] hover:underline pt-1 border-t border-border">
+            <a href="/admin/crm" className="block text-xs text-[#C4972A] hover:underline pt-1 border-t border-border">
               View in CRM →
             </a>
           </div>
@@ -414,7 +414,7 @@ function LeadMagnetPanel() {
         <button
           type="submit"
           disabled={submitting || !leadType || !name || !email}
-          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-[#DC2626] hover:bg-[#B91C1C] disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-lg transition-colors"
+          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-[#C4972A] hover:bg-[#A17D22] disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-lg transition-colors"
         >
           {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
           {submitting ? "Simulating..." : "Simulate Submission"}
@@ -431,7 +431,7 @@ export default function SimulatePage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-foreground">Simulate</h1>
-        <p className="text-sm text-gray-400 mt-1">
+        <p className="text-sm text-muted-foreground mt-1">
           E2E testing tools for purchases and lead submissions. Use for demos, QA, and training.
         </p>
         {process.env.NODE_ENV === "production" && (

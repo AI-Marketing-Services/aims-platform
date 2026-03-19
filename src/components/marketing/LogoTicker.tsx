@@ -35,15 +35,15 @@ export function LogoTicker() {
   const track = [...PARTNER_LOGOS, ...PARTNER_LOGOS, ...PARTNER_LOGOS]
 
   return (
-    <section className="border-y border-gray-100 bg-white py-10">
+    <section className="border-y border-border bg-ink py-10">
       <div className="mx-auto max-w-6xl px-4">
-        <p className="mb-6 text-center text-xs font-semibold uppercase tracking-widest text-gray-400">
+        <p className="mb-6 text-center text-xs font-semibold uppercase tracking-widest text-muted-foreground">
           Trusted by sales teams at
         </p>
         <div className="relative overflow-hidden">
           {/* Fade edges */}
-          <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-24 bg-gradient-to-r from-white to-transparent" />
-          <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-24 bg-gradient-to-l from-white to-transparent" />
+          <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-24 bg-gradient-to-r from-[#08090D] to-transparent" />
+          <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-24 bg-gradient-to-l from-[#08090D] to-transparent" />
 
           {/* Ticker track — animates translateX(0) → translateX(-33.333%) seamlessly */}
           <div className="flex will-change-transform animate-ticker-seamless items-center">
@@ -52,7 +52,7 @@ export function LogoTicker() {
               return (
                 <div
                   key={i}
-                  className="mx-12 inline-flex flex-shrink-0 items-center justify-center opacity-60 hover:opacity-100 transition-opacity grayscale hover:grayscale-0"
+                  className="mx-12 inline-flex flex-shrink-0 items-center justify-center brightness-0 invert opacity-40 hover:opacity-70 transition-opacity"
                   style={{ width: size.w, height: size.h }}
                 >
                   <Image

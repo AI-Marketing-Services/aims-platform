@@ -36,7 +36,7 @@ export default async function InternDashboardPage() {
     : false
 
   const PRIORITY_COLOR: Record<string, string> = {
-    URGENT: "text-red-400",
+    URGENT: "text-primary",
     HIGH: "text-orange-400",
     MEDIUM: "text-yellow-400",
     LOW: "text-muted-foreground",
@@ -45,7 +45,7 @@ export default async function InternDashboardPage() {
   const STATUS_ICON = {
     TODO: <Clock className="h-3.5 w-3.5 text-muted-foreground" />,
     IN_PROGRESS: <TrendingUp className="h-3.5 w-3.5 text-blue-400" />,
-    BLOCKED: <AlertCircle className="h-3.5 w-3.5 text-red-400" />,
+    BLOCKED: <AlertCircle className="h-3.5 w-3.5 text-primary" />,
     IN_REVIEW: <Clock className="h-3.5 w-3.5 text-yellow-400" />,
     DONE: <CheckSquare className="h-3.5 w-3.5 text-green-400" />,
   }
@@ -62,14 +62,14 @@ export default async function InternDashboardPage() {
 
       {/* EOD reminder */}
       {!hasEODToday && (
-        <div className="rounded-xl border border-[#DC2626]/30 bg-[#DC2626]/5 p-4 flex items-center justify-between">
+        <div className="rounded-xl border border-[#C4972A]/30 bg-[#C4972A]/5 p-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <AlertCircle className="h-4 w-4 text-[#DC2626]" />
+            <AlertCircle className="h-4 w-4 text-[#C4972A]" />
             <p className="text-sm font-medium text-foreground">EOD report not submitted today</p>
           </div>
           <Link
             href="/intern/eod-report"
-            className="text-sm font-medium text-[#DC2626] hover:underline"
+            className="text-sm font-medium text-[#C4972A] hover:underline"
           >
             Submit now
           </Link>
@@ -103,7 +103,7 @@ export default async function InternDashboardPage() {
         <div className="rounded-xl border border-border bg-card overflow-hidden">
           <div className="px-5 py-4 border-b border-border flex items-center justify-between">
             <h2 className="text-sm font-semibold text-foreground">Open Tasks</h2>
-            <Link href="/intern/tasks" className="text-xs text-[#DC2626] hover:underline">View all</Link>
+            <Link href="/intern/tasks" className="text-xs text-[#C4972A] hover:underline">View all</Link>
           </div>
           {profile.tasks.length === 0 ? (
             <div className="p-8 text-center">

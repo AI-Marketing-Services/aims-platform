@@ -33,22 +33,22 @@ const TYPE_ICON: Record<string, React.ElementType> = {
 }
 
 const TYPE_COLOR: Record<string, string> = {
-  new_lead: "bg-red-50 text-[#DC2626]",
-  chatbot_lead_captured: "bg-red-50 text-[#DC2626]",
-  new_purchase: "bg-red-50 text-[#DC2626]",
-  lead_magnet_completed: "bg-red-50 text-[#B91C1C]",
-  support_ticket: "bg-red-50 text-[#DC2626]",
-  support_reply: "bg-red-50 text-[#DC2626]",
-  fulfillment_overdue: "bg-red-100 text-red-800",
-  fulfillment_update: "bg-red-50 text-[#DC2626]",
-  churn_risk: "bg-red-100 text-red-800",
-  deal_stage_change: "bg-gray-100 text-gray-600",
-  eod_submitted: "bg-gray-100 text-gray-600",
-  billing_alert: "bg-red-100 text-red-800",
-  marketing_digest: "bg-gray-100 text-gray-600",
-  daily_digest: "bg-gray-100 text-gray-600",
-  api_cost_spike: "bg-red-100 text-red-800",
-  missed_eod: "bg-red-100 text-red-800",
+  new_lead: "bg-primary/10 text-primary",
+  chatbot_lead_captured: "bg-primary/10 text-primary",
+  new_purchase: "bg-primary/10 text-primary",
+  lead_magnet_completed: "bg-primary/15 text-primary",
+  support_ticket: "bg-primary/10 text-primary",
+  support_reply: "bg-primary/10 text-primary",
+  fulfillment_overdue: "bg-primary/15 text-primary",
+  fulfillment_update: "bg-primary/10 text-primary",
+  churn_risk: "bg-primary/15 text-primary",
+  deal_stage_change: "bg-deep text-muted-foreground",
+  eod_submitted: "bg-deep text-muted-foreground",
+  billing_alert: "bg-primary/15 text-primary",
+  marketing_digest: "bg-deep text-muted-foreground",
+  daily_digest: "bg-deep text-muted-foreground",
+  api_cost_spike: "bg-primary/15 text-primary",
+  missed_eod: "bg-primary/15 text-primary",
 }
 
 function timeAgo(date: string) {
@@ -86,13 +86,13 @@ export function NotificationCenter({
   onClose,
 }: NotificationCenterProps) {
   return (
-    <div className="absolute right-0 top-full mt-2 w-96 rounded-xl border border-gray-200 bg-white shadow-lg z-50 overflow-hidden">
+    <div className="absolute right-0 top-full mt-2 w-96 rounded-xl border border-border bg-card shadow-lg z-50 overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-border">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-semibold text-gray-900">Notifications</span>
+          <span className="text-sm font-semibold text-foreground">Notifications</span>
           {unreadCount > 0 && (
-            <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-[#DC2626] px-1.5 text-[10px] font-bold text-white">
+            <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-primary px-1.5 text-[10px] font-bold text-primary-foreground">
               {unreadCount}
             </span>
           )}
@@ -101,7 +101,7 @@ export function NotificationCenter({
           {unreadCount > 0 && (
             <button
               onClick={onMarkAllRead}
-              className="flex items-center gap-1 text-xs text-[#DC2626] hover:underline"
+              className="flex items-center gap-1 text-xs text-primary hover:underline"
             >
               <CheckCheck className="h-3 w-3" />
               Mark all read
@@ -109,7 +109,7 @@ export function NotificationCenter({
           )}
           <button
             onClick={onClose}
-            className="p-0.5 rounded text-gray-400 hover:text-gray-700 transition-colors"
+            className="p-0.5 rounded text-muted-foreground hover:text-foreground transition-colors"
           >
             <X className="h-3.5 w-3.5" />
           </button>
@@ -120,20 +120,20 @@ export function NotificationCenter({
       <div className="max-h-[28rem] overflow-y-auto custom-scrollbar">
         {loading && notifications.length === 0 ? (
           <div className="py-12 text-center">
-            <div className="text-xs text-gray-400">Loading notifications...</div>
+            <div className="text-xs text-muted-foreground">Loading notifications...</div>
           </div>
         ) : notifications.length === 0 ? (
           <div className="py-12 text-center">
-            <Bell className="h-8 w-8 mx-auto mb-3 text-gray-200" />
-            <p className="text-sm font-medium text-gray-400">No notifications yet</p>
-            <p className="text-xs text-gray-300 mt-1">
+            <Bell className="h-8 w-8 mx-auto mb-3 text-muted-foreground" />
+            <p className="text-sm font-medium text-muted-foreground">No notifications yet</p>
+            <p className="text-xs text-muted-foreground mt-1">
               You will see updates here when something happens.
             </p>
           </div>
         ) : (
           notifications.map((n) => {
             const Icon = TYPE_ICON[n.type] ?? Bell
-            const colorClass = TYPE_COLOR[n.type] ?? "bg-gray-100 text-gray-600"
+            const colorClass = TYPE_COLOR[n.type] ?? "bg-deep text-muted-foreground"
             return (
               <button
                 key={n.id}
@@ -141,10 +141,10 @@ export function NotificationCenter({
                   if (!n.read) onMarkRead(n.id)
                 }}
                 className={cn(
-                  "flex items-start gap-3 px-4 py-3 w-full text-left transition-colors border-b border-gray-100 last:border-0",
+                  "flex items-start gap-3 px-4 py-3 w-full text-left transition-colors border-b border-border last:border-0",
                   !n.read
-                    ? "border-l-[3px] border-l-[#DC2626] bg-red-50/30 hover:bg-red-50/50"
-                    : "border-l-[3px] border-l-transparent hover:bg-gray-50",
+                    ? "border-l-[3px] border-l-primary bg-primary/5 hover:bg-primary/10"
+                    : "border-l-[3px] border-l-transparent hover:bg-surface",
                   !n.read ? "cursor-pointer" : "cursor-default"
                 )}
               >
@@ -161,19 +161,19 @@ export function NotificationCenter({
                     <p
                       className={cn(
                         "text-sm truncate",
-                        !n.read ? "font-semibold text-gray-900" : "font-medium text-gray-700"
+                        !n.read ? "font-semibold text-foreground" : "font-medium text-foreground"
                       )}
                     >
                       {n.title}
                     </p>
                     {!n.read && (
-                      <div className="h-2 w-2 rounded-full bg-[#DC2626] flex-shrink-0 mt-1.5" />
+                      <div className="h-2 w-2 rounded-full bg-primary flex-shrink-0 mt-1.5" />
                     )}
                   </div>
-                  <p className="text-xs text-gray-500 mt-0.5 line-clamp-2 leading-relaxed">
+                  <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2 leading-relaxed">
                     {truncate(n.message, 120)}
                   </p>
-                  <p className="text-[10px] text-gray-400 mt-1">{timeAgo(n.sentAt)}</p>
+                  <p className="text-[10px] text-muted-foreground mt-1">{timeAgo(n.sentAt)}</p>
                 </div>
               </button>
             )

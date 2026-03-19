@@ -70,33 +70,33 @@ export default async function PartnerLandingPage({ params, searchParams }: Props
   const refCode = ref ?? referral.code
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA]">
+    <div className="min-h-screen bg-deep">
       {/* Partner header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
+      <div className="bg-card border-b border-border px-4 py-3">
         <div className="max-w-4xl mx-auto flex items-center gap-3">
           {referral.referrer.avatarUrl && (
             <Image src={referral.referrer.avatarUrl} alt="" width={32} height={32} className="h-8 w-8 rounded-full" />
           )}
-          <p className="text-sm text-gray-600">
-            You were referred by <span className="font-semibold text-gray-900">{partnerName}</span>
+          <p className="text-sm text-muted-foreground">
+            You were referred by <span className="font-semibold text-foreground">{partnerName}</span>
           </p>
         </div>
       </div>
 
       {/* Hero */}
       <div className="max-w-4xl mx-auto px-4 py-20 text-center">
-        <div className="inline-flex items-center gap-2 rounded-full bg-red-50 px-4 py-1.5 border border-red-100 mb-6">
-          <Star className="h-3.5 w-3.5 text-[#DC2626]" />
-          <span className="text-sm font-medium text-[#DC2626]">Partner Referral — Priority Onboarding</span>
+        <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 border border-primary/20 mb-6">
+          <Star className="h-3.5 w-3.5 text-primary" />
+          <span className="text-sm font-medium text-primary">Partner Referral — Priority Onboarding</span>
         </div>
 
-        <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 leading-tight mb-6">
+        <h1 className="text-4xl sm:text-5xl font-bold text-foreground leading-tight mb-6">
           AI Services That Run Your
           <br />
-          <span className="text-[#DC2626]">Sales & Marketing</span>
+          <span className="text-primary">Sales & Marketing</span>
         </h1>
 
-        <p className="text-lg text-gray-500 max-w-2xl mx-auto mb-10">
+        <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-10">
           {partnerName} uses AIMS to automate lead gen, outbound, and customer follow-up — now you can too.
           As a referred partner, you get priority setup and onboarding support.
         </p>
@@ -104,14 +104,14 @@ export default async function PartnerLandingPage({ params, searchParams }: Props
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link
             href={`/get-started?ref=${refCode}`}
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#DC2626] px-8 py-4 text-lg font-semibold text-white hover:bg-[#B91C1C] transition-colors"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-8 py-4 text-lg font-semibold text-white hover:bg-primary/90 transition-colors"
           >
             Get Started Free
             <ArrowRight className="h-5 w-5" />
           </Link>
           <Link
             href={`/marketplace?ref=${refCode}`}
-            className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-8 py-4 text-lg font-semibold text-gray-900 hover:bg-gray-50 transition-colors"
+            className="inline-flex items-center justify-center gap-2 rounded-xl border border-border bg-card px-8 py-4 text-lg font-semibold text-foreground hover:bg-surface transition-colors"
           >
             Browse Services
           </Link>
@@ -122,18 +122,18 @@ export default async function PartnerLandingPage({ params, searchParams }: Props
       <div className="max-w-4xl mx-auto px-4 pb-20">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {BENEFITS.map((b) => (
-            <div key={b} className="flex items-start gap-3 bg-white border border-gray-200 rounded-2xl p-5">
-              <CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-              <p className="text-sm font-medium text-gray-700">{b}</p>
+            <div key={b} className="flex items-start gap-3 bg-card border border-border rounded-2xl p-5">
+              <CheckCircle2 className="h-5 w-5 text-green-400 mt-0.5 flex-shrink-0" />
+              <p className="text-sm font-medium text-foreground">{b}</p>
             </div>
           ))}
         </div>
       </div>
 
       {/* Social proof */}
-      <div className="bg-[#DC2626] py-16">
+      <div className="bg-primary py-16">
         <div className="max-w-4xl mx-auto px-4 text-center">
-          <p className="text-red-100 text-sm uppercase tracking-wider font-semibold mb-8">What clients achieve</p>
+          <p className="text-muted-foreground text-sm uppercase tracking-wider font-semibold mb-8">What clients achieve</p>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
             {[
               { stat: "3.2×", label: "Average pipeline increase in 90 days" },
@@ -142,7 +142,7 @@ export default async function PartnerLandingPage({ params, searchParams }: Props
             ].map(({ stat, label }) => (
               <div key={stat} className="text-center">
                 <p className="text-3xl font-bold text-white font-mono mb-2">{stat}</p>
-                <p className="text-sm text-red-100">{label}</p>
+                <p className="text-sm text-muted-foreground">{label}</p>
               </div>
             ))}
           </div>
@@ -151,15 +151,15 @@ export default async function PartnerLandingPage({ params, searchParams }: Props
 
       {/* Bottom CTA */}
       <div className="max-w-4xl mx-auto px-4 py-20 text-center">
-        <h2 className="text-3xl font-bold text-gray-900 mb-4">
+        <h2 className="text-3xl font-bold text-foreground mb-4">
           Ready to see what AIMS can do for you?
         </h2>
-        <p className="text-gray-500 mb-8">
+        <p className="text-muted-foreground mb-8">
           Referred clients get expedited setup and a dedicated onboarding call.
         </p>
         <Link
           href={`/get-started?ref=${refCode}`}
-          className="inline-flex items-center gap-2 rounded-xl bg-[#DC2626] px-8 py-4 text-base font-semibold text-white hover:bg-[#B91C1C] transition-colors"
+          className="inline-flex items-center gap-2 rounded-xl bg-primary px-8 py-4 text-base font-semibold text-white hover:bg-primary/90 transition-colors"
         >
           Book Your Free Strategy Call
           <ArrowRight className="h-4 w-4" />
