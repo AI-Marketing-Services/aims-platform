@@ -34,6 +34,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE}/tools/segment-explorer`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE}/tools/stack-configurator`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE}/tools/dashboard`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
+    // About & solutions
+    { url: `${BASE}/about`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${BASE}/solutions`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${BASE}/industries`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${BASE}/crm-onboarding`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
     // Features
     { url: `${BASE}/features/ultimate-vendingpreneur-snapshot`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
     // Auth
