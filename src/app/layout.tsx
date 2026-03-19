@@ -49,6 +49,10 @@ export const metadata: Metadata = {
     description:
       "More qualified meetings. Less wasted ad spend. AI-powered outbound, inbound, and reactivation systems.",
   },
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/apple-icon.png",
+  },
   robots: { index: true, follow: true },
 }
 
