@@ -8,31 +8,31 @@ import { SectionHeader } from "./SectionHeader"
 const FAQS = [
   {
     q: "How long until I start seeing results?",
-    a: "Most clients see their first booked meetings within 14 days of launch. Full pipeline impact is typically visible within 30-60 days as sequences warm up and AI agents learn your ICP.",
+    a: "Our forward-deployed engineers begin the operational diagnostic in week one. Most clients see their first deployed AI solutions within 60 days, with measurable efficiency gains tracked from day one of deployment.",
   },
   {
     q: "What industries do you work with?",
-    a: "We specialize in B2B businesses across professional services, SaaS, multi-location operators (vending, healthcare, auto), and enterprise sales teams. Our AI is trained on industry-specific data for each vertical.",
+    a: "We specialize in B2B businesses across professional services, SaaS, multi-location operators (vending, healthcare, auto), and enterprise teams. Our engineers have deep vertical expertise and understand where the biggest operational bottlenecks hide in each industry.",
   },
   {
-    q: "Do I need to go high-level or use specific tools to work with you?",
-    a: "No. AIMS is tool-agnostic and integrates with your existing CRM, email, and communication stack. We can deploy on GoHighLevel, HubSpot, Salesforce, or build a clean stack from scratch.",
+    q: "Do I need to use specific tools to work with you?",
+    a: "No. AIMS is tool-agnostic. Our engineers embed into your existing tech stack and workflows — whether that is HubSpot, Salesforce, custom internal tools, or a greenfield environment. We build on what you already have.",
   },
   {
-    q: "What's included in setup vs. ongoing management?",
-    a: "Setup includes ICP research, domain warmup, sequence writing, CRM configuration, and AI agent training. Ongoing includes weekly reporting, A/B testing, reply handling, list building, and continuous optimization.",
+    q: "What does the embedded engineering model look like?",
+    a: "Our engineers work directly alongside your team — attending standups, accessing your systems, and building solutions in your environment. Think of it as adding senior AI engineers to your org without the hiring overhead. We handle diagnostic, build, deployment, and ongoing optimization.",
   },
   {
-    q: "How do AI agents handle complex questions?",
-    a: "Our AI agents are trained on your specific business, services, and FAQs. Complex questions that require human judgment are escalated to your team instantly via Slack notification, with full conversation context.",
+    q: "How do AI solutions integrate with our existing team?",
+    a: "Every solution is designed to augment your people, not replace them. Our engineers build AI that fits into the tools and workflows your team already uses. Full knowledge transfer is built into every engagement so your team can operate and extend the systems independently.",
   },
   {
-    q: "What does SEO/AEO include monthly?",
-    a: "Monthly SEO/AEO includes: content calendar execution (4-8 pieces), technical SEO audits, local citation management, answer engine optimization for ChatGPT/Perplexity/Gemini, and a detailed performance report.",
+    q: "What does an engagement typically include?",
+    a: "Each engagement is custom-scoped, but typically includes: an operational diagnostic across all departments, an AI opportunity map prioritized by ROI, custom-built AI solutions deployed into your workflows, and ongoing measurement and optimization.",
   },
   {
     q: "How is pricing structured?",
-    a: "Core GHL packages start at $97-$397/mo. Outbound campaigns, voice agents, and custom services are priced based on volume and complexity. We offer a 14-day trial and month-to-month contracts on all plans.",
+    a: "Engagements are custom-scoped based on your company size, operational complexity, and the number of departments involved. We provide a detailed scope and investment proposal after the initial discovery call — no generic pricing tiers.",
   },
 ]
 

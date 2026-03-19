@@ -28,11 +28,12 @@ function CalBooking() {
 }
 
 const SERVICES = [
-  { slug: "website-crm-chatbot", name: "Website + CRM + Chatbot", price: "from $97/mo" },
-  { slug: "cold-outbound", name: "Cold Outbound Engine", price: "Custom" },
-  { slug: "voice-agents", name: "AI Voice Agents", price: "Custom" },
-  { slug: "seo-aeo", name: "SEO & AEO Automation", price: "Custom" },
-  { slug: "lead-reactivation", name: "Lead Reactivation", price: "Custom" },
+  { slug: "cold-outbound", name: "Wild Ducks", description: "Outbound pipeline, fully deployed", flagship: true },
+  { slug: "seo-aeo", name: "Money Page", description: "Own your search presence across every channel", flagship: true },
+  { slug: "revops-pipeline", name: "Steel Trap", description: "Revenue operations that never leak", flagship: true },
+  { slug: "website-crm-chatbot", name: "Website + CRM + Chatbot", description: "Conversion-optimized site with AI lead capture", flagship: false },
+  { slug: "voice-agents", name: "AI Voice Agents", description: "Inbound and outbound AI calling agents", flagship: false },
+  { slug: "lead-reactivation", name: "Lead Reactivation", description: "Turn dead CRM contacts into booked meetings", flagship: false },
 ]
 
 const INDUSTRIES = [
@@ -149,7 +150,7 @@ export function GetStartedClient() {
           {/* Step 1: Services */}
           {step === 1 && (
             <div>
-              <h2 className="text-xl font-bold mb-2">Which services interest you?</h2>
+              <h2 className="text-xl font-bold mb-2">Which engagement interests you?</h2>
               <p className="text-sm text-muted-foreground mb-6">Select all that apply.</p>
               <div className="space-y-3">
                 {SERVICES.map((service) => {
@@ -158,10 +159,17 @@ export function GetStartedClient() {
                     <button
                       key={service.slug}
                       onClick={() => toggleService(service.slug)}
-                      className={`w-full flex items-center justify-between rounded-xl border-2 p-4 text-left transition ${selected ? "border-primary bg-primary/10" : "border-border hover:border-muted-foreground"}`}
+                      className={`w-full flex items-center justify-between rounded-xl border-2 p-4 text-left transition ${selected ? "border-primary bg-primary/10" : service.flagship ? "border-primary/40 hover:border-primary" : "border-border hover:border-muted-foreground"}`}
                     >
-                      <span className="font-medium text-foreground">{service.name}</span>
-                      <span className="text-sm text-muted-foreground">{service.price}</span>
+                      <div>
+                        <span className="font-medium text-foreground">{service.name}</span>
+                        {service.flagship && (
+                          <span className="ml-2 inline-block rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                            Flagship
+                          </span>
+                        )}
+                        <p className="text-xs text-muted-foreground mt-0.5">{service.description}</p>
+                      </div>
                     </button>
                   )
                 })}

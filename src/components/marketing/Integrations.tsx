@@ -77,8 +77,8 @@ export function Integrations() {
               <div className="absolute rounded-full border border-border/40" style={{ inset: 0 }} />
 
               {/* Center AIMS logo */}
-              <div className="relative z-10 flex h-16 w-16 items-center justify-center rounded-2xl bg-card shadow-xl border border-border">
-                <Image src="/logo.png" alt="AIMS" width={36} height={36} className="object-contain" />
+              <div className="relative z-10 flex h-24 w-24 items-center justify-center rounded-2xl bg-card shadow-xl border border-border">
+                <Image src="/logo.png" alt="AIMS" width={64} height={64} className="object-contain" />
               </div>
 
               {/* Orbiting logos */}

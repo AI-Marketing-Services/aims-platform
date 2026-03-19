@@ -1049,49 +1049,39 @@ export function Hero() {
       <div className="mx-auto max-w-5xl px-4">
         <div className="flex flex-col items-center text-center">
 
-          {/* Trust badge */}
+          {/* Eyebrow */}
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="mb-7">
-            <span className="inline-flex items-center gap-2.5 rounded-full border border-primary/30 bg-card px-4 py-1.5 text-sm font-medium text-foreground shadow-sm">
-              <span className="flex -space-x-1.5">
-                {["#C4972A", "#8B6914", "#7F1D1D"].map((c, i) => (
-                  <span key={i} className="flex h-5 w-5 items-center justify-center rounded-full border-2 border-card text-[8px] font-bold text-primary-foreground" style={{ background: c }}>{["A", "B", "C"][i]}</span>
-                ))}
-              </span>
-              Trusted by 1M+ users
-            </span>
+            <span className="font-mono text-primary text-xs uppercase tracking-widest">AI Managing Services — AIMS</span>
           </motion.div>
 
           {/* Headline */}
           <motion.h1
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55, delay: 0.1 }}
-            className="max-w-3xl text-[2.75rem] font-extrabold leading-[1.1] tracking-tight text-foreground sm:text-5xl md:text-[3.6rem]"
+            className="font-serif max-w-4xl text-[2.75rem] font-light leading-[1.1] tracking-tight text-foreground sm:text-5xl md:text-[3.6rem]"
           >
-            Your Pipeline Is a<br />
-            Bandwidth Problem.<br />We Fix That.
+            Your business isn&apos;t capped on <em className="text-primary">talent</em>.{" "}
+            It&apos;s capped on <em className="text-primary">bandwidth</em>.
           </motion.h1>
 
           <motion.p
             initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}
-            className="mx-auto mt-5 max-w-xl text-lg text-muted-foreground leading-relaxed"
+            className="mx-auto mt-5 max-w-2xl text-lg text-muted-foreground leading-relaxed"
           >
-            AI-powered outbound, voice agents, and reactivation systems —
-            fully managed so your team can close, not chase.
-            <br />
-            <strong className="text-foreground">More meetings. Zero overhead.</strong>
+            We embed inside your organization, find where your best people are buried in low-value work, and install the AI systems that give them — and your business — room to grow.
           </motion.p>
 
           <motion.div
             initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}
-            className="mt-8 flex flex-col items-center gap-2 sm:flex-row"
+            className="mt-8 flex flex-col items-center gap-3 sm:flex-row"
           >
             <Link href="/get-started" className="inline-flex items-center gap-2 bg-primary px-8 py-3.5 text-xs font-bold uppercase tracking-widest text-white shadow-md shadow-primary/20 transition hover:bg-primary/80 hover:shadow-lg">
-              Book a Strategy Call
+              Speak with Our Intake Agent
               <ArrowRight className="h-4 w-4" />
             </Link>
+            <Link href="/marketplace" className="inline-flex items-center gap-2 border border-border px-8 py-3.5 text-xs font-bold uppercase tracking-widest text-foreground transition hover:border-primary/50 hover:text-primary">
+              Explore Our Engagements
+            </Link>
           </motion.div>
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="mt-3 flex items-center gap-1.5 text-xs text-muted-foreground">
-            <CreditCard className="h-3.5 w-3.5" /> No credit card required
-          </motion.p>
 
           {/* Interactive Dashboard */}
           <motion.div
@@ -1191,12 +1181,12 @@ export function Hero() {
             </p>
           </motion.div>
 
-          {/* "Trusted by" label */}
+          {/* Experience label */}
           <motion.p
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}
             className="mt-14 text-sm font-semibold text-muted-foreground uppercase tracking-widest"
           >
-            Trusted by sales teams at
+            Our team has operated inside
           </motion.p>
         </div>
       </div>

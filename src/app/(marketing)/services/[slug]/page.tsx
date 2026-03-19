@@ -17,7 +17,7 @@ const STATIC_SERVICES: Record<string, {
   features: string[]
 }> = {
   "cold-outbound": {
-    name: "Outbound Lead Campaigns",
+    name: "Wild Ducks",
     pillar: "SALES",
     shortDesc: "Multi-domain email infra, AI SDR reply handling, auto-enrichment, and deliverability monitoring.",
     longDesc: "We build and run your entire cold outbound engine — from ICP research and lead sourcing to AI-personalized copy, multi-step sequences, and hot-lead routing. Your team receives warm, qualified meetings. We handle everything else.",
@@ -33,7 +33,7 @@ const STATIC_SERVICES: Record<string, {
     ],
   },
   "revops-pipeline": {
-    name: "RevOps Pipeline",
+    name: "Steel Trap",
     pillar: "OPERATIONS",
     shortDesc: "CRM architecture, lead routing, attribution, conversion dashboards, and rep coaching.",
     longDesc: "We architect your entire revenue operations layer — CRM setup, lead routing rules, attribution models, conversion tracking, and rep performance dashboards. Get full pipeline visibility in under 7 days.",
@@ -129,7 +129,7 @@ const STATIC_SERVICES: Record<string, {
     ],
   },
   "seo-aeo": {
-    name: "SEO & AEO",
+    name: "Money Page",
     pillar: "MARKETING",
     shortDesc: "Technical SEO, content clusters, and Answer Engine Optimization to rank in both search and AI results.",
     longDesc: "We combine traditional SEO with Answer Engine Optimization — structuring your content so it ranks in Google and gets cited by AI tools like ChatGPT and Perplexity. More visibility across every discovery channel.",
@@ -542,7 +542,7 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
                     href={`/get-started?service=${slug}`}
                     className="inline-flex items-center gap-2 rounded-sm bg-primary px-8 py-3.5 font-semibold text-white hover:bg-primary/90 transition"
                   >
-                    Get Started <ArrowRight className="h-4 w-4" />
+                    Book a Consultation <ArrowRight className="h-4 w-4" />
                   </Link>
                   <Link
                     href="/get-started"
@@ -623,82 +623,34 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
         </section>
       )}
 
-      {/* Pricing */}
-      {service.tiers.length > 0 && (
-        <section className="py-20 bg-card">
-          <div className="container mx-auto max-w-4xl px-4">
-            <h2 className="text-2xl font-bold text-foreground mb-8">Pricing</h2>
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {service.tiers.map((tier) => (
-                <div
-                  key={tier.id}
-                  className={`rounded-xl border-2 bg-card p-6 ${tier.isPopular ? "border-primary shadow-lg" : "border-border"}`}
-                >
-                  {tier.isPopular && (
-                    <div className="mb-3">
-                      <span className="rounded-full bg-primary px-2 py-0.5 text-[10px] font-semibold text-white">
-                        Most Popular
-                      </span>
-                    </div>
-                  )}
-                  <div className="text-lg font-bold text-foreground">{tier.name}</div>
-                  <div className="mt-2 text-3xl font-black text-foreground">
-                    ${(tier.price / 100).toLocaleString()}
-                    <span className="text-sm font-normal text-muted-foreground">/{tier.interval}</span>
-                  </div>
-                  {tier.features.length > 0 && (
-                    <ul className="mt-4 space-y-2">
-                      {tier.features.map((f) => (
-                        <li key={f} className="flex items-start gap-2 text-xs text-muted-foreground">
-                          <Check className="mt-0.5 h-3 w-3 shrink-0 text-primary" />
-                          {f}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                  <Link
-                    href={`/get-started?service=${slug}&tier=${tier.slug}`}
-                    className={`mt-5 block rounded-lg py-2.5 text-center text-sm font-semibold transition ${tier.isPopular ? "bg-primary text-white hover:bg-primary/90" : "border border-border text-foreground hover:bg-surface"}`}
-                  >
-                    Get Started
-                  </Link>
-                </div>
-              ))}
-            </div>
+      {/* Custom Engagement Pricing */}
+      <section className="py-20 bg-deep">
+        <div className="container mx-auto max-w-4xl px-4">
+          <div className="rounded-2xl border border-border bg-card p-10 text-center shadow-sm">
+            <h2 className="text-2xl font-bold text-foreground mb-3">Custom Engagement Pricing</h2>
+            <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
+              Every {service.name} engagement is scoped to your business size, goals, and timeline. Schedule a consultation and we&rsquo;ll build a plan tailored to your needs.
+            </p>
+            <Link
+              href={`/get-started?service=${slug}`}
+              className="inline-flex items-center gap-2 rounded-sm bg-primary px-8 py-3.5 font-semibold text-white hover:bg-primary/90 transition"
+            >
+              Schedule a Consultation <ArrowRight className="h-4 w-4" />
+            </Link>
           </div>
-        </section>
-      )}
-
-      {/* Custom pricing fallback */}
-      {service.tiers.length === 0 && (
-        <section className="py-20 bg-deep">
-          <div className="container mx-auto max-w-4xl px-4">
-            <div className="rounded-2xl border border-border bg-card p-10 text-center shadow-sm">
-              <h2 className="text-2xl font-bold text-foreground mb-3">Custom Pricing</h2>
-              <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
-                Pricing for {service.name} is tailored to your business size, goals, and scope. Book a call and we&rsquo;ll build your plan.
-              </p>
-              <Link
-                href={`/get-started?service=${slug}`}
-                className="inline-flex items-center gap-2 rounded-sm bg-primary px-8 py-3.5 font-semibold text-white hover:bg-primary/90 transition"
-              >
-                Get a Custom Quote <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
-          </div>
-        </section>
-      )}
+        </div>
+      </section>
 
       {/* CTA */}
       <section className="py-20 bg-primary">
         <div className="container mx-auto max-w-2xl px-4 text-center">
-          <h2 className="text-3xl font-bold text-white">Ready to get started?</h2>
-          <p className="mt-3 text-muted-foreground">Book a strategy call and we&rsquo;ll build your custom plan.</p>
+          <h2 className="text-3xl font-bold text-white">Ready to explore this engagement?</h2>
+          <p className="mt-3 text-muted-foreground">Schedule a call and we&rsquo;ll scope a plan for your business.</p>
           <Link
             href="/get-started"
             className="mt-8 inline-flex items-center gap-2 rounded-sm bg-primary px-8 py-3.5 font-semibold text-white hover:bg-primary/90 transition"
           >
-            Book a Strategy Call <ArrowRight className="h-4 w-4" />
+            Schedule a Call <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
       </section>

@@ -4,11 +4,10 @@ import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs"
-import { Menu, X, ShoppingCart, ChevronDown } from "lucide-react"
+import { Menu, X, ChevronDown } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
 import Image from "next/image"
-import { useCart } from "@/components/shared/CartContext"
 
 const TOOLS_LINKS = [
   { label: "AI Readiness Quiz", href: "/tools/ai-readiness-quiz", desc: "See how AI-ready your business is" },
@@ -71,7 +70,6 @@ export function Navbar() {
   const [dropdown, setDropdown] = useState<DropdownKey>(null)
   const [mobileExpanded, setMobileExpanded] = useState<DropdownKey>(null)
   const pathname = usePathname()
-  const { items, openCart } = useCart()
   const dropdownRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -111,7 +109,7 @@ export function Navbar() {
 
           {/* Logo */}
           <Link href="/" className="flex items-center flex-shrink-0">
-            <Image src="/logo.png" alt="AIMS" width={100} height={40} className="object-contain h-8 w-auto" priority />
+            <Image src="/logo.png" alt="AIMS" width={160} height={48} className="object-contain h-12 w-auto" priority />
           </Link>
 
           {/* Desktop nav */}
@@ -127,7 +125,7 @@ export function Navbar() {
                   : "text-muted-foreground hover:text-foreground hover:bg-muted/70"
               )}
             >
-              Services
+              Engagements
             </Link>
 
             {/* Solutions */}
@@ -200,17 +198,6 @@ export function Navbar() {
               </AnimatePresence>
             </div>
 
-            <Link
-              href="/pricing"
-              className={cn(
-                "px-3.5 py-1.5 text-sm font-medium rounded-lg transition-colors",
-                pathname === "/pricing"
-                  ? "text-foreground bg-muted"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted/70"
-              )}
-            >
-              Pricing
-            </Link>
           </nav>
 
           {/* Desktop auth */}
@@ -229,21 +216,9 @@ export function Navbar() {
                 href="/get-started"
                 className="text-xs font-bold rounded-sm bg-primary text-primary-foreground px-5 py-2 uppercase tracking-wider hover:bg-primary/80 transition-colors"
               >
-                Get started
+                Book a Call
               </Link>
             </SignedOut>
-            <button
-              onClick={openCart}
-              className="relative p-2 rounded-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors ml-1"
-              aria-label="Open cart"
-            >
-              <ShoppingCart className="w-5 h-5" />
-              {items.length > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
-                  {items.length}
-                </span>
-              )}
-            </button>
           </div>
 
           {/* Mobile toggle */}
@@ -268,7 +243,7 @@ export function Navbar() {
           >
             <div className="px-4 py-4 space-y-1">
               <Link href="/marketplace" className="flex items-center px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors">
-                Services
+                Engagements
               </Link>
 
               <Link href="/solutions" className="flex items-center px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors">
@@ -335,23 +310,7 @@ export function Navbar() {
                 )}
               </div>
 
-              <Link href="/pricing" className="flex items-center px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors">
-                Pricing
-              </Link>
-
               <div className="pt-3 mt-3 border-t border-border space-y-2">
-                <button
-                  onClick={() => { openCart(); setMobileOpen(false) }}
-                  className="flex w-full items-center gap-2 px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
-                >
-                  <ShoppingCart className="w-4 h-4" />
-                  Cart
-                  {items.length > 0 && (
-                    <span className="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white">
-                      {items.length}
-                    </span>
-                  )}
-                </button>
                 <SignedIn>
                   <Link href="/portal/dashboard" className="block px-3 py-2 text-sm font-medium text-muted-foreground">
                     Dashboard
@@ -366,7 +325,7 @@ export function Navbar() {
                   href="/get-started"
                   className="block w-full text-center rounded-sm bg-primary text-white text-xs font-bold px-4 py-2.5 uppercase tracking-wider"
                 >
-                  Get started
+                  Book a Call
                 </Link>
               </div>
             </div>

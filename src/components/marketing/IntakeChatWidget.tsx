@@ -62,10 +62,10 @@ export function IntakeChatWidget() {
       {!open && (
         <button
           onClick={() => setOpen(true)}
-          className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#141923] border border-[#C4972A]/30 shadow-xl hover:shadow-2xl hover:shadow-[#C4972A]/10 transition-all hover:scale-105 active:scale-95"
+          className="fixed bottom-6 right-6 z-50 flex h-16 w-16 items-center justify-center rounded-full bg-[#141923] border border-[#C4972A]/30 shadow-xl hover:shadow-2xl hover:shadow-[#C4972A]/10 transition-all hover:scale-105 active:scale-95"
           aria-label="Chat with AIMS"
         >
-          <Image src="/logo.png" alt="AIMS" width={28} height={28} className="h-7 w-7 object-contain" />
+          <Image src="/logo.png" alt="AIMS" width={40} height={40} className="h-10 w-10 object-contain" />
         </button>
       )}
 

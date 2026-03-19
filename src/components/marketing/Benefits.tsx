@@ -4,60 +4,60 @@ import { motion } from "framer-motion"
 import { CheckCircle2 } from "lucide-react"
 
 const METRICS = [
-  { value: "3.2x", label: "Average pipeline increase within 90 days" },
-  { value: "$284", label: "Average cost per qualified meeting" },
-  { value: "14d", label: "Average days to first booked meeting" },
-  { value: "500+", label: "Companies served across 12 industries" },
+  { value: "40%", label: "Average operational efficiency gain" },
+  { value: "90d", label: "Average time from diagnostic to deployed AI" },
+  { value: "3", label: "Flagship engagements, custom-scoped to your org" },
+  { value: "12+", label: "Industries with forward-deployed experience" },
 ]
 
 const BENEFITS = [
   {
-    title: "Battle-tested systems, not experiments",
-    desc: "Every playbook is proven across hundreds of clients. You're buying execution certainty, not agency trial-and-error.",
+    title: "Engineers embedded in your operations",
+    desc: "Our forward-deployed engineers sit inside your workflows, not in a separate office. They see what your team sees and build solutions that actually fit.",
   },
   {
-    title: "AI infrastructure at a fraction of the cost",
-    desc: "We run AI SDRs, voice agents, and automated sequences at scale — with lower CAC than any traditional agency can offer.",
+    title: "Production AI, not PowerPoint decks",
+    desc: "We ship working AI systems into your operations — not strategy documents that collect dust. Every engagement ends with deployed, measurable technology.",
   },
   {
-    title: "Speed to pipeline that agencies can't match",
-    desc: "Warmed domains, live sequences, and deployed AI agents within two weeks of kickoff. No 3-month ramp period.",
+    title: "90-day deployment, not 12-month timelines",
+    desc: "From diagnostic to production AI in 90 days. No drawn-out discovery phases or scope creep. We move at operator speed.",
   },
   {
     title: "End-to-end ownership, zero handoffs",
-    desc: "Strategy, build, copy, launch, optimization — one team handles everything with weekly transparent reporting.",
+    desc: "The same engineers who diagnose the problem build and deploy the solution. No documentation gaps, no lost context between teams.",
   },
   {
-    title: "Industry-specific intelligence baked in",
-    desc: "Deep vertical expertise means faster ramp times, higher reply rates, and sequences that actually convert in your market.",
+    title: "Industry-specific operational intelligence",
+    desc: "Deep vertical expertise across B2B services, SaaS, multi-location operators, and enterprise. We know where the time sinks hide in your industry.",
   },
   {
-    title: "AI agents respond before your competitor wakes up",
-    desc: "Inbound leads are engaged in seconds — not hours. Automated qualification and routing that never sleeps.",
+    title: "AI that works alongside your existing team",
+    desc: "We augment your people, not replace them. Our solutions integrate into the tools and workflows your team already uses daily.",
   },
   {
-    title: "Zero-ramp cold outreach infrastructure",
-    desc: "Pre-warmed domains, validated contact lists, and copy that lands in primary inboxes — not spam folders.",
+    title: "Measurable efficiency gains from day one",
+    desc: "Every engagement is instrumented to track hours saved, costs reduced, and throughput gained. You see the ROI in real time.",
   },
   {
-    title: "Revenue attribution on every campaign",
-    desc: "Closed-loop reporting shows exactly which sequences, channels, and messages drove pipeline and closed deals.",
+    title: "Custom-scoped to your organization",
+    desc: "No cookie-cutter packages. Every engagement is scoped to your company size, tech stack, and operational complexity.",
   },
   {
-    title: "Multi-channel orchestration from one team",
-    desc: "Email, LinkedIn, calling, and retargeting — synchronized sequences that follow your prospect across every channel.",
+    title: "Continuous optimization, not one-time projects",
+    desc: "Our engineers stay embedded to measure results, iterate on solutions, and identify the next highest-value AI opportunities.",
   },
   {
-    title: "Predictable meeting flow, every week",
-    desc: "No feast-or-famine cycles. Consistent qualified meetings booked automatically so your closers stay busy.",
+    title: "Full knowledge transfer built in",
+    desc: "Your team learns to operate and extend every system we build. We leave your organization smarter, not dependent.",
   },
   {
-    title: "Reactivate pipeline you left on the table",
-    desc: "AI-powered re-engagement sequences resurrect cold leads with personalized context — often 3–5x ROI from your existing database.",
+    title: "Cross-department AI opportunity mapping",
+    desc: "We audit every department — sales, ops, finance, marketing — to find the biggest time sinks and highest-ROI automation targets.",
   },
   {
-    title: "Built for your market, not the last client's",
-    desc: "Every ICP, sequence, and agent is configured specifically for your industry, offer, and competitive landscape.",
+    title: "Enterprise-grade security and compliance",
+    desc: "Every deployment follows your security policies. Data stays in your infrastructure. No third-party black boxes.",
   },
 ]
 
@@ -81,12 +81,12 @@ export function Benefits() {
               Why AIMS Works
             </span>
             <h2 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-              Our clients add
+              Operational efficiency
               <br />
-              $700K–$1M to their pipeline
+              through AI transformation
             </h2>
             <p className="mt-4 text-base text-muted-foreground max-w-sm">
-              Proven infrastructure, AI-powered execution. Results measured in qualified meetings and closed revenue — not impressions.
+              Forward-deployed engineers that embed in your operations. Results measured in hours saved, costs reduced, and systems deployed — not slide decks delivered.
             </p>
 
             <div className="mt-10 grid grid-cols-2 gap-4">

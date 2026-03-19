@@ -5,25 +5,25 @@ import { X, Check } from "lucide-react"
 import { ToolLogo } from "@/components/shared/ToolLogo"
 
 const OLD_AGENCY = [
-  "Slow 90-day onboarding",
-  "High retainer with no guarantees",
-  "One-size-fits-all strategy",
-  "Manually reviewed campaigns",
-  "Lagging monthly reports",
-  "No AI-powered personalization",
-  "You own nothing when you leave",
-  "Siloed teams — strategy doesn't talk to ops",
+  "6-month discovery phases before any work begins",
+  "Expensive retainers for PowerPoint decks",
+  "Junior analysts do the work, partners sell",
+  "No implementation — recommendations only",
+  "Cookie-cutter frameworks applied to every client",
+  "Knowledge walks out the door when the project ends",
+  "Siloed teams — strategy never talks to engineering",
+  "Success measured in hours billed, not outcomes delivered",
 ]
 
 const AIMS_PROS = [
-  "Live in under 2 weeks",
-  "Performance-tied pricing available",
-  "ICP-specific strategy built for you",
-  "AI-automated + human-reviewed",
-  "Real-time dashboards & weekly calls",
-  "Claude-powered personalization at scale",
-  "You keep all assets, data & workflows",
-  "One team owns strategy, build, and execution",
+  "Engineers embedded in your operations from week one",
+  "Custom-scoped engagements tied to measurable outcomes",
+  "Senior engineers build and deploy — no handoffs",
+  "Production AI shipped into your workflows",
+  "Every engagement scoped to your org's specific needs",
+  "Full knowledge transfer — your team owns everything",
+  "One team owns diagnostic, build, and optimization",
+  "Success measured in efficiency gains and deployed systems",
 ]
 
 const TOOLS = [
@@ -52,10 +52,10 @@ export function WhyAIMS() {
             Why AIMS
           </span>
           <h2 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-            The old agency model is broken
+            The traditional consulting model is broken
           </h2>
           <p className="mt-3 text-base text-muted-foreground">
-            AIMS is built for how modern B2B sales actually works — fast, data-driven, and AI-powered from day one.
+            AIMS is built on the forward-deployed model — engineers embedded in your operations, shipping production AI, measuring real outcomes.
           </p>
         </div>
 
@@ -71,7 +71,7 @@ export function WhyAIMS() {
           >
             <div className="mb-6">
               <span className="rounded-full border border-border bg-card px-3 py-1 text-xs font-semibold text-muted-foreground">
-                Traditional Agency
+                Traditional Consulting
               </span>
             </div>
             <ul className="space-y-3.5">
@@ -96,7 +96,7 @@ export function WhyAIMS() {
           >
             <div className="mb-6">
               <span className="rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
-                AIMS
+                AIMS Forward-Deployed Model
               </span>
             </div>
             <ul className="space-y-3.5">

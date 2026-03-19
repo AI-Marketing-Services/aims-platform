@@ -2,14 +2,10 @@ import Link from "next/link"
 import Image from "next/image"
 
 const FOOTER_LINKS = {
-  Services: [
-    { label: "Outbound Campaigns", href: "/services/cold-outbound" },
-    { label: "AI Voice Agents", href: "/services/voice-agents" },
-    { label: "SEO & AEO", href: "/services/seo-aeo" },
-    { label: "RevOps Pipeline", href: "/services/revops-pipeline" },
-    { label: "Lead Reactivation", href: "/services/lead-reactivation" },
-    { label: "Website + CRM + Chat", href: "/services/website-crm-chatbot" },
-    { label: "View All Services", href: "/marketplace" },
+  Engagements: [
+    { label: "Wild Ducks", href: "/services/cold-outbound" },
+    { label: "Money Page", href: "/services/seo-aeo" },
+    { label: "Steel Trap", href: "/services/revops-pipeline" },
   ],
   "Free Tools": [
     { label: "AI Readiness Quiz", href: "/tools/ai-readiness-quiz" },
@@ -29,7 +25,6 @@ const FOOTER_LINKS = {
     { label: "About AIMS", href: "/about" },
     { label: "Case Studies", href: "/case-studies" },
     { label: "Blog", href: "/blog" },
-    { label: "Pricing", href: "/pricing" },
     { label: "Get Started", href: "/get-started" },
   ],
 } as const
@@ -46,8 +41,7 @@ export function Footer() {
               <Image src="/logo.png" alt="AIMS" width={100} height={40} className="object-contain h-8 w-auto" />
             </Link>
             <p className="mt-4 max-w-xs text-sm text-muted-foreground leading-relaxed">
-              AI-powered business infrastructure. Built once. Runs forever.
-              More qualified meetings. Less wasted ad spend.
+              Forward-deployed AI engineers. Embedded in your team. Removing growth ceilings.
             </p>
             <div className="mt-6 flex gap-3">
               <a

@@ -2,16 +2,16 @@ import Image from "next/image"
 
 // Per-logo size overrides — text-only logos need more width/height to read
 const LOGO_SIZES: Record<string, { w: number; h: number }> = {
-  "/partners/6fSaG0Z9T6wu55AmxL45rMrgNms.avif": { w: 200, h: 64 }, // Toll Brothers — text heavy
-  "/partners/eZBM2bc6w6VUFPmhsr8gPaOjIM.avif":  { w: 200, h: 72 }, // Coca-Cola — script
-  "/partners/L6nZm8LsScxRkCrVutLpBDCd8w.avif":  { w: 200, h: 68 }, // American Campus — icon+text
-  "/partners/fTtyMgNdt6LbHbeiKlQuYCtl6I.avif":  { w: 180, h: 60 }, // Fairfield — text only
-  "/partners/YtZJ5gkoFtLfH4Xc9WYswHbSUTg.avif": { w: 180, h: 68 }, // Cortland — icon+text
-  "/partners/QwquX6NUmGF7dXFs9HDwVQXWIwA.avif": { w: 180, h: 60 }, // large text logo
-  "/partners/u7OFAO2pJctDed0w5dB7QQyFELE.avif":  { w: 180, h: 60 }, // large text logo
+  "/partners/6fSaG0Z9T6wu55AmxL45rMrgNms.avif": { w: 120, h: 40 }, // Toll Brothers — text heavy
+  "/partners/eZBM2bc6w6VUFPmhsr8gPaOjIM.avif":  { w: 120, h: 44 }, // Coca-Cola — script
+  "/partners/L6nZm8LsScxRkCrVutLpBDCd8w.avif":  { w: 120, h: 42 }, // American Campus — icon+text
+  "/partners/fTtyMgNdt6LbHbeiKlQuYCtl6I.avif":  { w: 110, h: 36 }, // Fairfield — text only
+  "/partners/YtZJ5gkoFtLfH4Xc9WYswHbSUTg.avif": { w: 110, h: 42 }, // Cortland — icon+text
+  "/partners/QwquX6NUmGF7dXFs9HDwVQXWIwA.avif": { w: 110, h: 36 }, // large text logo
+  "/partners/u7OFAO2pJctDed0w5dB7QQyFELE.avif":  { w: 110, h: 36 }, // large text logo
 }
 
-const DEFAULT_SIZE = { w: 160, h: 56 }
+const DEFAULT_SIZE = { w: 100, h: 36 }
 
 const PARTNER_LOGOS = [
   { name: "UDR", src: "/partners/2MAkhjCzE5rmoivR73vacCpvYE.avif" },
@@ -38,7 +38,7 @@ export function LogoTicker() {
     <section className="border-y border-border bg-ink py-10">
       <div className="mx-auto max-w-6xl px-4">
         <p className="mb-6 text-center text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-          Trusted by sales teams at
+          Our team has operated inside
         </p>
         <div className="relative overflow-hidden">
           {/* Fade edges */}

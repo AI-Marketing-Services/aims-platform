@@ -2,12 +2,10 @@
 
 import { useState, useMemo } from "react"
 import { AnimatePresence, motion } from "framer-motion"
-import { Search, ShoppingCart, Check } from "lucide-react"
+import { Search } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { ToolLogo } from "@/components/shared/ToolLogo"
-import { useCart } from "@/components/shared/CartContext"
-import { getPricing } from "@/lib/services-pricing"
 
 type Pillar = "MARKETING" | "SALES" | "OPERATIONS" | "FINANCE"
 
@@ -28,29 +26,6 @@ interface AIMSService {
 }
 
 const SERVICES: AIMSService[] = [
-  {
-    id: "s1",
-    slug: "website-crm-chatbot",
-    pillar: "MARKETING",
-    name: "Website + CRM + Chatbot Bundle",
-    desc: "GHL-powered website with built-in CRM, automations, and AI chatbot trained on your business",
-    setupTime: "3–5 days",
-    pricing: "from",
-    priceFrom: "$97/mo",
-    tools: [
-      { name: "GoHighLevel", domain: "gohighlevel.com" },
-      { name: "OpenAI", domain: "openai.com" },
-      { name: "Calendly", domain: "calendly.com" },
-      { name: "Slack", domain: "slack.com" },
-    ],
-    deliverables: [
-      "Custom GoHighLevel website with your branding and copy",
-      "CRM pipeline with automated lead nurture sequences",
-      "AI chatbot trained on your FAQs, services, and pricing",
-      "Instant lead notifications + booking calendar integration",
-    ],
-    outcome: "Full lead capture system with automated follow-up live in under a week — no developer required",
-  },
   {
     id: "s2",
     slug: "cold-outbound",
@@ -73,28 +48,6 @@ const SERVICES: AIMSService[] = [
       "Production AI deployments (EOS Agent, automation, etc.)",
     ],
     outcome: "AI-native team with forward-deployed engineers removing growth ceilings — avg 40% operational efficiency gain in 90 days",
-  },
-  {
-    id: "s3",
-    slug: "voice-agents",
-    pillar: "SALES",
-    name: "AI Voice Agent Platform",
-    desc: "Inbound and outbound AI calling with multi-location routing and CRM integration",
-    setupTime: "3–5 days",
-    pricing: "custom",
-    tools: [
-      { name: "GoHighLevel", domain: "gohighlevel.com" },
-      { name: "OpenAI", domain: "openai.com" },
-      { name: "Twilio", domain: "twilio.com" },
-      { name: "Slack", domain: "slack.com" },
-    ],
-    deliverables: [
-      "AI receptionist handling inbound calls 24/7",
-      "Outbound dialing sequences for lead follow-up and reactivation",
-      "Multi-location routing with custom scripts per scenario",
-      "Call summaries + CRM logging + Slack notifications",
-    ],
-    outcome: "24/7 AI calling system that qualifies and books meetings — zero manual follow-up required",
   },
   {
     id: "s4",
@@ -120,183 +73,6 @@ const SERVICES: AIMSService[] = [
     outcome: "Complete financial visibility into marketing ROI — know exactly which channels produce profitable business vs. waste budget",
   },
   {
-    id: "s5",
-    slug: "audience-targeting",
-    pillar: "SALES",
-    name: "Audience Targeting & Segments",
-    desc: "20K+ prebuilt audience segments with semantic search, ICP scoring, and ad platform sync",
-    setupTime: "4–6 hours",
-    pricing: "contact",
-    tools: [
-      { name: "Clay", domain: "clay.com" },
-      { name: "Apollo", domain: "apollo.io" },
-      { name: "Meta", domain: "meta.com" },
-      { name: "LinkedIn", domain: "linkedin.com" },
-    ],
-    deliverables: [
-      "ICP definition + scored contact lists (Tier 1/2/3)",
-      "Custom lookalike audiences built for Meta and LinkedIn ads",
-      "Semantic segment builder — find anyone matching a description",
-      "Automated list refresh keeping audiences always current",
-    ],
-    outcome: "Always-fresh targeting lists for ads and outbound, updated automatically every week",
-  },
-  {
-    id: "s6",
-    slug: "pixel-intelligence",
-    pillar: "SALES",
-    name: "Pixel & Visitor Intelligence",
-    desc: "Website pixel with company-level visitor identification, enrichment, and intent scoring",
-    setupTime: "1–2 hours",
-    pricing: "contact",
-    isBeta: true,
-    tools: [
-      { name: "RB2B", domain: "rb2b.com" },
-      { name: "Clay", domain: "clay.com" },
-      { name: "Slack", domain: "slack.com" },
-      { name: "HubSpot", domain: "hubspot.com" },
-    ],
-    deliverables: [
-      "1-line pixel deployed on your site (no dev required)",
-      "Company name, industry, headcount, LinkedIn URL on every visit",
-      "Intent scoring — prioritize visitors who match your ICP",
-      "Real-time Slack alerts + auto-add to CRM outreach sequence",
-    ],
-    outcome: "Real-time alerts when your target accounts visit — with full contact details ready to act on",
-  },
-  {
-    id: "s7",
-    slug: "inbound-orchestration",
-    pillar: "SALES",
-    name: "Inbound Lead Orchestration",
-    desc: "End-to-end inbound pipeline from capture to enrichment to booking — fully automated",
-    setupTime: "4–8 hours",
-    pricing: "custom",
-    tools: [
-      { name: "HubSpot", domain: "hubspot.com" },
-      { name: "Clay", domain: "clay.com" },
-      { name: "Cal.com", domain: "cal.com" },
-      { name: "Slack", domain: "slack.com" },
-    ],
-    deliverables: [
-      "Form → Clay enrichment → CRM routing in under 2 minutes",
-      "Lead scoring model (firmographic + behavioral signals)",
-      "Auto-book high-intent leads directly to your calendar",
-      "Slack alerts for every qualified lead with full context",
-    ],
-    outcome: "Every inbound lead enriched, scored, and routed to the right rep within 2 minutes — zero manual triage",
-  },
-  {
-    id: "s8",
-    slug: "lead-reactivation",
-    pillar: "SALES",
-    name: "Lead Reactivation System",
-    desc: "AI-personalized database reactivation sequences for dormant leads and past clients",
-    setupTime: "2–3 days",
-    pricing: "custom",
-    tools: [
-      { name: "GoHighLevel", domain: "gohighlevel.com" },
-      { name: "Instantly", domain: "instantly.ai" },
-      { name: "OpenAI", domain: "openai.com" },
-      { name: "Clay", domain: "clay.com" },
-    ],
-    deliverables: [
-      "Database audit — segment by recency, value, and fit",
-      "AI-personalized reactivation sequences (email + SMS + voice)",
-      "Win-back offers and re-engagement trigger logic",
-      "Pipeline report showing recovered revenue and attribution",
-    ],
-    outcome: "15–25% of dormant leads reactivated into active pipeline within 30 days of launch",
-  },
-  {
-    id: "s9",
-    slug: "linkedin-outbound",
-    pillar: "MARKETING",
-    name: "LinkedIn Outbound System",
-    desc: "Signal-based LinkedIn pipeline from ICP connection to booked meeting",
-    setupTime: "3–5 hours",
-    pricing: "custom",
-    tools: [
-      { name: "LinkedIn", domain: "linkedin.com" },
-      { name: "Clay", domain: "clay.com" },
-      { name: "Apollo", domain: "apollo.io" },
-      { name: "Instantly", domain: "instantly.ai" },
-    ],
-    deliverables: [
-      "Profile optimization + content strategy (3 posts/week)",
-      "ICP connection sequencing with personalized openers",
-      "Signal monitoring — triggers when prospects engage with content",
-      "Tiered outreach routing based on engagement score",
-    ],
-    outcome: "50+ qualified LinkedIn connections per week flowing into a scored, automated outbound pipeline",
-  },
-  {
-    id: "s10",
-    slug: "ai-content-engine",
-    pillar: "MARKETING",
-    name: "AI Content Engine",
-    desc: "High-volume content pipeline where AI handles research and drafting, humans handle final polish",
-    setupTime: "3–5 hours",
-    pricing: "contact",
-    tools: [
-      { name: "OpenAI", domain: "openai.com" },
-      { name: "Perplexity", domain: "perplexity.ai" },
-      { name: "Notion", domain: "notion.so" },
-      { name: "Surfer SEO", domain: "surferseo.com" },
-    ],
-    deliverables: [
-      "Content calendar + keyword-mapped topic clusters",
-      "AI drafting pipeline — full article drafts in Notion per brief",
-      "Human review + distribution workflow (blog, LinkedIn, email)",
-      "SEO scoring for every piece before publish",
-    ],
-    outcome: "4x more content output with half the team time — every piece optimized for Google and AI search",
-  },
-  {
-    id: "s11",
-    slug: "finance-automation",
-    pillar: "FINANCE",
-    name: "P&L Finance Automation",
-    desc: "Track, control, and optimize company spending with AI-powered visibility and renewal management",
-    setupTime: "4–6 hours",
-    pricing: "contact",
-    tools: [
-      { name: "Ramp", domain: "ramp.com" },
-      { name: "Airtable", domain: "airtable.com" },
-      { name: "Notion", domain: "notion.so" },
-      { name: "Stripe", domain: "stripe.com" },
-    ],
-    deliverables: [
-      "Spend tracking automation with vendor categorization",
-      "P&L dashboard with real-time budget vs. actuals",
-      "Renewal alert system — 30/7/1 day notices before charges",
-      "Monthly cost report with optimization recommendations",
-    ],
-    outcome: "Full financial visibility with automated reporting and proactive cost optimization — no manual spreadsheets",
-  },
-  {
-    id: "s12",
-    slug: "ai-tool-tracker",
-    pillar: "OPERATIONS",
-    name: "AI Tool Tracker (Trackr)",
-    desc: "Evaluate, track, and optimize every AI tool in your stack with automated research and scoring",
-    setupTime: "1–2 hours",
-    pricing: "contact",
-    tools: [
-      { name: "Trackr", domain: "trytrackr.com" },
-      { name: "Notion", domain: "notion.so" },
-      { name: "Slack", domain: "slack.com" },
-      { name: "Linear", domain: "linear.app" },
-    ],
-    deliverables: [
-      "Full AI stack audit — every tool scored across 7 dimensions",
-      "Spend tracking dashboard with ROI per tool",
-      "Automated research on any new tool in 30 minutes",
-      "Renewal calendar with Slack alerts before auto-renews",
-    ],
-    outcome: "One source of truth for your entire AI stack — with ROI tracking and automated renewal management",
-  },
-  {
     id: "s13",
     slug: "revops-pipeline",
     pillar: "SALES",
@@ -319,188 +95,6 @@ const SERVICES: AIMSService[] = [
     ],
     outcome: "Zero-leak sales pipeline revealing whether you have a sales problem or a pipeline problem — with BTC closing partners to fix it",
   },
-  {
-    id: "s14",
-    slug: "content-production",
-    pillar: "MARKETING",
-    name: "Content Production Pod",
-    desc: "AI-powered content calendar, short-form video scripts, email copy, and LinkedIn ghostwriting — published weekly",
-    setupTime: "3–5 hours",
-    pricing: "contact",
-    tools: [
-      { name: "OpenAI", domain: "openai.com" },
-      { name: "LinkedIn", domain: "linkedin.com" },
-      { name: "Notion", domain: "notion.so" },
-      { name: "Instagram", domain: "instagram.com" },
-    ],
-    deliverables: [
-      "Monthly content calendar with keyword-mapped topics",
-      "30+ assets per month (videos, posts, emails, ad copy)",
-      "LinkedIn ghostwriting and scheduling (3 posts/week)",
-      "Content performance reporting with engagement metrics",
-    ],
-    outcome: "30+ high-quality branded assets published monthly — zero time from your team",
-  },
-  {
-    id: "s15",
-    slug: "database-reactivation",
-    pillar: "OPERATIONS",
-    name: "Database Reactivation",
-    desc: "Full CRM audit, deduplication, re-enrichment, and a scored outreach plan to monetize your existing contacts",
-    setupTime: "2–3 days",
-    pricing: "custom",
-    tools: [
-      { name: "HubSpot", domain: "hubspot.com" },
-      { name: "Apollo", domain: "apollo.io" },
-      { name: "OpenAI", domain: "openai.com" },
-      { name: "Clay", domain: "clay.com" },
-    ],
-    deliverables: [
-      "Complete CRM data audit — deduplication and record merging",
-      "Bounce cleanup + re-enrichment with fresh contact data",
-      "Lead scoring model build with prioritized outreach plan",
-      "Clean CRM handoff with full documentation",
-    ],
-    outcome: "Avg. $24K recovered pipeline per client — from contacts you already own",
-  },
-  {
-    id: "s16",
-    slug: "ghl-community-os",
-    pillar: "OPERATIONS",
-    name: "GHL Community OS",
-    desc: "Done-for-you GoHighLevel community or franchise snapshot — website, CRM, pipelines, AI voice agent, and onboarding automation",
-    setupTime: "5–7 days",
-    pricing: "from",
-    priceFrom: "$297/mo",
-    tools: [
-      { name: "GoHighLevel", domain: "gohighlevel.com" },
-      { name: "Twilio", domain: "twilio.com" },
-      { name: "N8N", domain: "n8n.io" },
-      { name: "Slack", domain: "slack.com" },
-    ],
-    deliverables: [
-      "White-labeled GHL subaccount with custom branding, domain, and pipelines",
-      "AI receptionist + outbound voice agent configured for your workflows",
-      "Automated onboarding sequences for new members or locations",
-      "Full operating OS live in under a week — no developer required",
-    ],
-    outcome: "Full operating system for your community or multi-location business live in under a week",
-  },
-  {
-    id: "s17",
-    slug: "ai-reputation-engine",
-    pillar: "MARKETING",
-    name: "AI Reputation Engine",
-    desc: "Automated review generation, sentiment routing, and Google profile optimization running on autopilot",
-    setupTime: "2–3 days",
-    pricing: "from",
-    priceFrom: "$397/mo",
-    tools: [
-      { name: "GoHighLevel", domain: "gohighlevel.com" },
-      { name: "Twilio", domain: "twilio.com" },
-      { name: "Google Business", domain: "googlebusiness.com" },
-      { name: "N8N", domain: "n8n.io" },
-    ],
-    deliverables: [
-      "SMS-triggered review request sequences post-transaction",
-      "Sentiment routing: happy customers to Google, unhappy to internal inbox",
-      "Monthly competitor review monitoring with alert triggers",
-      "Google Business Profile optimization and update automation",
-    ],
-    outcome: "3–5x more Google reviews within 60 days with zero manual follow-up",
-  },
-  {
-    id: "s18",
-    slug: "vendor-ordering-portal",
-    pillar: "OPERATIONS",
-    name: "Vendor Ordering Portal",
-    desc: "Custom B2B ordering portal with product catalog, pricing logic, Stripe payments, and automated fulfillment notifications",
-    setupTime: "3–5 days",
-    pricing: "from",
-    priceFrom: "$197/mo",
-    tools: [
-      { name: "Stripe", domain: "stripe.com" },
-      { name: "Airtable", domain: "airtable.com" },
-      { name: "Resend", domain: "resend.com" },
-      { name: "Zapier", domain: "zapier.com" },
-    ],
-    deliverables: [
-      "Branded ordering portal with your product catalog and pricing logic",
-      "Airtable or Notion backend with order management dashboard",
-      "Stripe integration with minimum order logic",
-      "Automated email/SMS confirmations and fulfillment notifications",
-    ],
-    outcome: "Branded ordering portal live in under a week — replaces email and phone orders completely",
-  },
-  {
-    id: "s19",
-    slug: "ai-community-chatbot",
-    pillar: "OPERATIONS",
-    name: "AI Community Chatbot",
-    desc: "AI assistant trained on your content, FAQs, SOPs, and product catalog — embedded on your site, Skool, or Slack",
-    setupTime: "2–3 days",
-    pricing: "from",
-    priceFrom: "$297/mo",
-    tools: [
-      { name: "Anthropic", domain: "anthropic.com" },
-      { name: "Slack", domain: "slack.com" },
-      { name: "N8N", domain: "n8n.io" },
-      { name: "Zapier", domain: "zapier.com" },
-    ],
-    deliverables: [
-      "Knowledge base built from your docs, videos, webinars, and FAQs",
-      "Embedded chat widget for website, community platform, or Slack",
-      "Escalation routing to human support when confidence threshold is low",
-      "Usage analytics and unanswered question reports",
-    ],
-    outcome: "80%+ of support questions answered instantly without a human — 24/7",
-  },
-  {
-    id: "s20",
-    slug: "sales-team-enablement",
-    pillar: "SALES",
-    name: "Sales Team AI Enablement",
-    desc: "Full sales coaching infrastructure with AI call scoring, live assist, roleplay training, and performance dashboards",
-    setupTime: "3–5 days",
-    pricing: "from",
-    priceFrom: "$597/mo",
-    tools: [
-      { name: "Slack", domain: "slack.com" },
-      { name: "Notion", domain: "notion.so" },
-      { name: "OpenAI", domain: "openai.com" },
-      { name: "Linear", domain: "linear.app" },
-    ],
-    deliverables: [
-      "Call recording with AI scoring across 7 performance dimensions",
-      "Live call assist overlay surfacing objection responses in real time",
-      "Roleplay simulation modules for onboarding and ongoing training",
-      "Performance dashboard with rep leaderboards and coaching flags",
-    ],
-    outcome: "New reps hit quota 40% faster — call quality measurable from day one",
-  },
-  {
-    id: "s21",
-    slug: "sms-compliance-setup",
-    pillar: "OPERATIONS",
-    name: "SMS & Outbound Compliance",
-    desc: "A2P 10DLC registration, domain warmup, sending infrastructure, and deliverability baseline — done for you",
-    setupTime: "1–2 days",
-    pricing: "from",
-    priceFrom: "$1,497 one-time",
-    tools: [
-      { name: "Twilio", domain: "twilio.com" },
-      { name: "GoHighLevel", domain: "gohighlevel.com" },
-      { name: "Instantly", domain: "instantly.ai" },
-      { name: "Zapier", domain: "zapier.com" },
-    ],
-    deliverables: [
-      "A2P brand and campaign registration across all sending numbers",
-      "Domain acquisition and warmup schedule (3–5 domains)",
-      "Sending infrastructure audit with deliverability rate baseline report",
-      "Compliance documentation and ongoing monitoring setup",
-    ],
-    outcome: "Compliant outbound infrastructure live in 48 hours — no more blocked sends or carrier filtering",
-  },
 ]
 
 const PILLAR_STYLES: Record<Pillar, string> = {
@@ -512,43 +106,6 @@ const PILLAR_STYLES: Record<Pillar, string> = {
 
 
 function ServiceCard({ service }: { service: AIMSService }) {
-  const { addItem, items } = useCart()
-  const pricing = getPricing(service.slug)
-  const hasTiers = !!pricing?.tiers?.length
-  const [selectedTier, setSelectedTier] = useState(pricing?.tiers?.[0]?.id ?? "")
-  const inCart = items.some((i) => i.serviceId === service.id)
-
-  const handleAddToCart = () => {
-    if (!pricing) return
-    if (hasTiers && pricing.tiers) {
-      const tier = pricing.tiers.find((t) => t.id === selectedTier) ?? pricing.tiers[0]
-      addItem({
-        serviceId: service.id,
-        slug: service.slug,
-        name: service.name,
-        tierId: tier.id,
-        tierName: tier.name,
-        priceMonthly: tier.priceMonthly,
-      })
-    } else {
-      addItem({
-        serviceId: service.id,
-        slug: service.slug,
-        name: service.name,
-        priceMonthly: pricing.priceMonthly!,
-      })
-    }
-  }
-
-  const displayPrice = () => {
-    if (!pricing) return service.pricing === "from" && service.priceFrom ? `From ${service.priceFrom}` : service.pricing === "custom" ? "Custom pricing" : "Contact us"
-    if (hasTiers && pricing.tiers) {
-      const tier = pricing.tiers.find((t) => t.id === selectedTier) ?? pricing.tiers[0]
-      return `$${tier.priceMonthly / 100}/mo`
-    }
-    return `$${pricing.priceMonthly! / 100}/mo`
-  }
-
   return (
     <div className={cn(
       "bg-card border rounded-2xl overflow-hidden flex flex-col h-full hover:shadow-md transition-shadow duration-200",
@@ -603,51 +160,20 @@ function ServiceCard({ service }: { service: AIMSService }) {
         <p className="text-sm text-foreground/80 leading-snug">{service.outcome}</p>
       </div>
 
-      {/* Tier selector — always reserve the same height */}
-      <div className="px-5 pb-3 min-h-[48px] mt-auto">
-        {hasTiers && pricing?.tiers && (
-          <div className="flex gap-1.5 flex-wrap">
-            {pricing.tiers.map((tier) => (
-              <button
-                key={tier.id}
-                onClick={() => setSelectedTier(tier.id)}
-                className={cn(
-                  "px-3 py-1 rounded-lg text-xs font-semibold border transition-colors",
-                  selectedTier === tier.id
-                    ? "bg-primary text-white border-primary"
-                    : "bg-card text-muted-foreground border-border hover:border-line-hover cursor-pointer"
-                )}
-              >
-                {tier.name} — ${tier.priceMonthly / 100}/mo
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-
       {/* Pricing + CTA */}
-      <div className="px-5 pb-5">
+      <div className="px-5 pb-5 mt-auto">
         <div className="flex items-center justify-between mb-3">
-          <span className="text-sm font-bold text-foreground">{displayPrice()}</span>
+          <span className="text-sm font-bold text-foreground">Custom engagement</span>
           <Link href={`/services/${service.slug}`} className="text-xs text-muted-foreground hover:text-primary transition-colors">
             Learn more →
           </Link>
         </div>
-        <button
-          onClick={handleAddToCart}
-          className={cn(
-            "w-full flex items-center justify-center gap-2 py-3 text-sm font-semibold rounded-xl transition-colors",
-            inCart
-              ? "bg-green-900/15 text-green-400 border border-green-800 hover:bg-green-900/20"
-              : "bg-primary text-white hover:bg-primary/90"
-          )}
+        <Link
+          href={`/get-started?engagement=${service.slug}`}
+          className="w-full flex items-center justify-center gap-2 py-3 text-sm font-semibold rounded-xl transition-colors bg-primary text-white hover:bg-primary/90"
         >
-          {inCart ? (
-            <><Check className="w-4 h-4" /> Added to Cart</>
-          ) : (
-            <><ShoppingCart className="w-4 h-4" /> Add to Cart</>
-          )}
-        </button>
+          Book a Consultation
+        </Link>
       </div>
     </div>
   )
@@ -683,8 +209,8 @@ export function MarketplaceClient() {
       {/* Header */}
       <div className="bg-card border-b border-border">
         <div className="max-w-6xl mx-auto px-4 py-12">
-          <h1 className="text-4xl font-bold text-foreground">AI Services Marketplace</h1>
-          <p className="mt-3 text-lg text-muted-foreground">Browse every AIMS service. Filter by pillar. Start with what matters most.</p>
+          <h1 className="text-4xl font-bold text-foreground">Our Engagements</h1>
+          <p className="mt-3 text-lg text-muted-foreground">Forward-deployed AI engineering. Three flagship engagements. Custom-scoped to your business.</p>
 
           {/* Search + filters */}
           <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">

@@ -3,47 +3,59 @@ import Link from "next/link"
 import { ArrowRight, Check, Sparkles, Building2 } from "lucide-react"
 
 export const metadata: Metadata = {
-  title: "AI Solutions — Pre-Built Packages for Every Business | AIMS",
+  title: "Engagement Models — Forward-Deployed AI Consulting | AIMS",
   description:
-    "Choose a pre-built AI solution package or customize your own. From lead generation to revenue operations, AIMS bundles the right services for your growth stage.",
+    "Explore AIMS engagement models. From outbound pipeline to SEO dominance to revenue operations, our forward-deployed engineers build and run AI systems inside your business.",
 }
 
 const SOLUTION_PACKAGES = [
   {
-    name: "AI Growth Engine",
-    tagline: "Full-stack lead generation and conversion",
+    name: "Wild Ducks",
+    tagline: "Outbound pipeline, fully deployed",
     description:
-      "Everything you need to fill your pipeline and convert leads on autopilot.",
+      "We build and run your entire cold outbound engine — ICP targeting, multi-domain infrastructure, AI-personalized sequences, and warm lead routing. You get meetings, we handle everything else.",
     services: [
-      "Website + CRM + Chatbot",
       "Cold Outbound Engine",
       "AI Voice Agents",
-      "SEO/AEO",
+      "Lead Enrichment",
+      "Deliverability Infrastructure",
     ],
     idealFor: "B2B service businesses, agencies, consultancies",
-    startingPrice: "from $497/mo",
     isCustom: false,
   },
   {
-    name: "Revenue Operations Suite",
-    tagline: "Systemize your sales and operations",
+    name: "Money Page",
+    tagline: "Own your search presence across every channel",
     description:
-      "Turn your sales process into a repeatable, data-driven machine.",
+      "We engineer your SEO and AEO strategy so you rank in Google and get cited by ChatGPT, Perplexity, and every AI answer engine. Content clusters, technical optimization, and authority building — all done for you.",
+    services: [
+      "SEO & AEO Optimization",
+      "AI Content Engine",
+      "LinkedIn Outbound",
+      "Reputation Engine",
+    ],
+    idealFor: "Thought leaders, consultants, professional services",
+    isCustom: false,
+  },
+  {
+    name: "Steel Trap",
+    tagline: "Revenue operations that never leak",
+    description:
+      "We architect your entire revenue operations layer — CRM, lead routing, attribution, conversion tracking, and rep performance dashboards. Full pipeline visibility, zero manual work.",
     services: [
       "RevOps Pipeline",
       "Sales Team Enablement",
       "AI Tool Tracker",
-      "P&L Finance Automation",
+      "Finance Automation",
     ],
     idealFor: "Growing companies with 5-50 employees",
-    startingPrice: "from $397/mo",
     isCustom: false,
   },
   {
-    name: "Customer Reactivation Stack",
+    name: "Customer Reactivation",
     tagline: "Win back lost revenue automatically",
     description:
-      "Re-engage dormant customers and recover churned revenue with AI.",
+      "We mine your CRM for dead and cold leads, then run personalized multi-channel reactivation sequences. Avg. 18% of dormant leads convert to booked meetings within 30 days.",
     services: [
       "Lead Reactivation",
       "Database Reactivation",
@@ -51,22 +63,6 @@ const SOLUTION_PACKAGES = [
       "AI Reputation Engine",
     ],
     idealFor: "Businesses with 500+ past customers/leads",
-    startingPrice: "from $347/mo",
-    isCustom: false,
-  },
-  {
-    name: "Content & Authority Engine",
-    tagline: "Become the go-to expert in your space",
-    description:
-      "AI-powered content production and distribution across every channel.",
-    services: [
-      "AI Content Engine",
-      "LinkedIn Outbound",
-      "SEO/AEO",
-      "AI Reputation Engine",
-    ],
-    idealFor: "Thought leaders, consultants, professional services",
-    startingPrice: "from $297/mo",
     isCustom: false,
   },
   {
@@ -81,7 +77,6 @@ const SOLUTION_PACKAGES = [
       "Training & Handoff",
     ],
     idealFor: "Companies doing $1M+ revenue ready to transform with AI",
-    startingPrice: "Custom pricing",
     isCustom: true,
   },
 ]
@@ -94,14 +89,14 @@ export default function SolutionsPage() {
         <div className="max-w-4xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary text-sm font-medium rounded-full mb-6">
             <Sparkles className="w-3.5 h-3.5" />
-            Solution Packages
+            Engagement Models
           </div>
           <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-foreground mb-4">
-            AI Solutions Built For Your Business
+            AI Engagements Built For Your Business
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Stop buying one-off tools. Each package bundles the right AIMS
-            services for a specific outcome — so everything works together from
+            We don&rsquo;t sell tools — we deploy engineers inside your business
+            to build and run AI systems that drive measurable outcomes from
             day one.
           </p>
         </div>
@@ -137,11 +132,8 @@ export default function SolutionsPage() {
                       </span>
                     ))}
                   </div>
-                  <p className="text-xs text-muted-foreground mb-1">
+                  <p className="text-xs text-muted-foreground">
                     Ideal for: {pkg.idealFor}
-                  </p>
-                  <p className="text-sm font-semibold text-foreground">
-                    {pkg.startingPrice}
                   </p>
                 </div>
                 <div className="mt-6">
@@ -149,7 +141,7 @@ export default function SolutionsPage() {
                     href="/get-started"
                     className="inline-flex items-center justify-center gap-2 w-full rounded-sm bg-primary px-5 py-3 text-sm font-semibold text-white hover:bg-primary/90 transition-colors"
                   >
-                    Get Started
+                    Schedule a Consultation
                     <ArrowRight className="w-4 h-4" />
                   </Link>
                 </div>
@@ -194,9 +186,6 @@ export default function SolutionsPage() {
                   </p>
                 </div>
                 <div className="flex flex-col items-center gap-3 md:min-w-[200px]">
-                  <p className="text-lg font-bold text-foreground">
-                    {pkg.startingPrice}
-                  </p>
                   <Link
                     href="/get-started"
                     className="inline-flex items-center justify-center gap-2 w-full rounded-sm bg-primary px-6 py-3 text-sm font-semibold text-white hover:bg-primary/90 transition-colors"
@@ -235,7 +224,7 @@ export default function SolutionsPage() {
                 href="/marketplace"
                 className="inline-flex items-center justify-center gap-2 rounded-sm border border-border px-6 py-3 text-sm font-semibold text-foreground hover:bg-surface transition-colors"
               >
-                Browse All Services
+                Explore All Engagements
               </Link>
             </div>
           </div>

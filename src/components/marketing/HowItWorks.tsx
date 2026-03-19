@@ -5,21 +5,21 @@ import { motion } from "framer-motion"
 const STEPS = [
   {
     num: "01",
-    title: "Strategy & ICP Dive",
-    desc: "We audit your current pipeline, define your Ideal Customer Profile, identify gaps, and design a campaign roadmap scoped to your specific revenue target.",
-    items: ["Pipeline audit", "ICP definition", "Channel selection", "Campaign roadmap"],
+    title: "Discovery & Diagnostic",
+    desc: "We embed with your team for a deep operational audit. Our engineers map every department, identify time sinks, and build your AI opportunity map.",
+    items: ["Operational audit", "Department mapping", "Time sink analysis", "AI opportunity map"],
   },
   {
     num: "02",
-    title: "Build & Launch",
-    desc: "We configure warmed email domains, write personalized sequences, deploy AI calling agents, and connect your CRM — all live within two weeks of kickoff.",
-    items: ["Domain warmup", "Sequence writing", "AI agent setup", "CRM integration"],
+    title: "Deploy & Integrate",
+    desc: "Forward-deployed engineers build and install custom AI solutions directly in your workflows. No handoffs, no documentation gaps.",
+    items: ["Custom AI builds", "Workflow integration", "Direct embedding", "Zero handoff delivery"],
   },
   {
     num: "03",
-    title: "Optimize & Scale",
-    desc: "Weekly performance reviews, A/B testing, and continuous iteration. We cut what underperforms and scale what drives qualified pipeline — every single week.",
-    items: ["Weekly reporting", "A/B testing", "CAC reduction", "Scale winners"],
+    title: "Measure & Expand",
+    desc: "We track efficiency gains, ROI, and expansion opportunities. Your team gets smarter every quarter.",
+    items: ["Efficiency tracking", "ROI measurement", "Expansion scoping", "Quarterly reviews"],
   },
 ]
 
@@ -33,10 +33,10 @@ export function HowItWorks() {
             How It Works
           </span>
           <h2 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-            From kickoff to calendar-full in 30 days
+            From diagnostic to deployed in 90 days
           </h2>
           <p className="mt-3 text-base text-muted-foreground">
-            A proven three-phase process built to generate qualified meetings fast — not six months from now.
+            A proven three-phase process. Our forward-deployed engineers embed with your team to find, build, and ship production AI.
           </p>
         </div>
 
@@ -80,9 +80,9 @@ export function HowItWorks() {
         {/* Timeline bar */}
         <div className="mt-10 flex items-center gap-0 overflow-hidden rounded-sm border border-border bg-card">
           {[
-            { week: "Week 1–2", label: "Strategy & Setup", color: "bg-[#E8C46A]" },
-            { week: "Week 2–3", label: "Build & Launch", color: "bg-primary" },
-            { week: "Week 4+", label: "Optimize & Scale", color: "bg-[#8B6914]" },
+            { week: "Week 1–3", label: "Discovery & Diagnostic", color: "bg-[#E8C46A]" },
+            { week: "Week 3–8", label: "Deploy & Integrate", color: "bg-primary" },
+            { week: "Week 8+", label: "Measure & Expand", color: "bg-[#8B6914]" },
           ].map((phase, i) => (
             <div key={phase.label} className="flex-1 border-r border-border last:border-r-0 px-5 py-3.5">
               <div className={`mb-1.5 h-1 w-8 rounded-full ${phase.color}`} />

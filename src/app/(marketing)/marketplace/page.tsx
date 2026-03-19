@@ -2,8 +2,8 @@ import type { Metadata } from "next"
 import { MarketplaceClient } from "./MarketplaceClient"
 
 export const metadata: Metadata = {
-  title: "Marketplace — Browse All AI Services",
-  description: "Browse AIMS's full catalog of AI-powered marketing, sales, operations, and finance services.",
+  title: "Engagements | AIMS",
+  description: "Forward-deployed AI engineering engagements custom-scoped to your business. Browse our full catalog of AI-powered solutions.",
 }
 
 export default function MarketplacePage() {

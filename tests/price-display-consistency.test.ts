@@ -58,14 +58,7 @@ describe("No raw cent values displayed", () => {
     expect(priceLabelBlock).toContain("/ 100")
   })
 
-  it("MarketplaceClient displayPrice divides by 100", () => {
-    const content = readFileSync(
-      join(SRC, "app/(marketing)/marketplace/MarketplaceClient.tsx"),
-      "utf-8"
-    )
-    // Should contain "/ 100" in price display logic
-    expect(content).toContain("/ 100")
-  })
+  // MarketplaceClient no longer has pricing (engagements are custom-scoped)
 
   // NOTE: Subscription.monthlyAmount is stored in DOLLARS (webhook divides by 100 on write).
   // These pages should display monthlyAmount directly WITHOUT dividing by 100.

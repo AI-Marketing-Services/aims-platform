@@ -554,50 +554,6 @@ const SERVICES: ServiceCard[] = [
     tags: ["Lead Lifecycle", "Loss Patterns", "7x Rule"],
   },
   {
-    slug: "voice-agents",
-    name: "AI Calling Agents",
-    desc: "Inbound and outbound AI voice agents with multi-location routing, live transcripts, and CRM sync.",
-    outcome: "2.4x pickup-to-meeting rate",
-    icon: <Phone className="h-5 w-5" />,
-    tools: ["/integrations/openai-svgrepo-com.svg", "/integrations/hubspot-svgrepo-com.svg", "/integrations/slack.png"],
-    Demo: AICallingDemo,
-    accentColor: "#16A34A",
-    tags: ["Voice AI", "Inbound", "Outbound"],
-  },
-  {
-    slug: "content-production",
-    name: "Content Production Pod",
-    desc: "AI-powered content calendar, short-form video scripts, email copy, and LinkedIn ghostwriting — published weekly.",
-    outcome: "30+ assets per month, fully managed",
-    icon: <Play className="h-5 w-5" />,
-    tools: ["/integrations/openai-svgrepo-com.svg", "/integrations/linkedin.svg", "/integrations/notion.svg"],
-    Demo: ContentDemo,
-    accentColor: "#EA580C",
-    tags: ["AI Copy", "Video Scripts", "LinkedIn"],
-  },
-  {
-    slug: "lead-reactivation",
-    name: "Lead Reactivation",
-    desc: "Turn dead CRM contacts into booked meetings using AI personalization and multi-channel reactivation sequences.",
-    outcome: "18% of dead leads convert in 30 days",
-    icon: <RefreshCw className="h-5 w-5" />,
-    tools: ["/integrations/instantly.webp", "/integrations/openai-svgrepo-com.svg", "/integrations/hubspot-svgrepo-com.svg"],
-    Demo: ReactivationDemo,
-    accentColor: "#C4972A",
-    tags: ["Reactivation", "AI Copy", "Multi-Channel"],
-  },
-  {
-    slug: "database-reactivation",
-    name: "Database Reactivation",
-    desc: "Full CRM audit, deduplication, re-enrichment, and a scored outreach plan to monetize your existing contacts.",
-    outcome: "Avg. $24K recovered pipeline per client",
-    icon: <Database className="h-5 w-5" />,
-    tools: ["/integrations/hubspot-svgrepo-com.svg", "/integrations/apollo.svg", "/integrations/openai-svgrepo-com.svg"],
-    Demo: DatabaseDemo,
-    accentColor: "#9333EA",
-    tags: ["CRM Audit", "Enrichment", "Dedup"],
-  },
-  {
     slug: "seo-aeo",
     name: "Money Page",
     desc: "Revenue intelligence that shows which channels multiply your investment and which quietly destroy it.",
@@ -690,12 +646,16 @@ function ServiceCard({ service, index }: { service: ServiceCard; index: number }
             className="flex items-center gap-1 text-xs font-semibold text-muted-foreground hover:text-primary transition-colors"
             onClick={(e) => e.stopPropagation()}
           >
-            Learn more
+            Explore Engagement
             <ChevronRight className="h-3.5 w-3.5" />
           </Link>
-          <span className="text-[10px] text-muted-foreground">
-            {hovered ? "Live preview" : "Hover to demo"}
-          </span>
+          <Link
+            href={`/get-started?engagement=${service.slug}`}
+            className="text-[10px] font-semibold text-primary hover:text-primary/80 transition-colors"
+            onClick={(e) => e.stopPropagation()}
+          >
+            Book a Call
+          </Link>
         </div>
       </div>
     </motion.div>
@@ -716,13 +676,13 @@ export function ServicesGrid() {
           className="mb-14"
         >
           <span className="inline-block rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary mb-4">
-            Core Services
+            Core Engagements
           </span>
           <h2 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-            Every way we fill your pipeline
+            Three flagship engagements
           </h2>
           <p className="mt-3 max-w-xl text-base text-muted-foreground">
-            Outbound. Inbound. Reactivation. Content. Paid. All AI-powered, all fully managed. Hover any card to see it in action.
+            Forward-deployed engineers embedded in your operations. Each engagement is custom-scoped. Hover any card to see it in action.
           </p>
         </motion.div>
 
@@ -742,10 +702,10 @@ export function ServicesGrid() {
           className="mt-10 text-center"
         >
           <Link
-            href="/marketplace"
+            href="/get-started"
             className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-6 py-3 text-sm font-semibold text-foreground shadow-sm hover:border-border hover:bg-surface transition"
           >
-            View all 21 services
+            Book a Consultation
             <ArrowUpRight className="h-4 w-4" />
           </Link>
         </motion.div>
