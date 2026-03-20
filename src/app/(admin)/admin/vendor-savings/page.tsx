@@ -10,8 +10,8 @@ import {
   Lightbulb,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { VendorComparisonChart } from "@/components/admin/LeadMagnetCharts"
 import { VendorAddDialog } from "@/components/admin/VendorAddDialog"
+import { VendorComparisonChart } from "@/components/admin/LeadMagnetCharts"
 
 export const metadata = { title: "Vendor Savings" }
 

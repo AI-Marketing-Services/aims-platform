@@ -9,17 +9,20 @@ const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
+  display: "swap",
 })
 
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
   subsets: ["latin"],
+  display: "swap",
 })
 
 const dmMono = DM_Mono({
   variable: "--font-dm-mono",
   subsets: ["latin"],
   weight: ["400", "500"],
+  display: "swap",
 })
 
 
@@ -86,6 +89,11 @@ export default function RootLayout({
       }}
     >
       <html lang="en" className={`${cormorant.variable} ${dmSans.variable} ${dmMono.variable}`}>
+        <head>
+          <link rel="preconnect" href="https://clerk.aimseos.com" />
+          <link rel="dns-prefetch" href="https://player.vimeo.com" />
+          <link rel="dns-prefetch" href="https://api.anthropic.com" />
+        </head>
         <body className="min-h-screen bg-background font-sans antialiased grain-overlay">
           {children}
           <Toaster

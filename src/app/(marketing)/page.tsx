@@ -1,13 +1,33 @@
 import type { Metadata } from "next"
+import dynamic from "next/dynamic"
 import { Hero } from "@/components/marketing/Hero"
 import { LogoTicker } from "@/components/marketing/LogoTicker"
-import { ServicesGrid } from "@/components/marketing/ServicesGrid"
-import { HowItWorks } from "@/components/marketing/HowItWorks"
-import { Benefits } from "@/components/marketing/Benefits"
-import { WhyAIMS } from "@/components/marketing/WhyAIMS"
-import { Integrations } from "@/components/marketing/Integrations"
-import { FAQ } from "@/components/marketing/FAQ"
 import { FinalCTA } from "@/components/marketing/FinalCTA"
+
+const ServicesGrid = dynamic(
+  () => import("@/components/marketing/ServicesGrid").then(m => ({ default: m.ServicesGrid })),
+  { loading: () => <div className="py-24" /> }
+)
+const HowItWorks = dynamic(
+  () => import("@/components/marketing/HowItWorks").then(m => ({ default: m.HowItWorks })),
+  { loading: () => <div className="py-24" /> }
+)
+const Benefits = dynamic(
+  () => import("@/components/marketing/Benefits").then(m => ({ default: m.Benefits })),
+  { loading: () => <div className="py-24" /> }
+)
+const WhyAIMS = dynamic(
+  () => import("@/components/marketing/WhyAIMS").then(m => ({ default: m.WhyAIMS })),
+  { loading: () => <div className="py-24" /> }
+)
+const Integrations = dynamic(
+  () => import("@/components/marketing/Integrations").then(m => ({ default: m.Integrations })),
+  { loading: () => <div className="py-24" /> }
+)
+const FAQ = dynamic(
+  () => import("@/components/marketing/FAQ").then(m => ({ default: m.FAQ })),
+  { loading: () => <div className="py-24" /> }
+)
 
 export const metadata: Metadata = {
   title: "AIMS - Forward-Deployed AI Consulting",

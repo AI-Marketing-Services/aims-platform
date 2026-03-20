@@ -1,4 +1,9 @@
 import type { NextConfig } from "next"
+import bundleAnalyzer from "@next/bundle-analyzer"
+
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === "true",
+})
 
 const securityHeaders = [
   // Prevent clickjacking
@@ -41,7 +46,7 @@ const securityHeaders = [
       // Connect: API calls to AI services, Stripe, Clerk
       "connect-src 'self' https://*.clerk.com https://clerk.aimseos.com https://api.stripe.com https://generativelanguage.googleapis.com https://api.anthropic.com https://api.tavily.com https://upstash.io https://*.upstash.io wss://ws.clerk.com https://client.crisp.chat https://storage.crisp.chat wss://client.relay.crisp.chat wss://stream.relay.crisp.chat",
       // Frames: Stripe embedded UI only
-      "frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://game.crisp.chat",
+      "frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://game.crisp.chat https://player.vimeo.com",
       // Workers
       "worker-src 'self' blob:",
     ].join("; "),
@@ -56,6 +61,10 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "images.clerk.dev" },
       { protocol: "https", hostname: "lh3.googleusercontent.com" },
     ],
+    formats: ["image/avif", "image/webp"],
+  },
+  experimental: {
+    optimizeCss: true,
   },
   async headers() {
     return [
@@ -64,8 +73,22 @@ const nextConfig: NextConfig = {
         source: "/(.*)",
         headers: securityHeaders,
       },
+      {
+        // Cache static assets aggressively
+        source: "/integrations/:path*",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
+        ],
+      },
+      {
+        // Cache logo and favicons
+        source: "/:path(logo\\.png|favicon\\.ico|apple-icon\\.png|og-image\\.png)",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=2592000" },
+        ],
+      },
     ]
   },
 }
 
-export default nextConfig
+export default withBundleAnalyzer(nextConfig)

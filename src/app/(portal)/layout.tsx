@@ -4,8 +4,8 @@ import Link from "next/link"
 import Image from "next/image"
 import { UserButton } from "@clerk/nextjs"
 import { PortalSidebar } from "@/components/portal/Sidebar"
-import { PortalChatWidget } from "@/components/portal/PortalChatWidget"
 import { MobilePortalNav } from "@/components/portal/MobilePortalNav"
+import { PortalChatWidget } from "@/components/portal/PortalChatWidget"
 import { db } from "@/lib/db"
 
 export default async function PortalLayout({

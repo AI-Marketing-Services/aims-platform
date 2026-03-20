@@ -34,7 +34,7 @@ import { TextStreamChatTransport, type UIMessage } from "ai"
 /*  CONSTANTS                                                          */
 /* ------------------------------------------------------------------ */
 
-const VIDEO_PART1 = "https://screen.studio/share/TdKBz4u1"
+const VIDEO_PART1 = "https://vimeo.com/1175573132?fl=ip&fe=ec"
 const VIDEO_PART2 = "https://vimeo.com/1174987065?fl=ip&fe=ec"
 const ONBOARDING_FORM = "https://app.aimanagingservices.com/v2/preview/JAPEyRSFNoFYeSIBuSPs"
 const DNS_GODADDY = "https://youtu.be/CxCIPrme700?si=5oQfOTFLTdr7BYtG"
@@ -475,7 +475,7 @@ export default function CRMOnboardingPage() {
                 label: "Part 1",
                 title: "Introduction & Overview",
                 desc: "Account activation, dashboard navigation, custom values, calendar setup, website templates, automations, AI agents, and chat widget installation.",
-                embedUrl: "https://screen.studio/embed/TdKBz4u1",
+                embedUrl: "https://player.vimeo.com/video/1175573132?title=0&byline=0&portrait=0",
                 fallbackUrl: VIDEO_PART1,
               },
               {
