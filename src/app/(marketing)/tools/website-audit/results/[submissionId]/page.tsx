@@ -44,8 +44,8 @@ function ScoreRing({ score, label, color }: { score: number; label: string; colo
 
 const SEVERITY_CONFIG = {
   critical: { color: "text-primary bg-primary/10 border-primary/30", icon: XCircle, label: "Critical" },
-  high: { color: "text-orange-400 bg-orange-50 border-orange-800", icon: AlertTriangle, label: "High" },
-  medium: { color: "text-yellow-400 bg-yellow-50 border-yellow-800", icon: AlertTriangle, label: "Medium" },
+  high: { color: "text-orange-400 bg-orange-900/15 border-orange-800", icon: AlertTriangle, label: "High" },
+  medium: { color: "text-yellow-400 bg-yellow-900/15 border-yellow-800", icon: AlertTriangle, label: "Medium" },
 }
 
 export async function generateMetadata({ params }: Props) {
@@ -174,11 +174,11 @@ export default async function WebsiteAuditResultsPage({ params }: Props) {
 
         {/* Top opportunity */}
         {analysis?.topOpportunity && (
-          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6 mb-6">
+          <div className="bg-amber-900/15 border border-amber-800 rounded-2xl p-6 mb-6">
             <div className="flex items-start gap-3">
-              <TrendingUp className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+              <TrendingUp className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
               <div>
-                <h3 className="font-semibold text-amber-900 mb-1">Top Opportunity</h3>
+                <h3 className="font-semibold text-amber-300 mb-1">Top Opportunity</h3>
                 <p className="text-amber-400 text-sm">{analysis.topOpportunity}</p>
               </div>
             </div>

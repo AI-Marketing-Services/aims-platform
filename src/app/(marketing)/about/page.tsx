@@ -76,11 +76,11 @@ export default function AboutPage() {
                 { value: "500+", label: "Businesses served" },
                 { value: "3.2x", label: "Average pipeline increase" },
                 { value: "14 days", label: "Average time to first lead" },
-                { value: "15", label: "Productized AI services" },
+                { value: "3", label: "Flagship engagements" },
               ].map((stat) => (
                 <div key={stat.label}>
                   <div className="text-4xl font-black">{stat.value}</div>
-                  <div className="text-muted-foreground text-sm mt-0.5">{stat.label}</div>
+                  <div className="text-white/70 text-sm mt-0.5">{stat.label}</div>
                 </div>
               ))}
             </div>
@@ -113,12 +113,12 @@ export default function AboutPage() {
       <section className="py-20 bg-primary">
         <div className="container mx-auto max-w-2xl px-4 text-center">
           <h2 className="text-3xl font-bold text-white">Ready to put your pipeline on autopilot?</h2>
-          <p className="mt-3 text-muted-foreground">Book a strategy call. We&apos;ll audit your current stack and show you exactly what AIMS would build.</p>
+          <p className="mt-3 text-white/70">Book a strategy call. We&apos;ll audit your current stack and show you exactly what AIMS would build.</p>
           <Link
             href="/get-started"
             className="mt-8 inline-flex items-center gap-2 rounded-lg bg-card px-8 py-3.5 font-semibold text-primary hover:bg-primary/10 transition"
           >
-            Book a Strategy Call <ArrowRight className="h-4 w-4" />
+            Book a Consultation <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
       </section>

@@ -338,7 +338,7 @@ export default function AIReadinessQuizPage() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="John Smith"
-                    className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-foreground"
+                    className="w-full px-4 py-3 bg-card border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-foreground placeholder:text-muted-foreground/50"
                   />
                 </div>
                 <div>
@@ -349,7 +349,7 @@ export default function AIReadinessQuizPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@company.com"
-                    className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-foreground"
+                    className="w-full px-4 py-3 bg-card border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-foreground placeholder:text-muted-foreground/50"
                   />
                 </div>
                 <div>
@@ -359,7 +359,7 @@ export default function AIReadinessQuizPage() {
                     value={company}
                     onChange={(e) => setCompany(e.target.value)}
                     placeholder="Acme Inc."
-                    className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-foreground"
+                    className="w-full px-4 py-3 bg-card border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-foreground placeholder:text-muted-foreground/50"
                   />
                 </div>
                 <button

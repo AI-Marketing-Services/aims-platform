@@ -24,7 +24,7 @@ const CATEGORIES = [
     label: "Early Adopter",
     range: [40, 59] as [number, number],
     colorClass: "text-orange-500",
-    bgClass: "bg-orange-50",
+    bgClass: "bg-orange-900/15",
     borderClass: "border-orange-800",
     headline: "You have the foundation — now it's time to scale",
     description:
@@ -35,7 +35,7 @@ const CATEGORIES = [
     label: "AI Ready",
     range: [60, 79] as [number, number],
     colorClass: "text-yellow-500",
-    bgClass: "bg-yellow-50",
+    bgClass: "bg-yellow-900/15",
     borderClass: "border-yellow-800",
     headline: "You're ahead of most — let's optimize for growth",
     description:

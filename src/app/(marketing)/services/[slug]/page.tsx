@@ -635,7 +635,7 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
               href={`/get-started?service=${slug}`}
               className="inline-flex items-center gap-2 rounded-sm bg-primary px-8 py-3.5 font-semibold text-white hover:bg-primary/90 transition"
             >
-              Schedule a Consultation <ArrowRight className="h-4 w-4" />
+              Book a Consultation <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
         </div>

@@ -74,15 +74,15 @@ export default async function ROIResultsPage({ params }: Props) {
               icon: TrendingUp,
               label: "Annual Impact",
               value: `$${annualSavings.toLocaleString()}`,
-              color: "text-blue-600",
-              bg: "bg-blue-50",
+              color: "text-blue-400",
+              bg: "bg-blue-900/15",
             },
             {
               icon: Clock,
               label: "Hours Reclaimed/mo",
               value: hoursReclaimed > 0 ? `${hoursReclaimed}h` : "—",
-              color: "text-purple-600",
-              bg: "bg-purple-50",
+              color: "text-purple-400",
+              bg: "bg-purple-900/15",
             },
           ].map((metric) => (
             <div key={metric.label} className="bg-card border border-border rounded-2xl p-6 text-center shadow-sm">

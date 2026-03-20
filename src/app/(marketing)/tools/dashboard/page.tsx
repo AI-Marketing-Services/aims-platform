@@ -21,16 +21,16 @@ const TYPE_META: Record<string, {
   AI_READINESS_QUIZ: {
     label: "AI Readiness Quiz",
     icon: <Brain className="w-5 h-5" />,
-    color: "text-purple-600",
-    bg: "bg-purple-50",
+    color: "text-purple-400",
+    bg: "bg-purple-900/15",
     resultsPath: (id) => `/tools/ai-readiness-quiz/results/${id}`,
     retakePath: "/tools/ai-readiness-quiz",
   },
   ROI_CALCULATOR: {
     label: "ROI Calculator",
     icon: <BarChart2 className="w-5 h-5" />,
-    color: "text-blue-600",
-    bg: "bg-blue-50",
+    color: "text-blue-400",
+    bg: "bg-blue-900/15",
     resultsPath: () => "/tools/roi-calculator",
     retakePath: "/tools/roi-calculator",
   },
@@ -51,8 +51,8 @@ const TOOLS_AVAILABLE = [
     description: "7 questions. Get a personalized AI adoption score and roadmap.",
     href: "/tools/ai-readiness-quiz",
     icon: <Brain className="w-5 h-5" />,
-    bg: "bg-purple-50",
-    color: "text-purple-600",
+    bg: "bg-purple-900/15",
+    color: "text-purple-400",
   },
   {
     key: "ROI_CALCULATOR",
@@ -60,8 +60,8 @@ const TOOLS_AVAILABLE = [
     description: "See the monthly savings from automating your sales ops.",
     href: "/tools/roi-calculator",
     icon: <BarChart2 className="w-5 h-5" />,
-    bg: "bg-blue-50",
-    color: "text-blue-600",
+    bg: "bg-blue-900/15",
+    color: "text-blue-400",
   },
   {
     key: "WEBSITE_AUDIT",
@@ -83,8 +83,8 @@ function ScoreBadge({ score, type }: { score: number | null; type: string }) {
 
   let color = "text-primary bg-primary/10"
   if (score >= 80) color = "text-green-400 bg-green-900/15"
-  else if (score >= 60) color = "text-yellow-400 bg-yellow-50"
-  else if (score >= 40) color = "text-orange-400 bg-orange-50"
+  else if (score >= 60) color = "text-yellow-400 bg-yellow-900/15"
+  else if (score >= 40) color = "text-orange-400 bg-orange-900/15"
 
   return (
     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${color}`}>
@@ -219,7 +219,7 @@ export default async function ToolsDashboardPage() {
             </p>
             <Link
               href="/marketplace"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white text-sm font-semibold rounded-lg hover:bg-primary/90 transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-card text-primary text-sm font-semibold rounded-lg hover:bg-primary/10 transition-colors"
             >
               Browse Services
               <ArrowRight className="w-4 h-4" />

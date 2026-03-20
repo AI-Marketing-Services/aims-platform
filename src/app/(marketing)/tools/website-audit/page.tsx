@@ -46,7 +46,7 @@ function ScoreRing({ score, label, size = 80 }: { score: number; label: string; 
   return (
     <div className="flex flex-col items-center gap-1">
       <svg width={size} height={size}>
-        <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="#e5e7eb" strokeWidth={6} />
+        <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="#2a2e38" strokeWidth={6} />
         <circle
           cx={size / 2} cy={size / 2} r={radius}
           fill="none" stroke={color} strokeWidth={6}
@@ -197,7 +197,7 @@ export default function WebsiteAuditPage() {
                       value={url}
                       onChange={(e) => setUrl(e.target.value)}
                       placeholder="yourwebsite.com"
-                      className="w-full pl-10 pr-4 py-3.5 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-foreground font-medium"
+                      className="w-full pl-10 pr-4 py-3.5 bg-card border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-foreground font-medium placeholder:text-muted-foreground/50"
                     />
                   </div>
                   <button
@@ -331,7 +331,7 @@ export default function WebsiteAuditPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@company.com"
-                    className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-foreground"
+                    className="w-full px-4 py-3 bg-card border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-foreground placeholder:text-muted-foreground/50"
                   />
                 </div>
                 <button
@@ -383,11 +383,11 @@ export default function WebsiteAuditPage() {
 
               {/* Top opportunity */}
               {analysis?.topOpportunity && (
-                <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5">
+                <div className="bg-amber-900/15 border border-amber-800 rounded-2xl p-5">
                   <div className="flex items-start gap-3">
-                    <Zap className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                    <Zap className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
                     <div>
-                      <div className="text-sm font-semibold text-amber-900 mb-1">Top Opportunity</div>
+                      <div className="text-sm font-semibold text-amber-300 mb-1">Top Opportunity</div>
                       <div className="text-sm text-amber-400">{analysis.topOpportunity}</div>
                     </div>
                   </div>
@@ -421,10 +421,10 @@ export default function WebsiteAuditPage() {
               {/* Strengths */}
               {analysis?.strengths && analysis.strengths.length > 0 && (
                 <div className="bg-green-900/15 border border-green-800 rounded-2xl p-6">
-                  <h3 className="font-semibold text-green-900 mb-3">What&apos;s Working</h3>
+                  <h3 className="font-semibold text-green-400 mb-3">What&apos;s Working</h3>
                   <ul className="space-y-2">
                     {analysis.strengths.map((s, i) => (
-                      <li key={i} className="flex items-start gap-2 text-sm text-green-800">
+                      <li key={i} className="flex items-start gap-2 text-sm text-green-300">
                         <CheckCircle2 className="w-4 h-4 text-green-400 shrink-0 mt-0.5" />
                         {s}
                       </li>

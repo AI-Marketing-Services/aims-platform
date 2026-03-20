@@ -16,7 +16,7 @@ function CalBooking() {
       </div>
       <div className="rounded-sm border border-border overflow-hidden">
         <iframe
-          src="https://cal.com/adamwolfe/aims?embed=true&layout=month_view&theme=light&brandColor=%23DC2626&hideEventTypeDetails=true"
+          src="https://cal.com/adamwolfe/aims?embed=true&layout=month_view&theme=dark&brandColor=%23C4972A&hideEventTypeDetails=true"
           width="100%"
           height="640"
           style={{ border: "none", display: "block" }}

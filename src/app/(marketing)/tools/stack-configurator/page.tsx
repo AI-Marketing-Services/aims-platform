@@ -52,14 +52,14 @@ type StackRecommendation = {
 
 const PILLAR_COLORS = {
   marketing: "text-green-400 bg-green-900/15 border-green-800",
-  sales: "text-blue-400 bg-blue-50 border-blue-800",
-  operations: "text-orange-400 bg-orange-50 border-orange-800",
-  finance: "text-purple-400 bg-purple-50 border-purple-800",
+  sales: "text-blue-400 bg-blue-900/15 border-blue-800",
+  operations: "text-orange-400 bg-orange-900/15 border-orange-800",
+  finance: "text-purple-400 bg-purple-900/15 border-purple-800",
 }
 
 const URGENCY_COLORS = {
   critical: "text-primary bg-primary/10",
-  recommended: "text-yellow-400 bg-yellow-50",
+  recommended: "text-yellow-400 bg-yellow-900/15",
   optional: "text-muted-foreground bg-deep",
 }
 
@@ -406,7 +406,7 @@ export default function StackConfiguratorPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Full name"
-                className="w-full px-4 py-3 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary text-foreground"
+                className="w-full px-4 py-3 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary text-foreground placeholder:text-muted-foreground/50"
               />
               <input
                 type="email"
@@ -414,14 +414,14 @@ export default function StackConfiguratorPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Work email"
-                className="w-full px-4 py-3 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary text-foreground"
+                className="w-full px-4 py-3 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary text-foreground placeholder:text-muted-foreground/50"
               />
               <input
                 type="text"
                 value={company}
                 onChange={(e) => setCompany(e.target.value)}
                 placeholder="Company name (optional)"
-                className="w-full px-4 py-3 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary text-foreground"
+                className="w-full px-4 py-3 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary text-foreground placeholder:text-muted-foreground/50"
               />
               <button
                 type="submit"

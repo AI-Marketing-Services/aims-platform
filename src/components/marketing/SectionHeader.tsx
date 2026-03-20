@@ -35,7 +35,7 @@ export function SectionHeader({
               badgeColors[badgeColor] ?? badgeColors.red
             )}
           >
-            // {badge}
+            {badge}
           </span>
         </div>
       )}

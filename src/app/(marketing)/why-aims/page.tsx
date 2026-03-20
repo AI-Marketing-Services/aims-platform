@@ -157,7 +157,7 @@ export default function WhyAIMSPage() {
               href="/get-started"
               className="px-8 py-4 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 transition-colors"
             >
-              Book a Strategy Call
+              Book a Consultation
             </Link>
             <Link
               href="/tools/ai-readiness-quiz"

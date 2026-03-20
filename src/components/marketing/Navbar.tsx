@@ -216,7 +216,7 @@ export function Navbar() {
                 href="/get-started"
                 className="text-xs font-bold rounded-sm bg-primary text-primary-foreground px-5 py-2 uppercase tracking-wider hover:bg-primary/80 transition-colors"
               >
-                Book a Call
+                Book a Consultation
               </Link>
             </SignedOut>
           </div>
@@ -325,7 +325,7 @@ export function Navbar() {
                   href="/get-started"
                   className="block w-full text-center rounded-sm bg-primary text-white text-xs font-bold px-4 py-2.5 uppercase tracking-wider"
                 >
-                  Book a Call
+                  Book a Consultation
                 </Link>
               </div>
             </div>

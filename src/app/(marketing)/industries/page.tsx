@@ -167,7 +167,7 @@ export default function IndustriesPage() {
                 href="/get-started"
                 className="inline-flex items-center justify-center gap-2 rounded-sm bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
               >
-                Book a Strategy Call
+                Book a Consultation
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <Link

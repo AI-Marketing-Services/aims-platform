@@ -151,13 +151,13 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
               href="/get-started"
               className="inline-flex items-center justify-center gap-2 rounded-sm bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
             >
-              Book a Strategy Call <ArrowRight className="h-4 w-4" />
+              Book a Consultation <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
               href="/marketplace"
               className="inline-flex items-center justify-center gap-2 rounded-lg border border-border px-6 py-3 text-sm font-semibold text-foreground hover:bg-surface transition-colors"
             >
-              Browse All Services
+              Explore Engagements
             </Link>
           </div>
         </div>

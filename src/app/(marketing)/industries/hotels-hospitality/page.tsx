@@ -76,7 +76,7 @@ export default function HotelsHospitalityPage() {
               href="/get-started"
               className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-primary-foreground font-semibold rounded-xl hover:bg-primary/90 transition-colors"
             >
-              Book a Strategy Call
+              Book a Consultation
               <ArrowRight className="w-5 h-5" />
             </Link>
             <Link

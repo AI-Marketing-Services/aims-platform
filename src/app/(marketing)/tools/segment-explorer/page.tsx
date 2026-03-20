@@ -28,8 +28,8 @@ const VISIBLE_FREE = 5
 
 function intentColor(score: number) {
   if (score >= 85) return "text-green-400 bg-green-900/15"
-  if (score >= 70) return "text-yellow-400 bg-yellow-50"
-  return "text-orange-400 bg-orange-50"
+  if (score >= 70) return "text-yellow-400 bg-yellow-900/15"
+  return "text-orange-400 bg-orange-900/15"
 }
 
 export default function SegmentExplorerPage() {
@@ -117,7 +117,7 @@ export default function SegmentExplorerPage() {
                 value={query}
                 onChange={(e) => handleSearch(e.target.value)}
                 placeholder="Search segments, industries, roles..."
-                className="w-full pl-10 pr-4 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-foreground"
+                className="w-full pl-10 pr-4 py-2.5 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-foreground placeholder:text-muted-foreground/50"
               />
             </div>
             <button
@@ -165,7 +165,7 @@ export default function SegmentExplorerPage() {
                   <select
                     value={seniority}
                     onChange={(e) => setSeniority(e.target.value)}
-                    className="px-3 py-1.5 border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="px-3 py-1.5 bg-card border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                   >
                     {ALL_SENIORITIES.map((s) => (
                       <option key={s} value={s}>{s === "All" ? "All Seniority" : s}</option>
@@ -176,7 +176,7 @@ export default function SegmentExplorerPage() {
                   <select
                     value={intentMin}
                     onChange={(e) => setIntentMin(Number(e.target.value))}
-                    className="px-3 py-1.5 border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="px-3 py-1.5 bg-card border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                   >
                     {INTENT_FILTERS.map((f) => (
                       <option key={f.label} value={f.min}>{f.label === "All" ? "All Intent" : f.label}</option>
@@ -224,10 +224,10 @@ export default function SegmentExplorerPage() {
                     <span className="text-xs px-2 py-0.5 bg-deep text-muted-foreground rounded-full">
                       {seg.category}
                     </span>
-                    <span className="text-xs px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full">
+                    <span className="text-xs px-2 py-0.5 bg-blue-900/15 text-blue-400 rounded-full">
                       {seg.classification}
                     </span>
-                    <span className="text-xs px-2 py-0.5 bg-purple-50 text-purple-600 rounded-full">
+                    <span className="text-xs px-2 py-0.5 bg-purple-900/15 text-purple-400 rounded-full">
                       {seg.seniority}
                     </span>
                   </div>
@@ -306,7 +306,7 @@ export default function SegmentExplorerPage() {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Your name"
-                      className="w-full px-4 py-3 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary text-foreground"
+                      className="w-full px-4 py-3 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary text-foreground placeholder:text-muted-foreground/50"
                     />
                     <input
                       type="email"
@@ -314,7 +314,7 @@ export default function SegmentExplorerPage() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="Work email"
-                      className="w-full px-4 py-3 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary text-foreground"
+                      className="w-full px-4 py-3 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary text-foreground placeholder:text-muted-foreground/50"
                     />
                     <button
                       type="submit"

@@ -202,7 +202,7 @@ export function Pricing() {
             href="/get-started?ref=pricing-enterprise"
             className="shrink-0 rounded-sm bg-primary text-white px-6 py-2.5 text-sm font-semibold hover:bg-primary/80 transition"
           >
-            Book a Strategy Call →
+            Book a Consultation →
           </Link>
         </div>
 

@@ -218,13 +218,13 @@ export default function ROICalculatorPage() {
                     color: "text-green-400",
                   },
                   {
-                    icon: <Users className="w-4 h-4 text-blue-600" />,
+                    icon: <Users className="w-4 h-4 text-blue-400" />,
                     label: "Projected new leads/month",
                     value: `${results.aimsLeads} leads`,
-                    color: "text-blue-600",
+                    color: "text-blue-400",
                   },
                   {
-                    icon: <DollarSign className="w-4 h-4 text-purple-600" />,
+                    icon: <DollarSign className="w-4 h-4 text-purple-400" />,
                     label: "Estimated ROI",
                     value: `${results.roi > 0 ? "+" : ""}${Math.round(results.roi)}%`,
                     color: results.roi > 0 ? "text-green-400" : "text-primary",
@@ -242,7 +242,7 @@ export default function ROICalculatorPage() {
             </div>
 
             {/* Assumptions note */}
-            <div className="flex gap-2 p-4 bg-blue-50 rounded-xl text-sm text-blue-400">
+            <div className="flex gap-2 p-4 bg-blue-900/15 rounded-xl text-sm text-blue-400">
               <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
               <span>Projections based on 2.8x lead volume increase and 40% close rate improvement — typical AIMS client results after 60 days.</span>
             </div>
@@ -266,7 +266,7 @@ export default function ROICalculatorPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="your@email.com"
-                    className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-foreground"
+                    className="w-full px-4 py-3 bg-card border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-foreground placeholder:text-muted-foreground/50"
                   />
                   <button
                     type="submit"
