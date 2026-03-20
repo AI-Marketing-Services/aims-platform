@@ -16,6 +16,9 @@ import {
   PenTool,
   Workflow,
   Cpu,
+  Shield,
+  Star,
+  Mic,
   Mail,
   MessageSquare,
   AlertTriangle,
@@ -33,6 +36,7 @@ import { TextStreamChatTransport, type UIMessage } from "ai"
 
 const VIDEO_PART1 = "https://screen.studio/share/TdKBz4u1"
 const VIDEO_PART2 = "https://vimeo.com/1174987065?fl=ip&fe=ec"
+const ONBOARDING_FORM = "https://app.aimanagingservices.com/v2/preview/JAPEyRSFNoFYeSIBuSPs"
 const DNS_GODADDY = "https://youtu.be/CxCIPrme700?si=5oQfOTFLTdr7BYtG"
 const DNS_NAMECHEAP = "https://youtu.be/p0KqYLTdKbs?si=rSsukgeb7JqwO5QN"
 const DNS_CLOUDFLARE = "https://youtu.be/au4rL36eq3c?si=NXncfeioNMM2EKDR"
@@ -125,72 +129,16 @@ const CHECKLIST_PHASES = [
   },
 ]
 
-const FEATURE_GROUPS = [
-  {
-    title: "CRM & Custom Website",
-    subtitle: "Your Customers, Website, and Locations in One",
-    icon: Globe,
-    features: [
-      "Unlimited contacts and locations",
-      "Smart tagging and segmentation",
-      "Choose from 7 professionally designed templates for a full website",
-      "Full conversation history across every channel",
-      "Upload your logo, colors, and brand — goes live same day",
-      "Mobile-optimized and conversion-ready out of the box",
-    ],
-  },
-  {
-    title: "Sales Pipeline",
-    subtitle: "Close More Locations, Faster",
-    icon: PenTool,
-    features: [
-      "Drag-and-drop pipeline management",
-      "Automated follow-up sequences for every stage",
-      "Deal value tracking and revenue forecasting",
-      "Activity logging for every touchpoint",
-      "Move leads from New to Won without spreadsheets",
-      "Pipeline reports that show where deals stall",
-    ],
-  },
-  {
-    title: "Smart Automations",
-    subtitle: "Put Your Business on Autopilot",
-    icon: Workflow,
-    features: [
-      "Pre-built email and SMS sequences ready to activate",
-      "Appointment booking automation with reminders",
-      "Calendar booking embedded directly on your website",
-      "New lead notification alerts — never miss an inquiry",
-      "Form submissions auto-create contacts, opportunities, and tasks",
-      "Both workflows activate with a single click",
-    ],
-  },
-  {
-    title: "AI-Powered Tools",
-    subtitle: "24/7 Agents That Work While You Sleep",
-    icon: Bot,
-    features: [
-      "AI Chat Assistant trained on your business info",
-      "Answers questions, qualifies leads, and books appointments",
-      "Knowledge Base you control — update it anytime",
-      "Voice AI handles inbound calls and routes leads (premium)",
-      "Reputation Manager sends automated review requests",
-      "Positive reviews go public, negative feedback stays private",
-    ],
-  },
-  {
-    title: "Communication Hub",
-    subtitle: "Every Message, One Inbox",
-    icon: MessageSquare,
-    features: [
-      "Unified inbox: SMS, email, chat, social DMs, Google Business messages",
-      "Built-in email and SMS with custom domain support",
-      "Automated reminders for appointments and follow-ups",
-      "Two-way texting with full conversation history",
-      "Phone number included on premium plans",
-      "A2P 10DLC registration support for SMS compliance",
-    ],
-  },
+const BENTO_FEATURES = [
+  { icon: Globe, title: "CRM & Website", features: ["Unlimited contacts & locations", "7 website templates ready to launch", "Smart tagging & segmentation"] },
+  { icon: PenTool, title: "Sales Pipeline", features: ["Drag-and-drop deal management", "Automated follow-up sequences", "Revenue tracking & forecasting"] },
+  { icon: Workflow, title: "Automations", features: ["Pre-built email & SMS workflows", "Booking automation with reminders", "New lead alerts & auto-tagging"] },
+  { icon: Bot, title: "AI Chat Agent", features: ["Trained on your business info", "Books appointments 24/7", "Knowledge Base you control"] },
+  { icon: MessageSquare, title: "Unified Inbox", features: ["SMS, email, chat, social DMs", "Two-way texting & call logs", "Custom email domain support"] },
+  { icon: Star, title: "Reputation Manager", features: ["Automated review requests", "Positive ratings go public", "Negative feedback stays private"] },
+  { icon: Calendar, title: "Booking Calendar", features: ["Google Calendar & Outlook sync", "Zoom & Meet integration", "Embedded on your website"] },
+  { icon: Mic, title: "Voice AI", features: ["Automated phone handling", "Qualifies callers & books appts", "Premium plans only"] },
+  { icon: Shield, title: "Compliance & SMS", features: ["A2P 10DLC registration support", "Phone number included (premium)", "Carrier-compliant messaging"] },
 ]
 
 const PLANS = [
@@ -452,13 +400,24 @@ export default function CRMOnboardingPage() {
           <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
             Your all-in-one vending business platform. Everything you need to launch, manage, and grow — set up and ready to go.
           </p>
-          <a
-            href="#setup-videos"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-primary-foreground font-semibold rounded-sm hover:bg-primary/90 transition-colors"
-          >
-            <Play className="w-5 h-5" />
-            Watch the Setup Videos Below to Get Started
-          </a>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <a
+              href={ONBOARDING_FORM}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-primary-foreground font-semibold rounded-sm hover:bg-primary/90 transition-colors"
+            >
+              Get Started — Purchase Your Plan
+              <ArrowRight className="w-5 h-5" />
+            </a>
+            <a
+              href="#setup-videos"
+              className="inline-flex items-center gap-2 px-8 py-4 border border-border bg-card text-foreground font-semibold rounded-sm hover:bg-deep transition-colors"
+            >
+              <Play className="w-5 h-5" />
+              Watch the Setup Videos
+            </a>
+          </div>
 
           {/* Progress bar */}
           {checkedCount > 0 && (
@@ -691,34 +650,31 @@ export default function CRMOnboardingPage() {
       </section>
 
       {/* ============================================================ */}
-      {/*  SECTION 6: WHAT YOU'RE GETTING                              */}
+      {/*  SECTION 6: WHAT YOU'RE GETTING — BENTO GRID                 */}
       {/* ============================================================ */}
       <section className="py-16 px-4 bg-card">
         <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12">
+          <div className="text-center mb-10">
             <h2 className="text-3xl font-bold text-foreground mb-3">Everything Inside Your AIMS CRM</h2>
-            <p className="text-muted-foreground max-w-xl mx-auto">One platform replaces your website builder, CRM, email tool, scheduler, chatbot, review manager, and phone system.</p>
+            <p className="text-sm text-muted-foreground max-w-lg mx-auto">One platform replaces your website builder, CRM, email tool, scheduler, chatbot, review manager, and phone system.</p>
           </div>
-          <div className="space-y-6">
-            {FEATURE_GROUPS.map((group) => (
-              <div key={group.title} className="bg-background border border-border rounded-2xl p-6 sm:p-8">
-                <div className="flex items-start gap-4 mb-5">
-                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <group.icon className="w-5 h-5 text-primary" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {BENTO_FEATURES.map((f) => (
+              <div key={f.title} className="bg-background border border-border rounded-xl p-4 hover:border-primary/30 transition-colors">
+                <div className="flex items-center gap-2.5 mb-3">
+                  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <f.icon className="w-4 h-4 text-primary" />
                   </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-foreground">{group.title}</h3>
-                    <p className="text-sm text-muted-foreground">{group.subtitle}</p>
-                  </div>
+                  <h3 className="text-sm font-bold text-foreground">{f.title}</h3>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pl-0 sm:pl-14">
-                  {group.features.map((feature) => (
-                    <div key={feature} className="flex items-start gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-foreground">{feature}</span>
-                    </div>
+                <ul className="space-y-1.5">
+                  {f.features.map((item) => (
+                    <li key={item} className="flex items-start gap-1.5">
+                      <Check className="w-3 h-3 text-primary flex-shrink-0 mt-0.5" />
+                      <span className="text-xs text-muted-foreground leading-snug">{item}</span>
+                    </li>
                   ))}
-                </div>
+                </ul>
               </div>
             ))}
           </div>
@@ -757,9 +713,28 @@ export default function CRMOnboardingPage() {
                     </li>
                   ))}
                 </ul>
+                <a
+                  href={ONBOARDING_FORM}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`mt-5 w-full text-center rounded-sm px-4 py-3 text-sm font-semibold transition-colors inline-block ${
+                    plan.popular
+                      ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                      : "border border-border text-foreground hover:bg-deep"
+                  }`}
+                >
+                  Get Started
+                </a>
               </div>
             ))}
           </div>
+          <p className="mt-6 text-center text-sm text-muted-foreground">
+            Not sure which plan fits?{" "}
+            <a href={`mailto:${SUPPORT_EMAIL_2}`} className="text-primary font-medium hover:underline">
+              Contact us
+            </a>{" "}
+            and we&apos;ll recommend the right starting point.
+          </p>
         </div>
       </section>
 
