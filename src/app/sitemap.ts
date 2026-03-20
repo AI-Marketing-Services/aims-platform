@@ -11,8 +11,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
     { url: BASE, lastModified: now, changeFrequency: "weekly", priority: 1.0 },
     { url: `${BASE}/marketplace`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
-    { url: `${BASE}/pricing`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
-    { url: `${BASE}/why-aims`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+{ url: `${BASE}/why-aims`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE}/get-started`, lastModified: now, changeFrequency: "monthly", priority: 0.9 },
     // Industries
     { url: `${BASE}/industries/vendingpreneurs`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
@@ -38,9 +37,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE}/about`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
     { url: `${BASE}/solutions`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE}/industries`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
-    { url: `${BASE}/crm-onboarding`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
-    // Features
-    { url: `${BASE}/features/ultimate-vendingpreneur-snapshot`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${BASE}/crm-onboarding`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
     // Auth
     { url: `${BASE}/sign-in`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
     { url: `${BASE}/sign-up`, lastModified: now, changeFrequency: "yearly", priority: 0.4 },
