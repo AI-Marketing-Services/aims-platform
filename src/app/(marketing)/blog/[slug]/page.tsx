@@ -171,8 +171,8 @@ export default async function BlogPostPage({ params }: Props) {
           )}
 
           {/* CTA */}
-          <div className="mt-14 bg-primary rounded-2xl p-8 text-center text-white">
-            <h2 className="text-2xl font-bold mb-3">Ready to transform your business?</h2>
+          <div className="mt-14 bg-card border border-primary/20 rounded-2xl p-8 text-center">
+            <h2 className="text-2xl font-bold text-foreground mb-3">Ready to transform your business?</h2>
             <p className="text-muted-foreground mb-6">
               Take our free AI Readiness Quiz - 7 questions, 2 minutes, personalized recommendations for your business.
             </p>

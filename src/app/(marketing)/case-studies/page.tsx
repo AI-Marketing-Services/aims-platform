@@ -105,8 +105,8 @@ export default function CaseStudiesPage() {
         </div>
 
         {/* CTA */}
-        <div className="mt-14 bg-primary rounded-2xl p-10 text-center text-white">
-          <h2 className="text-2xl font-bold mb-3">Want results like these?</h2>
+        <div className="mt-14 bg-card border border-primary/20 rounded-2xl p-10 text-center">
+          <h2 className="text-2xl font-bold text-foreground mb-3">Want results like these?</h2>
           <p className="text-muted-foreground mb-6">
             Book a free strategy call and we&apos;ll show you exactly what AIMS would build for your business - with projected timelines and ROI.
           </p>

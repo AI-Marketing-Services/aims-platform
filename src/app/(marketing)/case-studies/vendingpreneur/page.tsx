@@ -113,8 +113,8 @@ export default function VendingpreneurCaseStudy() {
           </section>
         </div>
 
-        <div className="mt-14 bg-primary rounded-2xl p-8 text-center text-white">
-          <h2 className="text-2xl font-bold mb-3">Are you a vending operator?</h2>
+        <div className="mt-14 bg-card border border-primary/20 rounded-2xl p-8 text-center">
+          <h2 className="text-2xl font-bold text-foreground mb-3">Are you a vending operator?</h2>
           <p className="text-muted-foreground mb-6">
             We&apos;ve built this exact system for vending operators across the country. Book a call and we&apos;ll show you what it would look like for your territory.
           </p>

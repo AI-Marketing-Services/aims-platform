@@ -131,7 +131,7 @@ export default async function PartnerLandingPage({ params, searchParams }: Props
       </div>
 
       {/* Social proof */}
-      <div className="bg-primary py-16">
+      <div className="bg-card border-t border-border py-16">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <p className="text-muted-foreground text-sm uppercase tracking-wider font-semibold mb-8">What clients achieve</p>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
@@ -141,7 +141,7 @@ export default async function PartnerLandingPage({ params, searchParams }: Props
               { stat: "$284", label: "Average cost per booked meeting" },
             ].map(({ stat, label }) => (
               <div key={stat} className="text-center">
-                <p className="text-3xl font-bold text-white font-mono mb-2">{stat}</p>
+                <p className="text-3xl font-bold text-primary font-mono mb-2">{stat}</p>
                 <p className="text-sm text-muted-foreground">{label}</p>
               </div>
             ))}

@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect, useMemo } from "react"
+import { usePathname } from "next/navigation"
 import { X, Send, Loader2 } from "lucide-react"
 import { useChat } from "@ai-sdk/react"
 import { TextStreamChatTransport, type UIMessage } from "ai"
@@ -25,6 +26,7 @@ function getMessageText(parts: { type: string; text?: string }[]): string {
 }
 
 export function IntakeChatWidget() {
+  const pathname = usePathname()
   const [open, setOpen] = useState(false)
   const [input, setInput] = useState("")
   const [hasAutoOpened, setHasAutoOpened] = useState(false)
@@ -69,6 +71,9 @@ export function IntakeChatWidget() {
     sendMessage({ text: input.trim() })
     setInput("")
   }
+
+  // Hide on /crm-onboarding since it has its own dedicated chatbot
+  if (pathname === "/crm-onboarding") return null
 
   return (
     <>

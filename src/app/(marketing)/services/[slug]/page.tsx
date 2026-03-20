@@ -642,9 +642,9 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
       </section>
 
       {/* CTA */}
-      <section className="py-20 bg-primary">
+      <section className="py-20 bg-card border-t border-border">
         <div className="container mx-auto max-w-2xl px-4 text-center">
-          <h2 className="text-3xl font-bold text-white">Ready to explore this engagement?</h2>
+          <h2 className="text-3xl font-bold text-foreground">Ready to explore this engagement?</h2>
           <p className="mt-3 text-muted-foreground">Schedule a call and we&rsquo;ll scope a plan for your business.</p>
           <Link
             href="/get-started"

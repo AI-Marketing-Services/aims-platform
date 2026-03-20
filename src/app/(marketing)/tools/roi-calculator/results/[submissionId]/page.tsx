@@ -201,8 +201,8 @@ export default async function ROIResultsPage({ params }: Props) {
         </div>
 
         {/* CTA */}
-        <div className="bg-primary rounded-2xl p-8 text-center text-white mb-6">
-          <h3 className="text-2xl font-bold mb-3">Ready to capture this ROI?</h3>
+        <div className="bg-card border border-primary/20 rounded-2xl p-8 text-center mb-6">
+          <h3 className="text-2xl font-bold text-foreground mb-3">Ready to capture this ROI?</h3>
           <p className="text-muted-foreground mb-6">
             Book a free strategy call and we&apos;ll show you exactly which AIMS solutions generate the fastest return for your business.
           </p>

@@ -197,9 +197,9 @@ export default function ROICalculatorPage() {
                 </div>
                 <div className="text-sm text-muted-foreground mt-1">/month from new clients</div>
               </div>
-              <div className="bg-primary rounded-2xl p-6 text-white">
+              <div className="bg-card border border-primary/20 rounded-2xl p-6">
                 <div className="text-sm text-muted-foreground mb-1">With AIMS</div>
-                <div className="text-3xl font-bold">
+                <div className="text-3xl font-bold text-primary">
                   {formatCurrency(results.aimsRevenue)}
                 </div>
                 <div className="text-sm text-muted-foreground mt-1">/month projected</div>

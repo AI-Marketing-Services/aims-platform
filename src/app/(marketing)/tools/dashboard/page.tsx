@@ -212,8 +212,8 @@ export default async function ToolsDashboardPage() {
 
         {/* Upgrade CTA */}
         {submissions.length > 0 && (
-          <div className="mt-10 bg-primary rounded-2xl p-8 text-center text-white">
-            <h3 className="text-xl font-bold mb-2">Ready to act on your results?</h3>
+          <div className="mt-10 bg-card border border-primary/20 rounded-2xl p-8 text-center">
+            <h3 className="text-xl font-bold text-foreground mb-2">Ready to act on your results?</h3>
             <p className="text-muted-foreground text-sm mb-6">
               Browse the full AIMS service marketplace and build your custom AI stack.
             </p>

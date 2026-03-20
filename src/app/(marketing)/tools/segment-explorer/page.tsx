@@ -336,9 +336,9 @@ export default function SegmentExplorerPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mt-10 bg-primary rounded-2xl p-8 text-center text-white"
+            className="mt-10 bg-card border border-primary/20 rounded-2xl p-8 text-center"
           >
-            <h3 className="text-2xl font-bold mb-3">Ready to target one of these segments?</h3>
+            <h3 className="text-2xl font-bold text-foreground mb-3">Ready to target one of these segments?</h3>
             <p className="text-muted-foreground mb-6">
               AIMS builds custom AI outbound systems that reach your exact audience - qualified leads delivered to your calendar.
             </p>

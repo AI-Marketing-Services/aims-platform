@@ -118,8 +118,8 @@ export default function FordDealershipCaseStudy() {
         </div>
 
         {/* CTA */}
-        <div className="mt-14 bg-primary rounded-2xl p-8 text-center text-white">
-          <h2 className="text-2xl font-bold mb-3">Running a dealership? Let&apos;s build your system.</h2>
+        <div className="mt-14 bg-card border border-primary/20 rounded-2xl p-8 text-center">
+          <h2 className="text-2xl font-bold text-foreground mb-3">Running a dealership? Let&apos;s build your system.</h2>
           <p className="text-muted-foreground mb-6">
             Book a free 30-minute strategy call. We&apos;ll audit your current lead flow and show you exactly what AIMS would build - with projected results.
           </p>

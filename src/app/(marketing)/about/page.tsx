@@ -71,7 +71,7 @@ export default function AboutPage() {
                 ))}
               </div>
             </div>
-            <div className="rounded-2xl bg-primary p-8 text-white space-y-6">
+            <div className="rounded-2xl bg-surface border border-primary/20 p-8 space-y-6">
               {[
                 { value: "500+", label: "Businesses served" },
                 { value: "3.2x", label: "Average pipeline increase" },
@@ -79,8 +79,8 @@ export default function AboutPage() {
                 { value: "3", label: "Flagship engagements" },
               ].map((stat) => (
                 <div key={stat.label}>
-                  <div className="text-4xl font-black">{stat.value}</div>
-                  <div className="text-white/70 text-sm mt-0.5">{stat.label}</div>
+                  <div className="text-4xl font-black text-primary">{stat.value}</div>
+                  <div className="text-muted-foreground text-sm mt-0.5">{stat.label}</div>
                 </div>
               ))}
             </div>
@@ -110,10 +110,10 @@ export default function AboutPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-20 bg-primary">
+      <section className="py-20 bg-card border-t border-border">
         <div className="container mx-auto max-w-2xl px-4 text-center">
-          <h2 className="text-3xl font-bold text-white">Ready to put your pipeline on autopilot?</h2>
-          <p className="mt-3 text-white/70">Book a strategy call. We&apos;ll audit your current stack and show you exactly what AIMS would build.</p>
+          <h2 className="text-3xl font-bold text-foreground">Ready to put your pipeline on autopilot?</h2>
+          <p className="mt-3 text-muted-foreground">Book a strategy call. We&apos;ll audit your current stack and show you exactly what AIMS would build.</p>
           <Link
             href="/get-started"
             className="mt-8 inline-flex items-center gap-2 rounded-lg bg-card px-8 py-3.5 font-semibold text-primary hover:bg-primary/10 transition"

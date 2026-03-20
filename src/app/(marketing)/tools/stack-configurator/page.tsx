@@ -492,9 +492,9 @@ export default function StackConfiguratorPage() {
               </div>
             ))}
 
-            <div className="bg-primary rounded-2xl p-8 text-center text-white mt-8">
-              <h3 className="text-2xl font-bold mb-3">Ready to deploy your stack?</h3>
-              <p className="text-primary-foreground/80 mb-6">
+            <div className="bg-card border border-primary/20 rounded-2xl p-8 text-center mt-8">
+              <h3 className="text-2xl font-bold text-foreground mb-3">Ready to deploy your stack?</h3>
+              <p className="text-muted-foreground mb-6">
                 Book a free 30-minute strategy call. We'll finalize your roadmap, confirm priorities, and give you a fixed monthly price.
               </p>
               <a

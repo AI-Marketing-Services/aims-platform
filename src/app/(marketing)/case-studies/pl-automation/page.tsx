@@ -113,8 +113,8 @@ export default function PLAutomationCaseStudy() {
           </section>
         </div>
 
-        <div className="mt-14 bg-primary rounded-2xl p-8 text-center text-white">
-          <h2 className="text-2xl font-bold mb-3">Running a B2B SaaS company?</h2>
+        <div className="mt-14 bg-card border border-primary/20 rounded-2xl p-8 text-center">
+          <h2 className="text-2xl font-bold text-foreground mb-3">Running a B2B SaaS company?</h2>
           <p className="text-muted-foreground mb-6">
             Book a free strategy call. We&apos;ll audit your current pipeline, identify the fastest path to outbound, and show you what an AIMS-built system would look like for your ICP.
           </p>
