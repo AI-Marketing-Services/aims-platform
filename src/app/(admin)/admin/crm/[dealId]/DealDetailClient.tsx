@@ -27,7 +27,7 @@ import {
   CreditCard,
   ClipboardList,
 } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { cn, timeAgo } from "@/lib/utils"
 
 type ActivityType =
   | "EMAIL_SENT"
@@ -129,16 +129,6 @@ const PRIORITY_COLORS: Record<string, string> = {
   URGENT: "text-primary bg-primary/10",
 }
 
-function timeAgo(isoDate: string) {
-  const diff = Date.now() - new Date(isoDate).getTime()
-  const mins = Math.floor(diff / 60000)
-  if (mins < 60) return `${mins}m ago`
-  const hrs = Math.floor(mins / 60)
-  if (hrs < 24) return `${hrs}h ago`
-  const days = Math.floor(hrs / 24)
-  if (days < 30) return `${days}d ago`
-  return new Date(isoDate).toLocaleDateString()
-}
 
 function leadScoreBadge(score: number | null | undefined, tier: string | null | undefined) {
   if (score == null) return null

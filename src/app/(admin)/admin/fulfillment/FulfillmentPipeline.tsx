@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react"
 import { motion } from "framer-motion"
 import { Search, ChevronDown, Calendar, User, AlertTriangle } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { cn, getInitials } from "@/lib/utils"
 
 type FulfillmentTask = {
   id: string
@@ -70,14 +70,6 @@ function formatDate(iso?: string): string {
   })
 }
 
-function getInitials(name: string): string {
-  return name
-    .split(" ")
-    .slice(0, 2)
-    .map((w) => w[0] ?? "")
-    .join("")
-    .toUpperCase()
-}
 
 function TaskCard({
   task,

@@ -19,6 +19,7 @@ import {
 } from "lucide-react"
 import { db } from "@/lib/db"
 import { getWorkspaceDashboard } from "@/lib/emailbison"
+import { timeAgo } from "@/lib/utils"
 
 export const metadata: Metadata = { title: "Dashboard" }
 
@@ -28,16 +29,6 @@ const statusColors: Record<string, string> = {
   PAST_DUE: "bg-orange-900/20 text-orange-400",
   PAUSED: "bg-deep text-muted-foreground",
   CANCELLED: "bg-primary/15 text-primary",
-}
-
-function timeAgo(date: Date): string {
-  const diffMs = Date.now() - date.getTime()
-  const diffMin = Math.floor(diffMs / 60000)
-  if (diffMin < 60) return `${diffMin}m ago`
-  const diffHr = Math.floor(diffMin / 60)
-  if (diffHr < 24) return `${diffHr}h ago`
-  const diffDays = Math.floor(diffHr / 24)
-  return `${diffDays}d ago`
 }
 
 export default async function PortalDashboard({

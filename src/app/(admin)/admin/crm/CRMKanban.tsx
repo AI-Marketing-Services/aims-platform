@@ -18,7 +18,7 @@ import {
   type DragEndEvent,
 } from "@dnd-kit/core"
 import { CSS } from "@dnd-kit/utilities"
-import { cn } from "@/lib/utils"
+import { cn, getInitials } from "@/lib/utils"
 
 type DealStage =
   | "NEW_LEAD"
@@ -78,14 +78,6 @@ const SCORE_OPTIONS = [
   { value: "cold", label: "Cold (<40)" },
 ]
 
-function getInitials(name: string): string {
-  return name
-    .split(" ")
-    .slice(0, 2)
-    .map((w) => w[0] ?? "")
-    .join("")
-    .toUpperCase()
-}
 
 function timeInStage(updatedAt: string | undefined, daysInStage: number): { label: string; stale: boolean } {
   if (updatedAt) {
