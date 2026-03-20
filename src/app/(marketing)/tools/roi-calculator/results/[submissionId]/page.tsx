@@ -11,13 +11,13 @@ interface Props {
 export async function generateMetadata({ params }: Props) {
   const { submissionId } = await params
   const sub = await db.leadMagnetSubmission.findUnique({ where: { id: submissionId } })
-  if (!sub) return { title: "ROI Calculator Results — AIMS" }
+  if (!sub) return { title: "ROI Calculator Results - AIMS" }
   const data = sub.data as Record<string, unknown>
   const calcResults = (data?.results ?? {}) as Record<string, unknown>
   const savings = (calcResults?.additionalRevenue ?? 0) as number
   return {
-    title: `${sub.name ?? "Someone"} could add $${savings > 0 ? savings.toLocaleString() : "—"}/mo with AI | AIMS`,
-    description: "See how much time and money AI automation could save this business — and calculate your own ROI.",
+    title: `${sub.name ?? "Someone"} could add $${savings > 0 ? savings.toLocaleString() : "-"}/mo with AI | AIMS`,
+    description: "See how much time and money AI automation could save this business - and calculate your own ROI.",
   }
 }
 
@@ -80,7 +80,7 @@ export default async function ROIResultsPage({ params }: Props) {
             {
               icon: Clock,
               label: "Hours Reclaimed/mo",
-              value: hoursReclaimed > 0 ? `${hoursReclaimed}h` : "—",
+              value: hoursReclaimed > 0 ? `${hoursReclaimed}h` : "-",
               color: "text-purple-400",
               bg: "bg-purple-900/15",
             },
@@ -142,9 +142,9 @@ export default async function ROIResultsPage({ params }: Props) {
           </div>
         </div>
 
-        {/* Start Saving — Recommended Services */}
+        {/* Start Saving - Recommended Services */}
         <div className="bg-card border border-border rounded-2xl p-6 mb-6 shadow-sm">
-          <h3 className="font-semibold text-foreground mb-1">Start Saving — Recommended Services</h3>
+          <h3 className="font-semibold text-foreground mb-1">Start Saving - Recommended Services</h3>
           <p className="text-sm text-muted-foreground mb-4">These AIMS services deliver the fastest path to capturing your ${monthlySavings.toLocaleString()}/mo in savings.</p>
           <div className="space-y-3">
             <div className="border border-border rounded-xl p-4 hover:border-border transition-colors">
@@ -163,7 +163,7 @@ export default async function ROIResultsPage({ params }: Props) {
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1">
                   <h4 className="font-semibold text-foreground text-sm">RevOps Pipeline Automation</h4>
-                  <p className="text-xs text-muted-foreground mt-1">Systemize your sales process — automated follow-ups, deal routing, and pipeline dashboards that close revenue faster.</p>
+                  <p className="text-xs text-muted-foreground mt-1">Systemize your sales process - automated follow-ups, deal routing, and pipeline dashboards that close revenue faster.</p>
                   <p className="text-xs text-muted-foreground mt-2">from $197/mo</p>
                 </div>
                 <Link href="/marketplace" className="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 bg-primary text-white text-xs font-semibold rounded-lg hover:bg-primary/90 transition-colors">
@@ -176,7 +176,7 @@ export default async function ROIResultsPage({ params }: Props) {
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1">
                     <h4 className="font-semibold text-foreground text-sm">AI Voice Agents</h4>
-                    <p className="text-xs text-muted-foreground mt-1">Reclaim {hoursReclaimed}+ hours per month — AI answers calls, qualifies leads, and books meetings without human intervention.</p>
+                    <p className="text-xs text-muted-foreground mt-1">Reclaim {hoursReclaimed}+ hours per month - AI answers calls, qualifies leads, and books meetings without human intervention.</p>
                     <p className="text-xs text-muted-foreground mt-2">Custom pricing</p>
                   </div>
                   <Link href="/marketplace" className="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 bg-primary text-white text-xs font-semibold rounded-lg hover:bg-primary/90 transition-colors">

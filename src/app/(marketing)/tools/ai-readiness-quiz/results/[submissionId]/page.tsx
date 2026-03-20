@@ -26,7 +26,7 @@ const CATEGORIES = [
     colorClass: "text-orange-500",
     bgClass: "bg-orange-900/15",
     borderClass: "border-orange-800",
-    headline: "You have the foundation — now it's time to scale",
+    headline: "You have the foundation - now it's time to scale",
     description:
       "You've made some smart moves but your systems aren't working together. A few strategic automations could 2-3x your output without adding headcount.",
     recommended: ["Cold Outbound System", "SEO + AEO Strategy", "Audience Targeting"],
@@ -37,7 +37,7 @@ const CATEGORIES = [
     colorClass: "text-yellow-500",
     bgClass: "bg-yellow-900/15",
     borderClass: "border-yellow-800",
-    headline: "You're ahead of most — let's optimize for growth",
+    headline: "You're ahead of most - let's optimize for growth",
     description:
       "Your infrastructure is solid and you understand the game. The next level is fine-tuning your AI stack and adding intelligence layers that compound over time.",
     recommended: ["AI Tool Tracker", "Pixel Intelligence", "Finance Automation"],
@@ -48,7 +48,7 @@ const CATEGORIES = [
     colorClass: "text-green-500",
     bgClass: "bg-green-900/15",
     borderClass: "border-green-800",
-    headline: "You're operating at the top 10% — let's keep it that way",
+    headline: "You're operating at the top 10% - let's keep it that way",
     description:
       "You've built a real machine. The risk now is standing still while the landscape shifts. AIMS can help you stay ahead with custom AI builds and white-glove strategy.",
     recommended: ["Vending Placement Visualizer", "AI Tool Tracker", "Custom AI Builds"],
@@ -65,11 +65,11 @@ function getCategoryIcon(label: string) {
 export async function generateMetadata({ params }: Props) {
   const { submissionId } = await params
   const sub = await db.leadMagnetSubmission.findUnique({ where: { id: submissionId } })
-  if (!sub) return { title: "AI Readiness Results — AIMS" }
+  if (!sub) return { title: "AI Readiness Results - AIMS" }
   const score = sub.score ?? 0
   const cat = CATEGORIES.find((c) => score >= c.range[0] && score <= c.range[1]) ?? CATEGORIES[0]
   return {
-    title: `${sub.name ?? "Someone"} scored ${score}/100 — ${cat.label} | AIMS`,
+    title: `${sub.name ?? "Someone"} scored ${score}/100 - ${cat.label} | AIMS`,
     description: `See how AI-ready this business is and take the free quiz to get your own personalized score.`,
   }
 }
@@ -86,7 +86,7 @@ export default async function ResultsPage({ params }: Props) {
   const category = CATEGORIES.find((c) => score >= c.range[0] && score <= c.range[1]) ?? CATEGORIES[0]
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://aimseos.com"
   const shareUrl = `${appUrl}/tools/ai-readiness-quiz/results/${submissionId}`
-  const shareText = `I scored ${score}/100 on the AIMS AI Readiness Quiz — ${category.label}. See where your business stands:`
+  const shareText = `I scored ${score}/100 on the AIMS AI Readiness Quiz - ${category.label}. See where your business stands:`
 
   return (
     <div className="min-h-screen bg-deep">
@@ -133,13 +133,13 @@ export default async function ResultsPage({ params }: Props) {
         {/* Recommended services */}
         <div className="bg-card border border-border rounded-2xl p-6 mb-6 shadow-sm">
           <h3 className="font-semibold text-foreground mb-1">Services That Fix These Gaps</h3>
-          <p className="text-sm text-muted-foreground mb-4">Tailored to your {category.label} profile — here is where to start.</p>
+          <p className="text-sm text-muted-foreground mb-4">Tailored to your {category.label} profile - here is where to start.</p>
           <div className="space-y-3">
             {category.recommended.map((rec) => {
               const serviceDetails: Record<string, { desc: string; price: string }> = {
                 "Website + CRM + Chatbot Bundle": { desc: "AI-powered website with built-in CRM and chatbot that captures leads 24/7", price: "from $97/mo" },
                 "Cold Outbound System": { desc: "Automated outbound engine sending thousands of personalized emails monthly", price: "from $297/mo" },
-                "AI Voice Agents": { desc: "Never miss a call — AI answers, qualifies, and books meetings for you", price: "Custom" },
+                "AI Voice Agents": { desc: "Never miss a call - AI answers, qualifies, and books meetings for you", price: "Custom" },
                 "SEO + AEO Strategy": { desc: "Rank in search and get cited by AI assistants like ChatGPT and Perplexity", price: "from $197/mo" },
                 "Audience Targeting": { desc: "Precision B2B audiences built from 100M+ contacts for your outbound campaigns", price: "from $147/mo" },
                 "AI Tool Tracker": { desc: "Monitor AI tool spend, usage, and ROI across your entire organization", price: "from $97/mo" },

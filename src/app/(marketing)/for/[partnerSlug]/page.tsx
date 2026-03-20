@@ -18,11 +18,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     include: { referrer: { select: { name: true, company: true } } },
   })
 
-  if (!referral) return { title: "AIMS — AI Services" }
+  if (!referral) return { title: "AIMS - AI Services" }
 
   const partnerName = referral.referrer.company ?? referral.referrer.name ?? "a Partner"
   return {
-    title: `AIMS AI Services — Referred by ${partnerName}`,
+    title: `AIMS AI Services - Referred by ${partnerName}`,
     description: `${partnerName} recommends AIMS for AI-powered marketing, sales, and operations automation.`,
   }
 }
@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 const BENEFITS = [
   "AI-powered outbound that books meetings while you sleep",
   "Website + CRM + chatbot live in under a week",
-  "Voice agents handling calls 24/7 — no headcount needed",
+  "Voice agents handling calls 24/7 - no headcount needed",
   "Full-stack automation built and managed by experts",
 ]
 
@@ -87,7 +87,7 @@ export default async function PartnerLandingPage({ params, searchParams }: Props
       <div className="max-w-4xl mx-auto px-4 py-20 text-center">
         <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 border border-primary/20 mb-6">
           <Star className="h-3.5 w-3.5 text-primary" />
-          <span className="text-sm font-medium text-primary">Partner Referral — Priority Onboarding</span>
+          <span className="text-sm font-medium text-primary">Partner Referral - Priority Onboarding</span>
         </div>
 
         <h1 className="text-4xl sm:text-5xl font-bold text-foreground leading-tight mb-6">
@@ -97,7 +97,7 @@ export default async function PartnerLandingPage({ params, searchParams }: Props
         </h1>
 
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-10">
-          {partnerName} uses AIMS to automate lead gen, outbound, and customer follow-up — now you can too.
+          {partnerName} uses AIMS to automate lead gen, outbound, and customer follow-up - now you can too.
           As a referred partner, you get priority setup and onboarding support.
         </p>
 

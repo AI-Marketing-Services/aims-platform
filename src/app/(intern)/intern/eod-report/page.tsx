@@ -39,7 +39,7 @@ export default async function InternEODPage() {
       <div>
         <h1 className="text-2xl font-bold text-foreground">EOD Report</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Submit your end-of-day report — {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
+          Submit your end-of-day report - {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
         </p>
       </div>
       <EODReportClient

@@ -61,7 +61,7 @@ function WildDucksDemo() {
         ))}
       </div>
 
-      {/* Scan phase — time sinks + opportunity score */}
+      {/* Scan phase - time sinks + opportunity score */}
       {phase === "scan" && (
         <AnimatePresence mode="wait">
           <motion.div key={tab} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.25 }}>
@@ -97,10 +97,10 @@ function WildDucksDemo() {
         </AnimatePresence>
       )}
 
-      {/* Map phase — prioritized findings */}
+      {/* Map phase - prioritized findings */}
       {phase === "map" && (
         <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }} className="space-y-1.5">
-          <p className="text-[10px] text-muted-foreground uppercase tracking-wide font-semibold mb-1">Top 5 Findings — Ranked by Impact</p>
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wide font-semibold mb-1">Top 5 Findings - Ranked by Impact</p>
           {WD_OPPORTUNITY_MAP.map((opp, i) => (
             <div key={opp.name} className="flex items-center gap-2 rounded-sm bg-deep border border-border px-3 py-2">
               <span className="text-[10px] font-bold text-primary w-4">{i + 1}</span>
@@ -123,7 +123,7 @@ function WildDucksDemo() {
         </motion.div>
       )}
 
-      {/* Deploy phase — solutions installing */}
+      {/* Deploy phase - solutions installing */}
       {phase === "deploy" && (
         <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }} className="space-y-2">
           {["EOS Agent", "Process Automator", "Spend Challenger", "AI Copilot", "Report Generator"].map((sol, i) => (
@@ -147,7 +147,7 @@ function WildDucksDemo() {
           {deployed && (
             <motion.div initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} className="rounded-xl bg-green-950/20 border border-green-800/40 px-3 py-2.5 flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4 text-green-400 flex-shrink-0" />
-              <span className="text-[11px] font-semibold text-green-400">All solutions deployed — 40% efficiency gain in 90 days</span>
+              <span className="text-[11px] font-semibold text-green-400">All solutions deployed - 40% efficiency gain in 90 days</span>
             </motion.div>
           )}
         </motion.div>
@@ -161,9 +161,9 @@ const TRAP_STAGES = ["First Contact", "Qualified", "Demo", "Proposal", "Close"]
 const TRAP_TIMESTAMPS = ["Mar 3 9:14a", "Mar 5 2:31p", "Mar 9 11:00a", "Mar 12 3:45p", "Mar 15 10:22a"]
 const TRAP_TOUCHES = [1, 3, 4, 5, 7]
 const LOSS_REASONS = [
-  { reason: "Pricing objection", pct: 67, reco: "Recommend messaging review — value prop not landing" },
+  { reason: "Pricing objection", pct: 67, reco: "Recommend messaging review - value prop not landing" },
   { reason: "No decision-maker access", pct: 18, reco: "Route to BTC closer for multi-thread strategy" },
-  { reason: "Went dark after demo", pct: 11, reco: "Enforce 7x rule — avg. only 3.2 touches before cold" },
+  { reason: "Went dark after demo", pct: 11, reco: "Enforce 7x rule - avg. only 3.2 touches before cold" },
 ]
 
 function SteelTrapDemo() {
@@ -215,7 +215,7 @@ function SteelTrapDemo() {
                 <Shield className="h-4 w-4 text-blue-400" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-foreground">Apex Corp — $12,400</p>
+                <p className="text-sm font-semibold text-foreground">Apex Corp - $12,400</p>
                 <p className="text-xs text-muted-foreground">{TRAP_TIMESTAMPS[stage]}</p>
               </div>
             </div>
@@ -281,7 +281,7 @@ function SteelTrapDemo() {
 const VOICE_TRANSCRIPT = [
   { role: "agent", text: "Hi, this is AIMS AI calling for River City Ford. Is this Mike?" },
   { role: "lead", text: "Yeah, that's me." },
-  { role: "agent", text: "Great! We're following up on the recall notice for your 2021 Explorer. We have a service bay available this Thursday at 10am — does that work?" },
+  { role: "agent", text: "Great! We're following up on the recall notice for your 2021 Explorer. We have a service bay available this Thursday at 10am - does that work?" },
   { role: "lead", text: "Thursday at 10 works actually." },
   { role: "agent", text: "Perfect, I've got you down. We'll send a confirmation and reminder the morning of. Anything else I can help with?" },
   { role: "lead", text: "No that's it, thanks." },
@@ -311,7 +311,7 @@ function AICallingDemo() {
           <PhoneCall className="h-4 w-4 text-green-400" />
         </motion.div>
         <div>
-          <p className="text-sm font-semibold text-foreground">AI Voice Agent — Ford Dealership</p>
+          <p className="text-sm font-semibold text-foreground">AI Voice Agent - Ford Dealership</p>
           <p className="text-xs text-muted-foreground">Recall follow-up · 247 calls/day handled</p>
         </div>
         {playing && shown < VOICE_TRANSCRIPT.length && (
@@ -380,7 +380,7 @@ const CRM_TABS = [
             <div className="mt-3 h-7 w-28 rounded-sm bg-primary" />
           </div>
         </div>
-        <p className="text-xs text-muted-foreground text-center">GHL-powered site — live in 3 days</p>
+        <p className="text-xs text-muted-foreground text-center">GHL-powered site - live in 3 days</p>
       </div>
     ),
   },
@@ -540,7 +540,7 @@ function FinanceDemo() {
       {showAfter && (
         <motion.div initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} className="rounded-xl bg-green-900/15 border border-green-800 px-3 py-2.5 flex items-center gap-2">
           <CheckCircle2 className="h-4 w-4 text-green-400 flex-shrink-0" />
-          <span className="text-xs font-semibold text-green-400">Clean P&L ready — auto-synced from QuickBooks</span>
+          <span className="text-xs font-semibold text-green-400">Clean P&L ready - auto-synced from QuickBooks</span>
         </motion.div>
       )}
     </div>
@@ -629,7 +629,7 @@ function AudienceDemo() {
 // ─── Content Demo ─────────────────────────────────────────────────────────────
 const CONTENT_VARIANTS = [
   "\"We doubled Apex Corp's pipeline in 30 days.\"",
-  "\"The AI SDR that never sleeps — 47 meetings/mo.\"",
+  "\"The AI SDR that never sleeps - 47 meetings/mo.\"",
   "\"Your competitors are already using AIMS.\"",
   "\"From 0 to 200 qualified leads in 6 weeks.\"",
 ]
@@ -873,7 +873,7 @@ function MoneyPageDemo() {
         )}
         {tab === 1 && (
           <motion.div key="moic" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.25 }} className="space-y-2">
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wide">MOIC by Channel — Return on Invested Capital</p>
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wide">MOIC by Channel - Return on Invested Capital</p>
             {MOIC_CHANNELS.map((ch, i) => (
               <div key={ch.name} className="flex items-center gap-2 rounded-sm bg-card border border-border px-3 py-2">
                 <span className="text-[11px] text-muted-foreground w-16 flex-shrink-0">{ch.name}</span>
@@ -896,7 +896,7 @@ function MoneyPageDemo() {
         )}
         {tab === 2 && (
           <motion.div key="recovery" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.25 }} className="space-y-2">
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wide">AI Recovery Metric — This Quarter</p>
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wide">AI Recovery Metric - This Quarter</p>
             <div className="grid grid-cols-3 gap-2">
               <div className="rounded-xl bg-blue-950/30 border border-blue-800 p-2.5 text-center">
                 <p className="text-lg font-extrabold text-blue-400 tabular-nums">{hoursFreed}</p>
@@ -941,7 +941,7 @@ const DEMO_MAP: Record<string, React.ComponentType> = {
   "seo-aeo": MoneyPageDemo,
 }
 
-// Bare widget — rendered inline inside the hero column
+// Bare widget - rendered inline inside the hero column
 export function ServiceDemoWidget({ slug }: { slug: string }) {
   const Demo = DEMO_MAP[slug]
   if (!Demo) return null
@@ -952,7 +952,7 @@ export function ServiceDemoWidget({ slug }: { slug: string }) {
   )
 }
 
-// Legacy standalone section — kept for slugs that don't have an inline hero demo
+// Legacy standalone section - kept for slugs that don't have an inline hero demo
 export function ServiceDemoSection({ slug }: { slug: string }) {
   const Demo = DEMO_MAP[slug]
   if (!Demo) return null
@@ -961,7 +961,7 @@ export function ServiceDemoSection({ slug }: { slug: string }) {
     <section className="py-20 bg-deep">
       <div className="container mx-auto max-w-4xl px-4">
         <h2 className="text-2xl font-bold text-foreground mb-2">See It In Action</h2>
-        <p className="text-muted-foreground mb-8">Live interactive preview — this is what we build for you.</p>
+        <p className="text-muted-foreground mb-8">Live interactive preview - this is what we build for you.</p>
         <div className="bg-card rounded-2xl border border-border p-8 shadow-sm max-w-lg mx-auto">
           <Demo />
         </div>

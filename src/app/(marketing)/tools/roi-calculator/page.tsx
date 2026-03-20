@@ -244,7 +244,7 @@ export default function ROICalculatorPage() {
             {/* Assumptions note */}
             <div className="flex gap-2 p-4 bg-blue-900/15 rounded-xl text-sm text-blue-400">
               <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
-              <span>Projections based on 2.8x lead volume increase and 40% close rate improvement — typical AIMS client results after 60 days.</span>
+              <span>Projections based on 2.8x lead volume increase and 40% close rate improvement - typical AIMS client results after 60 days.</span>
             </div>
 
             {/* CTA */}

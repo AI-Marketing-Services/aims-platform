@@ -4,7 +4,7 @@ import { ArrowRight, BookOpen, Clock } from "lucide-react"
 import { getAllPosts } from "@/lib/blog"
 
 export const metadata: Metadata = {
-  title: "Blog — AIMS",
+  title: "Blog - AIMS",
   description: "Insights on AI-powered sales, marketing, and operations. Practical guides for businesses building their growth infrastructure.",
   openGraph: {
     title: "Blog | AIMS",
@@ -27,7 +27,7 @@ export default function BlogPage() {
           </div>
           <h1 className="text-4xl font-bold text-foreground mb-4">Insights & Playbooks</h1>
           <p className="text-lg text-muted-foreground max-w-xl mx-auto">
-            Practical guides on AI-powered sales, marketing, and operations — written for business owners who want results, not theory.
+            Practical guides on AI-powered sales, marketing, and operations - written for business owners who want results, not theory.
           </p>
         </div>
 
@@ -75,7 +75,7 @@ export default function BlogPage() {
         <div className="mt-14 bg-card border border-border rounded-2xl p-8 text-center">
           <h2 className="text-xl font-bold text-foreground mb-2">Want to see what AI could do for your business?</h2>
           <p className="text-muted-foreground mb-6 text-sm">
-            Take our free AI Readiness Quiz — 7 questions, 2 minutes, personalized recommendations.
+            Take our free AI Readiness Quiz - 7 questions, 2 minutes, personalized recommendations.
           </p>
           <Link
             href="/tools/ai-readiness-quiz"

@@ -114,7 +114,7 @@ export default async function PortalDashboard({
       dealExists = !!deal
       recentActivity = notifications
     } catch {
-      // graceful degradation — leave defaults
+      // graceful degradation - leave defaults
     }
   }
 
@@ -170,7 +170,7 @@ export default async function PortalDashboard({
       {/* Checkout success banner */}
       {checkout === "success" && (
         <div className="rounded-xl border border-green-800 bg-green-900/15 px-5 py-4 text-sm text-green-800 font-medium">
-          Your subscription is active. Our team will begin setup within 24 hours — check your email for next steps.
+          Your subscription is active. Our team will begin setup within 24 hours - check your email for next steps.
         </div>
       )}
 
@@ -286,7 +286,7 @@ export default async function PortalDashboard({
               </div>
               <p className="text-3xl font-bold font-mono text-foreground">{value}</p>
               <p className={`mt-1 text-xs font-medium ${active ? "text-green-400" : "text-muted-foreground"}`}>
-                {active ? "↑ Active" : "—"}
+                {active ? "↑ Active" : "-"}
               </p>
             </div>
           ))}

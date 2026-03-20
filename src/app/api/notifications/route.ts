@@ -11,7 +11,7 @@ export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
   const limit = Math.min(parseInt(searchParams.get("limit") ?? "20") || 20, 100)
 
-  // Cache user lookup — used for both findMany and count below
+  // Cache user lookup - used for both findMany and count below
   const dbUserId = isAdmin
     ? undefined
     : (await db.user.findUnique({ where: { clerkId: userId }, select: { id: true } }))?.id

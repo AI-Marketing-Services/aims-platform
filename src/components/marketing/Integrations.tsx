@@ -38,7 +38,7 @@ export function Integrations() {
               Plugs Into Your Existing Stack
             </h2>
             <p className="mt-4 text-lg text-muted-foreground">
-              AIMS connects directly into the tools your team already uses. No ripping and replacing — we
+              AIMS connects directly into the tools your team already uses. No ripping and replacing - we
               wire everything together and make it work automatically.
             </p>
             <ul className="mt-6 space-y-3">
@@ -93,7 +93,7 @@ export function Integrations() {
                   const x = Math.cos(angle) * radius
                   const y = Math.sin(angle) * radius
                   return (
-                    // Static positioning wrapper — Framer Motion does NOT control this div
+                    // Static positioning wrapper - Framer Motion does NOT control this div
                     <div
                       key={logo.name}
                       className="absolute"

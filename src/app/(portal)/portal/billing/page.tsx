@@ -25,7 +25,7 @@ export default async function BillingPage() {
       },
     })
   } catch {
-    // DB failure — render gracefully
+    // DB failure - render gracefully
   }
 
   if (!dbUser) redirect("/sign-in")
@@ -66,7 +66,7 @@ export default async function BillingPage() {
         pdfUrl: inv.invoice_pdf ?? null,
       }))
     } catch {
-      // Stripe unavailable — show empty state
+      // Stripe unavailable - show empty state
     }
   }
 

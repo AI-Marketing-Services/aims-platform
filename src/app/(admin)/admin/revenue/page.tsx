@@ -192,10 +192,10 @@ export default async function AdminRevenuePage() {
                       <td className="px-3 py-3 font-mono text-foreground">
                         {row.revenue > 0
                           ? `${((row.revenue - row.cost) / row.revenue * 100).toFixed(0)}%`
-                          : "—"}
+                          : "-"}
                       </td>
                       <td className={`px-3 py-3 font-mono font-bold ${multipleColor}`}>
-                        {row.revenue > 0 ? `${row.margin.toFixed(1)}x` : "—"}
+                        {row.revenue > 0 ? `${row.margin.toFixed(1)}x` : "-"}
                       </td>
                     </tr>
                   )
@@ -221,8 +221,8 @@ export default async function AdminRevenuePage() {
                         <td className="px-3 py-2 text-muted-foreground">{label}</td>
                         <td className="px-3 py-2 font-mono text-muted-foreground">$0/mo</td>
                         <td className="px-3 py-2 font-mono text-muted-foreground">${cost}/mo</td>
-                        <td className="px-3 py-2 text-muted-foreground">—</td>
-                        <td className="px-3 py-2 text-muted-foreground">—</td>
+                        <td className="px-3 py-2 text-muted-foreground">-</td>
+                        <td className="px-3 py-2 text-muted-foreground">-</td>
                       </tr>
                     ))}
                 </tbody>

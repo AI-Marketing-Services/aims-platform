@@ -49,7 +49,7 @@ export async function PATCH(req: Request) {
     ...directFields
   } = parsed.data
 
-  // Build the update object — only include fields that the User model supports directly
+  // Build the update object - only include fields that the User model supports directly
   const updateData: Record<string, unknown> = { ...directFields }
 
   // Store granular notification preferences as JSON metadata

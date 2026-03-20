@@ -86,7 +86,7 @@ export default function ApiCostsClient({
     <div className="space-y-8">
       <div>
         <h1 className="text-2xl font-bold text-foreground">API Cost Dashboard</h1>
-        <p className="text-sm text-muted-foreground mt-1">AI provider spend tracking — last 30 days</p>
+        <p className="text-sm text-muted-foreground mt-1">AI provider spend tracking - last 30 days</p>
       </div>
 
       {/* Total spend hero card */}

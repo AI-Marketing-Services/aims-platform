@@ -141,7 +141,7 @@ export default async function ReferralsPage() {
           <div className="flex-1">
             <h3 className="font-semibold text-foreground mb-1">Want ongoing commissions instead of just 3 months?</h3>
             <p className="text-sm text-muted-foreground mb-4">
-              Become a Reseller Partner — earn <span className="font-semibold text-foreground">20% ONGOING</span> plus white-label your own portal.
+              Become a Reseller Partner - earn <span className="font-semibold text-foreground">20% ONGOING</span> plus white-label your own portal.
             </p>
             <a
               href="/get-started?type=reseller"

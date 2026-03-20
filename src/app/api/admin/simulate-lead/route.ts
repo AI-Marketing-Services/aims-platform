@@ -58,7 +58,7 @@ export async function POST(req: Request) {
       .create({
         data: {
           type: "new_lead",
-          title: `[SIMULATED] New Lead — ${type.replace(/_/g, " ")}`,
+          title: `[SIMULATED] New Lead - ${type.replace(/_/g, " ")}`,
           message: `${name} (${email}) submitted ${type.replace(/_/g, " ")} with score ${score ?? "N/A"}`,
           channel: "IN_APP",
         },

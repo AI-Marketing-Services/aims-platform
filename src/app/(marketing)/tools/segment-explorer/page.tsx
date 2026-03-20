@@ -193,7 +193,7 @@ export default function SegmentExplorerPage() {
           <p className="text-sm text-muted-foreground">
             <span className="font-semibold text-foreground">{filtered.length}</span> segments found
             {!unlocked && filtered.length > VISIBLE_FREE && (
-              <span> — showing {VISIBLE_FREE} of {filtered.length}</span>
+              <span> - showing {VISIBLE_FREE} of {filtered.length}</span>
             )}
           </p>
           <p className="text-xs text-muted-foreground">Sorted by intent score</p>
@@ -340,7 +340,7 @@ export default function SegmentExplorerPage() {
           >
             <h3 className="text-2xl font-bold mb-3">Ready to target one of these segments?</h3>
             <p className="text-muted-foreground mb-6">
-              AIMS builds custom AI outbound systems that reach your exact audience — qualified leads delivered to your calendar.
+              AIMS builds custom AI outbound systems that reach your exact audience - qualified leads delivered to your calendar.
             </p>
             <a
               href="/get-started"

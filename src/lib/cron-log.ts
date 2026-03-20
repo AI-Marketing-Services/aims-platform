@@ -18,7 +18,7 @@ export async function logCronExecution(
       },
     })
   } catch (err) {
-    // Do not throw — cron logging should never break the cron job itself
+    // Do not throw - cron logging should never break the cron job itself
     console.error(`Failed to log cron execution for ${jobName}:`, err)
   }
 }

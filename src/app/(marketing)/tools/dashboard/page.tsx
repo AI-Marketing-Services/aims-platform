@@ -79,7 +79,7 @@ function formatDate(d: Date) {
 }
 
 function ScoreBadge({ score, type }: { score: number | null; type: string }) {
-  if (score === null) return <span className="text-muted-foreground text-sm">—</span>
+  if (score === null) return <span className="text-muted-foreground text-sm">-</span>
 
   let color = "text-primary bg-primary/10"
   if (score >= 80) color = "text-green-400 bg-green-900/15"

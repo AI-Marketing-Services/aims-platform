@@ -40,7 +40,7 @@ export default async function AdminClientsPage() {
     }) as SubWithArm[]
   } catch {}
 
-  // Build rows keyed by deal id — each deal is one "client" row
+  // Build rows keyed by deal id - each deal is one "client" row
   const rows = deals.map((deal) => {
     // Find subscriptions for the deal's linked user
     const userSubs = deal.userId

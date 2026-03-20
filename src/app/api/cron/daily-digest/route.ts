@@ -76,7 +76,7 @@ export async function GET(req: Request) {
   const newMrr = newSubAmount._sum.monthlyAmount ?? 0
 
   const lines: string[] = [
-    `*AIMS Daily Digest — ${now.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}*`,
+    `*AIMS Daily Digest - ${now.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}*`,
     "",
     `*Revenue*`,
     `  MRR: $${currentMrr.toLocaleString()}${previousMrr > 0 ? ` (${Number(mrrChange) >= 0 ? "+" : ""}${mrrChange}% vs last month)` : ""}`,
@@ -102,7 +102,7 @@ export async function GET(req: Request) {
   if (overdueTasks.length > 0) {
     overdueTasks.slice(0, 5).forEach(t => {
       const daysAgo = Math.floor((now.getTime() - (t.dueDate?.getTime() ?? 0)) / 86400000)
-      lines.push(`    - ${t.title} (${t.assignedTo ?? "unassigned"}) — ${daysAgo}d overdue`)
+      lines.push(`    - ${t.title} (${t.assignedTo ?? "unassigned"}) - ${daysAgo}d overdue`)
     })
   }
 
@@ -115,7 +115,7 @@ export async function GET(req: Request) {
 
   await notify({
     type: "daily_digest",
-    title: `Daily Digest — ${now.toLocaleDateString("en-US", { month: "short", day: "numeric" })}`,
+    title: `Daily Digest - ${now.toLocaleDateString("en-US", { month: "short", day: "numeric" })}`,
     message,
     channel: "ALL",
     urgency: "low",

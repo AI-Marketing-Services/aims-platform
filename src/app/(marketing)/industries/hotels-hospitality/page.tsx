@@ -3,15 +3,15 @@ import Link from "next/link"
 import { ArrowRight, CheckCircle2, Phone, Star, Users, BarChart2, Zap, Calendar } from "lucide-react"
 
 export const metadata: Metadata = {
-  title: "AI Systems for Hotels & Hospitality — AIMS",
+  title: "AI Systems for Hotels & Hospitality - AIMS",
   description: "AIMS builds the AI infrastructure that helps hotels and hospitality businesses drive direct bookings, reduce OTA dependence, and deliver 5-star guest experiences at scale.",
 }
 
 const PAIN_POINTS = [
   { icon: Calendar, pain: "Over-reliance on OTAs eating into margins with 15-25% commissions", fix: "Direct booking engine with AI-powered retargeting to convert OTA lookers into direct guests" },
   { icon: Phone, pain: "Front desk overwhelmed with calls, reservation changes, and FAQ inquiries", fix: "AI voice and chat agents handle routine calls, freeing your team for high-value guests" },
-  { icon: Star, pain: "Inconsistent review responses — negative reviews going unaddressed for days", fix: "Automated review monitoring and AI-drafted responses published within the hour" },
-  { icon: Users, pain: "Past guests not returning — no system to drive repeat bookings", fix: "Loyalty nurture sequences that reach past guests with personalized offers at the right time" },
+  { icon: Star, pain: "Inconsistent review responses - negative reviews going unaddressed for days", fix: "Automated review monitoring and AI-drafted responses published within the hour" },
+  { icon: Users, pain: "Past guests not returning - no system to drive repeat bookings", fix: "Loyalty nurture sequences that reach past guests with personalized offers at the right time" },
   { icon: BarChart2, pain: "Corporate and group sales pipeline tracked in spreadsheets or email threads", fix: "CRM built for group sales with automated follow-up, proposal tracking, and revenue forecasting" },
   { icon: Zap, pain: "Seasonal dips with no proactive strategy to fill rooms in shoulder season", fix: "Targeted outbound campaigns reaching event planners, corporate travel managers, and tour operators" },
 ]
@@ -41,7 +41,7 @@ const SERVICES = [
   {
     name: "Group & Corporate Sales CRM",
     slug: "cold-outbound",
-    desc: "Purpose-built outbound engine targeting event planners, corporate travel managers, and meeting organizers — with automated follow-up that never drops the ball.",
+    desc: "Purpose-built outbound engine targeting event planners, corporate travel managers, and meeting organizers - with automated follow-up that never drops the ball.",
     price: "Custom",
     badge: null,
   },
@@ -69,7 +69,7 @@ export default function HotelsHospitalityPage() {
             <span className="text-primary">Own Your Guest Relationships.</span>
           </h1>
           <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-            AIMS builds the AI systems that drive direct bookings, reduce OTA dependence, and let your team focus on delivering exceptional guest experiences — not answering the same questions 40 times a day.
+            AIMS builds the AI systems that drive direct bookings, reduce OTA dependence, and let your team focus on delivering exceptional guest experiences - not answering the same questions 40 times a day.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
@@ -105,7 +105,7 @@ export default function HotelsHospitalityPage() {
       <section className="py-16 px-4 bg-deep">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-foreground mb-4">Every Hospitality Challenge — Solved with AI</h2>
+            <h2 className="text-3xl font-bold text-foreground mb-4">Every Hospitality Challenge - Solved with AI</h2>
             <p className="text-muted-foreground max-w-xl mx-auto">Your guests expect a 5-star experience. Your backend systems should be working just as hard.</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

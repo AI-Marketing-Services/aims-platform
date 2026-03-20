@@ -16,11 +16,11 @@ const FAQS = [
   },
   {
     q: "Do I need to use specific tools to work with you?",
-    a: "No. AIMS is tool-agnostic. Our engineers embed into your existing tech stack and workflows — whether that is HubSpot, Salesforce, custom internal tools, or a greenfield environment. We build on what you already have.",
+    a: "No. AIMS is tool-agnostic. Our engineers embed into your existing tech stack and workflows - whether that is HubSpot, Salesforce, custom internal tools, or a greenfield environment. We build on what you already have.",
   },
   {
     q: "What does the embedded engineering model look like?",
-    a: "Our engineers work directly alongside your team — attending standups, accessing your systems, and building solutions in your environment. Think of it as adding senior AI engineers to your org without the hiring overhead. We handle diagnostic, build, deployment, and ongoing optimization.",
+    a: "Our engineers work directly alongside your team - attending standups, accessing your systems, and building solutions in your environment. Think of it as adding senior AI engineers to your org without the hiring overhead. We handle diagnostic, build, deployment, and ongoing optimization.",
   },
   {
     q: "How do AI solutions integrate with our existing team?",
@@ -32,7 +32,7 @@ const FAQS = [
   },
   {
     q: "How is pricing structured?",
-    a: "Engagements are custom-scoped based on your company size, operational complexity, and the number of departments involved. We provide a detailed scope and investment proposal after the initial discovery call — no generic pricing tiers.",
+    a: "Engagements are custom-scoped based on your company size, operational complexity, and the number of departments involved. We provide a detailed scope and investment proposal after the initial discovery call - no generic pricing tiers.",
   },
 ]
 

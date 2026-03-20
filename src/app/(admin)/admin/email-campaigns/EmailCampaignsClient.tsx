@@ -85,7 +85,7 @@ export function EmailCampaignsClient({ users }: Props) {
       setTimeout(() => setSaved(null), 2000)
       router.refresh()
     } catch {
-      setError("Network error — please try again.")
+      setError("Network error - please try again.")
     } finally {
       setSaving(null)
     }
@@ -118,7 +118,7 @@ export function EmailCampaignsClient({ users }: Props) {
               return (
                 <tr key={user.id} className="hover:bg-muted/20 transition-colors">
                   <td className="px-4 py-3">
-                    <p className="font-medium text-foreground">{user.name || "—"}</p>
+                    <p className="font-medium text-foreground">{user.name || "-"}</p>
                     {user.company && <p className="text-xs text-muted-foreground">{user.company}</p>}
                   </td>
                   <td className="px-4 py-3 text-muted-foreground">{user.email}</td>
@@ -138,7 +138,7 @@ export function EmailCampaignsClient({ users }: Props) {
                           }}
                           className="w-full appearance-none rounded-lg border border-border bg-background px-3 py-2 pr-8 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#C4972A]/20 focus:border-[#C4972A]"
                         >
-                          <option value="">— No workspace —</option>
+                          <option value=""> -  No workspace  - </option>
                           {workspaces.map((ws) => (
                             <option key={ws.id} value={ws.id}>
                               {ws.name}

@@ -3,7 +3,7 @@ import { CheckCircle, XCircle, Zap, Clock, TrendingUp, Shield, Users, BarChart }
 import Link from "next/link"
 
 export const metadata: Metadata = {
-  title: "Why AIMS — The Smarter Way to Grow",
+  title: "Why AIMS - The Smarter Way to Grow",
   description: "See exactly why 500+ businesses chose AIMS over traditional agencies. AI-powered execution. Transparent pricing. Results in 14 days.",
   openGraph: {
     title: "Why AIMS | The Smarter Way to Grow",
@@ -18,7 +18,7 @@ const oldWay = [
   "Monthly reports with no real-time visibility",
   "Single-channel tactics (usually just ads)",
   "High retainers before you see a single lead",
-  "Slow onboarding — 30-90 days to go live",
+  "Slow onboarding - 30-90 days to go live",
 ]
 
 const aimsWay = [
@@ -28,7 +28,7 @@ const aimsWay = [
   "Live dashboard updated in real-time",
   "Multi-channel: outbound, inbound, AI voice, content, SEO",
   "Results visible within 14 days of kickoff",
-  "Live in under a week — often in 48 hours",
+  "Live in under a week - often in 48 hours",
 ]
 
 const stats = [
@@ -42,13 +42,13 @@ const pillars = [
   {
     icon: Zap,
     title: "AI-Native from Day One",
-    description: "Every service is built around AI execution — not AI as a buzzword, but AI as the actual delivery engine. Claude, GPT-4o, and custom-trained models handle the work at scale.",
+    description: "Every service is built around AI execution - not AI as a buzzword, but AI as the actual delivery engine. Claude, GPT-4o, and custom-trained models handle the work at scale.",
     color: "bg-primary/10 text-primary",
   },
   {
     icon: BarChart,
     title: "Full-Stack Growth",
-    description: "We don't just run ads or just do outbound. We cover every stage of your pipeline: awareness, outbound, nurture, close, retain — across every channel that matters.",
+    description: "We don't just run ads or just do outbound. We cover every stage of your pipeline: awareness, outbound, nurture, close, retain - across every channel that matters.",
     color: "bg-primary/10 text-primary",
   },
   {

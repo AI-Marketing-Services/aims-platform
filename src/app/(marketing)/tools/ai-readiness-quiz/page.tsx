@@ -20,7 +20,7 @@ const QUESTIONS = [
     id: 2,
     question: "What does your current sales pipeline look like?",
     options: [
-      { label: "No formal pipeline — deals tracked in a spreadsheet or memory", score: 1 },
+      { label: "No formal pipeline - deals tracked in a spreadsheet or memory", score: 1 },
       { label: "We have a CRM but it's not consistently updated", score: 2 },
       { label: "We have a defined pipeline with clear stage criteria", score: 3 },
       { label: "Fully tracked with automations, alerts, and reporting", score: 4 },
@@ -33,7 +33,7 @@ const QUESTIONS = [
       { label: "We're not using AI at all yet", score: 1 },
       { label: "We use ChatGPT occasionally for writing tasks", score: 2 },
       { label: "We have a few AI tools integrated into our workflow", score: 3 },
-      { label: "AI is core to our operations — we have custom agents running", score: 4 },
+      { label: "AI is core to our operations - we have custom agents running", score: 4 },
     ],
   },
   {
@@ -43,17 +43,17 @@ const QUESTIONS = [
       { label: "Not enough new leads coming in", score: 1 },
       { label: "Leads aren't converting to meetings or demos", score: 2 },
       { label: "Deals stall and we struggle to close", score: 3 },
-      { label: "Scaling delivery — we get the clients but fulfillment is the bottleneck", score: 4 },
+      { label: "Scaling delivery - we get the clients but fulfillment is the bottleneck", score: 4 },
     ],
   },
   {
     id: 5,
     question: "How much time does your team spend on manual follow-up and admin?",
     options: [
-      { label: "Most of the day — we're constantly chasing leads and updating CRM", score: 1 },
+      { label: "Most of the day - we're constantly chasing leads and updating CRM", score: 1 },
       { label: "Several hours per day on repetitive tasks", score: 2 },
-      { label: "A few hours per week — some things are automated", score: 3 },
-      { label: "Almost none — nearly everything runs on autopilot", score: 4 },
+      { label: "A few hours per week - some things are automated", score: 3 },
+      { label: "Almost none - nearly everything runs on autopilot", score: 4 },
     ],
   },
   {
@@ -70,10 +70,10 @@ const QUESTIONS = [
     id: 7,
     question: "How quickly does your team follow up with new inbound leads?",
     options: [
-      { label: "We get to them when we can — often days later", score: 1 },
+      { label: "We get to them when we can - often days later", score: 1 },
       { label: "Usually within the same business day", score: 2 },
       { label: "Within a few hours of the lead coming in", score: 3 },
-      { label: "Instantly — we have automated AI responses within minutes", score: 4 },
+      { label: "Instantly - we have automated AI responses within minutes", score: 4 },
     ],
   },
 ]
@@ -103,7 +103,7 @@ const CATEGORIES: ScoreCategory[] = [
     range: [15, 20],
     color: "text-orange-500",
     icon: <AlertCircle className="w-8 h-8 text-orange-500" />,
-    headline: "You have the foundation — now it's time to scale",
+    headline: "You have the foundation - now it's time to scale",
     description: "You've made some smart moves but your systems aren't working together. A few strategic automations could 2-3x your output without adding headcount.",
     recommended: ["Cold Outbound System", "SEO + AEO Strategy", "Audience Targeting"],
   },
@@ -112,7 +112,7 @@ const CATEGORIES: ScoreCategory[] = [
     range: [21, 25],
     color: "text-yellow-500",
     icon: <Zap className="w-8 h-8 text-yellow-500" />,
-    headline: "You're ahead of most — let's optimize for growth",
+    headline: "You're ahead of most - let's optimize for growth",
     description: "Your infrastructure is solid and you understand the game. The next level is fine-tuning your AI stack and adding intelligence layers that compound over time.",
     recommended: ["AI Tool Tracker", "Pixel Intelligence", "Finance Automation"],
   },
@@ -121,7 +121,7 @@ const CATEGORIES: ScoreCategory[] = [
     range: [26, 28],
     color: "text-green-500",
     icon: <CheckCircle className="w-8 h-8 text-green-500" />,
-    headline: "You're operating at the top 10% — let's keep it that way",
+    headline: "You're operating at the top 10% - let's keep it that way",
     description: "You've built a real machine. The risk now is standing still while the landscape shifts. AIMS can help you stay ahead with custom AI builds and white-glove strategy.",
     recommended: ["Vending Placement Visualizer", "AI Tool Tracker", "Custom AI Builds"],
   },
@@ -190,7 +190,7 @@ export default function AIReadinessQuizPage() {
     })
   }
 
-  const shareText = `I scored ${pct}/100 on the AIMS AI Readiness Quiz — ${category.label}. See where your business stands:`
+  const shareText = `I scored ${pct}/100 on the AIMS AI Readiness Quiz - ${category.label}. See where your business stands:`
   const shareUrl = submissionId
     ? `${typeof window !== "undefined" ? window.location.origin : "https://aimseos.com"}/tools/ai-readiness-quiz/results/${submissionId}`
     : "https://aimseos.com/tools/ai-readiness-quiz"
@@ -431,7 +431,7 @@ export default function AIReadinessQuizPage() {
                   <h4 className="font-semibold text-foreground">Share your score</h4>
                 </div>
                 <p className="text-sm text-muted-foreground mb-4">
-                  Challenge your network to see how they compare — or save your unique results link.
+                  Challenge your network to see how they compare - or save your unique results link.
                 </p>
                 <div className="flex flex-wrap gap-3">
                   <button

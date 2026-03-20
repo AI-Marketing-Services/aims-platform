@@ -8,20 +8,20 @@ const OLD_AGENCY = [
   "6-month discovery phases before any work begins",
   "Expensive retainers for PowerPoint decks",
   "Junior analysts do the work, partners sell",
-  "No implementation — recommendations only",
+  "No implementation - recommendations only",
   "Cookie-cutter frameworks applied to every client",
   "Knowledge walks out the door when the project ends",
-  "Siloed teams — strategy never talks to engineering",
+  "Siloed teams - strategy never talks to engineering",
   "Success measured in hours billed, not outcomes delivered",
 ]
 
 const AIMS_PROS = [
   "Engineers embedded in your operations from week one",
   "Custom-scoped engagements tied to measurable outcomes",
-  "Senior engineers build and deploy — no handoffs",
+  "Senior engineers build and deploy - no handoffs",
   "Production AI shipped into your workflows",
   "Every engagement scoped to your org's specific needs",
-  "Full knowledge transfer — your team owns everything",
+  "Full knowledge transfer - your team owns everything",
   "One team owns diagnostic, build, and optimization",
   "Success measured in efficiency gains and deployed systems",
 ]
@@ -55,7 +55,7 @@ export function WhyAIMS() {
             The traditional consulting model is broken
           </h2>
           <p className="mt-3 text-base text-muted-foreground">
-            AIMS is built on the forward-deployed model — engineers embedded in your operations, shipping production AI, measuring real outcomes.
+            AIMS is built on the forward-deployed model - engineers embedded in your operations, shipping production AI, measuring real outcomes.
           </p>
         </div>
 

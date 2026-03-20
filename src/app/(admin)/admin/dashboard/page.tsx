@@ -274,7 +274,7 @@ async function getDashboardData() {
     // model may not be populated
   }
 
-  // MRR trend delta — true month-over-month: current 30d period vs previous 30d period
+  // MRR trend delta - true month-over-month: current 30d period vs previous 30d period
   const mrrDelta = mrrDeltaCurrentPeriod - mrrDeltaPrevPeriod
   const clientDelta = newClientsCurrentPeriod - newClientsPrevPeriod
   const pipelineDelta = pipelineValueCurrentPeriod - pipelineValuePrevPeriod

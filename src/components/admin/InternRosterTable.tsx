@@ -110,7 +110,7 @@ export function InternRosterTable({ interns }: { interns: InternRow[] }) {
                 >
                   <td className="px-4 py-3">
                     <div>
-                      <p className="text-sm font-medium text-foreground">{intern.userName ?? "—"}</p>
+                      <p className="text-sm font-medium text-foreground">{intern.userName ?? "-"}</p>
                       <p className="text-xs text-muted-foreground">{intern.userEmail}</p>
                     </div>
                   </td>
@@ -144,7 +144,7 @@ export function InternRosterTable({ interns }: { interns: InternRow[] }) {
                   </td>
                   <td className="px-4 py-3">
                     <span className="text-sm text-muted-foreground">
-                      {intern.sprintTitle ?? "—"}
+                      {intern.sprintTitle ?? "-"}
                     </span>
                   </td>
                   <td className="px-4 py-3">

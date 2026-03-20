@@ -78,7 +78,7 @@ function buildRecommendations(
 
   // Outbound if goal is more leads or outbound
   if (goals.includes("more-leads") || goals.includes("outbound")) {
-    recs.push({ name: "Cold Outbound System", description: "Multi-channel sequences — email + LinkedIn + SMS — targeting your ideal buyer persona.", urgency: "critical", pillar: "sales" })
+    recs.push({ name: "Cold Outbound System", description: "Multi-channel sequences - email + LinkedIn + SMS - targeting your ideal buyer persona.", urgency: "critical", pillar: "sales" })
   }
 
   // Website/SEO
@@ -301,7 +301,7 @@ export default function StackConfiguratorPage() {
               {step === 2 && (
                 <motion.div key="step2" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}>
                   <h2 className="text-2xl font-bold text-foreground mb-2">What are your top priorities? <span className="text-base font-normal text-muted-foreground">(pick all that apply)</span></h2>
-                  <p className="text-muted-foreground mb-6">Select everything that matters — we'll weight your stack accordingly.</p>
+                  <p className="text-muted-foreground mb-6">Select everything that matters - we'll weight your stack accordingly.</p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {GOALS.map((goal) => {
                       const selected = goals.includes(goal.id)
@@ -332,7 +332,7 @@ export default function StackConfiguratorPage() {
               {step === 3 && (
                 <motion.div key="step3" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}>
                   <h2 className="text-2xl font-bold text-foreground mb-2">Where are the gaps? <span className="text-base font-normal text-muted-foreground">(pick all that apply)</span></h2>
-                  <p className="text-muted-foreground mb-6">Be honest — this helps us prioritize the highest-leverage fixes first.</p>
+                  <p className="text-muted-foreground mb-6">Be honest - this helps us prioritize the highest-leverage fixes first.</p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {PAIN_POINTS.map((pain) => {
                       const selected = pains.includes(pain.id)
@@ -450,7 +450,7 @@ export default function StackConfiguratorPage() {
             </div>
 
             {[
-              { list: critical, title: "Critical — Fix These First", urgency: "critical" as const },
+              { list: critical, title: "Critical - Fix These First", urgency: "critical" as const },
               { list: recommended, title: "Recommended Next", urgency: "recommended" as const },
               { list: optional, title: "Growth Unlocks", urgency: "optional" as const },
             ].filter(({ list }) => list.length > 0).map(({ list, title, urgency }) => (

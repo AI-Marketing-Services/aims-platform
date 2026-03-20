@@ -25,7 +25,7 @@ const dmMono = DM_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "AIMS — AI-Powered Business Infrastructure",
+    default: "AIMS - AI-Powered Business Infrastructure",
     template: "%s | AIMS",
   },
   description:
@@ -38,14 +38,14 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://aimseos.com",
     siteName: "AIMS",
-    title: "AIMS — AI-Powered Business Infrastructure",
+    title: "AIMS - AI-Powered Business Infrastructure",
     description:
       "More qualified meetings. Less wasted ad spend. AI-powered outbound, inbound, and reactivation systems.",
     images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "AIMS — AI-Powered Business Infrastructure",
+    title: "AIMS - AI-Powered Business Infrastructure",
     description:
       "More qualified meetings. Less wasted ad spend. AI-powered outbound, inbound, and reactivation systems.",
   },

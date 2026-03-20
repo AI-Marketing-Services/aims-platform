@@ -51,12 +51,12 @@ const SEVERITY_CONFIG = {
 export async function generateMetadata({ params }: Props) {
   const { submissionId } = await params
   const sub = await db.leadMagnetSubmission.findUnique({ where: { id: submissionId } })
-  if (!sub) return { title: "Website Audit Results — AIMS" }
+  if (!sub) return { title: "Website Audit Results - AIMS" }
   const score = sub.score ?? 0
   const data = sub.data as Record<string, unknown>
   return {
     title: `Website Audit: ${data?.domain ?? "Site"} scored ${score}/100 | AIMS`,
-    description: "See what's holding this website back from converting — and run a free audit on yours.",
+    description: "See what's holding this website back from converting - and run a free audit on yours.",
   }
 }
 
@@ -262,7 +262,7 @@ export default async function WebsiteAuditResultsPage({ params }: Props) {
         <div className="bg-primary rounded-2xl p-8 text-center text-white mb-6">
           <h3 className="text-2xl font-bold mb-3">Ready to fix these issues?</h3>
           <p className="text-muted-foreground mb-6">
-            Book a free strategy call. We&apos;ll walk through your audit results and show you exactly how AIMS can resolve every issue — with a clear timeline and fixed price.
+            Book a free strategy call. We&apos;ll walk through your audit results and show you exactly how AIMS can resolve every issue - with a clear timeline and fixed price.
           </p>
           <Link
             href="/get-started"

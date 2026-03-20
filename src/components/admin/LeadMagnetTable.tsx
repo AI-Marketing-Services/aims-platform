@@ -172,7 +172,7 @@ export function LeadMagnetTable({
                         </td>
                         <td className="px-4 py-3">
                           <span className="text-sm font-mono text-foreground">
-                            {sub.score != null ? sub.score.toFixed(0) : "—"}
+                            {sub.score != null ? sub.score.toFixed(0) : "-"}
                           </span>
                         </td>
                         <td className="px-4 py-3">

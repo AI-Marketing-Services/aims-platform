@@ -15,7 +15,7 @@ const INDUSTRIES: Record<string, { title: string; description: string; solution:
   },
   "small-business": {
     title: "AI Services for Small Business",
-    description: "Website, CRM, chatbot, and outbound engine — everything a small business needs to generate and close leads on autopilot.",
+    description: "Website, CRM, chatbot, and outbound engine - everything a small business needs to generate and close leads on autopilot.",
     solution: "AI Growth Engine",
   },
   "hotels-hospitality": {
@@ -25,7 +25,7 @@ const INDUSTRIES: Record<string, { title: string; description: string; solution:
   },
   enterprise: {
     title: "AI Services for Enterprise",
-    description: "Custom AI automation at scale — RevOps, content production, pipeline orchestration, and vendor consolidation.",
+    description: "Custom AI automation at scale - RevOps, content production, pipeline orchestration, and vendor consolidation.",
     solution: "Enterprise AI Transformation",
   },
   healthcare: {
@@ -40,7 +40,7 @@ const INDUSTRIES: Record<string, { title: string; description: string; solution:
   },
   "home-services": {
     title: "AI Services for Home Services",
-    description: "HVAC, plumbing, electrical, roofing — AI voice agents answer every call, book jobs, and reactivate past customers automatically.",
+    description: "HVAC, plumbing, electrical, roofing - AI voice agents answer every call, book jobs, and reactivate past customers automatically.",
     solution: "Customer Reactivation Stack",
   },
   "real-estate": {
@@ -67,7 +67,7 @@ const INDUSTRIES: Record<string, { title: string; description: string; solution:
 
 const SOLUTION_DETAILS: Record<string, { tagline: string; services: string[]; price: string }> = {
   "AI Growth Engine": {
-    tagline: "Full-stack lead generation and conversion — website, outbound, voice, and SEO bundled together.",
+    tagline: "Full-stack lead generation and conversion - website, outbound, voice, and SEO bundled together.",
     services: ["Website + CRM + Chatbot", "Cold Outbound Engine", "AI Voice Agents", "SEO/AEO"],
     price: "from $497/mo",
   },

@@ -3,7 +3,7 @@ import Link from "next/link"
 import { ArrowRight, Zap, BarChart2, Clock, Shield, CheckCircle } from "lucide-react"
 
 export const metadata: Metadata = {
-  title: "About AIMS — AI Managing Services",
+  title: "About AIMS - AI Managing Services",
   description: "AIMS is a division of Modern Amenities Group, building AI-powered business infrastructure for B2B companies.",
   openGraph: {
     title: "About AIMS | AI Managing Services",
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 }
 
 const PILLARS = [
-  { icon: Zap, title: "AI-Native Execution", desc: "Every deliverable is powered by custom AI workflows — not templates, not manual work. We build agents that run 24/7 so you don't have to." },
+  { icon: Zap, title: "AI-Native Execution", desc: "Every deliverable is powered by custom AI workflows - not templates, not manual work. We build agents that run 24/7 so you don't have to." },
   { icon: BarChart2, title: "Results-First Model", desc: "We don't get paid to make decks. We get paid when your pipeline grows. Every engagement is tied to measurable outcomes." },
   { icon: Clock, title: "Speed of a Product Team", desc: "From kickoff to first lead in 14 days. We've eliminated every bottleneck that slows traditional agencies down." },
   { icon: Shield, title: "Full Transparency", desc: "Every client gets a live portal with real-time data on campaigns, pipeline, and ROI. No waiting for monthly reports." },
@@ -24,7 +24,7 @@ const VALUES = [
   "Results in days, not months",
   "Every client has a live dashboard",
   "We own outcomes, not just deliverables",
-  "Simple, honest pricing — no hidden fees",
+  "Simple, honest pricing - no hidden fees",
 ]
 
 export default function AboutPage() {
@@ -56,7 +56,7 @@ export default function AboutPage() {
               <p className="mt-4 text-muted-foreground leading-relaxed">
                 The best companies are built on systems, not hustle. Our mission is to give every B2B
                 business access to the same AI-powered infrastructure that Fortune 500 companies spend
-                millions building in-house — at a fraction of the cost.
+                millions building in-house - at a fraction of the cost.
               </p>
               <p className="mt-4 text-muted-foreground leading-relaxed">
                 We don&rsquo;t just consult. We build, deploy, and run the systems for you. Your job is to

@@ -47,7 +47,7 @@ const SERVICES: AIMSService[] = [
       "Prioritized AI opportunity map",
       "Production AI deployments (EOS Agent, automation, etc.)",
     ],
-    outcome: "AI-native team with forward-deployed engineers removing growth ceilings — avg 40% operational efficiency gain in 90 days",
+    outcome: "AI-native team with forward-deployed engineers removing growth ceilings - avg 40% operational efficiency gain in 90 days",
   },
   {
     id: "s4",
@@ -70,7 +70,7 @@ const SERVICES: AIMSService[] = [
       "Elasticity curve analysis per channel",
       "AI Recovery metric dashboard",
     ],
-    outcome: "Complete financial visibility into marketing ROI — know exactly which channels produce profitable business vs. waste budget",
+    outcome: "Complete financial visibility into marketing ROI - know exactly which channels produce profitable business vs. waste budget",
   },
   {
     id: "s13",
@@ -93,7 +93,7 @@ const SERVICES: AIMSService[] = [
       "7x contact rule enforcement system",
       "Pipeline accuracy scoring + 90-day forecast",
     ],
-    outcome: "Zero-leak sales pipeline revealing whether you have a sales problem or a pipeline problem — with BTC closing partners to fix it",
+    outcome: "Zero-leak sales pipeline revealing whether you have a sales problem or a pipeline problem - with BTC closing partners to fix it",
   },
 ]
 
@@ -142,19 +142,19 @@ function ServiceCard({ service }: { service: AIMSService }) {
         </div>
       </div>
 
-      {/* Deliverables — always exactly 3 rows */}
+      {/* Deliverables - always exactly 3 rows */}
       <div className="px-5 pb-4 flex-1">
         <ul className="space-y-2">
           {service.deliverables.slice(0, 3).map((d, i) => (
             <li key={i} className="flex items-start gap-2 text-sm text-foreground/80">
-              <span className="text-muted-foreground mt-0.5 flex-shrink-0">—</span>
+              <span className="text-muted-foreground mt-0.5 flex-shrink-0">-</span>
               <span className="line-clamp-1">{d}</span>
             </li>
           ))}
         </ul>
       </div>
 
-      {/* Outcome box — fixed height */}
+      {/* Outcome box - fixed height */}
       <div className="mx-5 mb-4 px-4 py-3 bg-muted border border-border rounded-xl min-h-[72px]">
         <div className="text-xs text-muted-foreground font-semibold uppercase tracking-wider mb-1">Outcome</div>
         <p className="text-sm text-foreground/80 leading-snug">{service.outcome}</p>

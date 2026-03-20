@@ -41,7 +41,7 @@ export async function POST(req: Request) {
 
         if (session.mode !== "subscription") break
         if (session.metadata?.source !== "cart") {
-          // Legacy single-service checkout — handled by subscription.created below
+          // Legacy single-service checkout - handled by subscription.created below
           break
         }
 
@@ -49,7 +49,7 @@ export async function POST(req: Request) {
         let userId = session.metadata?.userId as string | undefined
 
         if (!userId) {
-          // Guest or unlinked — try to find by Clerk ID or email
+          // Guest or unlinked - try to find by Clerk ID or email
           const clerkId = session.client_reference_id
           const email = session.customer_details?.email
 

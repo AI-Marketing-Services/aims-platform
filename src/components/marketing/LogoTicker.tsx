@@ -1,12 +1,12 @@
 import Image from "next/image"
 
-// Per-logo size overrides — text-only logos need more width/height to read
+// Per-logo size overrides - text-only logos need more width/height to read
 const LOGO_SIZES: Record<string, { w: number; h: number }> = {
-  "/partners/6fSaG0Z9T6wu55AmxL45rMrgNms.avif": { w: 120, h: 40 }, // Toll Brothers — text heavy
-  "/partners/eZBM2bc6w6VUFPmhsr8gPaOjIM.avif":  { w: 120, h: 44 }, // Coca-Cola — script
-  "/partners/L6nZm8LsScxRkCrVutLpBDCd8w.avif":  { w: 120, h: 42 }, // American Campus — icon+text
-  "/partners/fTtyMgNdt6LbHbeiKlQuYCtl6I.avif":  { w: 110, h: 36 }, // Fairfield — text only
-  "/partners/YtZJ5gkoFtLfH4Xc9WYswHbSUTg.avif": { w: 110, h: 42 }, // Cortland — icon+text
+  "/partners/6fSaG0Z9T6wu55AmxL45rMrgNms.avif": { w: 120, h: 40 }, // Toll Brothers - text heavy
+  "/partners/eZBM2bc6w6VUFPmhsr8gPaOjIM.avif":  { w: 120, h: 44 }, // Coca-Cola - script
+  "/partners/L6nZm8LsScxRkCrVutLpBDCd8w.avif":  { w: 120, h: 42 }, // American Campus - icon+text
+  "/partners/fTtyMgNdt6LbHbeiKlQuYCtl6I.avif":  { w: 110, h: 36 }, // Fairfield - text only
+  "/partners/YtZJ5gkoFtLfH4Xc9WYswHbSUTg.avif": { w: 110, h: 42 }, // Cortland - icon+text
   "/partners/QwquX6NUmGF7dXFs9HDwVQXWIwA.avif": { w: 110, h: 36 }, // large text logo
   "/partners/u7OFAO2pJctDed0w5dB7QQyFELE.avif":  { w: 110, h: 36 }, // large text logo
 }
@@ -45,7 +45,7 @@ export function LogoTicker() {
           <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-24 bg-gradient-to-r from-[#08090D] to-transparent" />
           <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-24 bg-gradient-to-l from-[#08090D] to-transparent" />
 
-          {/* Ticker track — animates translateX(0) → translateX(-33.333%) seamlessly */}
+          {/* Ticker track - animates translateX(0) → translateX(-33.333%) seamlessly */}
           <div className="flex will-change-transform animate-ticker-seamless items-center">
             {track.map((logo, i) => {
               const size = LOGO_SIZES[logo.src] ?? DEFAULT_SIZE

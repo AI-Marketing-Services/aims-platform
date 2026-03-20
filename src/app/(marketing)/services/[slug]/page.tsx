@@ -20,7 +20,7 @@ const STATIC_SERVICES: Record<string, {
     name: "Wild Ducks",
     pillar: "SALES",
     shortDesc: "Multi-domain email infra, AI SDR reply handling, auto-enrichment, and deliverability monitoring.",
-    longDesc: "We build and run your entire cold outbound engine — from ICP research and lead sourcing to AI-personalized copy, multi-step sequences, and hot-lead routing. Your team receives warm, qualified meetings. We handle everything else.",
+    longDesc: "We build and run your entire cold outbound engine - from ICP research and lead sourcing to AI-personalized copy, multi-step sequences, and hot-lead routing. Your team receives warm, qualified meetings. We handle everything else.",
     features: [
       "Multi-domain email infrastructure setup",
       "AI-powered lead sourcing & enrichment",
@@ -36,7 +36,7 @@ const STATIC_SERVICES: Record<string, {
     name: "Steel Trap",
     pillar: "OPERATIONS",
     shortDesc: "CRM architecture, lead routing, attribution, conversion dashboards, and rep coaching.",
-    longDesc: "We architect your entire revenue operations layer — CRM setup, lead routing rules, attribution models, conversion tracking, and rep performance dashboards. Get full pipeline visibility in under 7 days.",
+    longDesc: "We architect your entire revenue operations layer - CRM setup, lead routing rules, attribution models, conversion tracking, and rep performance dashboards. Get full pipeline visibility in under 7 days.",
     features: [
       "CRM audit and full rebuild",
       "Lead routing and assignment rules",
@@ -54,7 +54,7 @@ const STATIC_SERVICES: Record<string, {
     shortDesc: "Inbound and outbound AI voice agents with multi-location routing, live transcripts, and CRM sync.",
     longDesc: "Deploy AI voice agents that handle inbound calls 24/7 and run outbound dial campaigns while you sleep. Calls are transcribed in real-time, leads are scored, and hot prospects are routed directly to your team.",
     features: [
-      "Inbound AI receptionist — 24/7 coverage",
+      "Inbound AI receptionist - 24/7 coverage",
       "Outbound AI dialer campaigns",
       "Real-time call transcription",
       "Lead scoring and qualification",
@@ -68,7 +68,7 @@ const STATIC_SERVICES: Record<string, {
     name: "Content Production Pod",
     pillar: "MARKETING",
     shortDesc: "AI-powered content calendar, short-form video scripts, email copy, and LinkedIn ghostwriting.",
-    longDesc: "Your dedicated AI content team produces 30+ high-quality assets per month — video scripts, LinkedIn posts, email sequences, and ad copy — all aligned to your brand voice and ICP.",
+    longDesc: "Your dedicated AI content team produces 30+ high-quality assets per month - video scripts, LinkedIn posts, email sequences, and ad copy - all aligned to your brand voice and ICP.",
     features: [
       "Monthly content calendar and strategy",
       "30+ assets per month",
@@ -100,7 +100,7 @@ const STATIC_SERVICES: Record<string, {
     name: "Database Reactivation",
     pillar: "OPERATIONS",
     shortDesc: "Full CRM audit, deduplication, re-enrichment, and a scored outreach plan for your existing contacts.",
-    longDesc: "We perform a complete CRM health audit — deduplication, bounce cleanup, re-enrichment with fresh firmographic and contact data, and a scored outreach prioritization plan. Avg. $24K recovered pipeline per client.",
+    longDesc: "We perform a complete CRM health audit - deduplication, bounce cleanup, re-enrichment with fresh firmographic and contact data, and a scored outreach prioritization plan. Avg. $24K recovered pipeline per client.",
     features: [
       "Complete CRM data audit",
       "Deduplication and record merging",
@@ -120,7 +120,7 @@ const STATIC_SERVICES: Record<string, {
     features: [
       "Conversion-optimized website build",
       "CRM integration and pipeline setup",
-      "AI chat widget — 24/7 lead capture",
+      "AI chat widget - 24/7 lead capture",
       "Lead qualification and scoring",
       "Automatic CRM sync from chat",
       "Mobile-first responsive design",
@@ -132,7 +132,7 @@ const STATIC_SERVICES: Record<string, {
     name: "Money Page",
     pillar: "MARKETING",
     shortDesc: "Technical SEO, content clusters, and Answer Engine Optimization to rank in both search and AI results.",
-    longDesc: "We combine traditional SEO with Answer Engine Optimization — structuring your content so it ranks in Google and gets cited by AI tools like ChatGPT and Perplexity. More visibility across every discovery channel.",
+    longDesc: "We combine traditional SEO with Answer Engine Optimization - structuring your content so it ranks in Google and gets cited by AI tools like ChatGPT and Perplexity. More visibility across every discovery channel.",
     features: [
       "Technical SEO audit and fixes",
       "Keyword research and content clusters",
@@ -148,7 +148,7 @@ const STATIC_SERVICES: Record<string, {
     name: "Finance Automation",
     pillar: "FINANCE",
     shortDesc: "Automated invoicing, collections, expense categorization, and real-time financial dashboards.",
-    longDesc: "We automate your entire back-office financial workflow — from invoice generation and payment reminders to expense categorization and real-time P&L dashboards. Reduce manual finance work by 80%.",
+    longDesc: "We automate your entire back-office financial workflow - from invoice generation and payment reminders to expense categorization and real-time P&L dashboards. Reduce manual finance work by 80%.",
     features: [
       "Automated invoice generation",
       "Payment reminders and collections",
@@ -164,7 +164,7 @@ const STATIC_SERVICES: Record<string, {
     name: "Audience Targeting",
     pillar: "MARKETING",
     shortDesc: "Pixel-based audience building, lookalike modeling, and retargeting campaigns across paid channels.",
-    longDesc: "We deploy tracking pixels, build high-intent audience segments, and run retargeting campaigns across Meta, Google, and LinkedIn. Your ads reach the right people at the right moment — lower CPL, higher ROAS.",
+    longDesc: "We deploy tracking pixels, build high-intent audience segments, and run retargeting campaigns across Meta, Google, and LinkedIn. Your ads reach the right people at the right moment - lower CPL, higher ROAS.",
     features: [
       "Pixel deployment and configuration",
       "Custom audience segmentation",
@@ -180,7 +180,7 @@ const STATIC_SERVICES: Record<string, {
     name: "Local SEO",
     pillar: "MARKETING",
     shortDesc: "Google Business Profile optimization, local citations, and review management for location-based businesses.",
-    longDesc: "We dominate local search for your business — optimizing your Google Business Profile, building consistent citations, managing reviews, and creating location-specific content that ranks your business at the top of local results.",
+    longDesc: "We dominate local search for your business - optimizing your Google Business Profile, building consistent citations, managing reviews, and creating location-specific content that ranks your business at the top of local results.",
     features: [
       "Google Business Profile optimization",
       "Local citation building and cleanup",
@@ -196,7 +196,7 @@ const STATIC_SERVICES: Record<string, {
     name: "AI Automation",
     pillar: "OPERATIONS",
     shortDesc: "Custom AI workflows that eliminate repetitive tasks across sales, ops, marketing, and customer service.",
-    longDesc: "We map your biggest time sinks and build custom AI automations — from lead research and data entry to customer onboarding and support triaging. Avg. 22 hours/week reclaimed per client in 30 days.",
+    longDesc: "We map your biggest time sinks and build custom AI automations - from lead research and data entry to customer onboarding and support triaging. Avg. 22 hours/week reclaimed per client in 30 days.",
     features: [
       "Workflow audit and bottleneck mapping",
       "Custom AI automation builds",
@@ -212,7 +212,7 @@ const STATIC_SERVICES: Record<string, {
     name: "Pixel Intelligence",
     pillar: "MARKETING",
     shortDesc: "Identity resolution and visitor deanonymization to turn anonymous website traffic into actionable leads.",
-    longDesc: "We deploy advanced identity resolution pixels that reveal who's visiting your site — company name, contact info, and intent signals — turning anonymous traffic into a qualified prospect list for your sales team.",
+    longDesc: "We deploy advanced identity resolution pixels that reveal who's visiting your site - company name, contact info, and intent signals - turning anonymous traffic into a qualified prospect list for your sales team.",
     features: [
       "Identity resolution pixel deployment",
       "Visitor deanonymization",
@@ -228,7 +228,7 @@ const STATIC_SERVICES: Record<string, {
     name: "GHL Community OS",
     pillar: "OPERATIONS",
     shortDesc: "Done-for-you GoHighLevel snapshot with website, CRM, pipelines, AI voice agent, and onboarding automation.",
-    longDesc: "We build and configure a complete GoHighLevel operating system for your community or multi-location business — custom branding, domain, pipelines, AI receptionist, outbound voice agent, and automated onboarding sequences. Full OS live in under a week.",
+    longDesc: "We build and configure a complete GoHighLevel operating system for your community or multi-location business - custom branding, domain, pipelines, AI receptionist, outbound voice agent, and automated onboarding sequences. Full OS live in under a week.",
     features: [
       "White-labeled GHL subaccount setup",
       "Custom branding, domain, and pipeline configuration",
@@ -244,7 +244,7 @@ const STATIC_SERVICES: Record<string, {
     name: "AI Reputation Engine",
     pillar: "MARKETING",
     shortDesc: "Automated review generation, sentiment routing, and Google profile optimization running on autopilot.",
-    longDesc: "We deploy a fully automated review generation system — SMS-triggered requests post-transaction, sentiment routing to protect your reputation, and monthly competitor monitoring. Your Google profile stays optimized and your review count grows on autopilot.",
+    longDesc: "We deploy a fully automated review generation system - SMS-triggered requests post-transaction, sentiment routing to protect your reputation, and monthly competitor monitoring. Your Google profile stays optimized and your review count grows on autopilot.",
     features: [
       "SMS-triggered review request sequences",
       "Sentiment routing: positive → Google, negative → internal",
@@ -260,7 +260,7 @@ const STATIC_SERVICES: Record<string, {
     name: "Vendor Ordering Portal",
     pillar: "OPERATIONS",
     shortDesc: "Custom B2B ordering portal with product catalog, pricing logic, Stripe payments, and automated fulfillment.",
-    longDesc: "We build a branded B2B ordering portal with your product catalog, custom pricing logic, Stripe payment integration, and automated fulfillment notifications — eliminating email and phone orders completely.",
+    longDesc: "We build a branded B2B ordering portal with your product catalog, custom pricing logic, Stripe payment integration, and automated fulfillment notifications - eliminating email and phone orders completely.",
     features: [
       "Branded portal with your product catalog",
       "Custom pricing logic and minimum order rules",
@@ -275,8 +275,8 @@ const STATIC_SERVICES: Record<string, {
   "ai-community-chatbot": {
     name: "AI Community Chatbot",
     pillar: "OPERATIONS",
-    shortDesc: "AI assistant trained on your content, FAQs, SOPs, and product catalog — embedded on your site or community platform.",
-    longDesc: "We build an AI chatbot trained on your entire knowledge base — documents, videos, webinars, FAQs, and SOPs — and embed it wherever your community lives. 80%+ of questions answered instantly, 24/7, with smart escalation to humans when needed.",
+    shortDesc: "AI assistant trained on your content, FAQs, SOPs, and product catalog - embedded on your site or community platform.",
+    longDesc: "We build an AI chatbot trained on your entire knowledge base - documents, videos, webinars, FAQs, and SOPs - and embed it wherever your community lives. 80%+ of questions answered instantly, 24/7, with smart escalation to humans when needed.",
     features: [
       "Knowledge base ingestion (docs, video transcripts, FAQs)",
       "Custom AI assistant with your brand voice",
@@ -292,7 +292,7 @@ const STATIC_SERVICES: Record<string, {
     name: "Sales Team AI Enablement",
     pillar: "SALES",
     shortDesc: "AI call scoring, live call assist, roleplay training, and performance dashboards for your sales team.",
-    longDesc: "We deploy a complete AI-powered sales coaching infrastructure — call recording with AI scoring across 7 dimensions, live assist overlays surfacing responses in real time, roleplay simulation for training, and performance dashboards. New reps hit quota 40% faster.",
+    longDesc: "We deploy a complete AI-powered sales coaching infrastructure - call recording with AI scoring across 7 dimensions, live assist overlays surfacing responses in real time, roleplay simulation for training, and performance dashboards. New reps hit quota 40% faster.",
     features: [
       "Call recording and AI scoring (7 dimensions)",
       "Live call assist overlay with objection responses",
@@ -307,8 +307,8 @@ const STATIC_SERVICES: Record<string, {
   "sms-compliance-setup": {
     name: "SMS & Outbound Compliance",
     pillar: "OPERATIONS",
-    shortDesc: "A2P 10DLC registration, domain warmup, and sending infrastructure — fully compliant in 48 hours.",
-    longDesc: "We handle your complete outbound compliance setup — A2P brand and campaign registration, domain acquisition and warmup, sending infrastructure configuration, and a deliverability baseline report. No more blocked sends or carrier filtering.",
+    shortDesc: "A2P 10DLC registration, domain warmup, and sending infrastructure - fully compliant in 48 hours.",
+    longDesc: "We handle your complete outbound compliance setup - A2P brand and campaign registration, domain acquisition and warmup, sending infrastructure configuration, and a deliverability baseline report. No more blocked sends or carrier filtering.",
     features: [
       "A2P brand and campaign registration",
       "Sending number provisioning and configuration",
@@ -323,8 +323,8 @@ const STATIC_SERVICES: Record<string, {
   "crm-migration": {
     name: "CRM Migration & Architecture",
     pillar: "OPERATIONS",
-    shortDesc: "Full CRM audit, data migration, pipeline rebuild, and reporting dashboard — validated and live.",
-    longDesc: "We perform a complete CRM migration — auditing and deduplicating your source data, re-enriching contacts, mapping fields and custom properties, rebuilding your pipeline stages, and delivering a live reporting dashboard. Clean data, rebuilt pipelines, zero manual work.",
+    shortDesc: "Full CRM audit, data migration, pipeline rebuild, and reporting dashboard - validated and live.",
+    longDesc: "We perform a complete CRM migration - auditing and deduplicating your source data, re-enriching contacts, mapping fields and custom properties, rebuilding your pipeline stages, and delivering a live reporting dashboard. Clean data, rebuilt pipelines, zero manual work.",
     features: [
       "Source CRM audit and data deduplication",
       "Contact re-enrichment with fresh firmographic data",
@@ -339,8 +339,8 @@ const STATIC_SERVICES: Record<string, {
   "inbound-orchestration": {
     name: "Inbound Lead Orchestration",
     pillar: "SALES",
-    shortDesc: "End-to-end inbound pipeline from capture to enrichment to booking — fully automated.",
-    longDesc: "We automate your entire inbound lead flow — from form fill to enrichment to CRM routing in under 2 minutes. Every lead is scored, prioritized, and either auto-booked or routed to the right rep with full context. Zero manual triage.",
+    shortDesc: "End-to-end inbound pipeline from capture to enrichment to booking - fully automated.",
+    longDesc: "We automate your entire inbound lead flow - from form fill to enrichment to CRM routing in under 2 minutes. Every lead is scored, prioritized, and either auto-booked or routed to the right rep with full context. Zero manual triage.",
     features: [
       "Form → Clay enrichment → CRM routing in under 2 minutes",
       "Lead scoring model (firmographic + behavioral signals)",
@@ -356,12 +356,12 @@ const STATIC_SERVICES: Record<string, {
     name: "LinkedIn Outbound System",
     pillar: "MARKETING",
     shortDesc: "Signal-based LinkedIn pipeline from ICP connection to booked meeting.",
-    longDesc: "We build a complete LinkedIn outbound engine — optimizing your profile, running signal-based ICP connection sequences, and converting engaged connections into booked meetings. 50+ qualified connections per week flowing into your pipeline.",
+    longDesc: "We build a complete LinkedIn outbound engine - optimizing your profile, running signal-based ICP connection sequences, and converting engaged connections into booked meetings. 50+ qualified connections per week flowing into your pipeline.",
     features: [
       "Profile optimization and positioning",
       "3 posts/week content strategy for authority building",
       "ICP connection sequencing with personalized openers",
-      "Signal monitoring — triggers when prospects engage with content",
+      "Signal monitoring - triggers when prospects engage with content",
       "Tiered outreach routing based on engagement score",
       "Meeting link integration and follow-up sequences",
       "Weekly performance dashboard",
@@ -372,10 +372,10 @@ const STATIC_SERVICES: Record<string, {
     name: "AI Content Engine",
     pillar: "MARKETING",
     shortDesc: "High-volume content pipeline where AI handles research and drafting, humans handle final polish.",
-    longDesc: "We build a scalable AI content pipeline that produces 4x more output with half the team time. AI handles research, briefs, and first drafts — your team reviews and publishes. Every piece is SEO-scored before it goes live.",
+    longDesc: "We build a scalable AI content pipeline that produces 4x more output with half the team time. AI handles research, briefs, and first drafts - your team reviews and publishes. Every piece is SEO-scored before it goes live.",
     features: [
       "Content calendar and keyword-mapped topic clusters",
-      "AI drafting pipeline — full article drafts per brief",
+      "AI drafting pipeline - full article drafts per brief",
       "Human review and distribution workflow (blog, LinkedIn, email)",
       "SEO scoring for every piece before publish",
       "AI answer engine optimization for ChatGPT/Perplexity",
@@ -388,9 +388,9 @@ const STATIC_SERVICES: Record<string, {
     name: "AI Tool Tracker (Trackr)",
     pillar: "OPERATIONS",
     shortDesc: "Evaluate, track, and optimize every AI tool in your stack with automated research and scoring.",
-    longDesc: "We deploy Trackr — our AI tool intelligence platform — to give you one source of truth for your entire AI stack. Every tool is scored across 7 dimensions, spend is tracked, and you get automated renewal alerts before any auto-renews hit.",
+    longDesc: "We deploy Trackr - our AI tool intelligence platform - to give you one source of truth for your entire AI stack. Every tool is scored across 7 dimensions, spend is tracked, and you get automated renewal alerts before any auto-renews hit.",
     features: [
-      "Full AI stack audit — every tool scored across 7 dimensions",
+      "Full AI stack audit - every tool scored across 7 dimensions",
       "Spend tracking dashboard with ROI per tool",
       "Automated research on any new tool in 30 minutes",
       "Renewal calendar with Slack alerts before auto-renews",
@@ -469,7 +469,7 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
       }
     }
   } catch {
-    // DB unavailable — use static data
+    // DB unavailable - use static data
   }
 
   // Fall back to static config
@@ -525,7 +525,7 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
     <div className="min-h-screen bg-card">
-      {/* Hero — two-column when demo exists, full-width otherwise */}
+      {/* Hero - two-column when demo exists, full-width otherwise */}
       <section className="border-b border-border bg-card py-20">
         <div className={`container mx-auto px-4 ${hasDemo ? "max-w-6xl" : "max-w-4xl"}`}>
           {hasDemo ? (
@@ -555,7 +555,7 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
               {/* Right: live demo */}
               <div>
                 <p className="mb-3 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
-                  Live Demo — Interactive Preview
+                  Live Demo - Interactive Preview
                 </p>
                 <ServiceDemoWidget slug={slug} />
               </div>

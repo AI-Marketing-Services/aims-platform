@@ -4,7 +4,7 @@ const WORKSPACE_GID = process.env.ASANA_WORKSPACE_GID;
 
 function isConfigured(): boolean {
   if (!PAT || !WORKSPACE_GID) {
-    console.warn("[Asana] Missing ASANA_PAT or ASANA_WORKSPACE_GID — skipping Asana API call");
+    console.warn("[Asana] Missing ASANA_PAT or ASANA_WORKSPACE_GID - skipping Asana API call");
     return false;
   }
   return true;
@@ -35,7 +35,7 @@ async function asanaPost(path: string, body: object) {
   });
   if (!res.ok) {
     const err = await res.text();
-    throw new Error(`Asana POST ${path} failed: ${res.status} — ${err}`);
+    throw new Error(`Asana POST ${path} failed: ${res.status} - ${err}`);
   }
   return res.json();
 }
@@ -114,13 +114,13 @@ export async function createFulfillmentTask(ctx: FulfillmentContext) {
         .replace("{{client}}", ctx.clientName)
         .replace("{{service}}", ctx.serviceName)
         .replace("{{tier}}", ctx.tier ?? "")
-    : `New Client: ${ctx.clientName} — ${ctx.serviceName}${ctx.tier ? ` (${ctx.tier})` : ""}`;
+    : `New Client: ${ctx.clientName} - ${ctx.serviceName}${ctx.tier ? ` (${ctx.tier})` : ""}`;
 
   const defaultNotes = [
-    `New subscription purchased — fulfillment required.`,
+    `New subscription purchased - fulfillment required.`,
     ``,
     `Client: ${ctx.clientName} (${ctx.clientEmail})`,
-    `Service: ${ctx.serviceName}${ctx.tier ? ` — ${ctx.tier}` : ""}`,
+    `Service: ${ctx.serviceName}${ctx.tier ? ` - ${ctx.tier}` : ""}`,
     `Monthly Amount: $${ctx.monthlyAmount}/mo`,
     ``,
     `Portal: ${ctx.portalUrl}`,

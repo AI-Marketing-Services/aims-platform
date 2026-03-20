@@ -3,7 +3,7 @@ import Link from "next/link"
 import { ArrowRight, CheckCircle2, TrendingUp, Clock, MapPin } from "lucide-react"
 
 export const metadata: Metadata = {
-  title: "Vending Operator AI Case Study — AIMS",
+  title: "Vending Operator AI Case Study - AIMS",
   description: "How a multi-route vending operator secured 47 new locations in 90 days using AIMS cold outbound and AI automation.",
 }
 
@@ -25,7 +25,7 @@ export default function VendingpreneurCaseStudy() {
         </div>
 
         <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
-          47 New Locations in 90 Days — Without Hiring a Salesperson
+          47 New Locations in 90 Days - Without Hiring a Salesperson
         </h1>
         <p className="text-lg text-muted-foreground mb-10">
           How an owner-operator vending business scaled from manual prospecting to a fully automated location acquisition machine.
@@ -48,7 +48,7 @@ export default function VendingpreneurCaseStudy() {
           <section>
             <h2 className="text-xl font-bold text-foreground mb-3">The Challenge</h2>
             <p className="text-muted-foreground leading-relaxed">
-              A vending operator managing 240+ machines across three states was growing, but slowly. Every new location was the result of a personal relationship, a referral, or hours spent cold-calling property managers from a spreadsheet. The operator was the only salesperson — and between restocking routes, machine maintenance, and accounting, there was almost no time left to prospect.
+              A vending operator managing 240+ machines across three states was growing, but slowly. Every new location was the result of a personal relationship, a referral, or hours spent cold-calling property managers from a spreadsheet. The operator was the only salesperson - and between restocking routes, machine maintenance, and accounting, there was almost no time left to prospect.
             </p>
             <p className="text-muted-foreground leading-relaxed mt-3">
               The bottleneck was clear: &quot;I know exactly where my machines should go. I just can&apos;t find the time to pitch all of them.&quot;
@@ -60,10 +60,10 @@ export default function VendingpreneurCaseStudy() {
             <div className="space-y-3">
               {[
                 "Cold email outbound system targeting 2,000+ property managers, facility directors, and office managers per month within the operator's target territories",
-                "LinkedIn sequence running in parallel — personalized connection + follow-up based on company size and property type",
+                "LinkedIn sequence running in parallel - personalized connection + follow-up based on company size and property type",
                 "AI voice agent answering inbound calls 24/7, qualifying location leads, and scheduling site visits while the operator was on route",
-                "CRM pipeline pre-built for vending — stages from 'Location Prospected' through 'Machine Installed' with automated follow-up at each stage",
-                "Lead reactivation campaign reaching 180 cold contacts from the operator's existing spreadsheet — converting 22 of them into new conversations",
+                "CRM pipeline pre-built for vending - stages from 'Location Prospected' through 'Machine Installed' with automated follow-up at each stage",
+                "Lead reactivation campaign reaching 180 cold contacts from the operator's existing spreadsheet - converting 22 of them into new conversations",
               ].map((item) => (
                 <div key={item} className="flex items-start gap-3">
                   <CheckCircle2 className="w-4 h-4 text-green-400 flex-shrink-0 mt-0.5" />
@@ -98,11 +98,11 @@ export default function VendingpreneurCaseStudy() {
             <h2 className="text-xl font-bold text-foreground mb-3">Results After 90 Days</h2>
             <div className="bg-green-900/15 border border-green-800 rounded-xl p-6 space-y-3">
               {[
-                "47 new locations secured — 31 from cold outbound, 9 from voice agent inbound, 7 from reactivation",
+                "47 new locations secured - 31 from cold outbound, 9 from voice agent inbound, 7 from reactivation",
                 "Average cost per secured location: $284 (vs. $1,800+ when sourcing through broker networks)",
                 "Time spent on prospecting: reduced from ~12 hours/week to ~1 hour/week (review + approval only)",
                 "Machine count grew from 240 to 287 in 90 days without any new hires",
-                "Pipeline: 140 active prospects still in nurture — projected 30+ additional locations in next 60 days",
+                "Pipeline: 140 active prospects still in nurture - projected 30+ additional locations in next 60 days",
               ].map((item) => (
                 <div key={item} className="flex items-start gap-3">
                   <CheckCircle2 className="w-4 h-4 text-green-400 flex-shrink-0 mt-0.5" />

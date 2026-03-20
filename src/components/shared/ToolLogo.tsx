@@ -53,7 +53,7 @@ const LOCAL_LOGOS: Record<string, string> = {
   "mailgun.com": "/integrations/mailgun.svg",
   "resend.com": "/integrations/resend.svg",
   "googlebusiness.com": "/integrations/googlebusiness.svg",
-  // Aliases — use fallback initials for tools without distinct logos
+  // Aliases - use fallback initials for tools without distinct logos
   "gohighlevel.com": "/integrations/hubspot-svgrepo-com.svg",
   "ramp.com": "/integrations/excel.svg",
 }

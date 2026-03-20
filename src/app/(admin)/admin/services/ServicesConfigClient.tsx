@@ -171,7 +171,7 @@ export default function ServicesConfigClient() {
                             onChange={(e) => setEdit(svc.id, "asanaProjectGid", e.target.value)}
                             className="w-48 rounded-md border border-border px-2.5 py-1.5 text-xs focus:border-[#C4972A] focus:outline-none focus:ring-1 focus:ring-[#C4972A]/20"
                           >
-                            <option value="">— No project —</option>
+                            <option value=""> -  No project  - </option>
                             {projects.map((p) => (
                               <option key={p.gid} value={p.gid}>{p.name}</option>
                             ))}
@@ -185,7 +185,7 @@ export default function ServicesConfigClient() {
                             onChange={(e) => setEdit(svc.id, "asanaAssigneeGid", e.target.value)}
                             className="w-44 rounded-md border border-border px-2.5 py-1.5 text-xs focus:border-[#C4972A] focus:outline-none focus:ring-1 focus:ring-[#C4972A]/20"
                           >
-                            <option value="">— Unassigned —</option>
+                            <option value=""> -  Unassigned  - </option>
                             {users.map((u) => (
                               <option key={u.gid} value={u.gid}>{u.name}</option>
                             ))}
@@ -219,7 +219,7 @@ export default function ServicesConfigClient() {
                                 <label className="mb-1 block text-xs font-medium text-muted-foreground">Task Name</label>
                                 <input
                                   type="text"
-                                  placeholder="New Client: {{client}} — {{service}}"
+                                  placeholder="New Client: {{client}} - {{service}}"
                                   value={template?.name ?? ""}
                                   onChange={(e) => setEdit(svc.id, "asanaTaskTemplate", { ...template, name: e.target.value })}
                                   className="w-full rounded-md border border-border px-2.5 py-1.5 text-xs focus:border-[#C4972A] focus:outline-none focus:ring-1 focus:ring-[#C4972A]/20"

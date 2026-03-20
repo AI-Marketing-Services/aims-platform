@@ -18,7 +18,7 @@ export default async function AdminLayout({
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* Mobile top header — only visible on mobile */}
+      {/* Mobile top header - only visible on mobile */}
       <div className="lg:hidden flex items-center justify-between h-14 px-4 bg-deep border-b border-border sticky top-0 z-40">
         <span className="text-base font-bold tracking-tight text-foreground">AIMS Admin</span>
         <div className="flex items-center gap-2">

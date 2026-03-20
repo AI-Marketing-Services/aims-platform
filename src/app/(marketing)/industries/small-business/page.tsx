@@ -3,17 +3,17 @@ import Link from "next/link"
 import { ArrowRight, CheckCircle2, Phone, Mail, Users, BarChart2, Zap, Clock } from "lucide-react"
 
 export const metadata: Metadata = {
-  title: "AI Systems for Small Businesses — AIMS",
-  description: "AIMS gives small businesses the same AI-powered sales and marketing infrastructure that enterprise companies use — at a price that makes sense for a growing team.",
+  title: "AI Systems for Small Businesses - AIMS",
+  description: "AIMS gives small businesses the same AI-powered sales and marketing infrastructure that enterprise companies use - at a price that makes sense for a growing team.",
 }
 
 const PAIN_POINTS = [
-  { icon: Clock, pain: "No time to follow up with every lead — too busy running the business", fix: "AI sequences follow up instantly and nurture leads for weeks without any manual work" },
+  { icon: Clock, pain: "No time to follow up with every lead - too busy running the business", fix: "AI sequences follow up instantly and nurture leads for weeks without any manual work" },
   { icon: Phone, pain: "Calls going to voicemail when you're with a customer", fix: "AI voice agent answers, qualifies, and books appointments around the clock" },
   { icon: Users, pain: "Can't afford a full sales team but need consistent pipeline", fix: "AI-driven outbound system that works like a 3-person BDR team at a fraction of the cost" },
-  { icon: Mail, pain: "Website built years ago — not generating any leads", fix: "Modern conversion-optimized site with AI chatbot capturing visitors 24/7" },
+  { icon: Mail, pain: "Website built years ago - not generating any leads", fix: "Modern conversion-optimized site with AI chatbot capturing visitors 24/7" },
   { icon: BarChart2, pain: "No idea which marketing efforts are actually working", fix: "Dashboard connecting ad spend, leads, and closed revenue in plain English" },
-  { icon: Zap, pain: "Competitor down the street is winning more business — you're not sure why", fix: "Competitive positioning analysis + SEO strategy to outrank and outconvert them" },
+  { icon: Zap, pain: "Competitor down the street is winning more business - you're not sure why", fix: "Competitive positioning analysis + SEO strategy to outrank and outconvert them" },
 ]
 
 const RESULTS = [
@@ -41,14 +41,14 @@ const SERVICES = [
   {
     name: "Cold Outbound System",
     slug: "cold-outbound",
-    desc: "Done-for-you outbound engine targeting your ideal customers via email and LinkedIn. Sequences personalized at scale — designed to book calls, not get ignored.",
+    desc: "Done-for-you outbound engine targeting your ideal customers via email and LinkedIn. Sequences personalized at scale - designed to book calls, not get ignored.",
     price: "Custom",
     badge: null,
   },
   {
     name: "SEO + Local Visibility",
     slug: "seo-aeo",
-    desc: "Show up when your customers are searching — on Google, Maps, and now AI search engines like ChatGPT and Perplexity. Built for local and regional businesses.",
+    desc: "Show up when your customers are searching - on Google, Maps, and now AI search engines like ChatGPT and Perplexity. Built for local and regional businesses.",
     price: "Custom",
     badge: null,
   },
@@ -69,7 +69,7 @@ export default function SmallBusinessPage() {
             <span className="text-primary">Small Business Budgets</span>
           </h1>
           <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-            AIMS gives you the same AI-powered sales and marketing infrastructure your biggest competitors use — built, deployed, and managed for you at a price that makes sense.
+            AIMS gives you the same AI-powered sales and marketing infrastructure your biggest competitors use - built, deployed, and managed for you at a price that makes sense.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
@@ -131,7 +131,7 @@ export default function SmallBusinessPage() {
       <section className="py-16 px-4 bg-card">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-foreground mb-4">Start Here — AIMS for Small Business</h2>
+            <h2 className="text-3xl font-bold text-foreground mb-4">Start Here - AIMS for Small Business</h2>
             <p className="text-muted-foreground max-w-xl mx-auto">Pick the one service that solves your biggest problem, or let us build a full stack.</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -165,7 +165,7 @@ export default function SmallBusinessPage() {
           <div className="bg-card border border-border rounded-2xl p-8 shadow-sm">
             <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-2">Recommended Package</p>
             <h2 className="text-2xl font-bold text-foreground mb-1">AI Growth Engine</h2>
-            <p className="text-sm text-muted-foreground mb-4">Everything you need to fill your pipeline and convert leads on autopilot — website, outbound, voice agents, and SEO bundled together so it all works from day one.</p>
+            <p className="text-sm text-muted-foreground mb-4">Everything you need to fill your pipeline and convert leads on autopilot - website, outbound, voice agents, and SEO bundled together so it all works from day one.</p>
             <div className="flex flex-wrap gap-2 mb-5">
               {["Website + CRM + Chatbot", "Cold Outbound Engine", "AI Voice Agents", "SEO/AEO"].map((s) => (
                 <span key={s} className="inline-flex items-center gap-1 px-2.5 py-1 bg-deep text-foreground text-xs font-medium rounded-full">
@@ -188,7 +188,7 @@ export default function SmallBusinessPage() {
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="text-3xl font-bold mb-4 text-foreground">Let&apos;s build your growth engine.</h2>
           <p className="text-muted-foreground mb-8">
-            Book a free 30-minute strategy call. We&apos;ll look at your current setup, identify the biggest gaps, and give you a clear plan — no obligation, no pressure.
+            Book a free 30-minute strategy call. We&apos;ll look at your current setup, identify the biggest gaps, and give you a clear plan - no obligation, no pressure.
           </p>
           <Link
             href="/get-started"

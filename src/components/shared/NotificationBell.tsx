@@ -22,7 +22,7 @@ export function NotificationBell({ variant = "light" }: { variant?: "light" | "d
         setUnread(data.unreadCount ?? 0)
       }
     } catch {
-      // Silently fail — bell will just show no notifications
+      // Silently fail - bell will just show no notifications
     }
     setLoading(false)
   }, [])

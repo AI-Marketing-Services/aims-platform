@@ -109,7 +109,7 @@ export default async function PortalServicesPage() {
       },
     })
   } catch {
-    // DB failure — still render page with empty state
+    // DB failure - still render page with empty state
   }
 
   if (!dbUser) redirect("/sign-in")

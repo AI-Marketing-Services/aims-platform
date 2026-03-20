@@ -95,7 +95,7 @@ export default async function PortalServiceDetailPage({
             <p className="text-sm font-medium text-foreground">
               {subscription.createdAt
                 ? new Date(subscription.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
-                : "—"}
+                : "-"}
             </p>
           </div>
           <div>
@@ -103,7 +103,7 @@ export default async function PortalServiceDetailPage({
             <p className="text-sm font-medium text-foreground">
               {subscription.currentPeriodEnd
                 ? new Date(subscription.currentPeriodEnd).toLocaleDateString("en-US", { month: "short", day: "numeric" })
-                : "—"}
+                : "-"}
             </p>
           </div>
           <div>

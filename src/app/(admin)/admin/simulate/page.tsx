@@ -437,7 +437,7 @@ export default function SimulatePage() {
         {process.env.NODE_ENV === "production" && (
           <div className="mt-3 rounded-lg bg-yellow-500/10 border border-yellow-500/30 px-4 py-2.5">
             <p className="text-xs font-semibold text-yellow-400">
-              Production environment — purchase simulation is disabled unless ALLOW_SIMULATE=true is set.
+              Production environment - purchase simulation is disabled unless ALLOW_SIMULATE=true is set.
             </p>
           </div>
         )}

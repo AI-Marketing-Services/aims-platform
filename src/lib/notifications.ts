@@ -93,7 +93,7 @@ export async function notifyNewLead(deal: {
   await notify({
     type: "new_lead",
     title: "New Lead",
-    message: `${deal.contactName}${deal.company ? ` (${deal.company})` : ""} — ${deal.contactEmail}\nSource: ${deal.source ?? "direct"}${deal.channelTag ? ` | Channel: ${deal.channelTag}` : ""}`,
+    message: `${deal.contactName}${deal.company ? ` (${deal.company})` : ""} - ${deal.contactEmail}\nSource: ${deal.source ?? "direct"}${deal.channelTag ? ` | Channel: ${deal.channelTag}` : ""}`,
     userId: deal.userId,
   })
 }

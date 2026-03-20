@@ -15,7 +15,7 @@ import {
 } from "lucide-react"
 
 export const metadata: Metadata = {
-  title: "Industries We Serve — AI Solutions by Sector | AIMS",
+  title: "Industries We Serve - AI Solutions by Sector | AIMS",
   description:
     "AIMS builds AI growth systems for healthcare, legal, home services, real estate, hospitality, professional services, e-commerce, SaaS, and more.",
 }
@@ -41,7 +41,7 @@ const INDUSTRIES = [
     name: "Home Services",
     slug: "home-services",
     description:
-      "HVAC, plumbing, electrical, roofing — AI voice agents answer every call, book jobs, and reactivate past customers automatically.",
+      "HVAC, plumbing, electrical, roofing - AI voice agents answer every call, book jobs, and reactivate past customers automatically.",
     icon: Wrench,
     solution: "Customer Reactivation Stack",
   },
@@ -57,7 +57,7 @@ const INDUSTRIES = [
     name: "Restaurants & Hospitality",
     slug: "hotels-hospitality",
     description:
-      "Guest communication, review generation, and reservation optimization powered by AI — so you focus on the experience.",
+      "Guest communication, review generation, and reservation optimization powered by AI - so you focus on the experience.",
     icon: UtensilsCrossed,
     solution: "Customer Reactivation Stack",
   },
@@ -114,7 +114,7 @@ export default function IndustriesPage() {
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             No matter your vertical, AIMS builds and runs AI systems that
-            generate leads, close deals, and automate operations — tailored to
+            generate leads, close deals, and automate operations - tailored to
             how your industry actually works.
           </p>
         </div>

@@ -29,11 +29,11 @@ interface Lead {
 }
 
 const RECENT_LEADS: Lead[] = [
-  { initials: "SC", color: "#C4972A", name: "Sarah Chen", company: "Acme Corp", status: "hot", score: 92, email: "sarah@acmecorp.com", phone: "+1 555-0101", lastContacted: "2h ago", notes: "Follow up on Q2 budget — interested in AI Sales Engine" },
+  { initials: "SC", color: "#C4972A", name: "Sarah Chen", company: "Acme Corp", status: "hot", score: 92, email: "sarah@acmecorp.com", phone: "+1 555-0101", lastContacted: "2h ago", notes: "Follow up on Q2 budget - interested in AI Sales Engine" },
   { initials: "MW", color: "#8B6914", name: "Marcus Webb", company: "TechFlow Inc", status: "warm", score: 74, email: "marcus@techflow.io", phone: "+1 555-0102", lastContacted: "1d ago", notes: "Requested demo for outbound automation stack" },
-  { initials: "DR", color: "#7F1D1D", name: "Diana Ross", company: "Velocity Partners", status: "warm", score: 68, email: "diana@velocityp.com", phone: "+1 555-0103", lastContacted: "2d ago", notes: "Evaluating competitors — send case studies" },
-  { initials: "JL", color: "#A17D22", name: "James Liu", company: "Growth Labs", status: "new", score: 61, email: "james@growthlabs.co", phone: "+1 555-0104", lastContacted: "3d ago", notes: "Inbound from LinkedIn ad — schedule intro call" },
-  { initials: "KP", color: "#6B21A8", name: "Kevin Park", company: "CloudBase", status: "new", score: 55, email: "kevin@cloudbase.io", phone: "+1 555-0105", lastContacted: "4d ago", notes: "Referred by Acme Corp — high intent signal" },
+  { initials: "DR", color: "#7F1D1D", name: "Diana Ross", company: "Velocity Partners", status: "warm", score: 68, email: "diana@velocityp.com", phone: "+1 555-0103", lastContacted: "2d ago", notes: "Evaluating competitors - send case studies" },
+  { initials: "JL", color: "#A17D22", name: "James Liu", company: "Growth Labs", status: "new", score: 61, email: "james@growthlabs.co", phone: "+1 555-0104", lastContacted: "3d ago", notes: "Inbound from LinkedIn ad - schedule intro call" },
+  { initials: "KP", color: "#6B21A8", name: "Kevin Park", company: "CloudBase", status: "new", score: 55, email: "kevin@cloudbase.io", phone: "+1 555-0105", lastContacted: "4d ago", notes: "Referred by Acme Corp - high intent signal" },
   { initials: "AL", color: "#0369A1", name: "Amy Lin", company: "FinStack", status: "warm", score: 71, email: "amy@finstack.com", phone: "+1 555-0106", lastContacted: "1d ago", notes: "Interested in fractional SDR + AI calling bundle" },
 ]
 
@@ -208,7 +208,7 @@ function DashboardView() {
   const [showBreakdown, setShowBreakdown] = useState(false)
   return (
     <div className="flex-1 min-w-0 bg-deep/40 overflow-hidden">
-      {/* Metric row — 5 cols on desktop, 2 on mobile */}
+      {/* Metric row - 5 cols on desktop, 2 on mobile */}
       <div className="grid grid-cols-2 sm:grid-cols-5 border-b border-border">
         <div className="bg-card px-3 py-3 border-r border-border text-center">
           <p className="text-[9px] font-semibold uppercase tracking-wide text-muted-foreground">New Leads</p>
@@ -628,7 +628,7 @@ function PipelineView() {
         </button>
       </div>
 
-      {/* Kanban mini board — 3 columns */}
+      {/* Kanban mini board - 3 columns */}
       <div className="grid grid-cols-3 gap-2 mb-3">
         {KANBAN_COLUMNS.map((col, ci) => (
           <div key={col.label} className="rounded-sm bg-deep border border-border p-2">
@@ -776,7 +776,7 @@ function ReportsView() {
     <div className="flex-1 bg-card p-4 overflow-hidden">
       <p className="text-[11px] font-semibold text-foreground mb-2">Analytics Dashboard</p>
 
-      {/* Top stats row — 4 cards */}
+      {/* Top stats row - 4 cards */}
       <div className="grid grid-cols-4 gap-1.5 mb-3">
         {topStats.map((s) => (
           <div key={s.label} className="rounded-lg bg-deep px-2 py-1.5 text-center">
@@ -1009,10 +1009,10 @@ const VIEW_MAP: Record<string, React.FC> = {
 // ─── Floating logo animation ──────────────────────────────────────────────────
 
 const FLOAT_LOGOS = [
-  { src: "/integrations/hubspot-svgrepo-com.svg", label: "HubSpot", style: { top: "10%", left: "4%" }, delay: 0 },
-  { src: "/integrations/notion.svg", label: "Notion", style: { top: "10%", right: "4%" }, delay: 0.1 },
-  { src: "/integrations/instantly.webp", label: "Instantly", style: { top: "38%", left: "3%" }, delay: 0.2 },
-  { src: "/integrations/slack.png", label: "Slack", style: { top: "38%", right: "3%" }, delay: 0.3 },
+  { src: "/integrations/hubspot-svgrepo-com.svg", label: "HubSpot", style: { top: "8%", left: "10%" }, delay: 0, tiltDir: 1 },
+  { src: "/integrations/notion.svg", label: "Notion", style: { top: "6%", right: "10%" }, delay: 0.1, tiltDir: -1 },
+  { src: "/integrations/instantly.webp", label: "Instantly", style: { top: "36%", left: "6%" }, delay: 0.2, tiltDir: -1 },
+  { src: "/integrations/slack.png", label: "Slack", style: { top: "34%", right: "6%" }, delay: 0.3, tiltDir: 1 },
 ]
 
 // ─── Hero ─────────────────────────────────────────────────────────────────────
@@ -1028,21 +1028,23 @@ export function Hero() {
       {FLOAT_LOGOS.map((logo) => (
         <motion.div
           key={logo.label}
-          className="absolute z-10 hidden lg:flex h-[72px] w-[72px] items-center justify-center rounded-2xl bg-surface shadow-lg shadow-black/30 border border-border"
+          className="absolute z-10 hidden lg:flex h-[88px] w-[88px] items-center justify-center rounded-2xl bg-surface shadow-lg shadow-black/30 border border-border"
           style={logo.style as React.CSSProperties}
-          initial={{ opacity: 0, scale: 0.7 }}
+          initial={{ opacity: 0, scale: 0.7, rotate: 0 }}
           animate={{
             opacity: 1,
             scale: 1,
-            y: [0, -8, 0],
+            y: [0, -12, 0],
+            rotate: [0, 6 * logo.tiltDir, 0, -6 * logo.tiltDir, 0],
           }}
           transition={{
             opacity: { delay: logo.delay + 0.4, duration: 0.4 },
             scale: { delay: logo.delay + 0.4, duration: 0.4 },
             y: { delay: logo.delay + 1, duration: 3 + logo.delay, repeat: Infinity, ease: "easeInOut" },
+            rotate: { delay: logo.delay + 1, duration: 4 + logo.delay, repeat: Infinity, ease: "easeInOut" },
           }}
         >
-          <Image src={logo.src} alt={logo.label} width={42} height={42} className="object-contain" />
+          <Image src={logo.src} alt={logo.label} width={52} height={52} className="object-contain" />
         </motion.div>
       ))}
 
@@ -1051,7 +1053,7 @@ export function Hero() {
 
           {/* Eyebrow */}
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="mb-7">
-            <span className="font-mono text-primary text-xs uppercase tracking-widest">AI Managing Services — AIMS</span>
+            <span className="font-mono text-primary text-xs uppercase tracking-widest">AI Managing Services - AIMS</span>
           </motion.div>
 
           {/* Headline */}
@@ -1068,7 +1070,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}
             className="mx-auto mt-5 max-w-2xl text-lg text-muted-foreground leading-relaxed"
           >
-            We embed inside your organization, find where your best people are buried in low-value work, and install the AI systems that give them — and your business — room to grow.
+            We embed inside your organization, find where your best people are buried in low-value work, and install the AI systems that give them - and your business - room to grow.
           </motion.p>
 
           <motion.div
@@ -1094,7 +1096,7 @@ export function Hero() {
             <div className="overflow-hidden rounded-2xl border border-primary/30 bg-card h-auto sm:h-[560px] shadow-[0_8px_60px_-12px_rgba(196,151,42,0.25),0_0_0_1px_rgba(196,151,42,0.08)] hover:shadow-[0_12px_70px_-10px_rgba(196,151,42,0.35),0_0_0_1px_rgba(196,151,42,0.15)] transition-shadow duration-500">
               <div className="flex flex-col sm:flex-row h-auto sm:h-[560px]">
 
-                {/* DESKTOP SIDEBAR — hidden on mobile */}
+                {/* DESKTOP SIDEBAR - hidden on mobile */}
                 <div className="hidden sm:flex w-40 flex-shrink-0 border-r border-border bg-card flex-col">
                   <div className="flex items-center px-3 py-3.5 border-b border-border">
                     <Image src="/logo.png" alt="AIMS" width={80} height={32} className="object-contain h-6 w-auto" />
@@ -1133,7 +1135,7 @@ export function Hero() {
                   </div>
                 </div>
 
-                {/* MOBILE TAB BAR — visible only on mobile */}
+                {/* MOBILE TAB BAR - visible only on mobile */}
                 <div className="sm:hidden relative border-b border-border bg-card shrink-0">
                   {/* Scroll fade indicators */}
                   <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-8 bg-gradient-to-l from-card to-transparent" />

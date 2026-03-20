@@ -61,7 +61,7 @@ export async function POST(req: Request) {
         activities: {
           create: {
             type: "FORM_SUBMITTED",
-            detail: `Strategy call request — services: ${data.services.join(", ") || "not specified"}. Goal: ${data.goal ?? "—"}`,
+            detail: `Strategy call request - services: ${data.services.join(", ") || "not specified"}. Goal: ${data.goal ?? "-"}`,
           },
         },
       },

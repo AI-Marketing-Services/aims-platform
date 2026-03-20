@@ -13,7 +13,7 @@ export const AIMS_KNOWLEDGE_BASE = `
 - **AI Voice Agents** (Custom): 24/7 AI phone agents that handle inbound calls, qualify leads, book appointments, and answer FAQs.
 - **Audience Targeting** ($197-397/mo): AI-powered audience building using pixel data, lookalike modeling, and intent signals.
 - **Pixel Intelligence** ($97-297/mo): Website visitor identification and retargeting. See who visits your site even if they don't fill out a form.
-- **Inbound Orchestration** ($297-597/mo): Full inbound lead management — chatbots, forms, routing, scoring, and nurture sequences.
+- **Inbound Orchestration** ($297-597/mo): Full inbound lead management - chatbots, forms, routing, scoring, and nurture sequences.
 - **Lead Reactivation** ($197-397/mo): Re-engage dormant leads and past customers with AI-personalized outreach campaigns.
 - **RevOps Pipeline** ($297-597/mo): Sales pipeline automation, forecasting, and reporting. CRM cleanup and process optimization.
 - **Sales Team Enablement** ($197-497/mo): AI-powered sales coaching, call recording analysis, and playbook generation.

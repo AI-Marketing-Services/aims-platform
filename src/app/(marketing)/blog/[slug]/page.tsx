@@ -16,9 +16,9 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   const post = getPostBySlug(slug)
-  if (!post) return { title: "Post Not Found — AIMS Blog" }
+  if (!post) return { title: "Post Not Found - AIMS Blog" }
   return {
-    title: `${post.title} — AIMS Blog`,
+    title: `${post.title} - AIMS Blog`,
     description: post.description,
     openGraph: {
       title: post.title,
@@ -174,7 +174,7 @@ export default async function BlogPostPage({ params }: Props) {
           <div className="mt-14 bg-primary rounded-2xl p-8 text-center text-white">
             <h2 className="text-2xl font-bold mb-3">Ready to transform your business?</h2>
             <p className="text-muted-foreground mb-6">
-              Take our free AI Readiness Quiz — 7 questions, 2 minutes, personalized recommendations for your business.
+              Take our free AI Readiness Quiz - 7 questions, 2 minutes, personalized recommendations for your business.
             </p>
             <Link
               href="/tools/ai-readiness-quiz"

@@ -22,7 +22,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   }
 
-  // Block in production — ALLOW_SIMULATE must never be set in prod env vars
+  // Block in production - ALLOW_SIMULATE must never be set in prod env vars
   if (process.env.NODE_ENV === "production") {
     return NextResponse.json({ error: "Simulation disabled in production" }, { status: 403 })
   }
@@ -92,7 +92,7 @@ export async function POST(req: Request) {
       const notif = await db.notification.create({
         data: {
           type: "new_purchase",
-          title: `[SIMULATED] New Purchase — ${serviceArm?.name ?? "Service"}`,
+          title: `[SIMULATED] New Purchase - ${serviceArm?.name ?? "Service"}`,
           message: `${clientName} (${clientEmail}) subscribed at $${monthlyAmount}/mo`,
           channel: "IN_APP",
         },

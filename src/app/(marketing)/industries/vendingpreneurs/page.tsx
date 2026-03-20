@@ -3,7 +3,7 @@ import Link from "next/link"
 import { ArrowRight, CheckCircle2, TrendingUp, Phone, Mail, MapPin, BarChart2, Zap, DollarSign, Check } from "lucide-react"
 
 export const metadata: Metadata = {
-  title: "AI Systems for Vendingpreneurs — AIMS",
+  title: "AI Systems for Vendingpreneurs - AIMS",
   description: "AIMS builds and runs the AI infrastructure that helps vending operators get more locations, answer every call, and reactivate lost accounts. Built for the Vendingpreneur community.",
 }
 
@@ -11,9 +11,9 @@ const PAIN_POINTS = [
   { icon: Phone, pain: "Missing calls when you're on the road restocking", fix: "AI voice agent answers 24/7, books location meetings while you drive" },
   { icon: MapPin, pain: "Spending hours manually prospecting new locations", fix: "Cold outbound engine sends 2,000+ personalized pitches/month on autopilot" },
   { icon: Mail, pain: "Old location prospects sitting cold in a spreadsheet", fix: "Reactivation sequences turn 18% of dead leads into booked walkthroughs" },
-  { icon: BarChart2, pain: "No system to track location pipeline or follow-ups", fix: "CRM pre-built for vending operators — locations, contacts, deal stages" },
+  { icon: BarChart2, pain: "No system to track location pipeline or follow-ups", fix: "CRM pre-built for vending operators - locations, contacts, deal stages" },
   { icon: DollarSign, pain: "Website doesn't capture location inquiries after hours", fix: "AI chatbot trained on your routes, machines, and revenue splits" },
-  { icon: Zap, pain: "Wearing every hat — operator, salesperson, and marketer", fix: "Full-stack automation so you focus on operations, not outreach" },
+  { icon: Zap, pain: "Wearing every hat - operator, salesperson, and marketer", fix: "Full-stack automation so you focus on operations, not outreach" },
 ]
 
 const RESULTS = [
@@ -39,9 +39,9 @@ const SERVICES = [
     badge: null,
   },
   {
-    name: "AI Voice Agent — Never Miss a Call",
+    name: "AI Voice Agent - Never Miss a Call",
     slug: "voice-agents",
-    desc: "An AI agent that answers calls, qualifies location leads, schedules walkthroughs, and routes service calls — even when you're restocking at 7am.",
+    desc: "An AI agent that answers calls, qualifies location leads, schedules walkthroughs, and routes service calls - even when you're restocking at 7am.",
     price: "Custom",
     badge: "High Impact",
   },
@@ -54,7 +54,7 @@ const SERVICES = [
   },
 ]
 
-// VP Operator Toolkit — tier pricing
+// VP Operator Toolkit - tier pricing
 interface VPTier {
   id: string
   name: string
@@ -77,7 +77,7 @@ const VP_TIERS: VPTier[] = [
     cta: "Join VP Community",
     features: [
       { name: "Vending ROI Calculator", desc: "Real-time ROI estimates using live data from 500+ operators. Input any location, get revenue projections." },
-      { name: "Community Knowledge Bot", desc: "AI trained on all VP content, webinars, and SOPs — ask it anything about running your vending business." },
+      { name: "Community Knowledge Bot", desc: "AI trained on all VP content, webinars, and SOPs - ask it anything about running your vending business." },
     ],
   },
   {
@@ -99,16 +99,16 @@ const VP_TIERS: VPTier[] = [
     name: "Route Owner",
     price: "$597",
     priceNote: "per month",
-    description: "Full operating infrastructure — the complete GHL snapshot.",
+    description: "Full operating infrastructure - the complete GHL snapshot.",
     popular: true,
     cta: "Get Route Owner",
     features: [
       { name: "Everything in Solo", desc: "" },
-      { name: "VP GHL Business OS", desc: "Full GoHighLevel subaccount: website, CRM, pipelines, AI receptionist, and outbound dialer — ready day one." },
-      { name: "AI Receptionist", desc: "24/7 inbound call handling — handles FAQs, routes location requests, and books callbacks automatically." },
+      { name: "VP GHL Business OS", desc: "Full GoHighLevel subaccount: website, CRM, pipelines, AI receptionist, and outbound dialer - ready day one." },
+      { name: "AI Receptionist", desc: "24/7 inbound call handling - handles FAQs, routes location requests, and books callbacks automatically." },
       { name: "Reputation Autopilot", desc: "Automated review requests to location partners. Routes feedback and boosts your Google profile." },
       { name: "Location Scouting Score", desc: "Enter any address, get foot traffic, demographic, and competitor proximity score before you commit." },
-      { name: "Operator Dashboard", desc: "Machine performance, revenue per location, lease tracking, and inventory alerts — all in one view." },
+      { name: "Operator Dashboard", desc: "Machine performance, revenue per location, lease tracking, and inventory alerts - all in one view." },
     ],
   },
   {
@@ -121,7 +121,7 @@ const VP_TIERS: VPTier[] = [
     cta: "Go Empire",
     features: [
       { name: "Everything in Route Owner", desc: "" },
-      { name: "Outbound Lead Dialer", desc: "AI outbound calls to location prospects — qualifies interest and books site visits without lifting a finger." },
+      { name: "Outbound Lead Dialer", desc: "AI outbound calls to location prospects - qualifies interest and books site visits without lifting a finger." },
       { name: "Cold Outbound Engine (VP Edition)", desc: "Pre-configured Clay sequences targeting gyms, offices, warehouses, and schools with VP-specific copy." },
     ],
   },
@@ -149,7 +149,7 @@ export default function VendingpreneursPage() {
 
           <p className="mt-6 text-xl text-muted-foreground max-w-2xl leading-relaxed">
             AIMS builds the AI infrastructure that fills your location pipeline, answers every inquiry,
-            and reactivates lost accounts — so you can focus on running your routes.
+            and reactivates lost accounts - so you can focus on running your routes.
           </p>
 
           <div className="mt-10 flex flex-col gap-4 sm:flex-row">
@@ -173,7 +173,7 @@ export default function VendingpreneursPage() {
         </div>
       </section>
 
-      {/* Results — stat cards with red outlines */}
+      {/* Results - stat cards with red outlines */}
       <section className="py-12 bg-background">
         <div className="mx-auto max-w-5xl px-4">
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
@@ -263,7 +263,7 @@ export default function VendingpreneursPage() {
         </div>
       </section>
 
-      {/* VP Operator Toolkit — clean tier pricing */}
+      {/* VP Operator Toolkit - clean tier pricing */}
       <section className="py-24 bg-card">
         <div className="mx-auto max-w-6xl px-4">
           <div className="mb-4">
@@ -274,7 +274,7 @@ export default function VendingpreneursPage() {
               One operating system. Four tiers.
             </h2>
             <p className="mt-3 max-w-2xl text-base text-muted-foreground leading-relaxed">
-              Every tool below is delivered as a module inside your VP GHL Business OS snapshot —
+              Every tool below is delivered as a module inside your VP GHL Business OS snapshot  - 
               no separate logins, no duct tape. One system, everything in one place.
             </p>
           </div>
@@ -348,7 +348,7 @@ export default function VendingpreneursPage() {
           <div className="bg-card border border-border rounded-2xl p-8 shadow-sm">
             <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-2">Recommended Package</p>
             <h2 className="text-2xl font-bold text-foreground mb-1">AI Growth Engine</h2>
-            <p className="text-sm text-muted-foreground mb-4">The full-stack lead generation and conversion bundle designed for operators who want more locations without more hours. Website, outbound, voice agents, and SEO — all working together.</p>
+            <p className="text-sm text-muted-foreground mb-4">The full-stack lead generation and conversion bundle designed for operators who want more locations without more hours. Website, outbound, voice agents, and SEO - all working together.</p>
             <div className="flex flex-wrap gap-2 mb-5">
               {["Website + CRM + Chatbot", "Cold Outbound Engine", "AI Voice Agents", "SEO/AEO"].map((s) => (
                 <span key={s} className="inline-flex items-center gap-1 px-2.5 py-1 bg-deep text-foreground text-xs font-medium rounded-full">

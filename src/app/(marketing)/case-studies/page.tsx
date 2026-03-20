@@ -3,7 +3,7 @@ import Link from "next/link"
 import { ArrowRight, TrendingUp } from "lucide-react"
 
 export const metadata: Metadata = {
-  title: "Case Studies — AIMS",
+  title: "Case Studies - AIMS",
   description: "Real results from real businesses. See how AIMS builds AI-powered systems that generate leads, close deals, and automate operations.",
 }
 
@@ -13,7 +13,7 @@ const CASE_STUDIES = [
     client: "Regional Ford Dealership Group",
     industry: "Automotive",
     headline: "4.2x lead response rate, 31% more show rates",
-    summary: "A 3-location Ford dealer group was losing deals to competitors who responded faster. AIMS deployed an AI follow-up system that contacted every lead within 90 seconds — around the clock.",
+    summary: "A 3-location Ford dealer group was losing deals to competitors who responded faster. AIMS deployed an AI follow-up system that contacted every lead within 90 seconds - around the clock.",
     metrics: [
       { value: "4.2x", label: "Lead response rate" },
       { value: "31%", label: "Show rate improvement" },
@@ -38,7 +38,7 @@ const CASE_STUDIES = [
     slug: "pl-automation",
     client: "P&L Automation (SaaS)",
     industry: "Technology",
-    headline: "Pipeline 3x in 60 days — from 0 outbound to full system",
+    headline: "Pipeline 3x in 60 days - from 0 outbound to full system",
     summary: "A B2B SaaS company had no outbound motion and relied entirely on inbound. AIMS built a full outbound stack targeting CFOs and VPs of Finance at mid-market companies.",
     metrics: [
       { value: "3x", label: "Pipeline growth" },
@@ -108,7 +108,7 @@ export default function CaseStudiesPage() {
         <div className="mt-14 bg-primary rounded-2xl p-10 text-center text-white">
           <h2 className="text-2xl font-bold mb-3">Want results like these?</h2>
           <p className="text-muted-foreground mb-6">
-            Book a free strategy call and we&apos;ll show you exactly what AIMS would build for your business — with projected timelines and ROI.
+            Book a free strategy call and we&apos;ll show you exactly what AIMS would build for your business - with projected timelines and ROI.
           </p>
           <Link
             href="/get-started"

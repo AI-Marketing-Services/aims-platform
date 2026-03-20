@@ -11,7 +11,7 @@ const auditSchema = z.object({
     .refine((u) => {
       try {
         const { hostname, protocol } = new URL(u)
-        // Only allow public HTTPS/HTTP URLs — block private/internal IP ranges
+        // Only allow public HTTPS/HTTP URLs - block private/internal IP ranges
         if (!["https:", "http:"].includes(protocol)) return false
         const privatePatterns = [
           /^localhost$/i,
@@ -62,7 +62,7 @@ export async function POST(req: Request) {
 
     try {
       if (!process.env.TAVILY_API_KEY) {
-        throw new Error("Tavily API key not configured — skipping extract")
+        throw new Error("Tavily API key not configured - skipping extract")
       }
       const extractRes = await fetch("https://api.tavily.com/extract", {
         method: "POST",
@@ -90,7 +90,7 @@ export async function POST(req: Request) {
     let competitorContext = ""
     try {
       if (!process.env.TAVILY_API_KEY) {
-        throw new Error("Tavily API key not configured — skipping search")
+        throw new Error("Tavily API key not configured - skipping search")
       }
       const searchRes = await fetch("https://api.tavily.com/search", {
         method: "POST",
@@ -125,7 +125,7 @@ Domain: ${domain}
 Page Title: ${pageTitle || "Unknown"}
 
 Page Content (truncated):
-${pageContent || "Could not extract page content — analyze based on URL and domain only."}
+${pageContent || "Could not extract page content - analyze based on URL and domain only."}
 
 Additional context from web:
 ${competitorContext || "None available."}

@@ -318,7 +318,7 @@ export default function WebsiteAuditPage() {
               <div className="w-16 h-16 bg-green-900/20 rounded-full flex items-center justify-center mx-auto mb-6">
                 <CheckCircle2 className="w-8 h-8 text-green-400" />
               </div>
-              <h2 className="text-2xl font-bold text-foreground mb-3">Audit complete — see your results</h2>
+              <h2 className="text-2xl font-bold text-foreground mb-3">Audit complete - see your results</h2>
               <p className="text-muted-foreground mb-8 text-sm">
                 We found issues on <span className="font-semibold text-foreground">{url}</span>. Enter your email to unlock the full report.
               </p>
@@ -399,9 +399,9 @@ export default function WebsiteAuditPage() {
                 <h3 className="font-semibold text-foreground mb-4">Issues Found</h3>
                 <div className="space-y-3">
                   {(analysis?.issues ?? [
-                    { severity: "critical", issue: "No FAQ schema markup — invisible to AI search engines", fix: "AIMS adds structured FAQ schema within 48 hours" },
-                    { severity: "high", issue: "CTA appears below the fold on mobile — 60% of visitors miss it", fix: "Conversion audit + sticky CTA implementation" },
-                    { severity: "high", issue: "Page load time exceeds 3.2s — above Google's recommended threshold", fix: "Technical SEO sprint to optimize Core Web Vitals" },
+                    { severity: "critical", issue: "No FAQ schema markup - invisible to AI search engines", fix: "AIMS adds structured FAQ schema within 48 hours" },
+                    { severity: "high", issue: "CTA appears below the fold on mobile - 60% of visitors miss it", fix: "Conversion audit + sticky CTA implementation" },
+                    { severity: "high", issue: "Page load time exceeds 3.2s - above Google's recommended threshold", fix: "Technical SEO sprint to optimize Core Web Vitals" },
                     { severity: "medium", issue: "No lead capture widget on highest-traffic pages", fix: "AI chatbot + form placement optimization" },
                   ]).map((item, i) => (
                     <div key={i} className="flex gap-3 p-4 rounded-xl bg-deep border border-border">

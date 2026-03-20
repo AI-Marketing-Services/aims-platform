@@ -95,7 +95,7 @@ function EditableField({
         </div>
       ) : (
         <div className="flex items-center gap-1.5 group">
-          <p className="text-sm text-foreground">{value || "—"}</p>
+          <p className="text-sm text-foreground">{value || "-"}</p>
           {saved && <span className="text-[10px] text-green-400 font-medium">Saved</span>}
           <button
             onClick={() => { setDraft(value); setEditing(true) }}
@@ -155,7 +155,7 @@ function EditableSelectField({
         </select>
       ) : (
         <div className="flex items-center gap-1.5 group">
-          <p className="text-sm text-foreground">{value || "—"}</p>
+          <p className="text-sm text-foreground">{value || "-"}</p>
           {saved && <span className="text-[10px] text-green-400 font-medium">Saved</span>}
           <button
             onClick={() => { setDraft(value); setEditing(true) }}
@@ -229,7 +229,7 @@ function NotifToggle({
 export function PortalSettingsClient({ clerkUser, dbUser }: Props) {
   const router = useRouter()
 
-  // Profile field state — tracks current saved values
+  // Profile field state - tracks current saved values
   const [profileFields, setProfileFields] = useState({
     company: dbUser?.company ?? "",
     industry: dbUser?.industry ?? "",
@@ -239,12 +239,12 @@ export function PortalSettingsClient({ clerkUser, dbUser }: Props) {
     heardAbout: "",
   })
 
-  // Notification state — channels
+  // Notification state - channels
   const [emailNotifs, setEmailNotifs] = useState(dbUser?.emailNotifs ?? true)
   const [slackNotifs, setSlackNotifs] = useState(dbUser?.slackNotifs ?? false)
   const [inAppNotifs, setInAppNotifs] = useState(true) // Always on by default
 
-  // Notification state — per event type
+  // Notification state - per event type
   const [notifNewPurchase, setNotifNewPurchase] = useState(true)
   const [notifFulfillmentUpdate, setNotifFulfillmentUpdate] = useState(true)
   const [notifSupportReply, setNotifSupportReply] = useState(true)

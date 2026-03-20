@@ -10,11 +10,11 @@ import { FAQ } from "@/components/marketing/FAQ"
 import { FinalCTA } from "@/components/marketing/FinalCTA"
 
 export const metadata: Metadata = {
-  title: "AIMS — Forward-Deployed AI Consulting",
+  title: "AIMS - Forward-Deployed AI Consulting",
   description: "AIMS embeds senior AI engineers directly in your operations to diagnose bottlenecks, build custom AI solutions, and deliver measurable efficiency gains in 90 days.",
   alternates: { canonical: "https://aimseos.com" },
   openGraph: {
-    title: "AIMS — Forward-Deployed AI Consulting",
+    title: "AIMS - Forward-Deployed AI Consulting",
     description: "AIMS embeds senior AI engineers directly in your operations to diagnose bottlenecks, build custom AI solutions, and deliver measurable efficiency gains in 90 days.",
   },
 }
@@ -70,7 +70,7 @@ const FAQ_SCHEMA = {
       name: "Do I need to use specific tools to work with AIMS?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "No. AIMS is tool-agnostic. Our engineers embed into your existing tech stack and workflows — whether that is HubSpot, Salesforce, custom internal tools, or a greenfield environment.",
+        text: "No. AIMS is tool-agnostic. Our engineers embed into your existing tech stack and workflows - whether that is HubSpot, Salesforce, custom internal tools, or a greenfield environment.",
       },
     },
   ],

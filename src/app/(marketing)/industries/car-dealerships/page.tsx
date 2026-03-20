@@ -3,16 +3,16 @@ import Link from "next/link"
 import { ArrowRight, CheckCircle2, TrendingUp, Phone, Mail, Users, BarChart2, Zap, DollarSign } from "lucide-react"
 
 export const metadata: Metadata = {
-  title: "AI Systems for Car Dealerships — AIMS",
-  description: "AIMS builds the AI infrastructure that helps dealerships generate more floor traffic, convert more leads, and fill the service lane — automatically.",
+  title: "AI Systems for Car Dealerships - AIMS",
+  description: "AIMS builds the AI infrastructure that helps dealerships generate more floor traffic, convert more leads, and fill the service lane - automatically.",
 }
 
 const PAIN_POINTS = [
-  { icon: Phone, pain: "Leads from third-party sites go cold before your team follows up", fix: "AI follow-up triggers within 90 seconds — email, SMS, and voice — around the clock" },
+  { icon: Phone, pain: "Leads from third-party sites go cold before your team follows up", fix: "AI follow-up triggers within 90 seconds - email, SMS, and voice - around the clock" },
   { icon: Users, pain: "BDC team overwhelmed with inbound, outbound, and service reminders", fix: "AI voice agents and SMS bots handle tier-1 follow-up so your BDC focuses on closers" },
-  { icon: Mail, pain: "Old leads rotting in your CRM — service customers haven't been contacted in months", fix: "Reactivation sequences that bring back 15-20% of cold contacts automatically" },
+  { icon: Mail, pain: "Old leads rotting in your CRM - service customers haven't been contacted in months", fix: "Reactivation sequences that bring back 15-20% of cold contacts automatically" },
   { icon: BarChart2, pain: "No visibility into which marketing channels actually drive showroom visits", fix: "Attribution dashboard connects ad spend, leads, and closed deals in one view" },
-  { icon: DollarSign, pain: "Website visitors leaving without converting — chat widget goes unanswered", fix: "AI chatbot trained on your inventory, pricing, and trade-in process — 24/7" },
+  { icon: DollarSign, pain: "Website visitors leaving without converting - chat widget goes unanswered", fix: "AI chatbot trained on your inventory, pricing, and trade-in process - 24/7" },
   { icon: Zap, pain: "Service lane under-capacity because customers never get proactive reminders", fix: "Automated service outreach campaigns that fill the lane 30 days in advance" },
 ]
 
@@ -27,7 +27,7 @@ const SERVICES = [
   {
     name: "BDC AI Automation Suite",
     slug: "ai-automation",
-    desc: "AI-powered follow-up system that contacts every new lead within 90 seconds via email, SMS, and voice — so no opportunity leaves your lot without a touchpoint.",
+    desc: "AI-powered follow-up system that contacts every new lead within 90 seconds via email, SMS, and voice - so no opportunity leaves your lot without a touchpoint.",
     price: "Custom",
     badge: "Most Popular",
   },
@@ -39,9 +39,9 @@ const SERVICES = [
     badge: null,
   },
   {
-    name: "Cold Outbound — Conquest Leads",
+    name: "Cold Outbound - Conquest Leads",
     slug: "cold-outbound",
-    desc: "Multi-channel outbound targeting in-market buyers in your DMA — conquest campaigns that bring new buyers into your funnel before they hit a competitor.",
+    desc: "Multi-channel outbound targeting in-market buyers in your DMA - conquest campaigns that bring new buyers into your funnel before they hit a competitor.",
     price: "Custom",
     badge: null,
   },
@@ -69,7 +69,7 @@ export default function CarDealershipsPage() {
             <span className="text-primary">Showroom and Service Lane</span>
           </h1>
           <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-            AIMS builds and operates the AI infrastructure that turns your dealership&apos;s digital presence into a 24/7 lead machine — from conquest to close to service.
+            AIMS builds and operates the AI infrastructure that turns your dealership&apos;s digital presence into a 24/7 lead machine - from conquest to close to service.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
@@ -105,7 +105,7 @@ export default function CarDealershipsPage() {
       <section className="py-16 px-4 bg-deep">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-foreground mb-4">Common Dealership Pain Points — Solved</h2>
+            <h2 className="text-3xl font-bold text-foreground mb-4">Common Dealership Pain Points - Solved</h2>
             <p className="text-muted-foreground max-w-xl mx-auto">Every problem your team is dealing with has an AI-driven fix. Here&apos;s how we solve them.</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

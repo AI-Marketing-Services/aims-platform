@@ -119,7 +119,7 @@ function SteelTrapDemo() {
         <div className="flex items-center justify-between mb-1.5">
           <div className="flex items-center gap-2">
             <Shield className="h-3.5 w-3.5 text-blue-400" />
-            <span className="text-[11px] font-semibold text-foreground">Apex Corp — $12.4K</span>
+            <span className="text-[11px] font-semibold text-foreground">Apex Corp - $12.4K</span>
           </div>
           <span className="text-[10px] font-bold text-blue-400">Touch {touches}/7</span>
         </div>
@@ -155,7 +155,7 @@ function SteelTrapDemo() {
               <AlertTriangle className="h-2.5 w-2.5 text-orange-400" />
               <span className="text-[9px] font-semibold text-orange-400">AI Loss Pattern</span>
             </div>
-            <p className="text-[10px] text-foreground leading-snug">67% cite &quot;pricing&quot; — recommend messaging review</p>
+            <p className="text-[10px] text-foreground leading-snug">67% cite &quot;pricing&quot; - recommend messaging review</p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -167,7 +167,7 @@ function SteelTrapDemo() {
 const TRANSCRIPT = [
   { role: "agent", text: "Hey, is this Sarah from Apex Corp?" },
   { role: "lead", text: "Yes, this is her." },
-  { role: "agent", text: "I'm calling about your growth targets this quarter — do you have 2 minutes?" },
+  { role: "agent", text: "I'm calling about your growth targets this quarter - do you have 2 minutes?" },
   { role: "lead", text: "Sure, what's this about?" },
   { role: "agent", text: "We help B2B teams book 40+ meetings/mo with AI outbound. Want to see a quick demo?" },
   { role: "lead", text: "Actually yeah, send me a link." },
@@ -193,7 +193,7 @@ function AICallingDemo() {
           <PhoneCall className="h-3 w-3 text-green-400" />
         </motion.div>
         <div>
-          <p className="text-[11px] font-semibold text-foreground">AI Voice Agent — Live Call</p>
+          <p className="text-[11px] font-semibold text-foreground">AI Voice Agent - Live Call</p>
           <p className="text-[10px] text-muted-foreground">Bland.ai · Twilio · CRM sync</p>
         </div>
         <div className="ml-auto flex gap-0.5">
@@ -239,7 +239,7 @@ const CONTENT_POSTS = [
     logo: "/integrations/linkedin.svg",
     color: "#0A66C2",
     bg: "rgba(59,130,246,0.08)",
-    snippet: "We helped a B2B SaaS team book 47 meetings in 30 days using AI outbound — here's the exact playbook 🧵",
+    snippet: "We helped a B2B SaaS team book 47 meetings in 30 days using AI outbound - here's the exact playbook 🧵",
     stat: "3.2K impressions",
   },
   {
@@ -511,7 +511,7 @@ function MoneyPageGridDemo() {
       ))}
       <div className="mt-2 rounded-sm bg-primary/10 border border-primary/20 px-3 py-2 flex items-center gap-2">
         <TrendingUp className="h-3.5 w-3.5 text-primary" />
-        <span className="text-[11px] font-semibold text-primary">$127 C.O.M. — 18% below avg.</span>
+        <span className="text-[11px] font-semibold text-primary">$127 C.O.M. - 18% below avg.</span>
       </div>
     </div>
   )

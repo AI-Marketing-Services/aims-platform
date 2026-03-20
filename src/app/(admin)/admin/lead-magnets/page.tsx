@@ -197,7 +197,7 @@ export default async function AdminLeadMagnetsPage() {
           },
           {
             label: "Avg. Score",
-            value: avgScore != null ? avgScore.toFixed(1) : "—",
+            value: avgScore != null ? avgScore.toFixed(1) : "-",
             sub: `${scoresArr.length} scored`,
             icon: Award,
           },
@@ -241,7 +241,7 @@ export default async function AdminLeadMagnetsPage() {
             <span className="font-semibold text-green-400">{bestConvRate}% conversion</span>.{" "}
             {bestConvRate > 0
               ? "Consider driving more traffic to this tool."
-              : "No conversions recorded yet — consider improving follow-up sequences."}
+              : "No conversions recorded yet - consider improving follow-up sequences."}
           </p>
         </div>
       )}

@@ -153,7 +153,7 @@ export default async function AdminVendorSavingsPage() {
               <p className="text-xs text-muted-foreground mt-1">
                 {totalMonthly > 0
                   ? `${Math.round((totalProjected / totalMonthly) * 100)}% of total spend`
-                  : "—"}
+                  : "-"}
               </p>
             </div>
 
@@ -236,7 +236,7 @@ export default async function AdminVendorSavingsPage() {
                         </td>
                         <td className="px-4 py-3">
                           <span className="text-sm text-muted-foreground">
-                            {v.replacementName ?? "—"}
+                            {v.replacementName ?? "-"}
                           </span>
                         </td>
                         <td className="px-4 py-3">
@@ -259,7 +259,7 @@ export default async function AdminVendorSavingsPage() {
                           >
                             {v.projectedSavings > 0
                               ? `$${v.projectedSavings.toLocaleString()}/mo`
-                              : "—"}
+                              : "-"}
                           </span>
                         </td>
                         <td className="px-4 py-3">
@@ -271,12 +271,12 @@ export default async function AdminVendorSavingsPage() {
                           >
                             {v.actualSavings > 0
                               ? `$${v.actualSavings.toLocaleString()}/mo`
-                              : "—"}
+                              : "-"}
                           </span>
                         </td>
                         <td className="px-4 py-3 max-w-xs">
                           <span className="text-xs text-muted-foreground truncate block">
-                            {v.notes ?? "—"}
+                            {v.notes ?? "-"}
                           </span>
                         </td>
                       </tr>

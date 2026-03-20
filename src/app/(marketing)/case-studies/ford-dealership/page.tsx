@@ -3,7 +3,7 @@ import Link from "next/link"
 import { ArrowRight, CheckCircle2, TrendingUp, Clock, Calendar } from "lucide-react"
 
 export const metadata: Metadata = {
-  title: "Ford Dealership AI Case Study — AIMS",
+  title: "Ford Dealership AI Case Study - AIMS",
   description: "How a 3-location Ford dealer group achieved a 4.2x lead response rate and 31% improvement in show rates with AIMS AI automation.",
 }
 
@@ -30,7 +30,7 @@ export default function FordDealershipCaseStudy() {
           4.2x Lead Response Rate for a 3-Location Ford Dealer Group
         </h1>
         <p className="text-lg text-muted-foreground mb-10">
-          How AIMS deployed an AI-powered BDC system that followed up with every lead in under 90 seconds — turning missed opportunities into booked appointments.
+          How AIMS deployed an AI-powered BDC system that followed up with every lead in under 90 seconds - turning missed opportunities into booked appointments.
         </p>
 
         {/* Metrics banner */}
@@ -52,7 +52,7 @@ export default function FordDealershipCaseStudy() {
           <section>
             <h2 className="text-xl font-bold text-foreground mb-3">The Challenge</h2>
             <p className="text-muted-foreground leading-relaxed">
-              A regional Ford dealership group with three locations across the midwest was losing deals to competitors who responded faster to digital leads. Their BDC team was handling 200+ leads per month manually — and with average response times exceeding 3 hours, a significant percentage of leads had already gone elsewhere by the time anyone made contact.
+              A regional Ford dealership group with three locations across the midwest was losing deals to competitors who responded faster to digital leads. Their BDC team was handling 200+ leads per month manually - and with average response times exceeding 3 hours, a significant percentage of leads had already gone elsewhere by the time anyone made contact.
             </p>
             <p className="text-muted-foreground leading-relaxed mt-3">
               The dealership&apos;s GSM described it plainly: &quot;We were paying for leads we weren&apos;t working fast enough. Our show rate was 34% and we knew it should be closer to 50%.&quot;
@@ -63,7 +63,7 @@ export default function FordDealershipCaseStudy() {
             <h2 className="text-xl font-bold text-foreground mb-3">What AIMS Built</h2>
             <div className="space-y-3">
               {[
-                "AI-powered lead follow-up system triggering within 90 seconds of every new lead — email, SMS, and outbound AI voice call",
+                "AI-powered lead follow-up system triggering within 90 seconds of every new lead - email, SMS, and outbound AI voice call",
                 "Custom CRM workflow routing hot leads immediately to available sales reps via mobile notification",
                 "Automated appointment confirmation and day-before reminder sequences reducing no-shows",
                 "Service lane outreach campaign targeting customers overdue for maintenance using vehicle history data",
@@ -121,7 +121,7 @@ export default function FordDealershipCaseStudy() {
         <div className="mt-14 bg-primary rounded-2xl p-8 text-center text-white">
           <h2 className="text-2xl font-bold mb-3">Running a dealership? Let&apos;s build your system.</h2>
           <p className="text-muted-foreground mb-6">
-            Book a free 30-minute strategy call. We&apos;ll audit your current lead flow and show you exactly what AIMS would build — with projected results.
+            Book a free 30-minute strategy call. We&apos;ll audit your current lead flow and show you exactly what AIMS would build - with projected results.
           </p>
           <Link
             href="/get-started"

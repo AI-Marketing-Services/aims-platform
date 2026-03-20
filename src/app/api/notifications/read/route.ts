@@ -27,7 +27,7 @@ async function markRead(req: Request) {
       data: { read: true },
     })
   } else {
-    // Mark all unread — scoped to current user unless admin
+    // Mark all unread - scoped to current user unless admin
     await db.notification.updateMany({
       where: isAdmin ? { read: false } : { read: false, userId: dbUser?.id },
       data: { read: true },

@@ -86,7 +86,7 @@ export function CampaignsDashboardClient() {
     )
   }
 
-  // Not connected — show upsell
+  // Not connected - show upsell
   if (!data?.connected) {
     return (
       <div className="space-y-8">
@@ -158,7 +158,7 @@ export function CampaignsDashboardClient() {
     )
   }
 
-  // Connected — show real data
+  // Connected - show real data
   const totals = data.totals ?? { emailsSent: 0, peopleContacted: 0, replies: 0, bounced: 0, totalLeads: 0 }
   const replyRate = data.replyRate ?? "0"
   const bounceRate = data.bounceRate ?? "0"

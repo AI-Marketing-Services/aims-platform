@@ -398,7 +398,7 @@ export default function CRMOnboardingPage() {
             Welcome to AIMS CRM
           </h1>
           <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Your all-in-one vending business platform. Everything you need to launch, manage, and grow — set up and ready to go.
+            Your all-in-one vending business platform. Everything you need to launch, manage, and grow - set up and ready to go.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
@@ -407,7 +407,7 @@ export default function CRMOnboardingPage() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-primary-foreground font-semibold rounded-sm hover:bg-primary/90 transition-colors"
             >
-              Get Started — Purchase Your Plan
+              Get Started - Purchase Your Plan
               <ArrowRight className="w-5 h-5" />
             </a>
             <a
@@ -474,37 +474,44 @@ export default function CRMOnboardingPage() {
               {
                 label: "Part 1",
                 title: "Introduction & Overview",
-                duration: "Full Walkthrough",
                 desc: "Account activation, dashboard navigation, custom values, calendar setup, website templates, automations, AI agents, and chat widget installation.",
-                link: VIDEO_PART1,
-                btn: "Watch Part 1",
+                embedUrl: "https://screen.studio/embed/TdKBz4u1",
+                fallbackUrl: VIDEO_PART1,
               },
               {
                 label: "Part 2",
                 title: "Technical Setup",
-                duration: "Full Walkthrough",
                 desc: "DNS configuration, domain connection, email services, phone system setup, A2P registration, and advanced features.",
-                link: VIDEO_PART2,
-                btn: "Watch Part 2",
+                embedUrl: "https://player.vimeo.com/video/1174987065?title=0&byline=0&portrait=0",
+                fallbackUrl: VIDEO_PART2,
               },
             ].map((v) => (
-              <div key={v.label} className="bg-card border border-border rounded-2xl p-6 flex flex-col">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs font-mono text-primary uppercase tracking-wider">{v.label}</span>
-                  <span className="text-xs text-muted-foreground">{v.duration}</span>
+              <div key={v.label} className="bg-card border border-border rounded-2xl overflow-hidden flex flex-col">
+                <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
+                  <iframe
+                    src={v.embedUrl}
+                    className="absolute inset-0 w-full h-full"
+                    allow="autoplay; fullscreen; picture-in-picture"
+                    allowFullScreen
+                    title={`${v.label}: ${v.title}`}
+                  />
                 </div>
-                <h3 className="text-lg font-bold text-foreground mb-2">{v.title}</h3>
-                <p className="text-sm text-muted-foreground mb-5 flex-1">{v.desc}</p>
-                <a
-                  href={v.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 w-full rounded-sm bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
-                >
-                  <Play className="w-4 h-4" />
-                  {v.btn}
-                  <ExternalLink className="w-3.5 h-3.5" />
-                </a>
+                <div className="p-5 flex flex-col flex-1">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-mono text-primary uppercase tracking-wider">{v.label}</span>
+                  </div>
+                  <h3 className="text-lg font-bold text-foreground mb-2">{v.title}</h3>
+                  <p className="text-sm text-muted-foreground flex-1">{v.desc}</p>
+                  <a
+                    href={v.fallbackUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline mt-3"
+                  >
+                    Open in new tab
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                </div>
               </div>
             ))}
           </div>
@@ -650,7 +657,7 @@ export default function CRMOnboardingPage() {
       </section>
 
       {/* ============================================================ */}
-      {/*  SECTION 6: WHAT YOU'RE GETTING — BENTO GRID                 */}
+      {/*  SECTION 6: WHAT YOU'RE GETTING - BENTO GRID                 */}
       {/* ============================================================ */}
       <section className="py-16 px-4 bg-card">
         <div className="max-w-5xl mx-auto">

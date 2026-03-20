@@ -17,7 +17,7 @@ const BENEFITS = [
   },
   {
     title: "Production AI, not PowerPoint decks",
-    desc: "We ship working AI systems into your operations — not strategy documents that collect dust. Every engagement ends with deployed, measurable technology.",
+    desc: "We ship working AI systems into your operations, not strategy documents that collect dust. Every engagement ends with deployed, measurable technology.",
   },
   {
     title: "90-day deployment, not 12-month timelines",
@@ -53,7 +53,7 @@ const BENEFITS = [
   },
   {
     title: "Cross-department AI opportunity mapping",
-    desc: "We audit every department — sales, ops, finance, marketing — to find the biggest time sinks and highest-ROI automation targets.",
+    desc: "We audit every department - sales, ops, finance, marketing - to find the biggest time sinks and highest-ROI automation targets.",
   },
   {
     title: "Enterprise-grade security and compliance",
@@ -86,7 +86,7 @@ export function Benefits() {
               through AI transformation
             </h2>
             <p className="mt-4 text-base text-muted-foreground max-w-sm">
-              Forward-deployed engineers that embed in your operations. Results measured in hours saved, costs reduced, and systems deployed — not slide decks delivered.
+              Forward-deployed engineers that embed in your operations. Results measured in hours saved, costs reduced, and systems deployed, not slide decks delivered.
             </p>
 
             <div className="mt-10 grid grid-cols-2 gap-4">
@@ -112,7 +112,7 @@ export function Benefits() {
             <div className="pointer-events-none absolute top-0 left-0 right-0 z-10 h-16 bg-gradient-to-b from-background to-transparent" />
             <div className="pointer-events-none absolute bottom-0 left-0 right-0 z-10 h-16 bg-gradient-to-t from-background to-transparent" />
 
-            {/* Ticker track — translateY(-33.333%) for seamless loop */}
+            {/* Ticker track - translateY(-33.333%) for seamless loop */}
             <div className="animate-ticker-vertical flex flex-col gap-4 will-change-transform">
               {track.map((benefit, i) => (
                 <div

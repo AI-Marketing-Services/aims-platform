@@ -42,15 +42,15 @@ function scoreToTier(score: number | undefined, type: string): {
   }
   if (type === "WEBSITE_AUDIT") {
     const s = score ?? 50
-    if (s < 40) return { score: 75, tier: "hot", priority: "HIGH", reason: `Low audit score (${s}/100) — high pain, ready to fix` }
-    if (s < 65) return { score: 60, tier: "warm", priority: "MEDIUM", reason: `Moderate audit score (${s}/100) — improvement opportunity` }
-    return { score: 40, tier: "cold", priority: "LOW", reason: `Good audit score (${s}/100) — less urgency` }
+    if (s < 40) return { score: 75, tier: "hot", priority: "HIGH", reason: `Low audit score (${s}/100) - high pain, ready to fix` }
+    if (s < 65) return { score: 60, tier: "warm", priority: "MEDIUM", reason: `Moderate audit score (${s}/100) - improvement opportunity` }
+    return { score: 40, tier: "cold", priority: "LOW", reason: `Good audit score (${s}/100) - less urgency` }
   }
   if (type === "AI_READINESS_QUIZ") {
     const s = score ?? 50
-    if (s < 40) return { score: 80, tier: "hot", priority: "HIGH", reason: `Low AI readiness (${s}/100) — clear gap, high intent` }
-    if (s < 70) return { score: 55, tier: "warm", priority: "MEDIUM", reason: `Moderate AI readiness (${s}/100) — growing awareness` }
-    return { score: 35, tier: "cold", priority: "LOW", reason: `High AI readiness (${s}/100) — already advanced` }
+    if (s < 40) return { score: 80, tier: "hot", priority: "HIGH", reason: `Low AI readiness (${s}/100) - clear gap, high intent` }
+    if (s < 70) return { score: 55, tier: "warm", priority: "MEDIUM", reason: `Moderate AI readiness (${s}/100) - growing awareness` }
+    return { score: 35, tier: "cold", priority: "LOW", reason: `High AI readiness (${s}/100) - already advanced` }
   }
   return { score: 50, tier: "warm", priority: "MEDIUM", reason: "Lead magnet completed" }
 }
@@ -135,7 +135,7 @@ export async function POST(req: Request) {
       if (tier === "hot") {
         await notify({
           type: "hot_lead",
-          title: `HOT Lead — ${parsed.data.type}`,
+          title: `HOT Lead - ${parsed.data.type}`,
           message: `${parsed.data.name ?? parsed.data.email}${parsed.data.company ? ` (${parsed.data.company})` : ""} scored ${score}/100. ${reason}`,
           urgency: "high",
         }).catch(console.error)
@@ -167,7 +167,7 @@ export async function POST(req: Request) {
       }).catch(console.error)
     }
 
-    // Build results URL — dedicated page for quiz/calculator/audit, generic for others
+    // Build results URL - dedicated page for quiz/calculator/audit, generic for others
     const RESULTS_PAGE_TYPES = new Set(["ai-readiness-quiz", "roi-calculator", "website-audit"])
     const resultsUrl = RESULTS_PAGE_TYPES.has(typeSlug)
       ? `${appUrl}/tools/${typeSlug}/results/${submission.id}`

@@ -3,7 +3,7 @@ import { db } from "@/lib/db"
 
 export function getResend() {
   if (!process.env.RESEND_API_KEY || process.env.RESEND_API_KEY === "re_placeholder") {
-    console.warn("[AIMS] RESEND_API_KEY is not configured — emails will not be delivered")
+    console.warn("[AIMS] RESEND_API_KEY is not configured - emails will not be delivered")
   }
   return new Resend(process.env.RESEND_API_KEY ?? "re_placeholder")
 }
@@ -129,13 +129,13 @@ export async function sendWelcomeEmail(params: {
     </ol>
     ${btn("Go to Your Portal →", params.portalUrl)}
     ${divider()}
-    ${p(`Need help? Just reply to this email — we typically respond within 2 business hours.`)}
+    ${p(`Need help? Just reply to this email - we typically respond within 2 business hours.`)}
   `
   return sendTrackedEmail({
     from: FROM_EMAIL,
     to: params.to,
     replyTo: REPLY_TO,
-    subject: `Welcome to AIMS — Your ${params.serviceName} is live`,
+    subject: `Welcome to AIMS - Your ${params.serviceName} is live`,
     html: emailLayout(body, `Your ${params.serviceName} is now active. Here's what to expect.`),
   })
 }
@@ -156,7 +156,7 @@ export async function sendLeadMagnetResults(params: {
   }
 
   const body = `
-    ${h1(`${params.name ? `Hey ${params.name} —` : "Hey —"} your results are ready`)}
+    ${h1(`${params.name ? `Hey ${params.name}  - ` : "Hey  - "} your results are ready`)}
     ${params.score ? `
       <div style="background:#FEF2F2;border-left:4px solid #C4972A;border-radius:6px;padding:20px 24px;margin:0 0 24px;">
         <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#C4972A;text-transform:uppercase;letter-spacing:0.08em;">Your Score</p>
@@ -166,7 +166,7 @@ export async function sendLeadMagnetResults(params: {
     ${p("We've analyzed your inputs and put together a personalized report with specific recommendations for your business.")}
     ${btn("View Full Results →", params.resultsUrl)}
     ${divider()}
-    ${p(`Want to talk through your results with our team? We'll map the right AIMS services to your exact gaps — no pitch, just a working session.`)}
+    ${p(`Want to talk through your results with our team? We'll map the right AIMS services to your exact gaps - no pitch, just a working session.`)}
     <a href="https://aimseos.com/get-started" style="font-size:14px;color:#C4972A;font-weight:600;text-decoration:none;">
       Book a free strategy call →
     </a>
@@ -212,7 +212,7 @@ export async function sendFulfillmentAssignment(params: {
     from: FROM_EMAIL,
     to: params.to,
     replyTo: REPLY_TO,
-    subject: `New client: ${params.clientName} — ${params.serviceName}`,
+    subject: `New client: ${params.clientName} - ${params.serviceName}`,
     html: emailLayout(body, `New fulfillment: ${params.clientName} signed up for ${params.serviceName}.`),
   })
 }

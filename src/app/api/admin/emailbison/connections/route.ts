@@ -10,7 +10,7 @@ async function requireAdmin() {
   return role && ["ADMIN", "SUPER_ADMIN"].includes(role)
 }
 
-// GET /api/admin/emailbison/connections — list all connections
+// GET /api/admin/emailbison/connections - list all connections
 export async function GET() {
   if (!(await requireAdmin())) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 })
@@ -33,7 +33,7 @@ const upsertSchema = z.object({
   workspaceName: z.string().min(1),
 })
 
-// POST /api/admin/emailbison/connections — upsert connection for a user
+// POST /api/admin/emailbison/connections - upsert connection for a user
 export async function POST(req: Request) {
   if (!(await requireAdmin())) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 })

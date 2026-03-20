@@ -18,7 +18,7 @@ export async function POST(req: Request) {
       const h = new URL(returnUrl).hostname
       safeReturnUrl = h === allowedHost ? returnUrl : safeReturnUrl
     } catch {
-      // ignore invalid URL — use default
+      // ignore invalid URL - use default
     }
   }
 
