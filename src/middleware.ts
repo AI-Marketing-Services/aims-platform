@@ -74,6 +74,9 @@ export default clerkMiddleware(async (auth, req) => {
   if (isInternApiRoute(req) && !["INTERN", "ADMIN", "SUPER_ADMIN"].includes(role)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   }
+  if (isPortalApiRoute(req) && !userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
 
   return NextResponse.next()
 })

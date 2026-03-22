@@ -135,8 +135,8 @@ export default function ApiCostsClient({
                 <YAxis type="category" dataKey="name" tick={{ fontSize: 12, fill: "#D1D5DB" }} width={80} />
                 <Tooltip
                   formatter={(value: number) => [`$${value.toFixed(4)}`, "Cost"]}
-                  contentStyle={{ background: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 8, fontSize: 12 }}
-                  labelStyle={{ color: "#111827" }}
+                  contentStyle={{ background: "#141923", border: "1px solid hsl(220 13% 20%)", borderRadius: 8, fontSize: 12, color: "#F0EBE0" }}
+                  labelStyle={{ color: "#F0EBE0" }}
                 />
                 <Bar dataKey="cost" radius={[0, 4, 4, 0]} fill={RED}>
                   {providerChartData.map((_, i) => (
@@ -164,8 +164,8 @@ export default function ApiCostsClient({
                 <YAxis type="category" dataKey="name" tick={{ fontSize: 12, fill: "#D1D5DB" }} width={100} />
                 <Tooltip
                   formatter={(value: number) => [`$${value.toFixed(4)}`, "Cost"]}
-                  contentStyle={{ background: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 8, fontSize: 12 }}
-                  labelStyle={{ color: "#111827" }}
+                  contentStyle={{ background: "#141923", border: "1px solid hsl(220 13% 20%)", borderRadius: 8, fontSize: 12, color: "#F0EBE0" }}
+                  labelStyle={{ color: "#F0EBE0" }}
                 />
                 <Bar dataKey="cost" radius={[0, 4, 4, 0]} fill={RED}>
                   {serviceArmChartData.map((_, i) => (

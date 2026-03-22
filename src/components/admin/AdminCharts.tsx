@@ -50,7 +50,8 @@ export function PipelineFunnelChart({ data }: { data: PipelineFunnelEntry[] }) {
           tickLine={false}
         />
         <Tooltip
-          contentStyle={{ fontSize: 12, borderRadius: 8 }}
+          contentStyle={{ fontSize: 12, borderRadius: 8, background: "#141923", border: "1px solid hsl(220 13% 20%)", color: "#F0EBE0" }}
+          labelStyle={{ color: "#F0EBE0" }}
           formatter={(v: number) => [v, "Deals"]}
         />
         <Bar
@@ -112,7 +113,8 @@ export function RevenueByServiceChart({
           tickLine={false}
         />
         <Tooltip
-          contentStyle={{ fontSize: 12, borderRadius: 8 }}
+          contentStyle={{ fontSize: 12, borderRadius: 8, background: "#141923", border: "1px solid hsl(220 13% 20%)", color: "#F0EBE0" }}
+          labelStyle={{ color: "#F0EBE0" }}
           formatter={(v: number) => [`$${v.toLocaleString()}/mo`, "MRR"]}
         />
         <Bar

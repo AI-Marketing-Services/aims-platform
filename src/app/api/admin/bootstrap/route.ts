@@ -26,9 +26,9 @@ export async function GET(req: Request) {
       const email = user.emailAddresses[0]?.emailAddress
       if (email && ADMIN_EMAILS.includes(email)) {
         await client.users.updateUser(user.id, {
-          publicMetadata: { role: "ADMIN" },
+          publicMetadata: { role: "SUPER_ADMIN" },
         })
-        results.push({ email, role: "ADMIN", status: "updated" })
+        results.push({ email, role: "SUPER_ADMIN", status: "updated" })
       }
     }
 

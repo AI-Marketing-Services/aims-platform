@@ -200,7 +200,7 @@ export function InternTaskBoard({ tasks: initialTasks }: { tasks: Task[] }) {
 
       <DragOverlay dropAnimation={null}>
         {activeTask && (
-          <div className="bg-card border border-border rounded-xl p-4 w-52 shadow-2xl shadow-gray-200 rotate-1">
+          <div className="bg-card border border-border rounded-xl p-4 w-52 shadow-2xl shadow-black/40 rotate-1">
             <TaskCardInner task={activeTask} />
           </div>
         )}

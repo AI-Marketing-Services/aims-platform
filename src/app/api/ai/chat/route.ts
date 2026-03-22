@@ -75,10 +75,6 @@ export async function POST(req: Request) {
     if (!success) return Response.json({ error: "Too many requests. Please slow down." }, { status: 429 })
   }
 
-  if (!process.env.GEMINI_API_KEY) {
-    return Response.json({ error: "AI not configured" }, { status: 503 })
-  }
-
   let rawMessages: unknown
   try {
     const body = await req.json()

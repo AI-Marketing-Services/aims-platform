@@ -82,11 +82,11 @@ function renderSection(section: BlogSection, i: number) {
       )
     case "callout":
       return (
-        <div key={i} className="bg-amber-50 border border-amber-200 rounded-xl p-5">
+        <div key={i} className="bg-amber-900/15 border border-amber-800 rounded-xl p-5">
           {section.label && (
-            <p className="text-xs font-bold text-amber-700 uppercase tracking-wide mb-2">{section.label}</p>
+            <p className="text-xs font-bold text-amber-400 uppercase tracking-wide mb-2">{section.label}</p>
           )}
-          <p className="text-amber-900 text-sm leading-relaxed">{section.content as string}</p>
+          <p className="text-amber-200 text-sm leading-relaxed">{section.content as string}</p>
         </div>
       )
     default:
@@ -161,7 +161,7 @@ export default async function BlogPostPage({ params }: Props) {
 
           {/* Content */}
           {post.source === "mdx" && post.content ? (
-            <div className="prose prose-gray max-w-none prose-headings:text-foreground prose-headings:font-bold prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4 prose-p:text-muted-foreground prose-p:leading-relaxed prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-strong:text-foreground prose-li:text-muted-foreground prose-ul:space-y-1 prose-ol:space-y-2 prose-blockquote:border-l-primary prose-blockquote:text-muted-foreground">
+            <div className="prose prose-invert max-w-none prose-headings:text-foreground prose-headings:font-bold prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4 prose-p:text-muted-foreground prose-p:leading-relaxed prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-strong:text-foreground prose-li:text-muted-foreground prose-ul:space-y-1 prose-ol:space-y-2 prose-blockquote:border-l-primary prose-blockquote:text-muted-foreground">
               <ReactMarkdown>{post.content}</ReactMarkdown>
             </div>
           ) : (

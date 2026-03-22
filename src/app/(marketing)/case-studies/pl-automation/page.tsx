@@ -44,7 +44,7 @@ export default function PLAutomationCaseStudy() {
           ))}
         </div>
 
-        <div className="prose prose-gray max-w-none space-y-8">
+        <div className="prose prose-invert max-w-none space-y-8">
           <section>
             <h2 className="text-xl font-bold text-foreground mb-3">The Challenge</h2>
             <p className="text-muted-foreground leading-relaxed">

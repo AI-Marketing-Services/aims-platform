@@ -13,11 +13,11 @@ const ROLE_PILL: Record<string, string> = {
 
 const STATUS_PILL: Record<string, string> = {
   ACTIVE: "text-green-400 bg-green-900/15 border-green-800",
-  ONBOARDING: "text-yellow-400 bg-yellow-50 border-yellow-800",
+  ONBOARDING: "text-yellow-400 bg-yellow-900/20 border-yellow-800",
   PAUSED: "text-muted-foreground bg-deep border-border",
-  COMPLETED: "text-blue-400 bg-blue-50 border-blue-800",
+  COMPLETED: "text-blue-400 bg-blue-900/20 border-blue-800",
   APPLIED: "text-muted-foreground bg-muted border-border",
-  INTERVIEW: "text-amber-700 bg-amber-50 border-amber-200",
+  INTERVIEW: "text-amber-400 bg-amber-900/20 border-amber-800",
   REJECTED: "text-primary bg-primary/10 border-primary/30",
 }
 
