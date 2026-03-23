@@ -54,7 +54,7 @@ export async function GET(req: Request) {
         }
 
         await sendTrackedEmail({
-          from: "AIMS <hello@aimseos.com>",
+          from: "AIMS <irtaza@modern-amenities.com>",
           to: item.recipientEmail,
           subject: emailContent.subject,
           html: emailContent.html,

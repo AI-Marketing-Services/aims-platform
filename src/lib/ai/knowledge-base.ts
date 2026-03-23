@@ -35,7 +35,7 @@ export const AIMS_KNOWLEDGE_BASE = `
 - **Do you offer custom solutions?** Yes, our forward-deployed engineers can build custom AI solutions for your business.
 - **What's the onboarding process?** After purchase, you fill out a service-specific onboarding form, then our team handles everything.
 - **How do I track progress?** Your portal dashboard shows real-time fulfillment status for every service.
-- **What if I need help?** Use the chat support in your portal, or email support@aimseos.com. We respond within 24 hours.
+- **What if I need help?** Use the chat support in your portal for instant answers. If the chatbot can't resolve your issue, it will escalate to our team.
 - **Do you offer discounts for multiple services?** Yes, bundling 3+ services unlocks our Growth tier pricing with 15-20% savings.
 - **What industries do you work with?** We serve B2B and B2C companies across SaaS, professional services, e-commerce, healthcare, real estate, and more.
 

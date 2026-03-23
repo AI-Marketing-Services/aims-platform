@@ -382,32 +382,15 @@ export default function SupportPage() {
         )}
       </div>
 
-      {/* Direct contact */}
+      {/* Chatbot escalation notice */}
       <div className="rounded-2xl border border-border bg-muted/30 p-5">
         <h4 className="text-sm font-semibold text-foreground mb-2">
-          Urgent? Reach us directly
+          Need more help?
         </h4>
-        <div className="text-sm text-muted-foreground space-y-1">
-          <div>
-            Slack:{" "}
-            <span className="text-foreground font-medium">#aims-support</span>
-          </div>
-          <div>
-            Email:{" "}
-            <a
-              href="mailto:support@aimseos.com"
-              className="text-foreground font-medium hover:text-[#C4972A] transition-colors"
-            >
-              support@aimseos.com
-            </a>
-          </div>
-          <div>
-            Response time:{" "}
-            <span className="text-green-400 font-medium">
-              Under 2 hours (business days)
-            </span>
-          </div>
-        </div>
+        <p className="text-sm text-muted-foreground">
+          Use the chatbot above to get instant answers. If you need additional support,
+          the chatbot can escalate your request to our team.
+        </p>
       </div>
     </div>
   )

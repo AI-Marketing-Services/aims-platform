@@ -816,7 +816,7 @@ export default function CRMOnboardingPage() {
           </div>
 
           <div className="bg-background border border-border rounded-xl p-5">
-            <h3 className="text-sm font-semibold text-foreground mb-3">When to reach out:</h3>
+            <h3 className="text-sm font-semibold text-foreground mb-3">The chatbot can help with:</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {[
                 "Technical errors or bugs",
@@ -832,6 +832,9 @@ export default function CRMOnboardingPage() {
                 </div>
               ))}
             </div>
+            <p className="text-xs text-muted-foreground mt-3">
+              If the chatbot can&apos;t resolve your issue, it will connect you with our support team.
+            </p>
           </div>
         </div>
       </section>

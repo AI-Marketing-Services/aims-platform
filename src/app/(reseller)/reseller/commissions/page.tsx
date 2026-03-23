@@ -89,7 +89,7 @@ export default async function ResellerCommissionsPage() {
                 Once your account reaches the $50 minimum, our team will send you a Stripe Connect
                 onboarding link. After connecting, payouts are processed automatically on the 15th of
                 each month via ACH direct deposit. Until then, you can request a manual payout by
-                emailing <a href="mailto:partners@aimseos.com" className="underline font-medium">partners@aimseos.com</a>.
+                using the chatbot to request a manual payout.
               </p>
             </div>
           )}

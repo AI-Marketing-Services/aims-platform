@@ -37,6 +37,8 @@ interface PortalChatWidgetProps {
 export function PortalChatWidget({ firstName = "there", serviceCount = 0 }: PortalChatWidgetProps) {
   const [open, setOpen] = useState(false)
   const [input, setInput] = useState("")
+  const [showNudge, setShowNudge] = useState(false)
+  const [nudgeDismissed, setNudgeDismissed] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   const welcomeText = buildWelcomeMessage(firstName, serviceCount)
@@ -56,6 +58,13 @@ export function PortalChatWidget({ firstName = "there", serviceCount = 0 }: Port
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages])
 
+  // Proactive nudge after 8 seconds
+  useEffect(() => {
+    if (open || nudgeDismissed) return
+    const timer = setTimeout(() => setShowNudge(true), 8000)
+    return () => clearTimeout(timer)
+  }, [open, nudgeDismissed])
+
   const isStreaming = status === "streaming" || status === "submitted"
 
   const handleSend = (e: React.FormEvent) => {
@@ -68,13 +77,28 @@ export function PortalChatWidget({ firstName = "there", serviceCount = 0 }: Port
   return (
     <>
       {!open && (
-        <button
-          onClick={() => setOpen(true)}
-          className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-card border border-border shadow-xl hover:shadow-2xl transition-all hover:scale-105 active:scale-95"
-          aria-label="AIMS Support"
-        >
-          <Image src="/logo.png" alt="AIMS" width={28} height={28} className="h-7 w-7 object-contain" />
-        </button>
+        <div className="fixed bottom-6 right-6 z-50 flex items-end gap-3">
+          {showNudge && !nudgeDismissed && (
+            <div className="relative bg-card border border-border rounded-xl px-4 py-3 shadow-xl max-w-[220px] animate-in slide-in-from-right-2 fade-in duration-300">
+              <button
+                onClick={() => { setNudgeDismissed(true); setShowNudge(false) }}
+                className="absolute -top-2 -right-2 h-5 w-5 rounded-full bg-card border border-border flex items-center justify-center text-muted-foreground hover:text-foreground"
+                aria-label="Dismiss"
+              >
+                <X className="h-3 w-3" />
+              </button>
+              <p className="text-sm text-foreground font-medium">Need help?</p>
+              <p className="text-xs text-muted-foreground mt-1">I can answer questions about your services, billing, or setup.</p>
+            </div>
+          )}
+          <button
+            onClick={() => { setOpen(true); setShowNudge(false); setNudgeDismissed(true) }}
+            className="flex h-14 w-14 items-center justify-center rounded-full bg-card border border-border shadow-xl hover:shadow-2xl transition-all hover:scale-105 active:scale-95"
+            aria-label="AIMS Support"
+          >
+            <Image src="/logo.png" alt="AIMS" width={28} height={28} className="h-7 w-7 object-contain" />
+          </button>
+        </div>
       )}
 
       {open && (

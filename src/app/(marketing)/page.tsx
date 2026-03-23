@@ -48,7 +48,7 @@ const ORG_SCHEMA = {
   description: "Forward-deployed AI consulting firm. We embed senior engineers in your operations to diagnose bottlenecks, build custom AI solutions, and deliver measurable efficiency gains.",
   contactPoint: {
     "@type": "ContactPoint",
-    email: "hello@aimseos.com",
+    email: "irtaza@modern-amenities.com",
     contactType: "sales",
   },
   sameAs: [

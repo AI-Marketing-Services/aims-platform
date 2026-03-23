@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
-import { FolderOpen, Link as LinkIcon, ExternalLink, FileText, Download, Play, Mail } from "lucide-react"
+import { FolderOpen, Link as LinkIcon, ExternalLink, FileText, Download, Play } from "lucide-react"
 import { CopyButton } from "@/components/portal/CopyButton"
 
 export const metadata = { title: "Partner Resources" }
@@ -132,20 +132,16 @@ export default async function ResellerResourcesPage() {
       {/* Request Custom Materials */}
       <div className="rounded-xl border border-border bg-card p-6">
         <div className="flex items-center gap-2 mb-3">
-          <Mail className="h-4 w-4 text-muted-foreground" />
+          <FileText className="h-4 w-4 text-muted-foreground" />
           <h2 className="text-sm font-semibold text-foreground">Request Custom Materials</h2>
         </div>
         <p className="text-sm text-muted-foreground mb-4">
           Need a co-branded deck, custom case study for a specific industry, or tailored pitch materials?
           Our partnerships team can create custom collateral for your pipeline.
         </p>
-        <a
-          href="mailto:partners@aimseos.com?subject=Custom%20Materials%20Request"
-          className="inline-flex items-center gap-2 rounded-lg bg-[#C4972A] px-4 py-2 text-sm font-medium text-white hover:bg-[#C4972A]/90 transition-colors"
-        >
-          <Mail className="h-4 w-4" />
-          Request Materials
-        </a>
+        <p className="text-xs text-muted-foreground">
+          Use the chatbot to request custom materials. It will gather your requirements and submit the request to our partnerships team.
+        </p>
       </div>
     </div>
   )

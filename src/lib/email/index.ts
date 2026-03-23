@@ -27,8 +27,8 @@ export async function sendTrackedEmail(params: Parameters<ReturnType<typeof getR
   return result
 }
 
-const FROM_EMAIL = "AIMS <hello@aimseos.com>"
-const REPLY_TO = "support@aimseos.com"
+const FROM_EMAIL = "AIMS <irtaza@modern-amenities.com>"
+const REPLY_TO = "irtaza@modern-amenities.com"
 
 // ─── Branded HTML wrapper ─────────────────────────────────────────────────────
 
@@ -238,7 +238,8 @@ export async function sendInternalNotification(params: {
   `
   return sendTrackedEmail({
     from: FROM_EMAIL,
-    to: "team@aimseos.com",
+    to: "irtaza@modern-amenities.com",
+    cc: "adam@modern-amenities.com",
     subject: `[AIMS${params.urgency === "high" ? " URGENT" : ""}] ${params.subject}`,
     html: emailLayout(body),
   })
