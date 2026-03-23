@@ -19,7 +19,6 @@ import {
   Shield,
   Star,
   Mic,
-  Mail,
   MessageSquare,
   AlertTriangle,
   ExternalLink,
@@ -40,8 +39,6 @@ const ONBOARDING_FORM = "https://app.aimanagingservices.com/v2/preview/JAPEyRSFN
 const DNS_GODADDY = "https://youtu.be/CxCIPrme700?si=5oQfOTFLTdr7BYtG"
 const DNS_NAMECHEAP = "https://youtu.be/p0KqYLTdKbs?si=rSsukgeb7JqwO5QN"
 const DNS_CLOUDFLARE = "https://youtu.be/au4rL36eq3c?si=NXncfeioNMM2EKDR"
-const SUPPORT_EMAIL_1 = "irtaza@modern-amenities.com"
-const SUPPORT_EMAIL_2 = "adam@modern-amenities.com"
 
 const CHECKLIST_PHASES = [
   {
@@ -736,11 +733,7 @@ export default function CRMOnboardingPage() {
             ))}
           </div>
           <p className="mt-6 text-center text-sm text-muted-foreground">
-            Not sure which plan fits?{" "}
-            <a href={`mailto:${SUPPORT_EMAIL_2}`} className="text-primary font-medium hover:underline">
-              Contact us
-            </a>{" "}
-            and we&apos;ll recommend the right starting point.
+            Not sure which plan fits? Use the chatbot below and we&apos;ll recommend the right starting point.
           </p>
         </div>
       </section>
@@ -804,37 +797,22 @@ export default function CRMOnboardingPage() {
             <p className="text-muted-foreground">Our team is here to make sure your setup goes smoothly.</p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-            <a
-              href={`mailto:${SUPPORT_EMAIL_1}`}
-              className="bg-background border border-border rounded-xl p-5 text-center hover:border-primary/40 transition-colors group"
-            >
-              <Mail className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors mx-auto mb-2" />
-              <p className="text-sm font-semibold text-foreground mb-1">Irtaza</p>
-              <p className="text-xs text-muted-foreground">Technical Support</p>
-              <p className="text-xs text-primary mt-1 font-mono">{SUPPORT_EMAIL_1}</p>
-            </a>
-            <a
-              href={`mailto:${SUPPORT_EMAIL_2}`}
-              className="bg-background border border-border rounded-xl p-5 text-center hover:border-primary/40 transition-colors group"
-            >
-              <Mail className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors mx-auto mb-2" />
-              <p className="text-sm font-semibold text-foreground mb-1">Adam</p>
-              <p className="text-xs text-muted-foreground">General Support</p>
-              <p className="text-xs text-primary mt-1 font-mono">{SUPPORT_EMAIL_2}</p>
-            </a>
+          <div className="max-w-md mx-auto mb-8">
             <button
               onClick={() => {
                 const chatBtn = document.querySelector("[aria-label='Chat with Setup Assistant']") as HTMLButtonElement | null
                 chatBtn?.click()
               }}
-              className="bg-background border border-border rounded-xl p-5 text-center hover:border-primary/40 transition-colors group"
+              className="w-full bg-background border border-border rounded-xl p-6 text-center hover:border-primary/40 transition-colors group"
             >
-              <MessageSquare className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors mx-auto mb-2" />
-              <p className="text-sm font-semibold text-foreground mb-1">AI Help Agent</p>
-              <p className="text-xs text-muted-foreground">Instant answers to common questions</p>
-              <p className="text-xs text-primary mt-1">Open Chat</p>
+              <MessageSquare className="w-8 h-8 text-muted-foreground group-hover:text-primary transition-colors mx-auto mb-3" />
+              <p className="text-base font-semibold text-foreground mb-1">Chat with our AI Help Agent</p>
+              <p className="text-sm text-muted-foreground mb-2">Get instant answers to setup questions</p>
+              <p className="text-xs text-primary">Open Chat</p>
             </button>
+            <p className="text-xs text-muted-foreground text-center mt-3">
+              Still need help? The chatbot can connect you with our support team.
+            </p>
           </div>
 
           <div className="bg-background border border-border rounded-xl p-5">
