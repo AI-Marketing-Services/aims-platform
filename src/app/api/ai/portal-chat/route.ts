@@ -1,5 +1,5 @@
 import { anthropic } from "@ai-sdk/anthropic"
-import { streamText, tool } from "ai"
+import { streamText, tool, convertToModelMessages } from "ai"
 import { z } from "zod"
 import { auth } from "@clerk/nextjs/server"
 import { db } from "@/lib/db"
@@ -70,16 +70,11 @@ export async function POST(req: Request) {
   }
 
 
-  const messages: any[] = rawMessages
+  const uiMessages = rawMessages
     .slice(-MAX_MESSAGES)
     .filter((m: unknown) => typeof m === "object" && m !== null)
-    .map((m: unknown) => {
-      const msg = m as Record<string, unknown>
-      const content = typeof msg.content === "string"
-        ? msg.content.slice(0, MAX_MESSAGE_LENGTH)
-        : msg.content
-      return { ...msg, content }
-    })
+
+  const messages = await convertToModelMessages(uiMessages as Parameters<typeof convertToModelMessages>[0])
 
   // Fetch client context
   let clientContext = ""

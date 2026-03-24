@@ -1,5 +1,5 @@
 import { anthropic } from "@ai-sdk/anthropic"
-import { streamText } from "ai"
+import { streamText, convertToModelMessages } from "ai"
 import { chatRatelimit, getIp } from "@/lib/ratelimit"
 import { logApiCost, estimateAnthropicCost } from "@/lib/ai"
 
@@ -59,16 +59,11 @@ export async function POST(req: Request) {
   }
 
 
-  const messages: any[] = rawMessages
+  const uiMessages = rawMessages
     .slice(-MAX_MESSAGES)
     .filter((m: unknown) => typeof m === "object" && m !== null)
-    .map((m: unknown) => {
-      const msg = m as Record<string, unknown>
-      const content = typeof msg.content === "string"
-        ? msg.content.slice(0, MAX_MESSAGE_LENGTH)
-        : msg.content
-      return { ...msg, content }
-    })
+
+  const messages = await convertToModelMessages(uiMessages as Parameters<typeof convertToModelMessages>[0])
 
   const result = streamText({
     model: anthropic("claude-haiku-4-5-20251001"),

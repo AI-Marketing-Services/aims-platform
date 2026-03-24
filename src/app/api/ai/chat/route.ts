@@ -1,5 +1,5 @@
 import { createGoogleGenerativeAI } from "@ai-sdk/google"
-import { streamText, tool } from "ai"
+import { streamText, tool, convertToModelMessages } from "ai"
 
 function getGoogle() {
   if (!process.env.GEMINI_API_KEY) {
@@ -87,18 +87,12 @@ export async function POST(req: Request) {
     return Response.json({ error: "messages must be an array" }, { status: 400 })
   }
 
-  // Clamp to last MAX_MESSAGES and truncate each content to MAX_MESSAGE_LENGTH
-
-  const messages: any[] = rawMessages
+  // Clamp to last MAX_MESSAGES and convert UIMessage parts to model messages
+  const uiMessages = rawMessages
     .slice(-MAX_MESSAGES)
     .filter((m: unknown) => typeof m === "object" && m !== null)
-    .map((m: unknown) => {
-      const msg = m as Record<string, unknown>
-      const content = typeof msg.content === "string"
-        ? msg.content.slice(0, MAX_MESSAGE_LENGTH)
-        : msg.content
-      return { ...msg, content }
-    })
+
+  const messages = await convertToModelMessages(uiMessages as Parameters<typeof convertToModelMessages>[0])
 
   const result = streamText({
     model: getGoogle()("gemini-2.0-flash-001"),
