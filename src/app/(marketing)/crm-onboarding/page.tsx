@@ -45,6 +45,7 @@ const CHECKLIST_PHASES = [
     title: "Account & Profile",
     timeline: "Day 1",
     items: [
+      "Check your inbox (and spam/junk folder) for the portal invite email from AIMS",
       "Open your welcome email and click the activation link",
       "Create your password and log in",
       "Complete two-factor authentication",
