@@ -6,6 +6,7 @@ import { getAllPosts } from "@/lib/blog"
 export const metadata: Metadata = {
   title: "Blog - AIMS",
   description: "Insights on AI-powered sales, marketing, and operations. Practical guides for businesses building their growth infrastructure.",
+  alternates: { canonical: "https://aimseos.com/blog" },
   openGraph: {
     title: "Blog | AIMS",
     description: "Insights on AI-powered sales, marketing, and operations. Practical guides for businesses building their growth infrastructure.",

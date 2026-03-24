@@ -5,6 +5,7 @@ import { GetStartedClient } from "./GetStartedClient"
 export const metadata: Metadata = {
   title: "Get Started - Book Your Strategy Call",
   description: "Book a free strategy call with the AIMS team. We'll audit your current pipeline and build a custom growth plan.",
+  alternates: { canonical: "https://aimseos.com/get-started" },
   openGraph: {
     title: "Get Started | AIMS",
     description: "Book a free strategy call with the AIMS team. We'll audit your current pipeline and build a custom growth plan.",

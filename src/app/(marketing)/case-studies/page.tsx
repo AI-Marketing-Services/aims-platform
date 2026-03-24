@@ -5,6 +5,7 @@ import { ArrowRight, TrendingUp } from "lucide-react"
 export const metadata: Metadata = {
   title: "Case Studies - AIMS",
   description: "Real results from real businesses. See how AIMS builds AI-powered systems that generate leads, close deals, and automate operations.",
+  alternates: { canonical: "https://aimseos.com/case-studies" },
 }
 
 const CASE_STUDIES = [

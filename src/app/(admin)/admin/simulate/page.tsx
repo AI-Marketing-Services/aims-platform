@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
 import {
   Play,
   CheckCircle,
@@ -214,9 +215,9 @@ function PurchasePanel() {
               ))}
             </div>
             <div className="flex gap-3 pt-1 border-t border-border text-xs">
-              <a href="/admin/clients" className="text-[#C4972A] hover:underline">Clients →</a>
-              <a href="/admin/fulfillment" className="text-[#C4972A] hover:underline">Tasks →</a>
-              <a href="/admin/crm" className="text-[#C4972A] hover:underline">CRM →</a>
+              <Link href="/admin/clients" className="text-[#C4972A] hover:underline">Clients &rarr;</Link>
+              <Link href="/admin/fulfillment" className="text-[#C4972A] hover:underline">Tasks &rarr;</Link>
+              <Link href="/admin/crm" className="text-[#C4972A] hover:underline">CRM &rarr;</Link>
             </div>
           </div>
         )}
@@ -405,9 +406,9 @@ function LeadMagnetPanel() {
                 </div>
               ))}
             </div>
-            <a href="/admin/crm" className="block text-xs text-[#C4972A] hover:underline pt-1 border-t border-border">
-              View in CRM →
-            </a>
+            <Link href="/admin/crm" className="block text-xs text-[#C4972A] hover:underline pt-1 border-t border-border">
+              View in CRM &rarr;
+            </Link>
           </div>
         )}
 

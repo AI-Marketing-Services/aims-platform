@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect } from "react"
 import { AlertTriangle, RotateCcw, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 
@@ -16,6 +17,13 @@ export function ErrorBoundary({
   backHref = "/",
   backLabel = "Go Home",
 }: ErrorBoundaryProps) {
+  useEffect(() => {
+    // Log error digest for production debugging (non-sensitive)
+    if (error.digest) {
+      console.error("Error boundary caught:", error.digest)
+    }
+  }, [error.digest])
+
   return (
     <div className="flex min-h-[60vh] items-center justify-center p-6">
       <div className="max-w-md text-center space-y-6">
@@ -28,6 +36,11 @@ export function ErrorBoundary({
             An unexpected error occurred. Please try again or contact support if the
             problem persists.
           </p>
+          {error.digest && (
+            <p className="text-xs text-muted-foreground/50 font-mono">
+              Reference: {error.digest}
+            </p>
+          )}
           {process.env.NODE_ENV === "development" && error.message && (
             <pre className="mt-3 rounded-lg bg-muted p-3 text-left text-xs text-muted-foreground overflow-auto max-h-32">
               {error.message}

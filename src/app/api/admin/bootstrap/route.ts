@@ -3,17 +3,15 @@ import { clerkClient } from "@clerk/nextjs/server"
 
 const ADMIN_EMAILS = ["adam@modern-amenities.com", "adamwolfe102@gmail.com"]
 
-export async function GET(req: Request) {
-  // Require a secret token so this endpoint cannot be triggered by anonymous users.
-  // Set BOOTSTRAP_SECRET in your env vars and pass it as ?secret=<value>
-  const { searchParams } = new URL(req.url)
-  const secret = searchParams.get("secret")
+export async function POST(req: Request) {
+  // Require a secret token via Authorization header (POST-only for sensitive operations)
+  const authHeader = req.headers.get("authorization")
 
   if (!process.env.BOOTSTRAP_SECRET) {
     return NextResponse.json({ error: "Bootstrap not configured" }, { status: 500 })
   }
 
-  if (secret !== process.env.BOOTSTRAP_SECRET) {
+  if (authHeader !== `Bearer ${process.env.BOOTSTRAP_SECRET}`) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   }
 

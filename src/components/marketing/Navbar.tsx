@@ -46,12 +46,14 @@ function DropdownMenu({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -4 }}
       transition={{ duration: 0.12 }}
+      role="menu"
       className="absolute top-full left-1/2 -translate-x-1/2 mt-2 bg-panel border border-border rounded-xl shadow-lg py-2 z-50 min-w-[200px]"
     >
       {items.map((item) => (
         <Link
           key={item.href}
           href={item.href}
+          role="menuitem"
           className="flex flex-col px-4 py-2.5 hover:bg-surface transition-colors"
         >
           <span className="text-sm font-medium text-foreground">{item.label}</span>
@@ -145,6 +147,8 @@ export function Navbar() {
             <div className="relative">
               <button
                 onClick={() => toggleDropdown("tools")}
+                aria-expanded={dropdown === "tools"}
+                aria-haspopup="true"
                 className={cn(
                   "flex items-center gap-1 px-3.5 py-1.5 text-sm font-medium rounded-lg transition-colors",
                   dropdown === "tools"
@@ -164,6 +168,8 @@ export function Navbar() {
             <div className="relative">
               <button
                 onClick={() => toggleDropdown("industries")}
+                aria-expanded={dropdown === "industries"}
+                aria-haspopup="true"
                 className={cn(
                   "flex items-center gap-1 px-3.5 py-1.5 text-sm font-medium rounded-lg transition-colors",
                   dropdown === "industries"
@@ -183,6 +189,8 @@ export function Navbar() {
             <div className="relative">
               <button
                 onClick={() => toggleDropdown("resources")}
+                aria-expanded={dropdown === "resources"}
+                aria-haspopup="true"
                 className={cn(
                   "flex items-center gap-1 px-3.5 py-1.5 text-sm font-medium rounded-lg transition-colors",
                   dropdown === "resources"
@@ -224,6 +232,8 @@ export function Navbar() {
           {/* Mobile toggle */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
+            aria-label={mobileOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={mobileOpen}
             className="md:hidden p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
           >
             {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}

@@ -339,7 +339,7 @@ export async function createLeadMagnetSubmission(data: {
   utmMedium?: string
   utmCampaign?: string
 }) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   const submission = await db.leadMagnetSubmission.create({ data: data as any })
   return submission
 }

@@ -92,7 +92,7 @@ export default function ROICalculatorPage() {
       aimsClients: Math.round(aimsClients),
       aimsCloseRate: Math.round(aimsCloseRate * 10) / 10,
     }
-  }, [leadsPerMonth, closeRate, avgDealValue, monthlyAdSpend])
+  }, [leadsPerMonth, closeRate, avgDealValue])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()

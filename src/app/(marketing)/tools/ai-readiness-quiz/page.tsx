@@ -463,7 +463,7 @@ export default function AIReadinessQuizPage() {
               <div className="bg-card border border-primary/20 rounded-2xl p-8 text-center">
                 <h3 className="text-2xl font-bold text-foreground mb-3">Ready to close the gap?</h3>
                 <p className="text-muted-foreground mb-6">
-                  Book a free 30-minute strategy call. We'll walk through your score in detail and build a custom AI roadmap for your business.
+                  Book a free 30-minute strategy call. We&apos;ll walk through your score in detail and build a custom AI roadmap for your business.
                 </p>
                 <a
                   href="/get-started"

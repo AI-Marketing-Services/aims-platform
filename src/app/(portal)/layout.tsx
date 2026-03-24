@@ -16,11 +16,12 @@ export default async function PortalLayout({
   const { userId } = await auth()
   if (!userId) redirect("/sign-in")
 
-  // Look up DB user for sidebar data
+  // Single DB query for sidebar data + chat widget context
   const dbUser = await db.user.findUnique({
     where: { clerkId: userId },
     select: {
       id: true,
+      name: true,
       subscriptions: {
         where: { status: "ACTIVE" },
         select: { monthlyAmount: true },
@@ -29,6 +30,7 @@ export default async function PortalLayout({
   })
 
   const totalMrr = dbUser?.subscriptions.reduce((sum, s) => sum + s.monthlyAmount, 0) ?? 0
+  const serviceCount = dbUser?.subscriptions.length ?? 0
 
   const unreadCount = dbUser
     ? await db.notification.count({
@@ -36,17 +38,7 @@ export default async function PortalLayout({
       })
     : 0
 
-  // Fetch user name for chat widget
-  const chatUser = await db.user.findUnique({
-    where: { clerkId: userId },
-    select: {
-      name: true,
-      _count: { select: { subscriptions: { where: { status: "ACTIVE" } } } },
-    },
-  })
-
-  const firstName = chatUser?.name?.split(" ")[0] ?? "there"
-  const serviceCount = chatUser?._count?.subscriptions ?? 0
+  const firstName = dbUser?.name?.split(" ")[0] ?? "there"
 
   return (
     <div className="min-h-screen bg-background text-foreground">

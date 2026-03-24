@@ -12,7 +12,11 @@ export async function GET(req: Request) {
       featured: searchParams.get("featured") === "true",
     })
 
-    return NextResponse.json(services)
+    return NextResponse.json(services, {
+      headers: {
+        "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
+      },
+    })
   } catch (err) {
     console.error("Failed to fetch services:", err)
     return NextResponse.json({ error: "Failed to fetch services" }, { status: 500 })

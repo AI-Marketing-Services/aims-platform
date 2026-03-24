@@ -18,6 +18,7 @@ export const metadata: Metadata = {
   title: "Industries We Serve - AI Solutions by Sector | AIMS",
   description:
     "AIMS builds AI growth systems for healthcare, legal, home services, real estate, hospitality, professional services, e-commerce, SaaS, and more.",
+  alternates: { canonical: "https://aimseos.com/industries" },
 }
 
 const INDUSTRIES = [

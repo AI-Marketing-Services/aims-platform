@@ -25,6 +25,11 @@ export async function GET() {
       timestamp: new Date().toISOString(),
       latencyMs: Date.now() - start,
     },
-    { status: code }
+    {
+      status: code,
+      headers: {
+        "Cache-Control": "no-store, no-cache, must-revalidate",
+      },
+    }
   )
 }

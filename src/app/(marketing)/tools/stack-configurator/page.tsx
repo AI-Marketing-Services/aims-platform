@@ -301,7 +301,7 @@ export default function StackConfiguratorPage() {
               {step === 2 && (
                 <motion.div key="step2" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}>
                   <h2 className="text-2xl font-bold text-foreground mb-2">What are your top priorities? <span className="text-base font-normal text-muted-foreground">(pick all that apply)</span></h2>
-                  <p className="text-muted-foreground mb-6">Select everything that matters - we'll weight your stack accordingly.</p>
+                  <p className="text-muted-foreground mb-6">Select everything that matters - we&apos;ll weight your stack accordingly.</p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {GOALS.map((goal) => {
                       const selected = goals.includes(goal.id)
@@ -495,7 +495,7 @@ export default function StackConfiguratorPage() {
             <div className="bg-card border border-primary/20 rounded-2xl p-8 text-center mt-8">
               <h3 className="text-2xl font-bold text-foreground mb-3">Ready to deploy your stack?</h3>
               <p className="text-muted-foreground mb-6">
-                Book a free 30-minute strategy call. We'll finalize your roadmap, confirm priorities, and give you a fixed monthly price.
+                Book a free 30-minute strategy call. We&apos;ll finalize your roadmap, confirm priorities, and give you a fixed monthly price.
               </p>
               <a
                 href="/get-started"

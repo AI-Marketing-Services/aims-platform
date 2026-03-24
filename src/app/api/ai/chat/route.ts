@@ -88,7 +88,7 @@ export async function POST(req: Request) {
   }
 
   // Clamp to last MAX_MESSAGES and truncate each content to MAX_MESSAGE_LENGTH
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   const messages: any[] = rawMessages
     .slice(-MAX_MESSAGES)
     .filter((m: unknown) => typeof m === "object" && m !== null)

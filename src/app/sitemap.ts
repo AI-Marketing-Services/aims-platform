@@ -53,7 +53,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly" as const,
       priority: 0.8,
     }))
-  } catch {}
+  } catch (err) {
+    // Log but don't fail sitemap generation if DB is unreachable
+    if (process.env.NODE_ENV !== "production") {
+      console.error("Sitemap: failed to fetch service pages:", err)
+    }
+  }
 
   // Blog posts
   const blogSlugs = getAllSlugs()

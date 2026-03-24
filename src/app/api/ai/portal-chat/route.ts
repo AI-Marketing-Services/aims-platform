@@ -69,7 +69,7 @@ export async function POST(req: Request) {
     return Response.json({ error: "messages must be an array" }, { status: 400 })
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   const messages: any[] = rawMessages
     .slice(-MAX_MESSAGES)
     .filter((m: unknown) => typeof m === "object" && m !== null)

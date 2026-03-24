@@ -646,6 +646,7 @@ model PageView {
   @@index([path])
   @@index([createdAt])
   @@index([sessionId])
+  @@index([userId])
 }
 
 model ApiCostLog {

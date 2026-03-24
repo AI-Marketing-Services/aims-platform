@@ -71,7 +71,7 @@ export default async function InternLayout({
       </div>
 
       {/* Mobile bottom nav */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border flex items-center justify-around h-16 px-2 safe-area-pb">
+      <nav aria-label="Intern mobile navigation" className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border flex items-center justify-around h-16 px-2 safe-area-pb">
         {INTERN_NAV.slice(0, 5).map((item) => (
           <Link
             key={item.href}

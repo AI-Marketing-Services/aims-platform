@@ -87,6 +87,13 @@ const nextConfig: NextConfig = {
           { key: "Cache-Control", value: "public, max-age=2592000" },
         ],
       },
+      {
+        // Prevent search engines from indexing API routes
+        source: "/api/:path*",
+        headers: [
+          { key: "X-Robots-Tag", value: "noindex, nofollow" },
+        ],
+      },
     ]
   },
 }

@@ -169,7 +169,7 @@ export default async function PortalDashboard({
     <div className="space-y-8">
       {/* Checkout success banner */}
       {checkout === "success" && (
-        <div className="rounded-xl border border-green-800 bg-green-900/15 px-5 py-4 text-sm text-green-800 font-medium">
+        <div className="rounded-xl border border-green-800 bg-green-900/15 px-5 py-4 text-sm text-green-400 font-medium">
           Your subscription is active. Our team will begin setup within 24 hours - check your email for next steps.
         </div>
       )}
