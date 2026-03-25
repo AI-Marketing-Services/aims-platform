@@ -92,7 +92,11 @@ export async function POST(req: Request) {
     .slice(-MAX_MESSAGES)
     .filter((m: unknown) => typeof m === "object" && m !== null)
 
-  const messages = await convertToModelMessages(uiMessages as Parameters<typeof convertToModelMessages>[0])
+  // Drop leading assistant messages (client-side welcome greeting) — Gemini/Anthropic require first message to be user role
+  const firstUserIdx = uiMessages.findIndex((m) => (m as Record<string, unknown>).role === "user")
+  const trimmedMessages = firstUserIdx >= 0 ? uiMessages.slice(firstUserIdx) : uiMessages
+
+  const messages = await convertToModelMessages(trimmedMessages as Parameters<typeof convertToModelMessages>[0])
 
   const result = streamText({
     model: getGoogle()("gemini-2.0-flash-001"),
