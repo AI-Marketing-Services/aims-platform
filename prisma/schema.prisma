@@ -684,6 +684,23 @@ model EmailQueueItem {
   @@index([recipientEmail, sequenceKey])
 }
 
+// ============ CHAT SESSIONS ============
+
+model ChatSession {
+  id          String   @id @default(cuid())
+  email       String?
+  source      String   // "intake", "onboarding", "portal", "marketing"
+  clerkUserId String?
+  messages    Json     // Store message history
+  messageCount Int     @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([email])
+  @@index([source])
+  @@index([createdAt])
+}
+
 // ============ EMAIL BISON ============
 
 model EmailBisonConnection {

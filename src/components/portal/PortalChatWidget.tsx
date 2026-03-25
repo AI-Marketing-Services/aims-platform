@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect, useMemo } from "react"
-import { MessageSquare, X, Send, Loader2, Layers, CreditCard, MessageSquarePlus, ShoppingBag } from "lucide-react"
+import { MessageSquare, X, Send, Loader2, Layers, CreditCard, MessageSquarePlus, ShoppingBag, AlertCircle } from "lucide-react"
 import { useChat } from "@ai-sdk/react"
 import { TextStreamChatTransport, type UIMessage } from "ai"
 import Link from "next/link"
@@ -34,17 +34,26 @@ interface PortalChatWidgetProps {
   serviceCount?: number
 }
 
+function generatePortalSessionId(): string {
+  return `portal_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`
+}
+
 export function PortalChatWidget({ firstName = "there", serviceCount = 0 }: PortalChatWidgetProps) {
   const [open, setOpen] = useState(false)
   const [input, setInput] = useState("")
   const [showNudge, setShowNudge] = useState(false)
   const [nudgeDismissed, setNudgeDismissed] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const sessionIdRef = useRef(generatePortalSessionId())
 
   const welcomeText = buildWelcomeMessage(firstName, serviceCount)
 
   const transport = useMemo(
-    () => new TextStreamChatTransport({ api: "/api/ai/portal-chat" }),
+    () =>
+      new TextStreamChatTransport({
+        api: "/api/ai/portal-chat",
+        body: { sessionId: sessionIdRef.current },
+      }),
     []
   )
 
@@ -172,7 +181,12 @@ export function PortalChatWidget({ firstName = "there", serviceCount = 0 }: Port
                 </div>
               </div>
             )}
-            {error && <p className="text-xs text-red-400 text-center">Error. Please try again or visit /portal/support.</p>}
+            {error && (
+              <div className="flex items-center justify-center gap-2 py-2">
+                <AlertCircle className="h-3.5 w-3.5 text-foreground/60" />
+                <p className="text-xs text-foreground/60">Our assistant is temporarily unavailable. Please try again later.</p>
+              </div>
+            )}
             <div ref={messagesEndRef} />
           </div>
 

@@ -6,6 +6,7 @@ import { db } from "@/lib/db"
 import { chatRatelimit, getIp } from "@/lib/ratelimit"
 import { logApiCost, estimateAnthropicCost } from "@/lib/ai"
 import { AIMS_KNOWLEDGE_BASE } from "@/lib/ai/knowledge-base"
+import { upsertChatSession } from "@/lib/db/chat-sessions"
 
 export const maxDuration = 30
 
@@ -58,9 +59,11 @@ export async function POST(req: Request) {
   }
 
   let rawMessages: unknown
+  let sessionId: string | undefined
   try {
     const body = await req.json()
     rawMessages = body?.messages
+    sessionId = typeof body?.sessionId === "string" ? body.sessionId : undefined
   } catch {
     return Response.json({ error: "Invalid request body" }, { status: 400 })
   }
@@ -69,6 +72,15 @@ export async function POST(req: Request) {
     return Response.json({ error: "messages must be an array" }, { status: 400 })
   }
 
+  // Persist chat session (non-blocking)
+  if (sessionId) {
+    upsertChatSession({
+      sessionId,
+      source: "portal",
+      clerkUserId: userId,
+      messages: rawMessages,
+    })
+  }
 
   const uiMessages = rawMessages
     .slice(-MAX_MESSAGES)
