@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { DealStage } from "@prisma/client"
+import { logger } from "@/lib/logger"
 
 /**
  * Close CRM Webhook Handler
@@ -72,7 +73,7 @@ export async function POST(req: NextRequest) {
 
     const newStage = CLOSE_STATUS_TO_AIMS[newStatusLabel]
     if (!newStage) {
-      console.warn(`Close webhook: unmapped status "${newStatusLabel}" for lead ${closeLeadId}`)
+      logger.warn(`Close webhook: unmapped status "${newStatusLabel}" for lead ${closeLeadId}`, { endpoint: "POST /api/webhooks/close" })
       return NextResponse.json({ ok: true, skipped: `Unmapped status: ${newStatusLabel}` })
     }
 
@@ -83,7 +84,7 @@ export async function POST(req: NextRequest) {
     })
 
     if (!deal) {
-      console.warn(`Close webhook: no AIMS deal found for Close lead ${closeLeadId}`)
+      logger.warn(`Close webhook: no AIMS deal found for Close lead ${closeLeadId}`, { endpoint: "POST /api/webhooks/close" })
       return NextResponse.json({ ok: true, skipped: "No matching deal" })
     }
 

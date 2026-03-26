@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { z } from "zod"
 import { db } from "@/lib/db"
 import { formRatelimit, getIp } from "@/lib/ratelimit"
+import { logger } from "@/lib/logger"
 
 const trackSchema = z.object({
   code: z.string(),
@@ -39,7 +40,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ ok: true })
   } catch (err) {
-    console.error("Referral tracking failed:", err)
+    logger.error("Referral tracking failed", err, { endpoint: "POST /api/referrals/track" })
     return NextResponse.json({ error: "Internal error" }, { status: 500 })
   }
 }

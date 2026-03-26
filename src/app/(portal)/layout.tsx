@@ -7,6 +7,7 @@ import { UserButton } from "@clerk/nextjs"
 import { PortalSidebar } from "@/components/portal/Sidebar"
 import { MobilePortalNav } from "@/components/portal/MobilePortalNav"
 import { PortalChatWidget } from "@/components/portal/PortalChatWidget"
+import { ReferralClaimHandler } from "@/components/portal/ReferralClaimHandler"
 import { PageTransition } from "@/components/shared/PageTransition"
 import { db } from "@/lib/db"
 
@@ -72,6 +73,7 @@ export default async function PortalLayout({
       <MobilePortalNav hasUnread={unreadCount > 0} />
 
       <PortalChatWidget firstName={firstName} serviceCount={serviceCount} />
+      <ReferralClaimHandler />
     </div>
   )
 }

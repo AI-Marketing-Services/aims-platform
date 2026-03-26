@@ -4,7 +4,11 @@
  * API key: Settings > API Keys in Close dashboard
  */
 
+import { logger } from "@/lib/logger"
+
 const CLOSE_API_BASE = "https://api.close.com/api/v1"
+const CLOSE_TIMEOUT_MS = 10_000
+const CLOSE_MAX_RETRIES = 2
 
 // Stage → Close status ID mapping
 export const CLOSE_STATUS_MAP: Record<string, string> = {
@@ -20,13 +24,69 @@ export const CLOSE_STATUS_MAP: Record<string, string> = {
   LOST:                "stat_aR2jBa8YnTNZmHAnPsnlQuinBdaXpSBCkZGP3UvoBlV", // Lost
 }
 
-function closeHeaders() {
+function closeHeaders(): HeadersInit | null {
   const key = process.env.CLOSE_API_KEY
   if (!key) return null
   return {
     "Content-Type": "application/json",
     Authorization: `Basic ${Buffer.from(`${key}:`).toString("base64")}`,
   }
+}
+
+/**
+ * Fetch wrapper with timeout and retry for Close API calls.
+ * Retries on network errors and 429 (rate limit) responses.
+ */
+async function closeFetch(
+  url: string,
+  options: RequestInit,
+  context: string
+): Promise<Response | null> {
+  for (let attempt = 0; attempt <= CLOSE_MAX_RETRIES; attempt++) {
+    try {
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), CLOSE_TIMEOUT_MS)
+
+      const res = await fetch(url, {
+        ...options,
+        signal: controller.signal,
+      })
+
+      clearTimeout(timeoutId)
+
+      // Retry on rate limit with exponential backoff
+      if (res.status === 429 && attempt < CLOSE_MAX_RETRIES) {
+        const retryAfter = parseInt(res.headers.get("retry-after") ?? "2", 10)
+        const delayMs = Math.min(retryAfter * 1000, 5000) * (attempt + 1)
+        logger.warn(`Close API rate limited, retrying in ${delayMs}ms`, {
+          action: context,
+        })
+        await new Promise((resolve) => setTimeout(resolve, delayMs))
+        continue
+      }
+
+      return res
+    } catch (err) {
+      const isTimeout = err instanceof DOMException && err.name === "AbortError"
+      const isNetworkError = err instanceof TypeError
+
+      if ((isTimeout || isNetworkError) && attempt < CLOSE_MAX_RETRIES) {
+        const delayMs = 1000 * (attempt + 1)
+        logger.warn(`Close API ${isTimeout ? "timeout" : "network error"}, retrying in ${delayMs}ms`, {
+          action: context,
+        })
+        await new Promise((resolve) => setTimeout(resolve, delayMs))
+        continue
+      }
+
+      logger.error(`Close API ${context} failed after ${attempt + 1} attempts`, err, {
+        action: context,
+      })
+      return null
+    }
+  }
+
+  return null
 }
 
 export async function createCloseLead(params: {
@@ -42,9 +102,9 @@ export async function createCloseLead(params: {
   const headers = closeHeaders()
   if (!headers) return null
 
-  try {
-    // Create the lead (company)
-    const leadRes = await fetch(`${CLOSE_API_BASE}/lead/`, {
+  const res = await closeFetch(
+    `${CLOSE_API_BASE}/lead/`,
+    {
       method: "POST",
       headers,
       body: JSON.stringify({
@@ -63,17 +123,33 @@ export async function createCloseLead(params: {
           },
         ],
       }),
+    },
+    "createLead"
+  )
+
+  if (!res) return null
+
+  if (!res.ok) {
+    const errorBody = await res.text().catch(() => "unknown")
+    logger.error("Close lead creation failed", undefined, {
+      action: `createLead:${res.status}`,
+      dealId: params.dealId,
     })
-
-    if (!leadRes.ok) {
-      console.error("Close lead creation failed:", await leadRes.text())
-      return null
+    // Log error body separately only in dev (may contain PII)
+    if (process.env.NODE_ENV !== "production") {
+      logger.warn(`Close createLead response: ${errorBody}`)
     }
+    return null
+  }
 
-    const lead = await leadRes.json()
+  try {
+    const lead = await res.json()
     return lead.id as string
   } catch (err) {
-    console.error("Close API error (createLead):", err)
+    logger.error("Close createLead: failed to parse response", err, {
+      action: "createLead",
+      dealId: params.dealId,
+    })
     return null
   }
 }
@@ -88,24 +164,35 @@ export async function updateCloseLeadStatus(
   const statusId = CLOSE_STATUS_MAP[stage]
   if (!statusId) return false
 
-  try {
-    const res = await fetch(`${CLOSE_API_BASE}/lead/${closeLeadId}/`, {
+  const res = await closeFetch(
+    `${CLOSE_API_BASE}/lead/${closeLeadId}/`,
+    {
       method: "PUT",
       headers,
       body: JSON.stringify({ status_id: statusId }),
-    })
+    },
+    "updateStatus"
+  )
 
-    return res.ok
-  } catch (err) {
-    console.error("Close API error (updateStatus):", err)
+  if (!res) return false
+
+  if (!res.ok) {
+    logger.error("Close updateStatus failed", undefined, {
+      action: `updateStatus:${res.status}:${closeLeadId}`,
+    })
     return false
   }
+
+  return true
 }
 
 // Reverse mapping: Close status ID → label (for looking up current status)
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const CLOSE_STATUS_ID_TO_LABEL: Record<string, string> = Object.entries(CLOSE_STATUS_MAP).reduce(
   (acc, [stage, statusId]) => {
-    if (statusId) acc[statusId] = stage
+    if (statusId) {
+      return { ...acc, [statusId]: stage }
+    }
     return acc
   },
   {} as Record<string, string>
@@ -125,35 +212,43 @@ export async function syncDealStageToClose(
 
   const statusId = CLOSE_STATUS_MAP[newStage]
   if (!statusId) {
-    console.warn(`syncDealStageToClose: no Close status mapping for stage "${newStage}"`)
+    logger.warn(`syncDealStageToClose: no Close status mapping for stage "${newStage}"`, {
+      action: `syncDealStage:${newStage}`,
+    })
     return false
   }
 
-  try {
-    // Update the lead status in Close
-    const res = await fetch(`${CLOSE_API_BASE}/lead/${closeLeadId}/`, {
+  const res = await closeFetch(
+    `${CLOSE_API_BASE}/lead/${closeLeadId}/`,
+    {
       method: "PUT",
       headers,
       body: JSON.stringify({ status_id: statusId }),
+    },
+    "syncDealStage"
+  )
+
+  if (!res) return false
+
+  if (!res.ok) {
+    const errorBody = await res.text().catch(() => "unknown")
+    logger.error("Close stage sync failed", undefined, {
+      action: `syncDealStage:${res.status}:${closeLeadId}`,
     })
-
-    if (!res.ok) {
-      console.error("Close stage sync failed:", await res.text())
-      return false
+    if (process.env.NODE_ENV !== "production") {
+      logger.warn(`Close syncDealStage response: ${errorBody}`)
     }
-
-    // Add a note documenting the change
-    const noteText = previousStage
-      ? `Stage changed in AIMS: ${previousStage} -> ${newStage}`
-      : `Stage set in AIMS: ${newStage}`
-
-    await addCloseNote(closeLeadId, noteText)
-
-    return true
-  } catch (err) {
-    console.error("Close API error (syncDealStageToClose):", err)
     return false
   }
+
+  // Add a note documenting the change
+  const noteText = previousStage
+    ? `Stage changed in AIMS: ${previousStage} -> ${newStage}`
+    : `Stage set in AIMS: ${newStage}`
+
+  await addCloseNote(closeLeadId, noteText)
+
+  return true
 }
 
 export async function addCloseNote(
@@ -163,19 +258,27 @@ export async function addCloseNote(
   const headers = closeHeaders()
   if (!headers) return false
 
-  try {
-    const res = await fetch(`${CLOSE_API_BASE}/activity/note/`, {
+  const res = await closeFetch(
+    `${CLOSE_API_BASE}/activity/note/`,
+    {
       method: "POST",
       headers,
       body: JSON.stringify({
         lead_id: closeLeadId,
         note,
       }),
-    })
+    },
+    "addNote"
+  )
 
-    return res.ok
-  } catch (err) {
-    console.error("Close API error (addNote):", err)
+  if (!res) return false
+
+  if (!res.ok) {
+    logger.error("Close addNote failed", undefined, {
+      action: `addNote:${res.status}:${closeLeadId}`,
+    })
     return false
   }
+
+  return true
 }

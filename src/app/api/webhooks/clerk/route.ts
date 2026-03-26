@@ -53,7 +53,7 @@ export async function POST(req: Request) {
         const lastName = (data.last_name as string) ?? ""
         const name = [firstName, lastName].filter(Boolean).join(" ") || null
 
-        await db.user.create({
+        const newUser = await db.user.create({
           data: {
             clerkId: data.id as string,
             email,
@@ -61,6 +61,37 @@ export async function POST(req: Request) {
             avatarUrl: (data.image_url as string) ?? null,
           },
         })
+
+        // Link referral if a referral code was passed via Clerk unsafe_metadata
+        const unsafeMetadata = data.unsafe_metadata as Record<string, unknown> | undefined
+        const refCode = (unsafeMetadata?.referralCode as string) ?? null
+        if (refCode) {
+          try {
+            const referral = await db.referral.findUnique({
+              where: { code: refCode },
+              select: { id: true, referrerId: true, referredId: true },
+            })
+            if (referral && !referral.referredId && referral.referrerId !== newUser.id) {
+              await db.referral.update({
+                where: { id: referral.id },
+                data: {
+                  referredId: newUser.id,
+                  signups: { increment: 1 },
+                },
+              })
+              logger.info("Referral linked during user creation", {
+                userId: newUser.id,
+                action: `referral:${referral.id}:code:${refCode}`,
+              })
+            }
+          } catch (refErr) {
+            logger.error("Failed to link referral during user creation", refErr, {
+              endpoint: "POST /api/webhooks/clerk",
+              userId: newUser.id,
+              action: `refCode:${refCode}`,
+            })
+          }
+        }
         break
       }
 
