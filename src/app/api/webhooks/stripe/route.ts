@@ -382,6 +382,64 @@ export async function POST(req: Request) {
       case "invoice.paid": {
         const invoice = event.data.object as Stripe.Invoice
         await handleInvoicePaid(invoice)
+
+        // Calculate referral commissions on first invoice for referred users
+        if (invoice.subscription && invoice.amount_paid > 0) {
+          try {
+            const sub = await db.subscription.findUnique({
+              where: { stripeSubId: invoice.subscription as string },
+              select: { userId: true, id: true },
+            })
+            if (sub) {
+              // Check if this user was referred
+              const referral = await db.referral.findUnique({
+                where: { referredId: sub.userId },
+                select: { id: true, tier: true, referrerId: true },
+              })
+              if (referral) {
+                // Check if commission already exists for this payment
+                const existingCommission = await db.commission.findFirst({
+                  where: {
+                    referralId: referral.id,
+                    stripePaymentId: invoice.id,
+                  },
+                })
+                if (!existingCommission) {
+                  const commissionRates: Record<string, number> = {
+                    AFFILIATE: 0.10,
+                    COMMUNITY_PARTNER: 0.15,
+                    RESELLER: 0.25,
+                  }
+                  const rate = commissionRates[referral.tier] ?? 0.20
+                  const sourceAmount = invoice.amount_paid / 100
+                  const commissionAmount = sourceAmount * rate
+
+                  await db.commission.create({
+                    data: {
+                      referralId: referral.id,
+                      userId: referral.referrerId,
+                      amount: commissionAmount,
+                      percentage: rate * 100,
+                      sourceAmount,
+                      status: "PENDING",
+                      stripePaymentId: invoice.id,
+                    },
+                  })
+
+                  // Update referral conversion count
+                  await db.referral.update({
+                    where: { id: referral.id },
+                    data: {
+                      conversions: { increment: 1 },
+                    },
+                  })
+                }
+              }
+            }
+          } catch (commErr) {
+            logger.error("Failed to calculate commission", commErr, { endpoint: "POST /api/webhooks/stripe", action: "commission" })
+          }
+        }
         break
       }
 

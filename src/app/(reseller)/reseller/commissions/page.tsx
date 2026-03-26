@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
 import { DollarSign, Clock, CheckCircle2, TrendingUp } from "lucide-react"
+import { ResellerCommissionsClient } from "./ResellerCommissionsClient"
 
 export const metadata = { title: "Commissions" }
 
@@ -14,11 +15,36 @@ export default async function ResellerCommissionsPage() {
 
   const referral = await db.referral.findFirst({
     where: { referrerId: dbUser.id },
+    include: {
+      commissions: {
+        orderBy: { createdAt: "desc" },
+      },
+    },
   })
 
   const tier = referral?.tier ?? "AFFILIATE"
   const commissionRate = tier === "RESELLER" ? "25%" : tier === "COMMUNITY_PARTNER" ? "15%" : "10%"
   const nextTier = tier === "AFFILIATE" ? "COMMUNITY_PARTNER" : tier === "COMMUNITY_PARTNER" ? "RESELLER" : null
+
+  const commissions = referral?.commissions ?? []
+  const totalEarned = commissions
+    .filter((c) => c.status === "PAID")
+    .reduce((sum, c) => sum + c.amount, 0)
+  const pendingAmount = commissions
+    .filter((c) => c.status === "PENDING" || c.status === "APPROVED")
+    .reduce((sum, c) => sum + c.amount, 0)
+  const conversions = referral?.conversions ?? 0
+
+  const serializedCommissions = commissions.map((c) => ({
+    id: c.id,
+    amount: c.amount,
+    percentage: c.percentage,
+    sourceAmount: c.sourceAmount,
+    status: c.status,
+    createdAt: c.createdAt.toISOString(),
+    paidAt: c.paidAt?.toISOString() ?? null,
+    approvedAt: c.approvedAt?.toISOString() ?? null,
+  }))
 
   return (
     <div className="space-y-8">
@@ -49,10 +75,10 @@ export default async function ResellerCommissionsPage() {
       {/* Earnings summary */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         {[
-          { label: "Total Earned", value: `$${(referral?.totalEarned ?? 0).toLocaleString()}`, icon: DollarSign },
-          { label: "Pending Payout", value: `$${(referral?.pendingPayout ?? 0).toLocaleString()}`, icon: Clock },
-          { label: "Conversions", value: referral?.conversions ?? 0, icon: CheckCircle2 },
-          { label: "Est. Monthly", value: `$${Math.round((referral?.totalEarned ?? 0) / 12)}/mo`, icon: TrendingUp },
+          { label: "Total Earned", value: `$${totalEarned.toLocaleString()}`, icon: DollarSign },
+          { label: "Pending Payout", value: `$${pendingAmount.toLocaleString()}`, icon: Clock },
+          { label: "Conversions", value: conversions, icon: CheckCircle2 },
+          { label: "Est. Monthly", value: `$${Math.round(totalEarned / Math.max(1, 12))}/mo`, icon: TrendingUp },
         ].map(({ label, value, icon: Icon }) => (
           <div key={label} className="rounded-xl border border-border bg-card p-5">
             <div className="flex items-center justify-between mb-3">
@@ -65,6 +91,9 @@ export default async function ResellerCommissionsPage() {
           </div>
         ))}
       </div>
+
+      {/* Commission history */}
+      <ResellerCommissionsClient commissions={serializedCommissions} />
 
       {/* Payout info */}
       <div className="rounded-xl border border-border bg-card p-6">

@@ -4,9 +4,11 @@ import { createLeadMagnetSubmission } from "@/lib/db/queries"
 import { formRatelimit, getIp } from "@/lib/ratelimit"
 import { sendLeadMagnetResults } from "@/lib/email"
 import { queueEmailSequence } from "@/lib/email/queue"
+import { sendQuizResultsEmail, sendCalculatorResultsEmail, sendAuditResultsEmail } from "@/lib/email/lead-magnet-results"
 import { db } from "@/lib/db"
 import { notifyNewLead, notify } from "@/lib/notifications"
 import { createCloseLead } from "@/lib/close"
+import { logger } from "@/lib/logger"
 
 const submitSchema = z.object({
   type: z.enum([
@@ -173,21 +175,49 @@ export async function POST(req: Request) {
       ? `${appUrl}/tools/${typeSlug}/results/${submission.id}`
       : `${appUrl}/tools/${typeSlug}`
 
-    // Send immediate results email
+    // Send immediate results email (generic)
     await sendLeadMagnetResults({
       to: parsed.data.email,
       name: parsed.data.name ?? "",
       type: typeSlug,
       score: parsed.data.score,
       resultsUrl,
-    }).catch(console.error)
+    }).catch((err) => logger.error("Failed to send generic results email", err))
+
+    // Send detailed, type-specific results email with recommendations
+    const detailedEmailParams = {
+      to: parsed.data.email,
+      name: parsed.data.name ?? "",
+      score: parsed.data.score,
+      resultsUrl,
+      data: parsed.data.data as Record<string, unknown>,
+      results: parsed.data.results as Record<string, unknown> | undefined,
+    }
+
+    switch (parsed.data.type) {
+      case "AI_READINESS_QUIZ":
+        await sendQuizResultsEmail(detailedEmailParams).catch(
+          (err) => logger.error("Failed to send quiz results email", err)
+        )
+        break
+      case "ROI_CALCULATOR":
+        await sendCalculatorResultsEmail(detailedEmailParams).catch(
+          (err) => logger.error("Failed to send calculator results email", err)
+        )
+        break
+      case "WEBSITE_AUDIT":
+        await sendAuditResultsEmail(detailedEmailParams).catch(
+          (err) => logger.error("Failed to send audit results email", err)
+        )
+        break
+    }
 
     return NextResponse.json(
       { id: submission.id, score: submission.score },
       { status: 201 }
     )
   } catch (err) {
-    console.error("Lead magnet submission failed:", err)
+    logger.error("Lead magnet submission failed", err, { endpoint: "POST /api/lead-magnets/submit" })
     return NextResponse.json({ error: "Internal error" }, { status: 500 })
   }
 }

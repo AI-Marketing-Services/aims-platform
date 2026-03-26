@@ -10,7 +10,10 @@ import {
   Send,
   RefreshCw,
   ChevronDown,
+  ChevronUp,
   LifeBuoy,
+  User,
+  Shield,
 } from "lucide-react"
 import { EmptyState } from "@/components/shared/EmptyState"
 
@@ -32,6 +35,11 @@ const statusConfig = {
     label: "Resolved",
     className: "text-green-400 bg-green-900/15 border-green-800",
   },
+  closed: {
+    icon: CheckCircle,
+    label: "Closed",
+    className: "text-muted-foreground bg-muted/30 border-border",
+  },
 }
 
 const priorityConfig: Record<string, string> = {
@@ -43,14 +51,24 @@ const priorityConfig: Record<string, string> = {
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
+interface Reply {
+  id: string
+  message: string
+  isAdmin: boolean
+  authorName: string | null
+  createdAt: string
+}
+
 interface Ticket {
   id: string
   subject: string
+  message: string
   status: string
   priority: string
   assignedTo: string | null
   createdAt: string
   updatedAt: string
+  replies: Reply[]
 }
 
 interface ServiceOption {
@@ -64,7 +82,7 @@ interface ServiceOption {
 const FAQ_ITEMS = [
   {
     q: "How long until my service is live?",
-    a: "Most services activate within 48–72 business hours of your onboarding call. Complex setups (RevOps, Multi-location Voice) may take 5–7 days.",
+    a: "Most services activate within 48-72 business hours of your onboarding call. Complex setups (RevOps, Multi-location Voice) may take 5-7 days.",
   },
   {
     q: "How do I set up my DNS?",
@@ -72,7 +90,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "How do I upgrade my plan?",
-    a: "Visit Billing → Open Stripe Portal to upgrade, downgrade, or modify your subscription at any time.",
+    a: "Visit Billing > Open Stripe Portal to upgrade, downgrade, or modify your subscription at any time.",
   },
   {
     q: "What's included in my setup?",
@@ -80,7 +98,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "How do I cancel?",
-    a: "You can cancel anytime through Billing → Stripe Portal. There are no long-term contracts or cancellation fees.",
+    a: "You can cancel anytime through Billing > Stripe Portal. There are no long-term contracts or cancellation fees.",
   },
 ]
 
@@ -136,6 +154,9 @@ export default function SupportPage() {
   const [tickets, setTickets] = useState<Ticket[]>([])
   const [loadingTickets, setLoadingTickets] = useState(false)
   const [services, setServices] = useState<ServiceOption[]>([])
+  const [expandedId, setExpandedId] = useState<string | null>(null)
+  const [replyText, setReplyText] = useState("")
+  const [sending, setSending] = useState(false)
 
   async function loadTickets() {
     setLoadingTickets(true)
@@ -145,7 +166,9 @@ export default function SupportPage() {
         const data = await res.json()
         setTickets(Array.isArray(data) ? data : [])
       }
-    } catch {}
+    } catch {
+      // Handled silently
+    }
     setLoadingTickets(false)
   }
 
@@ -156,7 +179,9 @@ export default function SupportPage() {
         const data = await res.json()
         setServices(Array.isArray(data) ? data : [])
       }
-    } catch {}
+    } catch {
+      // Handled silently
+    }
   }
 
   useEffect(() => {
@@ -179,7 +204,9 @@ export default function SupportPage() {
           priority: "normal",
         }),
       })
-    } catch {}
+    } catch {
+      // Handled silently
+    }
     setSubmitted(true)
     setShowNew(false)
     setSubject("")
@@ -188,11 +215,58 @@ export default function SupportPage() {
     loadTickets()
   }
 
+  async function handleReply(ticketId: string) {
+    if (!replyText.trim() || sending) return
+    setSending(true)
+    try {
+      const res = await fetch(`/api/support/tickets/${ticketId}/reply`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: replyText }),
+      })
+      if (res.ok) {
+        const data = await res.json()
+        setTickets((prev) =>
+          prev.map((t) =>
+            t.id === ticketId
+              ? {
+                  ...t,
+                  replies: [
+                    ...t.replies,
+                    {
+                      id: data.id,
+                      message: replyText,
+                      isAdmin: false,
+                      authorName: "You",
+                      createdAt: new Date().toISOString(),
+                    },
+                  ],
+                }
+              : t
+          )
+        )
+        setReplyText("")
+      }
+    } catch {
+      // Handled silently
+    }
+    setSending(false)
+  }
+
   function formatDate(iso: string) {
     return new Date(iso).toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
       year: "numeric",
+    })
+  }
+
+  function formatDateTime(iso: string) {
+    return new Date(iso).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
     })
   }
 
@@ -306,7 +380,7 @@ export default function SupportPage() {
       {submitted && (
         <div className="flex items-center gap-3 p-4 bg-green-900/15 border border-green-800 rounded-xl text-green-400 text-sm">
           <CheckCircle className="w-4 h-4 flex-shrink-0" />
-          Your ticket has been submitted. Our team typically responds within 2 business hours.
+          Your ticket has been submitted. You will receive a confirmation email shortly. Our team typically responds within 24 hours.
         </div>
       )}
 
@@ -321,7 +395,7 @@ export default function SupportPage() {
             <EmptyState
               icon={LifeBuoy}
               title="No support tickets yet"
-              description="Open a ticket above and our team will respond within 2 business hours."
+              description="Open a ticket above and our team will respond within 24 hours."
               actionLabel="New Ticket"
               onAction={() => setShowNew(true)}
             />
@@ -332,50 +406,147 @@ export default function SupportPage() {
               statusConfig[ticket.status as keyof typeof statusConfig] ??
               statusConfig.open
             const StatusIcon = sc.icon
+            const isExpanded = expandedId === ticket.id
+            const canReply = ticket.status !== "closed"
+
             return (
               <div
                 key={ticket.id}
-                className="rounded-2xl border border-border bg-card p-5 hover:border-border/80 transition-colors"
+                className="rounded-2xl border border-border bg-card overflow-hidden hover:border-border/80 transition-colors"
               >
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1 min-w-0">
-                    {/* Status + priority badges */}
-                    <div className="flex flex-wrap items-center gap-2 mb-2">
-                      <span
-                        className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border ${sc.className}`}
-                      >
-                        <StatusIcon className="w-3 h-3" />
-                        {sc.label}
-                      </span>
-                      <span
-                        className={`text-xs font-medium ${
-                          priorityConfig[ticket.priority] ?? "text-muted-foreground"
-                        }`}
-                      >
-                        {ticket.priority.charAt(0).toUpperCase() +
-                          ticket.priority.slice(1)}{" "}
-                        priority
-                      </span>
-                    </div>
-
-                    {/* Subject */}
-                    <h3 className="text-sm font-semibold text-foreground truncate">
-                      {ticket.subject}
-                    </h3>
-
-                    {/* Meta */}
-                    <div className="text-xs text-muted-foreground flex flex-wrap items-center gap-3 mt-1.5">
-                      <span>Opened {formatDate(ticket.createdAt)}</span>
-                      <span>Updated {formatDate(ticket.updatedAt)}</span>
-                      <span>
-                        Assigned to:{" "}
-                        <span className="text-foreground">
-                          {ticket.assignedTo ?? "AIMS Team"}
+                {/* Ticket header */}
+                <button
+                  type="button"
+                  onClick={() => setExpandedId(isExpanded ? null : ticket.id)}
+                  className="w-full p-5 text-left"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-wrap items-center gap-2 mb-2">
+                        <span
+                          className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border ${sc.className}`}
+                        >
+                          <StatusIcon className="w-3 h-3" />
+                          {sc.label}
                         </span>
-                      </span>
+                        <span
+                          className={`text-xs font-medium ${
+                            priorityConfig[ticket.priority] ?? "text-muted-foreground"
+                          }`}
+                        >
+                          {ticket.priority.charAt(0).toUpperCase() +
+                            ticket.priority.slice(1)}{" "}
+                          priority
+                        </span>
+                        {ticket.replies.length > 0 && (
+                          <span className="text-xs text-muted-foreground flex items-center gap-1">
+                            <MessageSquare className="w-3 h-3" />
+                            {ticket.replies.length} {ticket.replies.length === 1 ? "reply" : "replies"}
+                          </span>
+                        )}
+                      </div>
+                      <h3 className="text-sm font-semibold text-foreground truncate">
+                        {ticket.subject}
+                      </h3>
+                      <div className="text-xs text-muted-foreground flex flex-wrap items-center gap-3 mt-1.5">
+                        <span>Opened {formatDate(ticket.createdAt)}</span>
+                        <span>Updated {formatDate(ticket.updatedAt)}</span>
+                        <span>
+                          Assigned to:{" "}
+                          <span className="text-foreground">
+                            {ticket.assignedTo ?? "AIMS Team"}
+                          </span>
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex-shrink-0">
+                      {isExpanded ? (
+                        <ChevronUp className="w-4 h-4 text-muted-foreground" />
+                      ) : (
+                        <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                      )}
                     </div>
                   </div>
-                </div>
+                </button>
+
+                {/* Expanded conversation */}
+                {isExpanded && (
+                  <div className="border-t border-border">
+                    {/* Original message */}
+                    <div className="px-5 py-4 bg-muted/10">
+                      <div className="flex items-center gap-2 mb-2">
+                        <User className="w-3.5 h-3.5 text-muted-foreground" />
+                        <span className="text-xs font-medium text-foreground">You</span>
+                        <span className="text-xs text-muted-foreground">
+                          {formatDateTime(ticket.createdAt)}
+                        </span>
+                      </div>
+                      <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                        {ticket.message}
+                      </p>
+                    </div>
+
+                    {/* Replies */}
+                    {ticket.replies.map((reply) => (
+                      <div
+                        key={reply.id}
+                        className={`px-5 py-4 border-t border-border ${
+                          reply.isAdmin ? "bg-primary/5" : "bg-muted/10"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2 mb-2">
+                          {reply.isAdmin ? (
+                            <Shield className="w-3.5 h-3.5 text-primary" />
+                          ) : (
+                            <User className="w-3.5 h-3.5 text-muted-foreground" />
+                          )}
+                          <span
+                            className={`text-xs font-medium ${
+                              reply.isAdmin ? "text-primary" : "text-foreground"
+                            }`}
+                          >
+                            {reply.isAdmin ? `${reply.authorName ?? "AIMS Support"} (AIMS Team)` : "You"}
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            {formatDateTime(reply.createdAt)}
+                          </span>
+                        </div>
+                        <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                          {reply.message}
+                        </p>
+                      </div>
+                    ))}
+
+                    {/* Reply box */}
+                    {canReply && (
+                      <div className="px-5 py-4 border-t border-border">
+                        <textarea
+                          rows={3}
+                          value={expandedId === ticket.id ? replyText : ""}
+                          onChange={(e) => setReplyText(e.target.value)}
+                          placeholder="Type your reply..."
+                          className="w-full px-4 py-3 bg-background border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C4972A]/20 focus:border-[#C4972A] resize-none"
+                        />
+                        <button
+                          onClick={() => handleReply(ticket.id)}
+                          disabled={!replyText.trim() || sending}
+                          className="mt-2 flex items-center gap-2 px-4 py-2 bg-[#C4972A] text-white text-xs font-medium rounded-lg hover:bg-[#A17D22] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          <Send className="w-3.5 h-3.5" />
+                          {sending ? "Sending..." : "Send Reply"}
+                        </button>
+                      </div>
+                    )}
+
+                    {!canReply && (
+                      <div className="px-5 py-4 border-t border-border text-center">
+                        <p className="text-xs text-muted-foreground">
+                          This ticket is closed. Open a new ticket if you need further help.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             )
           })

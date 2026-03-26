@@ -426,6 +426,8 @@ model Referral {
   landingPageSlug String?
   customBranding  Json?
 
+  commissions   Commission[]
+
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
 
@@ -595,9 +597,11 @@ model SupportTicket {
   status    String   @default("open")
   priority  String   @default("normal")
 
-  assignedTo String?
-  resolvedAt DateTime?
-  responses  SupportResponse[]
+  assignedTo     String?
+  resolvedAt     DateTime?
+  resolutionNote String?   @db.Text
+  responses      SupportResponse[]
+  replies        SupportTicketReply[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -616,6 +620,51 @@ model SupportResponse {
   createdAt DateTime      @default(now())
 
   @@index([ticketId])
+}
+
+model SupportTicketReply {
+  id         String        @id @default(cuid())
+  ticketId   String
+  ticket     SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  message    String        @db.Text
+  isAdmin    Boolean       @default(false)
+  authorId   String
+  authorName String?
+  createdAt  DateTime      @default(now())
+
+  @@index([ticketId])
+}
+
+// ============ COMMISSIONS ============
+
+model Commission {
+  id          String           @id @default(cuid())
+  referralId  String
+  referral    Referral         @relation(fields: [referralId], references: [id])
+  userId      String
+  amount      Float
+  percentage  Float
+  sourceAmount Float
+  status      CommissionStatus @default(PENDING)
+  stripePaymentId String?
+  paidAt      DateTime?
+  approvedAt  DateTime?
+  approvedBy  String?
+  notes       String?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@index([referralId])
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+enum CommissionStatus {
+  PENDING
+  APPROVED
+  PAID
+  REJECTED
 }
 
 // ============ VENDOR TRACKING ============

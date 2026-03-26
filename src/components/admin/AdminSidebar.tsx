@@ -22,6 +22,7 @@ import {
   ClipboardCheck,
   Timer,
   MessageSquare,
+  LifeBuoy,
 } from "lucide-react"
 import { useState } from "react"
 import { motion } from "framer-motion"
@@ -43,6 +44,7 @@ const ADMIN_NAV = [
       { label: "Clients", href: "/admin/clients", icon: Users },
       { label: "Fulfillment", href: "/admin/fulfillment", icon: ClipboardCheck },
       { label: "Email Campaigns", href: "/admin/email-campaigns", icon: Mail },
+      { label: "Support Tickets", href: "/admin/support", icon: LifeBuoy },
       { label: "Chat Sessions", href: "/admin/chat-sessions", icon: MessageSquare },
     ],
   },

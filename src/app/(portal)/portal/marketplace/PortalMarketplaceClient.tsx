@@ -9,6 +9,13 @@ import { ToolLogo } from "@/components/shared/ToolLogo"
 
 type Pillar = "MARKETING" | "SALES" | "OPERATIONS" | "FINANCE"
 
+interface ServiceTier {
+  price: number
+  slug: string
+  stripePriceId?: string | null
+  name?: string
+}
+
 interface ServiceArm {
   id: string
   slug: string
@@ -18,7 +25,7 @@ interface ServiceArm {
   status: string
   basePrice: number | null
   pricingModel: string
-  tiers: { price: number; slug: string }[]
+  tiers: ServiceTier[]
 }
 
 interface SubscribedService {
@@ -148,6 +155,49 @@ export function PortalMarketplaceClient({ services, subscribedIds, subscribedSer
   const subscribedSet = new Set(subscribedIds)
   const [pillar, setPillar] = useState("ALL")
   const [search, setSearch] = useState("")
+  const [checkingOut, setCheckingOut] = useState<string | null>(null)
+
+  async function handleCheckout(serviceArm: ServiceArm) {
+    // Find the cheapest tier with a stripePriceId, or the first available tier
+    const availableTier = serviceArm.tiers.find((t) => t.stripePriceId) ?? serviceArm.tiers[0]
+    if (!availableTier) {
+      router.push(`/get-started?service=${serviceArm.slug}`)
+      return
+    }
+
+    if (!availableTier.stripePriceId) {
+      router.push(`/get-started?service=${serviceArm.slug}`)
+      return
+    }
+
+    setCheckingOut(serviceArm.id)
+    try {
+      const res = await fetch("/api/portal/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          serviceArmId: serviceArm.id,
+          tierSlug: availableTier.slug,
+        }),
+      })
+      const data = await res.json()
+      if (res.ok && data.url) {
+        window.location.href = data.url
+        return
+      }
+      if (data.error) {
+        // If already subscribed or no Stripe price, redirect to get-started
+        if (res.status === 409) {
+          router.push(`/portal/services/${serviceArm.id}`)
+        } else {
+          router.push(`/get-started?service=${serviceArm.slug}`)
+        }
+      }
+    } catch {
+      router.push(`/get-started?service=${serviceArm.slug}`)
+    }
+    setCheckingOut(null)
+  }
 
   const subscribedSlugs = useMemo(() => {
     const subIdSet = new Set(subscribedIds)
@@ -312,13 +362,14 @@ export function PortalMarketplaceClient({ services, subscribedIds, subscribedSer
                     <ArrowRight className="h-3.5 w-3.5" />
                   </button>
                 ) : (
-                  <Link
-                    href={`/marketplace?highlight=${svc.slug}`}
-                    className="w-full flex items-center justify-center gap-2 py-2.5 bg-[#C4972A] text-white text-xs font-semibold rounded-lg hover:bg-[#A17D22] transition-colors"
+                  <button
+                    onClick={() => handleCheckout(svc)}
+                    disabled={checkingOut === svc.id}
+                    className="w-full flex items-center justify-center gap-2 py-2.5 bg-[#C4972A] text-white text-xs font-semibold rounded-lg hover:bg-[#A17D22] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Add to Plan
-                    <ArrowRight className="h-3.5 w-3.5" />
-                  </Link>
+                    {checkingOut === svc.id ? "Loading..." : "Add to Plan"}
+                    {checkingOut !== svc.id && <ArrowRight className="h-3.5 w-3.5" />}
+                  </button>
                 )}
               </div>
             </div>

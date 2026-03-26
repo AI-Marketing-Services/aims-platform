@@ -41,7 +41,7 @@ export default async function PortalMarketplacePage() {
     status: s.status,
     basePrice: s.basePrice,
     pricingModel: s.pricingModel,
-    tiers: s.tiers.map((t) => ({ price: t.price, slug: t.slug })),
+    tiers: s.tiers.map((t) => ({ price: t.price, slug: t.slug, stripePriceId: t.stripePriceId, name: t.name })),
   }))
 
   return (
