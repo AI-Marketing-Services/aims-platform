@@ -757,6 +757,12 @@ async function main() {
       { contactName: "Angela Foster", contactEmail: "angela@bayareachiro.com", company: "Bay Area Chiropractic", industry: "Chiropractic", stage: "LOST" as const, value: 0, mrr: 0, priority: "LOW" as const, source: "cold_outbound", leadScore: 21, leadScoreTier: "cold", lostReason: "Went with competitor -- already using GoHighLevel in-house", closedAt: daysAgo(20), createdAt: daysAgo(42) },
       { contactName: "Kevin Lam", contactEmail: "kevin@pacifictitle.com", company: "Pacific Title & Escrow", industry: "Real Estate", stage: "DEMO_BOOKED" as const, value: 0, mrr: 0, priority: "MEDIUM" as const, source: "referral", leadScore: 69, leadScoreTier: "warm", createdAt: daysAgo(6) },
       { contactName: "Michelle Torres", contactEmail: "michelle@eliteaesthetics.com", company: "Elite Aesthetics", industry: "Med Spa", stage: "UPSELL_OPPORTUNITY" as const, value: 5964, mrr: 497, priority: "MEDIUM" as const, source: "organic", leadScore: 85, leadScoreTier: "hot", createdAt: daysAgo(55) },
+      { contactName: "David Kim", contactEmail: "david@summitauto.com", company: "Summit Auto Group", industry: "Automotive", stage: "NEW_LEAD" as const, value: 0, mrr: 0, priority: "MEDIUM" as const, source: "linkedin", leadScore: 55, leadScoreTier: "warm", createdAt: daysAgo(2) },
+      { contactName: "Patricia Gomez", contactEmail: "patricia@cleansweepjanitorial.com", company: "CleanSweep Janitorial", industry: "Janitorial", stage: "NEW_LEAD" as const, value: 0, mrr: 0, priority: "LOW" as const, source: "google_ads", leadScore: 41, leadScoreTier: "warm", createdAt: daysAgo(0) },
+      { contactName: "Brian O'Connell", contactEmail: "brian@oconnellcpa.com", company: "O'Connell CPA Group", industry: "Accounting", stage: "QUALIFIED" as const, value: 0, mrr: 0, priority: "MEDIUM" as const, source: "roi_calculator", leadScore: 73, leadScoreTier: "warm", createdAt: daysAgo(7) },
+      { contactName: "Whitney Adams", contactEmail: "whitney@adamsrealty.com", company: "Adams Realty Partners", industry: "Real Estate", stage: "QUALIFIED" as const, value: 0, mrr: 0, priority: "HIGH" as const, source: "website_audit", leadScore: 79, leadScoreTier: "warm", createdAt: daysAgo(4) },
+      { contactName: "Hector Ramirez", contactEmail: "hector@premierpest.com", company: "Premier Pest Control", industry: "Pest Control", stage: "PROPOSAL_SENT" as const, value: 0, mrr: 0, priority: "MEDIUM" as const, source: "referral", leadScore: 68, leadScoreTier: "warm", createdAt: daysAgo(18) },
+      { contactName: "Nina Patel", contactEmail: "nina@zenithphysio.com", company: "Zenith Physiotherapy", industry: "Physical Therapy", stage: "AT_RISK" as const, value: 3564, mrr: 297, priority: "HIGH" as const, source: "organic", leadScore: 45, leadScoreTier: "warm", createdAt: daysAgo(95) },
     ]
 
     for (const d of deals) {
@@ -1091,6 +1097,482 @@ async function main() {
       })
       console.log("  Created intern profile")
     }
+  }
+
+  // ============ DEAL NOTES ============
+
+  console.log("  Creating deal notes...")
+  const existingNotes = await prisma.dealNote.count()
+  if (existingNotes > 0) {
+    console.log(`  Deal notes already exist (${existingNotes}), skipping`)
+  } else {
+    const dealsForNotes = await prisma.deal.findMany({ select: { id: true, contactEmail: true }, take: 20 })
+    const notesDealMap = Object.fromEntries(dealsForNotes.map((d) => [d.contactEmail, d.id]))
+
+    const dealNotes: { dealEmail: string; authorId: string; content: string; daysAgoCreated: number }[] = [
+      { dealEmail: "sarah@greenlawnpros.com", authorId: "adam", content: "Sarah is our highest-value client right now. Runs 3 locations and is very responsive. Great candidate for a case study.", daysAgoCreated: 40 },
+      { dealEmail: "sarah@greenlawnpros.com", authorId: "sabbir", content: "Chatbot training data updated with seasonal lawn care FAQ. Client reports 40% fewer phone calls during peak season.", daysAgoCreated: 15 },
+      { dealEmail: "marcus@elitedentalgroup.com", authorId: "adam", content: "Marcus fast-tracked from lead to active client in 3 days. Enterprise package. Wants all 5 locations live within 2 weeks.", daysAgoCreated: 63 },
+      { dealEmail: "marcus@elitedentalgroup.com", authorId: "ivan", content: "Voice agents configured for locations 1-4. Location 5 (San Jose) pending number provisioning. Each location has unique greeting and routing.", daysAgoCreated: 50 },
+      { dealEmail: "tom@capitalcitylaw.com", authorId: "adam", content: "Tom saw the website audit results and is motivated to fix the SEO issues. Has a competitor who ranks #1 for 'capital city attorney'. Demo scheduled for Thursday.", daysAgoCreated: 7 },
+      { dealEmail: "priya@apexmedspa.com", authorId: "marco", content: "Priya filled out ROI calculator showing 340% projected ROI. She runs Instagram ads but has no email or outbound strategy. Good fit for cold outbound + content engine.", daysAgoCreated: 5 },
+      { dealEmail: "james@tristateplumbing.com", authorId: "adam", content: "James wants a 90-day pilot before annual commitment. Offered 15% discount on pilot period. He needs to see 10+ booked meetings to convert.", daysAgoCreated: 10 },
+      { dealEmail: "linda@harmonyvet.com", authorId: "adam", content: "Linda is comparing us with Scorpion. Our differentiator is the AI chatbot + content engine bundle. She values the chatbot's ability to answer pet health FAQs 24/7.", daysAgoCreated: 11 },
+      { dealEmail: "derek@suncoastroofing.com", authorId: "adam", content: "Derek mentioned they might come back in Q4 when they ramp back up. Adding to re-engagement list for September outreach.", daysAgoCreated: 12 },
+      { dealEmail: "nina@zenithphysio.com", authorId: "adam", content: "Nina has been unresponsive to last 3 emails. Service usage dropped 70% in past 2 weeks. Scheduling a retention call.", daysAgoCreated: 3 },
+      { dealEmail: "nina@zenithphysio.com", authorId: "sabbir", content: "Retention call completed. Nina says she is overwhelmed and not using the tools. Offered a 1:1 training session next week to re-engage.", daysAgoCreated: 1 },
+      { dealEmail: "whitney@adamsrealty.com", authorId: "marco", content: "Whitney runs a 12-agent real estate team. Interested in lead routing and AI chatbot for property inquiries. High potential deal.", daysAgoCreated: 4 },
+    ]
+
+    let noteCount = 0
+    for (const n of dealNotes) {
+      const dealId = notesDealMap[n.dealEmail]
+      if (!dealId) continue
+      await prisma.dealNote.create({
+        data: {
+          dealId,
+          authorId: n.authorId,
+          content: n.content,
+          createdAt: daysAgo(n.daysAgoCreated),
+        },
+      })
+      noteCount++
+    }
+    console.log(`  Created ${noteCount} deal notes`)
+  }
+
+  // ============ ADDITIONAL SUPPORT TICKETS + REPLIES ============
+
+  console.log("  Creating additional support tickets with replies...")
+  const ticketCount = await prisma.supportTicket.count()
+  if (ticketCount >= 8) {
+    console.log(`  Sufficient tickets exist (${ticketCount}), skipping additional`)
+  } else {
+    const additionalTickets = [
+      { userId: createdUsers["demo_client_active_3"]!, subject: "DNS not propagating after 48 hours", message: "We followed the DNS setup guide and pointed our nameservers 2 days ago but the site is still showing the old hosting page. We checked with our registrar and the records look correct. Can you check on your end?", status: "in_progress", priority: "high", assignedTo: "sabbir", createdAt: daysAgo(3) },
+      { userId: createdUsers["demo_client_active_1"]!, subject: "Calendar not syncing with Google Calendar", message: "The booking calendar on our website is not syncing new appointments to our Google Calendar. Clients are booking but we do not see the events. This started after we changed our Google Workspace admin last week.", status: "open", priority: "high", createdAt: daysAgo(1) },
+      { userId: createdUsers["demo_client_active_2"]!, subject: "Need help with automation setup", message: "I would like to set up an automation that sends a follow-up email 24 hours after a missed call. I see the automation builder but I am not sure how to connect the voice agent trigger. Can someone walk me through it?", status: "open", priority: "normal", createdAt: daysAgo(0) },
+      { userId: createdUsers["demo_client_active_3"]!, subject: "Voice agent says wrong business hours", message: "Our voice agent is telling callers we close at 5pm but we updated our hours to 7pm two weeks ago. Where do I change this?", status: "resolved", priority: "normal", resolvedAt: daysAgo(5), resolutionNote: "Updated business hours in voice agent configuration. Confirmed correct hours are now being communicated to callers.", createdAt: daysAgo(9) },
+      { userId: createdUsers["demo_client_active_1"]!, subject: "Can we add Spanish language to chatbot?", message: "A lot of our customers speak Spanish. Is there a way to add Spanish language support to the AI chatbot? If so, what would the additional cost be?", status: "resolved", priority: "normal", resolvedAt: daysAgo(7), resolutionNote: "Enabled multilingual support on the chatbot. Spanish language pack added at no extra cost on Growth tier and above.", createdAt: daysAgo(14) },
+    ]
+
+    const createdTickets: string[] = []
+    for (const t of additionalTickets) {
+      if (!t.userId) continue
+      const ticket = await prisma.supportTicket.create({ data: t })
+      createdTickets.push(ticket.id)
+    }
+
+    // Add replies to resolved tickets
+    const allTickets = await prisma.supportTicket.findMany({
+      where: { status: { in: ["resolved", "in_progress"] } },
+      select: { id: true, userId: true, status: true, subject: true },
+    })
+
+    const ticketReplies: { ticketSubject: string; replies: { message: string; isAdmin: boolean; authorId: string; authorName: string; daysAgoCreated: number }[] }[] = [
+      {
+        ticketSubject: "Update cold email sender domain",
+        replies: [
+          { message: "Hi Sarah, I can help with that. I will need the DNS records for greenlawnservice.com. Can you share access to your domain registrar, or would you prefer to add the records yourself? I will send the required TXT and MX records.", isAdmin: true, authorId: "marco", authorName: "Marco", daysAgoCreated: 7 },
+          { message: "Sure, here are the registrar credentials: we use Namecheap. I sent the login info to support@aims-platform.com. Please add the records directly.", isAdmin: false, authorId: createdUsers["demo_client_active_1"] ?? "unknown", authorName: "Sarah Mitchell", daysAgoCreated: 6 },
+          { message: "All set! DNS records are configured and verified. The new domain is warming up now and will be ready for campaigns in about 14 days. I have queued the switch for your outbound campaigns.", isAdmin: true, authorId: "marco", authorName: "Marco", daysAgoCreated: 4 },
+        ],
+      },
+      {
+        ticketSubject: "Billing question -- double charge",
+        replies: [
+          { message: "Hi Marcus, I see the duplicate charge. This was caused by a Stripe retry after a temporary network timeout. I have submitted a refund for the second charge of $597. You should see it within 3-5 business days.", isAdmin: true, authorId: "adam", authorName: "Adam", daysAgoCreated: 3 },
+          { message: "Thanks for the quick resolution. I see the refund pending on my card now.", isAdmin: false, authorId: createdUsers["demo_client_active_2"] ?? "unknown", authorName: "Marcus Chen", daysAgoCreated: 2 },
+        ],
+      },
+      {
+        ticketSubject: "DNS not propagating after 48 hours",
+        replies: [
+          { message: "Hi Rachel, I checked the DNS records and it looks like the A record is pointing to the old IP. The CNAME for www is correct but the root domain needs to be updated. Here are the correct records you need to set:\n\nA record: @ -> 76.76.21.21\nCNAME: www -> cname.vercel-dns.com\n\nCan you update the A record and let me know?", isAdmin: true, authorId: "sabbir", authorName: "Sabbir", daysAgoCreated: 2 },
+        ],
+      },
+      {
+        ticketSubject: "Voice agent says wrong business hours",
+        replies: [
+          { message: "Hi Rachel, the business hours are configured in the voice agent settings under your account. I have updated them to reflect 7pm closing time. The change takes effect immediately for all new calls.", isAdmin: true, authorId: "ivan", authorName: "Ivan", daysAgoCreated: 7 },
+          { message: "Perfect, I just tested it and the agent now says the right hours. Thank you!", isAdmin: false, authorId: createdUsers["demo_client_active_3"] ?? "unknown", authorName: "Rachel Nguyen", daysAgoCreated: 6 },
+        ],
+      },
+      {
+        ticketSubject: "Can we add Spanish language to chatbot?",
+        replies: [
+          { message: "Great news -- multilingual support is included on your Growth tier. I have enabled Spanish language detection on your chatbot. It will automatically detect when a visitor is typing in Spanish and respond accordingly. No additional cost.", isAdmin: true, authorId: "sabbir", authorName: "Sabbir", daysAgoCreated: 12 },
+          { message: "That is amazing! I just tested it in Spanish and it works perfectly. Our team is thrilled. Thank you!", isAdmin: false, authorId: createdUsers["demo_client_active_1"] ?? "unknown", authorName: "Sarah Mitchell", daysAgoCreated: 10 },
+          { message: "Glad to hear it! Let us know if you want to add any other languages in the future. We support 40+ languages out of the box.", isAdmin: true, authorId: "sabbir", authorName: "Sabbir", daysAgoCreated: 9 },
+        ],
+      },
+    ]
+
+    for (const tr of ticketReplies) {
+      const ticket = allTickets.find((t) => t.subject === tr.ticketSubject)
+      if (!ticket) continue
+      for (const reply of tr.replies) {
+        await prisma.supportTicketReply.create({
+          data: {
+            ticketId: ticket.id,
+            message: reply.message,
+            isAdmin: reply.isAdmin,
+            authorId: reply.authorId,
+            authorName: reply.authorName,
+            createdAt: daysAgo(reply.daysAgoCreated),
+          },
+        })
+      }
+    }
+    console.log(`  Created ${additionalTickets.length} additional tickets + replies`)
+  }
+
+  // ============ CHAT SESSIONS ============
+
+  console.log("  Creating chat sessions...")
+  const existingSessions = await prisma.chatSession.count()
+  if (existingSessions > 0) {
+    console.log(`  Chat sessions already exist (${existingSessions}), skipping`)
+  } else {
+    const chatSessions = [
+      // Intake sessions (with email captured)
+      {
+        email: "jessica@brightsideinsurance.com",
+        source: "intake",
+        messageCount: 5,
+        messages: [
+          { role: "assistant", content: "Welcome to AIMS! I am here to help you explore how AI can grow your business. What industry are you in?" },
+          { role: "user", content: "I run an insurance agency in Miami. We have about 30 agents." },
+          { role: "assistant", content: "Great! Insurance agencies benefit a lot from AI-powered lead generation and client communication. Are you currently using any CRM or marketing automation tools?" },
+          { role: "user", content: "We use Salesforce but it feels clunky. We're losing leads because follow-up takes too long." },
+          { role: "assistant", content: "That is a common pain point. Our Website + CRM + Chatbot service can automate lead capture and instant follow-up. Would you like to see a demo? I can also share our ROI calculator so you can see the projected impact for your agency." },
+        ],
+        createdAt: daysAgo(3),
+      },
+      {
+        email: "david@summitauto.com",
+        source: "intake",
+        messageCount: 4,
+        messages: [
+          { role: "assistant", content: "Welcome to AIMS! Tell me about your business and what challenges you are facing." },
+          { role: "user", content: "We're a car dealership group. 4 locations across Texas. We need help with recall outreach." },
+          { role: "assistant", content: "Recall outreach is one of our specialties. Our AI Voice Agent can handle all recall campaigns across your locations, transcribing every call and logging results to your CRM. How are you handling recalls currently?" },
+          { role: "user", content: "We have two people calling all day. It's expensive and they can't keep up." },
+        ],
+        createdAt: daysAgo(2),
+      },
+      {
+        email: "patricia@cleansweepjanitorial.com",
+        source: "intake",
+        messageCount: 3,
+        messages: [
+          { role: "assistant", content: "Welcome to AIMS! How can I help you today?" },
+          { role: "user", content: "I want a website for my janitorial company. Something professional with online booking." },
+          { role: "assistant", content: "Our Website + CRM + Chatbot package includes a professional website with online booking, a CRM to manage your clients, and an AI chatbot that answers questions 24/7. The Starter plan begins at $97/month. Would you like to see some examples from similar businesses?" },
+        ],
+        createdAt: daysAgo(0),
+      },
+      {
+        email: "brian@oconnellcpa.com",
+        source: "intake",
+        messageCount: 6,
+        messages: [
+          { role: "assistant", content: "Welcome to AIMS! What brings you here today?" },
+          { role: "user", content: "I'm a CPA with a small firm. Tax season is over and I want to grow my advisory practice." },
+          { role: "assistant", content: "Growing advisory revenue is a great goal. Many accounting firms use our cold outbound and content engine to attract new advisory clients. What does your current marketing look like?" },
+          { role: "user", content: "Basically nothing. We get referrals but that's it. No website marketing." },
+          { role: "assistant", content: "You are leaving a lot on the table. A website with SEO optimization plus targeted outbound to business owners who need advisory services could transform your pipeline. Our ROI calculator can estimate the impact based on your current numbers." },
+          { role: "user", content: "That sounds interesting. Can I get a demo?" },
+        ],
+        createdAt: daysAgo(7),
+      },
+      // Onboarding sessions
+      {
+        email: "sarah@greenlawnpros.com",
+        source: "onboarding",
+        clerkUserId: "demo_client_active_1",
+        messageCount: 5,
+        messages: [
+          { role: "assistant", content: "Welcome to your onboarding, Sarah! Let us get your GreenLawn Pros account set up. First, can you confirm your business address and the 3 location addresses?" },
+          { role: "user", content: "Sure! Main office is 1205 Oak Street, Austin TX 78701. Second location is 890 Elm Drive, Round Rock TX 78664. Third is 445 Pine Ave, Cedar Park TX 78613." },
+          { role: "assistant", content: "Got it. I have created your 3 location profiles. Next, I need your current domain registrar info so we can point your DNS to the new website. Who hosts your domain?" },
+          { role: "user", content: "We use GoDaddy for greenlawnpros.com." },
+          { role: "assistant", content: "I will send you a step-by-step DNS setup guide for GoDaddy. It takes about 5 minutes. Once the DNS propagates (usually 24-48 hours), your new site will be live. In the meantime, let us customize your AI chatbot. What are the top 5 questions your customers ask?" },
+        ],
+        createdAt: daysAgo(75),
+      },
+      {
+        email: "marcus@elitedentalgroup.com",
+        source: "onboarding",
+        clerkUserId: "demo_client_active_2",
+        messageCount: 4,
+        messages: [
+          { role: "assistant", content: "Welcome aboard, Marcus! Let us get Elite Dental Group fully configured. I see you have 5 locations. Let us start by mapping out the voice agent setup for each one." },
+          { role: "user", content: "Each location has a different front desk number. I want the voice agent to answer after 3 rings if the front desk doesn't pick up." },
+          { role: "assistant", content: "Perfect. We will set up call forwarding with a 3-ring threshold for each location. The AI will greet callers with a location-specific message. What should the greeting sound like?" },
+          { role: "user", content: "Something like 'Thank you for calling Elite Dental [location name]. How can I help you today?' Keep it professional." },
+        ],
+        createdAt: daysAgo(62),
+      },
+      {
+        email: "rachel@precisionhvac.net",
+        source: "onboarding",
+        clerkUserId: "demo_client_active_3",
+        messageCount: 4,
+        messages: [
+          { role: "assistant", content: "Hi Rachel! Let us get your Precision HVAC voice agent configured. I see you have 2 locations. Do both locations share the same services and hours?" },
+          { role: "user", content: "Yes, both do residential and commercial HVAC. Hours are 7am-7pm Monday through Saturday." },
+          { role: "assistant", content: "Got it. I will configure the voice agent for both locations with those hours. For after-hours calls, should the AI take a message and schedule a callback, or route to an on-call technician?" },
+          { role: "user", content: "Take a message and schedule callback. We don't do emergency service." },
+        ],
+        createdAt: daysAgo(42),
+      },
+      // Portal sessions
+      {
+        email: "sarah@greenlawnpros.com",
+        source: "portal",
+        clerkUserId: "demo_client_active_1",
+        messageCount: 4,
+        messages: [
+          { role: "user", content: "How do I see the leads from the chatbot this week?" },
+          { role: "assistant", content: "You can view all chatbot leads in your CRM pipeline under the 'New Leads' stage. Go to Portal > Pipeline and filter by source 'chatbot'. This week you have 12 new chatbot leads." },
+          { role: "user", content: "Can I export them to a spreadsheet?" },
+          { role: "assistant", content: "Yes! Click the 'Export' button in the top right of the pipeline view. You can export to CSV or Excel. The export includes contact name, email, phone, and the full chat transcript." },
+        ],
+        createdAt: daysAgo(5),
+      },
+      {
+        email: "marcus@elitedentalgroup.com",
+        source: "portal",
+        clerkUserId: "demo_client_active_2",
+        messageCount: 3,
+        messages: [
+          { role: "user", content: "What's my call volume across locations this month?" },
+          { role: "assistant", content: "Here is your call summary for this month:\n- Downtown SF: 234 calls (89% answered by AI)\n- Oakland: 187 calls (92% answered by AI)\n- San Jose: 156 calls (91% answered by AI)\n- Walnut Creek: 98 calls (88% answered by AI)\n- Fremont: 112 calls (90% answered by AI)\n\nTotal: 787 calls, 90% AI-handled. 67 appointments booked." },
+          { role: "user", content: "That's great. The Walnut Creek numbers seem low though. Can we look into that?" },
+        ],
+        createdAt: daysAgo(2),
+      },
+      {
+        email: "rachel@precisionhvac.net",
+        source: "portal",
+        clerkUserId: "demo_client_active_3",
+        messageCount: 5,
+        messages: [
+          { role: "user", content: "Our voice agent picked up a call from someone asking about duct cleaning but we don't offer that. Can we update the script?" },
+          { role: "assistant", content: "Of course! I can update the voice agent to politely decline duct cleaning inquiries and suggest a referral partner if you have one. Would you like the agent to say something like 'We specialize in HVAC installation and repair. For duct cleaning, I can recommend...'?" },
+          { role: "user", content: "Yes, refer them to CleanAir Pros at 972-555-0100." },
+          { role: "assistant", content: "Done! I have updated the voice agent script to redirect duct cleaning inquiries to CleanAir Pros. The change is live immediately. I also added duct cleaning to the FAQ so the agent handles it smoothly." },
+          { role: "user", content: "Thank you, that was fast!" },
+        ],
+        createdAt: daysAgo(8),
+      },
+      // Marketing sessions (public, no user)
+      {
+        source: "marketing",
+        messageCount: 3,
+        messages: [
+          { role: "user", content: "What does AIMS do?" },
+          { role: "assistant", content: "AIMS is an AI-powered marketing and sales platform. We help businesses grow with services like AI chatbots, cold outbound email, voice agents, SEO, and more. Each service is fully managed -- we handle the setup, optimization, and ongoing management so you can focus on running your business." },
+          { role: "user", content: "How much does it cost?" },
+        ],
+        createdAt: daysAgo(4),
+      },
+      {
+        source: "marketing",
+        messageCount: 4,
+        messages: [
+          { role: "user", content: "Do you work with dental offices?" },
+          { role: "assistant", content: "Yes! Dental practices are one of our strongest verticals. We have helped multi-location dental groups automate patient communication with AI voice agents, improve their online presence with SEO and websites, and fill their chairs with targeted outbound campaigns." },
+          { role: "user", content: "What results do your dental clients see?" },
+          { role: "assistant", content: "Our dental clients typically see a 40-60% reduction in missed calls, 25-35% increase in new patient bookings, and significant time savings for front desk staff. One of our clients, a 5-location dental group, increased monthly bookings by 67 appointments after implementing our voice agent across all locations." },
+        ],
+        createdAt: daysAgo(6),
+      },
+    ]
+
+    for (const session of chatSessions) {
+      await prisma.chatSession.create({
+        data: {
+          email: session.email ?? null,
+          source: session.source,
+          clerkUserId: session.clerkUserId ?? null,
+          messages: session.messages,
+          messageCount: session.messageCount,
+          createdAt: session.createdAt,
+        },
+      })
+    }
+    console.log(`  Created ${chatSessions.length} chat sessions`)
+  }
+
+  // ============ PAGE VIEWS ============
+
+  console.log("  Creating page views...")
+  const existingPageViews = await prisma.pageView.count()
+  if (existingPageViews > 0) {
+    console.log(`  Page views already exist (${existingPageViews}), skipping`)
+  } else {
+    const pages = [
+      { path: "/", weight: 25 },
+      { path: "/marketplace", weight: 15 },
+      { path: "/marketplace/website-crm-chatbot", weight: 8 },
+      { path: "/marketplace/cold-outbound", weight: 6 },
+      { path: "/marketplace/voice-agents", weight: 7 },
+      { path: "/marketplace/seo-aeo", weight: 4 },
+      { path: "/marketplace/audience-targeting", weight: 3 },
+      { path: "/marketplace/finance-automation", weight: 2 },
+      { path: "/quiz", weight: 8 },
+      { path: "/calculator", weight: 6 },
+      { path: "/audit", weight: 5 },
+      { path: "/about", weight: 3 },
+      { path: "/blog", weight: 4 },
+      { path: "/contact", weight: 4 },
+    ]
+
+    const referrers = [null, null, null, "https://google.com", "https://google.com", "https://linkedin.com", "https://facebook.com", null]
+    const utmSources = [null, null, null, "google", "linkedin", "facebook", null]
+    const utmMediums = [null, null, null, "cpc", "organic", "social", null]
+    const sessionIds = Array.from({ length: 40 }, (_, i) => `session_${String(i + 1).padStart(3, "0")}`)
+
+    const pageViewData: { path: string; referrer: string | null; utmSource: string | null; utmMedium: string | null; sessionId: string; createdAt: Date }[] = []
+    const totalWeight = pages.reduce((sum, p) => sum + p.weight, 0)
+
+    for (let i = 0; i < 80; i++) {
+      // Weighted random page selection
+      let rand = Math.random() * totalWeight
+      let selectedPage = pages[0]
+      for (const page of pages) {
+        rand -= page.weight
+        if (rand <= 0) {
+          selectedPage = page
+          break
+        }
+      }
+
+      const dayOffset = Math.floor(Math.random() * 30)
+      const hourOffset = Math.floor(Math.random() * 14) + 8 // 8am - 10pm
+      const date = daysAgo(dayOffset)
+      date.setHours(hourOffset, Math.floor(Math.random() * 60), 0, 0)
+
+      pageViewData.push({
+        path: selectedPage.path,
+        referrer: referrers[Math.floor(Math.random() * referrers.length)] ?? null,
+        utmSource: utmSources[Math.floor(Math.random() * utmSources.length)] ?? null,
+        utmMedium: utmMediums[Math.floor(Math.random() * utmMediums.length)] ?? null,
+        sessionId: sessionIds[Math.floor(Math.random() * sessionIds.length)],
+        createdAt: date,
+      })
+    }
+
+    for (const pv of pageViewData) {
+      await prisma.pageView.create({ data: pv })
+    }
+    console.log(`  Created ${pageViewData.length} page views`)
+  }
+
+  // ============ API COST LOGS ============
+
+  console.log("  Creating API cost logs...")
+  const existingCostLogs = await prisma.apiCostLog.count()
+  if (existingCostLogs > 0) {
+    console.log(`  API cost logs already exist (${existingCostLogs}), skipping`)
+  } else {
+    const apiEndpoints = [
+      { endpoint: "chat", provider: "anthropic", model: "claude-sonnet-4-20250514", avgTokens: 1200, avgCost: 0.018 },
+      { endpoint: "intake-chat", provider: "anthropic", model: "claude-sonnet-4-20250514", avgTokens: 1800, avgCost: 0.027 },
+      { endpoint: "onboarding-chat", provider: "anthropic", model: "claude-sonnet-4-20250514", avgTokens: 2200, avgCost: 0.033 },
+      { endpoint: "portal-chat", provider: "anthropic", model: "claude-sonnet-4-20250514", avgTokens: 1500, avgCost: 0.022 },
+      { endpoint: "lead-scoring", provider: "anthropic", model: "claude-haiku-3-20250307", avgTokens: 800, avgCost: 0.004 },
+      { endpoint: "content-generation", provider: "anthropic", model: "claude-sonnet-4-20250514", avgTokens: 3500, avgCost: 0.052 },
+      { endpoint: "website-audit", provider: "google", model: "gemini-2.0-flash", avgTokens: 2000, avgCost: 0.008 },
+      { endpoint: "seo-analysis", provider: "google", model: "gemini-2.0-flash", avgTokens: 2500, avgCost: 0.010 },
+    ]
+
+    const costLogData: { provider: string; model: string; endpoint: string; tokens: number; cost: number; serviceArm: string | null; createdAt: Date }[] = []
+
+    for (let i = 0; i < 30; i++) {
+      // 1-4 API calls per day, heavier on recent days
+      const callsPerDay = randomBetween(1, 4)
+      for (let j = 0; j < callsPerDay; j++) {
+        const ep = apiEndpoints[Math.floor(Math.random() * apiEndpoints.length)]
+        const tokenVariance = randomBetween(-300, 300)
+        const tokens = Math.max(100, ep.avgTokens + tokenVariance)
+        const costVariance = (Math.random() - 0.5) * 0.01
+        const cost = Math.max(0.001, Number((ep.avgCost + costVariance).toFixed(4)))
+
+        const date = daysAgo(i)
+        date.setHours(randomBetween(8, 22), randomBetween(0, 59), 0, 0)
+
+        let serviceArm: string | null = null
+        if (ep.endpoint === "intake-chat") serviceArm = "website-crm-chatbot"
+        if (ep.endpoint === "content-generation") serviceArm = "ai-content-engine"
+        if (ep.endpoint === "website-audit") serviceArm = "seo-aeo"
+        if (ep.endpoint === "seo-analysis") serviceArm = "seo-aeo"
+        if (ep.endpoint === "lead-scoring") serviceArm = "cold-outbound"
+
+        costLogData.push({
+          provider: ep.provider,
+          model: ep.model,
+          endpoint: ep.endpoint,
+          tokens,
+          cost,
+          serviceArm,
+          createdAt: date,
+        })
+      }
+    }
+
+    for (const cl of costLogData) {
+      await prisma.apiCostLog.create({ data: cl })
+    }
+    console.log(`  Created ${costLogData.length} API cost logs`)
+  }
+
+  // ============ ADDITIONAL DEAL ACTIVITIES (for new deals) ============
+
+  console.log("  Creating activities for new deals...")
+  const activityCount = await prisma.dealActivity.count()
+  if (activityCount >= 40) {
+    console.log(`  Sufficient activities exist (${activityCount}), skipping additional`)
+  } else {
+    const freshDeals = await prisma.deal.findMany({ select: { id: true, contactEmail: true }, take: 25 })
+    const freshDealMap = Object.fromEntries(freshDeals.map((d) => [d.contactEmail, d.id]))
+
+    type ActType2 = "EMAIL_SENT" | "CALL_MADE" | "STAGE_CHANGE" | "NOTE_ADDED" | "FORM_SUBMITTED"
+    const newActivities: { dealEmail: string; type: ActType2; detail: string; daysAgoCreated: number }[] = [
+      { dealEmail: "david@summitauto.com", type: "FORM_SUBMITTED", detail: "Chatbot intake conversation -- 4 locations, needs recall outreach", daysAgoCreated: 2 },
+      { dealEmail: "david@summitauto.com", type: "EMAIL_SENT", detail: "Auto-sent follow-up email with voice agent case study", daysAgoCreated: 2 },
+      { dealEmail: "patricia@cleansweepjanitorial.com", type: "FORM_SUBMITTED", detail: "Chatbot intake -- wants website with online booking", daysAgoCreated: 0 },
+      { dealEmail: "brian@oconnellcpa.com", type: "FORM_SUBMITTED", detail: "Completed ROI Calculator (projected 280% ROI)", daysAgoCreated: 7 },
+      { dealEmail: "brian@oconnellcpa.com", type: "STAGE_CHANGE", detail: "NEW_LEAD -> QUALIFIED", daysAgoCreated: 6 },
+      { dealEmail: "brian@oconnellcpa.com", type: "EMAIL_SENT", detail: "Sent intro email with advisory practice growth playbook", daysAgoCreated: 6 },
+      { dealEmail: "whitney@adamsrealty.com", type: "FORM_SUBMITTED", detail: "Completed Website Audit (score: 45/100)", daysAgoCreated: 5 },
+      { dealEmail: "whitney@adamsrealty.com", type: "STAGE_CHANGE", detail: "NEW_LEAD -> QUALIFIED", daysAgoCreated: 4 },
+      { dealEmail: "whitney@adamsrealty.com", type: "CALL_MADE", detail: "Discovery call -- 18 min. 12-agent team, needs lead routing and chatbot", daysAgoCreated: 4 },
+      { dealEmail: "hector@premierpest.com", type: "STAGE_CHANGE", detail: "QUALIFIED -> PROPOSAL_SENT", daysAgoCreated: 18 },
+      { dealEmail: "hector@premierpest.com", type: "EMAIL_SENT", detail: "Sent proposal -- website + cold outbound at $894/mo", daysAgoCreated: 18 },
+      { dealEmail: "hector@premierpest.com", type: "NOTE_ADDED", detail: "Hector wants to include review management. Looking into adding that to the package.", daysAgoCreated: 15 },
+      { dealEmail: "nina@zenithphysio.com", type: "STAGE_CHANGE", detail: "ACTIVE_CLIENT -> AT_RISK", daysAgoCreated: 7 },
+      { dealEmail: "nina@zenithphysio.com", type: "EMAIL_SENT", detail: "Sent check-in email -- no response to last 3 communications", daysAgoCreated: 5 },
+      { dealEmail: "nina@zenithphysio.com", type: "CALL_MADE", detail: "Retention call -- Nina says she is overwhelmed and not using tools", daysAgoCreated: 3 },
+    ]
+
+    let newActCount = 0
+    for (const a of newActivities) {
+      const dealId = freshDealMap[a.dealEmail]
+      if (!dealId) continue
+      await prisma.dealActivity.create({
+        data: {
+          dealId,
+          type: a.type,
+          detail: a.detail,
+          createdAt: daysAgo(a.daysAgoCreated),
+        },
+      })
+      newActCount++
+    }
+    console.log(`  Created ${newActCount} additional deal activities`)
   }
 
   console.log("\nSeed complete.")
