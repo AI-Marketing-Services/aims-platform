@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import Link from "next/link"
@@ -10,6 +11,10 @@ import {
   FileText,
   Briefcase,
 } from "lucide-react"
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+}
 
 const INTERN_NAV = [
   { label: "Dashboard", href: "/intern/dashboard", icon: LayoutDashboard },

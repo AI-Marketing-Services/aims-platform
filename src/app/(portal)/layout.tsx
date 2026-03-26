@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import Link from "next/link"
@@ -7,6 +8,10 @@ import { PortalSidebar } from "@/components/portal/Sidebar"
 import { MobilePortalNav } from "@/components/portal/MobilePortalNav"
 import { PortalChatWidget } from "@/components/portal/PortalChatWidget"
 import { db } from "@/lib/db"
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+}
 
 export default async function PortalLayout({
   children,

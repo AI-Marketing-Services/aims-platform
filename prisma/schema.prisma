@@ -37,6 +37,14 @@ model User {
   lastLoginAt      DateTime?
   emailNotifs      Boolean   @default(true)
   slackNotifs      Boolean   @default(false)
+
+  // Granular notification preferences
+  notifNewPurchase       Boolean @default(true)
+  notifFulfillmentUpdate Boolean @default(true)
+  notifSupportReply      Boolean @default(true)
+  notifBillingAlert      Boolean @default(true)
+  notifMarketingDigest   Boolean @default(false)
+
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
 

@@ -1,210 +1,22 @@
 "use client"
 
-import Link from "next/link"
-import Image from "next/image"
-import { motion, AnimatePresence, useMotionValue, useSpring, useTransform, useInView } from "framer-motion"
-import { useState, useRef, useEffect, type ReactNode } from "react"
+import { useState } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 import {
-  LayoutDashboard, Users, Megaphone, GitBranch,
-  BarChart2, Settings, TrendingUp, Bell, Search, ChevronDown, X,
-  CreditCard, ArrowRight, Phone, Mail, Plus, Pause, Play, Filter,
-  CheckCircle2, AlertCircle, DollarSign,
+  TrendingUp, ChevronDown, X,
+  ArrowRight, Phone, Mail, Plus, Pause, Play, Filter,
+  CheckCircle2, DollarSign,
 } from "lucide-react"
+import { AnimNum, StaggerIn, PopUp, DonutChart } from "./AnimationHelpers"
+import {
+  RECENT_LEADS, HOT_DEALS, REVENUE_SOURCES, NOTIFICATIONS,
+  CAMPAIGNS, KANBAN_COLUMNS, TEAM_ACTIVITY,
+  type LeadStatus,
+} from "./HeroData"
 
-// ─── Data ────────────────────────────────────────────────────────────────────
+// ─── Dashboard View ──────────────────────────────────────────────────────────
 
-type LeadStatus = "hot" | "warm" | "new"
-
-interface Lead {
-  initials: string
-  color: string
-  name: string
-  company: string
-  status: LeadStatus
-  score: number
-  email: string
-  phone: string
-  lastContacted: string
-  notes: string
-}
-
-const RECENT_LEADS: Lead[] = [
-  { initials: "SC", color: "#C4972A", name: "Sarah Chen", company: "Acme Corp", status: "hot", score: 92, email: "sarah@acmecorp.com", phone: "+1 555-0101", lastContacted: "2h ago", notes: "Follow up on Q2 budget - interested in AI Sales Engine" },
-  { initials: "MW", color: "#8B6914", name: "Marcus Webb", company: "TechFlow Inc", status: "warm", score: 74, email: "marcus@techflow.io", phone: "+1 555-0102", lastContacted: "1d ago", notes: "Requested demo for outbound automation stack" },
-  { initials: "DR", color: "#7F1D1D", name: "Diana Ross", company: "Velocity Partners", status: "warm", score: 68, email: "diana@velocityp.com", phone: "+1 555-0103", lastContacted: "2d ago", notes: "Evaluating competitors - send case studies" },
-  { initials: "JL", color: "#A17D22", name: "James Liu", company: "Growth Labs", status: "new", score: 61, email: "james@growthlabs.co", phone: "+1 555-0104", lastContacted: "3d ago", notes: "Inbound from LinkedIn ad - schedule intro call" },
-  { initials: "KP", color: "#6B21A8", name: "Kevin Park", company: "CloudBase", status: "new", score: 55, email: "kevin@cloudbase.io", phone: "+1 555-0105", lastContacted: "4d ago", notes: "Referred by Acme Corp - high intent signal" },
-  { initials: "AL", color: "#0369A1", name: "Amy Lin", company: "FinStack", status: "warm", score: 71, email: "amy@finstack.com", phone: "+1 555-0106", lastContacted: "1d ago", notes: "Interested in fractional SDR + AI calling bundle" },
-]
-
-const HOT_DEALS = [
-  { company: "Acme Corp", value: "$120K", status: "Closing" },
-  { company: "Growth Labs", value: "$450K", status: "Closing" },
-  { company: "TechFlow Inc", value: "$85K", status: "Proposal" },
-]
-
-const REVENUE_SOURCES = [
-  { label: "LinkedIn", value: "$1.2M", pct: 100 },
-  { label: "Email", value: "$950K", pct: 79 },
-  { label: "Partner", value: "$450K", pct: 38 },
-]
-
-interface Notification {
-  icon: React.ElementType
-  text: string
-  time: string
-  unread: boolean
-  action: string
-  type: "lead" | "campaign" | "meeting" | "billing" | "system"
-}
-
-const NOTIFICATIONS: Notification[] = [
-  { icon: Users, text: "New high-value lead: Sarah Chen", time: "4 hours ago", unread: true, action: "View →", type: "lead" },
-  { icon: Megaphone, text: "Campaign 'Alpha' started", time: "3 hours ago", unread: true, action: "View →", type: "campaign" },
-  { icon: Bell, text: "Meeting booked: Acme Corp", time: "3 hours ago", unread: false, action: "Reply →", type: "meeting" },
-  { icon: CreditCard, text: "Invoice paid: $12,000", time: "Yesterday", unread: false, action: "Dismiss", type: "billing" },
-  { icon: AlertCircle, text: "Lead score alert: Kevin Park hit 55", time: "2 days ago", unread: false, action: "View →", type: "system" },
-]
-
-interface Campaign {
-  name: string
-  status: "live" | "paused"
-  leads: number
-  meetings: number
-  emailsSent: number
-  openRate: number
-  isAB?: boolean
-}
-
-const CAMPAIGNS: Campaign[] = [
-  { name: "Alpha Outbound", status: "live", leads: 124, meetings: 14, emailsSent: 1840, openRate: 48, isAB: true },
-  { name: "Re-engagement Q1", status: "live", leads: 89, meetings: 8, emailsSent: 1420, openRate: 41 },
-  { name: "AI Voice Follow-up", status: "paused", leads: 56, meetings: 5, emailsSent: 1561, openRate: 38 },
-]
-
-interface KanbanDeal {
-  company: string
-  value: string
-  days: number
-}
-
-interface KanbanColumn {
-  label: string
-  deals: KanbanDeal[]
-}
-
-const KANBAN_COLUMNS: KanbanColumn[] = [
-  {
-    label: "New Lead",
-    deals: [
-      { company: "CloudBase", value: "$42K", days: 2 },
-      { company: "FinStack", value: "$67K", days: 4 },
-      { company: "PivotIO", value: "$31K", days: 1 },
-    ],
-  },
-  {
-    label: "Demo Booked",
-    deals: [
-      { company: "TechFlow Inc", value: "$85K", days: 7 },
-      { company: "Velocity Ptrs", value: "$110K", days: 5 },
-    ],
-  },
-  {
-    label: "Closing",
-    deals: [
-      { company: "Acme Corp", value: "$120K", days: 14 },
-      { company: "Growth Labs", value: "$450K", days: 11 },
-    ],
-  },
-]
-
-const TEAM_ACTIVITY = [
-  { initials: "SC", text: "SC booked meeting with Acme Corp", time: "2h ago" },
-  { initials: "MW", text: "MW replied to TechFlow proposal", time: "4h ago" },
-  { initials: "DR", text: "DR added 12 leads from LinkedIn", time: "6h ago" },
-]
-
-const NAV_ITEMS = [
-  { icon: LayoutDashboard, label: "Dashboard", id: "dashboard" },
-  { icon: Users, label: "Leads", id: "leads" },
-  { icon: Megaphone, label: "Campaigns", id: "campaigns" },
-  { icon: GitBranch, label: "Pipeline", id: "pipeline" },
-  { icon: Bell, label: "Notifications", id: "notifications" },
-  { icon: BarChart2, label: "Reports", id: "reports" },
-  { icon: Settings, label: "Settings", id: "settings" },
-]
-
-// ─── Animation helpers ────────────────────────────────────────────────────────
-
-function AnimNum({ value, prefix = "", suffix = "", delay = 0.6, format }: { value: number; prefix?: string; suffix?: string; delay?: number; format?: (v: number) => string }) {
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: true })
-  const mv = useMotionValue(0)
-  const sp = useSpring(mv, { duration: 1800, bounce: 0 })
-  const display = useTransform(sp, (v) => {
-    const rounded = Math.round(v)
-    if (format) return format(rounded)
-    return `${prefix}${rounded.toLocaleString()}${suffix}`
-  })
-  useEffect(() => { if (isInView) setTimeout(() => mv.set(value), delay * 1000) }, [isInView, value, mv, delay])
-  return <motion.span ref={ref}>{display}</motion.span>
-}
-
-function StaggerIn({ children, className, delay = 0 }: { children: ReactNode; className?: string; delay?: number }) {
-  return (
-    <motion.div
-      className={className}
-      initial="hidden"
-      animate="visible"
-      variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.08, delayChildren: delay } } }}
-    >
-      {children}
-    </motion.div>
-  )
-}
-
-function PopUp({ children, className }: { children: ReactNode; className?: string }) {
-  return (
-    <motion.div
-      className={className}
-      variants={{
-        hidden: { opacity: 0, y: 16, scale: 0.92 },
-        visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } },
-      }}
-    >
-      {children}
-    </motion.div>
-  )
-}
-
-// ─── Sub-components ───────────────────────────────────────────────────────────
-
-function DonutChart({ pct, value }: { pct: number; value: string }) {
-  const r = 30
-  const circ = 2 * Math.PI * r
-  const dash = (pct / 100) * circ
-  return (
-    <div className="relative flex items-center justify-center w-[72px] h-[72px]">
-      <svg width="72" height="72" viewBox="0 0 72 72" className="-rotate-90">
-        <circle cx="36" cy="36" r={r} fill="none" stroke="#f3f4f6" strokeWidth="8" />
-        <motion.circle
-          cx="36" cy="36" r={r} fill="none" stroke="#C4972A" strokeWidth="8"
-          strokeLinecap="round"
-          strokeDasharray={`${dash} ${circ}`}
-          initial={{ strokeDasharray: `0 ${circ}` }}
-          animate={{ strokeDasharray: `${dash} ${circ}` }}
-          transition={{ duration: 1.2, delay: 0.8, ease: "easeOut" }}
-        />
-      </svg>
-      <div className="absolute flex flex-col items-center leading-none">
-        <span className="text-[11px] font-bold text-foreground">{value}</span>
-        <span className="text-[9px] text-muted-foreground mt-0.5">{pct}%</span>
-      </div>
-    </div>
-  )
-}
-
-function DashboardView() {
+export function DashboardView() {
   const [showBreakdown, setShowBreakdown] = useState(false)
   return (
     <div className="flex-1 min-w-0 bg-deep/40 overflow-hidden">
@@ -416,9 +228,11 @@ function DashboardView() {
   )
 }
 
+// ─── Leads View ──────────────────────────────────────────────────────────────
+
 type LeadFilter = "all" | "hot" | "warm" | "new"
 
-function LeadsView() {
+export function LeadsView() {
   const [selected, setSelected] = useState<string | null>(null)
   const [filter, setFilter] = useState<LeadFilter>("all")
 
@@ -534,7 +348,9 @@ function LeadsView() {
   )
 }
 
-function CampaignsView() {
+// ─── Campaigns View ──────────────────────────────────────────────────────────
+
+export function CampaignsView() {
   const [active, setActive] = useState("Alpha Outbound")
   const [paused, setPaused] = useState<string[]>(["AI Voice Follow-up"])
 
@@ -617,7 +433,9 @@ function CampaignsView() {
   )
 }
 
-function PipelineView() {
+// ─── Pipeline View ───────────────────────────────────────────────────────────
+
+export function PipelineView() {
   return (
     <div className="flex-1 bg-card p-4 overflow-hidden">
       <div className="flex items-center justify-between mb-3">
@@ -661,9 +479,11 @@ function PipelineView() {
   )
 }
 
+// ─── Notifications View ──────────────────────────────────────────────────────
+
 type NotifFilter = "all" | "unread" | "leads" | "system"
 
-function NotificationsView() {
+export function NotificationsView() {
   const [read, setRead] = useState<string[]>([])
   const [notifFilter, setNotifFilter] = useState<NotifFilter>("all")
 
@@ -740,6 +560,8 @@ function NotificationsView() {
   )
 }
 
+// ─── Reports View ────────────────────────────────────────────────────────────
+
 const LEAD_SOURCES = [
   { label: "LinkedIn", pct: 44 },
   { label: "Cold Email", pct: 28 },
@@ -757,7 +579,7 @@ const HEATMAP_DAYS = [
   { day: "S", pct: 15 },
 ]
 
-function ReportsView() {
+export function ReportsView() {
   const topStats = [
     { label: "MRR", value: "$12,450", delta: "↑ 8%", positive: true },
     { label: "Deals Closed", value: "23", delta: "↑ 3", positive: true },
@@ -787,9 +609,8 @@ function ReportsView() {
         ))}
       </div>
 
-      {/* Main chart area: MRR (60%) + Lead Sources (40%) */}
+      {/* Main chart area */}
       <div className="grid grid-cols-5 gap-2 mb-2">
-        {/* MRR Growth area chart */}
         <div className="col-span-3 rounded-sm border border-border p-2">
           <p className="text-[9px] font-semibold text-muted-foreground mb-1">MRR Growth</p>
           <div className="flex gap-1">
@@ -807,22 +628,8 @@ function ReportsView() {
               </defs>
               <line x1="0" y1="30" x2="280" y2="30" stroke="rgba(255,255,255,0.07)" strokeWidth="0.5" strokeDasharray="4 4" />
               <line x1="0" y1="60" x2="280" y2="60" stroke="rgba(255,255,255,0.07)" strokeWidth="0.5" strokeDasharray="4 4" />
-              <motion.path
-                d="M0,75 C30,65 60,50 90,42 C120,34 150,38 180,28 C210,20 240,15 280,10 L280,90 L0,90 Z"
-                fill="url(#rg2)"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.4 }}
-              />
-              <motion.path
-                d="M0,75 C30,65 60,50 90,42 C120,34 150,38 180,28 C210,20 240,15 280,10"
-                fill="none"
-                stroke="#C4972A"
-                strokeWidth="2"
-                initial={{ pathLength: 0 }}
-                animate={{ pathLength: 1 }}
-                transition={{ delay: 0.4, duration: 1.2 }}
-              />
+              <motion.path d="M0,75 C30,65 60,50 90,42 C120,34 150,38 180,28 C210,20 240,15 280,10 L280,90 L0,90 Z" fill="url(#rg2)" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }} />
+              <motion.path d="M0,75 C30,65 60,50 90,42 C120,34 150,38 180,28 C210,20 240,15 280,10" fill="none" stroke="#C4972A" strokeWidth="2" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 0.4, duration: 1.2 }} />
               {["Jan", "Feb", "Mar", "Apr", "May", "Jun"].map((m, i) => (
                 <text key={m} x={i * 50 + 10} y="89" fontSize="7" fill="#9CA3AF">{m}</text>
               ))}
@@ -830,7 +637,6 @@ function ReportsView() {
           </div>
         </div>
 
-        {/* Lead Sources horizontal bar chart */}
         <div className="col-span-2 rounded-sm border border-border p-2">
           <p className="text-[9px] font-semibold text-muted-foreground mb-1.5">Lead Sources</p>
           <div className="space-y-1.5">
@@ -838,13 +644,7 @@ function ReportsView() {
               <div key={s.label} className="flex items-center gap-1.5">
                 <span className="text-[8px] text-muted-foreground w-14 flex-shrink-0">{s.label}</span>
                 <div className="flex-1 h-2 rounded-full bg-deep overflow-hidden">
-                  <motion.div
-                    className="h-full rounded-full bg-primary"
-                    initial={{ width: 0 }}
-                    animate={{ width: `${s.pct}%` }}
-                    transition={{ duration: 0.7, delay: 0.4 + i * 0.1 }}
-                    style={{ opacity: 1 - i * 0.15 }}
-                  />
+                  <motion.div className="h-full rounded-full bg-primary" initial={{ width: 0 }} animate={{ width: `${s.pct}%` }} transition={{ duration: 0.7, delay: 0.4 + i * 0.1 }} style={{ opacity: 1 - i * 0.15 }} />
                 </div>
                 <span className="text-[8px] font-semibold text-muted-foreground w-6 text-right">{s.pct}%</span>
               </div>
@@ -859,12 +659,7 @@ function ReportsView() {
         <div className="flex items-center gap-1 flex-wrap">
           {funnelSteps.map((step, i) => (
             <div key={step.label} className="flex items-center gap-1">
-              <motion.div
-                className="flex flex-col items-center rounded-full bg-primary/10 border border-primary/30 px-2 py-1"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.3 + i * 0.1 }}
-              >
+              <motion.div className="flex flex-col items-center rounded-full bg-primary/10 border border-primary/30 px-2 py-1" initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.3 + i * 0.1 }}>
                 <span className="text-[9px] font-bold text-foreground">{step.count}</span>
                 <span className="text-[7px] text-muted-foreground">{step.label}</span>
               </motion.div>
@@ -885,13 +680,7 @@ function ReportsView() {
         <div className="flex items-end gap-2">
           {HEATMAP_DAYS.map((d, i) => (
             <div key={`${d.day}-${i}`} className="flex flex-col items-center gap-0.5">
-              <motion.div
-                className="h-5 w-5 rounded-full"
-                style={{ background: `rgba(196, 151, 42, ${d.pct / 100})` }}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 + i * 0.07 }}
-              />
+              <motion.div className="h-5 w-5 rounded-full" style={{ background: `rgba(196, 151, 42, ${d.pct / 100})` }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 + i * 0.07 }} />
               <span className="text-[7px] text-muted-foreground">{d.day}</span>
             </div>
           ))}
@@ -901,7 +690,9 @@ function ReportsView() {
   )
 }
 
-function SettingsView() {
+// ─── Settings View ───────────────────────────────────────────────────────────
+
+export function SettingsView() {
   const [notifications, setNotifications] = useState(true)
   const [digest, setDigest] = useState(true)
   const [leadScoring, setLeadScoring] = useState(true)
@@ -996,7 +787,9 @@ function SettingsView() {
   )
 }
 
-const VIEW_MAP: Record<string, React.FC> = {
+// ─── View Map ────────────────────────────────────────────────────────────────
+
+export const VIEW_MAP: Record<string, React.FC> = {
   dashboard: DashboardView,
   leads: LeadsView,
   campaigns: CampaignsView,
@@ -1004,195 +797,4 @@ const VIEW_MAP: Record<string, React.FC> = {
   notifications: NotificationsView,
   reports: ReportsView,
   settings: SettingsView,
-}
-
-// ─── Floating logo animation ──────────────────────────────────────────────────
-
-const FLOAT_LOGOS = [
-  { src: "/integrations/hubspot-svgrepo-com.svg", label: "HubSpot", style: { top: "8%", left: "10%" }, delay: 0, tiltDir: 1 },
-  { src: "/integrations/notion.svg", label: "Notion", style: { top: "6%", right: "10%" }, delay: 0.1, tiltDir: -1 },
-  { src: "/integrations/instantly.webp", label: "Instantly", style: { top: "36%", left: "6%" }, delay: 0.2, tiltDir: -1 },
-  { src: "/integrations/slack.png", label: "Slack", style: { top: "34%", right: "6%" }, delay: 0.3, tiltDir: 1 },
-]
-
-// ─── Hero ─────────────────────────────────────────────────────────────────────
-
-export function Hero() {
-  const [activeView, setActiveView] = useState("dashboard")
-  const ActiveView = VIEW_MAP[activeView] ?? DashboardView
-
-  return (
-    <section className="relative overflow-hidden bg-deep pt-24 pb-16 md:pt-32 md:pb-24">
-
-      {/* Floating tool logos */}
-      {FLOAT_LOGOS.map((logo) => (
-        <motion.div
-          key={logo.label}
-          className="absolute z-10 hidden lg:flex h-[88px] w-[88px] items-center justify-center rounded-2xl bg-surface shadow-lg shadow-black/30 border border-border"
-          style={logo.style as React.CSSProperties}
-          initial={{ opacity: 0, scale: 0.7, rotate: 0 }}
-          animate={{
-            opacity: 1,
-            scale: 1,
-            y: [0, -12, 0],
-            rotate: [0, 6 * logo.tiltDir, 0, -6 * logo.tiltDir, 0],
-          }}
-          transition={{
-            opacity: { delay: logo.delay + 0.4, duration: 0.4 },
-            scale: { delay: logo.delay + 0.4, duration: 0.4 },
-            y: { delay: logo.delay + 1, duration: 3 + logo.delay, repeat: Infinity, ease: "easeInOut" },
-            rotate: { delay: logo.delay + 1, duration: 4 + logo.delay, repeat: Infinity, ease: "easeInOut" },
-          }}
-        >
-          <Image src={logo.src} alt={logo.label} width={52} height={52} className="object-contain" />
-        </motion.div>
-      ))}
-
-      <div className="mx-auto max-w-5xl px-4">
-        <div className="flex flex-col items-center text-center">
-
-          {/* Eyebrow */}
-          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="mb-7">
-            <span className="font-mono text-primary text-xs uppercase tracking-widest">AI Managing Services - AIMS</span>
-          </motion.div>
-
-          {/* Headline */}
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55, delay: 0.1 }}
-            className="font-serif max-w-4xl text-[2.75rem] font-light leading-[1.1] tracking-tight text-foreground sm:text-5xl md:text-[3.6rem]"
-          >
-            Your Business Isn&apos;t Capped On <em className="text-primary">Talent</em>.
-            <br />
-            It&apos;s Capped On <em className="text-primary">Bandwidth</em>.
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}
-            className="mx-auto mt-5 max-w-2xl text-lg text-muted-foreground leading-relaxed"
-          >
-            We embed inside your organization, find where your best people are buried in low-value work, and install the AI systems that give them - and your business - room to grow.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}
-            className="mt-8 flex flex-col items-center gap-3 sm:flex-row"
-          >
-            <button onClick={() => window.dispatchEvent(new Event("open-intake-chat"))} className="inline-flex items-center gap-2 bg-primary px-8 py-3.5 text-xs font-bold uppercase tracking-widest text-white shadow-md shadow-primary/20 transition hover:bg-primary/80 hover:shadow-lg">
-              Speak with Our Intake Agent
-              <ArrowRight className="h-4 w-4" />
-            </button>
-            <Link href="/marketplace" className="inline-flex items-center gap-2 border border-border px-8 py-3.5 text-xs font-bold uppercase tracking-widest text-foreground transition hover:border-primary/50 hover:text-primary">
-              Explore Our Engagements
-            </Link>
-          </motion.div>
-
-          {/* Interactive Dashboard */}
-          <motion.div
-            initial={{ opacity: 0, y: 56 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.45 }}
-            className="mt-14 w-full max-w-5xl"
-          >
-            <div className="overflow-hidden rounded-2xl border border-primary/30 bg-card h-auto sm:h-[560px] shadow-[0_8px_60px_-12px_rgba(196,151,42,0.25),0_0_0_1px_rgba(196,151,42,0.08)] hover:shadow-[0_12px_70px_-10px_rgba(196,151,42,0.35),0_0_0_1px_rgba(196,151,42,0.15)] transition-shadow duration-500">
-              <div className="flex flex-col sm:flex-row h-auto sm:h-[560px]">
-
-                {/* DESKTOP SIDEBAR - hidden on mobile */}
-                <div className="hidden sm:flex w-40 flex-shrink-0 border-r border-border bg-card flex-col">
-                  <div className="flex items-center px-3 py-3.5 border-b border-border">
-                    <Image src="/logo.png" alt="AIMS" width={80} height={32} className="object-contain h-6 w-auto" />
-                  </div>
-                  <div className="px-2.5 py-2">
-                    <div className="flex items-center gap-1.5 rounded-lg bg-deep px-2 py-1.5">
-                      <Search className="h-3 w-3 text-muted-foreground" />
-                      <span className="text-[10px] text-muted-foreground">Search</span>
-                    </div>
-                  </div>
-                  <nav className="flex-1 px-2 space-y-0.5 overflow-hidden">
-                    {NAV_ITEMS.map((item, i) => (
-                      <motion.button
-                        key={item.id}
-                        onClick={() => setActiveView(item.id)}
-                        className={`w-full flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-[11px] font-medium transition-colors cursor-pointer ${activeView === item.id ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-surface hover:text-foreground"}`}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.35, delay: 0.6 + i * 0.06, ease: [0.22, 1, 0.36, 1] }}
-                        whileHover={{ x: 2 }}
-                        whileTap={{ scale: 0.97 }}
-                      >
-                        <item.icon className="h-3 w-3 flex-shrink-0" />
-                        {item.label}
-                      </motion.button>
-                    ))}
-                  </nav>
-                  <div className="border-t border-border px-3 py-2.5">
-                    <div className="flex items-center gap-1.5">
-                      <div className="h-6 w-6 rounded-full bg-primary flex items-center justify-center text-[9px] font-bold text-white">SA</div>
-                      <div>
-                        <p className="text-[10px] font-semibold text-foreground leading-none">Sam Altman</p>
-                        <p className="text-[9px] text-muted-foreground">ADMIN</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* MOBILE TAB BAR - visible only on mobile */}
-                <div className="sm:hidden relative border-b border-border bg-card shrink-0">
-                  {/* Scroll fade indicators */}
-                  <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-8 bg-gradient-to-l from-card to-transparent" />
-                  <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-8 bg-gradient-to-r from-card to-transparent" />
-                  <div className="flex items-center overflow-x-auto scrollbar-hide">
-                    <div className="flex items-center gap-1 px-3 py-2 min-w-max">
-                      <div className="flex items-center px-2 py-1 mr-2 border-r border-border">
-                        <Image src="/logo.png" alt="AIMS" width={60} height={24} className="object-contain h-5 w-auto" />
-                      </div>
-                      {NAV_ITEMS.map((item) => (
-                        <motion.button
-                          key={item.id}
-                          onClick={() => setActiveView(item.id)}
-                          className={`flex items-center gap-1.5 rounded-lg px-3 min-h-[44px] text-xs font-medium transition-colors whitespace-nowrap cursor-pointer ${activeView === item.id ? "bg-primary/15 text-primary border border-primary/20" : "text-muted-foreground hover:bg-surface"}`}
-                          whileTap={{ scale: 0.95 }}
-                        >
-                          <item.icon className="h-3.5 w-3.5 flex-shrink-0" />
-                          <span>{item.label}</span>
-                        </motion.button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Content panel */}
-                <div className="flex-1 min-w-0 overflow-hidden">
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={activeView}
-                      initial={{ opacity: 0, x: 10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -10 }}
-                      transition={{ duration: 0.2 }}
-                      className="h-full"
-                    >
-                      <ActiveView />
-                    </motion.div>
-                  </AnimatePresence>
-                </div>
-              </div>
-            </div>
-
-            {/* Hint */}
-            <p className="mt-3 text-xs text-muted-foreground text-center">
-              Click the sidebar tabs to explore ↑
-            </p>
-          </motion.div>
-
-          {/* Experience label */}
-          <motion.p
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}
-            className="mt-14 text-sm font-semibold text-muted-foreground uppercase tracking-widest"
-          >
-            Our team has operated inside
-          </motion.p>
-        </div>
-      </div>
-    </section>
-  )
 }

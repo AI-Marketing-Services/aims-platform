@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useDeferredValue } from "react"
 import { motion } from "framer-motion"
 import { Search, ChevronDown, Calendar, User, AlertTriangle } from "lucide-react"
 import { cn, getInitials } from "@/lib/utils"
@@ -160,11 +160,12 @@ export function FulfillmentPipeline({
 }) {
   const [tasks, setTasks] = useState<FulfillmentTask[]>(initialTasks)
   const [search, setSearch] = useState("")
+  const deferredSearch = useDeferredValue(search)
   const [priorityFilter, setPriorityFilter] = useState("all")
 
   const filteredTasks = useMemo(() => {
     return tasks.filter((t) => {
-      const q = search.toLowerCase()
+      const q = deferredSearch.toLowerCase()
       if (
         q &&
         !t.title.toLowerCase().includes(q) &&
@@ -175,7 +176,7 @@ export function FulfillmentPipeline({
       if (priorityFilter !== "all" && t.priority !== priorityFilter) return false
       return true
     })
-  }, [tasks, search, priorityFilter])
+  }, [tasks, deferredSearch, priorityFilter])
 
   async function handleStatusChange(taskId: string, newStatus: string) {
     const prevTask = tasks.find((t) => t.id === taskId)

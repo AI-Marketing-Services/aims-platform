@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { z } from "zod"
 import { db } from "@/lib/db"
+import { logger } from "@/lib/logger"
 
 const prefsSchema = z.object({
   // Notification channel prefs
@@ -35,12 +36,14 @@ export async function PATCH(req: Request) {
   const parsed = prefsSchema.safeParse(body)
   if (!parsed.success) return NextResponse.json({ error: "Invalid data" }, { status: 400 })
 
-  // Extract only the fields that map to User model columns.
-  // Granular notification prefs (notif*) and heardAbout are accepted by the
-  // schema for forward-compat but not persisted to DB columns yet.
   const {
     emailNotifs,
     slackNotifs,
+    notifNewPurchase,
+    notifFulfillmentUpdate,
+    notifSupportReply,
+    notifBillingAlert,
+    notifMarketingDigest,
     company,
     phone,
     website,
@@ -51,6 +54,11 @@ export async function PATCH(req: Request) {
   const updateData: Record<string, unknown> = {}
   if (emailNotifs !== undefined) updateData.emailNotifs = emailNotifs
   if (slackNotifs !== undefined) updateData.slackNotifs = slackNotifs
+  if (notifNewPurchase !== undefined) updateData.notifNewPurchase = notifNewPurchase
+  if (notifFulfillmentUpdate !== undefined) updateData.notifFulfillmentUpdate = notifFulfillmentUpdate
+  if (notifSupportReply !== undefined) updateData.notifSupportReply = notifSupportReply
+  if (notifBillingAlert !== undefined) updateData.notifBillingAlert = notifBillingAlert
+  if (notifMarketingDigest !== undefined) updateData.notifMarketingDigest = notifMarketingDigest
   if (company !== undefined) updateData.company = company
   if (phone !== undefined) updateData.phone = phone
   if (website !== undefined) updateData.website = website
@@ -64,6 +72,11 @@ export async function PATCH(req: Request) {
       select: {
         emailNotifs: true,
         slackNotifs: true,
+        notifNewPurchase: true,
+        notifFulfillmentUpdate: true,
+        notifSupportReply: true,
+        notifBillingAlert: true,
+        notifMarketingDigest: true,
         company: true,
         phone: true,
         website: true,
@@ -74,7 +87,7 @@ export async function PATCH(req: Request) {
 
     return NextResponse.json(user)
   } catch (err) {
-    console.error("Failed to update user preferences:", err)
+    logger.error("Failed to update user preferences", err, { endpoint: "PATCH /api/user/preferences", userId })
     return NextResponse.json({ error: "Failed to update preferences" }, { status: 500 })
   }
 }

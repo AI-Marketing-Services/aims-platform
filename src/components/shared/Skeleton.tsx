@@ -34,12 +34,14 @@ export function SkeletonRow() {
   )
 }
 
+const TABLE_HEADER_WIDTHS = ["w-40", "w-24", "w-16", "w-16", "w-16"]
+
 export function SkeletonTable({ rows = 5 }: { rows?: number }) {
   return (
     <div className="bg-card border border-border rounded-xl overflow-hidden">
       <div className="px-5 py-3 border-b border-border flex gap-4">
-        {[40, 24, 16, 16, 16].map((w, i) => (
-          <Skeleton key={i} className={`h-3 w-${w}`} />
+        {TABLE_HEADER_WIDTHS.map((w, i) => (
+          <Skeleton key={i} className={`h-3 ${w}`} />
         ))}
       </div>
       {Array.from({ length: rows }).map((_, i) => (
@@ -49,9 +51,18 @@ export function SkeletonTable({ rows = 5 }: { rows?: number }) {
   )
 }
 
+const STAT_GRID_CLASSES: Record<number, string> = {
+  2: "grid grid-cols-2 gap-4 sm:grid-cols-2",
+  3: "grid grid-cols-2 gap-4 sm:grid-cols-3",
+  4: "grid grid-cols-2 gap-4 sm:grid-cols-4",
+  5: "grid grid-cols-2 gap-4 sm:grid-cols-5",
+  6: "grid grid-cols-2 gap-4 sm:grid-cols-6",
+}
+
 export function SkeletonStatCards({ count = 4 }: { count?: number }) {
+  const gridClass = STAT_GRID_CLASSES[count] ?? STAT_GRID_CLASSES[4]
   return (
-    <div className={`grid grid-cols-2 gap-4 sm:grid-cols-${count}`}>
+    <div className={gridClass}>
       {Array.from({ length: count }).map((_, i) => (
         <SkeletonCard key={i} />
       ))}

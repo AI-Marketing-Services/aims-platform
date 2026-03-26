@@ -1,5 +1,6 @@
 "use client"
 
+import { memo } from "react"
 import { Bell, Users, DollarSign, BarChart2, LifeBuoy, Zap, Activity, X, CheckCheck } from "lucide-react"
 import { cn, timeAgo } from "@/lib/utils"
 
@@ -56,6 +57,59 @@ function truncate(str: string, maxLen: number) {
   if (str.length <= maxLen) return str
   return str.slice(0, maxLen).trimEnd() + "..."
 }
+
+const NotificationRow = memo(function NotificationRow({
+  item: n,
+  onMarkRead,
+}: {
+  item: NotificationItem
+  onMarkRead: (id: string) => void
+}) {
+  const Icon = TYPE_ICON[n.type] ?? Bell
+  const colorClass = TYPE_COLOR[n.type] ?? "bg-deep text-muted-foreground"
+  return (
+    <button
+      onClick={() => {
+        if (!n.read) onMarkRead(n.id)
+      }}
+      className={cn(
+        "flex items-start gap-3 px-4 py-3 w-full text-left transition-colors border-b border-border last:border-0",
+        !n.read
+          ? "border-l-[3px] border-l-primary bg-primary/5 hover:bg-primary/10"
+          : "border-l-[3px] border-l-transparent hover:bg-surface",
+        !n.read ? "cursor-pointer" : "cursor-default"
+      )}
+    >
+      <div
+        className={cn(
+          "flex h-8 w-8 items-center justify-center rounded-lg flex-shrink-0 mt-0.5",
+          colorClass
+        )}
+      >
+        <Icon className="h-4 w-4" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-start justify-between gap-2">
+          <p
+            className={cn(
+              "text-sm truncate",
+              !n.read ? "font-semibold text-foreground" : "font-medium text-foreground"
+            )}
+          >
+            {n.title}
+          </p>
+          {!n.read && (
+            <div className="h-2 w-2 rounded-full bg-primary flex-shrink-0 mt-1.5" />
+          )}
+        </div>
+        <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2 leading-relaxed">
+          {truncate(n.message, 120)}
+        </p>
+        <p className="text-[10px] text-muted-foreground mt-1">{timeAgo(n.sentAt)}</p>
+      </div>
+    </button>
+  )
+})
 
 interface NotificationCenterProps {
   notifications: NotificationItem[]
@@ -120,53 +174,9 @@ export function NotificationCenter({
             </p>
           </div>
         ) : (
-          notifications.map((n) => {
-            const Icon = TYPE_ICON[n.type] ?? Bell
-            const colorClass = TYPE_COLOR[n.type] ?? "bg-deep text-muted-foreground"
-            return (
-              <button
-                key={n.id}
-                onClick={() => {
-                  if (!n.read) onMarkRead(n.id)
-                }}
-                className={cn(
-                  "flex items-start gap-3 px-4 py-3 w-full text-left transition-colors border-b border-border last:border-0",
-                  !n.read
-                    ? "border-l-[3px] border-l-primary bg-primary/5 hover:bg-primary/10"
-                    : "border-l-[3px] border-l-transparent hover:bg-surface",
-                  !n.read ? "cursor-pointer" : "cursor-default"
-                )}
-              >
-                <div
-                  className={cn(
-                    "flex h-8 w-8 items-center justify-center rounded-lg flex-shrink-0 mt-0.5",
-                    colorClass
-                  )}
-                >
-                  <Icon className="h-4 w-4" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-start justify-between gap-2">
-                    <p
-                      className={cn(
-                        "text-sm truncate",
-                        !n.read ? "font-semibold text-foreground" : "font-medium text-foreground"
-                      )}
-                    >
-                      {n.title}
-                    </p>
-                    {!n.read && (
-                      <div className="h-2 w-2 rounded-full bg-primary flex-shrink-0 mt-1.5" />
-                    )}
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2 leading-relaxed">
-                    {truncate(n.message, 120)}
-                  </p>
-                  <p className="text-[10px] text-muted-foreground mt-1">{timeAgo(n.sentAt)}</p>
-                </div>
-              </button>
-            )
-          })
+          notifications.map((n) => (
+            <NotificationRow key={n.id} item={n} onMarkRead={onMarkRead} />
+          ))
         )}
       </div>
     </div>

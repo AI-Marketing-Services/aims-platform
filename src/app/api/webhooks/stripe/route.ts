@@ -7,6 +7,7 @@ import { sendWelcomeEmail } from "@/lib/email"
 import { queueEmailSequence } from "@/lib/email/queue"
 import { db } from "@/lib/db"
 import { createFulfillmentTask } from "@/lib/asana"
+import { logger } from "@/lib/logger"
 
 export async function POST(req: Request) {
   const body = await req.text()
@@ -19,7 +20,7 @@ export async function POST(req: Request) {
 
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
   if (!webhookSecret) {
-    console.error("STRIPE_WEBHOOK_SECRET is not configured")
+    logger.error("STRIPE_WEBHOOK_SECRET is not configured", undefined, { endpoint: "POST /api/webhooks/stripe" })
     return NextResponse.json({ error: "Webhook not configured" }, { status: 500 })
   }
 
@@ -28,7 +29,7 @@ export async function POST(req: Request) {
   try {
     event = stripe.webhooks.constructEvent(body, sig, webhookSecret)
   } catch (err) {
-    console.error("Stripe webhook signature verification failed:", err)
+    logger.error("Stripe webhook signature verification failed", err, { endpoint: "POST /api/webhooks/stripe" })
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 })
   }
 
@@ -396,7 +397,7 @@ export async function POST(req: Request) {
       }
     }
   } catch (err) {
-    console.error(`Error handling ${event.type}:`, err)
+    logger.error(`Error handling Stripe webhook event`, err, { endpoint: "POST /api/webhooks/stripe", action: event.type })
     // Always return 200 to prevent Stripe retries on business logic errors
   }
 

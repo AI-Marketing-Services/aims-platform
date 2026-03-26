@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useDeferredValue } from "react"
 import { motion } from "framer-motion"
 import { Plus, Search, ChevronDown } from "lucide-react"
 import Link from "next/link"
@@ -269,13 +269,14 @@ export function CRMKanban({ initialDeals }: { initialDeals: Deal[] }) {
   const [activeDeal, setActiveDeal] = useState<Deal | null>(null)
   const [addingToStage, setAddingToStage] = useState<DealStage | null>(null)
   const [search, setSearch] = useState("")
+  const deferredSearch = useDeferredValue(search)
   const [sourceFilter, setSourceFilter] = useState<string>("all")
   const [scoreFilter, setScoreFilter] = useState<string>("all")
   const [showClosed, setShowClosed] = useState(false)
 
   const filteredDeals = useMemo(() => {
     return deals.filter((d) => {
-      const q = search.toLowerCase()
+      const q = deferredSearch.toLowerCase()
       if (
         q &&
         !d.contactName.toLowerCase().includes(q) &&
@@ -294,7 +295,7 @@ export function CRMKanban({ initialDeals }: { initialDeals: Deal[] }) {
       }
       return true
     })
-  }, [deals, search, sourceFilter, scoreFilter])
+  }, [deals, deferredSearch, sourceFilter, scoreFilter])
 
   const visibleStages = useMemo(() => {
     return showClosed ? [...KANBAN_STAGES, ...CLOSED_STAGES] : KANBAN_STAGES

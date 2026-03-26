@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useDeferredValue } from "react"
 import { Search, Download, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, User } from "lucide-react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
@@ -65,6 +65,7 @@ const PAGE_SIZE = 25
 export function ClientsTable({ rows }: Props) {
   const router = useRouter()
   const [search, setSearch] = useState("")
+  const deferredSearch = useDeferredValue(search)
   const [stageFilter, setStageFilter] = useState<string>("all")
   const [sortField, setSortField] = useState<SortField>("createdAt")
   const [sortDir, setSortDir] = useState<SortDir>("desc")
@@ -81,7 +82,7 @@ export function ClientsTable({ rows }: Props) {
   }
 
   const filtered = useMemo(() => {
-    const q = search.toLowerCase()
+    const q = deferredSearch.toLowerCase()
     return rows.filter((r) => {
       if (
         q &&
@@ -94,7 +95,7 @@ export function ClientsTable({ rows }: Props) {
       if (stageFilter !== "all" && r.stage !== stageFilter) return false
       return true
     })
-  }, [rows, search, stageFilter])
+  }, [rows, deferredSearch, stageFilter])
 
   const sorted = useMemo(() => {
     return [...filtered].sort((a, b) => {

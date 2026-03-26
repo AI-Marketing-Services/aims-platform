@@ -2,6 +2,7 @@ import { headers } from "next/headers"
 import { NextResponse } from "next/server"
 import { Webhook } from "svix"
 import { db } from "@/lib/db"
+import { logger } from "@/lib/logger"
 
 interface ClerkWebhookEvent {
   data: Record<string, unknown>
@@ -23,7 +24,7 @@ export async function POST(req: Request) {
 
   const clerkWebhookSecret = process.env.CLERK_WEBHOOK_SECRET
   if (!clerkWebhookSecret) {
-    console.error("CLERK_WEBHOOK_SECRET is not configured")
+    logger.error("CLERK_WEBHOOK_SECRET is not configured", undefined, { endpoint: "POST /api/webhooks/clerk" })
     return NextResponse.json({ error: "Webhook not configured" }, { status: 500 })
   }
 
@@ -98,7 +99,7 @@ export async function POST(req: Request) {
       }
     }
   } catch (err) {
-    console.error(`Error handling Clerk webhook ${type}:`, err)
+    logger.error("Error handling Clerk webhook", err, { endpoint: "POST /api/webhooks/clerk", action: type })
     return NextResponse.json({ error: "Webhook processing failed" }, { status: 500 })
   }
 

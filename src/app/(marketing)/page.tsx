@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import dynamic from "next/dynamic"
-import { Hero } from "@/components/marketing/Hero"
+import { Hero } from "@/components/marketing/hero"
 import { LogoTicker } from "@/components/marketing/LogoTicker"
 import { FinalCTA } from "@/components/marketing/FinalCTA"
 
