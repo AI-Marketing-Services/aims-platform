@@ -1,5 +1,11 @@
 import { createGoogleGenerativeAI } from "@ai-sdk/google"
 import { streamText, tool, convertToModelMessages } from "ai"
+import { z } from "zod"
+import { db } from "@/lib/db"
+import { notifyNewLead } from "@/lib/notifications"
+import { chatRatelimit, getIp } from "@/lib/ratelimit"
+import { logApiCost } from "@/lib/ai"
+import { upsertChatSession } from "@/lib/db/chat-sessions"
 
 function getGoogle() {
   if (!process.env.GEMINI_API_KEY) {
@@ -7,12 +13,6 @@ function getGoogle() {
   }
   return createGoogleGenerativeAI({ apiKey: process.env.GEMINI_API_KEY })
 }
-import { z } from "zod"
-import { db } from "@/lib/db"
-import { notifyNewLead } from "@/lib/notifications"
-import { chatRatelimit, getIp } from "@/lib/ratelimit"
-import { logApiCost } from "@/lib/ai"
-import { upsertChatSession } from "@/lib/db/chat-sessions"
 
 export const maxDuration = 30
 

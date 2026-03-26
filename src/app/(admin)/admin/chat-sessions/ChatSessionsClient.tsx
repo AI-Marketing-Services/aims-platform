@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { ChevronDown, ChevronRight, MessageSquare, Mail, Clock, Hash } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { cn, timeAgo } from "@/lib/utils"
 
 type MessagePart = {
   type: string
@@ -52,20 +52,7 @@ function getMessageText(msg: StoredMessage): string {
   return msg.content ?? ""
 }
 
-function formatDate(dateStr: string): string {
-  const date = new Date(dateStr)
-  const now = new Date()
-  const diffMs = now.getTime() - date.getTime()
-  const diffMins = Math.floor(diffMs / 60000)
-  const diffHours = Math.floor(diffMs / 3600000)
-  const diffDays = Math.floor(diffMs / 86400000)
-
-  if (diffMins < 1) return "Just now"
-  if (diffMins < 60) return `${diffMins}m ago`
-  if (diffHours < 24) return `${diffHours}h ago`
-  if (diffDays < 7) return `${diffDays}d ago`
-  return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
-}
+// Use shared timeAgo from lib/utils instead of a local duplicate
 
 interface ChatSessionsClientProps {
   sessions: ChatSessionRow[]
@@ -201,7 +188,7 @@ function SessionRow({
         <td className="px-4 py-3">
           <div className="flex items-center gap-1.5">
             <Clock className="h-3 w-3 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">{formatDate(session.updatedAt)}</span>
+            <span className="text-sm text-muted-foreground">{timeAgo(session.updatedAt)}</span>
           </div>
         </td>
         <td className="px-4 py-3">

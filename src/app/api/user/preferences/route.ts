@@ -35,37 +35,27 @@ export async function PATCH(req: Request) {
   const parsed = prefsSchema.safeParse(body)
   if (!parsed.success) return NextResponse.json({ error: "Invalid data" }, { status: 400 })
 
+  // Extract only the fields that map to User model columns.
+  // Granular notification prefs (notif*) and heardAbout are accepted by the
+  // schema for forward-compat but not persisted to DB columns yet.
   const {
-    notifNewPurchase,
-    notifFulfillmentUpdate,
-    notifSupportReply,
-    notifBillingAlert,
-    notifMarketingDigest,
-    notifFeatureAnnouncements,
-    notifWeeklySummary,
-    notifServiceStatus,
-    notifBillingReminders,
-    heardAbout,
-    ...directFields
+    emailNotifs,
+    slackNotifs,
+    company,
+    phone,
+    website,
+    industry,
+    locationCount,
   } = parsed.data
 
-  // Build the update object - only include fields that the User model supports directly
-  const updateData: Record<string, unknown> = { ...directFields }
-
-  // Store granular notification preferences as JSON metadata
-  // These event-type prefs are not separate DB columns, so we store them
-  // in a JSON-friendly way. When a UserPreference model is added later,
-  // wire it up here. For now, these are acknowledged and the UI manages state.
-  void notifNewPurchase
-  void notifFulfillmentUpdate
-  void notifSupportReply
-  void notifBillingAlert
-  void notifMarketingDigest
-  void notifFeatureAnnouncements
-  void notifWeeklySummary
-  void notifServiceStatus
-  void notifBillingReminders
-  void heardAbout
+  const updateData: Record<string, unknown> = {}
+  if (emailNotifs !== undefined) updateData.emailNotifs = emailNotifs
+  if (slackNotifs !== undefined) updateData.slackNotifs = slackNotifs
+  if (company !== undefined) updateData.company = company
+  if (phone !== undefined) updateData.phone = phone
+  if (website !== undefined) updateData.website = website
+  if (industry !== undefined) updateData.industry = industry
+  if (locationCount !== undefined) updateData.locationCount = locationCount
 
   try {
     const user = await db.user.update({

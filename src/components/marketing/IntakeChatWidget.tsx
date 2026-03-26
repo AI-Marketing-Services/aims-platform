@@ -6,6 +6,7 @@ import { X, Send, Loader2, Mail, ArrowRight, AlertCircle } from "lucide-react"
 import { useChat } from "@ai-sdk/react"
 import { TextStreamChatTransport, type UIMessage } from "ai"
 import Image from "next/image"
+import { getMessageText } from "@/lib/utils"
 
 const WELCOME_TEXT =
   "What's the biggest bottleneck in your business right now? We help companies embed AI to remove growth ceilings."
@@ -17,13 +18,6 @@ const INITIAL_MESSAGES: UIMessage[] = [
     parts: [{ type: "text" as const, text: WELCOME_TEXT }],
   },
 ]
-
-function getMessageText(parts: { type: string; text?: string }[]): string {
-  return parts
-    .filter((p): p is { type: "text"; text: string } => p.type === "text")
-    .map((p) => p.text)
-    .join("")
-}
 
 function generateSessionId(): string {
   return `intake_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`

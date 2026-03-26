@@ -44,6 +44,13 @@ export function getInitials(name: string): string {
     .toUpperCase()
 }
 
+export function getMessageText(parts: { type: string; text?: string }[]): string {
+  return parts
+    .filter((p): p is { type: "text"; text: string } => p.type === "text")
+    .map((p) => p.text)
+    .join("")
+}
+
 export const FULFILLMENT_STATUS_CONFIG = {
   PENDING_SETUP: { label: "Pending Setup", color: "bg-yellow-900/20 text-yellow-400" },
   IN_PROGRESS: { label: "In Progress", color: "bg-blue-900/20 text-blue-400" },

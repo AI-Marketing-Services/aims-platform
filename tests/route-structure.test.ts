@@ -68,7 +68,6 @@ describe("Admin auth guards", () => {
 
 describe("API routes exist", () => {
   const apiRoutes = [
-    "app/api/checkout/route.ts",
     "app/api/admin/services/route.ts",
     "app/api/admin/emailbison/connections/route.ts",
     "app/api/admin/emailbison/workspaces/route.ts",

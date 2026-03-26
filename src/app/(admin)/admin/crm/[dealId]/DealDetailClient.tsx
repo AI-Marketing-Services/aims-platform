@@ -2,6 +2,7 @@
 
 import { useState, useTransition, useRef } from "react"
 import { useRouter } from "next/navigation"
+import { toast } from "sonner"
 import {
   ChevronDown,
   Clock,
@@ -279,9 +280,9 @@ export function DealDetailClient({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...data, authorId }),
       })
-      if (!res.ok) console.error("patchDeal failed:", res.status)
-    } catch (err) {
-      console.error("patchDeal error:", err)
+      if (!res.ok) toast.error("Failed to update deal")
+    } catch {
+      toast.error("Failed to update deal")
     }
   }
 
@@ -388,8 +389,8 @@ export function DealDetailClient({
       if (res.ok) {
         router.push("/admin/crm")
       }
-    } catch (err) {
-      console.error("Delete failed:", err)
+    } catch {
+      toast.error("Failed to delete deal")
     }
   }
 

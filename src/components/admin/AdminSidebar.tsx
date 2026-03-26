@@ -198,12 +198,9 @@ export function AdminSidebar() {
         <div className="flex items-center gap-2">
           <UserButton afterSignOutUrl="/" />
           {!collapsed && (
-            <>
-              <span className="text-sm text-muted-foreground truncate flex-1">
-                Admin
-              </span>
-              <NotificationBell variant="light" />
-            </>
+            <span className="text-sm text-muted-foreground truncate flex-1">
+              Admin
+            </span>
           )}
         </div>
       </div>

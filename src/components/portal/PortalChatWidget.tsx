@@ -1,11 +1,12 @@
 "use client"
 
 import { useState, useRef, useEffect, useMemo } from "react"
-import { MessageSquare, X, Send, Loader2, Layers, CreditCard, MessageSquarePlus, ShoppingBag, AlertCircle } from "lucide-react"
+import { X, Send, Loader2, Layers, CreditCard, MessageSquarePlus, ShoppingBag, AlertCircle } from "lucide-react"
 import { useChat } from "@ai-sdk/react"
 import { TextStreamChatTransport, type UIMessage } from "ai"
 import Link from "next/link"
 import Image from "next/image"
+import { getMessageText } from "@/lib/utils"
 
 const QUICK_LINKS = [
   { label: "My Services", href: "/portal/services", icon: Layers },
@@ -13,13 +14,6 @@ const QUICK_LINKS = [
   { label: "Submit Ticket", href: "/portal/support", icon: MessageSquarePlus },
   { label: "Marketplace", href: "/portal/marketplace", icon: ShoppingBag },
 ]
-
-function getMessageText(parts: { type: string; text?: string }[]): string {
-  return parts
-    .filter((p): p is { type: "text"; text: string } => p.type === "text")
-    .map((p) => p.text)
-    .join("")
-}
 
 function buildWelcomeMessage(firstName: string, serviceCount: number): string {
   if (serviceCount === 0) {

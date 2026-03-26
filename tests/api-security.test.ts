@@ -114,42 +114,20 @@ describe("No internal error leaking", () => {
   }
 })
 
-describe("Checkout route security", () => {
-  it("checkout route exists", () => {
-    const checkoutPath = join(SRC, "app/api/checkout/route.ts")
-    expect(existsSync(checkoutPath)).toBe(true)
+describe("Stripe webhook checkout security", () => {
+  // Checkout is handled via Stripe webhooks (checkout.session.completed)
+  // rather than a dedicated /api/checkout route.
+  it("stripe webhook verifies signature", () => {
+    const content = readFileSync(join(SRC, "app/api/webhooks/stripe/route.ts"), "utf-8")
+    expect(content).toContain("constructEvent")
+    expect(content).toContain("stripe-signature")
+    expect(content).toContain("STRIPE_WEBHOOK_SECRET")
   })
 
-  it("checkout route has rate limiting", () => {
-    const content = readFileSync(join(SRC, "app/api/checkout/route.ts"), "utf-8")
-    expect(content).toContain("ratelimit")
-  })
-
-  it("checkout route uses Zod validation", () => {
-    const content = readFileSync(join(SRC, "app/api/checkout/route.ts"), "utf-8")
-    expect(content).toContain("z.object")
-    expect(content).toContain("safeParse")
-  })
-
-  it("checkout route resolves prices from DB, not client", () => {
-    const content = readFileSync(join(SRC, "app/api/checkout/route.ts"), "utf-8")
-    // Should NOT accept price/amount from client
-    expect(content).toContain("never trust client")
-    // Should resolve from DB
-    expect(content).toContain("db.serviceArm.findMany")
-  })
-
-  it("checkout route validates redirect URLs", () => {
-    const content = readFileSync(join(SRC, "app/api/checkout/route.ts"), "utf-8")
-    expect(content).toContain("allowedHost")
-    expect(content).toContain("Invalid successUrl")
-    expect(content).toContain("Invalid cancelUrl")
-  })
-
-  it("checkout route has zero-price guard", () => {
-    const content = readFileSync(join(SRC, "app/api/checkout/route.ts"), "utf-8")
-    expect(content).toContain("unitAmount === 0")
-    expect(content).toContain("No pricing available")
+  it("stripe webhook has idempotency checks", () => {
+    const content = readFileSync(join(SRC, "app/api/webhooks/stripe/route.ts"), "utf-8")
+    expect(content).toContain("already exists")
+    expect(content).toContain("findUnique")
   })
 })
 

@@ -339,7 +339,21 @@ export async function createLeadMagnetSubmission(data: {
   utmMedium?: string
   utmCampaign?: string
 }) {
-
-  const submission = await db.leadMagnetSubmission.create({ data: data as any })
+  const submission = await db.leadMagnetSubmission.create({
+    data: {
+      type: data.type,
+      email: data.email,
+      name: data.name,
+      company: data.company,
+      phone: data.phone,
+      data: data.data as Prisma.InputJsonValue,
+      results: data.results as Prisma.InputJsonValue | undefined,
+      score: data.score,
+      source: data.source,
+      utmSource: data.utmSource,
+      utmMedium: data.utmMedium,
+      utmCampaign: data.utmCampaign,
+    },
+  })
   return submission
 }

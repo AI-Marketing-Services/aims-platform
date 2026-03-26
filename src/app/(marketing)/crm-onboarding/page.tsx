@@ -30,6 +30,7 @@ import {
 } from "lucide-react"
 import { useChat } from "@ai-sdk/react"
 import { TextStreamChatTransport, type UIMessage } from "ai"
+import { getMessageText } from "@/lib/utils"
 
 /* ------------------------------------------------------------------ */
 /*  CONSTANTS                                                          */
@@ -217,13 +218,6 @@ function saveChecked(state: Record<string, boolean>) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
   } catch { /* noop */ }
-}
-
-function getMessageText(parts: { type: string; text?: string }[]): string {
-  return parts
-    .filter((p): p is { type: "text"; text: string } => p.type === "text")
-    .map((p) => p.text)
-    .join("")
 }
 
 /* ------------------------------------------------------------------ */

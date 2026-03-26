@@ -31,7 +31,9 @@ export async function logApiCost(params: {
   clientId?: string
   metadata?: Record<string, string | number | boolean | null>
 }) {
-  await db.apiCostLog.create({ data: params }).catch(console.error)
+  await db.apiCostLog.create({ data: params }).catch(() => {
+    // Non-blocking: cost logging failure should not affect request processing
+  })
 }
 
 

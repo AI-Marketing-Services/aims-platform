@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { toast } from "sonner"
 import { User, Bell, Shield, ExternalLink, Plug, Pencil, Check, X } from "lucide-react"
 import Image from "next/image"
 
@@ -273,7 +274,7 @@ export function PortalSettingsClient({ clerkUser, dbUser }: Props) {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
-    }).catch(console.error)
+    }).catch(() => toast.error("Failed to save profile"))
   }
 
   async function handleToggle(field: "emailNotifs" | "slackNotifs", value: boolean) {
@@ -284,7 +285,7 @@ export function PortalSettingsClient({ clerkUser, dbUser }: Props) {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ [field]: value }),
-    }).catch(console.error)
+    }).catch(() => toast.error("Failed to save notification preference"))
   }
 
   async function saveNotificationPreferences() {
@@ -299,7 +300,7 @@ export function PortalSettingsClient({ clerkUser, dbUser }: Props) {
         notifBillingAlert,
         notifMarketingDigest,
       }),
-    }).catch(console.error)
+    }).catch(() => toast.error("Failed to save notification preferences"))
     setNotifSaving(false)
     setNotifSaved(true)
     setTimeout(() => setNotifSaved(false), 2000)
