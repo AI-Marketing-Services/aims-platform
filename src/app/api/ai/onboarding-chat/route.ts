@@ -122,7 +122,7 @@ export async function POST(req: Request) {
       source: "onboarding",
       email,
       messages: rawMessages,
-    })
+    }).catch(() => {})
   }
 
   const uiMessages = rawMessages

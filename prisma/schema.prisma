@@ -22,6 +22,7 @@ model User {
   industry      String?
   website       String?
   locationCount Int       @default(1)
+  heardAbout    String?
 
   deals                   Deal[]
   subscriptions           Subscription[]
@@ -706,6 +707,7 @@ model ChatSession {
 
   @@index([email])
   @@index([source])
+  @@index([clerkUserId])
   @@index([createdAt])
 }
 

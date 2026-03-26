@@ -10,4 +10,5 @@ export const DEMO_SLUGS = [
   "website-crm-chatbot",
   "finance-automation",
   "audience-targeting",
+  "seo-aeo",
 ]

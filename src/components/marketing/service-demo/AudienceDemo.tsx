@@ -55,7 +55,7 @@ export function AudienceDemo() {
         <Search className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
         <span className="text-sm text-foreground flex-1">
           {typed}
-          <motion.span animate={{ opacity: [1, 0, 1] }} transition={{ repeat: Infinity, duration: 0.6 }} className="inline-block w-0.5 h-3.5 bg-deep0 ml-0.5 align-middle" />
+          <motion.span animate={{ opacity: [1, 0, 1] }} transition={{ repeat: Infinity, duration: 0.6 }} className="inline-block w-0.5 h-3.5 bg-foreground ml-0.5 align-middle" />
         </span>
       </div>
       <AnimatePresence>

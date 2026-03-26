@@ -193,6 +193,7 @@ export function PortalChatWidget({ firstName = "there", serviceCount = 0 }: Port
                 placeholder="Ask about your services..."
                 className="flex-1 rounded-lg border border-border bg-[#0E1219] px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-[#C4972A]/50"
                 disabled={isStreaming}
+                maxLength={1500}
               />
               <button
                 type="submit"

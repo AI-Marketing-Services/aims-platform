@@ -14,11 +14,6 @@ const prefsSchema = z.object({
   notifSupportReply: z.boolean().optional(),
   notifBillingAlert: z.boolean().optional(),
   notifMarketingDigest: z.boolean().optional(),
-  // Legacy fields (still accepted for backwards compat)
-  notifFeatureAnnouncements: z.boolean().optional(),
-  notifWeeklySummary: z.boolean().optional(),
-  notifServiceStatus: z.boolean().optional(),
-  notifBillingReminders: z.boolean().optional(),
   // Profile fields
   company: z.string().max(200).optional(),
   phone: z.string().max(50).optional(),
@@ -32,7 +27,12 @@ export async function PATCH(req: Request) {
   const { userId } = await auth()
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
-  const body = await req.json()
+  let body: unknown
+  try {
+    body = await req.json()
+  } catch {
+    return NextResponse.json({ error: "Invalid request body" }, { status: 400 })
+  }
   const parsed = prefsSchema.safeParse(body)
   if (!parsed.success) return NextResponse.json({ error: "Invalid data" }, { status: 400 })
 
@@ -49,6 +49,7 @@ export async function PATCH(req: Request) {
     website,
     industry,
     locationCount,
+    heardAbout,
   } = parsed.data
 
   const updateData: Record<string, unknown> = {}
@@ -64,6 +65,7 @@ export async function PATCH(req: Request) {
   if (website !== undefined) updateData.website = website
   if (industry !== undefined) updateData.industry = industry
   if (locationCount !== undefined) updateData.locationCount = locationCount
+  if (heardAbout !== undefined) updateData.heardAbout = heardAbout
 
   try {
     const user = await db.user.update({
@@ -82,6 +84,7 @@ export async function PATCH(req: Request) {
         website: true,
         industry: true,
         locationCount: true,
+        heardAbout: true,
       },
     })
 

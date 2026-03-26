@@ -79,7 +79,7 @@ export async function POST(req: Request) {
       source: "portal",
       clerkUserId: userId,
       messages: rawMessages,
-    })
+    }).catch(() => {})
   }
 
   const uiMessages = rawMessages

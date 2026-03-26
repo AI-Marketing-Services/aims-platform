@@ -96,7 +96,7 @@ export async function POST(req: Request) {
       sessionId,
       source: "marketing",
       messages: rawMessages,
-    })
+    }).catch(() => {})
   }
 
   // Clamp to last MAX_MESSAGES and convert UIMessage parts to model messages

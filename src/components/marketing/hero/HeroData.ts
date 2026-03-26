@@ -1,6 +1,6 @@
 import {
   LayoutDashboard, Users, Megaphone, GitBranch,
-  BarChart2, Settings, Bell,
+  BarChart2, Settings, Bell, CreditCard, AlertCircle,
 } from "lucide-react"
 
 // ─── Data Types ──────────────────────────────────────────────────────────────
@@ -77,8 +77,8 @@ export const NOTIFICATIONS: Notification[] = [
   { icon: Users, text: "New high-value lead: Sarah Chen", time: "4 hours ago", unread: true, action: "View →", type: "lead" },
   { icon: Megaphone, text: "Campaign 'Alpha' started", time: "3 hours ago", unread: true, action: "View →", type: "campaign" },
   { icon: Bell, text: "Meeting booked: Acme Corp", time: "3 hours ago", unread: false, action: "Reply →", type: "meeting" },
-  { icon: Users, text: "Invoice paid: $12,000", time: "Yesterday", unread: false, action: "Dismiss", type: "billing" },
-  { icon: Users, text: "Lead score alert: Kevin Park hit 55", time: "2 days ago", unread: false, action: "View →", type: "system" },
+  { icon: CreditCard, text: "Invoice paid: $12,000", time: "Yesterday", unread: false, action: "Dismiss", type: "billing" },
+  { icon: AlertCircle, text: "Lead score alert: Kevin Park hit 55", time: "2 days ago", unread: false, action: "View →", type: "system" },
 ]
 
 export const CAMPAIGNS: Campaign[] = [
