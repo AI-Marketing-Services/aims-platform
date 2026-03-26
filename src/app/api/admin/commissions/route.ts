@@ -1,16 +1,8 @@
 import { NextResponse } from "next/server"
-import { auth } from "@clerk/nextjs/server"
 import { z } from "zod"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
-
-async function requireAdmin() {
-  const { userId, sessionClaims } = await auth()
-  if (!userId) return null
-  const role = (sessionClaims?.metadata as { role?: string })?.role
-  if (!role || !["ADMIN", "SUPER_ADMIN"].includes(role)) return null
-  return userId
-}
+import { requireAdmin } from "@/lib/auth"
 
 const approveSchema = z.object({
   commissionId: z.string().min(1),
@@ -75,6 +67,11 @@ export async function PATCH(req: Request) {
       return NextResponse.json({ error: "Commission not found" }, { status: 404 })
     }
 
+    const VALID_TRANSITIONS: Record<string, string[]> = {
+      PENDING: ["APPROVED", "REJECTED"],
+      APPROVED: ["PAID", "REJECTED"],
+    }
+
     const statusMap = {
       approve: "APPROVED" as const,
       reject: "REJECTED" as const,
@@ -82,6 +79,14 @@ export async function PATCH(req: Request) {
     }
 
     const newStatus = statusMap[parsed.data.action]
+    const allowedTargets = VALID_TRANSITIONS[commission.status] ?? []
+
+    if (!allowedTargets.includes(newStatus)) {
+      return NextResponse.json(
+        { error: `Cannot transition from ${commission.status} to ${newStatus}` },
+        { status: 400 }
+      )
+    }
 
     const updated = await db.commission.update({
       where: { id: parsed.data.commissionId },

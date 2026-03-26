@@ -232,7 +232,7 @@ export async function handleSubscriptionCreated(sub: Stripe.Subscription) {
 }
 
 export async function handleSubscriptionUpdated(sub: Stripe.Subscription) {
-  const existing = await db.subscription.findUnique({
+  const existing = await db.subscription.findFirst({
     where: { stripeSubId: sub.id },
   })
   if (!existing) return
@@ -245,7 +245,7 @@ export async function handleSubscriptionUpdated(sub: Stripe.Subscription) {
     paused: "PAUSED",
   }
 
-  await db.subscription.update({
+  await db.subscription.updateMany({
     where: { stripeSubId: sub.id },
     data: {
       status: statusMap[sub.status] ?? "ACTIVE",
@@ -258,7 +258,7 @@ export async function handleSubscriptionUpdated(sub: Stripe.Subscription) {
 }
 
 export async function handleSubscriptionDeleted(sub: Stripe.Subscription) {
-  await db.subscription.update({
+  await db.subscription.updateMany({
     where: { stripeSubId: sub.id },
     data: {
       status: "CANCELLED",
@@ -270,7 +270,7 @@ export async function handleSubscriptionDeleted(sub: Stripe.Subscription) {
 export async function handleInvoicePaid(invoice: Stripe.Invoice) {
   if (!invoice.subscription) return
 
-  const sub = await db.subscription.findUnique({
+  const sub = await db.subscription.findFirst({
     where: { stripeSubId: invoice.subscription as string },
     include: { user: true },
   })

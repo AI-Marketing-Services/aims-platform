@@ -1,9 +1,19 @@
 import { Resend } from "resend"
 import { db } from "@/lib/db"
+import { logger } from "@/lib/logger"
+
+export function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;")
+}
 
 export function getResend() {
   if (!process.env.RESEND_API_KEY || process.env.RESEND_API_KEY === "re_placeholder") {
-    console.warn("[AIMS] RESEND_API_KEY is not configured - emails will not be delivered")
+    logger.warn("RESEND_API_KEY is not configured - emails will not be delivered")
   }
   return new Resend(process.env.RESEND_API_KEY ?? "re_placeholder")
 }
@@ -32,7 +42,7 @@ const REPLY_TO = "irtaza@modern-amenities.com"
 
 // ─── Branded HTML wrapper ─────────────────────────────────────────────────────
 
-function emailLayout(content: string, preheader = "") {
+export function emailLayout(content: string, preheader = "") {
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -94,19 +104,19 @@ function emailLayout(content: string, preheader = "") {
 </html>`
 }
 
-function btn(text: string, url: string) {
+export function btn(text: string, url: string) {
   return `<a href="${url}" style="display:inline-block;background:#C4972A;color:#ffffff;padding:13px 28px;border-radius:6px;text-decoration:none;font-weight:700;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;margin:8px 0;">${text}</a>`
 }
 
-function h1(text: string) {
+export function h1(text: string) {
   return `<h1 style="margin:0 0 16px;font-size:26px;font-weight:800;color:#111827;line-height:1.2;letter-spacing:-0.5px;">${text}</h1>`
 }
 
-function p(text: string) {
+export function p(text: string) {
   return `<p style="margin:0 0 16px;font-size:15px;color:#4B5563;line-height:1.7;">${text}</p>`
 }
 
-function divider() {
+export function divider() {
   return `<hr style="border:none;border-top:1px solid #F0F0F0;margin:28px 0;" />`
 }
 

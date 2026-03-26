@@ -75,10 +75,10 @@ const priorityConfig: Record<string, string> = {
 export function AdminSupportClient({ tickets: initialTickets, stats }: Props) {
   const [tickets, setTickets] = useState(initialTickets)
   const [expandedId, setExpandedId] = useState<string | null>(null)
-  const [replyText, setReplyText] = useState("")
+  const [replyTexts, setReplyTexts] = useState<Record<string, string>>({})
   const [statusFilter, setStatusFilter] = useState<string>("all")
   const [sending, setSending] = useState(false)
-  const [statusNote, setStatusNote] = useState("")
+  const [statusNotes, setStatusNotes] = useState<Record<string, string>>({})
 
   const filtered = statusFilter === "all"
     ? tickets
@@ -95,13 +95,14 @@ export function AdminSupportClient({ tickets: initialTickets, stats }: Props) {
   }
 
   async function handleReply(ticketId: string) {
-    if (!replyText.trim() || sending) return
+    const text = replyTexts[ticketId] ?? ""
+    if (!text.trim() || sending) return
     setSending(true)
     try {
       const res = await fetch(`/api/admin/tickets/${ticketId}/reply`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: replyText }),
+        body: JSON.stringify({ message: text }),
       })
       if (res.ok) {
         const data = await res.json()
@@ -115,7 +116,7 @@ export function AdminSupportClient({ tickets: initialTickets, stats }: Props) {
                     ...t.replies,
                     {
                       id: data.id,
-                      message: replyText,
+                      message: text,
                       isAdmin: true,
                       authorId: "",
                       authorName: "AIMS Support",
@@ -126,7 +127,7 @@ export function AdminSupportClient({ tickets: initialTickets, stats }: Props) {
               : t
           )
         )
-        setReplyText("")
+        setReplyTexts((prev) => ({ ...prev, [ticketId]: "" }))
       }
     } catch {
       // Error handled silently
@@ -135,13 +136,14 @@ export function AdminSupportClient({ tickets: initialTickets, stats }: Props) {
   }
 
   async function handleStatusChange(ticketId: string, newStatus: string) {
+    const note = statusNotes[ticketId] ?? ""
     try {
       const res = await fetch(`/api/admin/tickets/${ticketId}/status`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           status: newStatus,
-          resolutionNote: statusNote || undefined,
+          resolutionNote: note || undefined,
         }),
       })
       if (res.ok) {
@@ -152,12 +154,12 @@ export function AdminSupportClient({ tickets: initialTickets, stats }: Props) {
                   ...t,
                   status: newStatus,
                   resolvedAt: ["resolved", "closed"].includes(newStatus) ? new Date().toISOString() : t.resolvedAt,
-                  resolutionNote: statusNote || t.resolutionNote,
+                  resolutionNote: note || t.resolutionNote,
                 }
               : t
           )
         )
-        setStatusNote("")
+        setStatusNotes((prev) => ({ ...prev, [ticketId]: "" }))
       }
     } catch {
       // Error handled silently
@@ -306,14 +308,14 @@ export function AdminSupportClient({ tickets: initialTickets, stats }: Props) {
                       <label className="block text-xs font-medium text-muted-foreground mb-1.5">Reply to client</label>
                       <textarea
                         rows={3}
-                        value={replyText}
-                        onChange={(e) => setReplyText(e.target.value)}
+                        value={replyTexts[ticket.id] ?? ""}
+                        onChange={(e) => setReplyTexts((prev) => ({ ...prev, [ticket.id]: e.target.value }))}
                         placeholder="Type your reply..."
                         className="w-full px-4 py-3 bg-background border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C4972A]/20 focus:border-[#C4972A] resize-none"
                       />
                       <button
                         onClick={() => handleReply(ticket.id)}
-                        disabled={!replyText.trim() || sending}
+                        disabled={!(replyTexts[ticket.id] ?? "").trim() || sending}
                         className="mt-2 flex items-center gap-2 px-4 py-2 bg-[#C4972A] text-white text-xs font-medium rounded-lg hover:bg-[#A17D22] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <Send className="w-3.5 h-3.5" />
@@ -327,8 +329,8 @@ export function AdminSupportClient({ tickets: initialTickets, stats }: Props) {
                         <label className="block text-xs font-medium text-muted-foreground mb-1.5">Resolution note (optional)</label>
                         <input
                           type="text"
-                          value={statusNote}
-                          onChange={(e) => setStatusNote(e.target.value)}
+                          value={statusNotes[ticket.id] ?? ""}
+                          onChange={(e) => setStatusNotes((prev) => ({ ...prev, [ticket.id]: e.target.value }))}
                           placeholder="Brief resolution summary..."
                           className="w-full px-3 py-2 bg-background border border-border rounded-lg text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C4972A]/20 focus:border-[#C4972A]"
                         />

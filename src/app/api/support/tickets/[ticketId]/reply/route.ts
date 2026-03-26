@@ -35,7 +35,12 @@ export async function POST(
     return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   }
 
-  const body = await req.json()
+  let body: unknown
+  try {
+    body = await req.json()
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 })
+  }
   const parsed = replySchema.safeParse(body)
   if (!parsed.success) {
     return NextResponse.json({ error: "Invalid data", details: parsed.error.flatten() }, { status: 400 })

@@ -298,7 +298,7 @@ model Subscription {
   serviceArmId      String
   serviceArm        ServiceArm        @relation(fields: [serviceArmId], references: [id])
 
-  stripeSubId       String?           @unique
+  stripeSubId       String?
   stripeCustId      String?
   status            SubStatus         @default(ACTIVE)
   tier              String?
@@ -322,6 +322,7 @@ model Subscription {
   @@index([serviceArmId])
   @@index([status])
   @@index([fulfillmentStatus])
+  @@index([stripeSubId])
 }
 
 enum SubStatus {
@@ -654,6 +655,7 @@ model Commission {
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
 
+  @@unique([referralId, stripePaymentId])
   @@index([referralId])
   @@index([userId])
   @@index([status])

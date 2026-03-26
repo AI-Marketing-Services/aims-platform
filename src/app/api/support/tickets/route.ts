@@ -22,7 +22,12 @@ export async function POST(req: Request) {
   const dbUser = await db.user.findUnique({ where: { clerkId } })
   if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 })
 
-  const body = await req.json()
+  let body: unknown
+  try {
+    body = await req.json()
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 })
+  }
   const parsed = createSchema.safeParse(body)
   if (!parsed.success) {
     return NextResponse.json({ error: "Invalid data", details: parsed.error.flatten() }, { status: 400 })
@@ -39,8 +44,8 @@ export async function POST(req: Request) {
       },
     })
 
-    // Send notifications in parallel (non-blocking)
-    Promise.allSettled([
+    // Send notifications in parallel
+    await Promise.allSettled([
       // Email confirmation to client
       sendTicketConfirmationEmail({
         to: dbUser.email,
@@ -87,7 +92,6 @@ export async function GET() {
       where: { userId: dbUser.id },
       orderBy: { createdAt: "desc" },
       include: {
-        responses: { select: { id: true } },
         replies: {
           orderBy: { createdAt: "asc" },
           select: {

@@ -81,7 +81,7 @@ export async function POST(req: Request) {
         }
 
         if (!userId) {
-          console.error("checkout.session.completed: could not resolve userId", session.id)
+          logger.error("checkout.session.completed: could not resolve userId", undefined, { endpoint: "POST /api/webhooks/stripe", action: session.id })
           break
         }
 
@@ -89,7 +89,7 @@ export async function POST(req: Request) {
         await db.user.update({
           where: { id: userId },
           data: { stripeCustomerId: session.customer as string },
-        }).catch((err) => console.error(`Failed to update stripeCustomerId for user ${userId}:`, err))
+        }).catch((err) => logger.error("Failed to update stripeCustomerId", err, { userId }))
 
         // Parse cart items from metadata
         const slugsArr = (session.metadata?.slugs ?? "").split(",").filter(Boolean)
@@ -98,18 +98,18 @@ export async function POST(req: Request) {
 
         // Validate array lengths match to prevent out-of-bounds access
         if (slugsArr.length === 0 || tierIdsArr.length < slugsArr.length || amountsArr.length < slugsArr.length) {
-          console.error("checkout.session.completed: metadata array length mismatch", {
-            slugs: slugsArr.length, tiers: tierIdsArr.length, amounts: amountsArr.length,
+          logger.error("checkout.session.completed: metadata array length mismatch", undefined, {
+            endpoint: "POST /api/webhooks/stripe", action: `slugs:${slugsArr.length},tiers:${tierIdsArr.length},amounts:${amountsArr.length}`,
           })
           break
         }
 
         // Idempotency: if subscription records already exist for this Stripe subscription, skip
-        const existingSub = await db.subscription.findUnique({
+        const existingSub = await db.subscription.findFirst({
           where: { stripeSubId: session.subscription as string },
         })
         if (existingSub) {
-          console.warn(`Subscription ${session.subscription} already exists, skipping duplicate cart processing`)
+          logger.warn(`Subscription ${session.subscription} already exists, skipping duplicate cart processing`)
           break
         }
 
@@ -129,7 +129,7 @@ export async function POST(req: Request) {
 
           const serviceArm = serviceArmMap.get(slug)
           if (!serviceArm) {
-            console.warn(`No service arm found for slug: ${slug}`)
+            logger.warn(`No service arm found for slug: ${slug}`)
             continue
           }
 
@@ -156,7 +156,7 @@ export async function POST(req: Request) {
               currentPeriodEnd: new Date(Date.now() + 30 * 86400000),
             },
           }).catch((err) => {
-            console.error(`Failed to create subscription for ${slug} (stripeSubId: ${session.subscription}):`, err)
+            logger.error(`Failed to create subscription for ${slug}`, err, { endpoint: "POST /api/webhooks/stripe", action: `stripeSubId:${session.subscription}` })
             return null
           })
 
@@ -176,7 +176,7 @@ export async function POST(req: Request) {
               asanaProjectGid: serviceArm.asanaProjectGid,
               asanaAssigneeGid: serviceArm.asanaAssigneeGid ?? undefined,
               asanaTaskTemplate: (serviceArm.asanaTaskTemplate as { name?: string; notes?: string; subtasks?: string[] }) ?? undefined,
-            }).catch((err) => console.error("Asana task creation failed:", err));
+            }).catch((err) => logger.error("Asana task creation failed", err));
           }
 
           // Create fulfillment tasks from service arm setup steps
@@ -223,7 +223,7 @@ export async function POST(req: Request) {
                 status: "active",
                 activatedAt: new Date(),
               },
-            }).catch((err) => console.error(`Failed to create dealServiceArm for deal ${deal.id}:`, err))
+            }).catch((err) => logger.error("Failed to create dealServiceArm", err, { dealId: deal.id }))
           }
 
           // Notifications + welcome email + post-purchase sequence for first item only
@@ -270,11 +270,11 @@ export async function POST(req: Request) {
         if (!serviceArm) break
 
         // Idempotency: check if subscription already exists before creating
-        const existingLegacySub = await db.subscription.findUnique({
+        const existingLegacySub = await db.subscription.findFirst({
           where: { stripeSubId: sub.id },
         })
         if (existingLegacySub) {
-          console.warn(`Subscription ${sub.id} already exists, skipping duplicate creation`)
+          logger.warn(`Subscription ${sub.id} already exists, skipping duplicate creation`)
           break
         }
 
@@ -311,7 +311,7 @@ export async function POST(req: Request) {
             asanaProjectGid: serviceArm.asanaProjectGid,
             asanaAssigneeGid: serviceArm.asanaAssigneeGid ?? undefined,
             asanaTaskTemplate: (serviceArm.asanaTaskTemplate as { name?: string; notes?: string; subtasks?: string[] }) ?? undefined,
-          }).catch((err) => console.error("Asana task creation failed (legacy):", err));
+          }).catch((err) => logger.error("Asana task creation failed (legacy)", err));
         }
 
         const setupSteps = (serviceArm.setupSteps as Array<{ title: string; description?: string }>) ?? []
@@ -358,13 +358,13 @@ export async function POST(req: Request) {
         const sub = event.data.object as Stripe.Subscription
         await handleSubscriptionDeleted(sub)
         // Mark associated deals as churned
-        const existingSub = await db.subscription.findUnique({
+        const deletedSub = await db.subscription.findFirst({
           where: { stripeSubId: sub.id },
           select: { userId: true },
         })
-        if (existingSub?.userId) {
+        if (deletedSub?.userId) {
           const deal = await db.deal.findFirst({
-            where: { userId: existingSub.userId, stage: "ACTIVE_CLIENT" },
+            where: { userId: deletedSub.userId, stage: "ACTIVE_CLIENT" },
           })
           if (deal) {
             await db.deal.update({
@@ -383,10 +383,13 @@ export async function POST(req: Request) {
         const invoice = event.data.object as Stripe.Invoice
         await handleInvoicePaid(invoice)
 
+        // Only create commissions on the first invoice (subscription creation)
+        if (invoice.billing_reason !== "subscription_create") break
+
         // Calculate referral commissions on first invoice for referred users
         if (invoice.subscription && invoice.amount_paid > 0) {
           try {
-            const sub = await db.subscription.findUnique({
+            const sub = await db.subscription.findFirst({
               where: { stripeSubId: invoice.subscription as string },
               select: { userId: true, id: true },
             })

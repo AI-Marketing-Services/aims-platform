@@ -1,5 +1,6 @@
 import { db } from "@/lib/db"
 import { sendInternalNotification } from "@/lib/email"
+import { logger } from "@/lib/logger"
 
 const SLACK_WEBHOOK_URL = process.env.SLACK_WEBHOOK_URL
 
@@ -62,7 +63,7 @@ export async function notify(payload: NotificationPayload) {
             },
           ],
         }),
-      }).catch((err) => console.error("Slack notification failed:", err))
+      }).catch((err) => logger.error("Slack notification failed", err))
     )
   }
 
@@ -73,7 +74,7 @@ export async function notify(payload: NotificationPayload) {
         subject: payload.title,
         message: payload.message,
         urgency: payload.urgency,
-      }).catch((err) => console.error("Email notification failed:", err))
+      }).catch((err) => logger.error("Email notification failed", err))
     )
   }
 

@@ -115,14 +115,14 @@ export async function POST(req: Request) {
           },
         },
       },
-    }).catch((e) => { console.error(e); return null })
+    }).catch((e) => { logger.error("Failed to create deal from lead magnet", e); return null })
 
     if (deal) {
       // Link submission to deal
       await db.leadMagnetSubmission.update({
         where: { id: submission.id },
         data: { convertedToDeal: true, dealId: deal.id },
-      }).catch(console.error)
+      }).catch((e) => logger.error("Failed to link submission to deal", e))
 
       // Notify team
       await notifyNewLead({
@@ -131,7 +131,7 @@ export async function POST(req: Request) {
         company: parsed.data.company,
         source: typeSlug,
         channelTag: parsed.data.utmSource,
-      }).catch(console.error)
+      }).catch((e) => logger.error("Failed to notify new lead", e))
 
       // Urgent Slack alert for hot leads
       if (tier === "hot") {
@@ -140,7 +140,7 @@ export async function POST(req: Request) {
           title: `HOT Lead - ${parsed.data.type}`,
           message: `${parsed.data.name ?? parsed.data.email}${parsed.data.company ? ` (${parsed.data.company})` : ""} scored ${score}/100. ${reason}`,
           urgency: "high",
-        }).catch(console.error)
+        }).catch((e) => logger.error("Failed to send hot lead notification", e))
       }
 
       // Sync to Close CRM
@@ -153,9 +153,9 @@ export async function POST(req: Request) {
         dealId: deal.id,
       }).then((closeLeadId) => {
         if (closeLeadId) {
-          db.deal.update({ where: { id: deal.id }, data: { closeLeadId } }).catch(console.error)
+          db.deal.update({ where: { id: deal.id }, data: { closeLeadId } }).catch((e) => logger.error("Failed to update deal with closeLeadId", e))
         }
-      }).catch(console.error)
+      }).catch((e) => logger.error("Failed to sync lead to Close CRM", e))
     }
 
     // Queue email sequence
@@ -166,7 +166,7 @@ export async function POST(req: Request) {
         score: parsed.data.score,
         monthlySavings: (parsed.data.results as Record<string, unknown>)?.monthlySavings as number | undefined,
         auditScore: parsed.data.score,
-      }).catch(console.error)
+      }).catch((e) => logger.error("Failed to queue email sequence", e))
     }
 
     // Build results URL - dedicated page for quiz/calculator/audit, generic for others
@@ -175,16 +175,7 @@ export async function POST(req: Request) {
       ? `${appUrl}/tools/${typeSlug}/results/${submission.id}`
       : `${appUrl}/tools/${typeSlug}`
 
-    // Send immediate results email (generic)
-    await sendLeadMagnetResults({
-      to: parsed.data.email,
-      name: parsed.data.name ?? "",
-      type: typeSlug,
-      score: parsed.data.score,
-      resultsUrl,
-    }).catch((err) => logger.error("Failed to send generic results email", err))
-
-    // Send detailed, type-specific results email with recommendations
+    // Send type-specific results email for quiz/calculator/audit, generic for others
     const detailedEmailParams = {
       to: parsed.data.email,
       name: parsed.data.name ?? "",
@@ -209,6 +200,16 @@ export async function POST(req: Request) {
         await sendAuditResultsEmail(detailedEmailParams).catch(
           (err) => logger.error("Failed to send audit results email", err)
         )
+        break
+      default:
+        // Generic fallback for SEGMENT_EXPLORER, STACK_CONFIGURATOR, etc.
+        await sendLeadMagnetResults({
+          to: parsed.data.email,
+          name: parsed.data.name ?? "",
+          type: typeSlug,
+          score: parsed.data.score,
+          resultsUrl,
+        }).catch((err) => logger.error("Failed to send generic results email", err))
         break
     }
 

@@ -4,8 +4,13 @@ import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
 
 export async function GET() {
-  const { userId: clerkId } = await auth()
+  const { userId: clerkId, sessionClaims } = await auth()
   if (!clerkId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+
+  const role = (sessionClaims?.metadata as { role?: string })?.role
+  if (!role || !["RESELLER", "ADMIN", "SUPER_ADMIN"].includes(role)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+  }
 
   try {
     const dbUser = await db.user.findUnique({ where: { clerkId } })

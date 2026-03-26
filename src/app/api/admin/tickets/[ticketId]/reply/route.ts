@@ -1,21 +1,13 @@
 import { NextResponse } from "next/server"
-import { auth } from "@clerk/nextjs/server"
 import { z } from "zod"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
+import { requireAdmin } from "@/lib/auth"
 import { sendReplyNotificationToClient } from "@/lib/email/support"
 
 const replySchema = z.object({
   message: z.string().min(1).max(10000),
 })
-
-async function requireAdmin() {
-  const { userId, sessionClaims } = await auth()
-  if (!userId) return null
-  const role = (sessionClaims?.metadata as { role?: string })?.role
-  if (!role || !["ADMIN", "SUPER_ADMIN"].includes(role)) return null
-  return userId
-}
 
 export async function POST(
   req: Request,
@@ -39,13 +31,21 @@ export async function POST(
     return NextResponse.json({ error: "Ticket not found" }, { status: 404 })
   }
 
-  const body = await req.json()
+  let body: unknown
+  try {
+    body = await req.json()
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 })
+  }
   const parsed = replySchema.safeParse(body)
   if (!parsed.success) {
     return NextResponse.json({ error: "Invalid data", details: parsed.error.flatten() }, { status: 400 })
   }
 
   const adminUser = await db.user.findUnique({ where: { clerkId: adminClerkId } })
+  if (!adminUser) {
+    return NextResponse.json({ error: "Admin user not found in database" }, { status: 404 })
+  }
 
   try {
     const reply = await db.supportTicketReply.create({
@@ -53,8 +53,8 @@ export async function POST(
         ticketId,
         message: parsed.data.message,
         isAdmin: true,
-        authorId: adminUser?.id ?? adminClerkId,
-        authorName: adminUser?.name ?? "AIMS Support",
+        authorId: adminUser.id,
+        authorName: adminUser.name ?? "AIMS Support",
       },
     })
 
@@ -73,7 +73,7 @@ export async function POST(
       clientName: ticket.user.name ?? ticket.user.email.split("@")[0],
       subject: ticket.subject,
       replyMessage: parsed.data.message,
-      authorName: adminUser?.name ?? "AIMS Support",
+      authorName: adminUser.name ?? "AIMS Support",
       ticketId: ticket.id,
     }).catch((err) => logger.error("Failed to send reply notification email", err))
 

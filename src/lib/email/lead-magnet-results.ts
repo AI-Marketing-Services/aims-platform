@@ -1,78 +1,7 @@
-import { sendTrackedEmail } from "./index"
+import { sendTrackedEmail, escapeHtml, emailLayout, h1, p, btn, divider } from "./index"
 
 const FROM_EMAIL = "AIMS <irtaza@modern-amenities.com>"
 const REPLY_TO = "irtaza@modern-amenities.com"
-
-function emailLayout(content: string, preheader = "") {
-  return `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AIMS</title>
-</head>
-<body style="margin:0;padding:0;background:#F5F5F5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
-  ${preheader ? `<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">${preheader}&nbsp;&zwnj;&nbsp;</div>` : ""}
-  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#F5F5F5;padding:32px 16px;">
-    <tr>
-      <td align="center">
-        <table width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;width:100%;">
-          <tr>
-            <td style="background:#ffffff;border-radius:12px 12px 0 0;padding:28px 40px;border-bottom:1px solid #F0F0F0;">
-              <table width="100%" cellpadding="0" cellspacing="0">
-                <tr>
-                  <td>
-                    <img src="https://aimseos.com/logo.png" alt="AIMS" width="36" height="36"
-                      style="display:inline-block;vertical-align:middle;margin-right:10px;" />
-                    <span style="font-size:18px;font-weight:800;color:#111827;vertical-align:middle;letter-spacing:-0.5px;">AIMS</span>
-                  </td>
-                  <td align="right">
-                    <span style="font-size:11px;color:#9CA3AF;letter-spacing:0.05em;text-transform:uppercase;">Your Results</span>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-          <tr>
-            <td style="background:#ffffff;padding:40px 40px 32px;">
-              ${content}
-            </td>
-          </tr>
-          <tr>
-            <td style="background:#F9FAFB;border-radius:0 0 12px 12px;padding:24px 40px;border-top:1px solid #F0F0F0;">
-              <p style="margin:0 0 8px;font-size:12px;color:#6B7280;">
-                Questions? Reply to this email or reach us at
-                <a href="mailto:${REPLY_TO}" style="color:#C4972A;text-decoration:none;">${REPLY_TO}</a>
-              </p>
-              <p style="margin:0;font-size:11px;color:#9CA3AF;">
-                AIMS - AI-Powered Business Infrastructure -
-                <a href="https://aimseos.com" style="color:#9CA3AF;text-decoration:none;">aimseos.com</a>
-              </p>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>`
-}
-
-function btn(text: string, url: string) {
-  return `<a href="${url}" style="display:inline-block;background:#C4972A;color:#ffffff;padding:13px 28px;border-radius:6px;text-decoration:none;font-weight:700;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;margin:8px 0;">${text}</a>`
-}
-
-function h1(text: string) {
-  return `<h1 style="margin:0 0 16px;font-size:26px;font-weight:800;color:#111827;line-height:1.2;letter-spacing:-0.5px;">${text}</h1>`
-}
-
-function p(text: string) {
-  return `<p style="margin:0 0 16px;font-size:15px;color:#4B5563;line-height:1.7;">${text}</p>`
-}
-
-function divider() {
-  return `<hr style="border:none;border-top:1px solid #F0F0F0;margin:28px 0;" />`
-}
 
 function recommendationBlock(title: string, description: string) {
   return `
@@ -98,8 +27,9 @@ export async function sendQuizResultsEmail(params: {
 
   const recommendations = getQuizRecommendations(score)
 
+  const safeName = escapeHtml(params.name)
   const body = `
-    ${h1(`${params.name ? `${params.name}, your` : "Your"} AI Readiness Score: ${score}/100`)}
+    ${h1(`${safeName ? `${safeName}, your` : "Your"} AI Readiness Score: ${score}/100`)}
     <div style="background:#FEF2F2;border-left:4px solid #C4972A;border-radius:6px;padding:20px 24px;margin:0 0 24px;">
       <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#C4972A;text-transform:uppercase;letter-spacing:0.08em;">AI Readiness Level</p>
       <p style="margin:0;font-size:42px;font-weight:800;color:#111827;line-height:1;">${score}<span style="font-size:20px;color:#6B7280;">/100</span></p>
@@ -190,8 +120,9 @@ export async function sendCalculatorResultsEmail(params: {
   const annualSavings = monthlySavings * 12
   const strategyUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://aimseos.com"}/get-started`
 
+  const safeName = escapeHtml(params.name)
   const body = `
-    ${h1(`${params.name ? `${params.name}, your` : "Your"} Custom ROI Report`)}
+    ${h1(`${safeName ? `${safeName}, your` : "Your"} Custom ROI Report`)}
     ${monthlySavings > 0 ? `
     <div style="background:#FEF2F2;border-left:4px solid #C4972A;border-radius:6px;padding:20px 24px;margin:0 0 24px;">
       <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#C4972A;text-transform:uppercase;letter-spacing:0.08em;">Projected Monthly Savings</p>
@@ -254,8 +185,9 @@ export async function sendAuditResultsEmail(params: {
   const severity = score < 40 ? "Critical" : score < 65 ? "Moderate" : "Good"
   const recommendations = getAuditRecommendations(score)
 
+  const safeName = escapeHtml(params.name)
   const body = `
-    ${h1(`${params.name ? `${params.name}, your` : "Your"} Website Audit Results`)}
+    ${h1(`${safeName ? `${safeName}, your` : "Your"} Website Audit Results`)}
     <div style="background:#FEF2F2;border-left:4px solid ${score < 40 ? "#EF4444" : score < 65 ? "#F59E0B" : "#22C55E"};border-radius:6px;padding:20px 24px;margin:0 0 24px;">
       <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:${score < 40 ? "#EF4444" : score < 65 ? "#F59E0B" : "#22C55E"};text-transform:uppercase;letter-spacing:0.08em;">Website Health: ${severity}</p>
       <p style="margin:0;font-size:48px;font-weight:800;color:#111827;line-height:1;">${score}<span style="font-size:20px;color:#6B7280;">/100</span></p>

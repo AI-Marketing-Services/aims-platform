@@ -7,8 +7,13 @@ import { AdminSupportClient } from "./AdminSupportClient"
 export const metadata = { title: "Support Tickets" }
 
 export default async function AdminSupportPage() {
-  const { userId } = await auth()
+  const { userId, sessionClaims } = await auth()
   if (!userId) redirect("/sign-in")
+
+  const role = (sessionClaims?.metadata as { role?: string })?.role
+  if (!role || !["ADMIN", "SUPER_ADMIN"].includes(role)) {
+    redirect("/portal/dashboard")
+  }
 
   const tickets = await db.supportTicket.findMany({
     orderBy: { updatedAt: "desc" },

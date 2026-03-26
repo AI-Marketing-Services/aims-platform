@@ -41,6 +41,7 @@ const isPortalRoute = createRouteMatcher(["/portal(.*)"])
 // API route matchers for defense-in-depth protection
 const isAdminApiRoute = createRouteMatcher(["/api/admin(.*)"])
 const isInternApiRoute = createRouteMatcher(["/api/intern(.*)"])
+const isResellerApiRoute = createRouteMatcher(["/api/reseller(.*)"])
 const isPortalApiRoute = createRouteMatcher(["/api/portal(.*)"])
 
 export default clerkMiddleware(async (auth, req) => {
@@ -74,6 +75,9 @@ export default clerkMiddleware(async (auth, req) => {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   }
   if (isInternApiRoute(req) && !["INTERN", "ADMIN", "SUPER_ADMIN"].includes(role)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+  }
+  if (isResellerApiRoute(req) && !["RESELLER", "ADMIN", "SUPER_ADMIN"].includes(role)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   }
   if (isPortalApiRoute(req) && !userId) {

@@ -151,11 +151,12 @@ export default function SupportPage() {
   const [message, setMessage] = useState("")
   const [serviceContext, setServiceContext] = useState("")
   const [submitted, setSubmitted] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
   const [tickets, setTickets] = useState<Ticket[]>([])
   const [loadingTickets, setLoadingTickets] = useState(false)
   const [services, setServices] = useState<ServiceOption[]>([])
   const [expandedId, setExpandedId] = useState<string | null>(null)
-  const [replyText, setReplyText] = useState("")
+  const [replyTexts, setReplyTexts] = useState<Record<string, string>>({})
   const [sending, setSending] = useState(false)
 
   async function loadTickets() {
@@ -195,7 +196,7 @@ export default function SupportPage() {
       ? `[${serviceContext}] ${subject}`
       : subject
     try {
-      await fetch("/api/support/tickets", {
+      const res = await fetch("/api/support/tickets", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -204,25 +205,31 @@ export default function SupportPage() {
           priority: "normal",
         }),
       })
+      if (!res.ok) {
+        setSubmitError("Failed to submit ticket. Please try again.")
+        return
+      }
+      setSubmitted(true)
+      setSubmitError(null)
+      setShowNew(false)
+      setSubject("")
+      setMessage("")
+      setServiceContext("")
+      loadTickets()
     } catch {
-      // Handled silently
+      setSubmitError("Failed to submit ticket. Please try again.")
     }
-    setSubmitted(true)
-    setShowNew(false)
-    setSubject("")
-    setMessage("")
-    setServiceContext("")
-    loadTickets()
   }
 
   async function handleReply(ticketId: string) {
-    if (!replyText.trim() || sending) return
+    const text = replyTexts[ticketId] ?? ""
+    if (!text.trim() || sending) return
     setSending(true)
     try {
       const res = await fetch(`/api/support/tickets/${ticketId}/reply`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: replyText }),
+        body: JSON.stringify({ message: text }),
       })
       if (res.ok) {
         const data = await res.json()
@@ -235,7 +242,7 @@ export default function SupportPage() {
                     ...t.replies,
                     {
                       id: data.id,
-                      message: replyText,
+                      message: text,
                       isAdmin: false,
                       authorName: "You",
                       createdAt: new Date().toISOString(),
@@ -245,7 +252,7 @@ export default function SupportPage() {
               : t
           )
         )
-        setReplyText("")
+        setReplyTexts((prev) => ({ ...prev, [ticketId]: "" }))
       }
     } catch {
       // Handled silently
@@ -373,6 +380,14 @@ export default function SupportPage() {
               </button>
             </div>
           </form>
+        </div>
+      )}
+
+      {/* Error banner */}
+      {submitError && (
+        <div className="flex items-center gap-3 p-4 bg-red-900/15 border border-red-800 rounded-xl text-red-400 text-sm">
+          <AlertCircle className="w-4 h-4 flex-shrink-0" />
+          {submitError}
         </div>
       )}
 
@@ -522,14 +537,14 @@ export default function SupportPage() {
                       <div className="px-5 py-4 border-t border-border">
                         <textarea
                           rows={3}
-                          value={expandedId === ticket.id ? replyText : ""}
-                          onChange={(e) => setReplyText(e.target.value)}
+                          value={replyTexts[ticket.id] ?? ""}
+                          onChange={(e) => setReplyTexts((prev) => ({ ...prev, [ticket.id]: e.target.value }))}
                           placeholder="Type your reply..."
                           className="w-full px-4 py-3 bg-background border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C4972A]/20 focus:border-[#C4972A] resize-none"
                         />
                         <button
                           onClick={() => handleReply(ticket.id)}
-                          disabled={!replyText.trim() || sending}
+                          disabled={!(replyTexts[ticket.id] ?? "").trim() || sending}
                           className="mt-2 flex items-center gap-2 px-4 py-2 bg-[#C4972A] text-white text-xs font-medium rounded-lg hover:bg-[#A17D22] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           <Send className="w-3.5 h-3.5" />

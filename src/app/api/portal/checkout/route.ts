@@ -33,6 +33,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Service not found" }, { status: 404 })
     }
 
+    if (!["ACTIVE", "BETA"].includes(serviceArm.status)) {
+      return NextResponse.json({ error: "This service is not currently available for purchase" }, { status: 400 })
+    }
+
     const tier = serviceArm.tiers.find((t) => t.slug === parsed.data.tierSlug)
     if (!tier) {
       return NextResponse.json({ error: "Tier not found" }, { status: 404 })

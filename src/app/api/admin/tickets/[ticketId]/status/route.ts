@@ -1,22 +1,14 @@
 import { NextResponse } from "next/server"
-import { auth } from "@clerk/nextjs/server"
 import { z } from "zod"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
+import { requireAdmin } from "@/lib/auth"
 import { sendTicketStatusChangeEmail } from "@/lib/email/support"
 
 const statusSchema = z.object({
   status: z.enum(["open", "in_progress", "resolved", "closed"]),
   resolutionNote: z.string().max(5000).optional(),
 })
-
-async function requireAdmin() {
-  const { userId, sessionClaims } = await auth()
-  if (!userId) return null
-  const role = (sessionClaims?.metadata as { role?: string })?.role
-  if (!role || !["ADMIN", "SUPER_ADMIN"].includes(role)) return null
-  return userId
-}
 
 export async function PATCH(
   req: Request,
@@ -39,7 +31,12 @@ export async function PATCH(
     return NextResponse.json({ error: "Ticket not found" }, { status: 404 })
   }
 
-  const body = await req.json()
+  let body: unknown
+  try {
+    body = await req.json()
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 })
+  }
   const parsed = statusSchema.safeParse(body)
   if (!parsed.success) {
     return NextResponse.json({ error: "Invalid data", details: parsed.error.flatten() }, { status: 400 })
