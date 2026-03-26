@@ -65,6 +65,14 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     optimizeCss: true,
+    optimizePackageImports: [
+      "lucide-react",
+      "recharts",
+      "date-fns",
+      "framer-motion",
+      "@dnd-kit/core",
+      "@dnd-kit/utilities",
+    ],
   },
   async headers() {
     return [
@@ -83,6 +91,20 @@ const nextConfig: NextConfig = {
       {
         // Cache logo and favicons
         source: "/:path(logo\\.png|favicon\\.ico|apple-icon\\.png|og-image\\.png)",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=2592000" },
+        ],
+      },
+      {
+        // Cache partner assets
+        source: "/partners/:path*",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
+        ],
+      },
+      {
+        // Cache resource files
+        source: "/resources/:path*",
         headers: [
           { key: "Cache-Control", value: "public, max-age=2592000" },
         ],

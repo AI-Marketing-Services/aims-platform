@@ -22,77 +22,29 @@ async function getDashboardData() {
   const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
   const sixtyDaysAgo = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000)
 
-  // MRR: sum monthlyAmount for active subscriptions
-  // Delta: compare new MRR added in last 30d vs new MRR added 30-60d ago
-  let mrr = 0
-  let mrrDeltaCurrentPeriod = 0
-  let mrrDeltaPrevPeriod = 0
-  let activeClients = 0
-  let newClientsCurrentPeriod = 0
-  let newClientsPrevPeriod = 0
-
-  try {
-    const activeSubs = await db.subscription.findMany({
+  // Fire all 7 independent DB queries in parallel via Promise.allSettled
+  const [
+    subsResult,
+    pipelineResult,
+    hotLeadsResult,
+    funnelResult,
+    revenueResult,
+    overdueResult,
+    activityResult,
+    workloadResult,
+  ] = await Promise.allSettled([
+    // 1. Active subscriptions (for MRR + client counts)
+    db.subscription.findMany({
       where: { status: "ACTIVE" },
       select: { monthlyAmount: true, createdAt: true, userId: true },
-    })
-    mrr = activeSubs.reduce((s, sub) => s + sub.monthlyAmount, 0)
-    activeClients = new Set(activeSubs.map((s) => s.userId)).size
-
-    // New MRR added in the current period (last 30 days)
-    const currentPeriodSubs = activeSubs.filter((s) => s.createdAt > thirtyDaysAgo)
-    mrrDeltaCurrentPeriod = currentPeriodSubs.reduce((s, sub) => s + sub.monthlyAmount, 0)
-    newClientsCurrentPeriod = new Set(currentPeriodSubs.map((s) => s.userId)).size
-
-    // New MRR added in the previous period (30-60 days ago)
-    const prevPeriodSubs = activeSubs.filter(
-      (s) => s.createdAt > sixtyDaysAgo && s.createdAt <= thirtyDaysAgo
-    )
-    mrrDeltaPrevPeriod = prevPeriodSubs.reduce((s, sub) => s + sub.monthlyAmount, 0)
-    newClientsPrevPeriod = new Set(prevPeriodSubs.map((s) => s.userId)).size
-  } catch {
-    // model may not be populated yet
-  }
-
-  // Pipeline value
-  let pipelineValue = 0
-  let pipelineValueCurrentPeriod = 0
-  let pipelineValuePrevPeriod = 0
-
-  try {
-    const pipelineDeals = await db.deal.findMany({
-      where: {
-        stage: {
-          notIn: ["CHURNED", "LOST"],
-        },
-      },
+    }),
+    // 2. Pipeline deals
+    db.deal.findMany({
+      where: { stage: { notIn: ["CHURNED", "LOST"] } },
       select: { value: true, createdAt: true },
-    })
-    pipelineValue = pipelineDeals.reduce((s, d) => s + d.value, 0)
-
-    // Pipeline delta: deals created in last 30d vs deals created 30-60d ago
-    const currentPeriodDeals = pipelineDeals.filter((d) => d.createdAt > thirtyDaysAgo)
-    pipelineValueCurrentPeriod = currentPeriodDeals.reduce((s, d) => s + d.value, 0)
-    const prevPeriodDeals = pipelineDeals.filter(
-      (d) => d.createdAt > sixtyDaysAgo && d.createdAt <= thirtyDaysAgo
-    )
-    pipelineValuePrevPeriod = prevPeriodDeals.reduce((s, d) => s + d.value, 0)
-  } catch {
-    // model may not be populated
-  }
-
-  // Hot leads
-  let hotLeads: Array<{
-    id: string
-    contactName: string
-    company: string | null
-    leadScore: number | null
-    source: string | null
-    channelTag: string | null
-  }> = []
-
-  try {
-    hotLeads = await db.deal.findMany({
+    }),
+    // 3. Hot leads
+    db.deal.findMany({
       where: { leadScore: { gte: 70 } },
       orderBy: { leadScore: "desc" },
       take: 5,
@@ -104,83 +56,28 @@ async function getDashboardData() {
         source: true,
         channelTag: true,
       },
-    })
-  } catch {
-    // model may not be populated
-  }
-
-  // Pipeline funnel counts
-  const funnelData: PipelineFunnelEntry[] = []
-  try {
-    const stageCounts = await db.deal.groupBy({
+    }),
+    // 4. Pipeline funnel stage counts
+    db.deal.groupBy({
       by: ["stage"],
       _count: { id: true },
       where: {
-        stage: {
-          in: FUNNEL_ORDER.map((f) => f.key as DealStage),
-        },
+        stage: { in: FUNNEL_ORDER.map((f) => f.key as DealStage) },
       },
-    })
-
-    const countMap = Object.fromEntries(
-      stageCounts.map((r) => [r.stage, r._count?.id ?? 0])
-    )
-
-    for (const { key, label } of FUNNEL_ORDER) {
-      funnelData.push({ stage: label, count: countMap[key] ?? 0 })
-    }
-  } catch {
-    for (const { label } of FUNNEL_ORDER) {
-      funnelData.push({ stage: label, count: 0 })
-    }
-  }
-
-  // Revenue by service arm
-  let revenueByService: RevenueByServiceEntry[] = []
-  try {
-    const serviceRevenue = await db.subscription.groupBy({
-      by: ["serviceArmId"],
-      _sum: { monthlyAmount: true },
-      where: { status: "ACTIVE" },
-    })
-
-    const serviceArms = await db.serviceArm.findMany({
-      where: {
-        id: { in: serviceRevenue.map((r) => r.serviceArmId) },
-      },
-      select: { id: true, name: true },
-    })
-
-    const nameMap = Object.fromEntries(serviceArms.map((s) => [s.id, s.name]))
-
-    revenueByService = serviceRevenue
-      .map((r) => ({
-        name: nameMap[r.serviceArmId] ?? r.serviceArmId,
-        mrr: r._sum.monthlyAmount ?? 0,
-      }))
-      .sort((a, b) => b.mrr - a.mrr)
-      .slice(0, 8)
-  } catch {
-    // model may not be populated
-  }
-
-  // Overdue fulfillment tasks
-  let overdueTasks: Array<{
-    id: string
-    title: string
-    assignedTo: string | null
-    dueDate: Date | null
-    subscription: {
-      user: {
-        name: string | null
-        company: string | null
-        email: string
-      } | null
-    }
-  }> = []
-
-  try {
-    overdueTasks = await db.fulfillmentTask.findMany({
+    }),
+    // 5. Revenue by service arm + service names
+    Promise.all([
+      db.subscription.groupBy({
+        by: ["serviceArmId"],
+        _sum: { monthlyAmount: true },
+        where: { status: "ACTIVE" },
+      }),
+      db.serviceArm.findMany({
+        select: { id: true, name: true },
+      }),
+    ]),
+    // 6. Overdue fulfillment tasks
+    db.fulfillmentTask.findMany({
       where: {
         dueDate: { lt: now },
         status: { not: "done" },
@@ -195,31 +92,14 @@ async function getDashboardData() {
         subscription: {
           select: {
             user: {
-              select: {
-                name: true,
-                company: true,
-                email: true,
-              },
+              select: { name: true, company: true, email: true },
             },
           },
         },
       },
-    })
-  } catch {
-    // model may not be populated
-  }
-
-  // Recent activity
-  let recentActivity: Array<{
-    id: string
-    type: string
-    detail: string | null
-    createdAt: Date
-    deal: { contactName: string; company: string | null } | null
-  }> = []
-
-  try {
-    recentActivity = await db.dealActivity.findMany({
+    }),
+    // 7. Recent activity
+    db.dealActivity.findMany({
       orderBy: { createdAt: "desc" },
       take: 10,
       select: {
@@ -227,54 +107,114 @@ async function getDashboardData() {
         type: true,
         detail: true,
         createdAt: true,
-        deal: {
-          select: {
-            contactName: true,
-            company: true,
-          },
-        },
+        deal: { select: { contactName: true, company: true } },
       },
-    })
-  } catch {
-    // model may not be populated
-  }
-
-  // Team workload
-  let teamWorkload: Array<{
-    assignedTo: string
-    total: number
-    overdue: number
-  }> = []
-
-  try {
-    const openTasks = await db.fulfillmentTask.findMany({
+    }),
+    // 8. Team workload
+    db.fulfillmentTask.findMany({
       where: {
         status: { not: "done" },
         assignedTo: { not: null },
       },
-      select: {
-        assignedTo: true,
-        dueDate: true,
-      },
-    })
+      select: { assignedTo: true, dueDate: true },
+    }),
+  ])
 
+  // Process subscriptions -> MRR metrics
+  let mrr = 0
+  let mrrDeltaCurrentPeriod = 0
+  let mrrDeltaPrevPeriod = 0
+  let activeClients = 0
+  let newClientsCurrentPeriod = 0
+  let newClientsPrevPeriod = 0
+
+  if (subsResult.status === "fulfilled") {
+    const activeSubs = subsResult.value
+    mrr = activeSubs.reduce((s, sub) => s + sub.monthlyAmount, 0)
+    activeClients = new Set(activeSubs.map((s) => s.userId)).size
+
+    const currentPeriodSubs = activeSubs.filter((s) => s.createdAt > thirtyDaysAgo)
+    mrrDeltaCurrentPeriod = currentPeriodSubs.reduce((s, sub) => s + sub.monthlyAmount, 0)
+    newClientsCurrentPeriod = new Set(currentPeriodSubs.map((s) => s.userId)).size
+
+    const prevPeriodSubs = activeSubs.filter(
+      (s) => s.createdAt > sixtyDaysAgo && s.createdAt <= thirtyDaysAgo
+    )
+    mrrDeltaPrevPeriod = prevPeriodSubs.reduce((s, sub) => s + sub.monthlyAmount, 0)
+    newClientsPrevPeriod = new Set(prevPeriodSubs.map((s) => s.userId)).size
+  }
+
+  // Process pipeline deals
+  let pipelineValue = 0
+  let pipelineValueCurrentPeriod = 0
+  let pipelineValuePrevPeriod = 0
+
+  if (pipelineResult.status === "fulfilled") {
+    const pipelineDeals = pipelineResult.value
+    pipelineValue = pipelineDeals.reduce((s, d) => s + d.value, 0)
+    const currentPeriodDeals = pipelineDeals.filter((d) => d.createdAt > thirtyDaysAgo)
+    pipelineValueCurrentPeriod = currentPeriodDeals.reduce((s, d) => s + d.value, 0)
+    const prevPeriodDeals = pipelineDeals.filter(
+      (d) => d.createdAt > sixtyDaysAgo && d.createdAt <= thirtyDaysAgo
+    )
+    pipelineValuePrevPeriod = prevPeriodDeals.reduce((s, d) => s + d.value, 0)
+  }
+
+  // Hot leads
+  const hotLeads = hotLeadsResult.status === "fulfilled" ? hotLeadsResult.value : []
+
+  // Pipeline funnel
+  const funnelData: PipelineFunnelEntry[] = []
+  if (funnelResult.status === "fulfilled") {
+    const countMap = Object.fromEntries(
+      funnelResult.value.map((r) => [r.stage, r._count?.id ?? 0])
+    )
+    for (const { key, label } of FUNNEL_ORDER) {
+      funnelData.push({ stage: label, count: countMap[key] ?? 0 })
+    }
+  } else {
+    for (const { label } of FUNNEL_ORDER) {
+      funnelData.push({ stage: label, count: 0 })
+    }
+  }
+
+  // Revenue by service
+  let revenueByService: RevenueByServiceEntry[] = []
+  if (revenueResult.status === "fulfilled") {
+    const [serviceRevenue, serviceArms] = revenueResult.value
+    const nameMap = Object.fromEntries(serviceArms.map((s) => [s.id, s.name]))
+    revenueByService = serviceRevenue
+      .map((r) => ({
+        name: nameMap[r.serviceArmId] ?? r.serviceArmId,
+        mrr: r._sum.monthlyAmount ?? 0,
+      }))
+      .sort((a, b) => b.mrr - a.mrr)
+      .slice(0, 8)
+  }
+
+  // Overdue tasks
+  const overdueTasks = overdueResult.status === "fulfilled" ? overdueResult.value : []
+
+  // Recent activity
+  const recentActivity = activityResult.status === "fulfilled" ? activityResult.value : []
+
+  // Team workload
+  let teamWorkload: Array<{ assignedTo: string; total: number; overdue: number }> = []
+  if (workloadResult.status === "fulfilled") {
     const workloadMap = new Map<string, { total: number; overdue: number }>()
-    for (const task of openTasks) {
+    for (const task of workloadResult.value) {
       if (!task.assignedTo) continue
       const entry = workloadMap.get(task.assignedTo) ?? { total: 0, overdue: 0 }
       entry.total++
       if (task.dueDate && task.dueDate < now) entry.overdue++
       workloadMap.set(task.assignedTo, entry)
     }
-
     teamWorkload = Array.from(workloadMap.entries())
       .map(([assignedTo, stats]) => ({ assignedTo, ...stats }))
       .sort((a, b) => b.total - a.total)
-  } catch {
-    // model may not be populated
   }
 
-  // MRR trend delta - true month-over-month: current 30d period vs previous 30d period
+  // MRR trend delta
   const mrrDelta = mrrDeltaCurrentPeriod - mrrDeltaPrevPeriod
   const clientDelta = newClientsCurrentPeriod - newClientsPrevPeriod
   const pipelineDelta = pipelineValueCurrentPeriod - pipelineValuePrevPeriod

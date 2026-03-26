@@ -13,37 +13,29 @@ export default async function AdminRevenuePage() {
   const role = (sessionClaims?.metadata as { role?: string })?.role
   if (!role || !["ADMIN", "SUPER_ADMIN"].includes(role)) redirect("/portal/dashboard")
 
-  // ── Active subscriptions ──────────────────────────────────────────────────
-  let activeSubs: {
-    monthlyAmount: number
-    createdAt: Date
-    serviceArm: { slug: string; name: string }
-  }[] = []
-  try {
-    activeSubs = await db.subscription.findMany({
+  // Fire all three independent queries in parallel
+  const [subsResult, serviceArmsResult, dealsResult] = await Promise.allSettled([
+    db.subscription.findMany({
       where: { status: { in: ["ACTIVE", "TRIALING"] } },
       select: {
         monthlyAmount: true,
         createdAt: true,
         serviceArm: { select: { slug: true, name: true } },
       },
-    })
-  } catch {}
-
-  // ── Service arm costs from DB ───────────────────────────────────────────
-  const serviceArms = await db.serviceArm.findMany({
-    select: { slug: true, name: true, deliveryCost: true },
-  })
-  const serviceCostMap = new Map(serviceArms.map(s => [s.slug, { label: s.name, cost: s.deliveryCost ?? 0 }]))
-
-  // ── Active client deals (for channel breakdown) ────────────────────────────
-  let activeDeals: { channelTag: string | null }[] = []
-  try {
-    activeDeals = await db.deal.findMany({
+    }),
+    db.serviceArm.findMany({
+      select: { slug: true, name: true, deliveryCost: true },
+    }),
+    db.deal.findMany({
       where: { stage: "ACTIVE_CLIENT" },
       select: { channelTag: true },
-    })
-  } catch {}
+    }),
+  ])
+
+  const activeSubs = subsResult.status === "fulfilled" ? subsResult.value : []
+  const serviceArms = serviceArmsResult.status === "fulfilled" ? serviceArmsResult.value : []
+  const serviceCostMap = new Map(serviceArms.map(s => [s.slug, { label: s.name, cost: s.deliveryCost ?? 0 }]))
+  const activeDeals = dealsResult.status === "fulfilled" ? dealsResult.value : []
 
   // ── Compute current MRR ────────────────────────────────────────────────────
   const currentMRR = activeSubs.reduce((s, sub) => s + sub.monthlyAmount, 0)

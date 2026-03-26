@@ -51,9 +51,20 @@ export async function getDealById(id: string) {
     where: { id },
     include: {
       serviceArms: { include: { serviceArm: true } },
-      notes: { orderBy: { createdAt: "desc" }, include: {} },
+      notes: { orderBy: { createdAt: "desc" } },
       activities: { orderBy: { createdAt: "desc" } },
-      user: true,
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          company: true,
+          avatarUrl: true,
+          phone: true,
+          industry: true,
+          website: true,
+        },
+      },
     },
   })
 }

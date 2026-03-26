@@ -2,6 +2,8 @@ import type { Metadata } from "next"
 import { ClerkProvider } from "@clerk/nextjs"
 import { Cormorant_Garamond, DM_Sans, DM_Mono } from "next/font/google"
 import { Toaster } from "sonner"
+import { SpeedInsights } from "@vercel/speed-insights/next"
+import { Analytics } from "@vercel/analytics/next"
 
 import "./globals.css"
 
@@ -120,6 +122,8 @@ export default function RootLayout({
         </head>
         <body className="min-h-screen bg-background font-sans antialiased grain-overlay">
           {children}
+          <SpeedInsights />
+          <Analytics />
           <Toaster
             position="bottom-right"
             toastOptions={{

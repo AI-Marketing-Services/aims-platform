@@ -402,6 +402,12 @@ const STATIC_SERVICES: Record<string, {
   },
 }
 
+export const dynamicParams = true
+
+export function generateStaticParams() {
+  return Object.keys(STATIC_SERVICES).map((slug) => ({ slug }))
+}
+
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { slug } = await params
   const staticSvc = STATIC_SERVICES[slug]
