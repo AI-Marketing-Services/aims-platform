@@ -63,10 +63,10 @@ export function PortalSidebar({ totalMrr = 0, hasUnread = false }: PortalSidebar
               key={item.href}
               href={item.href}
               className={cn(
-                "flex items-center gap-3 rounded-lg py-2.5 text-sm font-medium transition-colors",
+                "flex items-center gap-3 rounded-lg py-2.5 text-sm font-medium transition-all duration-150",
                 isActive
                   ? "bg-primary/10 text-primary border-l-2 border-primary pl-[10px]"
-                  : "text-muted-foreground hover:text-foreground hover:bg-surface pl-3"
+                  : "text-muted-foreground hover:text-foreground hover:bg-surface/80 pl-3"
               )}
             >
               <item.icon className={cn("h-4.5 w-4.5 shrink-0", isActive && "text-primary")} />

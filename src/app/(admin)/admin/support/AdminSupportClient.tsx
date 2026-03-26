@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import {
   AlertCircle,
   CheckCircle,
@@ -11,7 +11,9 @@ import {
   MessageSquare,
   User,
   Shield,
+  Search,
 } from "lucide-react"
+import { toast } from "sonner"
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -79,10 +81,16 @@ export function AdminSupportClient({ tickets: initialTickets, stats }: Props) {
   const [statusFilter, setStatusFilter] = useState<string>("all")
   const [sending, setSending] = useState(false)
   const [statusNotes, setStatusNotes] = useState<Record<string, string>>({})
+  const [search, setSearch] = useState("")
 
-  const filtered = statusFilter === "all"
-    ? tickets
-    : tickets.filter((t) => t.status === statusFilter)
+  const filtered = useMemo(() => {
+    const q = search.toLowerCase()
+    return tickets.filter((t) => {
+      if (statusFilter !== "all" && t.status !== statusFilter) return false
+      if (q && !t.subject.toLowerCase().includes(q) && !(t.user.name ?? "").toLowerCase().includes(q) && !t.user.email.toLowerCase().includes(q)) return false
+      return true
+    })
+  }, [tickets, statusFilter, search])
 
   function formatDate(iso: string) {
     return new Date(iso).toLocaleDateString("en-US", {
@@ -128,9 +136,12 @@ export function AdminSupportClient({ tickets: initialTickets, stats }: Props) {
           )
         )
         setReplyTexts((prev) => ({ ...prev, [ticketId]: "" }))
+        toast.success("Reply sent to client")
+      } else {
+        toast.error("Failed to send reply")
       }
     } catch {
-      // Error handled silently
+      toast.error("Failed to send reply")
     }
     setSending(false)
   }
@@ -160,9 +171,12 @@ export function AdminSupportClient({ tickets: initialTickets, stats }: Props) {
           )
         )
         setStatusNotes((prev) => ({ ...prev, [ticketId]: "" }))
+        toast.success(`Ticket marked as ${newStatus.replace("_", " ")}`)
+      } else {
+        toast.error("Failed to update ticket status")
       }
     } catch {
-      // Error handled silently
+      toast.error("Failed to update ticket status")
     }
   }
 
@@ -181,6 +195,19 @@ export function AdminSupportClient({ tickets: initialTickets, stats }: Props) {
             <p className={`text-2xl font-bold font-mono ${color}`}>{value}</p>
           </div>
         ))}
+      </div>
+
+      {/* Search */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+        <input
+          type="text"
+          data-search
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search tickets by subject, name, or email..."
+          className="w-full pl-9 pr-4 py-2 bg-card border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-[#C4972A] focus:ring-1 focus:ring-[#C4972A]/20"
+        />
       </div>
 
       {/* Filter tabs */}

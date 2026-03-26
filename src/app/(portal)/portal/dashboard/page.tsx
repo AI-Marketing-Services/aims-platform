@@ -165,6 +165,9 @@ export default async function PortalDashboard({
     upsellPrice = "Custom"
   }
 
+  const hour = new Date().getHours()
+  const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening"
+
   return (
     <div className="space-y-8">
       {/* Checkout success banner */}
@@ -179,7 +182,7 @@ export default async function PortalDashboard({
         <h1 className="text-2xl font-bold">
           {subs.length === 0
             ? `Welcome to AIMS, ${firstName}`
-            : `Welcome back, ${firstName}`}
+            : `${greeting}, ${firstName}`}
         </h1>
         <p className="mt-1 text-muted-foreground">
           {subs.length === 0
@@ -277,7 +280,7 @@ export default async function PortalDashboard({
               active: meetingCount > 0,
             },
           ].map(({ label, value, icon: Icon, active }) => (
-            <div key={label} className="rounded-2xl border border-border bg-card p-5">
+            <div key={label} className="rounded-2xl border border-border bg-card p-5 micro-card">
               <div className="flex items-center justify-between mb-3">
                 <p className="text-sm text-muted-foreground">{label}</p>
                 <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">

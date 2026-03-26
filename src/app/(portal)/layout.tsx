@@ -7,6 +7,7 @@ import { UserButton } from "@clerk/nextjs"
 import { PortalSidebar } from "@/components/portal/Sidebar"
 import { MobilePortalNav } from "@/components/portal/MobilePortalNav"
 import { PortalChatWidget } from "@/components/portal/PortalChatWidget"
+import { PageTransition } from "@/components/shared/PageTransition"
 import { db } from "@/lib/db"
 
 export const metadata: Metadata = {
@@ -61,7 +62,9 @@ export default async function PortalLayout({
       <div className="flex h-[calc(100dvh-3.5rem)] lg:h-screen overflow-hidden">
         <PortalSidebar totalMrr={totalMrr} hasUnread={unreadCount > 0} />
         <main className="flex-1 overflow-y-auto custom-scrollbar">
-          <div className="p-4 pb-20 lg:p-6 lg:pb-8 xl:p-8">{children}</div>
+          <PageTransition>
+            <div className="p-4 pb-20 lg:p-6 lg:pb-8 xl:p-8">{children}</div>
+          </PageTransition>
         </main>
       </div>
 

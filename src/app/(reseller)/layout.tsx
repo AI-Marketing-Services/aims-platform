@@ -10,6 +10,7 @@ import {
   DollarSign,
   FolderOpen,
 } from "lucide-react"
+import { PageTransition } from "@/components/shared/PageTransition"
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
@@ -66,7 +67,9 @@ export default async function ResellerLayout({
           </div>
         </aside>
         <main className="flex-1 overflow-y-auto custom-scrollbar">
-          <div className="p-4 pb-20 lg:p-6 lg:pb-8 xl:p-8">{children}</div>
+          <PageTransition>
+            <div className="p-4 pb-20 lg:p-6 lg:pb-8 xl:p-8">{children}</div>
+          </PageTransition>
         </main>
       </div>
 

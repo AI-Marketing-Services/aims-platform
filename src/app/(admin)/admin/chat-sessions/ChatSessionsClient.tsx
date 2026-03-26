@@ -1,7 +1,7 @@
 "use client"
 
-import { useState } from "react"
-import { ChevronDown, ChevronRight, MessageSquare, Mail, Clock, Hash } from "lucide-react"
+import { useState, useMemo } from "react"
+import { ChevronDown, ChevronRight, ChevronUp, ChevronsUpDown, MessageSquare, Mail, Clock, Hash, Search } from "lucide-react"
 import { cn, timeAgo } from "@/lib/utils"
 
 type MessagePart = {
@@ -58,11 +58,41 @@ interface ChatSessionsClientProps {
   sessions: ChatSessionRow[]
 }
 
+type SortField = "email" | "messageCount" | "updatedAt"
+type SortDir = "asc" | "desc"
+
 export function ChatSessionsClient({ sessions }: ChatSessionsClientProps) {
   const [filter, setFilter] = useState<string>("all")
   const [expandedId, setExpandedId] = useState<string | null>(null)
+  const [search, setSearch] = useState("")
+  const [sortField, setSortField] = useState<SortField>("updatedAt")
+  const [sortDir, setSortDir] = useState<SortDir>("desc")
 
-  const filtered = filter === "all" ? sessions : sessions.filter((s) => s.source === filter)
+  function handleSort(field: SortField) {
+    if (sortField === field) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"))
+    } else {
+      setSortField(field)
+      setSortDir("desc")
+    }
+  }
+
+  const filtered = useMemo(() => {
+    const q = search.toLowerCase()
+    return sessions
+      .filter((s) => {
+        if (filter !== "all" && s.source !== filter) return false
+        if (q && !(s.email ?? "").toLowerCase().includes(q) && !s.lastMessagePreview.toLowerCase().includes(q)) return false
+        return true
+      })
+      .sort((a, b) => {
+        let cmp = 0
+        if (sortField === "email") cmp = (a.email ?? "").localeCompare(b.email ?? "")
+        else if (sortField === "messageCount") cmp = a.messageCount - b.messageCount
+        else if (sortField === "updatedAt") cmp = new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime()
+        return sortDir === "asc" ? cmp : -cmp
+      })
+  }, [sessions, filter, search, sortField, sortDir])
 
   const sourceCounts = sessions.reduce<Record<string, number>>((acc, s) => {
     acc[s.source] = (acc[s.source] ?? 0) + 1
@@ -100,6 +130,19 @@ export function ChatSessionsClient({ sessions }: ChatSessionsClientProps) {
         ))}
       </div>
 
+      {/* Search */}
+      <div className="relative mb-4">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+        <input
+          type="text"
+          data-search
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search by email or message content..."
+          className="w-full pl-9 pr-4 py-2 bg-card border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-[#C4972A] focus:ring-1 focus:ring-[#C4972A]/20"
+        />
+      </div>
+
       {/* Table */}
       {filtered.length === 0 ? (
         <div className="text-center py-16 text-muted-foreground">
@@ -112,10 +155,34 @@ export function ChatSessionsClient({ sessions }: ChatSessionsClientProps) {
             <thead>
               <tr className="border-b border-border bg-card">
                 <th className="text-left text-xs font-medium text-muted-foreground px-4 py-3 w-8" />
-                <th className="text-left text-xs font-medium text-muted-foreground px-4 py-3">Email</th>
+                <th
+                  onClick={() => handleSort("email")}
+                  className="text-left text-xs font-medium text-muted-foreground px-4 py-3 cursor-pointer hover:text-foreground select-none transition-colors"
+                >
+                  <span className="inline-flex items-center gap-1">
+                    Email
+                    {sortField === "email" ? (sortDir === "asc" ? <ChevronUp className="w-3 h-3 text-foreground" /> : <ChevronDown className="w-3 h-3 text-foreground" />) : <ChevronsUpDown className="w-3 h-3 opacity-30" />}
+                  </span>
+                </th>
                 <th className="text-left text-xs font-medium text-muted-foreground px-4 py-3">Source</th>
-                <th className="text-left text-xs font-medium text-muted-foreground px-4 py-3">Messages</th>
-                <th className="text-left text-xs font-medium text-muted-foreground px-4 py-3">Last Active</th>
+                <th
+                  onClick={() => handleSort("messageCount")}
+                  className="text-left text-xs font-medium text-muted-foreground px-4 py-3 cursor-pointer hover:text-foreground select-none transition-colors"
+                >
+                  <span className="inline-flex items-center gap-1">
+                    Messages
+                    {sortField === "messageCount" ? (sortDir === "asc" ? <ChevronUp className="w-3 h-3 text-foreground" /> : <ChevronDown className="w-3 h-3 text-foreground" />) : <ChevronsUpDown className="w-3 h-3 opacity-30" />}
+                  </span>
+                </th>
+                <th
+                  onClick={() => handleSort("updatedAt")}
+                  className="text-left text-xs font-medium text-muted-foreground px-4 py-3 cursor-pointer hover:text-foreground select-none transition-colors"
+                >
+                  <span className="inline-flex items-center gap-1">
+                    Last Active
+                    {sortField === "updatedAt" ? (sortDir === "asc" ? <ChevronUp className="w-3 h-3 text-foreground" /> : <ChevronDown className="w-3 h-3 text-foreground" />) : <ChevronsUpDown className="w-3 h-3 opacity-30" />}
+                  </span>
+                </th>
                 <th className="text-left text-xs font-medium text-muted-foreground px-4 py-3">Preview</th>
               </tr>
             </thead>

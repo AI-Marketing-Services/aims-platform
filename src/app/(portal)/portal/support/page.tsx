@@ -15,6 +15,7 @@ import {
   User,
   Shield,
 } from "lucide-react"
+import { toast } from "sonner"
 import { EmptyState } from "@/components/shared/EmptyState"
 
 // ─── Status config ────────────────────────────────────────────────────────────
@@ -207,6 +208,7 @@ export default function SupportPage() {
       })
       if (!res.ok) {
         setSubmitError("Failed to submit ticket. Please try again.")
+        toast.error("Failed to submit ticket")
         return
       }
       setSubmitted(true)
@@ -215,9 +217,11 @@ export default function SupportPage() {
       setSubject("")
       setMessage("")
       setServiceContext("")
+      toast.success("Ticket submitted successfully")
       loadTickets()
     } catch {
       setSubmitError("Failed to submit ticket. Please try again.")
+      toast.error("Failed to submit ticket")
     }
   }
 
@@ -253,15 +257,27 @@ export default function SupportPage() {
           )
         )
         setReplyTexts((prev) => ({ ...prev, [ticketId]: "" }))
+        toast.success("Reply sent")
+      } else {
+        toast.error("Failed to send reply")
       }
     } catch {
-      // Handled silently
+      toast.error("Failed to send reply")
     }
     setSending(false)
   }
 
-  function formatDate(iso: string) {
-    return new Date(iso).toLocaleDateString("en-US", {
+  function formatRelative(iso: string) {
+    const date = new Date(iso)
+    const diff = Date.now() - date.getTime()
+    const mins = Math.floor(diff / 60000)
+    if (mins < 1) return "just now"
+    if (mins < 60) return `${mins}m ago`
+    const hours = Math.floor(mins / 60)
+    if (hours < 24) return `${hours}h ago`
+    const days = Math.floor(hours / 24)
+    if (days < 7) return `${days}d ago`
+    return date.toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
       year: "numeric",
@@ -299,7 +315,7 @@ export default function SupportPage() {
           </button>
           <button
             onClick={() => setShowNew(!showNew)}
-            className="flex items-center gap-2 px-4 py-2 bg-[#C4972A] text-white text-sm font-medium rounded-lg hover:bg-[#A17D22] transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-[#C4972A] text-white text-sm font-medium rounded-lg hover:bg-[#A17D22] transition-colors btn-lift"
           >
             <Plus className="w-4 h-4" />
             New Ticket
@@ -357,10 +373,11 @@ export default function SupportPage() {
                 required
                 rows={4}
                 value={message}
-                onChange={(e) => setMessage(e.target.value)}
+                onChange={(e) => setMessage(e.target.value.slice(0, 2000))}
                 placeholder="Describe the issue in detail. Include any relevant context..."
                 className="w-full px-4 py-3 bg-background border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C4972A]/20 focus:border-[#C4972A] resize-none"
               />
+              <p className="text-xs text-muted-foreground text-right mt-1">{message.length}/2000</p>
             </div>
 
             <div className="flex gap-3">
@@ -464,8 +481,8 @@ export default function SupportPage() {
                         {ticket.subject}
                       </h3>
                       <div className="text-xs text-muted-foreground flex flex-wrap items-center gap-3 mt-1.5">
-                        <span>Opened {formatDate(ticket.createdAt)}</span>
-                        <span>Updated {formatDate(ticket.updatedAt)}</span>
+                        <span title={new Date(ticket.createdAt).toLocaleString()}>Opened {formatRelative(ticket.createdAt)}</span>
+                        <span title={new Date(ticket.updatedAt).toLocaleString()}>Updated {formatRelative(ticket.updatedAt)}</span>
                         <span>
                           Assigned to:{" "}
                           <span className="text-foreground">

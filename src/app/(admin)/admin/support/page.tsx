@@ -3,6 +3,7 @@ import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
 import { LifeBuoy } from "lucide-react"
 import { AdminSupportClient } from "./AdminSupportClient"
+import { Breadcrumbs } from "@/components/shared/Breadcrumbs"
 
 export const metadata = { title: "Support Tickets" }
 
@@ -60,6 +61,12 @@ export default async function AdminSupportPage() {
 
   return (
     <div className="space-y-6">
+      <Breadcrumbs
+        items={[
+          { label: "Admin", href: "/admin/dashboard" },
+          { label: "Support Tickets" },
+        ]}
+      />
       <div className="flex items-center gap-3">
         <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-muted">
           <LifeBuoy className="h-5 w-5 text-muted-foreground" />

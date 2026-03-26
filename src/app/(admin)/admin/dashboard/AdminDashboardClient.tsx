@@ -28,6 +28,7 @@ import {
   type PipelineFunnelEntry,
   type RevenueByServiceEntry,
 } from "@/components/admin/AdminCharts"
+import { Sparkline } from "@/components/shared/Sparkline"
 import {
   AnimatedPage,
   StaggerContainer,
@@ -84,20 +85,34 @@ interface DashboardData {
     total: number
     overdue: number
   }>
+  mrrSparkline: number[]
+  clientSparkline: number[]
+  pipelineSparkline: number[]
   now: string
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function trendClass(n: number) {
-  if (n > 0) return "text-green-500"
-  if (n < 0) return "text-primary"
+  if (n > 0) return "text-green-400"
+  if (n < 0) return "text-red-400"
   return "text-muted-foreground"
 }
 
-function trendLabel(n: number) {
-  if (n > 0) return `+${n}`
-  return `${n}`
+function trendArrow(n: number) {
+  if (n > 0) return "\u2191"
+  if (n < 0) return "\u2193"
+  return ""
+}
+
+function trendLabel(n: number, prefix = "") {
+  const arrow = trendArrow(n)
+  if (prefix === "$") {
+    const absVal = Math.abs(n)
+    return `${arrow} ${n >= 0 ? "+" : "-"}$${absVal.toLocaleString()}`
+  }
+  if (n > 0) return `${arrow} +${n}`
+  return `${arrow} ${n}`
 }
 
 const ACTIVITY_ICON_MAP: Record<string, LucideIcon> = {
@@ -130,6 +145,9 @@ export function AdminDashboardClient({ data }: { data: DashboardData }) {
     overdueTasks,
     recentActivity,
     teamWorkload,
+    mrrSparkline,
+    clientSparkline,
+    pipelineSparkline,
     now: nowStr,
   } = data
 
@@ -169,15 +187,18 @@ export function AdminDashboardClient({ data }: { data: DashboardData }) {
               <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 MRR
               </p>
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-[#C4972A]">
-                <DollarSign className="h-4 w-4" />
+              <div className="flex items-center gap-2">
+                {mrrSparkline.length > 1 && <Sparkline data={mrrSparkline} />}
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-[#C4972A]">
+                  <DollarSign className="h-4 w-4" />
+                </div>
               </div>
             </div>
             <p className="text-3xl font-mono font-bold text-foreground">
               <AnimatedDollar value={mrr} />
             </p>
             <p className={`mt-1 text-xs font-medium ${trendClass(mrrDelta)}`}>
-              {trendLabel(mrrDelta)} vs last month
+              {trendLabel(mrrDelta, "$")} vs last month
             </p>
             <div className="mt-3">
               <div className="flex items-center justify-between text-[11px] text-muted-foreground mb-1">
@@ -196,8 +217,11 @@ export function AdminDashboardClient({ data }: { data: DashboardData }) {
               <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Active Clients
               </p>
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-[#C4972A]">
-                <Users className="h-4 w-4" />
+              <div className="flex items-center gap-2">
+                {clientSparkline.length > 1 && <Sparkline data={clientSparkline} color="#22c55e" />}
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-[#C4972A]">
+                  <Users className="h-4 w-4" />
+                </div>
               </div>
             </div>
             <p className="text-3xl font-mono font-bold text-foreground">
@@ -220,15 +244,18 @@ export function AdminDashboardClient({ data }: { data: DashboardData }) {
               <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Pipeline Value
               </p>
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-[#C4972A]">
-                <Layers className="h-4 w-4" />
+              <div className="flex items-center gap-2">
+                {pipelineSparkline.length > 1 && <Sparkline data={pipelineSparkline} color="#60a5fa" />}
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-[#C4972A]">
+                  <Layers className="h-4 w-4" />
+                </div>
               </div>
             </div>
             <p className="text-3xl font-mono font-bold text-foreground">
               <AnimatedDollar value={pipelineValue} />
             </p>
             <p className={`mt-1 text-xs font-medium ${trendClass(pipelineDelta)}`}>
-              {trendLabel(Math.round(pipelineDelta))} vs last month
+              {trendLabel(Math.round(pipelineDelta), "$")} vs last month
             </p>
             <div className="mt-3">
               <AnimatedProgressBar percentage={Math.min((pipelineValue / 500_000) * 100, 100)} delay={0.7} />

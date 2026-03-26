@@ -3,6 +3,7 @@ import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
 import { MessageSquare } from "lucide-react"
 import { ChatSessionsClient, type ChatSessionRow } from "./ChatSessionsClient"
+import { Breadcrumbs } from "@/components/shared/Breadcrumbs"
 
 export const metadata = { title: "Chat Sessions" }
 
@@ -60,6 +61,12 @@ export default async function AdminChatSessionsPage() {
 
   return (
     <div>
+      <Breadcrumbs
+        items={[
+          { label: "Admin", href: "/admin/dashboard" },
+          { label: "Chat Sessions" },
+        ]}
+      />
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-foreground">Chat Sessions</h1>
         <p className="text-sm text-muted-foreground mt-1">

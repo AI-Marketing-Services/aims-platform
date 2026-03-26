@@ -1,9 +1,10 @@
 import { auth } from "@clerk/nextjs/server"
 import { redirect, notFound } from "next/navigation"
 import { db } from "@/lib/db"
-import { CheckCircle2, Clock, AlertCircle, Circle, ArrowLeft, ExternalLink } from "lucide-react"
+import { CheckCircle2, Clock, AlertCircle, Circle, ExternalLink } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
+import { Breadcrumbs } from "@/components/shared/Breadcrumbs"
 
 const PILLAR_PILL: Record<string, string> = {
   MARKETING: "bg-green-900/15 text-green-400 border-green-800",
@@ -59,14 +60,13 @@ export default async function PortalServiceDetailPage({
 
   return (
     <div className="max-w-3xl space-y-8">
-      {/* Back */}
-      <Link
-        href="/portal/services"
-        className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        Back to My Services
-      </Link>
+      <Breadcrumbs
+        items={[
+          { label: "Portal", href: "/portal/dashboard" },
+          { label: "Services", href: "/portal/services" },
+          { label: serviceArm.name },
+        ]}
+      />
 
       {/* Header */}
       <div className="rounded-xl border border-border bg-card p-6">

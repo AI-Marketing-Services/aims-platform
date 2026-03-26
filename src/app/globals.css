@@ -265,4 +265,47 @@
   .animate-fade-up {
     animation: fade-up 0.6s ease-out forwards;
   }
+
+  /* ── Improvement #10: Micro-interactions ─────────────────────────────────── */
+
+  /* Subtle button lift on hover */
+  .btn-lift {
+    @apply transition-all duration-150 ease-out;
+  }
+  .btn-lift:hover {
+    transform: translateY(-1px);
+  }
+
+  /* Card micro-scale on hover */
+  .micro-card {
+    @apply transition-all duration-200 ease-out;
+  }
+  .micro-card:hover {
+    transform: scale(1.01);
+    box-shadow: 0 4px 16px -4px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.04);
+  }
+
+  /* Pulse animation for active/live status badges */
+  @keyframes status-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+  .status-live {
+    animation: status-pulse 2s ease-in-out infinite;
+  }
+
+  /* ── Improvement #15: Focus states & keyboard accessibility ─────────────── */
+
+  /* Global focus-visible ring for interactive elements */
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible,
+  [role="button"]:focus-visible,
+  [tabindex]:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--primary) / 0.5);
+    border-radius: inherit;
+  }
 }

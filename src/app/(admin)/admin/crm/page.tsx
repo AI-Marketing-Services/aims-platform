@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import { getDealsByStage } from "@/lib/db/queries"
 import { CRMKanban } from "./CRMKanban"
+import { Breadcrumbs } from "@/components/shared/Breadcrumbs"
 
 
 export default async function AdminCRMPage() {
@@ -34,6 +35,12 @@ export default async function AdminCRMPage() {
   return (
     <div className="h-[calc(100vh-4rem)] flex flex-col">
       <div className="mb-6 flex-shrink-0">
+        <Breadcrumbs
+          items={[
+            { label: "Admin", href: "/admin/dashboard" },
+            { label: "CRM Pipeline" },
+          ]}
+        />
         <h1 className="text-2xl font-bold text-foreground mb-1">CRM Pipeline</h1>
         <p className="text-muted-foreground">Drag deals between stages to update pipeline</p>
       </div>

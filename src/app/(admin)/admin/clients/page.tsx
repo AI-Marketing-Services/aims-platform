@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
 import { ClientsTable } from "./ClientsTable"
+import { Breadcrumbs } from "@/components/shared/Breadcrumbs"
 
 export const metadata = { title: "Clients" }
 
@@ -72,6 +73,12 @@ export default async function AdminClientsPage() {
 
   return (
     <div className="max-w-7xl">
+      <Breadcrumbs
+        items={[
+          { label: "Admin", href: "/admin/dashboard" },
+          { label: "Clients" },
+        ]}
+      />
       {/* Summary stat cards */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-8">
         {[
@@ -83,7 +90,7 @@ export default async function AdminClientsPage() {
         ].map((s) => (
           <div
             key={s.label}
-            className="bg-card border border-border rounded-xl px-4 py-3"
+            className="bg-card border border-border rounded-xl px-4 py-3 micro-card"
           >
             <div className="text-xs text-muted-foreground mb-1">{s.label}</div>
             <div className="text-lg font-bold font-mono text-foreground">{s.value}</div>

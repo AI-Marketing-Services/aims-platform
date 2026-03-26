@@ -268,7 +268,7 @@ export default async function PortalServicesPage() {
                     </span>
                   )}
                   <span
-                    className={`text-xs px-2 py-0.5 rounded-full border ${statusClass} flex items-center gap-1`}
+                    className={`text-xs px-2 py-0.5 rounded-full border ${statusClass} flex items-center gap-1 ${statusKey === "ACTIVE" ? "status-live" : ""}`}
                   >
                     <StatusIcon className="w-3 h-3" />
                     {statusLabel}

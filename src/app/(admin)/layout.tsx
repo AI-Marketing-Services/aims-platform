@@ -3,6 +3,8 @@ import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import { AdminSidebar } from "@/components/admin/AdminSidebar"
 import { MobileAdminNav } from "@/components/admin/MobileAdminNav"
+import { PageTransition } from "@/components/shared/PageTransition"
+import { KeyboardShortcuts } from "@/components/shared/KeyboardShortcuts"
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
@@ -34,12 +36,15 @@ export default async function AdminLayout({
       <div className="flex h-[calc(100dvh-3.5rem)] lg:h-screen overflow-hidden">
         <AdminSidebar />
         <main className="flex-1 overflow-y-auto custom-scrollbar">
-          <div className="p-4 pb-20 lg:p-6 lg:pb-8 xl:p-8">{children}</div>
+          <PageTransition>
+            <div className="p-4 pb-20 lg:p-6 lg:pb-8 xl:p-8">{children}</div>
+          </PageTransition>
         </main>
       </div>
 
       {/* Mobile bottom nav */}
       <MobileAdminNav />
+      <KeyboardShortcuts />
     </div>
   )
 }

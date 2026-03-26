@@ -1,8 +1,9 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useCallback } from "react"
 import { useSearchParams } from "next/navigation"
-import { Check, ArrowRight, ArrowLeft } from "lucide-react"
+import { Check, ArrowRight, ArrowLeft, CheckCircle2, AlertCircle } from "lucide-react"
+import { toast } from "sonner"
 
 function CalBooking() {
   return (
@@ -76,6 +77,23 @@ export function GetStartedClient() {
     goal: "",
   })
   const [submitted, setSubmitted] = useState(false)
+  const [touched, setTouched] = useState<Record<string, boolean>>({})
+
+  const markTouched = useCallback((field: string) => {
+    setTouched((prev) => ({ ...prev, [field]: true }))
+  }, [])
+
+  const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+  const fieldErrors: Record<string, string | null> = {
+    name: touched.name && !form.name.trim() ? "Name is required" : null,
+    email: touched.email ? (!form.email.trim() ? "Email is required" : !isValidEmail(form.email) ? "Enter a valid email" : null) : null,
+    company: touched.company && !form.company.trim() ? "Company is required" : null,
+  }
+  const fieldValid: Record<string, boolean> = {
+    name: touched.name ? !!form.name.trim() : false,
+    email: touched.email ? isValidEmail(form.email) : false,
+    company: touched.company ? !!form.company.trim() : false,
+  }
 
   const toggleService = (slug: string) => {
     setForm((prev) => ({
@@ -100,13 +118,17 @@ export function GetStartedClient() {
       })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))
-        setSubmitError(data.error ?? "Something went wrong. Please try again.")
+        const errMsg = data.error ?? "Something went wrong. Please try again."
+        setSubmitError(errMsg)
+        toast.error(errMsg)
         setSubmitting(false)
         return
       }
       setSubmitted(true)
+      toast.success("Request submitted! Now book your call.")
     } catch {
       setSubmitError("Network error. Please check your connection and try again.")
+      toast.error("Network error. Please try again.")
       setSubmitting(false)
     }
   }
@@ -192,32 +214,48 @@ export function GetStartedClient() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium mb-1.5">Your Name *</label>
-                    <input
-                      value={form.name}
-                      onChange={(e) => setForm({ ...form, name: e.target.value })}
-                      placeholder="Adam Wolfe"
-                      className="w-full rounded-lg border border-border px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-                    />
+                    <div className="relative">
+                      <input
+                        value={form.name}
+                        onChange={(e) => setForm({ ...form, name: e.target.value })}
+                        onBlur={() => markTouched("name")}
+                        placeholder="Adam Wolfe"
+                        className={`w-full rounded-lg border px-4 py-2.5 pr-9 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary ${fieldErrors.name ? "border-red-500" : fieldValid.name ? "border-green-500/50" : "border-border"}`}
+                      />
+                      {fieldValid.name && <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-green-400" />}
+                    </div>
+                    {fieldErrors.name && <p className="text-xs text-red-400 mt-1">{fieldErrors.name}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1.5">Company *</label>
-                    <input
-                      value={form.company}
-                      onChange={(e) => setForm({ ...form, company: e.target.value })}
-                      placeholder="ACME Corp"
-                      className="w-full rounded-lg border border-border px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-                    />
+                    <div className="relative">
+                      <input
+                        value={form.company}
+                        onChange={(e) => setForm({ ...form, company: e.target.value })}
+                        onBlur={() => markTouched("company")}
+                        placeholder="ACME Corp"
+                        className={`w-full rounded-lg border px-4 py-2.5 pr-9 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary ${fieldErrors.company ? "border-red-500" : fieldValid.company ? "border-green-500/50" : "border-border"}`}
+                      />
+                      {fieldValid.company && <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-green-400" />}
+                    </div>
+                    {fieldErrors.company && <p className="text-xs text-red-400 mt-1">{fieldErrors.company}</p>}
                   </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1.5">Work Email *</label>
-                  <input
-                    type="email"
-                    value={form.email}
-                    onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    placeholder="you@company.com"
-                    className="w-full rounded-lg border border-border px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-                  />
+                  <div className="relative">
+                    <input
+                      type="email"
+                      value={form.email}
+                      onChange={(e) => setForm({ ...form, email: e.target.value })}
+                      onBlur={() => markTouched("email")}
+                      placeholder="you@company.com"
+                      className={`w-full rounded-lg border px-4 py-2.5 pr-9 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary ${fieldErrors.email ? "border-red-500" : fieldValid.email ? "border-green-500/50" : "border-border"}`}
+                    />
+                    {fieldValid.email && <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-green-400" />}
+                    {fieldErrors.email && <AlertCircle className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-red-400" />}
+                  </div>
+                  {fieldErrors.email && <p className="text-xs text-red-400 mt-1">{fieldErrors.email}</p>}
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1.5">Website</label>
@@ -255,11 +293,12 @@ export function GetStartedClient() {
                   <label className="block text-sm font-medium mb-1.5">Primary Goal</label>
                   <textarea
                     value={form.goal}
-                    onChange={(e) => setForm({ ...form, goal: e.target.value })}
+                    onChange={(e) => setForm({ ...form, goal: e.target.value.slice(0, 500) })}
                     rows={3}
                     placeholder="e.g. Book 20 demos per month, reactivate old leads, build a cold email system..."
                     className="w-full rounded-lg border border-border px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none"
                   />
+                  <p className="text-xs text-muted-foreground text-right mt-1">{form.goal.length}/500</p>
                 </div>
               </div>
               <div className="mt-6 flex gap-3">

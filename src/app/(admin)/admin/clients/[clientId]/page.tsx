@@ -1,9 +1,8 @@
 import { auth } from "@clerk/nextjs/server"
 import { redirect, notFound } from "next/navigation"
 import { db } from "@/lib/db"
-import { ArrowLeft } from "lucide-react"
-import Link from "next/link"
 import { ClientDetailClient } from "./ClientDetailClient"
+import { Breadcrumbs } from "@/components/shared/Breadcrumbs"
 
 export default async function AdminClientDetailPage({ params }: { params: Promise<{ clientId: string }> }) {
   const { clientId } = await params
@@ -138,13 +137,13 @@ export default async function AdminClientDetailPage({ params }: { params: Promis
 
   return (
     <div className="max-w-7xl">
-      <Link
-        href="/admin/clients"
-        className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        Back to Clients
-      </Link>
+      <Breadcrumbs
+        items={[
+          { label: "Admin", href: "/admin/dashboard" },
+          { label: "Clients", href: "/admin/clients" },
+          { label: user.name ?? user.email ?? "Client" },
+        ]}
+      />
 
       <ClientDetailClient
         user={serializedUser}

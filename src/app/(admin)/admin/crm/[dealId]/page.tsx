@@ -1,9 +1,8 @@
 import { auth } from "@clerk/nextjs/server"
 import { redirect, notFound } from "next/navigation"
 import { getDealById } from "@/lib/db/queries"
-import { ArrowLeft } from "lucide-react"
-import Link from "next/link"
 import { DealDetailClient } from "./DealDetailClient"
+import { Breadcrumbs } from "@/components/shared/Breadcrumbs"
 
 const STAGE_OPTIONS = [
   { value: "NEW_LEAD", label: "New Lead" },
@@ -72,13 +71,13 @@ export default async function AdminDealDetailPage({ params }: { params: Promise<
 
   return (
     <div className="max-w-7xl">
-      <Link
-        href="/admin/crm"
-        className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        Back to CRM
-      </Link>
+      <Breadcrumbs
+        items={[
+          { label: "Admin", href: "/admin/dashboard" },
+          { label: "CRM", href: "/admin/crm" },
+          { label: deal.contactName || "Deal" },
+        ]}
+      />
 
       <DealDetailClient
         dealId={deal.id}

@@ -220,6 +220,29 @@ async function getDashboardData() {
   const pipelineDelta = pipelineValueCurrentPeriod - pipelineValuePrevPeriod
   const mrrPct = Math.round((mrr / MRR_TARGET) * 100)
 
+  // Generate 7-day sparkline data from items with createdAt dates
+  function buildSparkline<T extends { createdAt: Date }>(items: T[], extractValue: (item: T) => number = () => 1): number[] {
+    const points: number[] = []
+    for (let i = 6; i >= 0; i--) {
+      const dayStart = new Date(now.getTime() - i * 86_400_000)
+      dayStart.setHours(0, 0, 0, 0)
+      const dayEnd = new Date(dayStart.getTime() + 86_400_000)
+      const dayItems = items.filter((item) => item.createdAt >= dayStart && item.createdAt < dayEnd)
+      points.push(dayItems.reduce((sum, item) => sum + extractValue(item), 0))
+    }
+    return points
+  }
+
+  const mrrSparkline = subsResult.status === "fulfilled"
+    ? buildSparkline(subsResult.value, (s) => s.monthlyAmount)
+    : []
+  const clientSparkline = subsResult.status === "fulfilled"
+    ? buildSparkline(subsResult.value)
+    : []
+  const pipelineSparkline = pipelineResult.status === "fulfilled"
+    ? buildSparkline(pipelineResult.value, (d) => d.value)
+    : []
+
   return {
     mrr,
     mrrDelta,
@@ -234,6 +257,9 @@ async function getDashboardData() {
     overdueTasks,
     recentActivity,
     teamWorkload,
+    mrrSparkline,
+    clientSparkline,
+    pipelineSparkline,
     now,
   }
 }
