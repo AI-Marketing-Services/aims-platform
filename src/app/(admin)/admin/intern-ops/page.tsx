@@ -196,7 +196,7 @@ export default async function AdminInternOpsPage() {
       {/* Task overview stat row */}
       <div className="rounded-xl border border-border bg-card p-5">
         <h2 className="text-sm font-semibold text-foreground mb-4">Task Overview</h2>
-        <div className="grid grid-cols-5 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
           {TASK_STATUS_DISPLAY.map(({ key, label, color }) => (
             <div key={key} className="rounded-lg bg-muted/50 px-4 py-3 text-center">
               <p className={cn("text-2xl font-bold font-mono", color)}>

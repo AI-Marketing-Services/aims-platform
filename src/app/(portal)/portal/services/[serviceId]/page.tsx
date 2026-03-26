@@ -89,7 +89,7 @@ export default async function PortalServiceDetailPage({
           </div>
         </div>
 
-        <div className="mt-5 grid grid-cols-3 gap-4 pt-5 border-t border-border">
+        <div className="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-4 pt-5 border-t border-border">
           <div>
             <p className="text-xs text-muted-foreground mb-1">Started</p>
             <p className="text-sm font-medium text-foreground">

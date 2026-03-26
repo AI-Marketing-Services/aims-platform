@@ -185,7 +185,7 @@ export default async function BillingPage() {
         </div>
         <div className="divide-y divide-border">
           {/* Header row */}
-          <div className="grid grid-cols-4 px-5 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wide bg-muted/20">
+          <div className="hidden sm:grid grid-cols-4 px-5 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wide bg-muted/20">
             <span>Date</span>
             <span>Amount</span>
             <span>Status</span>
@@ -197,7 +197,7 @@ export default async function BillingPage() {
             </div>
           ) : (
             invoices.map((inv) => (
-              <div key={inv.id} className="grid grid-cols-4 px-5 py-3 text-sm items-center">
+              <div key={inv.id} className="grid grid-cols-2 sm:grid-cols-4 gap-2 px-5 py-3 text-sm items-center">
                 <span className="text-foreground">{inv.date}</span>
                 <span className="font-medium text-foreground">{inv.amount}</span>
                 <span>

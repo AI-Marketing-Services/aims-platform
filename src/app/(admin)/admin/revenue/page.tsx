@@ -102,7 +102,7 @@ export default async function AdminRevenuePage() {
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-4">
           <div>
             <p className="text-sm text-muted-foreground mb-1">Monthly Recurring Revenue</p>
-            <p className="text-5xl font-mono font-bold text-foreground">
+            <p className="text-3xl sm:text-5xl font-mono font-bold text-foreground">
               ${currentMRR.toLocaleString()}
             </p>
             <p className="text-sm text-muted-foreground mt-2">

@@ -115,8 +115,8 @@ export default function ServicesConfigClient() {
           <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             {pillar.replace(/_/g, " ")}
           </h2>
-          <div className="overflow-hidden rounded-xl border border-border bg-card">
-            <table className="w-full text-sm">
+          <div className="overflow-x-auto rounded-xl border border-border bg-card">
+            <table className="w-full text-sm min-w-[700px]">
               <thead>
                 <tr className="border-b border-border bg-muted text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   <th className="px-4 py-3">Service</th>

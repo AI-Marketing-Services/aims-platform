@@ -78,13 +78,13 @@ export function HowItWorks() {
         </div>
 
         {/* Timeline bar */}
-        <div className="mt-10 flex items-center gap-0 overflow-hidden rounded-sm border border-border bg-card">
+        <div className="mt-10 flex flex-col sm:flex-row items-stretch gap-0 overflow-hidden rounded-sm border border-border bg-card">
           {[
-            { week: "Week 1–3", label: "Discovery & Diagnostic", color: "bg-[#E8C46A]" },
-            { week: "Week 3–8", label: "Deploy & Integrate", color: "bg-primary" },
+            { week: "Week 1-3", label: "Discovery & Diagnostic", color: "bg-[#E8C46A]" },
+            { week: "Week 3-8", label: "Deploy & Integrate", color: "bg-primary" },
             { week: "Week 8+", label: "Measure & Expand", color: "bg-[#8B6914]" },
-          ].map((phase, i) => (
-            <div key={phase.label} className="flex-1 border-r border-border last:border-r-0 px-5 py-3.5">
+          ].map((phase) => (
+            <div key={phase.label} className="flex-1 border-b sm:border-b-0 sm:border-r border-border last:border-b-0 last:border-r-0 px-4 sm:px-5 py-3">
               <div className={`mb-1.5 h-1 w-8 rounded-full ${phase.color}`} />
               <p className="text-xs font-semibold text-foreground">{phase.week}</p>
               <p className="text-xs text-muted-foreground">{phase.label}</p>

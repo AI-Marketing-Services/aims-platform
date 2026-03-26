@@ -31,14 +31,14 @@ export default function PLAutomationCaseStudy() {
           How a B2B SaaS company built its first outbound motion from scratch, targeting CFOs and VP Finance at mid-market companies - and tripled its pipeline in two months.
         </p>
 
-        <div className="bg-card border border-border rounded-2xl p-6 mb-10 grid grid-cols-3 gap-4 text-center shadow-sm">
+        <div className="bg-card border border-border rounded-2xl p-6 mb-10 grid grid-cols-1 sm:grid-cols-3 gap-4 text-center shadow-sm">
           {[
             { value: "3x", label: "Pipeline growth" },
             { value: "60 days", label: "From launch to results" },
             { value: "12%", label: "Lead-to-meeting rate" },
           ].map((m) => (
             <div key={m.label}>
-              <div className="text-3xl font-black text-primary mb-1">{m.value}</div>
+              <div className="text-2xl sm:text-3xl font-black text-primary mb-1">{m.value}</div>
               <div className="text-xs text-muted-foreground">{m.label}</div>
             </div>
           ))}

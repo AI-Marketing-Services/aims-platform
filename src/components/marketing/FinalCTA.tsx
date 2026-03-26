@@ -10,7 +10,7 @@ export function FinalCTA() {
         <p className="font-mono text-xs uppercase tracking-widest text-primary mb-6">
           Ready to see the ceiling clearly?
         </p>
-        <h2 className="font-serif text-4xl font-light text-foreground sm:text-5xl">
+        <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-light text-foreground">
           Let the data tell you<br />what to <em className="text-primary italic">fix first.</em>
         </h2>
         <p className="mt-6 text-base text-muted-foreground max-w-xl mx-auto leading-relaxed">

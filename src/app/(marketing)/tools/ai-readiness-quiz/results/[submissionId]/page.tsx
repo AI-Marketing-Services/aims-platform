@@ -109,7 +109,7 @@ export default async function ResultsPage({ params }: Props) {
         {/* Score card */}
         <div className="bg-card border border-border rounded-2xl p-8 text-center mb-6 shadow-sm">
           <div className="flex justify-center mb-4">{getCategoryIcon(category.label)}</div>
-          <div className="text-7xl font-black text-foreground mb-1">{score}</div>
+          <div className="text-5xl sm:text-7xl font-black text-foreground mb-1">{score}</div>
           <div className="text-muted-foreground text-sm mb-3">AI Readiness Score</div>
           <div className={`text-xl font-bold mb-6 ${category.colorClass}`}>{category.label}</div>
 

@@ -39,7 +39,7 @@ export function SectionHeader({
           </span>
         </div>
       )}
-      <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-5xl">
+      <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-foreground">
         {heading}
       </h2>
       {subheading && (

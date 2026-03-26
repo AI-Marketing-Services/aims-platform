@@ -99,7 +99,7 @@ export default async function WebsiteAuditResultsPage({ params }: Props) {
 
         {/* Overall score */}
         <div className="bg-card border border-border rounded-2xl p-8 text-center shadow-sm mb-6">
-          <div className={cn("text-7xl font-black mb-1", scoreColor)}>{overallScore}</div>
+          <div className={cn("text-5xl sm:text-7xl font-black mb-1", scoreColor)}>{overallScore}</div>
           <div className="text-muted-foreground text-sm mb-4">Overall Marketing Health Score</div>
           <div className="max-w-xs mx-auto mb-4">
             <div className="h-3 bg-deep rounded-full overflow-hidden">
@@ -122,7 +122,7 @@ export default async function WebsiteAuditResultsPage({ params }: Props) {
         {analysis?.scores && (
           <div className="bg-card border border-border rounded-2xl p-6 mb-6 shadow-sm">
             <h3 className="font-semibold text-foreground mb-5">Score Breakdown</h3>
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               <ScoreRing score={analysis.scores.seo} label="SEO" color="" />
               <ScoreRing score={analysis.scores.speed} label="Speed" color="" />
               <ScoreRing score={analysis.scores.conversion} label="Conversion" color="" />

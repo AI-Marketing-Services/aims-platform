@@ -234,7 +234,7 @@ export function CronStatusClient() {
                 </div>
 
                 {/* Stats row */}
-                <div className="grid grid-cols-3 gap-3 pt-2 border-t border-border">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-border">
                   <div>
                     <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Last Run</p>
                     <p className="text-sm font-medium text-foreground mt-0.5">
@@ -270,8 +270,8 @@ export function CronStatusClient() {
                     <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">
                       Recent Executions ({job.recentExecutions.length})
                     </p>
-                    <div className="rounded-lg border border-border overflow-hidden">
-                      <table className="w-full text-xs">
+                    <div className="rounded-lg border border-border overflow-hidden overflow-x-auto">
+                      <table className="w-full text-xs min-w-[400px]">
                         <thead>
                           <tr className="bg-deep text-muted-foreground">
                             <th className="text-left px-2 py-1.5 font-medium">Time</th>

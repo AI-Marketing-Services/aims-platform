@@ -107,8 +107,8 @@ export function ChatSessionsClient({ sessions }: ChatSessionsClientProps) {
           <p className="text-sm">No chat sessions found</p>
         </div>
       ) : (
-        <div className="border border-border rounded-xl overflow-hidden">
-          <table className="w-full">
+        <div className="border border-border rounded-xl overflow-x-auto">
+          <table className="w-full min-w-[600px]">
             <thead>
               <tr className="border-b border-border bg-card">
                 <th className="text-left text-xs font-medium text-muted-foreground px-4 py-3 w-8" />

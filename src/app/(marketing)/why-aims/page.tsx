@@ -74,13 +74,13 @@ export default function WhyAIMSPage() {
         <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary text-sm font-medium rounded-full mb-6">
           Why AIMS
         </div>
-        <h1 className="text-5xl font-bold text-foreground mb-6 leading-tight">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-6 leading-tight">
           The Agency Model is Broken.<br />We Fixed It.
         </h1>
         <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
           Traditional agencies are slow, generalist, and expensive. AIMS is AI-native, specialized, and built for speed. Here&apos;s exactly what makes us different.
         </p>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
           {stats.map((stat) => (
             <div key={stat.label} className="bg-card border border-border rounded-2xl p-6">
               <stat.icon className="w-5 h-5 text-primary mb-3 mx-auto" />

@@ -37,7 +37,7 @@ export default function AboutPage() {
           <span className="inline-block rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary mb-4">
             About AIMS
           </span>
-          <h1 className="text-5xl font-bold tracking-tight text-foreground">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-foreground">
             We Build The Systems.<br />You Close The Deals.
           </h1>
           <p className="mt-6 text-xl text-muted-foreground max-w-2xl mx-auto">

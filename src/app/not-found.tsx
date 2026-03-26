@@ -16,7 +16,7 @@ export default function NotFound() {
           <Search className="h-10 w-10 text-primary" />
         </div>
         <div className="space-y-2">
-          <h1 className="text-6xl font-black text-primary">404</h1>
+          <h1 className="text-5xl sm:text-6xl font-black text-primary">404</h1>
           <h2 className="text-xl font-bold text-foreground">Page Not Found</h2>
           <p className="text-sm text-muted-foreground">
             The page you&apos;re looking for doesn&apos;t exist or has been moved.

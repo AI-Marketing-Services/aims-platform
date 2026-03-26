@@ -110,7 +110,7 @@ export function PortalChatWidget({ firstName = "there", serviceCount = 0 }: Port
       )}
 
       {open && (
-        <div className="fixed bottom-6 right-6 z-50 w-[420px] h-[520px] rounded-2xl border border-border bg-[#0E1219] shadow-2xl flex flex-col overflow-hidden">
+        <div className="fixed bottom-6 right-6 z-50 w-[calc(100vw-2rem)] sm:w-[420px] h-[520px] rounded-2xl border border-border bg-[#0E1219] shadow-2xl flex flex-col overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-card flex-shrink-0">
             <div className="flex items-center gap-2">

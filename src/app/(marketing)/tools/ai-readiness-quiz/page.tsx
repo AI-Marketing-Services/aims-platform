@@ -220,14 +220,14 @@ export default function AIReadinessQuizPage() {
                 Answer 7 questions about your current sales and marketing stack. Get a personalized score and a roadmap for where AI can add the most leverage.
               </p>
               <div className="bg-card border border-border rounded-2xl p-6 mb-8 text-left">
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-3 gap-3 sm:gap-4">
                   {[
                     { value: "7", label: "Questions" },
                     { value: "2 min", label: "To complete" },
                     { value: "Free", label: "Instant results" },
                   ].map((stat) => (
                     <div key={stat.label} className="text-center">
-                      <div className="text-2xl font-bold text-foreground">{stat.value}</div>
+                      <div className="text-xl sm:text-2xl font-bold text-foreground">{stat.value}</div>
                       <div className="text-sm text-muted-foreground">{stat.label}</div>
                     </div>
                   ))}
@@ -386,7 +386,7 @@ export default function AIReadinessQuizPage() {
             >
               <div className="bg-card border border-border rounded-2xl p-8 text-center">
                 <div className="mb-4">{category.icon}</div>
-                <div className="text-6xl font-bold text-foreground mb-1">{pct}</div>
+                <div className="text-4xl sm:text-6xl font-bold text-foreground mb-1">{pct}</div>
                 <div className="text-muted-foreground mb-3">AI Readiness Score</div>
                 <div className={cn("text-xl font-bold mb-2", category.color)}>
                   {category.label}
