@@ -7,6 +7,7 @@ import { chatRatelimit, getIp } from "@/lib/ratelimit"
 import { logApiCost, estimateAnthropicCost } from "@/lib/ai"
 import { AIMS_KNOWLEDGE_BASE } from "@/lib/ai/knowledge-base"
 import { upsertChatSession } from "@/lib/db/chat-sessions"
+import { logger } from "@/lib/logger"
 
 export const maxDuration = 30
 
@@ -129,7 +130,7 @@ ${ticketSummary}
 IMPORTANT: If this client asks about a service they already have, acknowledge their active subscription and offer to help with it. If they ask about a service they don't have, suggest how it complements their existing services.`
     }
   } catch (err) {
-    console.error("Failed to fetch portal chat client context:", err)
+    logger.error("Failed to fetch portal chat client context:", err)
   }
 
   const result = streamText({
@@ -160,7 +161,7 @@ IMPORTANT: If this client asks about a service they already have, acknowledge th
             }
             return { success: true, message: "Support ticket created. Our team will follow up within 24 hours." }
           } catch (err) {
-            console.error("Portal chat create_ticket tool failed:", err)
+            logger.error("Portal chat create_ticket tool failed:", err)
             return { success: false, message: "Ticket creation failed. Please try /portal/support directly." }
           }
         },

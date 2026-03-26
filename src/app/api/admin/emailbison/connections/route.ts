@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { z } from "zod"
 import { db } from "@/lib/db"
+import { logger } from "@/lib/logger"
 
 async function requireAdmin() {
   const { userId, sessionClaims } = await auth()
@@ -22,7 +23,7 @@ export async function GET() {
     })
     return NextResponse.json({ connections })
   } catch (err) {
-    console.error("Failed to fetch Email Bison connections:", err)
+    logger.error("Failed to fetch Email Bison connections:", err)
     return NextResponse.json({ error: "Failed to fetch connections" }, { status: 500 })
   }
 }
@@ -58,7 +59,7 @@ export async function POST(req: Request) {
     })
     return NextResponse.json({ connection })
   } catch (err) {
-    console.error("Failed to upsert Email Bison connection:", err)
+    logger.error("Failed to upsert Email Bison connection:", err)
     return NextResponse.json({ error: "Failed to save connection" }, { status: 500 })
   }
 }
@@ -77,7 +78,7 @@ export async function DELETE(req: Request) {
     await db.emailBisonConnection.delete({ where: { userId } })
     return NextResponse.json({ success: true })
   } catch (err) {
-    console.error("Failed to delete Email Bison connection:", err)
+    logger.error("Failed to delete Email Bison connection:", err)
     return NextResponse.json({ error: "Failed to delete connection" }, { status: 500 })
   }
 }

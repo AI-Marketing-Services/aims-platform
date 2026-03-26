@@ -193,64 +193,121 @@ export default async function PortalDashboard({
 
       {/* ── ONBOARDING STATE (no subscriptions) ── */}
       {subs.length === 0 ? (
-        <div className="rounded-2xl border border-border bg-card p-6">
-          {/* Progress header */}
-          <div className="mb-5">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-foreground">
-                {completedCount} of {checklist.length} complete
-              </span>
-              <span className="text-xs text-muted-foreground">{progressPct}%</span>
-            </div>
-            <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
-              <div
-                className="h-full rounded-full bg-[#C4972A] transition-all"
-                style={{ width: `${progressPct}%` }}
-              />
-            </div>
+        <>
+          {/* Welcome Action Cards */}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            {[
+              {
+                icon: ShoppingCart,
+                title: "Browse Services",
+                description: "Explore our AI-powered service marketplace and find the right tools for your business.",
+                href: "/portal/marketplace",
+                color: "text-[#C4972A]",
+                bg: "bg-primary/10",
+              },
+              {
+                icon: LifeBuoy,
+                title: "Get Support",
+                description: "Our team is here to help. Open a ticket or chat with us about your needs.",
+                href: "/portal/support",
+                color: "text-blue-400",
+                bg: "bg-blue-900/20",
+              },
+              {
+                icon: BarChart2,
+                title: "Learn More",
+                description: "Take the AI Readiness Quiz to see which services will have the biggest impact.",
+                href: "/tools/ai-readiness-quiz",
+                color: "text-green-400",
+                bg: "bg-green-900/15",
+              },
+            ].map(({ icon: Icon, title, description, href, color, bg }) => (
+              <Link
+                key={title}
+                href={href}
+                className="group rounded-2xl border border-border bg-card p-5 transition-all duration-200 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5"
+              >
+                <div className={`mb-3 flex h-10 w-10 items-center justify-center rounded-xl ${bg}`}>
+                  <Icon className={`h-5 w-5 ${color}`} />
+                </div>
+                <h3 className="text-sm font-semibold text-foreground group-hover:text-[#C4972A] transition-colors">
+                  {title}
+                </h3>
+                <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
+                  {description}
+                </p>
+                <span className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-[#C4972A]">
+                  Get started <ArrowRight className="h-3 w-3" />
+                </span>
+              </Link>
+            ))}
           </div>
 
-          {/* Checklist items */}
-          <ul className="space-y-3">
-            {checklist.map((item) => (
-              <li
-                key={item.label}
-                className="flex items-center justify-between gap-4 rounded-xl border border-border bg-background px-4 py-3"
-              >
-                <div className="flex items-center gap-3">
-                  <div
-                    className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${
-                      item.checked
-                        ? "border-green-500 bg-green-900/15"
-                        : "border-border bg-muted"
-                    }`}
-                  >
-                    {item.checked && (
-                      <Check className="h-3 w-3 text-green-400" />
-                    )}
+          {/* Getting Started Checklist */}
+          <div className="rounded-2xl border border-border bg-card p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <Check className="h-4 w-4 text-[#C4972A]" />
+              <h2 className="text-sm font-semibold text-foreground">Getting Started</h2>
+            </div>
+
+            {/* Progress header */}
+            <div className="mb-5">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-foreground">
+                  {completedCount} of {checklist.length} complete
+                </span>
+                <span className="text-xs text-muted-foreground">{progressPct}%</span>
+              </div>
+              <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-[#C4972A] transition-all"
+                  style={{ width: `${progressPct}%` }}
+                />
+              </div>
+            </div>
+
+            {/* Checklist items */}
+            <ul className="space-y-3">
+              {checklist.map((item) => (
+                <li
+                  key={item.label}
+                  className="flex items-center justify-between gap-4 rounded-xl border border-border bg-background px-4 py-3"
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${
+                        item.checked
+                          ? "border-green-500 bg-green-900/15"
+                          : "border-border bg-muted"
+                      }`}
+                    >
+                      {item.checked && (
+                        <Check className="h-3 w-3 text-green-400" />
+                      )}
+                    </div>
+                    <span
+                      className={`text-sm font-medium ${
+                        item.checked
+                          ? "text-muted-foreground line-through"
+                          : "text-foreground"
+                      }`}
+                    >
+                      {item.label}
+                    </span>
                   </div>
-                  <span
-                    className={`text-sm font-medium ${
-                      item.checked
-                        ? "text-muted-foreground line-through"
-                        : "text-foreground"
-                    }`}
-                  >
-                    {item.label}
-                  </span>
-                </div>
-                {!item.checked && item.href && (
-                  <Link
-                    href={item.href}
-                    className="shrink-0 flex items-center gap-1 text-sm font-medium text-[#C4972A] hover:text-[#A17D22] transition-colors"
-                  >
-                    Go <ArrowRight className="h-3.5 w-3.5" />
-                  </Link>
-                )}
-              </li>
-            ))}
-          </ul>
-        </div>
+                  {!item.checked && item.href && (
+                    <Link
+                      href={item.href}
+                      className="shrink-0 flex items-center gap-1 text-sm font-medium text-[#C4972A] hover:text-[#A17D22] transition-colors"
+                    >
+                      Go <ArrowRight className="h-3.5 w-3.5" />
+                    </Link>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </>
       ) : (
         /* ── ACTIVE STATE: metric cards ── */
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">

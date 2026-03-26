@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { clerkClient } from "@clerk/nextjs/server"
+import { logger } from "@/lib/logger"
 
 const ADMIN_EMAILS = ["adam@modern-amenities.com", "adamwolfe102@gmail.com"]
 
@@ -32,7 +33,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true, updated: results })
   } catch (err) {
-    console.error("Bootstrap failed:", err)
+    logger.error("Bootstrap failed:", err)
     return NextResponse.json({ error: "Bootstrap failed" }, { status: 500 })
   }
 }

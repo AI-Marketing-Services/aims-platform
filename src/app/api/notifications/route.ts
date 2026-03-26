@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { db } from "@/lib/db"
+import { logger } from "@/lib/logger"
 
 export async function GET(req: Request) {
   const { userId, sessionClaims } = await auth()
@@ -36,7 +37,7 @@ export async function GET(req: Request) {
 
     return NextResponse.json({ notifications, unreadCount })
   } catch (err) {
-    console.error("Failed to fetch notifications:", err)
+    logger.error("Failed to fetch notifications:", err)
     return NextResponse.json({ error: "Failed to fetch notifications" }, { status: 500 })
   }
 }

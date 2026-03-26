@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { db } from "@/lib/db"
+import { logger } from "@/lib/logger"
 
 export async function POST(req: Request) {
   const { userId, sessionClaims } = await auth()
@@ -33,7 +34,7 @@ export async function POST(req: Request) {
     })
     return NextResponse.json(vendor)
   } catch (err) {
-    console.error("Vendor create error:", err)
+    logger.error("Vendor create error:", err)
     return NextResponse.json({ error: "Failed to create vendor" }, { status: 500 })
   }
 }

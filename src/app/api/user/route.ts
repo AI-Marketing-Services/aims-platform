@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth, clerkClient } from "@clerk/nextjs/server"
 import { db } from "@/lib/db"
+import { logger } from "@/lib/logger"
 
 export async function DELETE() {
   const { userId } = await auth()
@@ -16,7 +17,7 @@ export async function DELETE() {
 
     return NextResponse.json({ success: true })
   } catch (err) {
-    console.error("Account deletion failed:", err)
+    logger.error("Account deletion failed:", err)
     return NextResponse.json({ error: "Failed to delete account" }, { status: 500 })
   }
 }

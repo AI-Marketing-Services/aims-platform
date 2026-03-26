@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
+import { logger } from "@/lib/logger"
 
 export async function GET(req: Request) {
   const url = new URL(req.url)
@@ -25,7 +26,7 @@ export async function GET(req: Request) {
 
     return NextResponse.json({ valid: true, referral })
   } catch (err) {
-    console.error("Referral validation failed:", err)
+    logger.error("Referral validation failed:", err)
     return NextResponse.json({ error: "Failed to validate referral" }, { status: 500 })
   }
 }

@@ -5,6 +5,7 @@ import { notifyNewLead } from "@/lib/notifications"
 import { createCloseLead } from "@/lib/close"
 import { scoreLeadFromSignals } from "@/lib/scoring/lead-scorer"
 import { formRatelimit, getIp } from "@/lib/ratelimit"
+import { logger } from "@/lib/logger"
 
 const intakeSchema = z.object({
   name: z.string().min(1),
@@ -72,7 +73,7 @@ export async function POST(req: Request) {
       contactEmail: data.email,
       company: data.company,
       source: "get-started-form",
-    }).catch(console.error)
+    }).catch((err) => logger.error("Operation failed", err))
 
     // Sync to Close CRM (fire-and-forget)
     createCloseLead({
@@ -86,13 +87,13 @@ export async function POST(req: Request) {
       dealId: deal.id,
     }).then((closeLeadId) => {
       if (closeLeadId) {
-        db.deal.update({ where: { id: deal.id }, data: { closeLeadId } }).catch(console.error)
+        db.deal.update({ where: { id: deal.id }, data: { closeLeadId } }).catch((err) => logger.error("Operation failed", err))
       }
-    }).catch(console.error)
+    }).catch((err) => logger.error("Operation failed", err))
 
     return NextResponse.json({ id: deal.id }, { status: 201 })
   } catch (err) {
-    console.error("Intake submission failed:", err)
+    logger.error("Intake submission failed:", err)
     return NextResponse.json({ error: "Internal error" }, { status: 500 })
   }
 }

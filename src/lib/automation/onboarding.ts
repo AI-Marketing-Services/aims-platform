@@ -1,5 +1,6 @@
 import { db } from "@/lib/db"
 import { notifyNewPurchase } from "@/lib/notifications"
+import { logger } from "@/lib/logger"
 
 export async function generateOnboardingTasks(subscription: {
   id: string
@@ -47,7 +48,7 @@ export async function generateOnboardingTasks(subscription: {
     serviceName: serviceArm.name,
     tier: subscription.tier ?? undefined,
     amount: 0,
-  }).catch(console.error)
+  }).catch((err) => logger.error("Onboarding notification failed", err))
 }
 
 function getDefaultSetupSteps(serviceName: string): { title: string; description?: string }[] {

@@ -7,6 +7,7 @@ import { createCloseLead } from "@/lib/close"
 import { db } from "@/lib/db"
 import { scoreLeadFromSignals } from "@/lib/scoring/lead-scorer"
 import { formRatelimit, getIp } from "@/lib/ratelimit"
+import { logger } from "@/lib/logger"
 
 const createDealSchema = z.object({
   contactName: z.string().min(1),
@@ -94,7 +95,7 @@ export async function POST(req: Request) {
       company: deal.company ?? undefined,
       source: deal.source ?? undefined,
       channelTag: deal.channelTag ?? undefined,
-    }).catch(console.error)
+    }).catch((err) => logger.error("Operation failed", err))
 
     // Sync to Close CRM (fire-and-forget)
     createCloseLead({
@@ -107,13 +108,13 @@ export async function POST(req: Request) {
       dealId: deal.id,
     }).then((closeLeadId) => {
       if (closeLeadId) {
-        db.deal.update({ where: { id: deal.id }, data: { closeLeadId } }).catch(console.error)
+        db.deal.update({ where: { id: deal.id }, data: { closeLeadId } }).catch((err) => logger.error("Operation failed", err))
       }
-    }).catch(console.error)
+    }).catch((err) => logger.error("Operation failed", err))
 
     return NextResponse.json(deal, { status: 201 })
   } catch (err) {
-    console.error("Failed to create deal:", err)
+    logger.error("Failed to create deal:", err)
     return NextResponse.json({ error: "Internal error" }, { status: 500 })
   }
 }

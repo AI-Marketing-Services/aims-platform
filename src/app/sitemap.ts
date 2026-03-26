@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next"
 import { db } from "@/lib/db"
 import { getAllSlugs } from "@/lib/blog"
+import { logger } from "@/lib/logger"
 
 const BASE = "https://aimseos.com"
 
@@ -55,9 +56,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }))
   } catch (err) {
     // Log but don't fail sitemap generation if DB is unreachable
-    if (process.env.NODE_ENV !== "production") {
-      console.error("Sitemap: failed to fetch service pages:", err)
-    }
+    logger.warn("Sitemap: failed to fetch service pages", { action: String(err) })
   }
 
   // Blog posts

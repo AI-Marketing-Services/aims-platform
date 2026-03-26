@@ -15,14 +15,25 @@ const FUNNEL_ORDER = [
 
 const MRR_TARGET = 100_000
 
+function startOfWeek(): Date {
+  const now = new Date()
+  const day = now.getDay()
+  const diff = now.getDate() - day + (day === 0 ? -6 : 1) // Monday start
+  const start = new Date(now)
+  start.setDate(diff)
+  start.setHours(0, 0, 0, 0)
+  return start
+}
+
 // ─── Data Fetching ────────────────────────────────────────────────────────────
 
 async function getDashboardData() {
   const now = new Date()
   const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
   const sixtyDaysAgo = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000)
+  const weekStart = startOfWeek()
 
-  // Fire all 7 independent DB queries in parallel via Promise.allSettled
+  // Fire all independent DB queries in parallel via Promise.allSettled
   const [
     subsResult,
     pipelineResult,
@@ -32,6 +43,16 @@ async function getDashboardData() {
     overdueResult,
     activityResult,
     workloadResult,
+    // This Week Summary queries
+    weekDealsResult,
+    weekTicketsResolvedResult,
+    weekRevenueResult,
+    weekChatsResult,
+    // Quick Actions: open ticket count
+    openTicketsResult,
+    // Enriched activity feed: support tickets + subscriptions + chat sessions
+    recentTicketsResult,
+    recentSubscriptionsResult,
   ] = await Promise.allSettled([
     // 1. Active subscriptions (for MRR + client counts)
     db.subscription.findMany({
@@ -98,7 +119,7 @@ async function getDashboardData() {
         },
       },
     }),
-    // 7. Recent activity
+    // 7. Recent deal activity
     db.dealActivity.findMany({
       orderBy: { createdAt: "desc" },
       take: 10,
@@ -117,6 +138,44 @@ async function getDashboardData() {
         assignedTo: { not: null },
       },
       select: { assignedTo: true, dueDate: true },
+    }),
+    // 9. This Week: new deals
+    db.deal.count({ where: { createdAt: { gte: weekStart } } }),
+    // 10. This Week: tickets resolved
+    db.supportTicket.count({ where: { resolvedAt: { gte: weekStart } } }),
+    // 11. This Week: revenue (subscriptions created this week)
+    db.subscription.findMany({
+      where: { createdAt: { gte: weekStart }, status: "ACTIVE" },
+      select: { monthlyAmount: true },
+    }),
+    // 12. This Week: chat sessions
+    db.chatSession.count({ where: { createdAt: { gte: weekStart } } }),
+    // 13. Open ticket count for quick actions badge
+    db.supportTicket.count({ where: { status: "open" } }),
+    // 14. Recent support tickets for activity feed
+    db.supportTicket.findMany({
+      orderBy: { createdAt: "desc" },
+      take: 5,
+      select: {
+        id: true,
+        subject: true,
+        status: true,
+        createdAt: true,
+        user: { select: { name: true, email: true } },
+      },
+    }),
+    // 15. Recent subscriptions for activity feed
+    db.subscription.findMany({
+      orderBy: { createdAt: "desc" },
+      take: 5,
+      select: {
+        id: true,
+        tier: true,
+        monthlyAmount: true,
+        createdAt: true,
+        serviceArm: { select: { name: true } },
+        user: { select: { name: true, email: true } },
+      },
     }),
   ])
 
@@ -195,8 +254,51 @@ async function getDashboardData() {
   // Overdue tasks
   const overdueTasks = overdueResult.status === "fulfilled" ? overdueResult.value : []
 
-  // Recent activity
-  const recentActivity = activityResult.status === "fulfilled" ? activityResult.value : []
+  // Recent activity — merge deal activities, support tickets, and subscriptions
+  const dealActivities = activityResult.status === "fulfilled" ? activityResult.value : []
+  const recentTickets = recentTicketsResult.status === "fulfilled" ? recentTicketsResult.value : []
+  const recentSubs = recentSubscriptionsResult.status === "fulfilled" ? recentSubscriptionsResult.value : []
+
+  type UnifiedActivity = {
+    id: string
+    type: string
+    detail: string | null
+    createdAt: Date
+    deal: { contactName: string; company: string | null } | null
+  }
+
+  const unifiedActivity: UnifiedActivity[] = [
+    ...dealActivities,
+    ...recentTickets.map((t) => ({
+      id: `ticket-${t.id}`,
+      type: "TICKET_OPENED",
+      detail: `Support ticket: ${t.subject}`,
+      createdAt: t.createdAt,
+      deal: { contactName: t.user?.name ?? t.user?.email ?? "Unknown", company: null },
+    })),
+    ...recentSubs.map((s) => ({
+      id: `sub-${s.id}`,
+      type: "SUBSCRIPTION_CREATED",
+      detail: `Subscribed to ${s.serviceArm.name}${s.tier ? ` (${s.tier})` : ""} at $${s.monthlyAmount}/mo`,
+      createdAt: s.createdAt,
+      deal: { contactName: s.user?.name ?? s.user?.email ?? "Unknown", company: null },
+    })),
+  ]
+    .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+    .slice(0, 10)
+
+  const recentActivity = unifiedActivity
+
+  // This Week Summary
+  const weekNewDeals = weekDealsResult.status === "fulfilled" ? weekDealsResult.value : 0
+  const weekTicketsResolved = weekTicketsResolvedResult.status === "fulfilled" ? weekTicketsResolvedResult.value : 0
+  const weekRevenue = weekRevenueResult.status === "fulfilled"
+    ? weekRevenueResult.value.reduce((sum, s) => sum + s.monthlyAmount, 0)
+    : 0
+  const weekChats = weekChatsResult.status === "fulfilled" ? weekChatsResult.value : 0
+
+  // Open tickets count for quick actions badge
+  const openTickets = openTicketsResult.status === "fulfilled" ? openTicketsResult.value : 0
 
   // Team workload
   let teamWorkload: Array<{ assignedTo: string; total: number; overdue: number }> = []
@@ -260,6 +362,13 @@ async function getDashboardData() {
     mrrSparkline,
     clientSparkline,
     pipelineSparkline,
+    weekSummary: {
+      newDeals: weekNewDeals,
+      ticketsResolved: weekTicketsResolved,
+      revenue: weekRevenue,
+      chats: weekChats,
+    },
+    openTickets,
     now,
   }
 }
@@ -282,6 +391,8 @@ export default async function AdminDashboard() {
       ...a,
       createdAt: a.createdAt.toISOString(),
     })),
+    weekSummary: data.weekSummary,
+    openTickets: data.openTickets,
   }
 
   return <AdminDashboardClient data={serializedData} />

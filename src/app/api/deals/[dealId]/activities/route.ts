@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { z } from "zod"
 import { db } from "@/lib/db"
+import { logger } from "@/lib/logger"
 
 const activitySchema = z.object({
   type: z.enum([
@@ -40,7 +41,7 @@ export async function GET(
     })
     return NextResponse.json(activities)
   } catch (err) {
-    console.error(`Failed to fetch activities for deal ${dealId}:`, err)
+    logger.error(`Failed to fetch activities for deal ${dealId}:`, err)
     return NextResponse.json({ error: "Failed to fetch activities" }, { status: 500 })
   }
 }
@@ -75,7 +76,7 @@ export async function POST(
     })
     return NextResponse.json(activity, { status: 201 })
   } catch (err) {
-    console.error(`Failed to create activity for deal ${dealId}:`, err)
+    logger.error(`Failed to create activity for deal ${dealId}:`, err)
     return NextResponse.json({ error: "Failed to create activity" }, { status: 500 })
   }
 }

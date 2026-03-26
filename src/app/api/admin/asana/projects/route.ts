@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { listWorkspaceProjects } from "@/lib/asana";
+import { logger } from "@/lib/logger"
 
 export async function GET() {
   const { userId, sessionClaims } = await auth();
@@ -14,7 +15,7 @@ export async function GET() {
     const projects = await listWorkspaceProjects();
     return NextResponse.json(projects);
   } catch (err) {
-    console.error("Failed to fetch Asana projects:", err);
+    logger.error("Failed to fetch Asana projects:", err);
     return NextResponse.json({ error: "Failed to fetch Asana projects" }, { status: 500 });
   }
 }

@@ -125,9 +125,13 @@ describe("Stripe webhook checkout security", () => {
   })
 
   it("stripe webhook has idempotency checks", () => {
-    const content = readFileSync(join(SRC, "app/api/webhooks/stripe/route.ts"), "utf-8")
-    expect(content).toContain("already exists")
-    expect(content).toContain("findUnique")
+    // Idempotency checks live in the decomposed handler modules
+    const checkoutHandler = readFileSync(join(SRC, "lib/stripe/handlers/handle-checkout-completed.ts"), "utf-8")
+    const lifecycleHandler = readFileSync(join(SRC, "lib/stripe/handlers/handle-subscription-lifecycle.ts"), "utf-8")
+    expect(checkoutHandler).toContain("already exists")
+    expect(lifecycleHandler).toContain("already exists")
+    expect(checkoutHandler).toContain("findFirst")
+    expect(lifecycleHandler).toContain("findFirst")
   })
 })
 

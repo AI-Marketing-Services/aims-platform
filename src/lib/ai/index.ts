@@ -1,5 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk"
 import { db } from "@/lib/db"
+import { logger } from "@/lib/logger"
 
 function getAnthropicClient() {
   if (!process.env.ANTHROPIC_API_KEY) {
@@ -209,7 +210,7 @@ export async function firecrawlScrape(url: string) {
       metadata: data.data?.metadata ?? null,
     }
   } catch (error) {
-    console.error("Firecrawl scrape failed:", error)
+    logger.error("Firecrawl scrape failed", error)
     return { content: null, metadata: null, error: String(error) }
   }
 }

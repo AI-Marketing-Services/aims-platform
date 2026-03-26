@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { db } from "@/lib/db"
+import { logger } from "@/lib/logger"
 
 export async function GET() {
   const { userId: clerkId } = await auth()
@@ -20,7 +21,7 @@ export async function GET() {
       subs.map((s) => ({ id: s.id, name: s.serviceArm.name, slug: s.serviceArm.slug }))
     )
   } catch (err) {
-    console.error("Failed to fetch portal subscriptions:", err)
+    logger.error("Failed to fetch portal subscriptions:", err)
     return NextResponse.json({ error: "Failed to fetch subscriptions" }, { status: 500 })
   }
 }

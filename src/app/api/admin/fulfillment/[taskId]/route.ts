@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server"
 import { db } from "@/lib/db"
 import { z } from "zod"
 import { updateFulfillmentTaskStatus } from "@/lib/fulfillment"
+import { logger } from "@/lib/logger"
 
 async function requireAdmin() {
   const { userId, sessionClaims } = await auth()
@@ -39,7 +40,7 @@ export async function GET(_req: NextRequest, context: RouteContext) {
 
     return NextResponse.json(task)
   } catch (err) {
-    console.error("Failed to fetch fulfillment task:", err)
+    logger.error("Failed to fetch fulfillment task:", err)
     return NextResponse.json({ error: "Failed to fetch task" }, { status: 500 })
   }
 }
@@ -102,7 +103,7 @@ export async function PATCH(req: NextRequest, context: RouteContext) {
 
     return NextResponse.json(updated)
   } catch (err) {
-    console.error("Failed to update fulfillment task:", err)
+    logger.error("Failed to update fulfillment task:", err)
     return NextResponse.json({ error: "Failed to update task" }, { status: 500 })
   }
 }
@@ -117,7 +118,7 @@ export async function DELETE(_req: NextRequest, context: RouteContext) {
     await db.fulfillmentTask.delete({ where: { id: taskId } })
     return NextResponse.json({ success: true })
   } catch (err) {
-    console.error("Failed to delete fulfillment task:", err)
+    logger.error("Failed to delete fulfillment task:", err)
     return NextResponse.json({ error: "Failed to delete task" }, { status: 500 })
   }
 }

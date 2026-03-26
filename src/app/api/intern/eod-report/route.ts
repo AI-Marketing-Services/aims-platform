@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { z } from "zod"
 import { db } from "@/lib/db"
+import { logger } from "@/lib/logger"
 
 const eodSchema = z.object({
   internId: z.string(),
@@ -51,7 +52,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(report, { status: 201 })
   } catch (err) {
-    console.error("Failed to create EOD report:", err)
+    logger.error("Failed to create EOD report:", err)
     return NextResponse.json({ error: "Failed to create EOD report" }, { status: 500 })
   }
 }

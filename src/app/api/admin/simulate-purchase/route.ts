@@ -4,6 +4,7 @@ import { z } from "zod"
 import { db } from "@/lib/db"
 import { generateOnboardingTasks } from "@/lib/automation/onboarding"
 import { notifyNewPurchase } from "@/lib/notifications"
+import { logger } from "@/lib/logger"
 
 const schema = z.object({
   serviceArmId: z.string(),
@@ -103,9 +104,9 @@ export async function POST(req: Request) {
         serviceName: `[SIMULATED] ${serviceArm?.name ?? "service"}`,
         amount: monthlyAmount,
         userId: user.id,
-      }).catch((err) => console.error("Simulate-purchase notification delivery failed:", err))
+      }).catch((err) => logger.error("Simulate-purchase notification delivery failed:", err))
     } catch (err) {
-      console.error("Failed to create simulation notification:", err)
+      logger.error("Failed to create simulation notification:", err)
     }
 
     return NextResponse.json({
@@ -119,7 +120,7 @@ export async function POST(req: Request) {
       message: `Onboarding tasks generated for ${clientName}`,
     }, { status: 201 })
   } catch (err) {
-    console.error("Simulate purchase failed:", err)
+    logger.error("Simulate purchase failed:", err)
     return NextResponse.json({ error: "Failed to simulate purchase" }, { status: 500 })
   }
 }

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { z } from "zod"
 import { db } from "@/lib/db"
+import { logger } from "@/lib/logger"
 
 const noteSchema = z.object({
   content: z.string().min(1).max(5000),
@@ -44,11 +45,11 @@ export async function POST(
         detail: parsed.data.content.slice(0, 100),
         authorId: userId,
       },
-    }).catch((err) => console.error(`Failed to log activity for deal ${dealId}:`, err))
+    }).catch((err) => logger.error(`Failed to log activity for deal ${dealId}:`, err))
 
     return NextResponse.json(note, { status: 201 })
   } catch (err) {
-    console.error(`Failed to create note for deal ${dealId}:`, err)
+    logger.error(`Failed to create note for deal ${dealId}:`, err)
     return NextResponse.json({ error: "Failed to create note" }, { status: 500 })
   }
 }

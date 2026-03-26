@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { getCustomerPortalUrl } from "@/lib/stripe"
 import { db } from "@/lib/db"
+import { logger } from "@/lib/logger"
 
 export async function POST(req: Request) {
   const { userId: clerkId } = await auth()
@@ -31,7 +32,7 @@ export async function POST(req: Request) {
     const url = await getCustomerPortalUrl(user.stripeCustomerId, safeReturnUrl)
     return NextResponse.json({ url })
   } catch (err) {
-    console.error("Failed to create billing portal session:", err)
+    logger.error("Failed to create billing portal session:", err)
     return NextResponse.json({ error: "Failed to create billing session" }, { status: 500 })
   }
 }

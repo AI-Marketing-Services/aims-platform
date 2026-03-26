@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { cancelSubscription } from "@/lib/stripe"
+import { logger } from "@/lib/logger"
 
 export async function POST(req: Request) {
   const { userId: clerkId } = await auth()
@@ -36,7 +37,7 @@ export async function POST(req: Request) {
     await cancelSubscription(subscription.stripeSubId)
     return NextResponse.json({ success: true })
   } catch (err) {
-    console.error("Failed to cancel subscription:", err)
+    logger.error("Failed to cancel subscription:", err)
     return NextResponse.json({ error: "Failed to cancel subscription" }, { status: 500 })
   }
 }

@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server"
 import { z } from "zod"
 import { db } from "@/lib/db"
 import { InternRole } from "@prisma/client"
+import { logger } from "@/lib/logger"
 
 const schema = z.object({
   name: z.string().min(1).max(100),
@@ -43,7 +44,7 @@ export async function POST(req: Request) {
     })
     return NextResponse.json(intern)
   } catch (err) {
-    console.error("Failed to create intern:", err)
+    logger.error("Failed to create intern:", err)
     return NextResponse.json({ error: "Failed to create intern profile" }, { status: 500 })
   }
 }

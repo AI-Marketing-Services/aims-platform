@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
+import { logger } from "@/lib/logger"
 
 async function requireAdmin() {
   const { userId, sessionClaims } = await auth();
@@ -32,7 +33,7 @@ export async function GET() {
     });
     return NextResponse.json(services);
   } catch (err) {
-    console.error("Failed to fetch service arms:", err);
+    logger.error("Failed to fetch service arms:", err);
     return NextResponse.json({ error: "Failed to fetch services" }, { status: 500 });
   }
 }
@@ -61,7 +62,7 @@ export async function PATCH(req: NextRequest) {
     });
     return NextResponse.json(updated);
   } catch (err) {
-    console.error("Failed to update service arm:", err);
+    logger.error("Failed to update service arm:", err);
     return NextResponse.json({ error: "Failed to update service" }, { status: 500 });
   }
 }

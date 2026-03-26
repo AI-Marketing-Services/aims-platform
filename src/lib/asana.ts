@@ -1,10 +1,12 @@
+import { logger } from "@/lib/logger"
+
 const ASANA_BASE = "https://app.asana.com/api/1.0";
 const PAT = process.env.ASANA_PAT;
 const WORKSPACE_GID = process.env.ASANA_WORKSPACE_GID;
 
 function isConfigured(): boolean {
   if (!PAT || !WORKSPACE_GID) {
-    console.warn("[Asana] Missing ASANA_PAT or ASANA_WORKSPACE_GID - skipping Asana API call");
+    logger.warn("[Asana] Missing ASANA_PAT or ASANA_WORKSPACE_GID - skipping Asana API call");
     return false;
   }
   return true;
@@ -82,7 +84,7 @@ export async function createAsanaTask(params: CreateTaskParams) {
       await asanaPost(`/tasks/${taskGid}/subtasks`, {
         name: subtaskName,
         assignee: params.assigneeGid ?? null,
-      }).catch(console.error);
+      }).catch((err) => logger.error("Asana subtask creation failed", err));
     }
   }
 

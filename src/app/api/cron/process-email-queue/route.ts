@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { getResend, sendTrackedEmail } from "@/lib/email"
 import { logCronExecution } from "@/lib/cron-log"
+import { logger } from "@/lib/logger"
 
 export const maxDuration = 60
 
@@ -66,7 +67,7 @@ export async function GET(req: Request) {
         })
         sent++
       } catch (err) {
-        console.error(`Failed to send email queue item ${item.id}:`, err)
+        logger.error(`Failed to send email queue item ${item.id}:`, err)
         await db.emailQueueItem.update({ where: { id: item.id }, data: { status: "failed" } })
         failed++
       }
@@ -80,7 +81,7 @@ export async function GET(req: Request) {
     const duration = Date.now() - startTime
     const errorMessage = err instanceof Error ? err.message : "Unknown error"
     await logCronExecution("process-email-queue", "error", errorMessage, duration)
-    console.error("Process email queue cron failed:", err)
+    logger.error("Process email queue cron failed:", err)
     return NextResponse.json({ error: "Process email queue failed" }, { status: 500 })
   }
 }

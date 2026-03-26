@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { notify } from "@/lib/notifications"
 import { logCronExecution } from "@/lib/cron-log"
+import { logger } from "@/lib/logger"
 
 export const maxDuration = 60
 
@@ -136,7 +137,7 @@ export async function GET(req: Request) {
     const duration = Date.now() - startTime
     const errorMessage = err instanceof Error ? err.message : "Unknown error"
     await logCronExecution("daily-digest", "error", errorMessage, duration)
-    console.error("Daily digest cron failed:", err)
+    logger.error("Daily digest cron failed:", err)
     return NextResponse.json({ error: "Daily digest failed" }, { status: 500 })
   }
 }

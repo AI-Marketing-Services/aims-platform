@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { z } from "zod"
 import { db } from "@/lib/db"
+import { logger } from "@/lib/logger"
 
 const updateSchema = z.object({
   status: z.enum(["TODO", "IN_PROGRESS", "IN_REVIEW", "DONE", "BLOCKED"]).optional(),
@@ -64,7 +65,7 @@ export async function PATCH(
 
     return NextResponse.json({ task: updated })
   } catch (err) {
-    console.error(`Failed to update intern task ${id}:`, err)
+    logger.error(`Failed to update intern task ${id}:`, err)
     return NextResponse.json({ error: "Failed to update task" }, { status: 500 })
   }
 }

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { db } from "@/lib/db"
+import { logger } from "@/lib/logger"
 
 export async function PATCH(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { userId, sessionClaims } = await auth()
@@ -27,7 +28,7 @@ export async function PATCH(_req: Request, { params }: { params: Promise<{ id: s
     await db.notification.update({ where: { id }, data: { read: true } })
     return NextResponse.json({ ok: true })
   } catch (err) {
-    console.error(`Failed to mark notification ${id} as read:`, err)
+    logger.error(`Failed to mark notification ${id} as read:`, err)
     return NextResponse.json({ error: "Failed to update" }, { status: 500 })
   }
 }

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { db } from "@/lib/db"
 import { getWorkspaceDashboard } from "@/lib/emailbison"
+import { logger } from "@/lib/logger"
 
 export const dynamic = "force-dynamic"
 
@@ -33,7 +34,7 @@ export async function GET() {
       try {
         dashboardByWorkspace[wsId] = await getWorkspaceDashboard(wsId)
       } catch (err) {
-        console.error(`Failed to fetch EB dashboard for workspace ${wsId}:`, err)
+        logger.error(`Failed to fetch EB dashboard for workspace ${wsId}:`, err)
       }
     })
   )

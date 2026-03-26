@@ -4,6 +4,7 @@ import { z } from "zod"
 import { getDealById, updateDealStage } from "@/lib/db/queries"
 import { db } from "@/lib/db"
 import { updateCloseLeadStatus } from "@/lib/close"
+import { logger } from "@/lib/logger"
 
 const updateDealSchema = z.object({
   stage: z.enum([
@@ -42,7 +43,7 @@ export async function GET(
     if (!deal) return NextResponse.json({ error: "Not found" }, { status: 404 })
     return NextResponse.json(deal)
   } catch (err) {
-    console.error(`Failed to fetch deal ${dealId}:`, err)
+    logger.error(`Failed to fetch deal ${dealId}:`, err)
     return NextResponse.json({ error: "Failed to fetch deal" }, { status: 500 })
   }
 }
@@ -79,7 +80,7 @@ export async function PATCH(
       // Sync stage to Close CRM (fire-and-forget)
       if (deal.closeLeadId) {
         updateCloseLeadStatus(deal.closeLeadId, stage).catch((err) =>
-          console.error(`Failed to sync deal ${dealId} stage to Close CRM:`, err)
+          logger.error(`Failed to sync deal ${dealId} stage to Close CRM:`, err)
         )
       }
       return NextResponse.json(deal)
@@ -92,7 +93,7 @@ export async function PATCH(
 
     return NextResponse.json(deal)
   } catch (err) {
-    console.error(`Failed to update deal ${dealId}:`, err)
+    logger.error(`Failed to update deal ${dealId}:`, err)
     return NextResponse.json({ error: "Failed to update deal" }, { status: 500 })
   }
 }
@@ -114,7 +115,7 @@ export async function DELETE(
     await db.deal.delete({ where: { id: dealId } })
     return NextResponse.json({ deleted: true })
   } catch (err) {
-    console.error(`Failed to delete deal ${dealId}:`, err)
+    logger.error(`Failed to delete deal ${dealId}:`, err)
     return NextResponse.json({ error: "Failed to delete deal" }, { status: 500 })
   }
 }

@@ -1,4 +1,5 @@
 import { db } from "@/lib/db"
+import { logger } from "@/lib/logger"
 
 export async function logCronExecution(
   jobName: string,
@@ -19,6 +20,6 @@ export async function logCronExecution(
     })
   } catch (err) {
     // Do not throw - cron logging should never break the cron job itself
-    console.error(`Failed to log cron execution for ${jobName}:`, err)
+    logger.error(`Failed to log cron execution for ${jobName}`, err)
   }
 }

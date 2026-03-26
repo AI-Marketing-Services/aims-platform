@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { db } from "@/lib/db"
+import { logger } from "@/lib/logger"
 
 export async function POST(req: Request) {
   const { userId, sessionClaims } = await auth()
@@ -63,11 +64,11 @@ export async function POST(req: Request) {
           channel: "IN_APP",
         },
       })
-      .catch((err) => console.error("Simulate-lead notification creation failed:", err))
+      .catch((err) => logger.error("Simulate-lead notification creation failed:", err))
 
     return NextResponse.json({ success: true, submission, deal }, { status: 201 })
   } catch (e) {
-    console.error("Simulate lead DB error:", e)
+    logger.error("Simulate lead DB error:", e)
     return NextResponse.json({ error: "Failed to create simulated lead" }, { status: 500 })
   }
 }

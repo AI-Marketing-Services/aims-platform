@@ -18,6 +18,12 @@ import {
   XCircle,
   CheckSquare,
   FileText,
+  LifeBuoy,
+  MessageSquare,
+  ClipboardList,
+  Briefcase,
+  TicketCheck,
+  TrendingUp,
   type LucideIcon,
 } from "lucide-react"
 import { motion } from "framer-motion"
@@ -85,6 +91,13 @@ interface DashboardData {
     total: number
     overdue: number
   }>
+  weekSummary: {
+    newDeals: number
+    ticketsResolved: number
+    revenue: number
+    chats: number
+  }
+  openTickets: number
   mrrSparkline: number[]
   clientSparkline: number[]
   pipelineSparkline: number[]
@@ -126,6 +139,7 @@ const ACTIVITY_ICON_MAP: Record<string, LucideIcon> = {
   PAYMENT_RECEIVED: DollarSign,
   TASK_CREATED: CheckSquare,
   FORM_SUBMITTED: FileText,
+  TICKET_OPENED: LifeBuoy,
 }
 
 // ─── Component ───────────────────────────────────────────────────────────────
@@ -145,6 +159,8 @@ export function AdminDashboardClient({ data }: { data: DashboardData }) {
     overdueTasks,
     recentActivity,
     teamWorkload,
+    weekSummary,
+    openTickets,
     mrrSparkline,
     clientSparkline,
     pipelineSparkline,
@@ -177,6 +193,63 @@ export function AdminDashboardClient({ data }: { data: DashboardData }) {
           >
             View CRM <ArrowUpRight className="h-3.5 w-3.5" />
           </Link>
+        </motion.div>
+
+        {/* ── Quick Actions Bar ──────────────────────────────────────────────── */}
+        <motion.div
+          className="flex flex-wrap gap-3"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+        >
+          {[
+            { icon: Briefcase, label: "View CRM", href: "/admin/crm" },
+            { icon: LifeBuoy, label: "Support Queue", href: "/admin/support", badge: openTickets > 0 ? openTickets : undefined },
+            { icon: ClipboardList, label: "Fulfillment", href: "/admin/fulfillment" },
+            { icon: MessageSquare, label: "Chat Sessions", href: "/admin/chat-sessions" },
+          ].map(({ icon: Icon, label, href, badge }) => (
+            <Link
+              key={label}
+              href={href}
+              className="relative flex items-center gap-2 px-4 py-2 rounded-lg border border-border bg-card text-sm font-medium text-muted-foreground hover:text-foreground hover:border-primary/30 transition-all duration-200"
+            >
+              <Icon className="h-4 w-4" />
+              {label}
+              {badge !== undefined && (
+                <span className="ml-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-primary/20 px-1.5 text-[11px] font-semibold text-[#C4972A]">
+                  {badge}
+                </span>
+              )}
+            </Link>
+          ))}
+        </motion.div>
+
+        {/* ── This Week Summary ────────────────────────────────────────────────── */}
+        <motion.div
+          className="grid grid-cols-2 gap-3 sm:grid-cols-4"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
+        >
+          {[
+            { label: "New Deals", value: weekSummary.newDeals, icon: TrendingUp, color: "text-blue-400", bg: "bg-blue-900/20" },
+            { label: "Tickets Resolved", value: weekSummary.ticketsResolved, icon: TicketCheck, color: "text-green-400", bg: "bg-green-900/15" },
+            { label: "Revenue", value: `$${weekSummary.revenue.toLocaleString()}`, icon: DollarSign, color: "text-[#C4972A]", bg: "bg-primary/10" },
+            { label: "Chats", value: weekSummary.chats, icon: MessageSquare, color: "text-purple-400", bg: "bg-purple-900/20" },
+          ].map(({ label, value, icon: Icon, color, bg }) => (
+            <div key={label} className="rounded-lg border border-border bg-card px-4 py-3">
+              <div className="flex items-center gap-2 mb-1.5">
+                <div className={`flex h-6 w-6 items-center justify-center rounded-md ${bg}`}>
+                  <Icon className={`h-3 w-3 ${color}`} />
+                </div>
+                <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+                  This Week
+                </p>
+              </div>
+              <p className="text-xl font-mono font-bold text-foreground">{value}</p>
+              <p className="text-[11px] text-muted-foreground">{label}</p>
+            </div>
+          ))}
         </motion.div>
 
         {/* ── Top Row: 4 Metric Cards ─────────────────────────────────────────── */}

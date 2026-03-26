@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { notifyChurnRisk } from "@/lib/notifications"
 import { logCronExecution } from "@/lib/cron-log"
+import { logger } from "@/lib/logger"
 
 // Vercel Cron: runs daily at 9am UTC
 // Configure in vercel.json: { "crons": [{ "path": "/api/cron/check-churn", "schedule": "0 9 * * *" }] }
@@ -48,7 +49,7 @@ export async function GET(req: Request) {
         email: user.email,
         daysSinceLogin,
         mrr: totalMrr,
-      }).catch((err) => console.error(`Churn risk notification failed for ${user.email}:`, err))
+      }).catch((err) => logger.error(`Churn risk notification failed for ${user.email}:`, err))
 
       // Also update any associated deals to AT_RISK
       await db.deal.updateMany({
@@ -74,7 +75,7 @@ export async function GET(req: Request) {
     const duration = Date.now() - startTime
     const errorMessage = err instanceof Error ? err.message : "Unknown error"
     await logCronExecution("check-churn", "error", errorMessage, duration)
-    console.error("Churn check cron failed:", err)
+    logger.error("Churn check cron failed:", err)
     return NextResponse.json({ error: "Churn check failed" }, { status: 500 })
   }
 }

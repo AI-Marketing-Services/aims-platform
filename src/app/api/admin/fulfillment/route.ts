@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server"
 import { db } from "@/lib/db"
 import { z } from "zod"
 import { updateFulfillmentTaskStatus } from "@/lib/fulfillment"
+import { logger } from "@/lib/logger"
 
 async function requireAdmin() {
   const { userId, sessionClaims } = await auth()
@@ -43,7 +44,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(tasks)
   } catch (err) {
-    console.error("Failed to fetch fulfillment tasks:", err)
+    logger.error("Failed to fetch fulfillment tasks:", err)
     return NextResponse.json({ error: "Failed to fetch tasks" }, { status: 500 })
   }
 }
@@ -91,7 +92,7 @@ export async function PATCH(req: NextRequest) {
 
     return NextResponse.json(updated)
   } catch (err) {
-    console.error("Failed to update fulfillment task:", err)
+    logger.error("Failed to update fulfillment task:", err)
     return NextResponse.json({ error: "Failed to update task" }, { status: 500 })
   }
 }

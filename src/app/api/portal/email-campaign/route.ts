@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { db } from "@/lib/db"
 import { getWorkspaceDashboard } from "@/lib/emailbison"
+import { logger } from "@/lib/logger"
 
 export async function GET() {
   const { userId: clerkId } = await auth()
@@ -24,7 +25,7 @@ export async function GET() {
       ...dashboard,
     })
   } catch (err) {
-    console.error("Email Bison dashboard fetch error:", err)
+    logger.error("Email Bison dashboard fetch error:", err)
     return NextResponse.json({ error: "Failed to load campaign data" }, { status: 500 })
   }
 }

@@ -6,6 +6,7 @@ import { notifyNewLead } from "@/lib/notifications"
 import { chatRatelimit, getIp } from "@/lib/ratelimit"
 import { logApiCost } from "@/lib/ai"
 import { upsertChatSession } from "@/lib/db/chat-sessions"
+import { logger } from "@/lib/logger"
 
 function getGoogle() {
   if (!process.env.GEMINI_API_KEY) {
@@ -168,11 +169,11 @@ export async function POST(req: Request) {
               company: input.company,
               source: "ai-chatbot",
               channelTag: "website-chatbot",
-            }).catch((err) => console.error("Chatbot lead notification failed:", err))
+            }).catch((err) => logger.error("Chatbot lead notification failed:", err))
 
             return { success: true, dealId: deal.id, message: `Lead saved. I'll have the team follow up with ${input.name} at ${input.email}.` }
           } catch (err) {
-            console.error("Chatbot capture_lead tool failed:", err)
+            logger.error("Chatbot capture_lead tool failed:", err)
             return { success: false, message: "I'll make sure the team reaches out to you." }
           }
         },

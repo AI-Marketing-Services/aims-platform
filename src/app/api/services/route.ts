@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { getServiceArms } from "@/lib/db/queries"
 import type { ServicePillar, ServiceStatus } from "@prisma/client"
+import { logger } from "@/lib/logger"
 
 export async function GET(req: Request) {
   try {
@@ -18,7 +19,7 @@ export async function GET(req: Request) {
       },
     })
   } catch (err) {
-    console.error("Failed to fetch services:", err)
+    logger.error("Failed to fetch services:", err)
     return NextResponse.json({ error: "Failed to fetch services" }, { status: 500 })
   }
 }

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { db } from "@/lib/db"
+import { logger } from "@/lib/logger"
 
 export async function GET(
   _req: Request,
@@ -52,7 +53,7 @@ export async function GET(
 
     return NextResponse.json(user)
   } catch (err) {
-    console.error(`Failed to fetch client ${clientId}:`, err)
+    logger.error(`Failed to fetch client ${clientId}:`, err)
     return NextResponse.json({ error: "Failed to fetch client" }, { status: 500 })
   }
 }

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { db } from "@/lib/db"
+import { logger } from "@/lib/logger"
 
 export async function PATCH() {
   const { userId, sessionClaims } = await auth()
@@ -29,7 +30,7 @@ export async function PATCH() {
 
     return NextResponse.json({ ok: true, updated: result.count })
   } catch (err) {
-    console.error("Failed to mark all notifications as read:", err)
+    logger.error("Failed to mark all notifications as read:", err)
     return NextResponse.json({ error: "Failed to mark notifications as read" }, { status: 500 })
   }
 }

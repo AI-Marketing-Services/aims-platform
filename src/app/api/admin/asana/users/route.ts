@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { listWorkspaceUsers } from "@/lib/asana";
+import { logger } from "@/lib/logger"
 
 export async function GET() {
   const { userId, sessionClaims } = await auth();
@@ -14,7 +15,7 @@ export async function GET() {
     const users = await listWorkspaceUsers();
     return NextResponse.json(users);
   } catch (err) {
-    console.error("Failed to fetch Asana users:", err);
+    logger.error("Failed to fetch Asana users:", err);
     return NextResponse.json({ error: "Failed to fetch Asana users" }, { status: 500 });
   }
 }

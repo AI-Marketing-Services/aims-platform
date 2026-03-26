@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { db } from "@/lib/db"
+import { logger } from "@/lib/logger"
 
 interface CronJobSummary {
   jobName: string
@@ -118,7 +119,7 @@ export async function GET() {
 
     return NextResponse.json({ jobs: summaries })
   } catch (err) {
-    console.error("Failed to fetch cron status:", err)
+    logger.error("Failed to fetch cron status:", err)
     return NextResponse.json({ error: "Failed to fetch cron status" }, { status: 500 })
   }
 }

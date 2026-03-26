@@ -3,6 +3,7 @@ import { z } from "zod"
 import Anthropic from "@anthropic-ai/sdk"
 import { auditRatelimit, getIp } from "@/lib/ratelimit"
 import { logApiCost, estimateAnthropicCost } from "@/lib/ai"
+import { logger } from "@/lib/logger"
 
 const auditSchema = z.object({
   url: z
@@ -83,7 +84,7 @@ export async function POST(req: Request) {
       }
       await logApiCost({ provider: "tavily", model: "extract", endpoint: "/extract", tokens: 0, cost: 0.02, serviceArm: "website-audit" }).catch(() => {})
     } catch (err) {
-      console.error("Tavily extract failed, proceeding with limited data:", err)
+      logger.error("Tavily extract failed, proceeding with limited data:", err)
     }
 
     // 2. Search for company info + SEO signals
@@ -114,7 +115,7 @@ export async function POST(req: Request) {
       }
       await logApiCost({ provider: "tavily", model: "search", endpoint: "/search", tokens: 0, cost: 0.01, serviceArm: "website-audit" }).catch(() => {})
     } catch (err) {
-      console.error("Tavily search failed, proceeding without competitor context:", err)
+      logger.error("Tavily search failed, proceeding without competitor context:", err)
     }
 
     // 3. AI analysis
@@ -183,7 +184,7 @@ Be specific to this actual website. For scores: consider actual presence of meta
 
     return NextResponse.json({ analysis, url, domain }, { status: 200 })
   } catch (err) {
-    console.error("Website audit failed:", err)
+    logger.error("Website audit failed:", err)
     return NextResponse.json({ error: "Audit failed" }, { status: 500 })
   }
 }
