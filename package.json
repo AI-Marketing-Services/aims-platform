@@ -13,7 +13,8 @@
     "seed": "npx prisma db seed",
     "db:studio": "prisma studio",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "stripe:setup": "tsx scripts/setup-stripe.ts"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.58",
