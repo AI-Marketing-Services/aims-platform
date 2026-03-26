@@ -38,7 +38,7 @@ export default async function ResellerLayout({
           <Image src="/logo.png" alt="AIMS" width={80} height={32} className="object-contain h-7 w-auto" />
           <span className="text-[10px] font-medium text-amber-500 uppercase tracking-wider">Partner</span>
         </Link>
-        <UserButton afterSignOutUrl="/" />
+        <UserButton />
       </div>
 
       <div className="flex h-[calc(100dvh-3.5rem)] lg:h-screen overflow-hidden">
@@ -62,7 +62,7 @@ export default async function ResellerLayout({
             ))}
           </nav>
           <div className="border-t border-border p-4">
-            <UserButton afterSignOutUrl="/" />
+            <UserButton />
           </div>
         </aside>
         <main className="flex-1 overflow-y-auto custom-scrollbar">

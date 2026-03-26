@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs"
+import { Show, UserButton } from "@clerk/nextjs"
 import { Menu, X, ChevronDown } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
@@ -210,13 +210,13 @@ export function Navbar() {
 
           {/* Desktop auth */}
           <div className="hidden md:flex items-center gap-3 flex-shrink-0">
-            <SignedIn>
+            <Show when="signed-in">
               <Link href="/portal/dashboard" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
                 Dashboard
               </Link>
-              <UserButton afterSignOutUrl="/" />
-            </SignedIn>
-            <SignedOut>
+              <UserButton />
+            </Show>
+            <Show when="signed-out">
               <Link href="/sign-in" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
                 Sign in
               </Link>
@@ -226,7 +226,7 @@ export function Navbar() {
               >
                 Book a Consultation
               </Link>
-            </SignedOut>
+            </Show>
           </div>
 
           {/* Mobile toggle */}
@@ -321,16 +321,16 @@ export function Navbar() {
               </div>
 
               <div className="pt-3 mt-3 border-t border-border space-y-2">
-                <SignedIn>
+                <Show when="signed-in">
                   <Link href="/portal/dashboard" className="block px-3 py-2 text-sm font-medium text-muted-foreground">
                     Dashboard
                   </Link>
-                </SignedIn>
-                <SignedOut>
+                </Show>
+                <Show when="signed-out">
                   <Link href="/sign-in" className="block px-3 py-2 text-sm font-medium text-muted-foreground">
                     Sign in
                   </Link>
-                </SignedOut>
+                </Show>
                 <Link
                   href="/get-started"
                   className="block w-full text-center rounded-sm bg-primary text-white text-xs font-bold px-4 py-2.5 uppercase tracking-wider"

@@ -67,76 +67,77 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <ClerkProvider
-      appearance={{
-        layout: {
-          logoImageUrl: "https://aimseos.com/logo.png",
-          logoLinkUrl: "https://aimseos.com",
-        },
-        variables: {
-          colorPrimary: "#C4972A",
-          colorBackground: "#0E1219",
-          colorText: "#F0EBE0",
-          colorInputBackground: "#141923",
-          colorInputText: "#F0EBE0",
-          borderRadius: "0.25rem",
-        },
-        elements: {
-          card: "shadow-lg border border-[rgba(255,255,255,0.07)]",
-          headerTitle: "font-bold text-[#F0EBE0]",
-          headerSubtitle: "text-[#F0EBE0]/60",
-          formFieldLabel: "text-[#F0EBE0]",
-          formFieldInput: "text-[#F0EBE0] bg-[#141923] border-[rgba(255,255,255,0.1)]",
-          formFieldHintText: "text-[#F0EBE0]/50",
-          formFieldInfoText: "text-[#F0EBE0]/50",
-          formFieldSuccessText: "text-green-400",
-          formFieldErrorText: "text-red-400",
-          formButtonPrimary: "bg-[#C4972A] hover:bg-[#A17D22] text-[#08090D] font-semibold uppercase tracking-wider text-xs",
-          formButtonReset: "text-[#C4972A] hover:text-[#E8C46A]",
-          footerActionLink: "text-[#C4972A] hover:text-[#E8C46A]",
-          footerActionText: "text-[#F0EBE0]/60",
-          identityPreviewText: "text-[#F0EBE0]",
-          identityPreviewEditButtonIcon: "text-[#C4972A]",
-          userButtonPopoverCard: "bg-[#141923] border border-[rgba(255,255,255,0.07)]",
-          userButtonPopoverActionButton: "text-[#F0EBE0] hover:bg-[rgba(255,255,255,0.05)]",
-          userButtonPopoverActionButtonText: "text-[#F0EBE0]",
-          userButtonPopoverActionButtonIcon: "text-[#F0EBE0]/60",
-          userButtonPopoverFooter: "hidden",
-          userPreviewMainIdentifier: "text-[#F0EBE0]",
-          userPreviewSecondaryIdentifier: "text-[#F0EBE0]/60",
-          alertText: "text-[#F0EBE0]",
-          dividerLine: "bg-[rgba(255,255,255,0.07)]",
-          dividerText: "text-[#F0EBE0]/40",
-          socialButtonsBlockButton: "border-[rgba(255,255,255,0.1)] text-[#F0EBE0] hover:bg-[rgba(255,255,255,0.05)]",
-          socialButtonsBlockButtonText: "text-[#F0EBE0]",
-          otpCodeFieldInput: "text-[#F0EBE0] bg-[#141923] border-[rgba(255,255,255,0.1)]",
-          alternativeMethodsBlockButton: "text-[#F0EBE0] border-[rgba(255,255,255,0.1)]",
-        },
-      }}
-    >
-      <html lang="en" className={`${cormorant.variable} ${dmSans.variable} ${dmMono.variable}`}>
-        <head>
-          <link rel="preconnect" href="https://clerk.aimseos.com" />
-          <link rel="dns-prefetch" href="https://player.vimeo.com" />
-          <link rel="dns-prefetch" href="https://api.anthropic.com" />
-        </head>
-        <body className="min-h-screen bg-background font-sans antialiased grain-overlay">
+    <html lang="en" className={`${cormorant.variable} ${dmSans.variable} ${dmMono.variable}`}>
+      <head>
+        <link rel="preconnect" href="https://clerk.aimseos.com" />
+        <link rel="dns-prefetch" href="https://player.vimeo.com" />
+        <link rel="dns-prefetch" href="https://api.anthropic.com" />
+      </head>
+      <body className="min-h-screen bg-background font-sans antialiased grain-overlay">
+        <ClerkProvider
+          afterSignOutUrl="/"
+          appearance={{
+            options: {
+              logoImageUrl: "https://aimseos.com/logo.png",
+              logoLinkUrl: "https://aimseos.com",
+            },
+            variables: {
+              colorPrimary: "#C4972A",
+              colorBackground: "#0E1219",
+              colorText: "#F0EBE0",
+              colorInputBackground: "#141923",
+              colorInputText: "#F0EBE0",
+              borderRadius: "0.25rem",
+            },
+            elements: {
+              card: "shadow-lg border border-[rgba(255,255,255,0.07)]",
+              headerTitle: "font-bold text-[#F0EBE0]",
+              headerSubtitle: "text-[#F0EBE0]/60",
+              formFieldLabel: "text-[#F0EBE0]",
+              formFieldInput: "text-[#F0EBE0] bg-[#141923] border-[rgba(255,255,255,0.1)]",
+              formFieldHintText: "text-[#F0EBE0]/50",
+              formFieldInfoText: "text-[#F0EBE0]/50",
+              formFieldSuccessText: "text-green-400",
+              formFieldErrorText: "text-red-400",
+              formButtonPrimary: "bg-[#C4972A] hover:bg-[#A17D22] text-[#08090D] font-semibold uppercase tracking-wider text-xs",
+              formButtonReset: "text-[#C4972A] hover:text-[#E8C46A]",
+              footerActionLink: "text-[#C4972A] hover:text-[#E8C46A]",
+              footerActionText: "text-[#F0EBE0]/60",
+              identityPreviewText: "text-[#F0EBE0]",
+              identityPreviewEditButtonIcon: "text-[#C4972A]",
+              userButtonPopoverCard: "bg-[#141923] border border-[rgba(255,255,255,0.07)]",
+              userButtonPopoverActionButton: "text-[#F0EBE0] hover:bg-[rgba(255,255,255,0.05)]",
+              userButtonPopoverActionButtonText: "text-[#F0EBE0]",
+              userButtonPopoverActionButtonIcon: "text-[#F0EBE0]/60",
+              userButtonPopoverFooter: "hidden",
+              userPreviewMainIdentifier: "text-[#F0EBE0]",
+              userPreviewSecondaryIdentifier: "text-[#F0EBE0]/60",
+              alertText: "text-[#F0EBE0]",
+              dividerLine: "bg-[rgba(255,255,255,0.07)]",
+              dividerText: "text-[#F0EBE0]/40",
+              socialButtonsBlockButton: "border-[rgba(255,255,255,0.1)] text-[#F0EBE0] hover:bg-[rgba(255,255,255,0.05)]",
+              socialButtonsBlockButtonText: "text-[#F0EBE0]",
+              otpCodeFieldInput: "text-[#F0EBE0] bg-[#141923] border-[rgba(255,255,255,0.1)]",
+              alternativeMethodsBlockButton: "text-[#F0EBE0] border-[rgba(255,255,255,0.1)]",
+            },
+          }}
+        >
           {children}
-          <SpeedInsights />
-          <Analytics />
-          <Toaster
-            position="bottom-right"
-            toastOptions={{
-              style: {
-                borderRadius: '0.125rem',
-                background: '#141923',
-                color: '#F0EBE0',
-                border: '1px solid rgba(255,255,255,0.07)',
-              },
-            }}
-          />
-        </body>
-      </html>
-    </ClerkProvider>
+        </ClerkProvider>
+        <SpeedInsights />
+        <Analytics />
+        <Toaster
+          position="bottom-right"
+          toastOptions={{
+            style: {
+              borderRadius: '0.125rem',
+              background: '#141923',
+              color: '#F0EBE0',
+              border: '1px solid rgba(255,255,255,0.07)',
+            },
+          }}
+        />
+      </body>
+    </html>
   )
 }

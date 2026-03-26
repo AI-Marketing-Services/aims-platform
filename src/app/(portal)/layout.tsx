@@ -54,7 +54,7 @@ export default async function PortalLayout({
         </Link>
         <div className="flex items-center gap-2">
           {unreadCount > 0 && <span className="h-2 w-2 rounded-full bg-primary" />}
-          <UserButton afterSignOutUrl="/" />
+          <UserButton />
         </div>
       </div>
 

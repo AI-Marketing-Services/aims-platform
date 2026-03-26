@@ -104,7 +104,7 @@ export function PortalSidebar({ totalMrr = 0, hasUnread = false }: PortalSidebar
       {/* User */}
       <div className="border-t border-border p-4">
         <div className="flex items-center gap-2">
-          <UserButton afterSignOutUrl="/" />
+          <UserButton />
           {!collapsed && (
             <>
               <span className="text-sm text-muted-foreground truncate flex-1">My Account</span>
