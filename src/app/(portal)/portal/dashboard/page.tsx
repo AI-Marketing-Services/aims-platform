@@ -16,6 +16,7 @@ import {
   Users,
   MessageSquare,
   AlertTriangle,
+  Gauge,
 } from "lucide-react"
 import { db } from "@/lib/db"
 import { getWorkspaceDashboard } from "@/lib/emailbison"
@@ -371,6 +372,27 @@ export default async function PortalDashboard({
           </Link>
         ))}
       </div>
+
+      {/* ── OPS EXCELLENCE BANNER ── */}
+      <Link
+        href="/portal/ops-excellence"
+        className="group block rounded-2xl border border-border bg-card p-5 transition-all duration-200 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5"
+      >
+        <div className="flex items-center gap-4">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 border border-primary/20">
+            <Gauge className="h-6 w-6 text-[#C4972A]" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <h3 className="text-sm font-semibold text-foreground group-hover:text-[#C4972A] transition-colors">
+              Operational Excellence Dashboard
+            </h3>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              View your operational credit score, capacity ROI, and spend efficiency metrics.
+            </p>
+          </div>
+          <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground group-hover:text-[#C4972A] group-hover:translate-x-1 transition-all" />
+        </div>
+      </Link>
 
       {/* ── ACTIVE SERVICES ── */}
       <div>

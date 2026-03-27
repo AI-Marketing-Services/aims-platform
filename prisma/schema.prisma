@@ -33,6 +33,7 @@ model User {
   internProfile         InternProfile?
   notifications         Notification[]
   emailBisonConnection  EmailBisonConnection?
+  opsExcellenceEngagements OpsExcellenceEngagement[]
 
   stripeCustomerId String?   @unique
   lastLoginAt      DateTime?
@@ -314,6 +315,8 @@ model Subscription {
   currentPeriodEnd      DateTime?
   cancelledAt           DateTime?
   cancelReason          String?
+
+  opsExcellenceEngagement OpsExcellenceEngagement?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -761,4 +764,286 @@ model EmailBisonConnection {
   updatedAt     DateTime @updatedAt
 
   @@index([userId])
+}
+
+// ============ OPERATIONAL EXCELLENCE ============
+
+model OpsExcellenceEngagement {
+  id             String @id @default(cuid())
+  userId         String
+  user           User   @relation(fields: [userId], references: [id])
+  subscriptionId String? @unique
+  subscription   Subscription? @relation(fields: [subscriptionId], references: [id])
+
+  companyName    String
+  companyLogo    String?
+  industry       String?
+  annualRevenue  String?
+  employeeCount  Int?
+  website        String?
+
+  stage          EngagementStage @default(INTAKE)
+  tier           EngagementTier  @default(DIAGNOSE)
+
+  intakeData        Json?
+  callRecordingUrl  String?
+  callNotes         Json?
+
+  startDate         DateTime  @default(now())
+  targetV1Date      DateTime?
+  targetV2Date      DateTime?
+  integratorId      String?
+
+  scores            CreditScore[]
+  cfoTest           CFOTestResult?
+  discoveryCards    ProcessDiscoveryCard[]
+  spendDecisions    SpendDecision[]
+  automationCards   AutomationCaseCard[]
+  capacityPulses    CapacityPulseSurvey[]
+  activities        EngagementActivity[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([stage])
+  @@index([integratorId])
+}
+
+enum EngagementStage {
+  INTAKE
+  ONBOARDING
+  PHASE_1_INSTRUMENT
+  PHASE_2_EXECUTE
+  PHASE_3_PROVE
+  ACTIVE_ONGOING
+  PAUSED
+  COMPLETED
+}
+
+enum EngagementTier {
+  DIAGNOSE
+  EXECUTE
+  PROVE
+}
+
+model CreditScore {
+  id                String @id @default(cuid())
+  engagementId      String
+  engagement        OpsExcellenceEngagement @relation(fields: [engagementId], references: [id], onDelete: Cascade)
+
+  version           Int
+  compositeScore    Float
+  confidenceTier    ConfidenceTier
+  confidencePercent Float
+
+  financialClarity  Float
+  aiReadiness       Float
+  capacityRoi       Float
+  spendEfficiency   Float
+
+  financialDetail   Json?
+  aiReadinessDetail Json?
+  capacityRoiDetail Json?
+  spendDetail       Json?
+
+  operationalLeverage Float?
+  totalHoursFreed     Float?
+  totalDollarsSaved   Float?
+  automationsDeployed Int?
+
+  calculatedAt DateTime @default(now())
+  calculatedBy String?
+  notes        String?
+
+  @@index([engagementId])
+  @@unique([engagementId, version])
+}
+
+enum ConfidenceTier {
+  RED
+  YELLOW
+  GREEN
+}
+
+model CFOTestResult {
+  id             String @id @default(cuid())
+  engagementId   String @unique
+  engagement     OpsExcellenceEngagement @relation(fields: [engagementId], references: [id], onDelete: Cascade)
+
+  responses      Json
+  greenCount     Int
+  yellowCount    Int
+  redCount       Int
+
+  administeredAt DateTime @default(now())
+  administeredBy String?
+  notes          String?
+}
+
+model ProcessDiscoveryCard {
+  id             String @id @default(cuid())
+  engagementId   String
+  engagement     OpsExcellenceEngagement @relation(fields: [engagementId], references: [id], onDelete: Cascade)
+
+  department        String
+  processName       String
+  ownerRole         String
+  frequency         ProcessFrequency
+  timePerInstance   Float
+  toolsUsed         String[]
+  painPoints        String?   @db.Text
+  exceptionHandling String?   @db.Text
+
+  automationCandidate AutomationCandidacy @default(MAYBE)
+  complexityScore     Int
+  valueScore          Int
+  tier                Int
+  annualCost          Float?
+
+  isExpandedCapture Boolean @default(false)
+  expandedContext   Json?
+
+  discoveryRound Int      @default(1)
+  validated      Boolean  @default(false)
+  validatedAt    DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([engagementId])
+  @@index([tier])
+  @@index([department])
+}
+
+enum ProcessFrequency {
+  DAILY
+  WEEKLY
+  MONTHLY
+  AD_HOC
+}
+
+enum AutomationCandidacy {
+  YES
+  NO
+  MAYBE
+}
+
+model SpendDecision {
+  id             String @id @default(cuid())
+  engagementId   String
+  engagement     OpsExcellenceEngagement @relation(fields: [engagementId], references: [id], onDelete: Cascade)
+
+  vendorName       String
+  toolName         String?
+  currentAnnualCost Float
+  decision         SpendDecisionType
+  newAnnualCost    Float?
+  dollarDelta      Float?
+
+  decisionOwner String
+  rationale     String?  @db.Text
+  renewalDate   DateTime?
+  usageLevel    UsageLevel?
+
+  status        SpendDecisionStatus @default(PENDING)
+  implementedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([engagementId])
+  @@index([status])
+}
+
+enum SpendDecisionType {
+  ELIMINATE
+  CONSOLIDATE
+  RENEGOTIATE
+  JUSTIFY
+}
+
+enum SpendDecisionStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETE
+}
+
+enum UsageLevel {
+  HIGH
+  MEDIUM
+  LOW
+  UNKNOWN
+}
+
+model AutomationCaseCard {
+  id             String @id @default(cuid())
+  engagementId   String
+  engagement     OpsExcellenceEngagement @relation(fields: [engagementId], references: [id], onDelete: Cascade)
+
+  processName            String
+  department             String
+  roleAffected           String
+  fullyLoadedHourlyCost  Float
+
+  baselineTimePerInstance Float
+  baselineFrequency       String
+  baselineMonthlyHours    Float
+  baselineMonthlyCost     Float
+
+  postTimePerInstance Float?
+  postMonthlyHours    Float?
+  hoursFreedPerMonth  Float?
+  dollarValueFreed    Float?
+
+  automationHealthScore Float?
+  uptimePercent         Float?
+  errorRate             Float?
+
+  deployedAt DateTime?
+  measuredAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([engagementId])
+  @@index([department])
+}
+
+model CapacityPulseSurvey {
+  id               String @id @default(cuid())
+  engagementId     String
+  engagement       OpsExcellenceEngagement @relation(fields: [engagementId], references: [id], onDelete: Cascade)
+  automationCardId String?
+
+  respondentRole     String
+  timeSavedPerWeek   Float?
+  capacityConversion CapacityConversion
+  feedback           String? @db.Text
+
+  submittedAt DateTime @default(now())
+
+  @@index([engagementId])
+}
+
+enum CapacityConversion {
+  HIGHER_VALUE_WORK
+  ABSORBED_NO_CHANGE
+  NOT_VISIBLE_YET
+}
+
+model EngagementActivity {
+  id             String @id @default(cuid())
+  engagementId   String
+  engagement     OpsExcellenceEngagement @relation(fields: [engagementId], references: [id], onDelete: Cascade)
+
+  type     String
+  title    String
+  detail   String?
+  metadata Json?
+
+  createdAt DateTime @default(now())
+
+  @@index([engagementId])
+  @@index([createdAt])
 }

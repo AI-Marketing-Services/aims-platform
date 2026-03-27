@@ -24,6 +24,7 @@ import {
   Timer,
   MessageSquare,
   LifeBuoy,
+  Gauge,
 } from "lucide-react"
 import { useState } from "react"
 import { motion } from "framer-motion"
@@ -59,6 +60,7 @@ const ADMIN_NAV = [
   {
     section: "Operations",
     items: [
+      { label: "Ops Excellence", href: "/admin/ops-excellence", icon: Gauge },
       { label: "Intern Ops", href: "/admin/intern-ops", icon: GraduationCap },
       { label: "Vendor Savings", href: "/admin/vendor-savings", icon: PiggyBank },
       { label: "API Costs", href: "/admin/api-costs", icon: Cpu },

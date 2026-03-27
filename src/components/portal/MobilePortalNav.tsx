@@ -3,17 +3,17 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
-  LayoutDashboard, Layers, ShoppingBag, CreditCard, LifeBuoy, Settings
+  LayoutDashboard, Layers, ShoppingBag, CreditCard, LifeBuoy, Settings, Gauge
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const MOBILE_NAV = [
   { label: "Home", href: "/portal/dashboard", icon: LayoutDashboard },
+  { label: "Ops Score", href: "/portal/ops-excellence", icon: Gauge },
   { label: "Services", href: "/portal/services", icon: Layers },
   { label: "Shop", href: "/portal/marketplace", icon: ShoppingBag },
   { label: "Billing", href: "/portal/billing", icon: CreditCard },
   { label: "Support", href: "/portal/support", icon: LifeBuoy },
-  { label: "Settings", href: "/portal/settings", icon: Settings },
 ]
 
 interface MobilePortalNavProps {

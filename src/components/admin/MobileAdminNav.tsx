@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
-  LayoutDashboard, Kanban, Users, DollarSign, GraduationCap, FlaskConical
+  LayoutDashboard, Kanban, Users, DollarSign, Gauge, FlaskConical
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -11,8 +11,8 @@ const MOBILE_ADMIN_NAV = [
   { label: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
   { label: "CRM", href: "/admin/crm", icon: Kanban },
   { label: "Clients", href: "/admin/clients", icon: Users },
+  { label: "Ops Score", href: "/admin/ops-excellence", icon: Gauge },
   { label: "Revenue", href: "/admin/revenue", icon: DollarSign },
-  { label: "Intern Ops", href: "/admin/intern-ops", icon: GraduationCap },
   { label: "Simulate", href: "/admin/simulate", icon: FlaskConical },
 ]
 
