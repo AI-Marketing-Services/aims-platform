@@ -89,9 +89,16 @@ export function emailLayout(content: string, preheader = "") {
                 Questions? Reply to this email or reach us at
                 <a href="mailto:${REPLY_TO}" style="color:#C4972A;text-decoration:none;">${REPLY_TO}</a>
               </p>
-              <p style="margin:0;font-size:11px;color:#9CA3AF;">
+              <p style="margin:0 0 8px;font-size:11px;color:#9CA3AF;">
                 AIMS · AI-Powered Business Infrastructure ·
                 <a href="https://aimseos.com" style="color:#9CA3AF;text-decoration:none;">aimseos.com</a>
+              </p>
+              <p style="margin:0 0 4px;font-size:11px;color:#9CA3AF;">
+                Modern Amenities Group · 8 The Green, Suite A · Dover, DE 19901
+              </p>
+              <p style="margin:0;font-size:11px;color:#9CA3AF;">
+                <a href="https://aimseos.com/unsubscribe" style="color:#9CA3AF;text-decoration:underline;">Unsubscribe</a>
+                · <a href="https://aimseos.com/privacy" style="color:#9CA3AF;text-decoration:underline;">Privacy Policy</a>
               </p>
             </td>
           </tr>

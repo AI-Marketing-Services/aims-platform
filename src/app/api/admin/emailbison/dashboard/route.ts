@@ -1,12 +1,18 @@
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
+import { z } from "zod"
 import { db } from "@/lib/db"
 import { getWorkspaceDashboard } from "@/lib/emailbison"
 import { logger } from "@/lib/logger"
 
 export const dynamic = "force-dynamic"
 
-export async function GET() {
+const querySchema = z.object({
+  take: z.coerce.number().int().min(1).max(100).default(50),
+  skip: z.coerce.number().int().min(0).default(0),
+})
+
+export async function GET(req: Request) {
   const { userId, sessionClaims } = await auth()
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   const role = (sessionClaims?.metadata as { role?: string })?.role
@@ -14,15 +20,32 @@ export async function GET() {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   }
 
-  // Get all users with Email Bison connections
-  const connections = await db.emailBisonConnection.findMany({
-    include: {
-      user: { select: { id: true, name: true, email: true, company: true } },
-    },
+  const { searchParams } = new URL(req.url)
+  const parsed = querySchema.safeParse({
+    take: searchParams.get("take") ?? undefined,
+    skip: searchParams.get("skip") ?? undefined,
   })
 
+  if (!parsed.success) {
+    return NextResponse.json({ error: "Invalid query params", details: parsed.error.flatten() }, { status: 400 })
+  }
+
+  const { take, skip } = parsed.data
+
+  // Get all users with Email Bison connections
+  const [connections, total] = await Promise.all([
+    db.emailBisonConnection.findMany({
+      take,
+      skip,
+      include: {
+        user: { select: { id: true, name: true, email: true, company: true } },
+      },
+    }),
+    db.emailBisonConnection.count(),
+  ])
+
   if (connections.length === 0) {
-    return NextResponse.json({ clients: [] })
+    return NextResponse.json({ data: [], meta: { total, take, skip } })
   }
 
   // Fetch dashboard data for each unique workspace (dedup so we don't hit same workspace twice)
@@ -56,5 +79,5 @@ export async function GET() {
     }
   })
 
-  return NextResponse.json({ clients })
+  return NextResponse.json({ data: clients, meta: { total, take, skip } })
 }

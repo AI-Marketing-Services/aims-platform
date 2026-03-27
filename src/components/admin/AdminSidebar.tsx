@@ -19,6 +19,7 @@ import {
   FlaskConical,
   Settings,
   Mail,
+  MailOpen,
   ClipboardCheck,
   Timer,
   MessageSquare,
@@ -68,6 +69,7 @@ const ADMIN_NAV = [
     section: "Dev Tools",
     items: [
       { label: "Simulate", href: "/admin/simulate", icon: FlaskConical },
+      { label: "Email Previews", href: "/admin/email-previews", icon: MailOpen },
     ],
   },
 ] as const

@@ -9,36 +9,65 @@ const approveSchema = z.object({
   action: z.enum(["approve", "reject", "paid"]),
 })
 
-export async function GET() {
+const querySchema = z.object({
+  take: z.coerce.number().int().min(1).max(100).default(50),
+  skip: z.coerce.number().int().min(0).default(0),
+  search: z.string().optional(),
+})
+
+export async function GET(req: Request) {
   if (!(await requireAdmin())) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   }
 
   try {
-    const commissions = await db.commission.findMany({
-      orderBy: { createdAt: "desc" },
-      include: {
-        referral: {
-          select: {
-            id: true,
-            code: true,
-            tier: true,
-            referrer: {
-              select: { id: true, name: true, email: true },
+    const { searchParams } = new URL(req.url)
+    const parsed = querySchema.safeParse({
+      take: searchParams.get("take") ?? undefined,
+      skip: searchParams.get("skip") ?? undefined,
+      search: searchParams.get("search") ?? undefined,
+    })
+
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Invalid query params", details: parsed.error.flatten() }, { status: 400 })
+    }
+
+    const { take, skip, search } = parsed.data
+
+    const where = search
+      ? { referral: { referrer: { id: { contains: search, mode: "insensitive" as const } } } }
+      : {}
+
+    const [commissions, total] = await Promise.all([
+      db.commission.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+        take,
+        skip,
+        include: {
+          referral: {
+            select: {
+              id: true,
+              code: true,
+              tier: true,
+              referrer: {
+                select: { id: true, name: true, email: true },
+              },
             },
           },
         },
-      },
-    })
+      }),
+      db.commission.count({ where }),
+    ])
 
     const summary = {
       totalPending: commissions.filter((c) => c.status === "PENDING").reduce((sum, c) => sum + c.amount, 0),
       totalApproved: commissions.filter((c) => c.status === "APPROVED").reduce((sum, c) => sum + c.amount, 0),
       totalPaid: commissions.filter((c) => c.status === "PAID").reduce((sum, c) => sum + c.amount, 0),
-      count: commissions.length,
+      count: total,
     }
 
-    return NextResponse.json({ commissions, summary })
+    return NextResponse.json({ data: commissions, summary, meta: { total, take, skip } })
   } catch (err) {
     logger.error("Failed to fetch commissions", err, { endpoint: "GET /api/admin/commissions" })
     return NextResponse.json({ error: "Failed to fetch commissions" }, { status: 500 })

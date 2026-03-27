@@ -30,7 +30,7 @@ export default async function AdminClientDetailPage({ params }: { params: Promis
       },
       supportTickets: {
         include: {
-          responses: { orderBy: { createdAt: "desc" }, take: 3 },
+          replies: { orderBy: { createdAt: "desc" }, take: 3 },
         },
         orderBy: { createdAt: "desc" },
       },

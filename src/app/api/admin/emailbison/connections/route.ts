@@ -11,17 +11,40 @@ async function requireAdmin() {
   return role && ["ADMIN", "SUPER_ADMIN"].includes(role)
 }
 
+const querySchema = z.object({
+  take: z.coerce.number().int().min(1).max(100).default(50),
+  skip: z.coerce.number().int().min(0).default(0),
+})
+
 // GET /api/admin/emailbison/connections - list all connections
-export async function GET() {
+export async function GET(req: Request) {
   if (!(await requireAdmin())) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   }
 
   try {
-    const connections = await db.emailBisonConnection.findMany({
-      include: { user: { select: { id: true, name: true, email: true, company: true } } },
+    const { searchParams } = new URL(req.url)
+    const parsed = querySchema.safeParse({
+      take: searchParams.get("take") ?? undefined,
+      skip: searchParams.get("skip") ?? undefined,
     })
-    return NextResponse.json({ connections })
+
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Invalid query params", details: parsed.error.flatten() }, { status: 400 })
+    }
+
+    const { take, skip } = parsed.data
+
+    const [connections, total] = await Promise.all([
+      db.emailBisonConnection.findMany({
+        take,
+        skip,
+        include: { user: { select: { id: true, name: true, email: true, company: true } } },
+      }),
+      db.emailBisonConnection.count(),
+    ])
+
+    return NextResponse.json({ data: connections, meta: { total, take, skip } })
   } catch (err) {
     logger.error("Failed to fetch Email Bison connections:", err)
     return NextResponse.json({ error: "Failed to fetch connections" }, { status: 500 })

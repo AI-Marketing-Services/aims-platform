@@ -13,6 +13,14 @@ async function requireAdmin() {
   return userId
 }
 
+const querySchema = z.object({
+  take: z.coerce.number().int().min(1).max(100).default(50),
+  skip: z.coerce.number().int().min(0).default(0),
+  status: z.string().optional(),
+  assignedTo: z.string().optional(),
+  subscriptionId: z.string().optional(),
+})
+
 export async function GET(req: NextRequest) {
   if (!(await requireAdmin())) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 })
@@ -20,29 +28,44 @@ export async function GET(req: NextRequest) {
 
   try {
     const { searchParams } = new URL(req.url)
-    const status = searchParams.get("status")
-    const assignedTo = searchParams.get("assignedTo")
-    const subscriptionId = searchParams.get("subscriptionId")
+    const parsed = querySchema.safeParse({
+      take: searchParams.get("take") ?? undefined,
+      skip: searchParams.get("skip") ?? undefined,
+      status: searchParams.get("status") ?? undefined,
+      assignedTo: searchParams.get("assignedTo") ?? undefined,
+      subscriptionId: searchParams.get("subscriptionId") ?? undefined,
+    })
+
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Invalid query params", details: parsed.error.flatten() }, { status: 400 })
+    }
+
+    const { take, skip, status, assignedTo, subscriptionId } = parsed.data
 
     const where: Record<string, unknown> = {}
     if (status) where.status = status
     if (assignedTo) where.assignedTo = assignedTo
     if (subscriptionId) where.subscriptionId = subscriptionId
 
-    const tasks = await db.fulfillmentTask.findMany({
-      where,
-      include: {
-        subscription: {
-          include: {
-            user: { select: { id: true, name: true, email: true } },
-            serviceArm: { select: { id: true, name: true, slug: true } },
+    const [tasks, total] = await Promise.all([
+      db.fulfillmentTask.findMany({
+        where,
+        take,
+        skip,
+        include: {
+          subscription: {
+            include: {
+              user: { select: { id: true, name: true, email: true } },
+              serviceArm: { select: { id: true, name: true, slug: true } },
+            },
           },
         },
-      },
-      orderBy: { dueDate: "asc" },
-    })
+        orderBy: { dueDate: "asc" },
+      }),
+      db.fulfillmentTask.count({ where }),
+    ])
 
-    return NextResponse.json(tasks)
+    return NextResponse.json({ data: tasks, meta: { total, take, skip } })
   } catch (err) {
     logger.error("Failed to fetch fulfillment tasks:", err)
     return NextResponse.json({ error: "Failed to fetch tasks" }, { status: 500 })

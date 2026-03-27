@@ -601,7 +601,6 @@ model SupportTicket {
   assignedTo     String?
   resolvedAt     DateTime?
   resolutionNote String?              @db.Text
-  responses      SupportResponse[]
   replies        SupportTicketReply[]
 
   createdAt DateTime @default(now())
@@ -609,18 +608,6 @@ model SupportTicket {
 
   @@index([userId])
   @@index([status])
-}
-
-model SupportResponse {
-  id         String        @id @default(cuid())
-  ticketId   String
-  ticket     SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
-  authorId   String
-  message    String        @db.Text
-  isInternal Boolean       @default(false)
-  createdAt  DateTime      @default(now())
-
-  @@index([ticketId])
 }
 
 model SupportTicketReply {
