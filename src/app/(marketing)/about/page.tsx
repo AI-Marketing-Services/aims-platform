@@ -13,10 +13,10 @@ export const metadata: Metadata = {
 }
 
 const PILLARS = [
-  { icon: Zap, title: "AI-Native Execution", desc: "Every deliverable is powered by custom AI workflows - not templates, not manual work. We build agents that run 24/7 so you don't have to." },
-  { icon: BarChart2, title: "Results-First Model", desc: "We don't get paid to make decks. We get paid when your pipeline grows. Every engagement is tied to measurable outcomes." },
-  { icon: Clock, title: "Speed of a Product Team", desc: "From kickoff to first lead in 14 days. We've eliminated every bottleneck that slows traditional agencies down." },
-  { icon: Shield, title: "Full Transparency", desc: "Every client gets a live portal with real-time data on campaigns, pipeline, and ROI. No waiting for monthly reports." },
+  { icon: Zap, title: "AI-Native Execution", desc: "Every deliverable runs on custom AI workflows - not templates, not manual labor. Production systems deployed in your environment, running 24/7." },
+  { icon: BarChart2, title: "Outcomes Over Outputs", desc: "We ship deployed AI systems, not strategy decks. Every engagement is tied to measurable efficiency gains tracked in real time." },
+  { icon: Clock, title: "90-Day Deployment Cycle", desc: "From diagnostic to production AI in 90 days. No drawn-out discovery phases. We move at operator speed because our engineers sit inside your operations." },
+  { icon: Shield, title: "Full Transparency", desc: "Every client gets a live portal with real-time data on progress, pipeline, and ROI. No waiting for monthly reports that are already stale." },
 ]
 
 const VALUES = [
@@ -38,12 +38,10 @@ export default function AboutPage() {
             About AIMS
           </span>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-foreground">
-            We Build The Systems.<br />You Close The Deals.
+            We Deploy the AI.<br />You Run the Business.
           </h1>
           <p className="mt-6 text-xl text-muted-foreground max-w-2xl mx-auto">
-            AIMS (AI Managing Services) is a division of Modern Amenities Group. We build and operate
-            AI-powered marketing and sales infrastructure for B2B businesses that want to grow without
-            adding headcount.
+            AIMS (AI Managing Services) is a division of Modern Amenities Group. We embed senior AI engineers directly in B2B operations to build, deploy, and manage production AI systems that deliver measurable results in 90 days.
           </p>
         </div>
       </section>
@@ -55,13 +53,10 @@ export default function AboutPage() {
             <div>
               <h2 className="text-3xl font-bold text-foreground">Our Mission</h2>
               <p className="mt-4 text-muted-foreground leading-relaxed">
-                The best companies are built on systems, not hustle. Our mission is to give every B2B
-                business access to the same AI-powered infrastructure that Fortune 500 companies spend
-                millions building in-house - at a fraction of the cost.
+                The best companies scale on systems, not headcount. Our mission is to give every B2B business access to the same AI-powered operational infrastructure that Fortune 500 companies spend millions building in-house - deployed in weeks, not years.
               </p>
               <p className="mt-4 text-muted-foreground leading-relaxed">
-                We don&rsquo;t just consult. We build, deploy, and run the systems for you. Your job is to
-                show up to the meetings we book.
+                We do not consult from the sidelines. Our engineers embed in your operations, build production AI, and stay to measure results and optimize.
               </p>
               <div className="mt-8 space-y-3">
                 {VALUES.map((v) => (
@@ -74,10 +69,10 @@ export default function AboutPage() {
             </div>
             <div className="rounded-2xl bg-surface border border-primary/20 p-8 space-y-6">
               {[
-                { value: "500+", label: "Businesses served" },
-                { value: "3.2x", label: "Average pipeline increase" },
-                { value: "14 days", label: "Average time to first lead" },
-                { value: "3", label: "Flagship engagements" },
+                { value: "40%", label: "Average operational efficiency gain" },
+                { value: "90d", label: "Diagnostic to deployed AI" },
+                { value: "12+", label: "Industries with deep vertical expertise" },
+                { value: "3", label: "Flagship engagement models" },
               ].map((stat) => (
                 <div key={stat.label}>
                   <div className="text-4xl font-black text-primary">{stat.value}</div>
@@ -113,11 +108,11 @@ export default function AboutPage() {
       {/* CTA */}
       <section className="py-20 bg-card border-t border-border">
         <div className="container mx-auto max-w-2xl px-4 text-center">
-          <h2 className="text-3xl font-bold text-foreground">Ready to put your pipeline on autopilot?</h2>
-          <p className="mt-3 text-muted-foreground">Book a strategy call. We&apos;ll audit your current stack and show you exactly what AIMS would build.</p>
+          <h2 className="text-3xl font-bold text-foreground">Ready to see what AI deploys in your operations?</h2>
+          <p className="mt-3 text-muted-foreground">Book a 30-minute call. We will map your highest-ROI AI opportunities and show you exactly what we would build.</p>
           <Link
             href="/get-started"
-            className="mt-8 inline-flex items-center gap-2 rounded-lg bg-card px-8 py-3.5 font-semibold text-primary hover:bg-primary/10 transition"
+            className="mt-8 inline-flex items-center gap-2 rounded-lg bg-primary px-8 py-3.5 font-semibold text-white hover:bg-primary/90 transition"
           >
             Book a Consultation <ArrowRight className="h-4 w-4" />
           </Link>

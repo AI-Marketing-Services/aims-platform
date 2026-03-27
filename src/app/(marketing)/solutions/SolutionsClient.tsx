@@ -367,12 +367,12 @@ export function SolutionsClient() {
             Engagement Models
           </div>
           <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-foreground mb-4">
-            AI Engagements Built For Your Business
+            Three Engagements. One Embedded Team.
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            We don&rsquo;t sell tools. We deploy engineers inside your business
-            to build and run AI systems that drive measurable outcomes from
-            day one.
+            We deploy senior engineers inside your operations to build and run
+            production AI systems. Custom-scoped. Outcome-measured. Deployed
+            in 90 days.
           </p>
         </div>
       </section>
@@ -396,12 +396,10 @@ export function SolutionsClient() {
         <div className="max-w-2xl mx-auto">
           <div className="bg-card border border-border rounded-2xl p-8 text-center shadow-sm">
             <h2 className="text-xl font-bold text-foreground mb-2">
-              Not sure which solution fits?
+              Not sure which engagement fits?
             </h2>
             <p className="text-sm text-muted-foreground mb-6">
-              Take our free AI Readiness Quiz. In 2 minutes you will get a
-              personalized score and a recommended solution package matched to
-              your business.
+              Take our 2-minute AI Readiness Quiz. Get a personalized score and a recommended engagement matched to your operations.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link

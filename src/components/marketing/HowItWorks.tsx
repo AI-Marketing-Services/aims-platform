@@ -33,10 +33,10 @@ export function HowItWorks() {
             How It Works
           </span>
           <h2 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-            From diagnostic to deployed in 90 days
+            Diagnostic to deployed AI in 90 days
           </h2>
           <p className="mt-3 text-base text-muted-foreground">
-            A proven three-phase process. Our forward-deployed engineers embed with your team to find, build, and ship production AI.
+            Three phases. One embedded team. Production AI shipped into your workflows with measurable efficiency gains tracked from week one.
           </p>
         </div>
 

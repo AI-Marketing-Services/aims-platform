@@ -81,12 +81,12 @@ export function Benefits() {
               Why AIMS Works
             </span>
             <h2 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-              Operational efficiency
+              Measurable efficiency gains.
               <br />
-              through AI transformation
+              Not slide decks.
             </h2>
             <p className="mt-4 text-base text-muted-foreground max-w-sm">
-              Forward-deployed engineers that embed in your operations. Results measured in hours saved, costs reduced, and systems deployed, not slide decks delivered.
+              Forward-deployed engineers embedded in your operations. Every engagement is measured in hours saved, costs reduced, and production AI deployed.
             </p>
 
             <div className="mt-10 grid grid-cols-2 gap-4">

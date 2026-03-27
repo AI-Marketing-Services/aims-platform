@@ -43,8 +43,8 @@ export function FAQ() {
     <section className="py-24 bg-background" id="faq">
       <div className="container mx-auto max-w-3xl px-4">
         <SectionHeader
-          badge="FAQ's"
-          heading="Common Questions With Clear Answers"
+          badge="FAQ"
+          heading="Straight Answers to Common Questions"
         />
 
         <div className="mt-12 divide-y divide-border rounded-2xl border border-border bg-card shadow-sm overflow-hidden">

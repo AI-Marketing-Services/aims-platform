@@ -52,10 +52,10 @@ export function WhyAIMS() {
             Why AIMS
           </span>
           <h2 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-            The traditional consulting model is broken
+            Traditional consulting ships decks. We ship production AI.
           </h2>
           <p className="mt-3 text-base text-muted-foreground">
-            AIMS is built on the forward-deployed model - engineers embedded in your operations, shipping production AI, measuring real outcomes.
+            The forward-deployed model: engineers embedded in your operations from day one. Custom AI solutions deployed in 90 days. Outcomes measured in real time.
           </p>
         </div>
 

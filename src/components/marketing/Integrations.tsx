@@ -35,11 +35,10 @@ export function Integrations() {
               Integrations
             </span>
             <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-              Plugs Into Your Existing Stack
+              Deploys Into Your Existing Stack
             </h2>
             <p className="mt-4 text-lg text-muted-foreground">
-              AIMS connects directly into the tools your team already uses. No ripping and replacing - we
-              wire everything together and make it work automatically.
+              No ripping and replacing. Our engineers build directly into the tools your team already uses - connected in days, running automatically.
             </p>
             <ul className="mt-6 space-y-3">
               {[
@@ -58,7 +57,7 @@ export function Integrations() {
               href="/get-started"
               className="mt-8 inline-flex items-center gap-2 rounded-sm bg-primary px-6 py-3 text-sm font-semibold text-white hover:bg-primary/80 transition shadow-md shadow-primary/20"
             >
-              Get Started Now <ArrowRight className="h-4 w-4" />
+              Book a Consultation <ArrowRight className="h-4 w-4" />
             </Link>
           </motion.div>
 

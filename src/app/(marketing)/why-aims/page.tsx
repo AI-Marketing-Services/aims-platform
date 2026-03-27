@@ -13,55 +13,55 @@ export const metadata: Metadata = {
 }
 
 const oldWay = [
-  "Long agency contracts with no guarantees",
-  "Generalist teams that don't understand your industry",
-  "Manual processes that don't scale",
-  "Monthly reports with no real-time visibility",
-  "Single-channel tactics (usually just ads)",
-  "High retainers before you see a single lead",
-  "Slow onboarding - 30-90 days to go live",
+  "6-month discovery phases before any work starts",
+  "Generalist teams with no vertical expertise",
+  "Manual processes that break at scale",
+  "Monthly PDF reports already 30 days stale",
+  "Recommendations only - no implementation",
+  "Knowledge walks out when the project ends",
+  "Success measured in hours billed, not outcomes delivered",
 ]
 
 const aimsWay = [
-  "Month-to-month with performance accountability",
-  "AI-trained on your specific vertical and ICP",
-  "Automated systems that run 24/7 without adding headcount",
-  "Live dashboard updated in real-time",
-  "Multi-channel: outbound, inbound, AI voice, content, SEO",
-  "Results visible within 14 days of kickoff",
-  "Live in under a week - often in 48 hours",
+  "Engineers embedded in your operations from week one",
+  "Deep vertical expertise across 12+ industries",
+  "Production AI deployed in your workflows within 90 days",
+  "Live portal with real-time progress and ROI tracking",
+  "Full implementation - diagnostic, build, deploy, optimize",
+  "Complete knowledge transfer - your team owns everything",
+  "Success measured in efficiency gains and deployed systems",
 ]
 
 const stats = [
-  { value: "3.2x", label: "Average pipeline increase", icon: TrendingUp },
-  { value: "500+", label: "Active clients served", icon: Users },
-  { value: "14 days", label: "Average time to first lead", icon: Clock },
-  { value: "97%", label: "Client retention rate", icon: Shield },
+  { value: "40%", label: "Average operational efficiency gain", icon: TrendingUp },
+  { value: "90d", label: "Diagnostic to deployed AI", icon: Clock },
+  { value: "12+", label: "Industries with deep vertical expertise", icon: Users },
+  { value: "0", label: "Handoffs between teams", icon: Shield },
 ]
 
 const pillars = [
   {
     icon: Zap,
-    title: "AI-Native from Day One",
-    description: "Every service is built around AI execution - not AI as a buzzword, but AI as the actual delivery engine. Claude, GPT-4o, and custom-trained models handle the work at scale.",
+    title: "Production AI, Not Prototypes",
+    description: "Every engagement ships working AI systems into your operations. Custom-built solutions deployed in your environment, running 24/7, measured in real time.",
     color: "bg-primary/10 text-primary",
   },
   {
     icon: BarChart,
-    title: "Full-Stack Growth",
-    description: "We don't just run ads or just do outbound. We cover every stage of your pipeline: awareness, outbound, nurture, close, retain - across every channel that matters.",
+    title: "Cross-Department Deployment",
+    description: "We audit every department - sales, ops, finance, marketing - to find the biggest time sinks and highest-ROI automation targets. No function left unexamined.",
     color: "bg-primary/10 text-primary",
   },
   {
     icon: Clock,
-    title: "Speed of a Startup",
-    description: "AIMS moves in days, not months. We've eliminated every bottleneck that slows traditional agencies down. From kickoff to first lead in 14 days, guaranteed.",
+    title: "90-Day Deployment Cycle",
+    description: "From operational diagnostic to production AI in 90 days. No drawn-out discovery phases. Our engineers embed with your team and start building in week one.",
     color: "bg-primary/10 text-primary",
   },
   {
     icon: Shield,
     title: "Transparent by Design",
-    description: "Every client gets a live portal with real-time data on campaigns, pipeline, and ROI. No more waiting for monthly PDF reports that are already 30 days stale.",
+    description: "Every client gets a live portal with real-time data on progress, efficiency gains, and ROI. No monthly PDF reports. No guessing.",
     color: "bg-primary/10 text-primary",
   },
 ]
@@ -75,10 +75,10 @@ export default function WhyAIMSPage() {
           Why AIMS
         </div>
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-6 leading-tight">
-          The Agency Model is Broken.<br />We Fixed It.
+          Traditional Consulting Ships Decks.<br />We Ship Production AI.
         </h1>
         <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
-          Traditional agencies are slow, generalist, and expensive. AIMS is AI-native, specialized, and built for speed. Here&apos;s exactly what makes us different.
+          AIMS replaces the traditional consulting model with forward-deployed engineers embedded in your operations. Here is exactly what makes us different.
         </p>
         <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
           {stats.map((stat) => (
@@ -95,13 +95,13 @@ export default function WhyAIMSPage() {
       <section className="py-16 px-4">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-foreground mb-4">Old Agency vs. AIMS</h2>
-            <p className="text-muted-foreground">Every line item matters when it comes to your pipeline.</p>
+            <h2 className="text-3xl font-bold text-foreground mb-4">Traditional Consulting vs. AIMS</h2>
+            <p className="text-muted-foreground">Every line item matters when it comes to your operations.</p>
           </div>
           <div className="grid md:grid-cols-2 gap-6">
             {/* Old way */}
             <div className="bg-card border border-border rounded-2xl p-8">
-              <h3 className="font-semibold text-muted-foreground mb-6 text-sm uppercase tracking-wider">The Old Agency Model</h3>
+              <h3 className="font-semibold text-muted-foreground mb-6 text-sm uppercase tracking-wider">Traditional Consulting</h3>
               <div className="space-y-4">
                 {oldWay.map((item) => (
                   <div key={item} className="flex items-start gap-3">
@@ -113,7 +113,7 @@ export default function WhyAIMSPage() {
             </div>
             {/* AIMS way */}
             <div className="bg-card border-2 border-primary rounded-2xl p-8">
-              <h3 className="font-semibold text-primary mb-6 text-sm uppercase tracking-wider">The AIMS Way</h3>
+              <h3 className="font-semibold text-primary mb-6 text-sm uppercase tracking-wider">AIMS Forward-Deployed Model</h3>
               <div className="space-y-4">
                 {aimsWay.map((item) => (
                   <div key={item} className="flex items-start gap-3">

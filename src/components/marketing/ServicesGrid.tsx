@@ -654,7 +654,7 @@ function ServiceCard({ service, index }: { service: ServiceCard; index: number }
             className="text-[10px] font-semibold text-primary hover:text-primary/80 transition-colors"
             onClick={(e) => e.stopPropagation()}
           >
-            Book a Call
+            Book a Consultation
           </Link>
         </div>
       </div>
@@ -679,10 +679,10 @@ export function ServicesGrid() {
             Core Engagements
           </span>
           <h2 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-            Three flagship engagements
+            Three flagship engagements. One embedded team.
           </h2>
           <p className="mt-3 max-w-xl text-base text-muted-foreground">
-            Forward-deployed engineers embedded in your operations. Each engagement is custom-scoped. Hover any card to see it in action.
+            Each engagement is custom-scoped to your operations and deployed by the same engineers who diagnose the problem. Hover any card to see it in action.
           </p>
         </motion.div>
 
@@ -703,7 +703,7 @@ export function ServicesGrid() {
         >
           <Link
             href="/get-started"
-            className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-6 py-3 text-sm font-semibold text-foreground shadow-sm hover:border-border hover:bg-surface transition"
+            className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-6 py-3 text-sm font-semibold text-foreground shadow-sm hover:border-primary/30 hover:bg-surface transition"
           >
             Book a Consultation
             <ArrowUpRight className="h-4 w-4" />
