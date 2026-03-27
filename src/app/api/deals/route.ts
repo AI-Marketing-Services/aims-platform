@@ -57,6 +57,9 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
+  // This endpoint is intentionally public — it's the lead creation endpoint
+  // called from the get-started form and intake chatbot. Rate limiting is the
+  // primary protection against abuse.
   if (formRatelimit) {
     const ip = getIp(req)
     const { success } = await formRatelimit.limit(`deals:${ip}`)
@@ -64,7 +67,8 @@ export async function POST(req: Request) {
   }
 
   try {
-    const body = await req.json()
+    const body = await req.json().catch(() => null)
+    if (!body) return NextResponse.json({ error: "Invalid request body" }, { status: 400 })
     const parsed = createDealSchema.safeParse(body)
 
     if (!parsed.success) {

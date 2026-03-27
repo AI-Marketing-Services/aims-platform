@@ -37,12 +37,17 @@ export async function sendTrackedEmail(params: Parameters<ReturnType<typeof getR
   return result
 }
 
+import { buildUnsubscribeUrl } from "@/app/api/unsubscribe/route"
+
 const FROM_EMAIL = "AIMS <irtaza@modern-amenities.com>"
 const REPLY_TO = "irtaza@modern-amenities.com"
 
 // ─── Branded HTML wrapper ─────────────────────────────────────────────────────
 
-export function emailLayout(content: string, preheader = "") {
+export function emailLayout(content: string, preheader = "", recipientEmail?: string) {
+  const unsubscribeHref = recipientEmail
+    ? buildUnsubscribeUrl(recipientEmail)
+    : "https://aimseos.com/unsubscribe"
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -97,7 +102,7 @@ export function emailLayout(content: string, preheader = "") {
                 Modern Amenities Group · 8 The Green, Suite A · Dover, DE 19901
               </p>
               <p style="margin:0;font-size:11px;color:#9CA3AF;">
-                <a href="https://aimseos.com/unsubscribe" style="color:#9CA3AF;text-decoration:underline;">Unsubscribe</a>
+                <a href="${unsubscribeHref}" style="color:#9CA3AF;text-decoration:underline;">Unsubscribe</a>
                 · <a href="https://aimseos.com/privacy" style="color:#9CA3AF;text-decoration:underline;">Privacy Policy</a>
               </p>
             </td>

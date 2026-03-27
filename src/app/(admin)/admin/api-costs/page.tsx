@@ -20,6 +20,7 @@ export default async function AdminApiCostsPage() {
       .findMany({
         where: { status: "ACTIVE" },
         select: {
+          userId: true,
           monthlyAmount: true,
           serviceArm: { select: { name: true } },
           user: { select: { name: true, email: true } },
@@ -74,7 +75,7 @@ export default async function AdminApiCostsPage() {
   }
   const clientRows: ClientRow[] = subscriptions.map((s) => {
     const revenue = s.monthlyAmount
-    const matchedLog = clientCostLogs.find(() => false) // placeholder - no user→clientId mapping yet
+    const matchedLog = clientCostLogs.find((log) => log.clientId === s.userId)
     const apiCost = matchedLog ? (matchedLog._sum.cost ?? 0) : 0
     const profit = revenue - apiCost
     const margin = revenue > 0 ? Math.round((profit / revenue) * 100) : 0

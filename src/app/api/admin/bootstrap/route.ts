@@ -2,7 +2,10 @@ import { NextResponse } from "next/server"
 import { clerkClient } from "@clerk/nextjs/server"
 import { logger } from "@/lib/logger"
 
-const ADMIN_EMAILS = ["adam@modern-amenities.com", "adamwolfe102@gmail.com"]
+const ADMIN_EMAILS = (process.env.BOOTSTRAP_ADMIN_EMAILS ?? "adam@modern-amenities.com,adamwolfe102@gmail.com")
+  .split(",")
+  .map((e) => e.trim())
+  .filter(Boolean)
 
 export async function POST(req: Request) {
   // Require a secret token via Authorization header (POST-only for sensitive operations)

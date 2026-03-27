@@ -100,10 +100,18 @@ export async function POST(req: Request) {
     }).catch(() => {})
   }
 
-  // Clamp to last MAX_MESSAGES and convert UIMessage parts to model messages
+  // Clamp to last MAX_MESSAGES, enforce content length, and convert
   const uiMessages = rawMessages
     .slice(-MAX_MESSAGES)
     .filter((m: unknown) => typeof m === "object" && m !== null)
+
+  // Truncate oversized message content to prevent token cost inflation
+  for (const m of uiMessages) {
+    const msg = m as Record<string, unknown>
+    if (typeof msg.content === "string" && msg.content.length > MAX_MESSAGE_LENGTH) {
+      msg.content = msg.content.slice(0, MAX_MESSAGE_LENGTH)
+    }
+  }
 
   // Drop leading assistant messages (client-side welcome greeting) — Gemini/Anthropic require first message to be user role
   const firstUserIdx = uiMessages.findIndex((m) => (m as Record<string, unknown>).role === "user")

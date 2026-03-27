@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
+import { timingSafeEqual } from "crypto"
 import { db } from "@/lib/db"
 import { DealStage } from "@prisma/client"
 import { logger } from "@/lib/logger"
@@ -26,17 +27,21 @@ const CLOSE_STATUS_TO_AIMS: Record<string, DealStage> = {
 function verifyWebhook(req: NextRequest): boolean {
   const secret = process.env.CLOSE_WEBHOOK_SECRET
   if (!secret) {
-    // If no secret configured, reject all webhooks in production
-    if (process.env.NODE_ENV === "production") return false
-    // In development, allow unsigned webhooks for testing
-    return true
+    return false
   }
 
   const sig = req.headers.get("x-close-webhook-signature") ?? req.headers.get("x-signature")
   if (!sig) return false
 
-  // Close uses a simple token-based verification
-  return sig === secret
+  // Use timing-safe comparison to prevent timing attacks
+  try {
+    const sigBuf = Buffer.from(sig, "utf-8")
+    const secretBuf = Buffer.from(secret, "utf-8")
+    if (sigBuf.length !== secretBuf.length) return false
+    return timingSafeEqual(sigBuf, secretBuf)
+  } catch {
+    return false
+  }
 }
 
 export async function POST(req: NextRequest) {

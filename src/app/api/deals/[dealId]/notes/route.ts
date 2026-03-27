@@ -6,7 +6,6 @@ import { logger } from "@/lib/logger"
 
 const noteSchema = z.object({
   content: z.string().min(1).max(5000),
-  authorId: z.string().optional(),
 })
 
 export async function POST(
@@ -33,7 +32,7 @@ export async function POST(
       data: {
         dealId,
         content: parsed.data.content,
-        authorId: parsed.data.authorId ?? userId,
+        authorId: userId,
       },
     })
 

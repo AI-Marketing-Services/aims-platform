@@ -211,7 +211,7 @@ export function GetStartedClient() {
             <div>
               <h2 className="text-xl font-bold mb-6">Tell us about your business</h2>
               <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium mb-1.5">Your Name *</label>
                     <div className="relative">
@@ -266,7 +266,7 @@ export function GetStartedClient() {
                     className="w-full rounded-lg border border-border px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                   />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium mb-1.5">Industry</label>
                     <select

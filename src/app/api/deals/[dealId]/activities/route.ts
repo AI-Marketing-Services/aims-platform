@@ -18,7 +18,6 @@ const activitySchema = z.object({
     "FORM_SUBMITTED",
   ]),
   detail: z.string().min(1).max(2000),
-  authorId: z.string().optional(),
 })
 
 export async function GET(
@@ -71,7 +70,7 @@ export async function POST(
         dealId,
         type: parsed.data.type,
         detail: parsed.data.detail,
-        authorId: parsed.data.authorId ?? userId,
+        authorId: userId,
       },
     })
     return NextResponse.json(activity, { status: 201 })

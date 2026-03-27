@@ -1,7 +1,12 @@
 import Stripe from "stripe"
 import { db } from "@/lib/db"
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? "", {
+if (!process.env.STRIPE_SECRET_KEY) {
+  // eslint-disable-next-line no-console
+  console.warn("STRIPE_SECRET_KEY is not configured - Stripe operations will fail")
+}
+
+export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? "sk_placeholder_not_configured", {
   apiVersion: "2025-02-24.acacia",
   typescript: true,
 })

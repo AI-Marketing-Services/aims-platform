@@ -53,8 +53,14 @@ export async function POST(req: Request) {
         const lastName = (data.last_name as string) ?? ""
         const name = [firstName, lastName].filter(Boolean).join(" ") || null
 
-        const newUser = await db.user.create({
-          data: {
+        const newUser = await db.user.upsert({
+          where: { clerkId: data.id as string },
+          update: {
+            email,
+            name,
+            avatarUrl: (data.image_url as string) ?? null,
+          },
+          create: {
             clerkId: data.id as string,
             email,
             name,

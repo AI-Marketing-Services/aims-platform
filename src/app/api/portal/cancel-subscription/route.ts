@@ -1,8 +1,13 @@
 import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
+import { z } from "zod"
 import { db } from "@/lib/db"
 import { cancelSubscription } from "@/lib/stripe"
 import { logger } from "@/lib/logger"
+
+const cancelSchema = z.object({
+  subscriptionId: z.string().min(1),
+})
 
 export async function POST(req: Request) {
   const { userId: clerkId } = await auth()
@@ -10,10 +15,15 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
-  const { subscriptionId } = await req.json()
-  if (!subscriptionId || typeof subscriptionId !== "string") {
+  const body = await req.json().catch(() => null)
+  if (!body) return NextResponse.json({ error: "Invalid request body" }, { status: 400 })
+
+  const parsed = cancelSchema.safeParse(body)
+  if (!parsed.success) {
     return NextResponse.json({ error: "Missing subscriptionId" }, { status: 400 })
   }
+
+  const { subscriptionId } = parsed.data
 
   const dbUser = await db.user.findUnique({ where: { clerkId } })
   if (!dbUser) {

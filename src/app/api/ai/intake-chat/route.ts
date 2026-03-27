@@ -77,6 +77,13 @@ export async function POST(req: Request) {
     .slice(-MAX_MESSAGES)
     .filter((m: unknown) => typeof m === "object" && m !== null)
 
+  for (const m of uiMessages) {
+    const msg = m as Record<string, unknown>
+    if (typeof msg.content === "string" && msg.content.length > MAX_MESSAGE_LENGTH) {
+      msg.content = msg.content.slice(0, MAX_MESSAGE_LENGTH)
+    }
+  }
+
   // Drop leading assistant messages (client-side welcome greeting) — Anthropic requires first message to be user role
   const firstUserIdx = uiMessages.findIndex((m) => (m as Record<string, unknown>).role === "user")
   const trimmedMessages = firstUserIdx >= 0 ? uiMessages.slice(firstUserIdx) : uiMessages

@@ -1,7 +1,15 @@
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
+import { z } from "zod"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
+
+const simulateLeadSchema = z.object({
+  name: z.string().min(1).max(200),
+  email: z.string().email(),
+  type: z.enum(["AI_READINESS_QUIZ", "ROI_CALCULATOR", "WEBSITE_AUDIT", "SEGMENT_EXPLORER", "STACK_CONFIGURATOR"]),
+  score: z.number().min(0).max(100).optional(),
+})
 
 export async function POST(req: Request) {
   const { userId, sessionClaims } = await auth()
@@ -12,23 +20,15 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   }
 
-  const { name, email, type, score } = await req.json()
+  const body = await req.json().catch(() => null)
+  if (!body) return NextResponse.json({ error: "Invalid request body" }, { status: 400 })
 
-  if (!name || !email || !type) {
-    return NextResponse.json({ error: "name, email, and type are required" }, { status: 400 })
+  const parsed = simulateLeadSchema.safeParse(body)
+  if (!parsed.success) {
+    return NextResponse.json({ error: "Invalid data", details: parsed.error.flatten() }, { status: 400 })
   }
 
-  const validTypes = [
-    "AI_READINESS_QUIZ",
-    "ROI_CALCULATOR",
-    "WEBSITE_AUDIT",
-    "SEGMENT_EXPLORER",
-    "STACK_CONFIGURATOR",
-  ]
-
-  if (!validTypes.includes(type)) {
-    return NextResponse.json({ error: "Invalid lead magnet type" }, { status: 400 })
-  }
+  const { name, email, type, score } = parsed.data
 
   try {
     const submission = await db.leadMagnetSubmission.create({
