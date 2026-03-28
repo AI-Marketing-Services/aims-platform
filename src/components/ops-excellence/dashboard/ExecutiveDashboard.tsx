@@ -10,6 +10,9 @@ import DimensionCard from "./DimensionCard"
 import CapacityChart from "./CapacityChart"
 import SpendSummary from "./SpendSummary"
 import ActivityFeed from "./ActivityFeed"
+import ExecSummaryBanner from "./ExecSummaryBanner"
+import CFOTestPanel from "./CFOTestPanel"
+import DiscoveryMetrics from "./DiscoveryMetrics"
 
 interface ExecutiveDashboardProps {
   data: DashboardData
@@ -33,7 +36,14 @@ export default function ExecutiveDashboard({ data }: ExecutiveDashboardProps) {
       {/* 1. Company Header */}
       <CompanyHeader engagement={engagement} score={latestScore} />
 
-      {/* 2. Score Section */}
+      {/* 2. Executive Summary Banner */}
+      <ExecSummaryBanner
+        engagement={engagement}
+        score={latestScore}
+        previousScore={previousScore}
+      />
+
+      {/* 3. Score Section */}
       <motion.div
         className="rounded-2xl border border-border bg-card p-6"
         initial={{ opacity: 0, y: 16 }}
@@ -139,13 +149,19 @@ export default function ExecutiveDashboard({ data }: ExecutiveDashboardProps) {
         })}
       </div>
 
-      {/* 3. Capacity ROI Section */}
+      {/* 5. CFO Test + Discovery row */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <CFOTestPanel cfoTest={data.cfoTest} />
+        <DiscoveryMetrics metrics={data.discoveryMetrics} />
+      </div>
+
+      {/* 6. Capacity ROI Section */}
       <CapacityChart metrics={data.capacityMetrics} />
 
-      {/* 4. Spend Summary */}
+      {/* 7. Spend Summary */}
       <SpendSummary metrics={data.spendMetrics} />
 
-      {/* 5. Activity Feed */}
+      {/* 8. Activity Feed */}
       <ActivityFeed activities={data.recentActivity} />
     </div>
   )
