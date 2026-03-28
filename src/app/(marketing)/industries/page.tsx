@@ -124,12 +124,12 @@ export default function IndustriesPage() {
       {/* Industry Grid */}
       <section className="pb-20 px-4">
         <div className="max-w-5xl mx-auto">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 stagger-in">
             {INDUSTRIES.map((industry) => (
               <Link
                 key={industry.slug}
                 href={`/industries/${industry.slug}`}
-                className="group bg-card border border-border rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-border transition-all flex flex-col"
+                className="group bg-card border border-border rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-border transition-all flex flex-col animated-glow-card"
               >
                 <div className="w-10 h-10 rounded-xl bg-deep flex items-center justify-center mb-4 group-hover:bg-primary/10 transition-colors">
                   <industry.icon className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />

@@ -91,9 +91,9 @@ export default function AboutPage() {
             <h2 className="text-3xl font-bold text-foreground">How AIMS Operates</h2>
             <p className="mt-3 text-muted-foreground">Four principles that drive every engagement</p>
           </div>
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 stagger-in">
             {PILLARS.map((p) => (
-              <div key={p.title} className="bg-deep border border-border rounded-2xl p-6">
+              <div key={p.title} className="bg-deep border border-border rounded-2xl p-6 animated-glow-card">
                 <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center mb-4">
                   <p.icon className="w-5 h-5 text-primary" />
                 </div>

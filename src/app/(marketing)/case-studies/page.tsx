@@ -67,12 +67,12 @@ export default function CaseStudiesPage() {
         </div>
 
         {/* Case study cards */}
-        <div className="space-y-6">
+        <div className="space-y-6 stagger-in">
           {CASE_STUDIES.map((cs) => (
             <Link
               key={cs.slug}
               href={`/case-studies/${cs.slug}`}
-              className="block bg-card border border-border rounded-2xl p-8 hover:shadow-md hover:border-border transition-all group"
+              className="block bg-card border border-border rounded-2xl p-8 hover:shadow-md hover:border-border transition-all group animated-glow-card"
             >
               <div className="flex flex-col sm:flex-row sm:items-start gap-6">
                 <div className="flex-1">
