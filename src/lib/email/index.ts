@@ -267,6 +267,102 @@ export async function sendInternalNotification(params: {
   })
 }
 
+export async function sendCancellationEmail(params: {
+  to: string
+  name: string
+  serviceName: string
+  cancelledAt: Date
+}) {
+  const body = `
+    ${h1(`We're sorry to see you go, ${params.name}`)}
+    ${p(`Your <strong style="color:#111827;">${params.serviceName}</strong> subscription has been cancelled as of ${params.cancelledAt.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}.`)}
+    ${p("If this was a mistake or you'd like to discuss continuing, just reply to this email — we'll make it right.")}
+    ${divider()}
+    ${p("If there's anything we could have done better, we'd genuinely love to hear it. Your feedback helps us improve.")}
+    <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #E5E7EB;border-radius:8px;overflow:hidden;margin:0 0 24px;">
+      <tr style="background:#F9FAFB;">
+        <td style="padding:16px 20px;">
+          <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:0.08em;">Want to restart?</p>
+          <p style="margin:0 0 12px;font-size:14px;color:#374151;">You can reactivate at any time — pick up right where you left off.</p>
+          <a href="https://aimseos.com/get-started" style="font-size:13px;color:#C4972A;font-weight:700;text-decoration:none;">Restart my subscription →</a>
+        </td>
+      </tr>
+    </table>
+  `
+  return sendTrackedEmail({
+    from: FROM_EMAIL,
+    to: params.to,
+    replyTo: REPLY_TO,
+    subject: `Your ${params.serviceName} subscription has been cancelled`,
+    html: emailLayout(body, `Your ${params.serviceName} subscription has been cancelled.`, params.to),
+  })
+}
+
+export async function sendRenewalEmail(params: {
+  to: string
+  name: string
+  serviceName: string
+  amount: number
+  nextBillingDate: Date
+  portalUrl: string
+}) {
+  const body = `
+    ${h1(`Payment confirmed — ${params.serviceName}`)}
+    ${p(`Hi ${params.name}, your renewal payment of <strong style="color:#111827;">$${params.amount.toLocaleString()}</strong> has been processed successfully.`)}
+    <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #E5E7EB;border-radius:8px;overflow:hidden;margin:0 0 24px;">
+      ${[
+        ["Service", params.serviceName],
+        ["Amount", `$${params.amount.toLocaleString()}/month`],
+        ["Next billing date", params.nextBillingDate.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })],
+      ].map(([label, value], i) => `
+        <tr style="background:${i % 2 === 0 ? "#F9FAFB" : "#ffffff"};">
+          <td style="padding:12px 16px;font-size:13px;color:#6B7280;width:160px;">${label}</td>
+          <td style="padding:12px 16px;font-size:13px;font-weight:600;color:#111827;">${value}</td>
+        </tr>
+      `).join("")}
+    </table>
+    ${btn("View Portal →", params.portalUrl)}
+    ${divider()}
+    ${p("Thank you for continuing to grow with AIMS. If you have questions about your account or want to explore additional services, reply to this email any time.")}
+  `
+  return sendTrackedEmail({
+    from: FROM_EMAIL,
+    to: params.to,
+    replyTo: REPLY_TO,
+    subject: `Payment confirmed - ${params.serviceName} renewed`,
+    html: emailLayout(body, `Your $${params.amount}/mo ${params.serviceName} subscription has been renewed.`, params.to),
+  })
+}
+
+export async function sendPaymentFailedEmail(params: {
+  to: string
+  name: string
+  serviceName: string
+  amount: number
+  retryDate?: Date
+  updatePaymentUrl: string
+}) {
+  const body = `
+    ${h1(`Action required: Payment failed`)}
+    <div style="background:#FEF2F2;border-left:4px solid #EF4444;border-radius:6px;padding:16px 20px;margin:0 0 24px;">
+      <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#EF4444;text-transform:uppercase;letter-spacing:0.08em;">Payment Failed</p>
+      <p style="margin:0;font-size:14px;color:#374151;">We were unable to process your payment of <strong>$${params.amount.toLocaleString()}</strong> for <strong>${params.serviceName}</strong>.</p>
+    </div>
+    ${p("To keep your service running without interruption, please update your payment method.")}
+    ${btn("Update Payment Method →", params.updatePaymentUrl)}
+    ${divider()}
+    ${params.retryDate ? p(`We'll automatically retry your payment on <strong>${params.retryDate.toLocaleDateString("en-US", { month: "long", day: "numeric" })}</strong>. Update your payment details before then to avoid any disruption.`) : ""}
+    ${p("Need help? Reply to this email and we'll sort it out immediately.")}
+  `
+  return sendTrackedEmail({
+    from: FROM_EMAIL,
+    to: params.to,
+    replyTo: REPLY_TO,
+    subject: `Action required: Payment failed for ${params.serviceName}`,
+    html: emailLayout(body, `Your payment of $${params.amount} for ${params.serviceName} failed. Action required.`, params.to),
+  })
+}
+
 // ─── Sequence definitions ─────────────────────────────────────────────────────
 
 export const EMAIL_SEQUENCES = {

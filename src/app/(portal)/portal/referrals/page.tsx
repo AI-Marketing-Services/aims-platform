@@ -54,14 +54,14 @@ export default async function ReferralsPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-8 stagger-in">
         {[
           { label: "Link Clicks", value: referral.clicks.toLocaleString(), sub: "total visits", icon: TrendingUp },
           { label: "Sign-Ups", value: referral.signups.toLocaleString(), sub: "from your link", icon: Users },
           { label: "Active Clients", value: referral.conversions.toLocaleString(), sub: "converted", icon: CheckCircle },
           { label: "Total Earned", value: `$${totalEarned.toFixed(0)}`, sub: `$${pendingPayout.toFixed(0)} pending payout`, icon: DollarSign },
         ].map((stat) => (
-          <div key={stat.label} className="bg-card border border-border rounded-xl p-5">
+          <div key={stat.label} className="bg-card border border-border rounded-xl p-5 micro-card">
             <stat.icon className="w-4 h-4 text-muted-foreground mb-3" />
             <div className="text-2xl font-bold text-foreground">{stat.value}</div>
             <div className="text-[11px] text-muted-foreground mt-0.5 uppercase tracking-wide">{stat.sub}</div>

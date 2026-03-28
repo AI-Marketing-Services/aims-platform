@@ -94,7 +94,7 @@ export default async function BillingPage() {
 
       {/* Active subscriptions */}
       {activeSubs.length > 0 ? (
-        <div className="rounded-2xl border border-border overflow-hidden mb-6">
+        <div className="rounded-2xl border border-border overflow-hidden mb-6 stagger-in">
           <div className="divide-y divide-border">
             {activeSubs.map((sub) => {
               const activeSince = sub.createdAt

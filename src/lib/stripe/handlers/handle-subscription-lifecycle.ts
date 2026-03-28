@@ -3,7 +3,7 @@ import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
 import { handleSubscriptionUpdated, handleSubscriptionDeleted } from "@/lib/stripe"
 import { notifyNewPurchase } from "@/lib/notifications"
-import { sendWelcomeEmail } from "@/lib/email"
+import { sendWelcomeEmail, sendCancellationEmail } from "@/lib/email"
 import { queueEmailSequence } from "@/lib/email/queue"
 import { createFulfillmentTask } from "@/lib/asana"
 
@@ -129,16 +129,18 @@ export async function handleSubscriptionUpdatedEvent(sub: Stripe.Subscription) {
  * and marks associated deals as churned.
  */
 export async function handleSubscriptionDeletedEvent(sub: Stripe.Subscription) {
+  // Fetch before deletion so we have service arm name for the email
+  const existingSub = await db.subscription.findFirst({
+    where: { stripeSubId: sub.id },
+    include: { user: true, serviceArm: true },
+  })
+
   await handleSubscriptionDeleted(sub)
 
   // Mark associated deals as churned
-  const deletedSub = await db.subscription.findFirst({
-    where: { stripeSubId: sub.id },
-    select: { userId: true },
-  })
-  if (deletedSub?.userId) {
+  if (existingSub?.userId) {
     const deal = await db.deal.findFirst({
-      where: { userId: deletedSub.userId, stage: "ACTIVE_CLIENT" },
+      where: { userId: existingSub.userId, stage: "ACTIVE_CLIENT" },
     })
     if (deal) {
       await db.deal.update({
@@ -153,6 +155,16 @@ export async function handleSubscriptionDeletedEvent(sub: Stripe.Subscription) {
           },
         },
       })
+    }
+
+    // Send cancellation confirmation email to client
+    if (existingSub.user) {
+      await sendCancellationEmail({
+        to: existingSub.user.email,
+        name: existingSub.user.name ?? "there",
+        serviceName: existingSub.serviceArm.name,
+        cancelledAt: new Date(),
+      }).catch((err) => logger.error("Failed to send cancellation email", err))
     }
   }
 }

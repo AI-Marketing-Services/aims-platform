@@ -33,12 +33,12 @@ export default function BlogPage() {
         </div>
 
         {/* Posts */}
-        <div className="space-y-6">
+        <div className="space-y-6 stagger-in">
           {posts.map((post, i) => (
             <Link
               key={post.slug}
               href={`/blog/${post.slug}`}
-              className="block bg-card border border-border rounded-2xl p-8 hover:shadow-md hover:border-border transition-all group"
+              className="block bg-card border border-border rounded-2xl p-8 hover:shadow-md transition-all group animated-glow-card"
             >
               <div className="flex items-start gap-6">
                 <div className="flex-1">

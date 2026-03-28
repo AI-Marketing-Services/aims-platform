@@ -2,6 +2,7 @@ import Stripe from "stripe"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
 import { handleInvoicePaid } from "@/lib/stripe"
+import { sendRenewalEmail, sendPaymentFailedEmail } from "@/lib/email"
 
 /**
  * Handles invoice.paid events — logs payment activity and calculates
@@ -9,6 +10,31 @@ import { handleInvoicePaid } from "@/lib/stripe"
  */
 export async function handleInvoicePaidEvent(invoice: Stripe.Invoice) {
   await handleInvoicePaid(invoice)
+
+  // Send renewal confirmation email for subscription_cycle invoices (not first payment)
+  if (invoice.billing_reason === "subscription_cycle" && invoice.subscription && invoice.amount_paid > 0) {
+    try {
+      const renewedSub = await db.subscription.findFirst({
+        where: { stripeSubId: invoice.subscription as string },
+        include: { user: true, serviceArm: true },
+      })
+      if (renewedSub?.user) {
+        await sendRenewalEmail({
+          to: renewedSub.user.email,
+          name: renewedSub.user.name ?? "there",
+          serviceName: renewedSub.serviceArm.name,
+          amount: invoice.amount_paid / 100,
+          nextBillingDate: renewedSub.currentPeriodEnd ?? new Date(Date.now() + 30 * 86400000),
+          portalUrl: `${process.env.NEXT_PUBLIC_APP_URL}/portal/dashboard`,
+        })
+      }
+    } catch (err) {
+      logger.error("Failed to send renewal email", err, {
+        endpoint: "POST /api/webhooks/stripe",
+        action: "invoice.paid.renewal",
+      })
+    }
+  }
 
   // Only create commissions on the first invoice (subscription creation)
   if (invoice.billing_reason !== "subscription_create") return
@@ -76,7 +102,8 @@ export async function handleInvoicePaidEvent(invoice: Stripe.Invoice) {
 }
 
 /**
- * Handles invoice.payment_failed events — marks subscriptions as PAST_DUE.
+ * Handles invoice.payment_failed events — marks subscriptions as PAST_DUE
+ * and notifies the client via email.
  */
 export async function handleInvoicePaymentFailedEvent(invoice: Stripe.Invoice) {
   if (!invoice.subscription) return
@@ -85,4 +112,30 @@ export async function handleInvoicePaymentFailedEvent(invoice: Stripe.Invoice) {
     where: { stripeSubId: invoice.subscription as string },
     data: { status: "PAST_DUE" },
   })
+
+  // Notify client so they can update payment method
+  try {
+    const sub = await db.subscription.findFirst({
+      where: { stripeSubId: invoice.subscription as string },
+      include: { user: true, serviceArm: true },
+    })
+    if (sub?.user) {
+      const retryDate = invoice.next_payment_attempt
+        ? new Date(invoice.next_payment_attempt * 1000)
+        : undefined
+      await sendPaymentFailedEmail({
+        to: sub.user.email,
+        name: sub.user.name ?? "there",
+        serviceName: sub.serviceArm.name,
+        amount: invoice.amount_due / 100,
+        retryDate,
+        updatePaymentUrl: `${process.env.NEXT_PUBLIC_APP_URL}/portal/billing`,
+      })
+    }
+  } catch (err) {
+    logger.error("Failed to send payment failed email", err, {
+      endpoint: "POST /api/webhooks/stripe",
+      action: "invoice.payment_failed",
+    })
+  }
 }
