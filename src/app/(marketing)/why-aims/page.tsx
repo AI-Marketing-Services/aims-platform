@@ -80,9 +80,9 @@ export default function WhyAIMSPage() {
         <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
           AIMS replaces the traditional consulting model with forward-deployed engineers embedded in your operations. Here is exactly what makes us different.
         </p>
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6 stagger-in">
           {stats.map((stat) => (
-            <div key={stat.label} className="bg-card border border-border rounded-2xl p-6">
+            <div key={stat.label} className="bg-card border border-border rounded-2xl p-6 micro-card">
               <stat.icon className="w-5 h-5 text-primary mb-3 mx-auto" />
               <div className="text-3xl font-bold text-foreground">{stat.value}</div>
               <div className="text-sm text-muted-foreground mt-1">{stat.label}</div>
@@ -134,9 +134,9 @@ export default function WhyAIMSPage() {
             <h2 className="text-3xl font-bold text-foreground mb-4">The AIMS Difference</h2>
             <p className="text-muted-foreground">Four principles that make every engagement different.</p>
           </div>
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-2 gap-6 stagger-in">
             {pillars.map((p) => (
-              <div key={p.title} className="bg-deep border border-border rounded-2xl p-8">
+              <div key={p.title} className="bg-deep border border-border rounded-2xl p-8 animated-glow-card">
                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-5 ${p.color}`}>
                   <p.icon className="w-6 h-6" />
                 </div>

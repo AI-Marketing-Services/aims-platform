@@ -78,14 +78,14 @@ export default function ToolsIndexPage() {
       {/* Tool Cards */}
       <section className="py-20">
         <div className="container mx-auto max-w-4xl px-4">
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 stagger-in">
             {TOOLS.map((tool) => {
               const Icon = tool.icon
               return (
                 <Link
                   key={tool.href}
                   href={tool.href}
-                  className="group flex flex-col rounded-xl border border-border bg-[#141923] p-6 transition-all hover:border-primary/40 hover:shadow-[0_0_20px_rgba(196,151,42,0.08)]"
+                  className="group flex flex-col rounded-xl border border-border bg-[#141923] p-6 transition-all hover:border-primary/40 hover:shadow-[0_0_20px_rgba(196,151,42,0.08)] animated-glow-card"
                 >
                   <div className="mb-4 flex items-center justify-between">
                     <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">

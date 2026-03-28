@@ -372,7 +372,7 @@ export default async function PortalServicesPage() {
                       </Link>
                     )}
                   <Link
-                    href={`/portal/services/${svc.id}`}
+                    href={`/portal/services/${svc.serviceArmId}`}
                     className={`px-4 py-1.5 text-sm font-medium rounded-lg transition-colors ${
                       !svc.onboardingCompletedAt && svc.serviceArm.onboardingFormSchema
                         ? "border border-border text-foreground hover:bg-surface"

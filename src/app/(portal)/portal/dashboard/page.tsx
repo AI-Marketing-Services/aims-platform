@@ -446,7 +446,7 @@ export default async function PortalDashboard({
                     </div>
                   </div>
                   <Link
-                    href={`/portal/services/${sub.id}`}
+                    href={`/portal/services/${sub.serviceArmId}`}
                     className="text-sm text-primary hover:underline flex items-center gap-1"
                   >
                     View <ArrowRight className="h-3 w-3" />
