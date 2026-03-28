@@ -77,14 +77,14 @@ export default async function InternDashboardPage() {
       )}
 
       {/* Stats */}
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 stagger-in">
         {[
           { label: "Tasks Completed", value: profile?.tasksCompleted ?? 0, icon: CheckSquare },
           { label: "Revenue Attributed", value: `$${(profile?.revenueAttributed ?? 0).toLocaleString()}`, icon: TrendingUp },
           { label: "Active Sprint", value: profile?.sprintGoals[0]?.title ?? "None", icon: Target, isText: true },
           { label: "EOD Reports", value: profile?.eodReports?.length?.toString() ?? "0", icon: FileText },
         ].map(({ label, value, icon: Icon, isText }) => (
-          <div key={label} className="rounded-xl border border-border bg-card p-5">
+          <div key={label} className="rounded-xl border border-border bg-card p-5 micro-card">
             <div className="flex items-center justify-between mb-3">
               <p className="text-xs text-muted-foreground">{label}</p>
               <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-muted">

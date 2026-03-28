@@ -80,7 +80,7 @@ export default async function AdminClientsPage() {
         ]}
       />
       {/* Summary stat cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-8">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-8 stagger-in">
         {[
           { label: "Total Clients", value: rows.length.toString() },
           { label: "Active Clients", value: totalClients.toString() },

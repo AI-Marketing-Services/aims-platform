@@ -49,14 +49,14 @@ export default async function ResellerDashboardPage() {
       )}
 
       {/* Stats */}
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 stagger-in">
         {[
           { label: "Total Clicks", value: referral?.clicks ?? 0, icon: TrendingUp },
           { label: "Signups", value: referral?.signups ?? 0, icon: Users },
           { label: "Conversions", value: referral?.conversions ?? 0, icon: Gift },
           { label: "Total Earned", value: `$${(referral?.totalEarned ?? 0).toLocaleString()}`, icon: DollarSign, isMoney: true },
         ].map(({ label, value, icon: Icon, isMoney }) => (
-          <div key={label} className="rounded-xl border border-border bg-card p-5">
+          <div key={label} className="rounded-xl border border-border bg-card p-5 micro-card">
             <div className="flex items-center justify-between mb-3">
               <p className="text-xs text-muted-foreground">{label}</p>
               <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-muted">
