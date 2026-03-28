@@ -4,6 +4,7 @@ import { useState, useMemo } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { CheckCircle2, ArrowRight, Search } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { ToolLogo } from "@/components/shared/ToolLogo"
 
@@ -281,16 +282,22 @@ export function PortalMarketplaceClient({ services, subscribedIds, subscribedSer
       </p>
 
       {/* Grid */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {filtered.map((svc) => {
+      <AnimatePresence mode="popLayout">
+        <motion.div layout className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {filtered.map((svc, i) => {
           const isSubscribed = subscribedSet.has(svc.id)
           const isRecommended = svc.slug === recommendedSlug && !isSubscribed
           const tools = TOOL_MAP[svc.slug] ?? []
           const custom = isCustomPriced(svc)
 
           return (
-            <div
+            <motion.div
               key={svc.id}
+              layout
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.3, delay: Math.min(i * 0.04, 0.3), ease: [0.22, 1, 0.36, 1] }}
               className={cn(
                 "flex flex-col rounded-xl border border-border bg-card overflow-hidden hover:border-border/70 transition-colors",
                 isSubscribed && "border-l-4 border-l-green-500"
@@ -372,10 +379,11 @@ export function PortalMarketplaceClient({ services, subscribedIds, subscribedSer
                   </button>
                 )}
               </div>
-            </div>
+            </motion.div>
           )
         })}
-      </div>
+        </motion.div>
+      </AnimatePresence>
 
       {filtered.length === 0 && (
         <div className="py-16 text-center">

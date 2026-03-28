@@ -146,8 +146,8 @@ export function AdminCampaignDashboard() {
       )}
 
       {/* Global stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="rounded-xl border border-border bg-card p-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 stagger-in">
+        <div className="rounded-xl border border-border bg-card p-4 micro-card">
           <div className="flex items-center justify-between mb-2">
             <p className="text-xs text-muted-foreground">Total Emails Sent</p>
             <Mail className="h-3.5 w-3.5 text-[#C4972A]" />
@@ -156,7 +156,7 @@ export function AdminCampaignDashboard() {
             {globalTotals.emailsSent.toLocaleString()}
           </p>
         </div>
-        <div className="rounded-xl border border-border bg-card p-4">
+        <div className="rounded-xl border border-border bg-card p-4 micro-card">
           <div className="flex items-center justify-between mb-2">
             <p className="text-xs text-muted-foreground">People Contacted</p>
             <Users className="h-3.5 w-3.5 text-blue-400" />
@@ -165,7 +165,7 @@ export function AdminCampaignDashboard() {
             {globalTotals.peopleContacted.toLocaleString()}
           </p>
         </div>
-        <div className="rounded-xl border border-border bg-card p-4">
+        <div className="rounded-xl border border-border bg-card p-4 micro-card">
           <div className="flex items-center justify-between mb-2">
             <p className="text-xs text-muted-foreground">Total Replies</p>
             <MessageSquare className="h-3.5 w-3.5 text-green-400" />
@@ -175,7 +175,7 @@ export function AdminCampaignDashboard() {
           </p>
           <p className="text-xs text-muted-foreground mt-0.5">{globalReplyRate}% rate</p>
         </div>
-        <div className="rounded-xl border border-border bg-card p-4">
+        <div className="rounded-xl border border-border bg-card p-4 micro-card">
           <div className="flex items-center justify-between mb-2">
             <p className="text-xs text-muted-foreground">Bounced</p>
             <TrendingUp className="h-3.5 w-3.5 text-orange-400" />

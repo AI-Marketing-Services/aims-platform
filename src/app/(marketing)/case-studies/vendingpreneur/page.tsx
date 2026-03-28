@@ -31,13 +31,13 @@ export default function VendingpreneurCaseStudy() {
           How an owner-operator vending business scaled from manual prospecting to a fully automated location acquisition machine.
         </p>
 
-        <div className="bg-card border border-border rounded-2xl p-6 mb-10 grid grid-cols-1 sm:grid-cols-3 gap-4 text-center shadow-sm">
+        <div className="bg-card border border-border rounded-2xl p-6 mb-10 grid grid-cols-1 sm:grid-cols-3 gap-4 text-center shadow-sm stagger-in">
           {[
             { value: "47", label: "New locations secured" },
             { value: "90 days", label: "To results" },
             { value: "$284", label: "Cost per location" },
           ].map((m) => (
-            <div key={m.label}>
+            <div key={m.label} className="micro-card rounded-xl p-2">
               <div className="text-2xl sm:text-3xl font-black text-primary mb-1">{m.value}</div>
               <div className="text-xs text-muted-foreground">{m.label}</div>
             </div>

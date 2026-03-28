@@ -11,6 +11,7 @@ import {
   RefreshCw,
   Megaphone,
 } from "lucide-react"
+import { motion } from "framer-motion"
 import { EmptyState } from "@/components/shared/EmptyState"
 import { cn } from "@/lib/utils"
 
@@ -194,7 +195,7 @@ export function CampaignsDashboardClient() {
       </div>
 
       {/* Metric cards */}
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 stagger-in">
         <div className="rounded-xl border border-border bg-card p-5">
           <div className="flex items-center justify-between mb-3">
             <p className="text-xs text-muted-foreground">Emails Sent</p>

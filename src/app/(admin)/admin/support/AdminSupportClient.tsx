@@ -183,14 +183,14 @@ export function AdminSupportClient({ tickets: initialTickets, stats }: Props) {
   return (
     <div className="space-y-6">
       {/* Stats row */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 stagger-in">
         {[
           { label: "Total", value: stats.total, color: "text-foreground" },
           { label: "Open", value: stats.open, color: "text-red-400" },
           { label: "In Progress", value: stats.inProgress, color: "text-amber-400" },
           { label: "Resolved", value: stats.resolved, color: "text-green-400" },
         ].map(({ label, value, color }) => (
-          <div key={label} className="rounded-xl border border-border bg-card p-4">
+          <div key={label} className="rounded-xl border border-border bg-card p-4 micro-card">
             <p className="text-xs text-muted-foreground mb-1">{label}</p>
             <p className={`text-2xl font-bold font-mono ${color}`}>{value}</p>
           </div>
