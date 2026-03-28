@@ -131,7 +131,7 @@ export default async function PortalServicesPage() {
       </div>
 
       {/* Metric cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8 stagger-in">
         <div className="bg-card border border-border rounded-2xl p-5 flex items-start gap-4">
           <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
             <DollarSign className="w-4 h-4 text-[#C4972A]" />
@@ -221,7 +221,7 @@ export default async function PortalServicesPage() {
           </p>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-4 stagger-in">
           {subs.map((svc) => {
             const statusKey =
               svc.status === "ACTIVE" ||

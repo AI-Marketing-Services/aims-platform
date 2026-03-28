@@ -196,7 +196,7 @@ export default async function PortalDashboard({
       {subs.length === 0 ? (
         <>
           {/* Welcome Action Cards */}
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 stagger-in">
             {[
               {
                 icon: ShoppingCart,
@@ -311,7 +311,7 @@ export default async function PortalDashboard({
         </>
       ) : (
         /* ── ACTIVE STATE: metric cards ── */
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 stagger-in">
           {[
             {
               label: "Active Services",
@@ -416,7 +416,7 @@ export default async function PortalDashboard({
             </Link>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-3 stagger-in">
             {subs.map((sub) => {
               const statusClass = statusColors[sub.status] ?? "bg-deep text-muted-foreground"
               const renewsAt = sub.currentPeriodEnd

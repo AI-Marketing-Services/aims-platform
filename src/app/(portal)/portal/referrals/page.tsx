@@ -1,15 +1,50 @@
-import { currentUser } from "@clerk/nextjs/server"
+import { auth, currentUser } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
-import { Share2, DollarSign, Users, CheckCircle, Mail, Linkedin, TrendingUp, ExternalLink } from "lucide-react"
+import { Share2, DollarSign, Users, CheckCircle, Mail, Linkedin, TrendingUp, ExternalLink, Clock } from "lucide-react"
 import { CopyButton } from "@/components/portal/CopyButton"
+import { db } from "@/lib/db"
 
 export default async function ReferralsPage() {
+  const { userId: clerkId } = await auth()
   const user = await currentUser()
-  if (!user) redirect("/sign-in")
+  if (!clerkId || !user) redirect("/sign-in")
 
-  const refCode = `AIMS-${user.id.slice(-6).toUpperCase()}`
-  const refLink = `https://aimseos.com?ref=${refCode}`
+  const dbUser = await db.user.findUnique({ where: { clerkId } })
+  if (!dbUser) redirect("/sign-in")
+
+  // Fetch or create referral record for this user
+  let referral = await db.referral.findFirst({
+    where: { referrerId: dbUser.id },
+    include: {
+      commissions: {
+        orderBy: { createdAt: "desc" },
+        take: 10,
+      },
+    },
+  })
+
+  if (!referral) {
+    // Auto-create a referral record
+    const code = `AIMS-${dbUser.id.slice(-8).toUpperCase()}`
+    referral = await db.referral.create({
+      data: {
+        referrerId: dbUser.id,
+        code,
+        tier: "AFFILIATE",
+      },
+      include: {
+        commissions: { orderBy: { createdAt: "desc" }, take: 10 },
+      },
+    })
+  }
+
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://aimseos.com"
+  const refLink = `${appUrl}?ref=${referral.code}`
   const encodedRefLink = encodeURIComponent(refLink)
+
+  const totalEarned = referral.totalEarned
+  const pendingPayout = referral.pendingPayout
+  const paidOut = totalEarned - pendingPayout
 
   return (
     <div className="w-full">
@@ -19,16 +54,17 @@ export default async function ReferralsPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-8">
         {[
-          { label: "Total Referred", value: "0", sub: "businesses", icon: Users },
-          { label: "Active Clients", value: "0", sub: "from referrals", icon: CheckCircle },
-          { label: "Total Earned", value: "$0", sub: "in commissions", icon: DollarSign },
+          { label: "Link Clicks", value: referral.clicks.toLocaleString(), sub: "total visits", icon: TrendingUp },
+          { label: "Sign-Ups", value: referral.signups.toLocaleString(), sub: "from your link", icon: Users },
+          { label: "Active Clients", value: referral.conversions.toLocaleString(), sub: "converted", icon: CheckCircle },
+          { label: "Total Earned", value: `$${totalEarned.toFixed(0)}`, sub: `$${pendingPayout.toFixed(0)} pending payout`, icon: DollarSign },
         ].map((stat) => (
           <div key={stat.label} className="bg-card border border-border rounded-xl p-5">
             <stat.icon className="w-4 h-4 text-muted-foreground mb-3" />
             <div className="text-2xl font-bold text-foreground">{stat.value}</div>
-            <div className="text-xs text-muted-foreground mt-0.5">{stat.sub}</div>
+            <div className="text-[11px] text-muted-foreground mt-0.5 uppercase tracking-wide">{stat.sub}</div>
           </div>
         ))}
       </div>
@@ -45,7 +81,12 @@ export default async function ReferralsPage() {
           </div>
           <CopyButton text={refLink} />
         </div>
-        <p className="text-xs text-muted-foreground mt-3">Share this link. When someone signs up and pays, you earn 20% of their first 3 months.</p>
+        <p className="text-xs text-muted-foreground mt-3">
+          Share this link. When someone signs up and pays, you earn 20% of their first 3 months.
+        </p>
+        <p className="text-xs text-muted-foreground mt-1">
+          Your referral code: <span className="font-mono text-foreground">{referral.code}</span>
+        </p>
 
         {/* Share via row */}
         <div className="mt-4 pt-4 border-t border-border">
@@ -69,7 +110,7 @@ export default async function ReferralsPage() {
               LinkedIn
             </a>
             <a
-              href={`https://twitter.com/intent/tweet?text=I%20use%20AIMS%20for%20AI%20automation%20%E2%80%94%20here%27s%20%2450%20off%20your%20first%20month%3A&url=${encodedRefLink}`}
+              href={`https://twitter.com/intent/tweet?text=I%20use%20AIMS%20for%20AI%20automation%20%E2%80%94%20here%27s%20your%20invite%3A&url=${encodedRefLink}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-border bg-card text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
@@ -83,13 +124,49 @@ export default async function ReferralsPage() {
         </div>
       </div>
 
+      {/* Commission history */}
+      {referral.commissions.length > 0 && (
+        <div className="bg-card border border-border rounded-xl p-6 mb-6">
+          <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
+            <DollarSign className="w-4 h-4 text-[#C4972A]" />
+            Commission History
+          </h3>
+          <div className="space-y-3">
+            {referral.commissions.map((c) => (
+              <div key={c.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
+                <div>
+                  <p className="text-sm font-medium text-foreground">
+                    Commission Earned
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {new Date(c.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm font-bold text-green-400">${c.amount.toFixed(2)}</p>
+                  <p className={`text-[11px] uppercase tracking-wide ${c.status === "PAID" ? "text-green-400" : "text-yellow-400"}`}>
+                    {c.status === "PAID" ? "Paid" : "Pending"}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+          {paidOut > 0 && (
+            <div className="mt-4 pt-4 border-t border-border flex items-center justify-between">
+              <span className="text-sm text-muted-foreground">Total paid out</span>
+              <span className="text-sm font-bold text-foreground">${paidOut.toFixed(2)}</span>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* How it works */}
       <div className="bg-card border border-border rounded-xl p-6 mb-6">
         <h3 className="font-semibold text-foreground mb-5">How the Referral Program Works</h3>
         <div className="space-y-4">
           {[
             { step: "1", title: "Share your link", desc: "Send your referral link to friends, colleagues, or your network" },
-            { step: "2", title: "They sign up", desc: "When they book a call and become a paying client, you're credited" },
+            { step: "2", title: "They sign up", desc: "When they book a call and become a paying client, you are credited" },
             { step: "3", title: "You earn 20%", desc: "Receive 20% of their monthly subscription for their first 3 months" },
           ].map((item) => (
             <div key={item.step} className="flex items-start gap-4">
@@ -112,7 +189,7 @@ export default async function ReferralsPage() {
           Earning Potential
         </h3>
         <div className="space-y-4">
-          <div className="bg-card border border-green-100 rounded-lg p-4">
+          <div className="bg-card border border-green-900/40 rounded-lg p-4">
             <p className="text-sm text-muted-foreground mb-1">If 10 referrals sign up at $297/mo:</p>
             <p className="text-sm font-medium text-foreground">
               You earn:{" "}
@@ -121,7 +198,7 @@ export default async function ReferralsPage() {
               <span className="text-green-400 font-bold">$1,782 total</span>
             </p>
           </div>
-          <div className="bg-card border border-green-100 rounded-lg p-4">
+          <div className="bg-card border border-green-900/40 rounded-lg p-4">
             <p className="text-sm text-muted-foreground mb-1">If 5 referrals sign up at $497/mo:</p>
             <p className="text-sm font-medium text-foreground">
               You earn:{" "}
@@ -134,6 +211,22 @@ export default async function ReferralsPage() {
         <p className="text-xs text-muted-foreground mt-3">Commissions are calculated at 20% of the referred client&apos;s monthly amount for the first 3 months.</p>
       </div>
 
+      {/* Payout status */}
+      {pendingPayout > 0 && (
+        <div className="bg-card border border-border rounded-xl p-6 mb-6">
+          <div className="flex items-start gap-3">
+            <Clock className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
+            <div>
+              <h3 className="font-semibold text-foreground mb-1">Pending Payout</h3>
+              <p className="text-2xl font-bold text-yellow-400 mb-2">${pendingPayout.toFixed(2)}</p>
+              <p className="text-sm text-muted-foreground">
+                Payouts are processed monthly. Contact your account manager to set up or confirm your payout method.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Reseller partner upgrade pitch */}
       <div className="border-l-4 border-l-[#C4972A] border border-border rounded-2xl bg-card p-6">
         <div className="flex items-start gap-3">
@@ -141,7 +234,7 @@ export default async function ReferralsPage() {
           <div className="flex-1">
             <h3 className="font-semibold text-foreground mb-1">Want ongoing commissions instead of just 3 months?</h3>
             <p className="text-sm text-muted-foreground mb-4">
-              Become a Reseller Partner - earn <span className="font-semibold text-foreground">20% ONGOING</span> plus white-label your own portal.
+              Become a Reseller Partner — earn <span className="font-semibold text-foreground">20% ONGOING</span> plus white-label your own portal.
             </p>
             <a
               href="/get-started?type=reseller"
