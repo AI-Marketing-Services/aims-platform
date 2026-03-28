@@ -15,13 +15,21 @@ import { logger } from "@/lib/logger"
 
 // Close status label → AIMS DealStage mapping
 const CLOSE_STATUS_TO_AIMS: Record<string, DealStage> = {
-  "Potential":       DealStage.NEW_LEAD,
-  "Qualified":       DealStage.QUALIFIED,
-  "Demo Scheduled":  DealStage.DEMO_BOOKED,
-  "Proposal":        DealStage.PROPOSAL_SENT,
-  "Negotiation":     DealStage.NEGOTIATION,
-  "Won":             DealStage.ACTIVE_CLIENT,
-  "Lost":            DealStage.LOST,
+  "Potential":            DealStage.NEW_LEAD,
+  "Qualified":            DealStage.QUALIFIED,
+  "Demo Scheduled":       DealStage.DEMO_BOOKED,
+  "Proposal":             DealStage.PROPOSAL_SENT,
+  "Proposal Sent":        DealStage.PROPOSAL_SENT,
+  "Negotiation":          DealStage.NEGOTIATION,
+  "Won":                  DealStage.ACTIVE_CLIENT,
+  "Active Client":        DealStage.ACTIVE_CLIENT,
+  "Lost":                 DealStage.LOST,
+  "Upsell Opportunity":   DealStage.UPSELL_OPPORTUNITY,
+  "Upsell":               DealStage.UPSELL_OPPORTUNITY,
+  "At Risk":              DealStage.AT_RISK,
+  "At-Risk":              DealStage.AT_RISK,
+  "Churned":              DealStage.CHURNED,
+  "Cancelled":            DealStage.CHURNED,
 }
 
 function verifyWebhook(req: NextRequest): boolean {
@@ -100,13 +108,14 @@ export async function POST(req: NextRequest) {
 
     const oldStage = deal.stage
 
+    const terminalStages = new Set<DealStage>([DealStage.ACTIVE_CLIENT, DealStage.LOST, DealStage.CHURNED])
+
     // Update the deal stage
     await db.deal.update({
       where: { id: deal.id },
       data: {
         stage: newStage,
-        ...(newStage === DealStage.ACTIVE_CLIENT ? { closedAt: new Date() } : {}),
-        ...(newStage === DealStage.LOST ? { closedAt: new Date() } : {}),
+        ...(terminalStages.has(newStage) ? { closedAt: new Date() } : {}),
       },
     })
 
