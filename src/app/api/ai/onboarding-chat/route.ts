@@ -140,28 +140,42 @@ export async function POST(req: Request) {
   const firstUserIdx = uiMessages.findIndex((m) => (m as Record<string, unknown>).role === "user")
   const trimmedMessages = firstUserIdx >= 0 ? uiMessages.slice(firstUserIdx) : uiMessages
 
-  const messages = await convertToModelMessages(trimmedMessages as Parameters<typeof convertToModelMessages>[0])
+  let messages: Awaited<ReturnType<typeof convertToModelMessages>>
+  try {
+    messages = await convertToModelMessages(trimmedMessages as Parameters<typeof convertToModelMessages>[0])
+  } catch (err) {
+    console.error("[onboarding-chat] failed to convert messages:", err)
+    return Response.json({ error: "Invalid message format" }, { status: 400 })
+  }
 
-  const result = streamText({
-    model: anthropic("claude-haiku-4-5-20251001"),
-    system: SYSTEM_PROMPT,
-    messages,
-    maxOutputTokens: 512,
-    onFinish: async ({ usage }) => {
-      const model = "claude-haiku-4-5-20251001"
-      const inputTokens = usage?.inputTokens ?? 0
-      const outputTokens = usage?.outputTokens ?? 0
-      await logApiCost({
-        provider: "anthropic",
-        model,
-        endpoint: "onboarding-chat",
-        tokens: inputTokens + outputTokens,
-        cost: estimateAnthropicCost(model, inputTokens, outputTokens),
-        serviceArm: "crm-onboarding",
-        metadata: { inputTokens, outputTokens },
-      })
-    },
-  })
+  try {
+    const result = streamText({
+      model: anthropic("claude-haiku-4-5-20251001"),
+      system: SYSTEM_PROMPT,
+      messages,
+      maxOutputTokens: 512,
+      onError: (err) => {
+        console.error("[onboarding-chat] stream error:", err)
+      },
+      onFinish: async ({ usage }) => {
+        const model = "claude-haiku-4-5-20251001"
+        const inputTokens = usage?.inputTokens ?? 0
+        const outputTokens = usage?.outputTokens ?? 0
+        await logApiCost({
+          provider: "anthropic",
+          model,
+          endpoint: "onboarding-chat",
+          tokens: inputTokens + outputTokens,
+          cost: estimateAnthropicCost(model, inputTokens, outputTokens),
+          serviceArm: "crm-onboarding",
+          metadata: { inputTokens, outputTokens },
+        })
+      },
+    })
 
-  return result.toTextStreamResponse()
+    return result.toTextStreamResponse()
+  } catch (err) {
+    console.error("[onboarding-chat] failed to initialize stream:", err)
+    return Response.json({ error: "Failed to start AI response" }, { status: 500 })
+  }
 }
