@@ -290,6 +290,86 @@ export async function sendCreditScoreEmail({
   })
 }
 
+// ─── Executive Ops Audit Results ───────────────────────────────────────────
+
+export async function sendOpsAuditEmail({
+  to,
+  name,
+  score,
+  resultsUrl,
+  data,
+}: {
+  to: string
+  name?: string
+  score?: number
+  resultsUrl: string
+  data?: Record<string, unknown>
+}) {
+  const displayName = name || "there"
+  const s = score ?? 50
+  const scores = data?.scores as { costOfInefficiency?: number; aiRoiPotential?: number } | undefined
+  const cost = scores?.costOfInefficiency ?? 0
+  const roi = scores?.aiRoiPotential ?? 0
+
+  const tier = s < 40 ? "Optimization Target" : s < 70 ? "Growth Ready" : "High Performer"
+
+  const recs = s < 40
+    ? [
+        recommendationBlock("Full Operations Transformation", "Your audit identified multiple high-friction bottlenecks. AIMS recommends a full ops transformation starting with your highest-cost department."),
+        recommendationBlock("Cold Outbound + CRM Automation", "Manual sales processes are costing you significantly. AI-powered outbound sequences and CRM automation should be your first deployment."),
+        recommendationBlock("Process Elimination Before Optimization", "Several of your identified processes should be eliminated entirely before being optimized. Our ops team will identify which ones in your strategy session."),
+      ]
+    : s < 70
+    ? [
+        recommendationBlock("Targeted Department Automation", "Your audit shows strong performance in some areas with clear automation gaps in others. Targeted deployment in your lowest-scoring departments will yield the fastest ROI."),
+        recommendationBlock("Workflow Integration Audit", "With your current tool stack, integration gaps are likely creating data silos and duplicate work. A workflow audit will identify consolidation opportunities."),
+        recommendationBlock("AI Agent Deployment", "Based on your identified AI agent placement, you're already thinking about the right problems. AIMS can have your first agent deployed within 30 days."),
+      ]
+    : [
+        recommendationBlock("Scale Without Hiring", "Your efficiency score shows a well-run operation. The next phase is scaling your output without scaling headcount — AI automation makes this possible."),
+        recommendationBlock("Executive Intelligence Dashboard", "At your efficiency level, real-time visibility is the highest-value next investment. Automated reporting and KPI dashboards give you the data you need without the overhead."),
+        recommendationBlock("Advanced AI Agent Suite", "You're ready for custom AI agent deployments that go beyond off-the-shelf automation. AIMS builds bespoke AI workflows for businesses at your stage."),
+      ]
+
+  const costLine = cost > 0
+    ? `<div style="background:#1a0a0a;border:1px solid #ef4444;border-radius:12px;padding:20px;text-align:center;margin:16px 0;"><div style="font-size:13px;color:#ef4444;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">Estimated Annual Cost of Inefficiency</div><div style="font-size:42px;font-weight:900;color:#ef4444;">$${cost.toLocaleString()}</div></div>`
+    : ""
+
+  const roiLine = roi > 0
+    ? `<div style="background:#0a1a0a;border:1px solid #22c55e;border-radius:12px;padding:20px;text-align:center;margin:16px 0;"><div style="font-size:13px;color:#22c55e;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">Projected AI ROI Potential</div><div style="font-size:42px;font-weight:900;color:#22c55e;">$${roi.toLocaleString()}/yr</div></div>`
+    : ""
+
+  const html = emailLayout(`
+    ${h1(`Your Executive Operations Audit: ${s}/100`)}
+    ${p(`Hi ${displayName},`)}
+    ${p(`Your Executive Operations Audit is complete. Here's your summary — and what to do with it.`)}
+    <div style="background:#1a1a2e;border:2px solid #C4972A;border-radius:16px;padding:24px;text-align:center;margin:24px 0;">
+      <div style="font-size:56px;font-weight:900;color:#C4972A;line-height:1;">${s}</div>
+      <div style="font-size:16px;color:#F0EBE0;margin-top:4px;">Operational Efficiency Score</div>
+      <div style="display:inline-block;margin-top:12px;padding:4px 16px;border-radius:9999px;border:1px solid #C4972A;color:#C4972A;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;">${tier}</div>
+    </div>
+    ${costLine}
+    ${roiLine}
+    ${p(`Based on your department analysis, bottleneck inputs, and cost structure — here are your three highest-impact next steps:`)}
+    ${recs.join("")}
+    ${divider()}
+    ${btn("View Your Full Executive Scorecard", resultsUrl)}
+    ${p(`Your full scorecard includes department-by-department efficiency scores, your complete pain point analysis, and a prioritized 5-step automation roadmap.`)}
+    ${divider()}
+    ${p(`Ready to turn this audit into a 90-day action plan? Book a free Executive Strategy Session.`)}
+    ${btn("Book Executive Strategy Session", "https://aimseos.com/get-started")}
+  `)
+
+  return sendTrackedEmail({
+    from: FROM_EMAIL,
+    to,
+    replyTo: REPLY_TO,
+    subject: `Your Executive Ops Audit: ${s}/100 — $${cost > 0 ? cost.toLocaleString() : "X"} in Annual Inefficiency Identified`,
+    html,
+    serviceArm: "lead-magnet",
+  })
+}
+
 function getAuditRecommendations(score: number): Array<{ title: string; description: string }> {
   if (score < 40) {
     return [

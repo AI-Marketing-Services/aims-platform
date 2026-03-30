@@ -4,7 +4,7 @@ import { createLeadMagnetSubmission } from "@/lib/db/queries"
 import { formRatelimit, getIp } from "@/lib/ratelimit"
 import { sendLeadMagnetResults } from "@/lib/email"
 import { queueEmailSequence } from "@/lib/email/queue"
-import { sendQuizResultsEmail, sendCalculatorResultsEmail, sendAuditResultsEmail, sendCreditScoreEmail } from "@/lib/email/lead-magnet-results"
+import { sendQuizResultsEmail, sendCalculatorResultsEmail, sendAuditResultsEmail, sendCreditScoreEmail, sendOpsAuditEmail } from "@/lib/email/lead-magnet-results"
 import { db } from "@/lib/db"
 import { notifyNewLead, notify } from "@/lib/notifications"
 import { createCloseLead } from "@/lib/close"
@@ -18,6 +18,7 @@ const submitSchema = z.object({
     "SEGMENT_EXPLORER",
     "STACK_CONFIGURATOR",
     "BUSINESS_CREDIT_SCORE",
+    "EXECUTIVE_OPS_AUDIT",
   ]),
   email: z.string().email(),
   name: z.string().optional(),
@@ -55,6 +56,13 @@ function scoreToTier(score: number | undefined, type: string): {
     if (s < 60) return { score: 65, tier: "hot", priority: "HIGH", reason: `Low-developing business credit (${s}/100) — clear need, high intent` }
     if (s < 80) return { score: 50, tier: "warm", priority: "MEDIUM", reason: `Established business credit (${s}/100) — optimization opportunity` }
     return { score: 35, tier: "cold", priority: "LOW", reason: `Strong business credit (${s}/100) — less immediate need` }
+  }
+  if (type === "EXECUTIVE_OPS_AUDIT") {
+    const s = score ?? 50
+    // All exec audit completions are hot — they've invested 5-7 minutes and revealed deep pain
+    if (s < 40) return { score: 92, tier: "hot", priority: "HIGH", reason: `Very low ops efficiency (${s}/100) — high pain, multiple bottlenecks identified, ready to engage` }
+    if (s < 70) return { score: 78, tier: "hot", priority: "HIGH", reason: `Moderate ops efficiency (${s}/100) — clear automation opportunities, strong ROI case` }
+    return { score: 55, tier: "warm", priority: "MEDIUM", reason: `High ops efficiency (${s}/100) — optimization opportunity, scaling focus` }
   }
   if (type === "AI_READINESS_QUIZ") {
     const s = score ?? 50
@@ -178,7 +186,7 @@ export async function POST(req: Request) {
     }
 
     // Build results URL - dedicated page for quiz/calculator/audit, generic for others
-    const RESULTS_PAGE_TYPES = new Set(["ai-readiness-quiz", "roi-calculator", "website-audit", "business-credit-score"])
+    const RESULTS_PAGE_TYPES = new Set(["ai-readiness-quiz", "roi-calculator", "website-audit", "business-credit-score", "executive-ops-audit"])
     const resultsUrl = RESULTS_PAGE_TYPES.has(typeSlug)
       ? `${appUrl}/tools/${typeSlug}/results/${submission.id}`
       : `${appUrl}/tools/${typeSlug}`
@@ -212,6 +220,11 @@ export async function POST(req: Request) {
       case "BUSINESS_CREDIT_SCORE":
         await sendCreditScoreEmail(detailedEmailParams).catch(
           (err) => logger.error("Failed to send credit score results email", err)
+        )
+        break
+      case "EXECUTIVE_OPS_AUDIT":
+        await sendOpsAuditEmail(detailedEmailParams).catch(
+          (err) => logger.error("Failed to send ops audit email", err)
         )
         break
       default:
