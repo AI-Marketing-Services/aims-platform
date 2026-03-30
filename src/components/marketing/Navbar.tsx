@@ -217,9 +217,6 @@ export function Navbar() {
               <UserButton />
             </Show>
             <Show when="signed-out">
-              <Link href="/sign-in" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-                Sign in
-              </Link>
               <Link
                 href="/get-started"
                 className="text-xs font-bold rounded-sm bg-primary text-primary-foreground px-5 py-2 uppercase tracking-wider hover:bg-primary/80 transition-colors"
@@ -324,11 +321,6 @@ export function Navbar() {
                 <Show when="signed-in">
                   <Link href="/portal/dashboard" className="block px-3 py-2 text-sm font-medium text-muted-foreground">
                     Dashboard
-                  </Link>
-                </Show>
-                <Show when="signed-out">
-                  <Link href="/sign-in" className="block px-3 py-2 text-sm font-medium text-muted-foreground">
-                    Sign in
                   </Link>
                 </Show>
                 <Link
