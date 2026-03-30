@@ -14,6 +14,7 @@ import {
 import { useChat } from "@ai-sdk/react"
 import { TextStreamChatTransport, type UIMessage } from "ai"
 import { getMessageText } from "@/lib/utils"
+import ReactMarkdown from "react-markdown"
 
 const CHAT_WELCOME = "I'm your AIMS CRM setup assistant. Ask me anything about configuring your account, connecting your domain, setting up automations, or troubleshooting issues."
 
@@ -165,12 +166,26 @@ export function OnboardingChatWidget() {
                           <Bot className="h-3 w-3 text-primary" />
                         </div>
                       )}
-                      <div className={`max-w-[82%] rounded-xl px-3 py-2 text-sm leading-relaxed whitespace-pre-wrap ${
+                      <div className={`max-w-[82%] rounded-xl px-3 py-2 text-sm leading-relaxed ${
                         m.role === "user"
                           ? "bg-primary text-white rounded-br-sm"
                           : "bg-white/5 text-[#F0EBE0]/90 rounded-bl-sm"
                       }`}>
-                        {text}
+                        {m.role === "user" ? text : (
+                          <ReactMarkdown
+                            components={{
+                              p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+                              strong: ({ children }) => <strong className="font-semibold text-[#F0EBE0]">{children}</strong>,
+                              ol: ({ children }) => <ol className="list-decimal list-outside ml-4 space-y-1 mb-2">{children}</ol>,
+                              ul: ({ children }) => <ul className="list-disc list-outside ml-4 space-y-1 mb-2">{children}</ul>,
+                              li: ({ children }) => <li className="leading-relaxed">{children}</li>,
+                              code: ({ children }) => <code className="bg-black/30 rounded px-1 py-0.5 text-xs font-mono text-[#C4972A]">{children}</code>,
+                              a: ({ href, children }) => <a href={href} target="_blank" rel="noopener noreferrer" className="text-[#C4972A] underline underline-offset-2 hover:text-[#C4972A]/80">{children}</a>,
+                            }}
+                          >
+                            {text}
+                          </ReactMarkdown>
+                        )}
                       </div>
                     </div>
                   )
