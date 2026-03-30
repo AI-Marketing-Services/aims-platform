@@ -4,7 +4,7 @@ import { createLeadMagnetSubmission } from "@/lib/db/queries"
 import { formRatelimit, getIp } from "@/lib/ratelimit"
 import { sendLeadMagnetResults } from "@/lib/email"
 import { queueEmailSequence } from "@/lib/email/queue"
-import { sendQuizResultsEmail, sendCalculatorResultsEmail, sendAuditResultsEmail } from "@/lib/email/lead-magnet-results"
+import { sendQuizResultsEmail, sendCalculatorResultsEmail, sendAuditResultsEmail, sendCreditScoreEmail } from "@/lib/email/lead-magnet-results"
 import { db } from "@/lib/db"
 import { notifyNewLead, notify } from "@/lib/notifications"
 import { createCloseLead } from "@/lib/close"
@@ -17,6 +17,7 @@ const submitSchema = z.object({
     "WEBSITE_AUDIT",
     "SEGMENT_EXPLORER",
     "STACK_CONFIGURATOR",
+    "BUSINESS_CREDIT_SCORE",
   ]),
   email: z.string().email(),
   name: z.string().optional(),
@@ -47,6 +48,13 @@ function scoreToTier(score: number | undefined, type: string): {
     if (s < 40) return { score: 75, tier: "hot", priority: "HIGH", reason: `Low audit score (${s}/100) - high pain, ready to fix` }
     if (s < 65) return { score: 60, tier: "warm", priority: "MEDIUM", reason: `Moderate audit score (${s}/100) - improvement opportunity` }
     return { score: 40, tier: "cold", priority: "LOW", reason: `Good audit score (${s}/100) - less urgency` }
+  }
+  if (type === "BUSINESS_CREDIT_SCORE") {
+    const s = score ?? 50
+    if (s < 40) return { score: 85, tier: "hot", priority: "HIGH", reason: `Very low business credit score (${s}/100) — high urgency, motivated to build credit` }
+    if (s < 60) return { score: 65, tier: "hot", priority: "HIGH", reason: `Low-developing business credit (${s}/100) — clear need, high intent` }
+    if (s < 80) return { score: 50, tier: "warm", priority: "MEDIUM", reason: `Established business credit (${s}/100) — optimization opportunity` }
+    return { score: 35, tier: "cold", priority: "LOW", reason: `Strong business credit (${s}/100) — less immediate need` }
   }
   if (type === "AI_READINESS_QUIZ") {
     const s = score ?? 50
@@ -170,7 +178,7 @@ export async function POST(req: Request) {
     }
 
     // Build results URL - dedicated page for quiz/calculator/audit, generic for others
-    const RESULTS_PAGE_TYPES = new Set(["ai-readiness-quiz", "roi-calculator", "website-audit"])
+    const RESULTS_PAGE_TYPES = new Set(["ai-readiness-quiz", "roi-calculator", "website-audit", "business-credit-score"])
     const resultsUrl = RESULTS_PAGE_TYPES.has(typeSlug)
       ? `${appUrl}/tools/${typeSlug}/results/${submission.id}`
       : `${appUrl}/tools/${typeSlug}`
@@ -199,6 +207,11 @@ export async function POST(req: Request) {
       case "WEBSITE_AUDIT":
         await sendAuditResultsEmail(detailedEmailParams).catch(
           (err) => logger.error("Failed to send audit results email", err)
+        )
+        break
+      case "BUSINESS_CREDIT_SCORE":
+        await sendCreditScoreEmail(detailedEmailParams).catch(
+          (err) => logger.error("Failed to send credit score results email", err)
         )
         break
       default:

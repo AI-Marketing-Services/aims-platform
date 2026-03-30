@@ -337,7 +337,7 @@ export async function getApiCostSummary(days: number = 30) {
 // ============ LEAD MAGNETS ============
 
 export async function createLeadMagnetSubmission(data: {
-  type: "AI_READINESS_QUIZ" | "ROI_CALCULATOR" | "WEBSITE_AUDIT" | "SEGMENT_EXPLORER" | "STACK_CONFIGURATOR"
+  type: "AI_READINESS_QUIZ" | "ROI_CALCULATOR" | "WEBSITE_AUDIT" | "SEGMENT_EXPLORER" | "STACK_CONFIGURATOR" | "BUSINESS_CREDIT_SCORE"
   email: string
   name?: string
   company?: string

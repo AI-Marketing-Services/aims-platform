@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils"
 import Image from "next/image"
 
 const TOOLS_LINKS = [
+  { label: "Business Credit Score", href: "/tools/business-credit-score", desc: "See your business credit profile in 2 minutes" },
   { label: "AI Readiness Quiz", href: "/tools/ai-readiness-quiz", desc: "See how AI-ready your business is" },
   { label: "ROI Calculator", href: "/tools/roi-calculator", desc: "Project your revenue impact" },
   { label: "Free Website Audit", href: "/tools/website-audit", desc: "Score your site in 60 seconds" },

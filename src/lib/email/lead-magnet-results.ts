@@ -224,6 +224,72 @@ export async function sendAuditResultsEmail(params: {
   })
 }
 
+// ─── Business Credit Score Results ─────────────────────────────────────────
+
+export async function sendCreditScoreEmail({
+  to,
+  name,
+  score,
+  resultsUrl,
+}: {
+  to: string
+  name?: string
+  score?: number
+  resultsUrl: string
+}) {
+  const displayName = name || "there"
+  const s = score ?? 50
+
+  const tier = s < 40 ? "Credit Builder" : s < 60 ? "Developing" : s < 80 ? "Established" : "Strong"
+
+  const recommendations =
+    s < 40
+      ? [
+          recommendationBlock("Register a Formal Business Entity", "If you're operating as a sole prop, register as an LLC or S-Corp immediately. This is the foundation everything else is built on."),
+          recommendationBlock("Get Your EIN and Open a Business Bank Account", "Apply for a free EIN at IRS.gov (takes 10 minutes), then open a dedicated business checking account this week."),
+          recommendationBlock("Set Up Net-30 Accounts That Report to Bureaus", "Uline, Quill, and Grainger all offer net-30 terms and report to D&B. These are the fastest way to start building your business credit file."),
+        ]
+      : s < 80
+      ? [
+          recommendationBlock("Add More Tradelines Reporting to Bureaus", "The more accounts actively reporting payment history, the stronger your profile. Target 5+ accounts across D&B, Experian Business, and Equifax Business."),
+          recommendationBlock("Keep Utilization Under 30% on Every Account", "Business credit scoring heavily penalizes high utilization. Set up alerts to keep every account below 30%."),
+          recommendationBlock("Apply for a Business Credit Card or Line of Credit", "A dedicated business credit card used and paid in full monthly dramatically accelerates your score growth."),
+        ]
+      : [
+          recommendationBlock("Apply for Premium Business Credit Lines", "With a strong profile, you now qualify for American Express Business, Chase Ink, and SBA-backed credit lines at favorable rates."),
+          recommendationBlock("Leverage Your Credit Score for Vendor Negotiations", "Use your strong profile to negotiate net-60/net-90 terms with key suppliers — this directly improves cash flow."),
+          recommendationBlock("Separate Personal Guarantees Using Business Credit", "A strong business credit score lets you remove personal guarantees from business financing — protecting your personal assets."),
+        ]
+
+  const html = emailLayout(`
+    ${h1(`Your Business Credit Score: ${s}/100`)}
+    ${p(`Hi ${displayName},`)}
+    ${p(`You just completed your Business Credit Score assessment. Here's what your results mean and what to do next.`)}
+    <div style="background:#1a1a2e;border:2px solid #C4972A;border-radius:16px;padding:28px;text-align:center;margin:24px 0;">
+      <div style="font-size:64px;font-weight:900;color:#C4972A;line-height:1;">${s}</div>
+      <div style="font-size:18px;color:#F0EBE0;font-weight:600;margin-top:4px;">out of 100</div>
+      <div style="display:inline-block;margin-top:12px;padding:4px 16px;border-radius:9999px;border:1px solid #C4972A;color:#C4972A;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;">${tier}</div>
+    </div>
+    ${p(`Based on your answers across business foundation, credit profile, tradeline reporting, credit utilization, and business maturity — here are your three highest-impact next steps:`)}
+    ${recommendations.join("")}
+    ${divider()}
+    ${btn("View Your Full Scorecard", resultsUrl)}
+    ${p(`Your full scorecard includes a dimension-by-dimension breakdown, the specific factors helping and hurting your score, and a complete 90-day action plan.`)}
+    ${divider()}
+    ${p(`Want help executing your credit building plan? Book a free strategy call with the AIMS team.`)}
+    ${btn("Book Free Strategy Call", "https://aimseos.com/get-started")}
+  `)
+
+  return sendTrackedEmail({
+    from: FROM_EMAIL,
+    to,
+    replyTo: REPLY_TO,
+    subject: `Your Business Credit Score: ${s}/100 — Here's Your Action Plan`,
+    html,
+    serviceArm: "lead-magnet",
+  })
+}
+
 function getAuditRecommendations(score: number): Array<{ title: string; description: string }> {
   if (score < 40) {
     return [
