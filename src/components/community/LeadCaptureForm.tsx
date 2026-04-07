@@ -41,7 +41,7 @@ export function LeadCaptureForm({
       }
 
       setSuccess(true)
-      toast.success("You're in. Check your email for next steps.")
+      toast.success("Check your inbox — the Playbook Vault is on its way.")
     } catch (err) {
       const message = err instanceof Error ? err.message : "Something went wrong"
       toast.error(message)
@@ -54,9 +54,14 @@ export function LeadCaptureForm({
     return (
       <div className="rounded-md border border-aims-gold/40 bg-aims-gold/5 p-6 text-center">
         <CheckCircle2 className="w-10 h-10 text-aims-gold mx-auto mb-3" />
-        <p className="text-cream font-semibold text-lg">You&apos;re on the list.</p>
-        <p className="text-cream/60 text-sm mt-1">
-          Check your email. We&apos;ll send your application link and next steps.
+        <p className="text-cream font-semibold text-lg">Check your inbox.</p>
+        <p className="text-cream/70 text-sm mt-2 leading-relaxed">
+          The <span className="text-aims-gold font-semibold">AI Operator Playbook Vault</span>{" "}
+          is on its way right now. If you don&apos;t see it in 2 minutes, check your spam or
+          promotions folder — it&apos;s worth digging for.
+        </p>
+        <p className="text-cream/45 text-xs mt-3 font-mono uppercase tracking-wider">
+          Your application is in the review queue
         </p>
       </div>
     )

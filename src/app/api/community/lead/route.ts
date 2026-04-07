@@ -5,6 +5,7 @@ import { formRatelimit, getIp } from "@/lib/ratelimit"
 import { logger } from "@/lib/logger"
 import { notify } from "@/lib/notifications"
 import { createCloseLead } from "@/lib/close"
+import { sendOperatorVaultEmail } from "@/lib/email/operator-vault"
 
 const schema = z.object({
   name: z.string().min(1).max(120),
@@ -64,6 +65,12 @@ export async function POST(req: Request) {
         logger.error("Failed to create deal from community lead", err)
         return null
       })
+
+    // Fire the AI Operator Playbook Vault email immediately — this is the lead magnet
+    // promised on the landing page and the entire reason people are submitting the form.
+    // Intentionally not awaited so the API responds fast; failures are logged.
+    sendOperatorVaultEmail({ to: email, name })
+      .catch((err) => logger.error("Failed to send operator vault email", err))
 
     if (deal) {
       await notify({

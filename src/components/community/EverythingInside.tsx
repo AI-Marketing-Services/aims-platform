@@ -1,76 +1,64 @@
 import {
-  BookOpen,
-  Wrench,
-  Phone,
-  MessageSquare,
-  Target,
-  Mail,
-  PiggyBank,
-  Trophy,
+  Briefcase,
+  Calculator,
+  FileSignature,
   Users,
+  Headphones,
+  BadgeCheck,
 } from "lucide-react"
 
 const FEATURES = [
   {
-    icon: BookOpen,
-    title: "Structured Operator Curriculum",
-    body: "A phased program that walks you through forming your LLC, defining your offer, pricing your services, and building a sales process before any AI tooling is introduced.",
+    icon: Briefcase,
+    title: "Done-For-You Business Setup",
+    body: "LLC formation, EIN registration, and business banking handled as a service on Day 1. Not a video walkthrough. You're a real operating business before you touch a single tool.",
   },
   {
-    icon: Wrench,
-    title: "Cold Email Infrastructure Walkthroughs",
-    body: "Step-by-step guidance on multi-domain warmup, ICP targeting, and AI-assisted sequence building. Built around the same approach used inside the AIMS portfolio.",
+    icon: FileSignature,
+    title: "Pre-Filled Contracts & Proposals",
+    body: "MSA, SOW, and AI Readiness Assessment pulled from real AIMS client engagements. You modify them for your offer — you don't draft them from scratch.",
   },
   {
-    icon: Phone,
-    title: "Voice & Chat Agent Build Sessions",
-    body: "Live build sessions covering voice agents, chat agents, and CRM automation using the same tooling stack the AIMS portfolio deploys internally.",
-  },
-  {
-    icon: MessageSquare,
-    title: "Live Coaching With Operators",
-    body: "Scheduled coaching with the consortium and hot-seat sessions where members get direct feedback on their offer, pricing, and pipeline. Session cadence is published before each cohort.",
-  },
-  {
-    icon: Target,
-    title: "Sales Process Frameworks",
-    body: "The discovery, qualification, and proposal frameworks AIMS uses with its own clients, broken down so members can adapt them to their own offer.",
-  },
-  {
-    icon: Mail,
-    title: "Outreach Templates & Scopes",
-    body: "Starting-point templates for cold email, LinkedIn outreach, follow-ups, scopes of work, and proposals. These are starting points, not magic. Members customize for their own market.",
-  },
-  {
-    icon: PiggyBank,
-    title: "Tooling Recommendations",
-    body: "The actual stack the AIMS portfolio uses across outbound, voice, CRM, and reporting, with notes on what works for which use case. Where founder discounts are available, they are passed through.",
-  },
-  {
-    icon: Trophy,
-    title: "Graduation Pathway",
-    body: "An aspirational track for members who complete the program and build their own pipeline. Future graduation opportunities (referrals, partnerships) are reviewed case by case and not guaranteed.",
+    icon: Calculator,
+    title: "Pricing & Client ROI Calculators",
+    body: "The pricing calculator kills chronic underpricing. The client ROI calculator is deployed live in prospect meetings to quantify labor hours saved and net return on your fee.",
   },
   {
     icon: Users,
-    title: "Founding Member Community",
-    body: "A private network where founding cohort members share their work, ask questions, and review each other's offers. Active participation is expected.",
+    title: "Live Coaching & Hot-Seat Reviews",
+    body: "Weekly sessions with consortium operators. Bring your real deals, pipeline, and objections. Get direct feedback from people who close clients for a living.",
+  },
+  {
+    icon: Headphones,
+    title: "Virtual Co-Close Support",
+    body: "An operator joins your prospect closing call as a strategic advisor. One session included per year. This is the single highest-leverage asset in the program.",
+  },
+  {
+    icon: BadgeCheck,
+    title: "Certified AI Operator Credential",
+    body: "Earned after completing the core curriculum and submitting a verified client result. Used on your LinkedIn, your one-pager, and every proposal you send.",
   },
 ]
 
 export function EverythingInside() {
   return (
-    <section className="relative py-24 sm:py-32 border-t border-line bg-gradient-to-b from-ink to-deep">
+    <section
+      id="what-you-get"
+      className="relative py-24 sm:py-32 border-t border-line bg-gradient-to-b from-ink to-deep"
+    >
       <div className="mx-auto max-w-6xl px-4">
         <div className="text-center max-w-3xl mx-auto">
+          <p className="text-xs font-mono uppercase tracking-[0.2em] text-aims-gold mb-4">
+            What You Get
+          </p>
           <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl text-cream leading-[1.25] pb-2">
-            What&apos;s Inside the{" "}
-            <span className="block text-aims-gold italic">Collective</span>
+            Six Assets That Remove{" "}
+            <span className="block text-aims-gold italic">Every Excuse to Not Start.</span>
           </h2>
           <p className="mt-6 text-lg text-cream/65">
-            Nine pillars built around the way the AIMS portfolio actually operates.
-            Some sessions are pre-built, some are run live each cohort. We will not list
-            anything here that does not exist or is not scheduled.
+            Each asset below is the exact thing an AIMS operator uses to win business. You
+            don&apos;t build them from scratch — we hand you ours, and you modify them for
+            your market.
           </p>
         </div>
 

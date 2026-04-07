@@ -1,15 +1,13 @@
-import { Check } from "lucide-react"
+import { Check, Zap } from "lucide-react"
 import { LeadCaptureForm } from "./LeadCaptureForm"
 
 const INCLUDED = [
-  "Structured operator curriculum",
-  "Live coaching with portfolio operators",
-  "Cold email infrastructure walkthroughs",
-  "Voice and chat agent build sessions",
-  "Hot-seat sales and pipeline reviews",
-  "Outreach templates and scope frameworks",
-  "Private founding member community",
-  "Strategy call before any commitment",
+  "The AI Operator Playbook Vault (instant email)",
+  "Cold email sequences and outreach scripts",
+  "Pricing calculator and client ROI model",
+  "Discovery, qualification, and proposal frameworks",
+  "Application review + strategy call booking",
+  "Founding cohort waitlist priority",
 ]
 
 export function ApplicationCard() {
@@ -20,14 +18,16 @@ export function ApplicationCard() {
     >
       <div className="mx-auto max-w-2xl px-4">
         <div className="text-center max-w-3xl mx-auto">
+          <p className="text-xs font-mono uppercase tracking-[0.2em] text-aims-gold mb-4">
+            Get the Vault + Apply for the Cohort
+          </p>
           <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl text-cream leading-[1.25] pb-2">
-            Apply for the{" "}
-            <span className="block text-aims-gold italic">Founding Cohort</span>
+            One Form.{" "}
+            <span className="block text-aims-gold italic">Two Things You Want.</span>
           </h2>
           <p className="mt-6 text-lg text-cream/65">
-            Drop your name and email. If there is mutual fit, we&apos;ll send your
-            application link and book a strategy call to walk you through the program in
-            detail.
+            Drop your name and email. The AI Operator Playbook Vault hits your inbox
+            immediately, and your application enters the review queue for the alpha cohort.
           </p>
         </div>
 
@@ -36,14 +36,15 @@ export function ApplicationCard() {
 
           <div className="relative rounded-md border border-aims-gold/30 bg-gradient-to-b from-panel to-surface p-8 sm:p-10 shadow-[0_0_60px_rgba(196,151,42,0.15)]">
             <div className="text-center mb-8">
-              <p className="text-xs font-mono uppercase tracking-[0.2em] text-aims-gold mb-3">
-                Founding Member Cohort
-              </p>
+              <div className="inline-flex items-center gap-2 rounded-full border border-aims-gold/40 bg-aims-gold/10 px-4 py-1.5 text-[10px] sm:text-xs font-mono uppercase tracking-[0.15em] text-aims-gold mb-4">
+                <Zap className="w-3.5 h-3.5" />
+                Free Resource + Application
+              </div>
               <p className="font-serif text-3xl sm:text-4xl text-cream leading-tight">
-                Application Only
+                The AI Operator Playbook Vault
               </p>
-              <p className="mt-2 text-sm text-cream/50">
-                Limited to 100 founding operators
+              <p className="mt-2 text-sm text-cream/55">
+                Delivered to your inbox the moment you submit
               </p>
             </div>
 
@@ -59,11 +60,11 @@ export function ApplicationCard() {
             <LeadCaptureForm
               variant="stacked"
               source="application_card"
-              ctaLabel="Submit Application"
+              ctaLabel="Send Me the Vault"
             />
 
             <p className="mt-5 text-center text-xs text-cream/40 font-mono uppercase tracking-wider">
-              No payment to apply. Pricing only reviewed if there is mutual fit on the call.
+              No payment to apply. No credit card. Unsubscribe any time.
             </p>
 
             <p className="mt-3 text-center text-[10px] text-cream/35 leading-relaxed max-w-sm mx-auto">

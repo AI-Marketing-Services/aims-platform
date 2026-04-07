@@ -6,36 +6,40 @@ import { cn } from "@/lib/utils"
 
 const QUESTIONS = [
   {
+    q: "What is the AI Operator Playbook Vault and what's in it?",
+    a: "It's the collection of cold email sequences, discovery frameworks, pricing models, outreach scripts, and delivery playbooks the AIMS team uses internally. You get it as a single email the moment you submit the form — free, no strings. If you never apply to the cohort, the Vault is still yours to keep. We're building it out continuously, so you'll get updates as new plays get added.",
+  },
+  {
+    q: "What actually happens after I submit the form?",
+    a: "Three things: (1) the Playbook Vault email hits your inbox in under a minute — check spam if you don't see it, (2) a real operator reviews your submission within 24 hours to check fit, and (3) if there's alignment, we send you a link to book a 30-minute strategy call. No pitch — it's a working session on your background and whether the program is a fit.",
+  },
+  {
+    q: "Who is this actually built for?",
+    a: "Professionals with real career experience who want to build a business, not find another job. That includes W-2 folks who've been displaced or see it coming, corporate leaders with domain expertise but no playbook for starting a services company, and operators who can see the AI opportunity but can't figure out how to package their experience into a sellable offer. It is not built for people looking for passive income, a get-rich-quick outcome, or a course they won't implement.",
+  },
+  {
     q: "Do I need technical experience?",
-    a: "No. The first phase of the program is business fundamentals: forming your LLC, setting your pricing, building your sales process. AI tooling does not start until later in the program. The Collective is built for non-technical operators.",
+    a: "No. The first four weeks are business fundamentals — LLC, pricing, pipeline, sales process. AI tooling does not start until Week 5. If you can write an email and run a calendar, you can do the technical portion too. The whole point is to meet you where you are.",
   },
   {
     q: "Will the program get me clients?",
-    a: "No, the program does not get you clients and we do not promise that. The program teaches you how to build the sales process, infrastructure, and offer that operators in the AIMS portfolio use to land clients. Whether you land clients depends entirely on the work you put in. We make no income or outcome claims.",
+    a: "No. We make no income or client guarantees. The program teaches the exact sales process, infrastructure, and offer that the AIMS portfolio uses to land clients — but whether you land any is entirely about the work you put in. Anyone promising you guaranteed clients is making a claim we are not willing to make.",
   },
   {
     q: "What if I still have my W-2 job?",
-    a: "The program is designed so you can complete it while still employed. Most of the work is structured around evenings and weekends. Whether and when you transition out of your W-2 is entirely your decision and we make no claims about that.",
-  },
-  {
-    q: "How is this different from free AI communities?",
-    a: "Free communities and YouTube channels typically jump straight to tools. They teach you n8n, Make, and prompt packs. The AI Operator Collective is structured to teach business fundamentals first (LLC formation, pricing, sales pipeline) and only introduces AI tooling once those fundamentals are in place.",
+    a: "Most founding members will. The program is designed to run on evenings and weekends until your pipeline justifies the jump. When (or whether) you leave your W-2 is entirely your call.",
   },
   {
     q: "Who runs the program?",
-    a: "The program is operated by the team behind the AIMS portfolio and supported by a consortium of YPO operators. The mentor credentials shown on this page come from public profiles and internal records. Mentor availability and session formats are subject to scheduling.",
+    a: "It's operated by the team behind the AIMS portfolio, supported by a consortium of YPO operators who deploy these same systems inside their own companies. Mentor credentials are sourced from public profiles and internal records. Specific mentor availability varies by session.",
   },
   {
-    q: "What does pricing look like?",
-    a: "Pricing is not published on this page. The program is application-only. If there is mutual fit on the strategy call, pricing and structure are reviewed in full. There is no payment required to apply.",
+    q: "What does it cost to join?",
+    a: "Pricing is reviewed on the strategy call, only if there's mutual fit. There is no payment required to apply, and no payment required to get the Playbook Vault. The Collective is annual-commitment only — we don't do monthly because monthly options produce churn before the curriculum has time to deliver.",
   },
   {
-    q: "Is there a guarantee?",
-    a: "No. The Collective does not guarantee income, clients, engagements, revenue, or any specific outcome. Anyone offering a guaranteed outcome in this space is making a claim we are not willing to make. The program is structured to give you the best possible chance, but the work is on you.",
-  },
-  {
-    q: "What if I am not in the US?",
-    a: "Most of the curriculum applies globally, but the live sales coaching, community time zones, and US business formation guidance are US-focused for the founding cohort. International operators are welcome to apply.",
+    q: "What if I'm not in the US?",
+    a: "Most of the curriculum applies globally, but the live coaching, community time zones, and business formation are US-focused for the alpha cohort. International operators are welcome to apply — just know that the LLC/EIN piece will look different for you.",
   },
 ]
 

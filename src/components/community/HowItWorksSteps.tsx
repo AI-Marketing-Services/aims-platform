@@ -3,28 +3,27 @@ import { ChevronDown } from "lucide-react"
 const STEPS = [
   {
     n: "01",
-    title: "Foundation",
-    body: "Form your LLC, define your services, and set your pricing. Build the legal and financial structure of a real business before any tools enter the picture.",
+    weeks: "Weeks 1 – 4",
+    title: "Business Setup",
+    body: "Done-for-you LLC, EIN, and business banking. Define your offer, ICP, and positioning. Price your services with the member calculator. Insurance, contracts, and invoicing squared away.",
   },
   {
     n: "02",
-    title: "Pipeline",
-    body: "Learn how businesses actually buy. Build a sales process. Get the language you need to talk to operators about marketing, sales, and operations problems.",
+    weeks: "Weeks 3 – 6",
+    title: "Pipeline & Sales Process",
+    body: "Cold email infrastructure, LinkedIn outreach, discovery calls, and the exact qualification and proposal frameworks AIMS uses with its own clients. Your pipeline is built before any AI tooling.",
   },
   {
     n: "03",
-    title: "Sales Practice",
-    body: "Hot-seat sessions and live deal reviews with the consortium. Walk through real-world discovery, qualification, and proposal frameworks the AIMS portfolio uses.",
+    weeks: "Weeks 5 – 10",
+    title: "AI Deployment",
+    body: "Build sessions for the four service lines AIMS runs internally: AI-assisted cold email, voice and chat agents with CRM automation, social content systems, and paid media fundamentals.",
   },
   {
     n: "04",
-    title: "Deploy",
-    body: "Build sessions for the four core AI service lines: cold email infrastructure, voice and chat agents, social funnels, and paid media. Same stack the AIMS portfolio runs internally.",
-  },
-  {
-    n: "05",
-    title: "Graduate",
-    body: "Members who complete the program and build their own pipeline are evaluated for graduation pathways. Future referrals and partnerships are reviewed case by case and not guaranteed.",
+    weeks: "Ongoing",
+    title: "Coaching, Hot Seats & Co-Close",
+    body: "Live deal reviews with consortium operators. Virtual co-close support where an operator joins your prospect call as a strategic advisor. Accountability that continues long after the curriculum.",
   },
 ]
 
@@ -33,12 +32,15 @@ export function HowItWorksSteps() {
     <section className="relative py-24 sm:py-32 border-t border-line">
       <div className="mx-auto max-w-4xl px-4">
         <div className="text-center max-w-3xl mx-auto">
+          <p className="text-xs font-mono uppercase tracking-[0.2em] text-aims-gold mb-4">
+            How It Works
+          </p>
           <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl text-cream leading-[1.25] pb-2">
-            Your Path From W-2 to{" "}
-            <span className="block text-aims-gold italic">AI Operator</span>
+            Business Fundamentals First.{" "}
+            <span className="block text-aims-gold italic">AI Tooling Second.</span>
           </h2>
           <p className="mt-6 text-lg text-cream/65">
-            Five steps. Built to be the fastest path from zero to your first paying client.
+            Four phases. Sequenced the way an operator actually builds a services company.
           </p>
         </div>
 
@@ -52,7 +54,12 @@ export function HowItWorksSteps() {
                     {step.n}
                   </div>
                   <div className="flex-1 pt-1">
-                    <h3 className="font-serif text-2xl text-cream mb-2">{step.title}</h3>
+                    <div className="flex items-baseline justify-between gap-4 mb-1">
+                      <h3 className="font-serif text-2xl text-cream">{step.title}</h3>
+                      <span className="text-[10px] sm:text-xs font-mono uppercase tracking-wider text-aims-gold whitespace-nowrap">
+                        {step.weeks}
+                      </span>
+                    </div>
                     <p className="text-cream/60 leading-relaxed">{step.body}</p>
                   </div>
                 </div>
@@ -73,10 +80,6 @@ export function HowItWorksSteps() {
             )
           })}
         </div>
-
-        <p className="mt-12 text-center text-sm text-cream/50 italic font-serif">
-          Built to be the fastest, most accountable path from zero to your first paying client.
-        </p>
       </div>
     </section>
   )

@@ -3,26 +3,26 @@ import { Mail, Headphones, Megaphone, BarChart3 } from "lucide-react"
 const SOLUTIONS = [
   {
     icon: Mail,
-    title: "AI-Assisted Cold Email",
-    body: "Learn the outbound stack the AIMS portfolio uses internally: ICP definition, multi-domain warmup, and AI-assisted sequence building. The skill set, not a guarantee of bookings.",
+    title: "AI Cold Email Infrastructure",
+    body: "Multi-domain warmup, ICP targeting, and AI-assisted sequence building. The outbound engine the AIMS team uses internally to fill its own pipeline.",
     tag: "Outbound",
   },
   {
     icon: Headphones,
-    title: "CRM, Voice & Chat Agents",
-    body: "Build sessions covering voice agents, chat agents, and CRM automation using the same tooling stack used inside the AIMS portfolio. Deployment outcomes depend on the operator and the use case.",
+    title: "Voice & Chat Agents + CRM",
+    body: "Live build sessions for voice agents, chat agents, and CRM automation. You deliver real, working systems by the end of the phase — not slides.",
     tag: "Inbound",
   },
   {
     icon: Megaphone,
     title: "Social Content Workflows",
-    body: "Frameworks for generating, scheduling, and distributing content across LinkedIn and other platforms using the workflows the AIMS portfolio runs internally.",
+    body: "End-to-end systems for generating, scheduling, and distributing content on LinkedIn and beyond. The same workflows AIMS runs for its portfolio companies.",
     tag: "Brand",
   },
   {
     icon: BarChart3,
     title: "Paid Media Fundamentals",
-    body: "How operators inside the AIMS portfolio approach paid campaigns across Meta, Google, and LinkedIn. Creative, budget, and reporting fundamentals that apply across accounts.",
+    body: "Meta, Google, and LinkedIn. Creative, budget, and reporting fundamentals that survive algorithm changes and actually make ad budgets profitable.",
     tag: "Performance",
   },
 ]
@@ -32,14 +32,16 @@ export function SolutionsGrid() {
     <section className="relative py-24 sm:py-32 border-t border-line">
       <div className="mx-auto max-w-6xl px-4">
         <div className="text-center max-w-3xl mx-auto">
+          <p className="text-xs font-mono uppercase tracking-[0.2em] text-aims-gold mb-4">
+            Four Service Lines You Can Sell
+          </p>
           <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl text-cream leading-[1.25] pb-2">
-            Four Solutions.{" "}
-            <span className="block text-aims-gold italic">One Operator Stack.</span>
+            One Operator Stack.{" "}
+            <span className="block text-aims-gold italic">Four Ways to Get Paid.</span>
           </h2>
           <p className="mt-6 text-lg text-cream/65">
-            The four service lines the AIMS portfolio runs internally. The Collective walks
-            members through each one, in proper sequence, after the business fundamentals
-            phase is complete.
+            These are the four service lines AIMS runs internally — and the four you&apos;ll
+            be trained to package, price, and deliver to your own clients.
           </p>
         </div>
 
@@ -66,14 +68,6 @@ export function SolutionsGrid() {
               </div>
             )
           })}
-        </div>
-
-        <div className="mt-10 rounded-md border border-aims-gold/30 bg-gradient-to-r from-aims-gold/5 via-aims-gold/10 to-aims-gold/5 p-6 sm:p-8 text-center">
-          <p className="text-cream font-serif text-xl sm:text-2xl leading-snug">
-            Phase 1 is LLC formation, pricing, and pipeline building. AI deployment doesn&apos;t
-            start until <span className="text-aims-gold">Week 5</span>. Tools without business
-            skills are just expensive hobbies.
-          </p>
         </div>
       </div>
     </section>
