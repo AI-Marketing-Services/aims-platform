@@ -1,5 +1,6 @@
 import Image from "next/image"
 import { ArrowRight, ChevronDown, Sparkles, Users, TrendingUp } from "lucide-react"
+import { LiveSignupTicker } from "./LiveSignupTicker"
 
 export function CommunityHero() {
   return (
@@ -44,6 +45,8 @@ export function CommunityHero() {
             <ChevronDown className="w-4 h-4" />
           </a>
         </div>
+
+        <LiveSignupTicker />
 
         {/* Hero visual card (replaces video) */}
         <div className="mt-16 relative max-w-4xl mx-auto">
