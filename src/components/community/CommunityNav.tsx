@@ -33,7 +33,7 @@ export function CommunityNav() {
         <div className="flex h-16 items-center justify-between gap-6">
           <Link href="/" className="flex items-center gap-3 flex-shrink-0">
             <Image
-              src="/aims-community-logo.png"
+              src="/logo.png"
               alt="AI Operator Collective"
               width={48}
               height={48}

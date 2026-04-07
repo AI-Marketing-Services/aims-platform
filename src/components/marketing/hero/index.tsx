@@ -89,8 +89,9 @@ export function Hero() {
 
                 {/* DESKTOP SIDEBAR - hidden on mobile */}
                 <div className="hidden sm:flex w-40 flex-shrink-0 border-r border-border bg-card flex-col">
-                  <div className="flex items-center px-3 py-3.5 border-b border-border">
-                    <Image src="/logo.png" alt="AIMS" width={80} height={32} className="object-contain h-6 w-auto" />
+                  <div className="flex items-center gap-1.5 px-3 py-3.5 border-b border-border">
+                    <Image src="/logo.png" alt="AIMS" width={24} height={24} className="object-contain h-6 w-6" />
+                    <span className="text-sm font-serif tracking-tight text-cream">AIMS</span>
                   </div>
                   <div className="px-2.5 py-2">
                     <div className="flex items-center gap-1.5 rounded-lg bg-deep px-2 py-1.5">
@@ -132,8 +133,9 @@ export function Hero() {
                   <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-8 bg-gradient-to-r from-card to-transparent" />
                   <div className="flex items-center overflow-x-auto scrollbar-hide">
                     <div className="flex items-center gap-1 px-3 py-2 min-w-max">
-                      <div className="flex items-center px-2 py-1 mr-2 border-r border-border">
-                        <Image src="/logo.png" alt="AIMS" width={60} height={24} className="object-contain h-5 w-auto" />
+                      <div className="flex items-center gap-1 px-2 py-1 mr-2 border-r border-border">
+                        <Image src="/logo.png" alt="AIMS" width={20} height={20} className="object-contain h-5 w-5" />
+                        <span className="text-xs font-serif tracking-tight text-cream">AIMS</span>
                       </div>
                       {NAV_ITEMS.map((item) => (
                         <motion.button

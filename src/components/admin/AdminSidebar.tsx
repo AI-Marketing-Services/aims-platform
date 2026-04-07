@@ -93,12 +93,13 @@ export function AdminSidebar() {
           <Image
             src="/logo.png"
             alt="AIMS"
-            width={collapsed ? 32 : 100}
-            height={40}
-            className={`shrink-0 object-contain ${collapsed ? "h-8 w-8" : "h-8 w-auto"}`}
+            width={36}
+            height={36}
+            className="shrink-0 object-contain h-8 w-8"
           />
           {!collapsed && (
-            <div>
+            <div className="flex items-center gap-1.5">
+              <span className="text-base font-serif tracking-tight text-cream">AIMS</span>
               <span className="text-[10px] font-medium text-primary uppercase tracking-wider">
                 Admin
               </span>

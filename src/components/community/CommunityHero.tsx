@@ -54,7 +54,7 @@ export function CommunityHero() {
           <div className="relative rounded-md border border-line bg-gradient-to-b from-surface to-deep p-8 sm:p-12 shadow-[0_0_60px_rgba(0,0,0,0.6)]">
             <div className="flex items-center justify-center mb-8">
               <Image
-                src="/aims-community-logo.png"
+                src="/logo.png"
                 alt="AI Operator Collective"
                 width={320}
                 height={320}

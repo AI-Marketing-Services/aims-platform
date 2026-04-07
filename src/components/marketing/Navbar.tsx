@@ -112,8 +112,9 @@ export function Navbar() {
         <div className="flex h-16 items-center justify-between gap-6">
 
           {/* Logo */}
-          <Link href="/" className="flex items-center flex-shrink-0">
-            <Image src="/logo.png" alt="AIMS" width={160} height={48} className="object-contain h-12 w-auto" priority />
+          <Link href="/" className="flex items-center gap-2.5 flex-shrink-0">
+            <Image src="/logo.png" alt="AIMS" width={48} height={48} className="object-contain h-10 w-10" priority />
+            <span className="text-base font-serif tracking-tight text-cream hidden sm:inline">AIMS</span>
           </Link>
 
           {/* Desktop nav */}

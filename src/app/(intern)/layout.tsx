@@ -38,7 +38,7 @@ export default async function InternLayout({
       {/* Mobile top header */}
       <div className="lg:hidden flex items-center justify-between h-14 px-4 bg-deep border-b border-border sticky top-0 z-40">
         <Link href="/intern/dashboard" className="flex items-center gap-2">
-          <Image src="/logo.png" alt="AIMS" width={80} height={32} className="object-contain h-7 w-auto" />
+          <Image src="/logo.png" alt="AIMS" width={32} height={32} className="object-contain h-7 w-7" />
           <span className="text-[10px] font-medium text-primary uppercase tracking-wider">Builder</span>
         </Link>
         <UserButton />

@@ -9,7 +9,7 @@ export function CommunityFooter() {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">
             <Image
-              src="/aims-community-logo.png"
+              src="/logo.png"
               alt="AI Operator Collective"
               width={40}
               height={40}
