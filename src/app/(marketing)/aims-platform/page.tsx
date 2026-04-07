@@ -30,11 +30,12 @@ const FAQ = dynamic(
 )
 
 export const metadata: Metadata = {
-  title: "AIMS - Forward-Deployed AI Consulting",
+  title: "AIMS Platform - Forward-Deployed AI Consulting",
   description: "AIMS embeds senior AI engineers directly in your operations to diagnose bottlenecks, build custom AI solutions, and deliver measurable efficiency gains in 90 days.",
-  alternates: { canonical: "https://aimseos.com" },
+  alternates: { canonical: "https://aimseos.com/aims-platform" },
+  robots: { index: false, follow: false },
   openGraph: {
-    title: "AIMS - Forward-Deployed AI Consulting",
+    title: "AIMS Platform - Forward-Deployed AI Consulting",
     description: "AIMS embeds senior AI engineers directly in your operations to diagnose bottlenecks, build custom AI solutions, and deliver measurable efficiency gains in 90 days.",
   },
 }
@@ -96,7 +97,7 @@ const FAQ_SCHEMA = {
   ],
 }
 
-export default function HomePage() {
+export default function AimsPlatformPage() {
   return (
     <>
       <script
