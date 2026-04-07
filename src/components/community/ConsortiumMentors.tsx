@@ -93,10 +93,13 @@ export function ConsortiumMentors() {
           ))}
         </div>
 
-        <div className="mt-12 text-center">
-          <p className="text-sm text-cream/50 font-mono uppercase tracking-wider">
-            Combined operator footprint:{" "}
-            <span className="text-aims-gold">$100M+ in exits, $30M+ EBITDA portfolio</span>
+        <div className="mt-12 text-center max-w-2xl mx-auto">
+          <p className="text-xs text-cream/45 font-mono uppercase tracking-wider">
+            Mentor credentials sourced from public profiles and internal records
+          </p>
+          <p className="mt-3 text-xs text-cream/40 leading-relaxed">
+            Mentor availability and session formats are subject to scheduling. No specific
+            mentor is guaranteed at any specific session.
           </p>
         </div>
       </div>

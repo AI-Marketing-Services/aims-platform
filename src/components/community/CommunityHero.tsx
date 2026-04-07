@@ -1,6 +1,5 @@
 import Image from "next/image"
-import { ArrowRight, ChevronDown, Sparkles, Users, TrendingUp } from "lucide-react"
-import { LiveSignupTicker } from "./LiveSignupTicker"
+import { ArrowRight, ChevronDown, TrendingUp, Briefcase, Users } from "lucide-react"
 
 export function CommunityHero() {
   return (
@@ -23,9 +22,9 @@ export function CommunityHero() {
         </h1>
 
         <p className="mt-8 text-lg sm:text-xl text-cream/70 max-w-3xl mx-auto leading-relaxed">
-          Join the operator community that teaches you how to build a real AI services business
+          An operator-led community for professionals who want to build a real AI services business
           starting with <span className="text-cream font-semibold">business fundamentals</span>, not code.
-          Backed by founders running $30M+ companies.
+          Backed by founders inside the AIMS portfolio.
         </p>
 
         {/* CTA buttons */}
@@ -34,7 +33,7 @@ export function CommunityHero() {
             href="#apply"
             className="group inline-flex items-center justify-center gap-2 rounded-sm bg-aims-gold text-ink px-7 py-4 text-sm font-bold uppercase tracking-wider hover:bg-aims-gold-light transition-all shadow-[0_0_50px_rgba(196,151,42,0.35)] hover:shadow-[0_0_70px_rgba(196,151,42,0.5)]"
           >
-            Apply for Next Cohort
+            Apply for the Founding Cohort
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </a>
           <a
@@ -46,7 +45,9 @@ export function CommunityHero() {
           </a>
         </div>
 
-        <LiveSignupTicker />
+        <p className="mt-6 text-xs sm:text-sm text-cream/50 font-mono uppercase tracking-wider">
+          Application-only. Founding cohort forming now.
+        </p>
 
         {/* Hero visual card (replaces video) */}
         <div className="mt-16 relative max-w-4xl mx-auto">
@@ -66,29 +67,29 @@ export function CommunityHero() {
             <div className="grid grid-cols-3 gap-4 sm:gap-8 border-t border-line pt-8">
               <div className="text-center">
                 <div className="flex items-center justify-center mb-2">
-                  <TrendingUp className="w-5 h-5 text-aims-gold" />
+                  <Briefcase className="w-5 h-5 text-aims-gold" />
                 </div>
-                <div className="font-serif text-3xl sm:text-4xl text-cream">$100M+</div>
+                <div className="font-serif text-3xl sm:text-4xl text-cream">YPO</div>
                 <div className="mt-1 text-[10px] sm:text-xs uppercase tracking-wider text-cream/50 font-mono">
-                  Operator Exits
+                  Operator Mentors
                 </div>
               </div>
               <div className="text-center border-x border-line">
                 <div className="flex items-center justify-center mb-2">
-                  <Users className="w-5 h-5 text-aims-gold" />
+                  <TrendingUp className="w-5 h-5 text-aims-gold" />
                 </div>
-                <div className="font-serif text-3xl sm:text-4xl text-cream">1,400+</div>
+                <div className="font-serif text-3xl sm:text-4xl text-cream">5 Wks</div>
                 <div className="mt-1 text-[10px] sm:text-xs uppercase tracking-wider text-cream/50 font-mono">
-                  Members Built
+                  Business Setup First
                 </div>
               </div>
               <div className="text-center">
                 <div className="flex items-center justify-center mb-2">
-                  <Sparkles className="w-5 h-5 text-aims-gold" />
+                  <Users className="w-5 h-5 text-aims-gold" />
                 </div>
-                <div className="font-serif text-3xl sm:text-4xl text-cream">$30M</div>
+                <div className="font-serif text-3xl sm:text-4xl text-cream">100</div>
                 <div className="mt-1 text-[10px] sm:text-xs uppercase tracking-wider text-cream/50 font-mono">
-                  EBITDA Portfolio
+                  Founding Seats
                 </div>
               </div>
             </div>
@@ -98,13 +99,13 @@ export function CommunityHero() {
         {/* Trust pills */}
         <div className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-cream/50 font-mono uppercase tracking-wider">
           <span className="flex items-center gap-1.5">
-            <span className="text-aims-gold">✓</span> YPO-Led Mentors
+            <span className="text-aims-gold">✓</span> Operator-Led, Not Influencer-Led
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="text-aims-gold">✓</span> Business-First Curriculum
+            <span className="text-aims-gold">✓</span> Business Fundamentals First
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="text-aims-gold">✓</span> Live Client Pipeline
+            <span className="text-aims-gold">✓</span> Application-Only Program
           </span>
         </div>
       </div>

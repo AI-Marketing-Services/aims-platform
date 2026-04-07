@@ -13,48 +13,48 @@ import {
 const FEATURES = [
   {
     icon: BookOpen,
-    title: "Operator Curriculum (Week-by-Week)",
-    body: "A 90-day, day-by-day roadmap walking you through everything from forming your LLC to closing your first $5K-$15K client engagement.",
+    title: "Structured Operator Curriculum",
+    body: "A phased program that walks you through forming your LLC, defining your offer, pricing your services, and building a sales process before any AI tooling is introduced.",
   },
   {
     icon: Wrench,
-    title: "Cold Email Infrastructure Templates",
-    body: "Multi-domain warmup setup, ICP targeting frameworks, and AI-personalized sequences that book real meetings for your clients.",
+    title: "Cold Email Infrastructure Walkthroughs",
+    body: "Step-by-step guidance on multi-domain warmup, ICP targeting, and AI-assisted sequence building. Built around the same approach used inside the AIMS portfolio.",
   },
   {
     icon: Phone,
-    title: "Voice & Chat Agent Playbooks",
-    body: "Build deployable voice agents that answer phones, qualify leads, and book appointments using the same systems we deploy in our portfolio.",
+    title: "Voice & Chat Agent Build Sessions",
+    body: "Live build sessions covering voice agents, chat agents, and CRM automation using the same tooling stack the AIMS portfolio deploys internally.",
   },
   {
     icon: MessageSquare,
     title: "Live Coaching With Operators",
-    body: "Weekly office hours with the consortium, hot-seat sessions, and direct feedback from founders who built and exited real businesses.",
+    body: "Scheduled coaching with the consortium and hot-seat sessions where members get direct feedback on their offer, pricing, and pipeline. Session cadence is published before each cohort.",
   },
   {
     icon: Target,
-    title: "Sales Module From Real Calls",
-    body: "Every client call we run gets recorded and added to the library so you learn exactly how to position, price, and close deals.",
+    title: "Sales Process Frameworks",
+    body: "The discovery, qualification, and proposal frameworks AIMS uses with its own clients, broken down so members can adapt them to their own offer.",
   },
   {
     icon: Mail,
-    title: "Outreach Scripts & Proposals",
-    body: "Copy-paste templates for cold email, LinkedIn DMs, follow-ups, scopes, contracts, and pricing conversations that actually convert.",
+    title: "Outreach Templates & Scopes",
+    body: "Starting-point templates for cold email, LinkedIn outreach, follow-ups, scopes of work, and proposals. These are starting points, not magic. Members customize for their own market.",
   },
   {
     icon: PiggyBank,
-    title: "Software Discounts & Stack",
-    body: "Founder-rate access to the tools we use across our $30M+ portfolio: GHL, Retell, Apollo, Smartlead, Anthropic credits, and more.",
+    title: "Tooling Recommendations",
+    body: "The actual stack the AIMS portfolio uses across outbound, voice, CRM, and reporting, with notes on what works for which use case. Where founder discounts are available, they are passed through.",
   },
   {
     icon: Trophy,
-    title: "Certified Operator Pathway",
-    body: "Graduate to the AIMS client pipeline. Top-performing operators get fed real paying clients from the consortium portfolio companies.",
+    title: "Graduation Pathway",
+    body: "An aspirational track for members who complete the program and build their own pipeline. Future graduation opportunities (referrals, partnerships) are reviewed case by case and not guaranteed.",
   },
   {
     icon: Users,
     title: "Founding Member Community",
-    body: "A private network of operators who share wins, deal reviews, hiring tips, and the unglamorous reality of building a services business.",
+    body: "A private network where founding cohort members share their work, ask questions, and review each other's offers. Active participation is expected.",
   },
 ]
 
@@ -64,12 +64,13 @@ export function EverythingInside() {
       <div className="mx-auto max-w-6xl px-4">
         <div className="text-center max-w-3xl mx-auto">
           <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl text-cream leading-[1.25] pb-2">
-            Everything You Get Inside the{" "}
+            What&apos;s Inside the{" "}
             <span className="block text-aims-gold italic">Collective</span>
           </h2>
           <p className="mt-6 text-lg text-cream/65">
-            Nine pillars built on what actually works inside our $30M+ portfolio.
-            No fluff. No theory. No filler videos.
+            Nine pillars built around the way the AIMS portfolio actually operates.
+            Some sessions are pre-built, some are run live each cohort. We will not list
+            anything here that does not exist or is not scheduled.
           </p>
         </div>
 

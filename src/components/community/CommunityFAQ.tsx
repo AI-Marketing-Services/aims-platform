@@ -7,31 +7,35 @@ import { cn } from "@/lib/utils"
 const QUESTIONS = [
   {
     q: "Do I need technical experience?",
-    a: "No. The first month is business fundamentals: forming your LLC, setting your pricing, building your sales process. You won't touch a workflow tool until Week 5. The whole point is to give non-technical operators the business chops AI bros never bother to teach.",
+    a: "No. The first phase of the program is business fundamentals: forming your LLC, setting your pricing, building your sales process. AI tooling does not start until later in the program. The Collective is built for non-technical operators.",
   },
   {
-    q: "How long until I can take on paying clients?",
-    a: "Most cohort operators land their first paying engagement inside 90 days. We back the timeline with a guarantee: if you do the work and don't land a client in 90 days, we coach you free until you do.",
+    q: "Will the program get me clients?",
+    a: "No, the program does not get you clients and we do not promise that. The program teaches you how to build the sales process, infrastructure, and offer that operators in the AIMS portfolio use to land clients. Whether you land clients depends entirely on the work you put in. We make no income or outcome claims.",
   },
   {
     q: "What if I still have my W-2 job?",
-    a: "Most operators start the program while still employed. The curriculum is built for nights and weekends. Many transition to the operator business full-time around month 4 to 6 once they have a few retainers locked in.",
+    a: "The program is designed so you can complete it while still employed. Most of the work is structured around evenings and weekends. Whether and when you transition out of your W-2 is entirely your decision and we make no claims about that.",
   },
   {
     q: "How is this different from free AI communities?",
-    a: "Free communities and YouTube channels jump straight to tools. They teach you n8n, Make, and prompt packs. None of them teach you how to actually run a business: how to price, how to sell, how to close, how to deliver, how to retain. That gap is why most AI side hustles never make a dollar. We fix that.",
+    a: "Free communities and YouTube channels typically jump straight to tools. They teach you n8n, Make, and prompt packs. The AI Operator Collective is structured to teach business fundamentals first (LLC formation, pricing, sales pipeline) and only introduces AI tooling once those fundamentals are in place.",
   },
   {
-    q: "Who are the mentors?",
-    a: "Operators running real businesses, not influencers. The consortium includes YPO members with $100M+ in combined exits across vending, healthcare, beverage, transportation, gaming, finance, and hospitality. They deploy the same AI systems inside their portfolio that you'll learn to build.",
+    q: "Who runs the program?",
+    a: "The program is operated by the team behind the AIMS portfolio and supported by a consortium of YPO operators. The mentor credentials shown on this page come from public profiles and internal records. Mentor availability and session formats are subject to scheduling.",
   },
   {
     q: "What does pricing look like?",
-    a: "We don't publish pricing on this page. Apply and we'll walk you through the program structure on a strategy call. The program is application-only because it's designed for operators ready to put in real work, not buy a course and ghost.",
+    a: "Pricing is not published on this page. The program is application-only. If there is mutual fit on the strategy call, pricing and structure are reviewed in full. There is no payment required to apply.",
   },
   {
-    q: "What if I'm not in the US?",
-    a: "Most of the curriculum applies globally, but the live sales coaching, client pipeline, and business formation guidance are US-focused for the founding cohort. International operators are welcome to apply for the next cohort as we expand.",
+    q: "Is there a guarantee?",
+    a: "No. The Collective does not guarantee income, clients, engagements, revenue, or any specific outcome. Anyone offering a guaranteed outcome in this space is making a claim we are not willing to make. The program is structured to give you the best possible chance, but the work is on you.",
+  },
+  {
+    q: "What if I am not in the US?",
+    a: "Most of the curriculum applies globally, but the live sales coaching, community time zones, and US business formation guidance are US-focused for the founding cohort. International operators are welcome to apply.",
   },
 ]
 

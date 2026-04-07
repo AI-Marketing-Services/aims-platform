@@ -13,26 +13,27 @@ export function RiskFreeStripe() {
               <ShieldCheck className="w-7 h-7 text-aims-gold" />
             </div>
 
-            <h3 className="font-serif text-3xl sm:text-4xl text-cream leading-tight">
-              First Paying Client in 90 Days,{" "}
-              <span className="block text-aims-gold italic">Or You Don&apos;t Pay In Full.</span>
+            <h3 className="font-serif text-3xl sm:text-4xl text-cream leading-[1.25] pb-2">
+              Application-Only.{" "}
+              <span className="block text-aims-gold italic">We Vet Every Operator.</span>
             </h3>
 
             <p className="mt-5 text-cream/70 text-base sm:text-lg max-w-xl mx-auto">
-              We back the program with a 90-day execution guarantee. Show up, do the work, and
-              if you don&apos;t land your first paying engagement, we coach you free until you do.
+              The Collective is not a course you buy. It is an application-only program
+              capped at the founding cohort. Every applicant gets a strategy call so we can
+              determine fit before either side commits.
             </p>
 
             <a
               href="#apply"
               className="mt-8 inline-flex items-center justify-center gap-2 rounded-sm bg-aims-gold text-ink px-7 py-4 text-sm font-bold uppercase tracking-wider hover:bg-aims-gold-light transition-all shadow-[0_0_50px_rgba(196,151,42,0.35)]"
             >
-              Apply Risk-Free
+              Submit an Application
               <ArrowRight className="w-4 h-4" />
             </a>
 
             <p className="mt-4 text-xs text-cream/40 font-mono uppercase tracking-wider">
-              Cohort guarantee. Full terms reviewed on your strategy call.
+              No payment required to apply. Pricing reviewed on the call if there is mutual fit.
             </p>
           </div>
         </div>

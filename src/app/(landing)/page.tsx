@@ -11,26 +11,27 @@ import { ComparisonTable } from "@/components/community/ComparisonTable"
 import { ApplicationCard } from "@/components/community/ApplicationCard"
 import { CommunityFAQ } from "@/components/community/CommunityFAQ"
 import { FinalCTASection } from "@/components/community/FinalCTASection"
+import { CommunityDisclosures } from "@/components/community/CommunityDisclosures"
 
 export const metadata: Metadata = {
-  title: "AI Operator Collective | Build a Real AI Services Business in 90 Days",
+  title: "AI Operator Collective | Operator-Led AI Services Community",
   description:
-    "Join the operator-led community teaching white-collar professionals how to build a profitable AI services business. Business fundamentals first, AI deployment second. Backed by founders running $30M+ companies.",
+    "An application-only community for professionals who want to build an AI services business. Business fundamentals first, AI tooling second. Operated by the team behind the AIMS portfolio.",
   alternates: { canonical: "https://aioperatorcollective.com" },
   openGraph: {
     type: "website",
     url: "https://aioperatorcollective.com",
     siteName: "AI Operator Collective",
-    title: "AI Operator Collective | Build a Real AI Services Business in 90 Days",
+    title: "AI Operator Collective | Operator-Led AI Services Community",
     description:
-      "The only operator community that teaches business fundamentals first, AI deployment second. Backed by YPO operators with $100M+ in combined exits.",
+      "Application-only community for operators building AI services businesses. Business fundamentals first, AI tooling second. Operated by the team behind the AIMS portfolio.",
     images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "AI Operator Collective | Build a Real AI Services Business in 90 Days",
+    title: "AI Operator Collective | Operator-Led AI Services Community",
     description:
-      "Operator-led training and accountability program. Land your first AI services client in 90 days or get coached free until you do.",
+      "Application-only community for operators building AI services businesses. Operated by the team behind the AIMS portfolio.",
   },
 }
 
@@ -41,7 +42,7 @@ const ORG_SCHEMA = {
   url: "https://aioperatorcollective.com",
   logo: "https://aioperatorcollective.com/logo.png",
   description:
-    "Operator-led training and accountability community for professionals building AI services businesses. Powered by AIMS.",
+    "Operator-led training and accountability community for professionals building AI services businesses. Operated by Modern Amenities LLC.",
   parentOrganization: {
     "@type": "Organization",
     name: "AIMS",
@@ -58,23 +59,23 @@ const FAQ_SCHEMA = {
       name: "Do I need technical experience to join the AI Operator Collective?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "No. The first month is business fundamentals: forming your LLC, setting your pricing, building your sales process. AI tooling does not start until Week 5. The program is built for non-technical operators.",
+        text: "No. The first phase of the program is business fundamentals: forming your LLC, setting your pricing, building your sales process. AI tooling is introduced later in the program.",
       },
     },
     {
       "@type": "Question",
-      name: "How long until I can land my first paying client?",
+      name: "Will the program get me clients?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Most cohort operators land their first paying engagement inside 90 days. The program is backed by a 90-day execution guarantee.",
+        text: "No. The Collective makes no income or client claims. The program teaches the sales process and infrastructure used inside the AIMS portfolio. Whether you land clients depends entirely on the work you put in.",
       },
     },
     {
       "@type": "Question",
-      name: "Who runs the AI Operator Collective?",
+      name: "Is there a guarantee?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "The program is operator-led by a consortium of YPO members and founders with $100M+ in combined exits across vending, healthcare, beverage, transportation, gaming, and finance.",
+        text: "No. The Collective does not guarantee income, clients, or any specific outcome. The program is structured to give you the best chance, but the work is on you.",
       },
     },
     {
@@ -82,7 +83,7 @@ const FAQ_SCHEMA = {
       name: "What does pricing look like?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "The program is application-only. Pricing is reviewed on the strategy call after you submit your application.",
+        text: "The program is application-only. Pricing is reviewed on the strategy call only if there is mutual fit. There is no payment required to apply.",
       },
     },
   ],
@@ -111,6 +112,7 @@ export default function LandingPage() {
       <ApplicationCard />
       <CommunityFAQ />
       <FinalCTASection />
+      <CommunityDisclosures />
     </>
   )
 }

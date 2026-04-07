@@ -25,7 +25,7 @@ export function CommunityFooter() {
             </div>
           </div>
 
-          <nav className="flex items-center gap-6 text-xs font-mono uppercase tracking-wider text-cream/50">
+          <nav className="flex items-center gap-5 text-xs font-mono uppercase tracking-wider text-cream/50">
             <a href="#program" className="hover:text-cream transition-colors">
               Program
             </a>
@@ -34,6 +34,9 @@ export function CommunityFooter() {
             </a>
             <a href="#faq" className="hover:text-cream transition-colors">
               FAQ
+            </a>
+            <a href="#disclosures" className="hover:text-cream transition-colors">
+              Disclosures
             </a>
             <Link href="/privacy" className="hover:text-cream transition-colors">
               Privacy

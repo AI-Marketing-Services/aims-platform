@@ -50,18 +50,18 @@ export function CommunityNav() {
             </div>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-8 text-sm">
-            <a href="#problem" className="text-cream/70 hover:text-cream transition-colors">
-              The Problem
-            </a>
+          <nav className="hidden md:flex items-center gap-7 text-sm">
             <a href="#program" className="text-cream/70 hover:text-cream transition-colors">
-              The Program
+              Program
             </a>
             <a href="#mentors" className="text-cream/70 hover:text-cream transition-colors">
               Mentors
             </a>
             <a href="#faq" className="text-cream/70 hover:text-cream transition-colors">
               FAQ
+            </a>
+            <a href="#disclosures" className="text-cream/70 hover:text-cream transition-colors">
+              Disclosures
             </a>
           </nav>
 

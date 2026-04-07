@@ -1,14 +1,12 @@
 import { Check, X } from "lucide-react"
 
 const ROWS = [
-  { feature: "Business fundamentals first", us: true, yt: false, skool: false },
+  { feature: "Business fundamentals taught first", us: true, yt: false, skool: false },
   { feature: "Operator-led mentorship (YPO members)", us: true, yt: false, skool: false },
-  { feature: "Direct client pipeline access", us: true, yt: false, skool: false },
-  { feature: "Sales module from real recorded calls", us: true, yt: false, skool: false },
-  { feature: "Certified operator pathway with rev share", us: true, yt: false, skool: false },
   { feature: "AI deployment in proper sequence", us: "Week 5", yt: "Day 1", skool: "Day 1" },
-  { feature: "Live deal coaching with founders", us: true, yt: false, skool: "Sometimes" },
-  { feature: "90-day first-client guarantee", us: true, yt: false, skool: false },
+  { feature: "Live coaching with portfolio operators", us: true, yt: false, skool: "Sometimes" },
+  { feature: "Application-only program", us: true, yt: false, skool: false },
+  { feature: "Hot-seat deal review sessions", us: true, yt: false, skool: "Sometimes" },
 ]
 
 function Cell({ value }: { value: boolean | string }) {

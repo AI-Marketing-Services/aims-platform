@@ -3,26 +3,26 @@ import { Mail, Headphones, Megaphone, BarChart3 } from "lucide-react"
 const SOLUTIONS = [
   {
     icon: Mail,
-    title: "AI-Powered Cold Email",
-    body: "Build outbound engines for your clients. ICP targeting, multi-domain warmup infrastructure, AI-personalized sequences. Your clients get booked meetings. You get paid retainers.",
+    title: "AI-Assisted Cold Email",
+    body: "Learn the outbound stack the AIMS portfolio uses internally: ICP definition, multi-domain warmup, and AI-assisted sequence building. The skill set, not a guarantee of bookings.",
     tag: "Outbound",
   },
   {
     icon: Headphones,
     title: "CRM, Voice & Chat Agents",
-    body: "Deploy voice agents that answer phones, qualify leads, and book appointments. Set up CRM systems that run sales operations. Built on the same stack we use in our portfolio.",
+    body: "Build sessions covering voice agents, chat agents, and CRM automation using the same tooling stack used inside the AIMS portfolio. Deployment outcomes depend on the operator and the use case.",
     tag: "Inbound",
   },
   {
     icon: Megaphone,
-    title: "Social Media Funnels",
-    body: "Build content engines that generate, schedule, and distribute social content across LinkedIn, Instagram, X, and TikTok. Your clients get reach. You get a recurring fee.",
+    title: "Social Content Workflows",
+    body: "Frameworks for generating, scheduling, and distributing content across LinkedIn and other platforms using the workflows the AIMS portfolio runs internally.",
     tag: "Brand",
   },
   {
     icon: BarChart3,
-    title: "Paid Media Management",
-    body: "Run and optimize ad campaigns across Meta, Google, and LinkedIn. From creative generation to budget optimization to weekly reporting. The full media buyer skillset.",
+    title: "Paid Media Fundamentals",
+    body: "How operators inside the AIMS portfolio approach paid campaigns across Meta, Google, and LinkedIn. Creative, budget, and reporting fundamentals that apply across accounts.",
     tag: "Performance",
   },
 ]
@@ -37,8 +37,9 @@ export function SolutionsGrid() {
             <span className="block text-aims-gold italic">One Operator Stack.</span>
           </h2>
           <p className="mt-6 text-lg text-cream/65">
-            Master the four AI services your clients are already paying for. We give you the
-            playbooks, the infrastructure, and the live deal coaching to deploy them.
+            The four service lines the AIMS portfolio runs internally. The Collective walks
+            members through each one, in proper sequence, after the business fundamentals
+            phase is complete.
           </p>
         </div>
 

@@ -4,27 +4,27 @@ const STEPS = [
   {
     n: "01",
     title: "Foundation",
-    body: "Form your LLC, define your services, and set your pricing. Build the legal and financial structure of a real business in your first two weeks.",
+    body: "Form your LLC, define your services, and set your pricing. Build the legal and financial structure of a real business before any tools enter the picture.",
   },
   {
     n: "02",
     title: "Pipeline",
-    body: "Learn how businesses actually buy. Build your sales process. Understand the marketing, sales, and operations problems your future clients face every day.",
+    body: "Learn how businesses actually buy. Build a sales process. Get the language you need to talk to operators about marketing, sales, and operations problems.",
   },
   {
     n: "03",
-    title: "First Clients",
-    body: "We sell alongside you on real calls. Every conversation gets recorded for the training library so you watch the exact moves that close $5K-$15K engagements.",
+    title: "Sales Practice",
+    body: "Hot-seat sessions and live deal reviews with the consortium. Walk through real-world discovery, qualification, and proposal frameworks the AIMS portfolio uses.",
   },
   {
     n: "04",
     title: "Deploy",
-    body: "Master the four core AI solutions: cold email infrastructure, voice agents, social funnels, and paid media. Deploy them for clients who are already paying you.",
+    body: "Build sessions for the four core AI service lines: cold email infrastructure, voice and chat agents, social funnels, and paid media. Same stack the AIMS portfolio runs internally.",
   },
   {
     n: "05",
-    title: "Scale",
-    body: "Graduate to Certified Operator. Get access to the AIMS client pipeline. Earn revenue share on referrals from our $30M+ portfolio companies.",
+    title: "Graduate",
+    body: "Members who complete the program and build their own pipeline are evaluated for graduation pathways. Future referrals and partnerships are reviewed case by case and not guaranteed.",
   },
 ]
 

@@ -1,16 +1,15 @@
-import { Check, ShieldCheck } from "lucide-react"
+import { Check } from "lucide-react"
 import { LeadCaptureForm } from "./LeadCaptureForm"
 
 const INCLUDED = [
-  "Day-by-day operator curriculum",
-  "Live coaching with the consortium",
-  "Cold email infrastructure templates",
-  "Voice and chat agent playbooks",
-  "Sales module from real recorded calls",
-  "Outreach scripts, proposals, and contracts",
-  "Founding member software discounts",
-  "Certified operator pathway",
-  "Founding member community access",
+  "Structured operator curriculum",
+  "Live coaching with portfolio operators",
+  "Cold email infrastructure walkthroughs",
+  "Voice and chat agent build sessions",
+  "Hot-seat sales and pipeline reviews",
+  "Outreach templates and scope frameworks",
+  "Private founding member community",
+  "Strategy call before any commitment",
 ]
 
 export function ApplicationCard() {
@@ -26,8 +25,9 @@ export function ApplicationCard() {
             <span className="block text-aims-gold italic">Founding Cohort</span>
           </h2>
           <p className="mt-6 text-lg text-cream/65">
-            Drop your name and email. We&apos;ll send your application link and book a strategy
-            call to walk you through the program.
+            Drop your name and email. If there is mutual fit, we&apos;ll send your
+            application link and book a strategy call to walk you through the program in
+            detail.
           </p>
         </div>
 
@@ -56,16 +56,6 @@ export function ApplicationCard() {
               ))}
             </ul>
 
-            <div className="rounded-sm border border-aims-gold/20 bg-aims-gold/5 p-4 mb-8 text-center">
-              <div className="flex items-center justify-center gap-2 mb-1">
-                <ShieldCheck className="w-4 h-4 text-aims-gold" />
-                <p className="text-sm font-bold text-cream">90-Day Execution Guarantee</p>
-              </div>
-              <p className="text-xs text-cream/60">
-                Land your first paying engagement in 90 days or get coached free until you do.
-              </p>
-            </div>
-
             <LeadCaptureForm
               variant="stacked"
               source="application_card"
@@ -73,7 +63,12 @@ export function ApplicationCard() {
             />
 
             <p className="mt-5 text-center text-xs text-cream/40 font-mono uppercase tracking-wider">
-              Pricing reviewed on your strategy call. No payment today.
+              No payment to apply. Pricing only reviewed if there is mutual fit on the call.
+            </p>
+
+            <p className="mt-3 text-center text-[10px] text-cream/35 leading-relaxed max-w-sm mx-auto">
+              The Collective makes no income claims. Individual results vary and depend on
+              the work each operator puts in. See full disclosures below.
             </p>
           </div>
         </div>

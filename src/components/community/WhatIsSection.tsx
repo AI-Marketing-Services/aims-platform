@@ -14,56 +14,61 @@ export function WhatIsSection() {
         <div className="mt-12 space-y-6 text-cream/75 text-lg leading-relaxed">
           <p>
             The AI Operator Collective is an{" "}
-            <H>operator-led training and accountability program</H> for white-collar professionals
-            who want to build a profitable AI services business. Founded by the team behind a{" "}
-            <H>$30M+ EBITDA portfolio</H> and backed by YPO operators with{" "}
-            <H>$100M+ in combined exits</H>, it gives you the exact roadmap, mentorship, and
-            client pipeline to land your <H>first paying engagement in 90 days or less</H>.
+            <H>operator-led training and accountability program</H> for white-collar
+            professionals who want to build an AI services business. It is operated by the
+            team behind the AIMS portfolio and supported by a consortium of YPO operators
+            who deploy the same AI systems inside their own companies.
           </p>
 
           <p>
-            Most AI communities jump straight to n8n workflows, prompt packs, and tool tutorials.
-            That works if you already know how to run a business. If you don&apos;t, you end up
-            with <H>a folder full of automations and zero clients</H>. The AI Operator Collective
-            fixes that. <H>Phase 1 is LLC formation, pricing your services, and building a real
-            sales pipeline.</H> AI deployment doesn&apos;t start until <H>Week 5</H>, because{" "}
-            <H>tools without business skills are just expensive hobbies</H>.
+            Most AI communities jump straight to n8n workflows, prompt packs, and tool
+            tutorials. That works if you already know how to run a business. If you
+            don&apos;t, you end up with{" "}
+            <H>a folder full of automations and zero clients</H>. The AI Operator Collective
+            is structured to fix that. <H>Phase 1 is LLC formation, pricing your services,
+            and building a real sales pipeline.</H> AI deployment doesn&apos;t start until{" "}
+            <H>Week 5</H>, because tools without business skills are just expensive hobbies.
           </p>
 
           <p>
-            The program combines a <H>day-by-day operator curriculum</H>,{" "}
-            <H>weekly live coaching with the consortium</H>, hot-seat sessions, and{" "}
-            <H>recorded sales calls from real client engagements</H> so you watch the exact
-            moves that close $5K-$15K retainers. Plus a private community of operators sharing
-            wins, scripts, and strategies every day. It is the{" "}
-            <H>fastest, most accountable path from W-2 employee to AI operator with paying clients</H>.
+            The program is designed to combine a structured operator curriculum, live
+            coaching with the consortium, hot-seat sessions, and a private community of
+            operators who share their work in the open. It is the{" "}
+            <H>operator-led path</H> we wish existed when we were building the businesses
+            in our portfolio.
+          </p>
+
+          <p className="text-sm text-cream/45 italic">
+            The founding cohort is forming now. The Collective makes no income claims and
+            does not promise client outcomes. Individual results depend entirely on the
+            work each member puts in. See the disclosures section below for full terms.
           </p>
         </div>
 
-        {/* Inline impact stats strip */}
+        {/* Structure strip - describes program structure, not promised outcomes */}
         <div className="mt-14 grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div className="rounded-md border border-line bg-surface/60 p-4 text-center">
-            <div className="font-serif text-2xl sm:text-3xl text-aims-gold">90 Days</div>
+            <div className="font-serif text-2xl sm:text-3xl text-aims-gold">Phase 1</div>
             <div className="mt-1 text-[10px] uppercase tracking-wider text-cream/50 font-mono">
-              To First Client
-            </div>
-          </div>
-          <div className="rounded-md border border-line bg-surface/60 p-4 text-center">
-            <div className="font-serif text-2xl sm:text-3xl text-aims-gold">$5K-$15K</div>
-            <div className="mt-1 text-[10px] uppercase tracking-wider text-cream/50 font-mono">
-              Avg Retainer
-            </div>
-          </div>
-          <div className="rounded-md border border-line bg-surface/60 p-4 text-center">
-            <div className="font-serif text-2xl sm:text-3xl text-aims-gold">$100M+</div>
-            <div className="mt-1 text-[10px] uppercase tracking-wider text-cream/50 font-mono">
-              Mentor Exits
+              Business Setup
             </div>
           </div>
           <div className="rounded-md border border-line bg-surface/60 p-4 text-center">
             <div className="font-serif text-2xl sm:text-3xl text-aims-gold">Week 5</div>
             <div className="mt-1 text-[10px] uppercase tracking-wider text-cream/50 font-mono">
-              AI Tools Start
+              AI Tools Begin
+            </div>
+          </div>
+          <div className="rounded-md border border-line bg-surface/60 p-4 text-center">
+            <div className="font-serif text-2xl sm:text-3xl text-aims-gold">YPO</div>
+            <div className="mt-1 text-[10px] uppercase tracking-wider text-cream/50 font-mono">
+              Operator Mentors
+            </div>
+          </div>
+          <div className="rounded-md border border-line bg-surface/60 p-4 text-center">
+            <div className="font-serif text-2xl sm:text-3xl text-aims-gold">100</div>
+            <div className="mt-1 text-[10px] uppercase tracking-wider text-cream/50 font-mono">
+              Founding Seats
             </div>
           </div>
         </div>
