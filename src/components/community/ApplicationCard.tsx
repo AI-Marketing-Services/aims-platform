@@ -21,9 +21,9 @@ export function ApplicationCard() {
     >
       <div className="mx-auto max-w-2xl px-4">
         <div className="text-center max-w-3xl mx-auto">
-          <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl text-cream leading-[1.1]">
+          <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl text-cream leading-[1.25] pb-2">
             Apply for the{" "}
-            <span className="text-aims-gold italic">Founding Cohort</span>
+            <span className="block text-aims-gold italic">Founding Cohort</span>
           </h2>
           <p className="mt-6 text-lg text-cream/65">
             Drop your name and email. We&apos;ll send your application link and book a strategy

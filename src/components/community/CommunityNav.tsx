@@ -33,15 +33,15 @@ export function CommunityNav() {
         <div className="flex h-16 items-center justify-between gap-6">
           <Link href="/" className="flex items-center gap-3 flex-shrink-0">
             <Image
-              src="/logo.png"
+              src="/aims-community-logo.png"
               alt="AI Operator Collective"
-              width={160}
+              width={48}
               height={48}
-              className="object-contain h-10 w-auto"
+              className="object-contain h-10 w-10"
               priority
             />
             <div className="hidden sm:flex flex-col leading-tight">
-              <span className="text-[10px] uppercase tracking-[0.2em] text-aims-gold font-mono">
+              <span className="text-[11px] uppercase tracking-[0.2em] text-aims-gold font-mono">
                 AI Operator Collective
               </span>
               <span className="text-[9px] text-cream/40 uppercase tracking-wider font-mono">

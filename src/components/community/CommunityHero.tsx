@@ -12,14 +12,13 @@ export function CommunityHero() {
       </div>
 
       <div className="mx-auto max-w-5xl px-4 text-center">
-        <div className="inline-flex items-center gap-2 rounded-full border border-aims-gold/30 bg-aims-gold/5 px-4 py-1.5 text-xs font-mono uppercase tracking-wider text-aims-gold mb-8">
-          <Sparkles className="w-3.5 h-3.5" />
+        <p className="text-xs sm:text-sm font-mono uppercase tracking-[0.3em] text-aims-gold mb-8">
           The AI Operator Collective
-        </div>
+        </p>
 
-        <h1 className="font-serif text-5xl sm:text-6xl md:text-7xl lg:text-[88px] leading-[1.02] tracking-tight text-cream">
+        <h1 className="font-serif text-5xl sm:text-6xl md:text-7xl lg:text-[88px] leading-[1.1] pb-2 tracking-tight text-cream">
           AI Won&apos;t Replace You.{" "}
-          <span className="text-aims-gold italic">Someone Using AI Will.</span>
+          <span className="block text-aims-gold italic">Someone Using AI Will.</span>
         </h1>
 
         <p className="mt-8 text-lg sm:text-xl text-cream/70 max-w-3xl mx-auto leading-relaxed">
@@ -52,11 +51,11 @@ export function CommunityHero() {
           <div className="relative rounded-md border border-line bg-gradient-to-b from-surface to-deep p-8 sm:p-12 shadow-[0_0_60px_rgba(0,0,0,0.6)]">
             <div className="flex items-center justify-center mb-8">
               <Image
-                src="/logo.png"
+                src="/aims-community-logo.png"
                 alt="AI Operator Collective"
-                width={220}
-                height={220}
-                className="object-contain h-32 w-auto opacity-90"
+                width={320}
+                height={320}
+                className="object-contain h-40 w-auto sm:h-48 drop-shadow-[0_0_40px_rgba(196,151,42,0.35)]"
                 priority
               />
             </div>

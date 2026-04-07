@@ -15,7 +15,7 @@ export function RiskFreeStripe() {
 
             <h3 className="font-serif text-3xl sm:text-4xl text-cream leading-tight">
               First Paying Client in 90 Days,{" "}
-              <span className="text-aims-gold italic">Or You Don&apos;t Pay In Full.</span>
+              <span className="block text-aims-gold italic">Or You Don&apos;t Pay In Full.</span>
             </h3>
 
             <p className="mt-5 text-cream/70 text-base sm:text-lg max-w-xl mx-auto">

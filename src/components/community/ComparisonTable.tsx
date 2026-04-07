@@ -22,9 +22,9 @@ export function ComparisonTable() {
     <section className="relative py-24 sm:py-32 border-t border-line">
       <div className="mx-auto max-w-5xl px-4">
         <div className="text-center max-w-3xl mx-auto">
-          <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl text-cream leading-[1.1]">
+          <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl text-cream leading-[1.25] pb-2">
             This Isn&apos;t Another{" "}
-            <span className="text-aims-gold italic">AI Course</span>
+            <span className="block text-aims-gold italic">AI Course</span>
           </h2>
           <p className="mt-6 text-lg text-cream/65">
             How the AI Operator Collective compares to free communities and YouTube tutorials.

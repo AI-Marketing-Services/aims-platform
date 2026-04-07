@@ -8,9 +8,9 @@ export function FinalCTASection() {
       </div>
 
       <div className="mx-auto max-w-3xl px-4 text-center">
-        <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl text-cream leading-[1.1]">
+        <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl text-cream leading-[1.25] pb-2">
           The AI Economy Is Here.{" "}
-          <span className="text-aims-gold italic">Your Seat Is Waiting.</span>
+          <span className="block text-aims-gold italic">Your Seat Is Waiting.</span>
         </h2>
 
         <p className="mt-6 text-lg text-cream/70 max-w-2xl mx-auto">

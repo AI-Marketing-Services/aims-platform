@@ -42,9 +42,9 @@ export function CommunityFAQ() {
     <section id="faq" className="relative py-24 sm:py-32 border-t border-line">
       <div className="mx-auto max-w-3xl px-4">
         <div className="text-center max-w-3xl mx-auto">
-          <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl text-cream leading-[1.1]">
+          <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl text-cream leading-[1.25] pb-2">
             Frequently Asked{" "}
-            <span className="text-aims-gold italic">Questions</span>
+            <span className="block text-aims-gold italic">Questions</span>
           </h2>
         </div>
 

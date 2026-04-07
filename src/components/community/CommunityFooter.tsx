@@ -9,11 +9,11 @@ export function CommunityFooter() {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">
             <Image
-              src="/logo.png"
+              src="/aims-community-logo.png"
               alt="AI Operator Collective"
-              width={120}
-              height={36}
-              className="object-contain h-9 w-auto"
+              width={40}
+              height={40}
+              className="object-contain h-9 w-9"
             />
             <div className="flex flex-col leading-tight">
               <span className="text-[10px] uppercase tracking-[0.2em] text-aims-gold font-mono">

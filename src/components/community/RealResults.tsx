@@ -33,9 +33,9 @@ export function RealResults() {
     <section className="relative py-24 sm:py-32 border-t border-line bg-gradient-to-b from-ink to-deep">
       <div className="mx-auto max-w-6xl px-4">
         <div className="text-center max-w-3xl mx-auto">
-          <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl text-cream leading-[1.1]">
+          <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl text-cream leading-[1.25] pb-2">
             Real Results From{" "}
-            <span className="text-aims-gold italic">Real Operators</span>
+            <span className="block text-aims-gold italic">Real Operators</span>
           </h2>
           <p className="mt-6 text-lg text-cream/65">
             Engagement results from inside the AIMS portfolio. As cohort members graduate,
