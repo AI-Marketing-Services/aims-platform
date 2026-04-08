@@ -1,4 +1,4 @@
-import { Inbox, Calendar, ClipboardCheck, Rocket } from "lucide-react"
+import { Inbox, Mail, ClipboardCheck, Rocket } from "lucide-react"
 
 const STEPS = [
   {
@@ -11,17 +11,17 @@ const STEPS = [
     icon: ClipboardCheck,
     when: "Within 24 hours",
     title: "We review your background",
-    body: "The Collective is application-only. A real operator (not a VA) reads your submission and checks for fit: your domain, your timeline, your willingness to do the work. If there's alignment, we move fast.",
+    body: "The Collective is application-only. A real operator (not a VA) reads your submission and checks for fit: your domain, your timeline, your willingness to do the work. No phone tag, no pitch call.",
   },
   {
-    icon: Calendar,
-    when: "Within the week",
-    title: "Strategy call — no pitch",
-    body: "We book a 30-minute call to walk through your situation, your existing network, and what an AI services practice could look like for you. Program details and structure are reviewed on the call only if both sides want to keep going.",
+    icon: Mail,
+    when: "Over the following days",
+    title: "The full playbook arrives in chapters",
+    body: "We drip the rest of the Operator Vault straight into your inbox — chapter by chapter. No calls to book, no hoops to jump through. Read at your own pace and implement what fits.",
   },
   {
     icon: Rocket,
-    when: "Day one of the cohort",
+    when: "If there's fit, cohort day one",
     title: "Your business starts getting built",
     body: "LLC, EIN, banking, offer definition, and pricing — all handled as a service inside Week 1. By Week 4 you have a live pipeline. By Week 5 you're deploying AI. You're in motion from the first day.",
   },

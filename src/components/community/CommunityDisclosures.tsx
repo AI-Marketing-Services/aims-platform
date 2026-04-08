@@ -11,7 +11,7 @@ const DISCLOSURES = [
   },
   {
     title: "Application-Only Program",
-    body: "The Collective is application-only. Submitting your name and email is not enrollment and is not a payment. We will only accept members who, in our sole discretion, are a fit for the program. Pricing, terms, and program structure are reviewed in detail on the strategy call before either party commits.",
+    body: "The Collective is application-only. Submitting your name and email is not enrollment and is not a payment. We will only accept members who, in our sole discretion, are a fit for the program. Pricing, terms, and program structure are shared over email with applicants who are offered a cohort seat, before either party commits.",
   },
   {
     title: "Forward-Looking Statements",

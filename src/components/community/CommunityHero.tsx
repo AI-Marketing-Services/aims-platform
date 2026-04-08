@@ -102,10 +102,10 @@ export function CommunityHero() {
                 <Lock className="w-5 h-5 text-aims-gold flex-shrink-0 mt-0.5" />
                 <div>
                   <p className="text-sm text-cream font-semibold leading-tight">
-                    Strategy Call Invite
+                    Cohort Waitlist Priority
                   </p>
                   <p className="mt-1 text-xs text-cream/50 leading-snug">
-                    We walk through your background, offer, and fit — no pitch.
+                    Applications are reviewed by a real operator — no pitch calls, no hoops.
                   </p>
                 </div>
               </div>

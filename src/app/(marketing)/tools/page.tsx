@@ -1,12 +1,35 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { ArrowRight, BarChart2, Globe, Zap, Layers, Search } from "lucide-react"
+import { ArrowRight, BarChart2, Globe, Zap, Layers, Search, BookOpen, Sparkles, Briefcase, TrendingUp } from "lucide-react"
 
 export const metadata: Metadata = {
   title: "Free AI Tools | AIMS",
   description:
     "Free AI-powered tools to assess your readiness, calculate ROI, audit your website, and explore your ideal customer segments.",
 }
+
+const FEATURED_TOOLS = [
+  {
+    href: "/tools/ai-opportunity-audit",
+    icon: Sparkles,
+    title: "AI Opportunity Audit",
+    description:
+      "Answer 4 questions and drop your URL. We scan your site, analyze your business, and deliver a personalized report with the highest-ROI AI opportunities for your company.",
+    cta: "Run My Audit",
+    badge: "For businesses",
+    highlight: true,
+  },
+  {
+    href: "/tools/ai-playbook",
+    icon: BookOpen,
+    title: "AI Operator Playbook",
+    description:
+      "Twelve specific AI plays for corporate professionals. Turn your W-2 expertise into an AI services business or become the AI champion at your day job.",
+    cta: "Read the Playbook",
+    badge: "For operators",
+    highlight: true,
+  },
+]
 
 const TOOLS = [
   {
@@ -34,6 +57,24 @@ const TOOLS = [
     description:
       "Get a full AI-powered audit of your site — SEO, answer engine optimization, conversion, and mobile performance.",
     cta: "Audit My Site",
+    badge: "Free report",
+  },
+  {
+    href: "/tools/executive-ops-audit",
+    icon: TrendingUp,
+    title: "Executive Ops Audit",
+    description:
+      "A 5-7 minute diagnostic that identifies the biggest operational bottlenecks costing you time and money, and maps them to specific AI solutions.",
+    cta: "Run Ops Audit",
+    badge: "For leaders",
+  },
+  {
+    href: "/tools/business-credit-score",
+    icon: Briefcase,
+    title: "Business Credit Score",
+    description:
+      "Check your business credit profile and get a personalized action plan to build, repair, or leverage your credit for growth.",
+    cta: "Check My Score",
     badge: "Free report",
   },
   {
@@ -69,15 +110,64 @@ export default function ToolsIndexPage() {
             AI Tools Built for Growth
           </h1>
           <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-            Five free, interactive tools to benchmark your AI readiness, calculate ROI, audit your
-            digital presence, and build your perfect stack — no signup required.
+            Interactive tools to benchmark your AI readiness, generate a personalized AI
+            opportunity report, audit your site, and build your perfect stack — no signup required.
           </p>
         </div>
       </section>
 
-      {/* Tool Cards */}
+      {/* Featured — cold-email landing targets */}
       <section className="py-20">
-        <div className="container mx-auto max-w-4xl px-4">
+        <div className="container mx-auto max-w-5xl px-4">
+          <div className="mb-10 text-center">
+            <span className="inline-block rounded-full border border-primary/40 bg-primary/15 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary mb-3">
+              Most popular
+            </span>
+            <h2 className="text-2xl font-bold text-foreground md:text-3xl">
+              Start here
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 stagger-in">
+            {FEATURED_TOOLS.map((tool) => {
+              const Icon = tool.icon
+              return (
+                <Link
+                  key={tool.href}
+                  href={tool.href}
+                  className="group relative flex flex-col rounded-xl border border-primary/30 bg-gradient-to-br from-[#141923] to-[#0E1219] p-8 transition-all hover:border-primary/60 hover:shadow-[0_0_40px_rgba(196,151,42,0.15)]"
+                >
+                  <div className="mb-5 flex items-center justify-between">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/15 border border-primary/30">
+                      <Icon className="h-6 w-6 text-primary" />
+                    </div>
+                    <span className="rounded-full border border-primary/40 bg-primary/10 px-2.5 py-0.5 text-[11px] font-semibold text-primary uppercase tracking-wider">
+                      {tool.badge}
+                    </span>
+                  </div>
+                  <h3 className="mb-3 text-xl font-bold text-foreground">{tool.title}</h3>
+                  <p className="mb-6 flex-1 text-sm text-muted-foreground leading-relaxed">
+                    {tool.description}
+                  </p>
+                  <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary group-hover:gap-2.5 transition-all">
+                    {tool.cta}
+                    <ArrowRight className="h-4 w-4" />
+                  </span>
+                </Link>
+              )
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Secondary tools */}
+      <section className="border-t border-border pt-20 pb-20">
+        <div className="container mx-auto max-w-5xl px-4">
+          <div className="mb-10 text-center">
+            <h2 className="text-xl font-semibold text-foreground">More free tools</h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Quick diagnostics, calculators, and explorers
+            </p>
+          </div>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 stagger-in">
             {TOOLS.map((tool) => {
               const Icon = tool.icon

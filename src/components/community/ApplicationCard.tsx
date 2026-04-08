@@ -6,7 +6,6 @@ const INCLUDED = [
   "Cold email sequences and outreach scripts",
   "Pricing calculator and client ROI model",
   "Discovery, qualification, and proposal frameworks",
-  "Application review + strategy call booking",
   "Founding cohort waitlist priority",
 ]
 
@@ -16,18 +15,18 @@ export function ApplicationCard() {
       id="apply"
       className="relative py-24 sm:py-32 border-t border-line bg-gradient-to-b from-deep to-ink"
     >
-      <div className="mx-auto max-w-2xl px-4">
-        <div className="text-center max-w-3xl mx-auto">
+      <div className="mx-auto max-w-4xl px-4">
+        <div className="text-center mx-auto">
           <p className="text-xs font-mono uppercase tracking-[0.2em] text-aims-gold mb-4">
-            Get the Vault + Apply for the Cohort
+            Free Download
           </p>
           <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl text-cream leading-[1.25] pb-2">
-            One Form.{" "}
-            <span className="block text-aims-gold italic">Two Things You Want.</span>
+            Get Our{" "}
+            <span className="block text-aims-gold italic">AI Playbook</span>
           </h2>
-          <p className="mt-6 text-lg text-cream/65">
+          <p className="mt-6 text-lg text-cream/65 max-w-2xl mx-auto">
             Drop your name and email. The AI Operator Playbook Vault hits your inbox
-            immediately, and your application enters the review queue for the alpha cohort.
+            immediately — the same frameworks, scripts, and pricing models we use internally.
           </p>
         </div>
 
@@ -48,7 +47,7 @@ export function ApplicationCard() {
               </p>
             </div>
 
-            <ul className="space-y-3 mb-8">
+            <ul className="space-y-3 mb-8 w-fit mx-auto">
               {INCLUDED.map((item) => (
                 <li key={item} className="flex items-start gap-3 text-sm text-cream/80">
                   <Check className="w-4 h-4 text-aims-gold mt-0.5 flex-shrink-0" />

@@ -11,7 +11,7 @@ const QUESTIONS = [
   },
   {
     q: "What actually happens after I submit the form?",
-    a: "Three things: (1) the Playbook Vault email hits your inbox in under a minute — check spam if you don't see it, (2) a real operator reviews your submission within 24 hours to check fit, and (3) if there's alignment, we send you a link to book a 30-minute strategy call. No pitch — it's a working session on your background and whether the program is a fit.",
+    a: "Three things: (1) the Playbook Vault email hits your inbox in under a minute — check spam if you don't see it, (2) additional chapters drip into your inbox over the following days so you can implement at your own pace, and (3) a real operator reviews your submission within 24 hours for cohort fit. No pitch calls, no hoops, no calendar tag — if you're a fit we'll email you directly.",
   },
   {
     q: "Who is this actually built for?",
@@ -35,7 +35,7 @@ const QUESTIONS = [
   },
   {
     q: "What does it cost to join?",
-    a: "Pricing is reviewed on the strategy call, only if there's mutual fit. There is no payment required to apply, and no payment required to get the Playbook Vault. The Collective is annual-commitment only — we don't do monthly because monthly options produce churn before the curriculum has time to deliver.",
+    a: "Pricing is shared over email with applicants who are a fit for the cohort. There is no payment required to apply, and no payment required to get the Playbook Vault. The Collective is annual-commitment only — we don't do monthly because monthly options produce churn before the curriculum has time to deliver.",
   },
   {
     q: "What if I'm not in the US?",

@@ -269,7 +269,7 @@ export function buildOperatorVaultEmail(
             },
             {
               title: "What happens after you apply.",
-              body: "A real operator (not a VA) reviews your application within 24 hours. If there's alignment, we book a 30-minute call — no pitch, working session only. If there's not, we say so cleanly and you keep every chapter of the Vault anyway.",
+              body: "A real operator (not a VA) reviews your application within 24 hours. If there's alignment, we reach out directly over email with cohort details and next steps. No pitch calls, no calendar tag. If there's not, we say so cleanly and you keep every chapter of the Vault anyway.",
             },
           ],
           cta: { label: "Apply to the alpha cohort", url: applyUrl },

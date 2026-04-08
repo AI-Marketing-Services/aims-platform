@@ -85,10 +85,10 @@ export async function sendOperatorVaultEmail(params: { to: string; name: string 
     </div>
 
     ${p(
-      "While you wait, the fastest thing you can do is apply to the alpha cohort. A real operator reviews every application within 24 hours. If there's fit, we'll book a 30-minute strategy call — no pitch — to walk through your background and whether the program is right for you."
+      "A real operator reviews every application within 24 hours. If you're a fit for the alpha cohort, we'll reach out directly over email — no pitch calls, no calendar tag. In the meantime, just read what lands in your inbox and run the plays that fit your situation."
     )}
 
-    ${btn("Apply to the Alpha Cohort", applyUrl)}
+    ${btn("Read the full program", applyUrl)}
 
     ${divider()}
 
