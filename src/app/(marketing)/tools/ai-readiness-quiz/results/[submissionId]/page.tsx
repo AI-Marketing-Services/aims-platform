@@ -17,7 +17,7 @@ const CATEGORIES = [
     borderClass: "border-primary/30",
     headline: "You're leaving serious revenue on the table",
     description:
-      "Your competitors are running AI-powered outbound 24/7 while your team is still doing things manually. The good news: there's massive upside waiting, and AIMS can unlock it fast.",
+      "Your competitors are running AI-powered outbound 24/7 while your team is still doing things manually. The good news: there's massive upside waiting, and a clear starting sequence you can run this month.",
     recommended: ["Website + CRM + Chatbot Bundle", "Cold Outbound System", "AI Voice Agents"],
   },
   {
@@ -50,7 +50,7 @@ const CATEGORIES = [
     borderClass: "border-green-800",
     headline: "You're operating at the top 10% - let's keep it that way",
     description:
-      "You've built a real machine. The risk now is standing still while the landscape shifts. AIMS can help you stay ahead with custom AI builds and white-glove strategy.",
+      "You've built a real machine. The risk now is standing still while the landscape shifts. The operators pulling further ahead are the ones compounding AI-native advantages every month.",
     recommended: ["Vending Placement Visualizer", "AI Tool Tracker", "Custom AI Builds"],
   },
 ]
@@ -65,12 +65,17 @@ function getCategoryIcon(label: string) {
 export async function generateMetadata({ params }: Props) {
   const { submissionId } = await params
   const sub = await db.leadMagnetSubmission.findUnique({ where: { id: submissionId } })
-  if (!sub) return { title: "AI Readiness Results - AIMS" }
+  if (!sub) return { title: "AI Readiness Results | AI Operator Collective" }
   const score = sub.score ?? 0
   const cat = CATEGORIES.find((c) => score >= c.range[0] && score <= c.range[1]) ?? CATEGORIES[0]
   return {
-    title: `${sub.name ?? "Someone"} scored ${score}/100 - ${cat.label} | AIMS`,
+    title: `${sub.name ?? "Someone"} scored ${score}/100 — ${cat.label} | AI Operator Collective`,
     description: `See how AI-ready this business is and take the free quiz to get your own personalized score.`,
+    openGraph: {
+      title: `${score}/100 — ${cat.label}`,
+      description: "Take the free AI Readiness Quiz to benchmark your business.",
+      images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+    },
   }
 }
 
@@ -84,9 +89,9 @@ export default async function ResultsPage({ params }: Props) {
 
   const score = submission.score ?? 0
   const category = CATEGORIES.find((c) => score >= c.range[0] && score <= c.range[1]) ?? CATEGORIES[0]
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://aimseos.com"
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://aioperatorcollective.com"
   const shareUrl = `${appUrl}/tools/ai-readiness-quiz/results/${submissionId}`
-  const shareText = `I scored ${score}/100 on the AIMS AI Readiness Quiz - ${category.label}. See where your business stands:`
+  const shareText = `I scored ${score}/100 on the AI Readiness Quiz — ${category.label}. See where your business stands:`
 
   return (
     <div className="min-h-screen bg-deep">
@@ -130,43 +135,6 @@ export default async function ResultsPage({ params }: Props) {
           <p className="text-muted-foreground leading-relaxed">{category.description}</p>
         </div>
 
-        {/* Recommended services */}
-        <div className="bg-card border border-border rounded-2xl p-6 mb-6 shadow-sm">
-          <h3 className="font-semibold text-foreground mb-1">Services That Fix These Gaps</h3>
-          <p className="text-sm text-muted-foreground mb-4">Tailored to your {category.label} profile - here is where to start.</p>
-          <div className="space-y-3">
-            {category.recommended.map((rec) => {
-              const serviceDetails: Record<string, { desc: string; price: string }> = {
-                "Website + CRM + Chatbot Bundle": { desc: "AI-powered website with built-in CRM and chatbot that captures leads 24/7", price: "from $97/mo" },
-                "Cold Outbound System": { desc: "Automated outbound engine sending thousands of personalized emails monthly", price: "from $297/mo" },
-                "AI Voice Agents": { desc: "Never miss a call - AI answers, qualifies, and books meetings for you", price: "Custom" },
-                "SEO + AEO Strategy": { desc: "Rank in search and get cited by AI assistants like ChatGPT and Perplexity", price: "from $197/mo" },
-                "Audience Targeting": { desc: "Precision B2B audiences built from 100M+ contacts for your outbound campaigns", price: "from $147/mo" },
-                "AI Tool Tracker": { desc: "Monitor AI tool spend, usage, and ROI across your entire organization", price: "from $97/mo" },
-                "Pixel Intelligence": { desc: "Identify anonymous website visitors and route them into automated follow-up", price: "from $197/mo" },
-                "Finance Automation": { desc: "Automated P&L reporting, invoice processing, and financial dashboards", price: "from $247/mo" },
-                "Vending Placement Visualizer": { desc: "AI-powered location scouting and placement optimization for vending operators", price: "Custom" },
-                "Custom AI Builds": { desc: "Forward-deployed engineers build and deploy custom AI solutions you own forever", price: "Custom" },
-              }
-              const details = serviceDetails[rec] ?? { desc: "AI-powered solution tailored to your business needs", price: "Custom" }
-              return (
-                <div key={rec} className="border border-border rounded-xl p-4 hover:border-border transition-colors">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-foreground text-sm">{rec}</h4>
-                      <p className="text-xs text-muted-foreground mt-1">{details.desc}</p>
-                      <p className="text-xs text-muted-foreground mt-2">{details.price}</p>
-                    </div>
-                    <Link href="/marketplace" className="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 bg-primary text-white text-xs font-semibold rounded-lg hover:bg-primary/90 transition-colors">
-                      View <ArrowRight className="w-3 h-3" />
-                    </Link>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-
         {/* Share */}
         <div className="bg-card border border-border rounded-2xl p-6 mb-6 shadow-sm">
           <h3 className="font-semibold text-foreground mb-1">Share your score</h3>
@@ -176,17 +144,19 @@ export default async function ResultsPage({ params }: Props) {
           <ShareButtons shareUrl={shareUrl} shareText={shareText} />
         </div>
 
-        {/* CTA */}
+        {/* CTA — Collective */}
         <div className="bg-card border border-primary/20 rounded-2xl p-8 text-center mb-6">
-          <h3 className="text-2xl font-bold text-foreground mb-3">Ready to close the gap?</h3>
+          <h3 className="text-2xl font-bold text-foreground mb-3">You know the gap. Closing it is the harder half.</h3>
           <p className="text-muted-foreground mb-6">
-            Book a free 30-minute strategy call. We&apos;ll walk through your score and build a custom AI roadmap.
+            The AI Operator Collective is where operators workshop the AI moves their business
+            should run — with playbooks, working tooling, and people who&apos;ve already shipped
+            what you&apos;re trying to build. Apply below.
           </p>
           <Link
-            href="/get-started"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-card text-primary font-semibold rounded-xl hover:bg-primary/10 transition-colors"
+            href="/#apply"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 transition-colors"
           >
-            Book Your Strategy Call
+            Apply to the Collective
             <ArrowRight className="w-5 h-5" />
           </Link>
         </div>

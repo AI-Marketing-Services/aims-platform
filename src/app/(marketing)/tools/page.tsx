@@ -3,7 +3,7 @@ import Link from "next/link"
 import { ArrowRight, BarChart2, Globe, Zap, Layers, Search, BookOpen, Sparkles, Briefcase, TrendingUp } from "lucide-react"
 
 export const metadata: Metadata = {
-  title: "Free AI Tools | AIMS",
+  title: "Free AI Tools | AI Operator Collective",
   description:
     "Free AI-powered tools to assess your readiness, calculate ROI, audit your website, and explore your ideal customer segments.",
 }

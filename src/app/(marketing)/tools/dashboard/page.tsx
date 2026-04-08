@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import { auth, currentUser } from "@clerk/nextjs/server"
 
 export const metadata: Metadata = {
-  title: "Your Tool Results | AIMS",
+  title: "Your Tool Results | AI Operator Collective",
   description: "View your AI readiness quiz, ROI calculator, and website audit results.",
 }
 import { redirect } from "next/navigation"

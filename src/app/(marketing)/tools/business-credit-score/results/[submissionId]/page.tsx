@@ -109,16 +109,21 @@ function formatDate(date: Date): string {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { submissionId } = await params
   const sub = await db.leadMagnetSubmission.findUnique({ where: { id: submissionId } })
-  if (!sub) return { title: "Business Credit Score — AIMS" }
+  if (!sub) return { title: "Business Credit Score | AI Operator Collective" }
 
   const score = sub.score ?? 0
   const tier = getTier(score)
   const name = sub.name ?? "A business owner"
 
   return {
-    title: `${name}'s Business Credit Score: ${score}/100 — ${tier.label} | AIMS`,
+    title: `${name}'s Business Credit Score: ${score}/100 — ${tier.label} | AI Operator Collective`,
     description:
       "See how this business's credit profile breaks down across 5 key dimensions. Take the free quiz to get your own personalized scorecard.",
+    openGraph: {
+      title: `Business Credit Score: ${score}/100 — ${tier.label}`,
+      description: "Breakdown across 5 key credit dimensions.",
+      images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+    },
   }
 }
 
@@ -143,9 +148,9 @@ export default async function BusinessCreditScoreResultsPage({ params }: Props) 
     maturity: 0,
   }
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://aimseos.com"
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://aioperatorcollective.com"
   const shareUrl = `${appUrl}/tools/business-credit-score/results/${submissionId}`
-  const shareText = `I just got my free Business Credit Score from @AIMS — score: ${score}/100 (${tier.label}). Get yours: ${shareUrl}`
+  const shareText = `I just got my free Business Credit Score — ${score}/100 (${tier.label}). Get yours: ${shareUrl}`
 
   // ── Dimension definitions ──────────────────────────────────────────────────
   const dimensions = [
@@ -275,7 +280,9 @@ export default async function BusinessCreditScoreResultsPage({ params }: Props) 
     ],
   }
 
-  const services = SERVICE_RECS[tier.label] ?? SERVICE_RECS["Credit Builder"]
+  // Service recommendations block was removed as part of the Collective rebrand.
+  // Keeping SERVICE_RECS above for reference if we bring it back.
+  void SERVICE_RECS
 
   // ── Gauge marker position ──────────────────────────────────────────────────
   const markerLeft = `${Math.min(Math.max(score, 2), 98)}%`
@@ -489,33 +496,6 @@ export default async function BusinessCreditScoreResultsPage({ params }: Props) 
           </div>
         </div>
 
-        {/* ── Recommended AIMS Services ──────────────────────────────────── */}
-        <div className="mb-6">
-          <h2 className="font-bold text-foreground text-lg mb-1">Recommended for Your Profile</h2>
-          <p className="text-sm text-muted-foreground mb-4">
-            Services matched to your {tier.label} credit tier
-          </p>
-
-          <div className="grid md:grid-cols-3 gap-4">
-            {services.map((svc) => (
-              <div
-                key={svc.name}
-                className="bg-card border border-border rounded-xl p-5 flex flex-col hover:border-primary/40 transition-colors"
-              >
-                <h4 className="font-semibold text-foreground text-sm mb-2 leading-snug">{svc.name}</h4>
-                <p className="text-xs text-muted-foreground leading-relaxed flex-1 mb-3">{svc.desc}</p>
-                <div className="text-xs font-semibold text-primary mb-4">{svc.price}</div>
-                <Link
-                  href="/marketplace"
-                  className="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-primary/10 text-primary text-xs font-semibold rounded-lg hover:bg-primary/20 transition-colors"
-                >
-                  Learn more <ArrowRight className="w-3 h-3" />
-                </Link>
-              </div>
-            ))}
-          </div>
-        </div>
-
         {/* ── CTA Banner ─────────────────────────────────────────────────── */}
         <div className="bg-card border border-primary/25 rounded-2xl p-8 sm:p-10 text-center mb-6 relative overflow-hidden">
           <div
@@ -524,17 +504,18 @@ export default async function BusinessCreditScoreResultsPage({ params }: Props) 
           />
           <div className="relative">
             <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-3">
-              Ready to Build Elite Business Credit?
+              Credit is the plumbing. Operators build on top of it.
             </h2>
             <p className="text-muted-foreground leading-relaxed mb-6 max-w-lg mx-auto">
-              Book a free 30-minute strategy call. We&apos;ll review your scorecard and show you exactly
-              how AIMS can help you build the credit profile your business deserves.
+              The AI Operator Collective is where operators workshop the business fundamentals —
+              credit, entity structure, banking, cash flow — alongside the AI moves they&apos;re
+              shipping. Apply below.
             </p>
             <Link
-              href="/get-started"
+              href="/#apply"
               className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white font-bold rounded-xl hover:bg-primary/90 transition-colors text-sm"
             >
-              Book Free Strategy Call
+              Apply to the Collective
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>

@@ -463,13 +463,15 @@ export default function AIReadinessQuizClient() {
               <div className="bg-card border border-primary/20 rounded-2xl p-8 text-center">
                 <h3 className="text-2xl font-bold text-foreground mb-3">Ready to close the gap?</h3>
                 <p className="text-muted-foreground mb-6">
-                  Book a free 30-minute strategy call. We&apos;ll walk through your score in detail and build a custom AI roadmap for your business.
+                  The AI Operator Collective is where operators workshop the AI moves their
+                  business should run — with playbooks, tooling, and people who&apos;ve
+                  already shipped what you&apos;re trying to build. Apply below.
                 </p>
                 <a
-                  href="/get-started"
-                  className="inline-flex items-center gap-2 px-8 py-4 bg-card text-primary font-semibold rounded-xl hover:bg-primary/10 transition-colors"
+                  href="/#apply"
+                  className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 transition-colors"
                 >
-                  Book Your Strategy Call
+                  Apply to the Collective
                   <ArrowRight className="w-5 h-5" />
                 </a>
               </div>

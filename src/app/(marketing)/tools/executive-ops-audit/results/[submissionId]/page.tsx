@@ -108,15 +108,20 @@ const DEPT_RECOMMENDATIONS: Record<string, string> = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { submissionId } = await params
   const sub = await db.leadMagnetSubmission.findUnique({ where: { id: submissionId } })
-  if (!sub) return { title: "Executive Ops Audit — AIMS" }
+  if (!sub) return { title: "Executive Ops Audit | AI Operator Collective" }
 
   const score = Math.round(sub.score ?? 0)
   const name = sub.name ?? "Executive"
 
   return {
-    title: `${name} Ops Audit — ${score}/100 Efficiency Score | AIMS`,
+    title: `${name} Ops Audit — ${score}/100 Efficiency Score | AI Operator Collective`,
     description:
       "See the full executive operations audit including department scores, cost of inefficiency analysis, and AI automation roadmap.",
+    openGraph: {
+      title: `${name} Ops Audit — ${score}/100`,
+      description: "Department scores, cost of inefficiency, and an AI automation roadmap.",
+      images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+    },
   }
 }
 
@@ -529,7 +534,7 @@ export default async function ExecutiveOpsAuditResultsPage({ params }: Props) {
                       <div>
                         <p className="text-xs text-primary font-semibold mb-1">Process Elimination</p>
                         <p className="text-xs text-foreground/80 leading-relaxed">
-                          Process elimination is often faster than process improvement. AIMS can automate, eliminate, or systematically replace this in 30–60 days.
+                          Process elimination is often faster than process improvement. An operator who&apos;s shipped this before can automate, eliminate, or replace this in 30–60 days.
                         </p>
                       </div>
                     </div>
@@ -827,20 +832,20 @@ export default async function ExecutiveOpsAuditResultsPage({ params }: Props) {
               Next Step
             </div>
             <h2 className="text-2xl sm:text-4xl font-bold text-foreground mb-4 leading-tight">
-              Ready to Act on This Audit?
+              You know where the gaps are. The harder part is shipping the fixes.
             </h2>
             <p className="text-muted-foreground leading-relaxed mb-8 max-w-2xl mx-auto">
-              Book a free 45-minute Executive Strategy Session. We&apos;ll walk through your scorecard live,
-              validate our assumptions with your actual data, and give you a 90-day roadmap you can execute
-              with or without AIMS.
+              The AI Operator Collective is where operators workshop rollouts like this together —
+              real case studies, real working playbooks, real implementation help. Apply below.
+              No pitch calls, no calendar tag, just a real fit review within 24 hours.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
-                href="/get-started"
+                href="/#apply"
                 className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white font-bold rounded-xl hover:bg-primary/90 transition-colors text-sm shadow-lg"
               >
-                Book Executive Strategy Session
+                Apply to the Collective
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <div className="print:hidden">

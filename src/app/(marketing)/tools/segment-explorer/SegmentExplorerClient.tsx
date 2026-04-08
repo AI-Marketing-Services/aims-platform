@@ -256,10 +256,10 @@ export default function SegmentExplorerClient() {
                 </div>
                 {unlocked && (
                   <a
-                    href="/get-started"
+                    href="/#apply"
                     className="flex-shrink-0 inline-flex items-center gap-1.5 px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors"
                   >
-                    Build Campaign
+                    Apply
                     <ArrowRight className="w-3.5 h-3.5" />
                   </a>
                 )}
@@ -340,13 +340,13 @@ export default function SegmentExplorerClient() {
           >
             <h3 className="text-2xl font-bold text-foreground mb-3">Ready to target one of these segments?</h3>
             <p className="text-muted-foreground mb-6">
-              AIMS builds custom AI outbound systems that reach your exact audience - qualified leads delivered to your calendar.
+              Operators inside the AI Operator Collective workshop exactly these campaigns together — targeting, messaging, automation, and the AI tooling that makes them work.
             </p>
             <a
-              href="/get-started"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-card text-primary font-semibold rounded-xl hover:bg-primary/10 transition-colors"
+              href="/#apply"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 transition-colors"
             >
-              Build My Campaign
+              Apply to the Collective
               <ArrowRight className="w-5 h-5" />
             </a>
           </motion.div>

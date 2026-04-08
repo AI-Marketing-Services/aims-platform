@@ -69,7 +69,6 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${cormorant.variable} ${dmSans.variable} ${dmMono.variable}`}>
       <head>
-        <link rel="preconnect" href="https://clerk.aimseos.com" />
         <link rel="dns-prefetch" href="https://player.vimeo.com" />
         <link rel="dns-prefetch" href="https://api.anthropic.com" />
         {/* IDPixel — anonymous visitor identification for retargeting the bounced traffic. */}

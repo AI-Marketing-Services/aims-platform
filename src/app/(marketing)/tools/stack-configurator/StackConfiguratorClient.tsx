@@ -480,10 +480,10 @@ export default function StackConfiguratorClient() {
                         <p className="text-sm text-muted-foreground">{rec.description}</p>
                       </div>
                       <a
-                        href="/get-started"
+                        href="/#apply"
                         className="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-primary border border-primary/30 rounded-lg hover:bg-primary/10 transition-colors"
                       >
-                        Add to Plan
+                        Apply
                         <ChevronRight className="w-3 h-3" />
                       </a>
                     </motion.div>
@@ -495,13 +495,13 @@ export default function StackConfiguratorClient() {
             <div className="bg-card border border-primary/20 rounded-2xl p-8 text-center mt-8">
               <h3 className="text-2xl font-bold text-foreground mb-3">Ready to deploy your stack?</h3>
               <p className="text-muted-foreground mb-6">
-                Book a free 30-minute strategy call. We&apos;ll finalize your roadmap, confirm priorities, and give you a fixed monthly price.
+                The AI Operator Collective is where operators workshop stack rollouts like this together — with people who&apos;ve already shipped the exact tools you&apos;re considering.
               </p>
               <a
-                href="/get-started"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-card text-primary font-semibold rounded-xl hover:bg-primary/10 transition-colors"
+                href="/#apply"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 transition-colors"
               >
-                Book Strategy Call
+                Apply to the Collective
                 <ArrowRight className="w-5 h-5" />
               </a>
             </div>

@@ -11,13 +11,18 @@ interface Props {
 export async function generateMetadata({ params }: Props) {
   const { submissionId } = await params
   const sub = await db.leadMagnetSubmission.findUnique({ where: { id: submissionId } })
-  if (!sub) return { title: "ROI Calculator Results - AIMS" }
+  if (!sub) return { title: "ROI Calculator Results | AI Operator Collective" }
   const data = sub.data as Record<string, unknown>
   const calcResults = (data?.results ?? {}) as Record<string, unknown>
   const savings = (calcResults?.additionalRevenue ?? 0) as number
   return {
-    title: `${sub.name ?? "Someone"} could add $${savings > 0 ? savings.toLocaleString() : "-"}/mo with AI | AIMS`,
-    description: "See how much time and money AI automation could save this business - and calculate your own ROI.",
+    title: `${sub.name ?? "Someone"} could add $${savings > 0 ? savings.toLocaleString() : "-"}/mo with AI | AI Operator Collective`,
+    description: "See how much time and money AI automation could save this business — and calculate your own ROI.",
+    openGraph: {
+      title: `$${savings > 0 ? savings.toLocaleString() : "-"}/mo in potential AI savings`,
+      description: "See the full AI ROI breakdown.",
+      images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+    },
   }
 }
 
@@ -39,7 +44,7 @@ export default async function ROIResultsPage({ params }: Props) {
   const rawRoi = (calcResults.roi ?? 0) as number
   const roiMultiple = rawRoi > 0 ? Math.round(rawRoi / 100 * 10) / 10 : 3
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://aimseos.com"
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://aioperatorcollective.com"
   const shareUrl = `${appUrl}/tools/roi-calculator/results/${submissionId}`
   const shareText = `I could save $${monthlySavings.toLocaleString()}/mo with AI automation. Calculate your business ROI:`
 
@@ -122,9 +127,9 @@ export default async function ROIResultsPage({ params }: Props) {
           </div>
         </div>
 
-        {/* What AIMS delivers */}
+        {/* What the AI plays look like */}
         <div className="bg-card border border-border rounded-2xl p-6 mb-6 shadow-sm">
-          <h3 className="font-semibold text-foreground mb-4">How AIMS Generates This ROI</h3>
+          <h3 className="font-semibold text-foreground mb-4">How This ROI Actually Materializes</h3>
           <div className="space-y-3">
             {[
               "AI-powered lead gen running 24/7 while your team focuses on closing",
@@ -142,57 +147,6 @@ export default async function ROIResultsPage({ params }: Props) {
           </div>
         </div>
 
-        {/* Start Saving - Recommended Services */}
-        <div className="bg-card border border-border rounded-2xl p-6 mb-6 shadow-sm">
-          <h3 className="font-semibold text-foreground mb-1">Start Saving - Recommended Services</h3>
-          <p className="text-sm text-muted-foreground mb-4">These AIMS services deliver the fastest path to capturing your ${monthlySavings.toLocaleString()}/mo in savings.</p>
-          <div className="space-y-3">
-            <div className="border border-border rounded-xl p-4 hover:border-border transition-colors">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1">
-                  <h4 className="font-semibold text-foreground text-sm">Cold Outbound Engine</h4>
-                  <p className="text-xs text-muted-foreground mt-1">Automated outbound sends thousands of personalized emails monthly, filling your pipeline without adding headcount.</p>
-                  <p className="text-xs text-muted-foreground mt-2">from $297/mo</p>
-                </div>
-                <Link href="/marketplace" className="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 bg-primary text-white text-xs font-semibold rounded-lg hover:bg-primary/90 transition-colors">
-                  View <ArrowRight className="w-3 h-3" />
-                </Link>
-              </div>
-            </div>
-            <div className="border border-border rounded-xl p-4 hover:border-border transition-colors">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1">
-                  <h4 className="font-semibold text-foreground text-sm">RevOps Pipeline Automation</h4>
-                  <p className="text-xs text-muted-foreground mt-1">Systemize your sales process - automated follow-ups, deal routing, and pipeline dashboards that close revenue faster.</p>
-                  <p className="text-xs text-muted-foreground mt-2">from $197/mo</p>
-                </div>
-                <Link href="/marketplace" className="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 bg-primary text-white text-xs font-semibold rounded-lg hover:bg-primary/90 transition-colors">
-                  View <ArrowRight className="w-3 h-3" />
-                </Link>
-              </div>
-            </div>
-            {hoursReclaimed > 20 && (
-              <div className="border border-border rounded-xl p-4 hover:border-border transition-colors">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1">
-                    <h4 className="font-semibold text-foreground text-sm">AI Voice Agents</h4>
-                    <p className="text-xs text-muted-foreground mt-1">Reclaim {hoursReclaimed}+ hours per month - AI answers calls, qualifies leads, and books meetings without human intervention.</p>
-                    <p className="text-xs text-muted-foreground mt-2">Custom pricing</p>
-                  </div>
-                  <Link href="/marketplace" className="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 bg-primary text-white text-xs font-semibold rounded-lg hover:bg-primary/90 transition-colors">
-                    View <ArrowRight className="w-3 h-3" />
-                  </Link>
-                </div>
-              </div>
-            )}
-          </div>
-          <div className="mt-4 text-center">
-            <Link href="/solutions" className="text-sm text-primary hover:underline font-medium">
-              View all solution packages
-            </Link>
-          </div>
-        </div>
-
         {/* Share */}
         <div className="bg-card border border-border rounded-2xl p-6 mb-6 shadow-sm">
           <h3 className="font-semibold text-foreground mb-1">Share your results</h3>
@@ -200,17 +154,19 @@ export default async function ROIResultsPage({ params }: Props) {
           <ShareButtons shareUrl={shareUrl} shareText={shareText} />
         </div>
 
-        {/* CTA */}
+        {/* CTA — Collective */}
         <div className="bg-card border border-primary/20 rounded-2xl p-8 text-center mb-6">
-          <h3 className="text-2xl font-bold text-foreground mb-3">Ready to capture this ROI?</h3>
+          <h3 className="text-2xl font-bold text-foreground mb-3">The numbers are real. Shipping them is the hard part.</h3>
           <p className="text-muted-foreground mb-6">
-            Book a free strategy call and we&apos;ll show you exactly which AIMS solutions generate the fastest return for your business.
+            The AI Operator Collective is where operators workshop ROI models like this together,
+            then ship the implementation with playbooks and working tooling. Apply below — no
+            pitch calls, no calendar tag.
           </p>
           <Link
-            href="/get-started"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-card text-primary font-semibold rounded-xl hover:bg-primary/10 transition-colors"
+            href="/#apply"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 transition-colors"
           >
-            Book Strategy Call
+            Apply to the Collective
             <ArrowRight className="w-5 h-5" />
           </Link>
         </div>

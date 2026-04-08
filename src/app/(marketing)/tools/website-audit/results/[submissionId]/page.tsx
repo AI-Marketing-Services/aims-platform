@@ -51,12 +51,17 @@ const SEVERITY_CONFIG = {
 export async function generateMetadata({ params }: Props) {
   const { submissionId } = await params
   const sub = await db.leadMagnetSubmission.findUnique({ where: { id: submissionId } })
-  if (!sub) return { title: "Website Audit Results - AIMS" }
+  if (!sub) return { title: "Website Audit Results | AI Operator Collective" }
   const score = sub.score ?? 0
   const data = sub.data as Record<string, unknown>
   return {
-    title: `Website Audit: ${data?.domain ?? "Site"} scored ${score}/100 | AIMS`,
-    description: "See what's holding this website back from converting - and run a free audit on yours.",
+    title: `Website Audit: ${data?.domain ?? "Site"} scored ${score}/100 | AI Operator Collective`,
+    description: "See what's holding this website back from converting — and run a free audit on yours.",
+    openGraph: {
+      title: `Website Audit: ${data?.domain ?? "Site"} scored ${score}/100`,
+      description: "See what's holding this website back from converting.",
+      images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+    },
   }
 }
 
@@ -75,9 +80,9 @@ export default async function WebsiteAuditResultsPage({ params }: Props) {
   const domain = (data.domain ?? results.domain ?? "the audited site") as string
   const overallScore = submission.score ?? analysis?.scores?.overall ?? 0
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://aimseos.com"
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://aioperatorcollective.com"
   const shareUrl = `${appUrl}/tools/website-audit/results/${submissionId}`
-  const shareText = `${domain} scored ${overallScore}/100 on the AIMS Website Audit. See what's holding your site back:`
+  const shareText = `${domain} scored ${overallScore}/100 on the AI Operator Collective Website Audit. See what's holding your site back:`
 
   const scoreColor =
     overallScore >= 70 ? "text-green-400" : overallScore >= 50 ? "text-yellow-400" : "text-primary"
@@ -185,72 +190,6 @@ export default async function WebsiteAuditResultsPage({ params }: Props) {
           </div>
         )}
 
-        {/* Recommended Services */}
-        {analysis?.scores && (
-          <div className="bg-card border border-border rounded-2xl p-6 mb-6 shadow-sm">
-            <h3 className="font-semibold text-foreground mb-1">Services That Fix These Issues</h3>
-            <p className="text-sm text-muted-foreground mb-4">Based on your scores, these AIMS services will have the highest impact.</p>
-            <div className="space-y-3">
-              {analysis.scores.seo < 60 && (
-                <div className="border border-border rounded-xl p-4 hover:border-border transition-colors">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-foreground text-sm">SEO / AEO Strategy</h4>
-                      <p className="text-xs text-muted-foreground mt-1">Your SEO score of {analysis.scores.seo} means you are invisible in search. We fix your technical SEO, build authority content, and optimize for AI answer engines so you rank and get cited.</p>
-                      <p className="text-xs text-muted-foreground mt-2">from $197/mo</p>
-                    </div>
-                    <Link href="/marketplace" className="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 bg-primary text-white text-xs font-semibold rounded-lg hover:bg-primary/90 transition-colors">
-                      Learn More <ArrowRight className="w-3 h-3" />
-                    </Link>
-                  </div>
-                </div>
-              )}
-              {analysis.scores.speed < 60 && (
-                <div className="border border-border rounded-xl p-4 hover:border-border transition-colors">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-foreground text-sm">Website + CRM + Chatbot</h4>
-                      <p className="text-xs text-muted-foreground mt-1">A speed score of {analysis.scores.speed} is costing you visitors and rankings. We rebuild your site for sub-2-second load times with built-in lead capture and AI chatbot.</p>
-                      <p className="text-xs text-muted-foreground mt-2">from $97/mo</p>
-                    </div>
-                    <Link href="/marketplace" className="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 bg-primary text-white text-xs font-semibold rounded-lg hover:bg-primary/90 transition-colors">
-                      Learn More <ArrowRight className="w-3 h-3" />
-                    </Link>
-                  </div>
-                </div>
-              )}
-              {analysis.scores.conversion < 60 && (
-                <div className="border border-border rounded-xl p-4 hover:border-border transition-colors">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-foreground text-sm">Inbound Orchestration + Lead Reactivation</h4>
-                      <p className="text-xs text-muted-foreground mt-1">A conversion score of {analysis.scores.conversion} means visitors leave without taking action. We build multi-step funnels and reactivate your dormant leads with automated sequences.</p>
-                      <p className="text-xs text-muted-foreground mt-2">from $147/mo</p>
-                    </div>
-                    <Link href="/marketplace" className="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 bg-primary text-white text-xs font-semibold rounded-lg hover:bg-primary/90 transition-colors">
-                      Learn More <ArrowRight className="w-3 h-3" />
-                    </Link>
-                  </div>
-                </div>
-              )}
-              {analysis.scores.ai < 60 && (
-                <div className="border border-border rounded-xl p-4 hover:border-border transition-colors">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-foreground text-sm">AI Content Engine</h4>
-                      <p className="text-xs text-muted-foreground mt-1">An AI visibility score of {analysis.scores.ai} means AI assistants never mention your business. We produce and distribute AI-optimized content so you get cited in ChatGPT, Perplexity, and Google AI Overviews.</p>
-                      <p className="text-xs text-muted-foreground mt-2">from $247/mo</p>
-                    </div>
-                    <Link href="/marketplace" className="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 bg-primary text-white text-xs font-semibold rounded-lg hover:bg-primary/90 transition-colors">
-                      Learn More <ArrowRight className="w-3 h-3" />
-                    </Link>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
         {/* Share */}
         <div className="bg-card border border-border rounded-2xl p-6 mb-6 shadow-sm">
           <h3 className="font-semibold text-foreground mb-1">Share this audit</h3>
@@ -258,17 +197,19 @@ export default async function WebsiteAuditResultsPage({ params }: Props) {
           <ShareButtons shareUrl={shareUrl} shareText={shareText} />
         </div>
 
-        {/* CTA */}
+        {/* CTA — Collective */}
         <div className="bg-card border border-primary/20 rounded-2xl p-8 text-center mb-6">
-          <h3 className="text-2xl font-bold text-foreground mb-3">Ready to fix these issues?</h3>
+          <h3 className="text-2xl font-bold text-foreground mb-3">You know what to fix. The harder part is shipping it.</h3>
           <p className="text-muted-foreground mb-6">
-            Book a free strategy call. We&apos;ll walk through your audit results and show you exactly how AIMS can resolve every issue - with a clear timeline and fixed price.
+            The AI Operator Collective is where operators workshop audits like this with
+            other operators who&apos;ve already shipped the fixes. Apply to join — no pitch
+            calls, no calendar tag, just a real fit review.
           </p>
           <Link
-            href="/get-started"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-card text-primary font-semibold rounded-xl hover:bg-primary/10 transition-colors"
+            href="/#apply"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 transition-colors"
           >
-            Fix My Site
+            Apply to the Collective
             <ArrowRight className="w-5 h-5" />
           </Link>
         </div>
