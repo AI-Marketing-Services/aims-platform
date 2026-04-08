@@ -36,7 +36,7 @@ export function FinalCTASection() {
           </a>
         </div>
 
-        <p className="mt-6 text-xs text-cream/40 font-mono uppercase tracking-wider">
+        <p className="mt-6 text-xs text-cream/70 font-mono uppercase tracking-wider">
           Free to start · No payment today · Application reviewed within 24 hours
         </p>
       </div>

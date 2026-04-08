@@ -8,7 +8,7 @@ export function AnnouncementBar() {
           <Calendar className="w-3.5 h-3.5 text-aims-gold" />
           Next Cohort Opens Q2 2026
         </span>
-        <span className="hidden sm:inline text-cream/30">|</span>
+        <span className="hidden sm:inline text-cream/50">|</span>
         <span className="flex items-center gap-1.5 font-mono uppercase tracking-wider">
           <Users className="w-3.5 h-3.5 text-aims-gold" />
           Founding Members: Limited to 100 Operators

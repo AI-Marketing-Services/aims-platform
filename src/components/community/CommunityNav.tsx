@@ -44,7 +44,7 @@ export function CommunityNav() {
               <span className="text-[11px] uppercase tracking-[0.2em] text-aims-gold font-mono">
                 AI Operator Collective
               </span>
-              <span className="text-[9px] text-cream/40 uppercase tracking-wider font-mono">
+              <span className="text-[9px] text-cream/70 uppercase tracking-wider font-mono">
                 Powered by AIMS
               </span>
             </div>

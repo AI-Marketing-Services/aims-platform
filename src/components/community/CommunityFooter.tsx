@@ -19,13 +19,13 @@ export function CommunityFooter() {
               <span className="text-[10px] uppercase tracking-[0.2em] text-aims-gold font-mono">
                 AI Operator Collective
               </span>
-              <span className="text-[9px] text-cream/40 uppercase tracking-wider font-mono">
+              <span className="text-[9px] text-cream/70 uppercase tracking-wider font-mono">
                 Powered by AIMS
               </span>
             </div>
           </div>
 
-          <nav className="flex items-center gap-5 text-xs font-mono uppercase tracking-wider text-cream/50">
+          <nav className="flex items-center gap-5 text-xs font-mono uppercase tracking-wider text-cream/75">
             <a href="#program" className="hover:text-cream transition-colors">
               Program
             </a>
@@ -44,9 +44,9 @@ export function CommunityFooter() {
           </nav>
         </div>
 
-        <div className="mt-10 pt-6 border-t border-line text-center text-[11px] font-mono uppercase tracking-wider text-cream/30">
+        <div className="mt-10 pt-6 border-t border-line text-center text-[11px] font-mono uppercase tracking-wider text-cream/60">
           &copy; {year} Modern Amenities LLC. All rights reserved.
-          <span className="mx-2 text-cream/20">|</span>
+          <span className="mx-2 text-cream/50">|</span>
           aioperatorcollective.com
         </div>
       </div>

@@ -52,7 +52,7 @@ export function CommunityHero() {
           </a>
         </div>
 
-        <p className="mt-5 text-xs sm:text-sm text-cream/50 font-mono uppercase tracking-wider">
+        <p className="mt-5 text-xs sm:text-sm text-cream/70 font-mono uppercase tracking-wider">
           No payment to apply · Application-only · Alpha cohort capped
         </p>
 
@@ -71,7 +71,7 @@ export function CommunityHero() {
               />
             </div>
 
-            <p className="text-center text-xs font-mono uppercase tracking-[0.2em] text-cream/50 mb-6">
+            <p className="text-center text-xs font-mono uppercase tracking-[0.2em] text-cream/70 mb-6">
               What lands in your inbox the second you sign up
             </p>
 
@@ -82,7 +82,7 @@ export function CommunityHero() {
                   <p className="text-sm text-cream font-semibold leading-tight">
                     Operator Playbook Vault
                   </p>
-                  <p className="mt-1 text-xs text-cream/50 leading-snug">
+                  <p className="mt-1 text-xs text-cream/70 leading-snug">
                     Cold email, discovery, pricing, and delivery plays.
                   </p>
                 </div>
@@ -93,7 +93,7 @@ export function CommunityHero() {
                   <p className="text-sm text-cream font-semibold leading-tight">
                     Pricing &amp; ROI Calculators
                   </p>
-                  <p className="mt-1 text-xs text-cream/50 leading-snug">
+                  <p className="mt-1 text-xs text-cream/70 leading-snug">
                     Same models the AIMS team uses to price and close deals.
                   </p>
                 </div>
@@ -104,7 +104,7 @@ export function CommunityHero() {
                   <p className="text-sm text-cream font-semibold leading-tight">
                     Cohort Waitlist Priority
                   </p>
-                  <p className="mt-1 text-xs text-cream/50 leading-snug">
+                  <p className="mt-1 text-xs text-cream/70 leading-snug">
                     Applications are reviewed by a real operator — no pitch calls, no hoops.
                   </p>
                 </div>
@@ -114,7 +114,7 @@ export function CommunityHero() {
         </div>
 
         {/* Trust pills */}
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-cream/50 font-mono uppercase tracking-wider">
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-cream/70 font-mono uppercase tracking-wider">
           <span className="flex items-center gap-1.5">
             <span className="text-aims-gold">✓</span> Operator-Led
           </span>

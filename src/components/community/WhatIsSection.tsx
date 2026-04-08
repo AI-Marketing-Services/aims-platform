@@ -65,13 +65,13 @@ export function WhatIsSection() {
             </ul>
           </div>
           <div className="rounded-md border border-line bg-surface/40 p-6 sm:p-7">
-            <p className="text-xs font-mono uppercase tracking-wider text-cream/45 mb-4">
+            <p className="text-xs font-mono uppercase tracking-wider text-cream/70 mb-4">
               Not A Fit If
             </p>
             <ul className="space-y-3">
               {NOT_FIT.map((line) => (
-                <li key={line} className="flex items-start gap-3 text-sm text-cream/55 leading-relaxed">
-                  <X className="w-4 h-4 text-cream/40 mt-0.5 flex-shrink-0" />
+                <li key={line} className="flex items-start gap-3 text-sm text-cream/75 leading-relaxed">
+                  <X className="w-4 h-4 text-cream/60 mt-0.5 flex-shrink-0" />
                   <span>{line}</span>
                 </li>
               ))}
@@ -79,7 +79,7 @@ export function WhatIsSection() {
           </div>
         </div>
 
-        <p className="mt-10 text-center text-sm text-cream/45 italic max-w-2xl mx-auto">
+        <p className="mt-10 text-center text-sm text-cream/70 italic max-w-2xl mx-auto">
           The Collective makes no income claims and does not promise client outcomes. Results
           depend entirely on the work you put in. See disclosures at the bottom of this page.
         </p>

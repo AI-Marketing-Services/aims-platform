@@ -57,7 +57,7 @@ export function SolutionsGrid() {
                   <div className="inline-flex items-center justify-center w-12 h-12 rounded-sm bg-aims-gold/10 border border-aims-gold/20">
                     <Icon className="w-6 h-6 text-aims-gold" />
                   </div>
-                  <span className="text-[10px] uppercase tracking-wider font-mono text-cream/40 border border-line px-2 py-1 rounded-sm">
+                  <span className="text-[10px] uppercase tracking-wider font-mono text-cream/70 border border-line px-2 py-1 rounded-sm">
                     {solution.tag}
                   </span>
                 </div>

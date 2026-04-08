@@ -45,7 +45,7 @@ export function CommunityDisclosures() {
           <h2 className="font-serif text-2xl sm:text-3xl text-cream leading-tight">
             Important Disclosures
           </h2>
-          <p className="mt-3 text-sm text-cream/55">
+          <p className="mt-3 text-sm text-cream/75">
             Please read these in full before applying or making any business decision based on
             the information on this page.
           </p>
@@ -65,7 +65,7 @@ export function CommunityDisclosures() {
           ))}
         </div>
 
-        <p className="mt-10 text-center text-[11px] text-cream/35 font-mono uppercase tracking-wider">
+        <p className="mt-10 text-center text-[11px] text-cream/60 font-mono uppercase tracking-wider">
           Last updated: {new Date().toLocaleDateString("en-US", { year: "numeric", month: "long" })}
         </p>
       </div>

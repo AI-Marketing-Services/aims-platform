@@ -42,7 +42,7 @@ export function ApplicationCard() {
               <p className="font-serif text-3xl sm:text-4xl text-cream leading-tight">
                 The AI Operator Playbook Vault
               </p>
-              <p className="mt-2 text-sm text-cream/55">
+              <p className="mt-2 text-sm text-cream/75">
                 Delivered to your inbox the moment you submit
               </p>
             </div>
@@ -62,11 +62,11 @@ export function ApplicationCard() {
               ctaLabel="Send Me the Vault"
             />
 
-            <p className="mt-5 text-center text-xs text-cream/40 font-mono uppercase tracking-wider">
+            <p className="mt-5 text-center text-xs text-cream/70 font-mono uppercase tracking-wider">
               No payment to apply. No credit card. Unsubscribe any time.
             </p>
 
-            <p className="mt-3 text-center text-[10px] text-cream/35 leading-relaxed max-w-sm mx-auto">
+            <p className="mt-3 text-center text-[11px] text-cream/60 leading-relaxed max-w-sm mx-auto">
               The Collective makes no income claims. Individual results vary and depend on
               the work each operator puts in. See full disclosures below.
             </p>

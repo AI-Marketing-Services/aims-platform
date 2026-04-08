@@ -11,7 +11,7 @@ const ROWS = [
 
 function Cell({ value }: { value: boolean | string }) {
   if (value === true) return <Check className="w-5 h-5 text-aims-gold mx-auto" />
-  if (value === false) return <X className="w-5 h-5 text-cream/30 mx-auto" />
+  if (value === false) return <X className="w-5 h-5 text-cream/60 mx-auto" />
   return <span className="text-xs font-mono uppercase tracking-wider text-cream/70">{value}</span>
 }
 
@@ -32,16 +32,16 @@ export function ComparisonTable() {
         <div className="mt-14 rounded-md border border-line bg-surface/40 overflow-hidden">
           <div className="grid grid-cols-[1.5fr_1fr_1fr_1fr] sm:grid-cols-[2fr_1fr_1fr_1fr]">
             {/* Header */}
-            <div className="p-4 sm:p-5 border-b border-line text-xs font-mono uppercase tracking-wider text-cream/40">
+            <div className="p-4 sm:p-5 border-b border-line text-xs font-mono uppercase tracking-wider text-cream/70">
               Feature
             </div>
             <div className="p-4 sm:p-5 border-b border-l border-line text-center text-xs font-mono uppercase tracking-wider text-aims-gold bg-aims-gold/5">
               The Collective
             </div>
-            <div className="p-4 sm:p-5 border-b border-l border-line text-center text-xs font-mono uppercase tracking-wider text-cream/40">
+            <div className="p-4 sm:p-5 border-b border-l border-line text-center text-xs font-mono uppercase tracking-wider text-cream/70">
               YouTube / TikTok
             </div>
-            <div className="p-4 sm:p-5 border-b border-l border-line text-center text-xs font-mono uppercase tracking-wider text-cream/40">
+            <div className="p-4 sm:p-5 border-b border-l border-line text-center text-xs font-mono uppercase tracking-wider text-cream/70">
               Other Skools
             </div>
 

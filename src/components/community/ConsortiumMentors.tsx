@@ -94,10 +94,10 @@ export function ConsortiumMentors() {
         </div>
 
         <div className="mt-12 text-center max-w-2xl mx-auto">
-          <p className="text-xs text-cream/45 font-mono uppercase tracking-wider">
+          <p className="text-xs text-cream/70 font-mono uppercase tracking-wider">
             Mentor credentials sourced from public profiles and internal records
           </p>
-          <p className="mt-3 text-xs text-cream/40 leading-relaxed">
+          <p className="mt-3 text-xs text-cream/65 leading-relaxed">
             Mentor availability and session formats are subject to scheduling. No specific
             mentor is guaranteed at any specific session.
           </p>
