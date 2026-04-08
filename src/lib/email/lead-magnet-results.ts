@@ -418,3 +418,152 @@ function getAuditRecommendations(score: number): Array<{ title: string; descript
     },
   ]
 }
+
+// ─── AI Operator Collective: Business AI Audit (inline delivery) ────────────
+
+const COLLECTIVE_FROM = "AI Operator Collective <irtaza@modern-amenities.com>"
+const COLLECTIVE_BASE = "https://aioperatorcollective.com"
+const COLLECTIVE_APPLY = `${COLLECTIVE_BASE}/#apply`
+
+interface AIOpportunityShape {
+  rank: number
+  title: string
+  problem: string
+  solution: string
+}
+
+interface OpportunityReportShape {
+  companyName?: string
+  domain?: string
+  opportunityScore?: number
+  opportunities?: AIOpportunityShape[]
+  priorityMove?: { title?: string; rationale?: string; firstStep?: string }
+}
+
+export async function sendBusinessAIAuditEmail(params: {
+  to: string
+  name: string
+  resultsUrl: string
+  data?: Record<string, unknown>
+  results?: Record<string, unknown>
+}) {
+  const safeName = escapeHtml(params.name?.split(" ")[0] ?? "")
+  const greeting = safeName ? `Hey ${safeName},` : "Hey there,"
+
+  const report = (params.results?.report ?? null) as OpportunityReportShape | null
+  const companyName = escapeHtml(report?.companyName ?? "your company")
+  const score = report?.opportunityScore ?? 50
+  const topOpportunities = (report?.opportunities ?? []).slice(0, 3)
+  const priorityMove = report?.priorityMove
+
+  const opportunityHtml = topOpportunities
+    .map(
+      (opp, i) => `
+    <div style="background:#F9FAFB;border-left:3px solid #C4972A;border-radius:6px;padding:18px 22px;margin:0 0 14px;">
+      <p style="margin:0 0 4px;font-size:11px;font-weight:700;color:#C4972A;text-transform:uppercase;letter-spacing:0.08em;">Opportunity 0${i + 1}</p>
+      <p style="margin:0 0 6px;font-size:15px;font-weight:700;color:#111827;">${escapeHtml(opp.title)}</p>
+      <p style="margin:0;font-size:13px;color:#4B5563;line-height:1.65;">${escapeHtml(opp.solution)}</p>
+    </div>`
+    )
+    .join("")
+
+  const body = `
+    ${h1(`${companyName}'s AI Opportunity Report is ready.`)}
+    <p style="margin:0 0 18px;font-size:15px;color:#4B5563;line-height:1.7;">${greeting} we just finished scanning your site, mapping it against your industry, and identifying the highest-leverage AI moves your team should be running. Here's the short version.</p>
+
+    <div style="background:#0b0d12;border:1px solid #C4972A;border-radius:10px;padding:22px 24px;margin:0 0 24px;">
+      <p style="margin:0 0 6px;font-size:11px;font-weight:700;color:#C4972A;text-transform:uppercase;letter-spacing:0.12em;">Opportunity Score</p>
+      <p style="margin:0;font-size:42px;font-weight:800;color:#F0EBE0;line-height:1;">${score}<span style="font-size:18px;color:#9CA3AF;">/100</span></p>
+      <p style="margin:8px 0 0;font-size:12px;color:#9CA3AF;">Higher = more high-leverage AI opportunities we found in your business.</p>
+    </div>
+
+    ${
+      priorityMove?.title
+        ? `<div style="background:#FEF2F2;border-left:4px solid #C4972A;border-radius:6px;padding:18px 22px;margin:0 0 24px;">
+            <p style="margin:0 0 6px;font-size:11px;font-weight:700;color:#C4972A;text-transform:uppercase;letter-spacing:0.08em;">Your priority move</p>
+            <p style="margin:0 0 8px;font-size:16px;font-weight:700;color:#111827;line-height:1.35;">${escapeHtml(priorityMove.title)}</p>
+            ${priorityMove.firstStep ? `<p style="margin:0;font-size:13px;color:#4B5563;line-height:1.65;"><strong style="color:#111827;">First step this week:</strong> ${escapeHtml(priorityMove.firstStep)}</p>` : ""}
+          </div>`
+        : ""
+    }
+
+    ${opportunityHtml ? `${p("Top 3 opportunities (your full report has more):")}${opportunityHtml}` : ""}
+
+    ${btn("Open my full report", params.resultsUrl)}
+
+    ${divider()}
+
+    ${p(`The audit tells you what to build. The hard part is shipping it inside a real business with a real team. That's the entire reason the AI Operator Collective exists — operators who've already shipped what you're trying to build, workshopping your specific rollout in a working community.`)}
+
+    <p style="margin:0 0 16px;font-size:15px;color:#4B5563;line-height:1.7;">If your team needs the implementation playbooks, the working tooling, and the network of operators behind the report — apply below. Application-only, reviewed by a real operator within 24 hours.</p>
+
+    ${btn("Apply to the AI Operator Collective", COLLECTIVE_APPLY)}
+
+    ${divider()}
+
+    <p style="margin:0 0 6px;font-size:13px;color:#4B5563;line-height:1.65;">Questions? Just reply to this email — it goes straight to me, not a ticket queue.</p>
+    <p style="margin:0;font-size:13px;color:#4B5563;line-height:1.65;">— The AI Operator Collective Team<br /><span style="color:#9CA3AF;font-size:12px;">Powered by AIMS · Operated by Modern Amenities LLC</span></p>
+
+    <p style="margin:24px 0 0;font-size:11px;color:#9CA3AF;line-height:1.55;font-style:italic;">Disclosure: The AI Operator Collective makes no income, earnings, or client outcome claims. Tool capabilities and pricing change frequently — verify before purchase. Your results depend entirely on your own execution, market, and effort.</p>
+  `
+
+  return sendTrackedEmail({
+    from: COLLECTIVE_FROM,
+    to: params.to,
+    replyTo: REPLY_TO,
+    subject: `Your AI Opportunity Report for ${report?.companyName ?? "your business"}`,
+    html: emailLayout(body, `Your AI opportunity report is ready — ${topOpportunities.length} high-impact moves identified.`, params.to),
+    serviceArm: "ai-operator-collective",
+  })
+}
+
+// ─── AI Operator Collective: W-2 Playbook (inline delivery) ─────────────────
+
+export async function sendW2PlaybookEmail(params: {
+  to: string
+  name: string
+  resultsUrl: string
+  data?: Record<string, unknown>
+}) {
+  const safeName = escapeHtml(params.name?.split(" ")[0] ?? "")
+  const greeting = safeName ? `Hey ${safeName},` : "Hey there,"
+  const playbookUrl = `${COLLECTIVE_BASE}/tools/ai-playbook`
+
+  const body = `
+    ${h1("The AI Operator Playbook is yours.")}
+    <p style="margin:0 0 18px;font-size:15px;color:#4B5563;line-height:1.7;">${greeting} thanks for grabbing the playbook. It's everything we'd tell a corporate operator who came to us asking how to turn their domain expertise into an AI services business — without quitting their day job until the math works.</p>
+
+    <div style="background:#0b0d12;border:1px solid #C4972A;border-radius:10px;padding:22px 24px;margin:0 0 24px;">
+      <p style="margin:0 0 6px;font-size:11px;font-weight:700;color:#C4972A;text-transform:uppercase;letter-spacing:0.12em;">What's inside</p>
+      <p style="margin:0 0 6px;font-size:15px;color:#F0EBE0;line-height:1.6;">Twelve specific plays. Tools, scripts, pricing structures. The same plays AIMS portfolio operators run before they leave their W-2.</p>
+    </div>
+
+    ${p("The full playbook lives on the web (always up to date) and you can re-read it any time:")}
+
+    ${btn("Open the playbook", playbookUrl)}
+
+    ${divider()}
+
+    ${p("Over the next two weeks I'll send you the deeper plays we don't publish on the public page — the ones that compound when you actually run them in sequence. No spam, just the unfiltered version.")}
+
+    ${p(`If you want the live community where operators workshop these plays together, the AI Operator Collective is application-only and runs cohorts twice a year. No payment to apply, no pitch calls, no calendar tag — just an honest fit assessment.`)}
+
+    ${btn("Apply to the AI Operator Collective", COLLECTIVE_APPLY)}
+
+    ${divider()}
+
+    <p style="margin:0 0 6px;font-size:13px;color:#4B5563;line-height:1.65;">Questions? Just reply to this email — it goes straight to me.</p>
+    <p style="margin:0;font-size:13px;color:#4B5563;line-height:1.65;">— The AI Operator Collective Team<br /><span style="color:#9CA3AF;font-size:12px;">Powered by AIMS · Operated by Modern Amenities LLC</span></p>
+
+    <p style="margin:24px 0 0;font-size:11px;color:#9CA3AF;line-height:1.55;font-style:italic;">Disclosure: The AI Operator Collective makes no income, earnings, or client outcome claims. Your results depend entirely on your own execution, market, and effort.</p>
+  `
+
+  return sendTrackedEmail({
+    from: COLLECTIVE_FROM,
+    to: params.to,
+    replyTo: REPLY_TO,
+    subject: "The AI Operator Playbook (twelve plays inside)",
+    html: emailLayout(body, "Your AI Operator Playbook is ready — twelve specific plays for W-2 operators.", params.to),
+    serviceArm: "ai-operator-collective",
+  })
+}

@@ -4,7 +4,7 @@ import { createLeadMagnetSubmission } from "@/lib/db/queries"
 import { formRatelimit, getIp } from "@/lib/ratelimit"
 import { sendLeadMagnetResults } from "@/lib/email"
 import { queueEmailSequence } from "@/lib/email/queue"
-import { sendQuizResultsEmail, sendCalculatorResultsEmail, sendAuditResultsEmail, sendCreditScoreEmail, sendOpsAuditEmail } from "@/lib/email/lead-magnet-results"
+import { sendQuizResultsEmail, sendCalculatorResultsEmail, sendAuditResultsEmail, sendCreditScoreEmail, sendOpsAuditEmail, sendW2PlaybookEmail, sendBusinessAIAuditEmail } from "@/lib/email/lead-magnet-results"
 import { db } from "@/lib/db"
 import { notifyNewLead, notify } from "@/lib/notifications"
 import { createCloseLead } from "@/lib/close"
@@ -19,6 +19,8 @@ const submitSchema = z.object({
     "STACK_CONFIGURATOR",
     "BUSINESS_CREDIT_SCORE",
     "EXECUTIVE_OPS_AUDIT",
+    "W2_PLAYBOOK",
+    "BUSINESS_AI_AUDIT",
   ]),
   email: z.string().email(),
   name: z.string().optional(),
@@ -70,14 +72,27 @@ function scoreToTier(score: number | undefined, type: string): {
     if (s < 70) return { score: 55, tier: "warm", priority: "MEDIUM", reason: `Moderate AI readiness (${s}/100) - growing awareness` }
     return { score: 35, tier: "cold", priority: "LOW", reason: `High AI readiness (${s}/100) - already advanced` }
   }
+  if (type === "W2_PLAYBOOK") {
+    // W-2 playbook is a content download — content-stage lead, no pain signal yet
+    return { score: 60, tier: "warm", priority: "MEDIUM", reason: "W-2 AI Operator Playbook downloaded — career-pivot ICP" }
+  }
+  if (type === "BUSINESS_AI_AUDIT") {
+    // opportunityScore (0-100): higher = more gaps = more pain = hotter lead
+    const s = score ?? 50
+    if (s >= 70) return { score: 92, tier: "hot", priority: "HIGH", reason: `Severe AI gaps identified (${s}/100 opportunity score) — 5+ high-impact opportunities, strong buying signal` }
+    if (s >= 40) return { score: 72, tier: "warm", priority: "MEDIUM", reason: `Moderate AI gaps (${s}/100 opportunity score) — clear improvement opportunities` }
+    return { score: 45, tier: "cold", priority: "LOW", reason: `Already AI-mature (${s}/100 opportunity score) — low immediate need` }
+  }
   return { score: 50, tier: "warm", priority: "MEDIUM", reason: "Lead magnet completed" }
 }
 
 // Map type → sequence key
-const SEQUENCE_MAP: Record<string, "post-quiz" | "post-calculator" | "post-audit"> = {
+const SEQUENCE_MAP: Record<string, "post-quiz" | "post-calculator" | "post-audit" | "w2-playbook" | "business-ai-audit"> = {
   AI_READINESS_QUIZ: "post-quiz",
   ROI_CALCULATOR: "post-calculator",
   WEBSITE_AUDIT: "post-audit",
+  W2_PLAYBOOK: "w2-playbook",
+  BUSINESS_AI_AUDIT: "business-ai-audit",
 }
 
 export async function POST(req: Request) {
@@ -186,7 +201,7 @@ export async function POST(req: Request) {
     }
 
     // Build results URL - dedicated page for quiz/calculator/audit, generic for others
-    const RESULTS_PAGE_TYPES = new Set(["ai-readiness-quiz", "roi-calculator", "website-audit", "business-credit-score", "executive-ops-audit"])
+    const RESULTS_PAGE_TYPES = new Set(["ai-readiness-quiz", "roi-calculator", "website-audit", "business-credit-score", "executive-ops-audit", "business-ai-audit"])
     const resultsUrl = RESULTS_PAGE_TYPES.has(typeSlug)
       ? `${appUrl}/tools/${typeSlug}/results/${submission.id}`
       : `${appUrl}/tools/${typeSlug}`
@@ -225,6 +240,16 @@ export async function POST(req: Request) {
       case "EXECUTIVE_OPS_AUDIT":
         await sendOpsAuditEmail(detailedEmailParams).catch(
           (err) => logger.error("Failed to send ops audit email", err)
+        )
+        break
+      case "W2_PLAYBOOK":
+        await sendW2PlaybookEmail(detailedEmailParams).catch(
+          (err) => logger.error("Failed to send W-2 playbook email", err)
+        )
+        break
+      case "BUSINESS_AI_AUDIT":
+        await sendBusinessAIAuditEmail(detailedEmailParams).catch(
+          (err) => logger.error("Failed to send business AI audit email", err)
         )
         break
       default:

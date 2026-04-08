@@ -4,6 +4,8 @@ import { getResend, sendTrackedEmail, emailLayout } from "@/lib/email"
 import { logCronExecution } from "@/lib/cron-log"
 import { logger } from "@/lib/logger"
 import { buildOperatorVaultEmail } from "@/lib/email/community-sequence"
+import { buildBusinessAIAuditEmail } from "@/lib/email/business-audit-sequence"
+import { buildW2PlaybookEmail } from "@/lib/email/w2-playbook-sequence"
 
 export const maxDuration = 60
 
@@ -49,27 +51,41 @@ export async function GET(req: Request) {
           continue
         }
 
-        // The operator-vault drip has its own template builder and its own from-address
-        // so community subscribers see "AI Operator Collective" in their inbox, not "AIMS".
+        // The Collective sequences (operator-vault, business-ai-audit, w2-playbook)
+        // each have a dedicated template builder and ship from the AI Operator
+        // Collective sender so subscribers see the right brand in their inbox.
         // Routed separately to keep the AIMS builder untouched.
-        const isOperatorVault = item.sequenceKey === "operator-vault"
-        const emailContent = isOperatorVault
-          ? buildOperatorVaultEmail(item.emailIndex, item.metadata as Record<string, unknown>)
-          : buildEmailContent(item.sequenceKey, item.emailIndex, item.metadata as Record<string, unknown>)
+        const meta = item.metadata as Record<string, unknown>
+        let emailContent: EmailContent | null = null
+        let isCollectiveSequence = false
+
+        if (item.sequenceKey === "operator-vault") {
+          emailContent = buildOperatorVaultEmail(item.emailIndex, meta)
+          isCollectiveSequence = true
+        } else if (item.sequenceKey === "business-ai-audit") {
+          emailContent = buildBusinessAIAuditEmail(item.emailIndex, meta)
+          isCollectiveSequence = true
+        } else if (item.sequenceKey === "w2-playbook") {
+          emailContent = buildW2PlaybookEmail(item.emailIndex, meta)
+          isCollectiveSequence = true
+        } else {
+          emailContent = buildEmailContent(item.sequenceKey, item.emailIndex, meta)
+        }
+
         if (!emailContent) {
           await db.emailQueueItem.update({ where: { id: item.id }, data: { status: "cancelled" } })
           continue
         }
 
         await sendTrackedEmail({
-          from: isOperatorVault
+          from: isCollectiveSequence
             ? "AI Operator Collective <irtaza@modern-amenities.com>"
             : "AIMS <irtaza@modern-amenities.com>",
           to: item.recipientEmail,
           replyTo: "irtaza@modern-amenities.com",
           subject: emailContent.subject,
-          html: isOperatorVault ? emailLayout(emailContent.html, emailContent.subject) : emailContent.html,
-          serviceArm: isOperatorVault ? "ai-operator-collective" : undefined,
+          html: isCollectiveSequence ? emailLayout(emailContent.html, emailContent.subject) : emailContent.html,
+          serviceArm: isCollectiveSequence ? "ai-operator-collective" : undefined,
         })
 
         await db.emailQueueItem.update({

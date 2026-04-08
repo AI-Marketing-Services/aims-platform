@@ -429,6 +429,20 @@ export const EMAIL_SEQUENCES = {
       { delay: 14, subject: "Last call — alpha cohort review window is closing", templateKey: "operator-vault-closing" },
     ],
   },
+  "business-ai-audit": {
+    name: "Business AI Audit Follow-up",
+    emails: [
+      { delay: 5, subject: "Your in-house team vs. an Operator Collective member", templateKey: "business-audit-build-vs-buy" },
+      { delay: 12, subject: "Last note from the Collective — then I'll stop emailing", templateKey: "business-audit-closing" },
+    ],
+  },
+  "w2-playbook": {
+    name: "W-2 Playbook Follow-up",
+    emails: [
+      { delay: 5, subject: "Why most W-2 operators stall at $2k/mo (and how to break through)", templateKey: "w2-playbook-stall" },
+      { delay: 12, subject: "Last play, then I'll stop emailing you", templateKey: "w2-playbook-closing" },
+    ],
+  },
 } as const
 
 export type SequenceKey = keyof typeof EMAIL_SEQUENCES

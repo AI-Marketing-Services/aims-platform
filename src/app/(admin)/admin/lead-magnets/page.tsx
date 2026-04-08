@@ -18,6 +18,10 @@ const LEAD_MAGNET_TYPES = [
   "WEBSITE_AUDIT",
   "SEGMENT_EXPLORER",
   "STACK_CONFIGURATOR",
+  "BUSINESS_CREDIT_SCORE",
+  "EXECUTIVE_OPS_AUDIT",
+  "W2_PLAYBOOK",
+  "BUSINESS_AI_AUDIT",
 ]
 
 const TYPE_LABEL: Record<string, string> = {
@@ -26,6 +30,10 @@ const TYPE_LABEL: Record<string, string> = {
   WEBSITE_AUDIT: "Website Audit",
   SEGMENT_EXPLORER: "Segment Explorer",
   STACK_CONFIGURATOR: "Stack Configurator",
+  BUSINESS_CREDIT_SCORE: "Business Credit Score",
+  EXECUTIVE_OPS_AUDIT: "Executive Ops Audit",
+  W2_PLAYBOOK: "AI Operator Playbook (W-2)",
+  BUSINESS_AI_AUDIT: "AI Opportunity Audit (Business)",
 }
 
 export default async function AdminLeadMagnetsPage() {
