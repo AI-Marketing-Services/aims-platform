@@ -419,6 +419,16 @@ export const EMAIL_SEQUENCES = {
       { delay: 14, subject: "How partners are selling AIMS", templateKey: "partner-case-study" },
     ],
   },
+  "operator-vault": {
+    name: "AI Operator Vault Drip",
+    emails: [
+      { delay: 1, subject: "Chapter 2: The cold email sequence AIMS actually uses", templateKey: "operator-vault-ch2" },
+      { delay: 3, subject: "Chapter 3: The discovery script that books follow-up calls", templateKey: "operator-vault-ch3" },
+      { delay: 6, subject: "Chapter 4: Pricing in ranges + the MSA we pre-filled for you", templateKey: "operator-vault-ch4" },
+      { delay: 10, subject: "Chapter 5: The delivery playbook that turns month 1 into year 1", templateKey: "operator-vault-ch5" },
+      { delay: 14, subject: "Last call — alpha cohort review window is closing", templateKey: "operator-vault-closing" },
+    ],
+  },
 } as const
 
 export type SequenceKey = keyof typeof EMAIL_SEQUENCES

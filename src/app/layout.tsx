@@ -72,6 +72,11 @@ export default function RootLayout({
         <link rel="preconnect" href="https://clerk.aimseos.com" />
         <link rel="dns-prefetch" href="https://player.vimeo.com" />
         <link rel="dns-prefetch" href="https://api.anthropic.com" />
+        {/* IDPixel — anonymous visitor identification for retargeting the bounced traffic. */}
+        <script
+          src="https://cdn.idpixel.app/v1/idp-analytics-69d59af7d233fe5c1d74bf6d.min.js"
+          defer
+        />
       </head>
       <body className="min-h-screen bg-background font-sans antialiased grain-overlay">
         <ClerkProvider

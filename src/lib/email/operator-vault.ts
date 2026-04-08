@@ -1,4 +1,5 @@
 import { sendTrackedEmail, escapeHtml, emailLayout, h1, p, btn, divider } from "./index"
+import { getCommunityInviteUrl } from "./community-sequence"
 
 const FROM_EMAIL = "AI Operator Collective <irtaza@modern-amenities.com>"
 const REPLY_TO = "irtaza@modern-amenities.com"
@@ -17,6 +18,7 @@ export async function sendOperatorVaultEmail(params: { to: string; name: string 
   const safeName = escapeHtml(params.name || "").trim()
   const greeting = safeName ? `${safeName.split(" ")[0]}, welcome in.` : "Welcome in."
   const applyUrl = "https://aioperatorcollective.com/#apply"
+  const inviteUrl = getCommunityInviteUrl()
 
   const body = `
     ${h1(greeting)}
@@ -62,12 +64,23 @@ export async function sendOperatorVaultEmail(params: { to: string; name: string 
 
     ${divider()}
 
+    <div style="background:#0b0d12;border:1px solid #C4972A;border-radius:10px;padding:24px 26px;margin:0 0 24px;">
+      <p style="margin:0 0 6px;font-size:11px;font-weight:800;color:#C4972A;text-transform:uppercase;letter-spacing:0.12em;">Your community invite</p>
+      <p style="margin:0 0 12px;font-size:19px;font-weight:800;color:#F0EBE0;line-height:1.3;">Jump into the operator community.</p>
+      <p style="margin:0 0 18px;font-size:14px;color:#9CA3AF;line-height:1.65;">
+        This is where the active cohort members, the consortium operators, and the admin team live day-to-day.
+        Bring a question, a half-built offer, or just lurk until you're ready to post. You're in.
+      </p>
+      <a href="${inviteUrl}" style="display:inline-block;background:#C4972A;color:#0b0d12;padding:13px 28px;border-radius:6px;text-decoration:none;font-weight:800;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;">Accept my invite</a>
+      <p style="margin:12px 0 0;font-size:11px;color:#6B7280;font-style:italic;">Save this email — the invite link works any time.</p>
+    </div>
+
     <div style="background:#FEF2F2;border-radius:8px;padding:22px 24px;margin:0 0 24px;">
-      <p style="margin:0 0 10px;font-size:13px;font-weight:800;color:#C4972A;text-transform:uppercase;letter-spacing:0.08em;">Chapter 2 drops next week</p>
+      <p style="margin:0 0 10px;font-size:13px;font-weight:800;color:#C4972A;text-transform:uppercase;letter-spacing:0.08em;">Chapter 2 drops tomorrow</p>
       <p style="margin:0;font-size:14px;color:#4B5563;line-height:1.65;">
-        Next week we release Chapter 2 of the Vault: the exact cold email sequence structure the AIMS team uses,
-        the discovery script template, and the pre-filled MSA / SOW pulled from real AIMS engagements. You'll get
-        it in your inbox automatically — nothing to do.
+        Tomorrow we release Chapter 2: the exact cold email sequence structure the AIMS team uses. Then Chapters
+        3–5 over the next 10 days — discovery scripts, the pre-filled MSA, and the delivery playbook. You don't
+        have to do anything. It all lands in your inbox automatically.
       </p>
     </div>
 

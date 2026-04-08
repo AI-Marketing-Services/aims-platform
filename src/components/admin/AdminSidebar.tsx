@@ -20,6 +20,7 @@ import {
   Settings,
   Mail,
   MailOpen,
+  Inbox,
   ClipboardCheck,
   Timer,
   MessageSquare,
@@ -55,6 +56,7 @@ const ADMIN_NAV = [
     items: [
       { label: "Revenue", href: "/admin/revenue", icon: DollarSign },
       { label: "Lead Magnets", href: "/admin/lead-magnets", icon: FileBarChart },
+      { label: "Community Sequence", href: "/admin/community-sequence", icon: Inbox },
     ],
   },
   {

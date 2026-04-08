@@ -6,6 +6,7 @@ import { logger } from "@/lib/logger"
 import { notify } from "@/lib/notifications"
 import { createCloseLead } from "@/lib/close"
 import { sendOperatorVaultEmail } from "@/lib/email/operator-vault"
+import { queueEmailSequence } from "@/lib/email/queue"
 
 const schema = z.object({
   name: z.string().min(1).max(120),
@@ -68,9 +69,16 @@ export async function POST(req: Request) {
 
     // Fire the AI Operator Playbook Vault email immediately — this is the lead magnet
     // promised on the landing page and the entire reason people are submitting the form.
+    // Chapter 1 + community invite go out right now. Chapters 2–5 + closing are queued
+    // below and delivered by the process-email-queue cron.
     // Intentionally not awaited so the API responds fast; failures are logged.
     sendOperatorVaultEmail({ to: email, name })
       .catch((err) => logger.error("Failed to send operator vault email", err))
+
+    // Enroll the lead in the drip sequence. Idempotent — queueEmailSequence no-ops
+    // if this recipient already has a pending sequence with the same key.
+    queueEmailSequence(email, "operator-vault", { name, source: source ?? "landing" })
+      .catch((err) => logger.error("Failed to enroll in operator-vault sequence", err))
 
     if (deal) {
       await notify({

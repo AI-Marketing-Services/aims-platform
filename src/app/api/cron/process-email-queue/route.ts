@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { getResend, sendTrackedEmail } from "@/lib/email"
+import { getResend, sendTrackedEmail, emailLayout } from "@/lib/email"
 import { logCronExecution } from "@/lib/cron-log"
 import { logger } from "@/lib/logger"
+import { buildOperatorVaultEmail } from "@/lib/email/community-sequence"
 
 export const maxDuration = 60
 
@@ -48,17 +49,27 @@ export async function GET(req: Request) {
           continue
         }
 
-        const emailContent = buildEmailContent(item.sequenceKey, item.emailIndex, item.metadata as Record<string, unknown>)
+        // The operator-vault drip has its own template builder and its own from-address
+        // so community subscribers see "AI Operator Collective" in their inbox, not "AIMS".
+        // Routed separately to keep the AIMS builder untouched.
+        const isOperatorVault = item.sequenceKey === "operator-vault"
+        const emailContent = isOperatorVault
+          ? buildOperatorVaultEmail(item.emailIndex, item.metadata as Record<string, unknown>)
+          : buildEmailContent(item.sequenceKey, item.emailIndex, item.metadata as Record<string, unknown>)
         if (!emailContent) {
           await db.emailQueueItem.update({ where: { id: item.id }, data: { status: "cancelled" } })
           continue
         }
 
         await sendTrackedEmail({
-          from: "AIMS <irtaza@modern-amenities.com>",
+          from: isOperatorVault
+            ? "AI Operator Collective <irtaza@modern-amenities.com>"
+            : "AIMS <irtaza@modern-amenities.com>",
           to: item.recipientEmail,
+          replyTo: "irtaza@modern-amenities.com",
           subject: emailContent.subject,
-          html: emailContent.html,
+          html: isOperatorVault ? emailLayout(emailContent.html, emailContent.subject) : emailContent.html,
+          serviceArm: isOperatorVault ? "ai-operator-collective" : undefined,
         })
 
         await db.emailQueueItem.update({
