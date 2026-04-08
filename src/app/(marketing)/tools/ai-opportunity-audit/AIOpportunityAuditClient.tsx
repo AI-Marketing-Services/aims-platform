@@ -155,11 +155,31 @@ export default function AIOpportunityAuditClient() {
       }),
     })
       .then(async (res) => {
+        // Only try to parse JSON if the server actually sent JSON — otherwise show
+        // the HTTP status so we don't leak raw HTML "<!DOCTYPE..." errors to users.
+        const contentType = res.headers.get("content-type") ?? ""
+        const isJson = contentType.includes("application/json")
+
         if (!res.ok) {
-          const data = await res.json().catch(() => ({}))
-          throw new Error(data?.error ?? "Failed to generate report")
+          if (isJson) {
+            const data = await res.json().catch(() => ({}))
+            throw new Error(data?.error ?? `Server returned ${res.status}`)
+          }
+          throw new Error(
+            `We couldn't reach the audit service (status ${res.status}). Please try again in a moment.`
+          )
         }
+
+        if (!isJson) {
+          throw new Error(
+            "We got an unexpected response from the audit service. Please try again."
+          )
+        }
+
         const data = await res.json()
+        if (!data?.report) {
+          throw new Error("The audit service returned an empty report. Please try again.")
+        }
         return data.report as OpportunityReport
       })
       .catch((err) => {
