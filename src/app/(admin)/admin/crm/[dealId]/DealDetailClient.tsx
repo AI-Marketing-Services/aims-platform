@@ -97,6 +97,7 @@ interface Props {
   utmMedium?: string | null
   utmCampaign?: string | null
   createdAt?: string
+  submissionResultsUrl?: string | null
 }
 
 const ACTIVITY_ICONS: Record<ActivityType, React.ReactNode> = {
@@ -242,6 +243,7 @@ export function DealDetailClient({
   utmMedium,
   utmCampaign,
   createdAt,
+  submissionResultsUrl,
 }: Props) {
   const router = useRouter()
   const [stage, setStage] = useState(currentStage)
@@ -815,9 +817,19 @@ export function DealDetailClient({
           </div>
 
           {/* Attribution */}
-          {(source || channelTag || utmSource || utmMedium || utmCampaign || createdAt) && (
+          {(source || channelTag || utmSource || utmMedium || utmCampaign || createdAt || submissionResultsUrl) && (
             <div className="bg-card border border-border rounded-xl p-5">
               <h2 className="text-sm font-semibold text-foreground mb-3">Attribution</h2>
+              {submissionResultsUrl && (
+                <a
+                  href={submissionResultsUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1.5 mb-3 text-xs font-semibold text-[#C4972A] hover:underline"
+                >
+                  View full lead magnet report →
+                </a>
+              )}
               <div className="space-y-2 text-xs">
                 {source && (
                   <div className="flex items-center justify-between">

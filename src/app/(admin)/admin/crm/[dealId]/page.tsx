@@ -1,8 +1,19 @@
 import { auth } from "@clerk/nextjs/server"
 import { redirect, notFound } from "next/navigation"
 import { getDealById } from "@/lib/db/queries"
+import { db } from "@/lib/db"
 import { DealDetailClient } from "./DealDetailClient"
 import { Breadcrumbs } from "@/components/shared/Breadcrumbs"
+
+// Lead magnet types that have a public results page at /tools/{slug}/results/{id}
+const TYPES_WITH_RESULTS_PAGE = new Set([
+  "AI_READINESS_QUIZ",
+  "ROI_CALCULATOR",
+  "WEBSITE_AUDIT",
+  "BUSINESS_CREDIT_SCORE",
+  "EXECUTIVE_OPS_AUDIT",
+  "BUSINESS_AI_AUDIT",
+])
 
 const STAGE_OPTIONS = [
   { value: "NEW_LEAD", label: "New Lead" },
@@ -39,6 +50,18 @@ export default async function AdminDealDetailPage({ params }: { params: Promise<
 
   const deal = await getDealById(dealId)
   if (!deal) notFound()
+
+  // Look up the linked lead magnet submission (if this deal came in via a tool)
+  // so the detail page can surface a "View full report" link.
+  const linkedSubmission = await db.leadMagnetSubmission.findFirst({
+    where: { dealId },
+    select: { id: true, type: true },
+    orderBy: { createdAt: "desc" },
+  }).catch(() => null)
+
+  const submissionResultsUrl = linkedSubmission && TYPES_WITH_RESULTS_PAGE.has(linkedSubmission.type)
+    ? `/tools/${linkedSubmission.type.toLowerCase().replace(/_/g, "-")}/results/${linkedSubmission.id}`
+    : null
 
   const activities = deal.activities.map((a) => ({
     id: a.id,
@@ -110,6 +133,7 @@ export default async function AdminDealDetailPage({ params }: { params: Promise<
         utmMedium={deal.utmMedium}
         utmCampaign={deal.utmCampaign}
         createdAt={deal.createdAt.toISOString()}
+        submissionResultsUrl={submissionResultsUrl}
       />
     </div>
   )

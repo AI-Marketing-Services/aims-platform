@@ -10,6 +10,10 @@ const TYPE_LABEL: Record<string, string> = {
   WEBSITE_AUDIT: "Website Audit",
   SEGMENT_EXPLORER: "Segment Explorer",
   STACK_CONFIGURATOR: "Stack Configurator",
+  BUSINESS_CREDIT_SCORE: "Business Credit Score",
+  EXECUTIVE_OPS_AUDIT: "Executive Ops Audit",
+  W2_PLAYBOOK: "AI Operator Playbook",
+  BUSINESS_AI_AUDIT: "AI Opportunity Audit",
 }
 
 const TYPE_COLOR: Record<string, string> = {
@@ -18,6 +22,26 @@ const TYPE_COLOR: Record<string, string> = {
   WEBSITE_AUDIT: "text-purple-400 bg-purple-500/10 border-purple-500/20",
   SEGMENT_EXPLORER: "text-orange-400 bg-orange-500/10 border-orange-500/20",
   STACK_CONFIGURATOR: "text-yellow-400 bg-yellow-500/10 border-yellow-500/20",
+  BUSINESS_CREDIT_SCORE: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
+  EXECUTIVE_OPS_AUDIT: "text-cyan-400 bg-cyan-500/10 border-cyan-500/20",
+  W2_PLAYBOOK: "text-pink-400 bg-pink-500/10 border-pink-500/20",
+  BUSINESS_AI_AUDIT: "text-[#C4972A] bg-[#C4972A]/10 border-[#C4972A]/30",
+}
+
+// Lead magnet types that have a public /tools/*/results/[submissionId] page
+const TYPES_WITH_RESULTS_PAGE = new Set([
+  "AI_READINESS_QUIZ",
+  "ROI_CALCULATOR",
+  "WEBSITE_AUDIT",
+  "BUSINESS_CREDIT_SCORE",
+  "EXECUTIVE_OPS_AUDIT",
+  "BUSINESS_AI_AUDIT",
+])
+
+function buildResultsUrl(type: string, id: string): string | null {
+  if (!TYPES_WITH_RESULTS_PAGE.has(type)) return null
+  const slug = type.toLowerCase().replace(/_/g, "-")
+  return `/tools/${slug}/results/${id}`
 }
 
 export interface SubmissionRow {
@@ -203,21 +227,31 @@ export function LeadMagnetTable({
                         <tr key={`${sub.id}-expanded`} className="bg-muted/20 border-b border-border/50">
                           <td colSpan={6} className="px-6 py-4">
                             <div className="space-y-2">
+                              <div className="flex flex-wrap items-center gap-3 mb-2">
+                                {buildResultsUrl(sub.type, sub.id) && (
+                                  <a
+                                    href={buildResultsUrl(sub.type, sub.id) ?? "#"}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#C4972A] hover:underline"
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    View full report →
+                                  </a>
+                                )}
+                                {sub.dealId && (
+                                  <a
+                                    href={`/admin/crm/${sub.dealId}`}
+                                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#C4972A] hover:underline"
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    Open deal in CRM →
+                                  </a>
+                                )}
+                              </div>
                               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
                                 Submission Data
                               </p>
-                              {sub.dealId && (
-                                <p className="text-xs text-muted-foreground mb-2">
-                                  Deal:{" "}
-                                  <a
-                                    href={`/admin/crm/${sub.dealId}`}
-                                    className="text-[#C4972A] hover:underline"
-                                    onClick={(e) => e.stopPropagation()}
-                                  >
-                                    View deal →
-                                  </a>
-                                </p>
-                              )}
                               <pre className="text-xs text-muted-foreground bg-muted/50 rounded-lg p-3 overflow-x-auto max-h-48 font-mono whitespace-pre-wrap break-words">
                                 {JSON.stringify(sub.data, null, 2)}
                               </pre>
