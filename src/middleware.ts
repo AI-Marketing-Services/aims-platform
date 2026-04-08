@@ -19,6 +19,10 @@ const isPublicRoute = createRouteMatcher([
   "/crm-onboarding(.*)",
   "/solutions(.*)",
   "/features(.*)",
+  "/privacy(.*)",
+  "/terms(.*)",
+  "/disclosures(.*)",
+  "/unsubscribe(.*)",
   "/sign-in(.*)",
   "/sign-up(.*)",
   "/api/webhooks(.*)",
@@ -32,6 +36,8 @@ const isPublicRoute = createRouteMatcher([
   "/api/ai/opportunity-audit(.*)",
   "/api/intake(.*)",
   "/api/health(.*)",
+  "/api/community/lead(.*)",
+  "/api/unsubscribe(.*)",
 ])
 
 const isAdminRoute = createRouteMatcher(["/admin(.*)"])
