@@ -102,9 +102,9 @@ export function PortalChatWidget({ firstName = "there", serviceCount = 0 }: Port
           <button
             onClick={() => { setOpen(true); setShowNudge(false); setNudgeDismissed(true) }}
             className="flex h-14 w-14 items-center justify-center rounded-full bg-card border border-border shadow-xl hover:shadow-2xl transition-all hover:scale-105 active:scale-95"
-            aria-label="AIMS Support"
+            aria-label="Open support chat"
           >
-            <Image src="/logo.png" alt="AIMS" width={28} height={28} className="h-7 w-7 object-contain" />
+            <Image src="/logo.png" alt="" width={28} height={28} className="h-7 w-7 object-contain" />
           </button>
         </div>
       )}
@@ -114,9 +114,9 @@ export function PortalChatWidget({ firstName = "there", serviceCount = 0 }: Port
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-card flex-shrink-0">
             <div className="flex items-center gap-2">
-              <Image src="/logo.png" alt="AIMS" width={20} height={20} className="object-contain" />
+              <Image src="/logo.png" alt="" width={20} height={20} className="object-contain" />
               <div>
-                <p className="text-sm font-semibold text-foreground">AIMS Support</p>
+                <p className="text-sm font-semibold text-foreground">Support</p>
                 <p className="text-[10px] text-muted-foreground">Ask about your services</p>
               </div>
             </div>
@@ -150,7 +150,7 @@ export function PortalChatWidget({ firstName = "there", serviceCount = 0 }: Port
                 <div key={m.id} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
                   {m.role === "assistant" && (
                     <div className="flex h-6 w-6 items-center justify-center rounded-full bg-card border border-border shadow-sm mr-2 mt-1 flex-shrink-0 overflow-hidden">
-                      <Image src="/logo.png" alt="AIMS" width={16} height={16} className="h-4 w-4 object-contain" />
+                      <Image src="/logo.png" alt="" width={16} height={16} className="h-4 w-4 object-contain" />
                     </div>
                   )}
                   <div
@@ -168,7 +168,7 @@ export function PortalChatWidget({ firstName = "there", serviceCount = 0 }: Port
             {isStreaming && (
               <div className="flex justify-start">
                 <div className="flex h-6 w-6 items-center justify-center rounded-full bg-card border border-border shadow-sm mr-2 mt-1 flex-shrink-0 overflow-hidden">
-                  <Image src="/logo.png" alt="AIMS" width={16} height={16} className="h-4 w-4 object-contain" />
+                  <Image src="/logo.png" alt="" width={16} height={16} className="h-4 w-4 object-contain" />
                 </div>
                 <div className="bg-card border border-border rounded-xl rounded-bl-sm px-3 py-2">
                   <Loader2 className="h-3.5 w-3.5 text-muted-foreground animate-spin" />

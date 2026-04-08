@@ -22,10 +22,10 @@ const FOOTER_LINKS = {
     { label: "Enterprise", href: "/industries/enterprise" },
   ],
   Company: [
-    { label: "About AIMS", href: "/about" },
+    { label: "About", href: "/about" },
     { label: "Case Studies", href: "/case-studies" },
     { label: "Blog", href: "/blog" },
-    { label: "Get Started", href: "/get-started" },
+    { label: "Apply to the Collective", href: "/#apply" },
   ],
 } as const
 
@@ -92,14 +92,17 @@ export function Footer() {
         {/* Bottom bar */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-border py-6">
           <p className="text-xs text-muted-foreground">
-            &copy; {new Date().getFullYear()} AI Managing Services. All rights reserved.
+            &copy; {new Date().getFullYear()} Modern Amenities LLC. All rights reserved.
           </p>
           <div className="flex gap-6">
-            <Link href="/about" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
-              About
+            <Link href="/privacy" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
+              Privacy
             </Link>
-            <Link href="/get-started" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
-              Contact
+            <Link href="/#disclosures" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
+              Disclosures
+            </Link>
+            <Link href="/unsubscribe" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
+              Unsubscribe
             </Link>
           </div>
         </div>

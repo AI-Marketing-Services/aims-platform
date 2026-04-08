@@ -32,8 +32,15 @@ export async function generateMetadata({ params }: Props) {
   const report = (results.report ?? null) as OpportunityReport | null
   if (!report) return { title: "AI Opportunity Audit | AI Operator Collective" }
   return {
-    title: `${report.companyName} — AI Opportunity Report`,
+    title: `${report.companyName} — AI Opportunity Report | AI Operator Collective`,
     description: report.executiveSummary?.slice(0, 160) ?? "Personalized AI integration report.",
+    openGraph: {
+      title: `${report.companyName} — AI Opportunity Report`,
+      description: report.executiveSummary?.slice(0, 160) ?? "Personalized AI integration report.",
+      images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+    },
+    // Unique personalized reports — keep out of search so they stay private-ish
+    robots: { index: false, follow: false },
   }
 }
 

@@ -16,7 +16,6 @@
  *   T+14d   → Final: alpha cohort review window closing
  *
  * The copy below is scaffold copy. Every subject line and body has a
- * // TODO(copy): marker so they're easy to find and refine later. The
  * community invite link is resolved from env at send time via getCommunityInviteUrl().
  */
 
@@ -131,7 +130,6 @@ export function buildOperatorVaultEmail(
     case "chapter-2-cold-email":
       return {
         subject: step.subject,
-        // TODO(copy): refine Chapter 2 copy once final vault content is written.
         html: section({
           greeting,
           kicker: "Chapter 02 · Cold Email",
@@ -161,7 +159,6 @@ export function buildOperatorVaultEmail(
     case "chapter-3-discovery":
       return {
         subject: step.subject,
-        // TODO(copy): refine Chapter 3 copy with the real AIMS discovery script.
         html: section({
           greeting,
           kicker: "Chapter 03 · Discovery",
@@ -191,7 +188,6 @@ export function buildOperatorVaultEmail(
     case "chapter-4-pricing-msa":
       return {
         subject: step.subject,
-        // TODO(copy): refine Chapter 4 with actual pricing calculator screenshots + real MSA excerpt.
         html: section({
           greeting,
           kicker: "Chapter 04 · Pricing & Paper",
@@ -221,7 +217,6 @@ export function buildOperatorVaultEmail(
     case "chapter-5-delivery":
       return {
         subject: step.subject,
-        // TODO(copy): refine Chapter 5 with retention / recurring revenue frameworks.
         html: section({
           greeting,
           kicker: "Chapter 05 · Delivery",
@@ -251,7 +246,6 @@ export function buildOperatorVaultEmail(
     case "cohort-closing":
       return {
         subject: step.subject,
-        // TODO(copy): refine cohort-closing with real deadline + seat count when available.
         html: section({
           greeting,
           kicker: "Final Notice",

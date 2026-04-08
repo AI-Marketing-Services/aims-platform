@@ -36,7 +36,7 @@ export default async function ResellerLayout({
       {/* Mobile top header */}
       <div className="lg:hidden flex items-center justify-between h-14 px-4 bg-deep border-b border-border sticky top-0 z-40">
         <Link href="/reseller/dashboard" className="flex items-center gap-2">
-          <Image src="/logo.png" alt="AIMS" width={32} height={32} className="object-contain h-7 w-7" />
+          <Image src="/logo.png" alt="" width={32} height={32} className="object-contain h-7 w-7" />
           <span className="text-[10px] font-medium text-amber-500 uppercase tracking-wider">Partner</span>
         </Link>
         <UserButton />
@@ -46,7 +46,7 @@ export default async function ResellerLayout({
         <aside className="hidden lg:flex w-64 flex-col border-r border-border bg-deep">
           <div className="flex h-16 items-center px-4 border-b border-border">
             <Link href="/reseller/dashboard" className="flex items-center gap-2.5">
-              <Image src="/logo.png" alt="AIMS" width={36} height={36} className="object-contain h-8 w-8" />
+              <Image src="/logo.png" alt="" width={36} height={36} className="object-contain h-8 w-8" />
               <span className="text-[10px] font-medium text-amber-500 uppercase tracking-wider">Partner</span>
             </Link>
           </div>

@@ -3,8 +3,9 @@ import type { Metadata } from "next"
 import UnsubscribeClient from "./UnsubscribeClient"
 
 export const metadata: Metadata = {
-  title: "Unsubscribe | AIMS",
-  description: "Unsubscribe from AIMS marketing emails.",
+  title: "Unsubscribe | AI Operator Collective",
+  description: "Unsubscribe from Collective emails.",
+  robots: { index: false, follow: false },
 }
 
 export default function UnsubscribePage() {
