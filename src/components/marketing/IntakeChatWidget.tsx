@@ -109,9 +109,9 @@ export function IntakeChatWidget() {
         <button
           onClick={() => setOpen(true)}
           className="fixed bottom-6 right-6 z-50 flex h-16 w-16 items-center justify-center rounded-full bg-[#141923] border border-[#C4972A]/30 shadow-xl hover:shadow-2xl hover:shadow-[#C4972A]/10 transition-all hover:scale-105 active:scale-95"
-          aria-label="Chat with AIMS"
+          aria-label="Open chat"
         >
-          <Image src="/logo.png" alt="AIMS" width={40} height={40} className="h-10 w-10 object-contain" />
+          <Image src="/logo.png" alt="" width={40} height={40} className="h-10 w-10 object-contain" />
         </button>
       )}
 
@@ -121,9 +121,9 @@ export function IntakeChatWidget() {
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-[#C4972A]/20 bg-[#0D0F14] flex-shrink-0">
             <div className="flex items-center gap-2">
-              <Image src="/logo.png" alt="AIMS" width={20} height={20} className="object-contain" />
+              <Image src="/logo.png" alt="" width={20} height={20} className="object-contain" />
               <div>
-                <p className="text-sm font-semibold text-[#F0EBE0]">AIMS</p>
+                <p className="text-sm font-semibold text-[#F0EBE0]">AI Operator Collective</p>
                 <p className="text-[10px] text-[#F0EBE0]/40">AI-powered growth partner</p>
               </div>
             </div>
@@ -184,7 +184,7 @@ export function IntakeChatWidget() {
                     <div key={m.id} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
                       {m.role === "assistant" && (
                         <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#141923] border border-[#C4972A]/20 shadow-sm mr-2 mt-1 flex-shrink-0 overflow-hidden">
-                          <Image src="/logo.png" alt="AIMS" width={16} height={16} className="h-4 w-4 object-contain" />
+                          <Image src="/logo.png" alt="" width={16} height={16} className="h-4 w-4 object-contain" />
                         </div>
                       )}
                       <div
@@ -202,7 +202,7 @@ export function IntakeChatWidget() {
                 {isStreaming && (
                   <div className="flex justify-start">
                     <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#141923] border border-[#C4972A]/20 shadow-sm mr-2 mt-1 flex-shrink-0 overflow-hidden">
-                      <Image src="/logo.png" alt="AIMS" width={16} height={16} className="h-4 w-4 object-contain" />
+                      <Image src="/logo.png" alt="" width={16} height={16} className="h-4 w-4 object-contain" />
                     </div>
                     <div className="bg-white/5 rounded-xl rounded-bl-sm px-3 py-2">
                       <Loader2 className="h-3.5 w-3.5 text-[#C4972A] animate-spin" />

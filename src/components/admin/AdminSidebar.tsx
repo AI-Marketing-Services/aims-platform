@@ -91,21 +91,18 @@ export function AdminSidebar() {
     >
       {/* Logo + Bell */}
       <div className="flex h-16 items-center justify-between px-4 border-b border-border">
-        <Link href="/admin/dashboard" className="flex items-center gap-2.5">
+        <Link href="/admin/dashboard" className="flex items-center gap-2.5" aria-label="Admin home">
           <Image
             src="/logo.png"
-            alt="AIMS"
+            alt=""
             width={36}
             height={36}
             className="shrink-0 object-contain h-8 w-8"
           />
           {!collapsed && (
-            <div className="flex items-center gap-1.5">
-              <span className="text-base font-serif tracking-tight text-cream">AIMS</span>
-              <span className="text-[10px] font-medium text-primary uppercase tracking-wider">
-                Admin
-              </span>
-            </div>
+            <span className="text-[10px] font-medium text-primary uppercase tracking-wider">
+              Admin
+            </span>
           )}
         </Link>
 

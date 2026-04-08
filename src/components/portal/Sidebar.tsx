@@ -51,9 +51,8 @@ export function PortalSidebar({ totalMrr = 0, hasUnread = false }: PortalSidebar
     >
       {/* Logo */}
       <div className="flex h-16 items-center px-4 border-b border-border">
-        <Link href="/" className="flex items-center gap-2.5">
-          <Image src="/logo.png" alt="AIMS" width={36} height={36} className="shrink-0 object-contain h-8 w-8" />
-          {!collapsed && <span className="text-base font-serif tracking-tight text-cream">AIMS</span>}
+        <Link href="/" className="flex items-center gap-2.5" aria-label="Home">
+          <Image src="/logo.png" alt="" width={36} height={36} className="shrink-0 object-contain h-8 w-8" />
         </Link>
       </div>
 
