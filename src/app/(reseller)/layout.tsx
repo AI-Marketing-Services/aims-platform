@@ -28,8 +28,13 @@ export default async function ResellerLayout({
 }: {
   children: React.ReactNode
 }) {
-  const { userId } = await auth()
+  const { userId, sessionClaims } = await auth()
   if (!userId) redirect("/sign-in")
+
+  const role = (sessionClaims?.metadata as { role?: string })?.role
+  if (!role || !["RESELLER", "ADMIN", "SUPER_ADMIN"].includes(role)) {
+    redirect("/portal/dashboard")
+  }
 
   return (
     <div className="min-h-screen bg-background text-foreground">

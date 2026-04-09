@@ -55,6 +55,7 @@ const ADMIN_NAV = [
     section: "Revenue",
     items: [
       { label: "Revenue", href: "/admin/revenue", icon: DollarSign },
+      { label: "Commissions", href: "/admin/commissions", icon: DollarSign },
       { label: "Lead Magnets", href: "/admin/lead-magnets", icon: FileBarChart },
       { label: "Community Sequence", href: "/admin/community-sequence", icon: Inbox },
     ],
