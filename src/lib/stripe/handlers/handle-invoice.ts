@@ -3,6 +3,7 @@ import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
 import { handleInvoicePaid } from "@/lib/stripe"
 import { sendRenewalEmail, sendPaymentFailedEmail } from "@/lib/email"
+import { getCommissionRate } from "@/lib/referrals/commission-config"
 
 /**
  * Handles invoice.paid events — logs payment activity and calculates
@@ -65,12 +66,7 @@ export async function handleInvoicePaidEvent(invoice: Stripe.Invoice) {
     })
     if (existingCommission) return
 
-    const commissionRates: Record<string, number> = {
-      AFFILIATE: 0.1,
-      COMMUNITY_PARTNER: 0.15,
-      RESELLER: 0.25,
-    }
-    const rate = commissionRates[referral.tier] ?? 0.2
+    const rate = getCommissionRate(referral.tier)
     const sourceAmount = invoice.amount_paid / 100
     const commissionAmount = sourceAmount * rate
 

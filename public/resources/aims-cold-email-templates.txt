@@ -1,0 +1,89 @@
+AIMS PARTNER — COLD EMAIL TEMPLATES
+Version 1.0
+
+These are proven subject lines and opening sequences for partners introducing
+AIMS to their own networks. Swap the {{variables}} for your own context and
+A/B test subject lines against your list.
+
+=================================================================
+SEQUENCE 1 — "One small ask" (founders/owners)
+=================================================================
+
+Subject A: Quick one, {{first_name}}?
+Subject B: {{company}} + AI operators
+Subject C: 14-day pilot idea for {{company}}
+
+Hey {{first_name}},
+
+Short one — I've been working with the team at AIMS, an AI services group
+that installs a done-for-you AI operator inside companies your size. They
+handle the setup, the tools, and the reporting.
+
+I think what they do would fit {{company}} surprisingly well. Mind if I make
+the intro? No pressure either way.
+
+— {{sender_name}}
+
+=================================================================
+SEQUENCE 2 — "Specific proof" (operators with a pipeline problem)
+=================================================================
+
+Subject A: Your {{channel}} numbers
+Subject B: Saw your {{pain_point}} note
+Subject C: 3 AIMS case studies for {{industry}}
+
+Hey {{first_name}},
+
+Noticed {{company}} is pushing hard on {{channel}}. I'm a partner with AIMS
+(they build AI-native operator teams for {{industry}} businesses) and I just
+saw a case study where they cut CAC on that exact channel by {{metric}}.
+
+Worth a 20-minute call? I can forward the deck before we talk if that's
+easier.
+
+— {{sender_name}}
+
+=================================================================
+SEQUENCE 3 — "Referral" (warm intros from existing clients)
+=================================================================
+
+Subject A: {{mutual_contact}} mentioned you
+Subject B: Intro from {{mutual_contact}}
+
+{{first_name}},
+
+{{mutual_contact}} suggested I reach out. I help operators like you plug in
+AIMS — a group of AI engineers who set up your marketing + sales ops on
+productized retainers. {{mutual_contact}} has been running with them for
+{{months}} months and thought you'd want to hear how.
+
+Got 15 minutes this week?
+
+— {{sender_name}}
+
+=================================================================
+SUBJECT LINE BANK (use with any sequence)
+=================================================================
+
+1.  One small ask, {{first_name}}?
+2.  {{company}} + AI operators
+3.  Saw your {{pain_point}} post
+4.  Quick intro — 14-day AIMS pilot
+5.  Did you see this? ({{metric}})
+6.  {{mutual_contact}} said to email you
+7.  Your Q{{quarter}} pipeline
+8.  {{industry}} ops question
+9.  Cut {{pain_point}} by {{metric}}?
+10. {{first_name}}, read this if {{pain_point}}
+
+=================================================================
+BEST PRACTICES
+=================================================================
+
+- Personalize at least the first two lines. No blast templates.
+- Keep every email under 100 words.
+- One CTA per email. "Reply yes for the deck" converts better than "book a call."
+- Follow up 3x over 10 days before dropping a lead.
+- Always include your name and your AIMS referral link in the signature.
+
+Questions? Ping the partnerships team via the Partner chatbot in the portal.

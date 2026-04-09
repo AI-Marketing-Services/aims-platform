@@ -3,6 +3,14 @@ import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
 import { DollarSign, Clock, CheckCircle2, TrendingUp } from "lucide-react"
 import { ResellerCommissionsClient } from "./ResellerCommissionsClient"
+import {
+  COMMISSION_TIERS,
+  TIER_UPGRADE_PATH,
+  formatCommissionRate,
+  getCommissionRate,
+  getTierLabel,
+  type ReferralTier,
+} from "@/lib/referrals/commission-config"
 
 export const metadata = { title: "Commissions" }
 
@@ -22,9 +30,12 @@ export default async function ResellerCommissionsPage() {
     },
   })
 
-  const tier = referral?.tier ?? "AFFILIATE"
-  const commissionRate = tier === "RESELLER" ? "25%" : tier === "COMMUNITY_PARTNER" ? "15%" : "10%"
-  const nextTier = tier === "AFFILIATE" ? "COMMUNITY_PARTNER" : tier === "COMMUNITY_PARTNER" ? "RESELLER" : null
+  const tier = (referral?.tier ?? "AFFILIATE") as ReferralTier
+  const commissionRate = formatCommissionRate(getCommissionRate(tier))
+  const tierLabel = getTierLabel(tier)
+  const nextTier = TIER_UPGRADE_PATH[tier]
+  const nextTierLabel = nextTier ? COMMISSION_TIERS[nextTier].label : null
+  const nextTierRate = nextTier ? formatCommissionRate(COMMISSION_TIERS[nextTier].rate) : null
 
   const commissions = referral?.commissions ?? []
   const totalEarned = commissions
@@ -58,15 +69,16 @@ export default async function ResellerCommissionsPage() {
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-xs font-semibold text-[#C4972A] uppercase tracking-wider mb-1">Your Tier</p>
-            <p className="text-2xl font-bold text-foreground capitalize">{tier.replace(/_/g, " ")}</p>
+            <p className="text-2xl font-bold text-foreground">{tierLabel}</p>
             <p className="text-sm text-muted-foreground mt-1">
               Earn <span className="text-foreground font-semibold">{commissionRate}</span> on every client you refer
             </p>
           </div>
-          {nextTier && (
+          {nextTierLabel && nextTierRate && (
             <div className="text-right">
               <p className="text-xs text-muted-foreground mb-1">Next tier</p>
-              <p className="text-sm font-medium text-foreground capitalize">{nextTier.replace(/_/g, " ")}</p>
+              <p className="text-sm font-medium text-foreground">{nextTierLabel}</p>
+              <p className="text-xs text-muted-foreground">{nextTierRate} commission</p>
             </div>
           )}
         </div>

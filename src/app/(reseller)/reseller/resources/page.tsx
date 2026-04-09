@@ -10,7 +10,7 @@ const SALES_RESOURCES = [
   { title: "AIMS Partner Deck", desc: "Company overview, service catalog, pricing tiers", type: "PDF", href: "/resources/aims-partner-deck.txt" },
   { title: "Case Studies Pack", desc: "3 client results with before/after metrics", type: "PDF", href: "/resources/aims-case-studies.txt" },
   { title: "Onboarding Guide", desc: "Step-by-step partner onboarding and setup guide", type: "PDF", href: "/resources/aims-onboarding-guide.txt" },
-  { title: "Cold Email Templates", desc: "5 proven subject lines and opening sequences", type: "Copy", href: "/resources/aims-partner-deck.txt" },
+  { title: "Cold Email Templates", desc: "5 proven subject lines and opening sequences", type: "Copy", href: "/resources/aims-cold-email-templates.txt" },
 ]
 
 const VIDEO_RESOURCES = [
