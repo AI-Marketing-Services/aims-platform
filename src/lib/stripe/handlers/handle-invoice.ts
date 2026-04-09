@@ -4,6 +4,7 @@ import { logger } from "@/lib/logger"
 import { handleInvoicePaid } from "@/lib/stripe"
 import { sendRenewalEmail, sendPaymentFailedEmail } from "@/lib/email"
 import { getCommissionRate } from "@/lib/referrals/commission-config"
+import { getDubClient } from "@/lib/dub"
 
 /**
  * Handles invoice.paid events — logs payment activity and calculates
@@ -78,6 +79,7 @@ export async function handleInvoicePaidEvent(invoice: Stripe.Invoice) {
         percentage: rate * 100,
         sourceAmount,
         status: "PENDING",
+        source: "internal",
         stripePaymentId: invoice.id,
       },
     })
@@ -89,6 +91,25 @@ export async function handleInvoicePaidEvent(invoice: Stripe.Invoice) {
         conversions: { increment: 1 },
       },
     })
+
+    // Report sale to Dub.co for attribution tracking (non-blocking)
+    const dub = getDubClient()
+    if (dub) {
+      try {
+        await dub.track.sale({
+          customerExternalId: sub.userId,
+          amount: invoice.amount_paid, // Already in cents
+          currency: "usd",
+          paymentProcessor: "stripe",
+          invoiceId: invoice.id,
+        })
+      } catch (dubErr) {
+        logger.error("Failed to report sale to Dub.co", dubErr, {
+          endpoint: "POST /api/webhooks/stripe",
+          action: "dub:track:sale",
+        })
+      }
+    }
   } catch (commErr) {
     logger.error("Failed to calculate commission", commErr, {
       endpoint: "POST /api/webhooks/stripe",

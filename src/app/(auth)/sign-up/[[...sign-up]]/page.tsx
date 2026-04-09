@@ -7,9 +7,10 @@ import { Suspense } from "react"
 function SignUpForm() {
   const searchParams = useSearchParams()
   const refFromUrl = searchParams.get("ref")
+  const dubId = searchParams.get("dub_id")
 
-  // Read referral code from URL param or cookie
-  const refCode = refFromUrl ?? getCookie("aims_ref") ?? undefined
+  // Priority: dub_id (server-side tracking) > ref param > aims_ref cookie (legacy)
+  const refCode = dubId ?? refFromUrl ?? getCookie("aims_ref") ?? undefined
 
   return (
     <SignUp

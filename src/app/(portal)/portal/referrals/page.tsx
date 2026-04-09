@@ -3,6 +3,8 @@ import { redirect } from "next/navigation"
 import { Share2, DollarSign, Users, CheckCircle, Mail, Linkedin, TrendingUp, ExternalLink, Clock } from "lucide-react"
 import { CopyButton } from "@/components/portal/CopyButton"
 import { db } from "@/lib/db"
+import { getDubClient } from "@/lib/dub"
+import { formatCommissionRate, getCommissionRate } from "@/lib/referrals/commission-config"
 
 export default async function ReferralsPage() {
   const { userId: clerkId } = await auth()
@@ -39,7 +41,21 @@ export default async function ReferralsPage() {
   }
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://aimseos.com"
-  const refLink = `${appUrl}?ref=${referral.code}`
+  const commissionRate = formatCommissionRate(getCommissionRate(referral.tier))
+
+  // Try Dub.co links first, fall back to legacy ?ref= format
+  let refLink = `${appUrl}?ref=${referral.code}`
+  const dub = getDubClient()
+  if (dub && referral.dubPartnerId) {
+    try {
+      const links = await dub.partners.retrieveLinks({ partnerId: referral.dubPartnerId })
+      if (links.length > 0) {
+        refLink = links[0].shortLink
+      }
+    } catch {
+      // Fall through to legacy link
+    }
+  }
   const encodedRefLink = encodeURIComponent(refLink)
 
   const totalEarned = referral.totalEarned
@@ -50,7 +66,7 @@ export default async function ReferralsPage() {
     <div className="w-full">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-foreground mb-1">Referrals</h1>
-        <p className="text-muted-foreground">Earn 20% commission for every business you refer to AIMS</p>
+        <p className="text-muted-foreground">Earn {commissionRate} commission for every business you refer to AIMS</p>
       </div>
 
       {/* Stats */}
@@ -82,7 +98,7 @@ export default async function ReferralsPage() {
           <CopyButton text={refLink} />
         </div>
         <p className="text-xs text-muted-foreground mt-3">
-          Share this link. When someone signs up and pays, you earn 20% of their first 3 months.
+          Share this link. When someone signs up and pays, you earn {commissionRate} of their first 3 months.
         </p>
         <p className="text-xs text-muted-foreground mt-1">
           Your referral code: <span className="font-mono text-foreground">{referral.code}</span>

@@ -3,6 +3,7 @@ import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
 import { Users, DollarSign, TrendingUp, Gift } from "lucide-react"
 import Link from "next/link"
+import { getDubClient } from "@/lib/dub"
 
 export const metadata = { title: "Partner Dashboard" }
 
@@ -21,6 +22,21 @@ export default async function ResellerDashboardPage() {
     ? Math.round((referral.conversions / referral.clicks) * 100)
     : 0
 
+  // Resolve Dub.co short link or fall back to legacy
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://aimseos.com"
+  let refLink = referral
+    ? `${baseUrl}/for/${referral.landingPageSlug ?? referral.code}?ref=${referral.code}`
+    : ""
+  const dub = getDubClient()
+  if (dub && referral?.dubPartnerId) {
+    try {
+      const links = await dub.partners.retrieveLinks({ partnerId: referral.dubPartnerId })
+      if (links.length > 0) refLink = links[0].shortLink
+    } catch {
+      // keep legacy link
+    }
+  }
+
   return (
     <div className="space-y-8">
       <div>
@@ -36,13 +52,13 @@ export default async function ResellerDashboardPage() {
           <p className="text-xs text-muted-foreground mb-2 font-medium uppercase tracking-wider">Your Referral Link</p>
           <div className="flex items-center gap-3">
             <code className="flex-1 text-sm font-mono text-[#C4972A] bg-muted px-3 py-2 rounded-lg overflow-x-auto">
-              {process.env.NEXT_PUBLIC_APP_URL ?? "https://aimseos.com"}/for/{referral.landingPageSlug ?? referral.code}?ref={referral.code}
+              {refLink}
             </code>
             <Link
-              href={`/reseller/resources`}
+              href="/reseller/resources"
               className="px-4 py-2 bg-[#C4972A] text-white text-sm font-medium rounded-lg hover:bg-[#A17D22] transition-colors whitespace-nowrap"
             >
-              Copy & Share
+              Copy &amp; Share
             </Link>
           </div>
         </div>

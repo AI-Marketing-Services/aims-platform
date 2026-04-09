@@ -3,6 +3,7 @@ import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
 import { FolderOpen, Link as LinkIcon, ExternalLink, FileText, Download, Play } from "lucide-react"
 import { CopyButton } from "@/components/portal/CopyButton"
+import { getDubClient } from "@/lib/dub"
 
 export const metadata = { title: "Partner Resources" }
 
@@ -27,9 +28,24 @@ export default async function ResellerResourcesPage() {
   if (!dbUser) redirect("/sign-in")
 
   const referral = await db.referral.findFirst({ where: { referrerId: dbUser.id } })
-  const baseUrl = "https://aimseos.com"
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://aimseos.com"
   const refCode = referral?.code ?? ""
-  const refLink = referral ? `${baseUrl}/for/${referral.landingPageSlug ?? refCode}?ref=${refCode}` : null
+
+  // Try Dub.co links first, fall back to legacy format
+  let primaryLink: string | null = null
+  const dub = getDubClient()
+  if (dub && referral?.dubPartnerId) {
+    try {
+      const links = await dub.partners.retrieveLinks({ partnerId: referral.dubPartnerId })
+      if (links.length > 0) primaryLink = links[0].shortLink
+    } catch {
+      // Fall through to legacy
+    }
+  }
+
+  const refLink = referral
+    ? primaryLink ?? `${baseUrl}/for/${referral.landingPageSlug ?? refCode}?ref=${refCode}`
+    : null
 
   return (
     <div className="space-y-8">
@@ -48,9 +64,9 @@ export default async function ResellerResourcesPage() {
           <div className="space-y-3">
             {[
               { label: "General landing", url: refLink },
-              { label: "Marketplace", url: `${baseUrl}/marketplace?ref=${refCode}` },
-              { label: "AI Readiness Quiz", url: `${baseUrl}/tools/ai-readiness-quiz?ref=${refCode}` },
-              { label: "ROI Calculator", url: `${baseUrl}/tools/roi-calculator?ref=${refCode}` },
+              { label: "Marketplace", url: primaryLink ? `${primaryLink}?page=marketplace` : `${baseUrl}/marketplace?ref=${refCode}` },
+              { label: "AI Readiness Quiz", url: primaryLink ? `${primaryLink}?page=quiz` : `${baseUrl}/tools/ai-readiness-quiz?ref=${refCode}` },
+              { label: "ROI Calculator", url: primaryLink ? `${primaryLink}?page=calculator` : `${baseUrl}/tools/roi-calculator?ref=${refCode}` },
             ].map(({ label, url }) => (
               <div key={label} className="flex items-center gap-3 p-3 bg-muted rounded-lg">
                 <div className="flex-1 min-w-0">

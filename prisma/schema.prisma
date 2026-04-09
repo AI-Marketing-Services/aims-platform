@@ -432,7 +432,11 @@ model Referral {
   stripeConnectId String?
 
   landingPageSlug String?
-  customBranding  Json?
+
+  // Dub.co integration
+  dubPartnerId  String?
+  dubProgramId  String?
+  dubLinkId     String? // Dub.co short link ID for this partner
 
   commissions Commission[]
 
@@ -441,6 +445,7 @@ model Referral {
 
   @@index([code])
   @@index([referrerId])
+  @@index([dubPartnerId])
 }
 
 enum ReferralTier {
@@ -641,7 +646,9 @@ model Commission {
   percentage      Float
   sourceAmount    Float
   status          CommissionStatus @default(PENDING)
+  source          String           @default("internal") // "internal" | "dub"
   stripePaymentId String?
+  dubSaleId       String?          // Dub.co sale event ID for correlation
   paidAt          DateTime?
   approvedAt      DateTime?
   approvedBy      String?

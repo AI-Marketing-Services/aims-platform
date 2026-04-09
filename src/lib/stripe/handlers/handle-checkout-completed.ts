@@ -5,6 +5,7 @@ import { notifyNewPurchase } from "@/lib/notifications"
 import { sendWelcomeEmail } from "@/lib/email"
 import { queueEmailSequence } from "@/lib/email/queue"
 import { createFulfillmentTask } from "@/lib/asana"
+import { getDubClient } from "@/lib/dub"
 
 /**
  * Handles checkout.session.completed events for cart-based multi-service checkout.
@@ -182,6 +183,23 @@ export async function handleCheckoutCompleted(session: Stripe.Checkout.Session) 
           },
         })
         .catch((err) => logger.error("Failed to create dealServiceArm", err, { dealId: deal.id }))
+    }
+
+    // Report sale to Dub.co (non-blocking)
+    const dub = getDubClient()
+    if (dub && userId) {
+      dub.track.sale({
+        customerExternalId: userId,
+        amount: monthlyAmount * 100,
+        currency: "usd",
+        paymentProcessor: "stripe",
+        invoiceId: session.id,
+        metadata: { serviceArm: slug, tier: tierName },
+      }).catch((err) => {
+        logger.error("Failed to report sale to Dub.co", err, {
+          action: "dub:track:sale",
+        })
+      })
     }
 
     // Notifications + welcome email + post-purchase sequence for first item only
