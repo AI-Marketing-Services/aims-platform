@@ -186,7 +186,7 @@ export async function handleCheckoutCompleted(session: Stripe.Checkout.Session) 
     }
 
     // Report sale to Dub.co (non-blocking)
-    const dub = getDubClient()
+    const dub = await getDubClient()
     if (dub && userId) {
       dub.track.sale({
         customerExternalId: userId,

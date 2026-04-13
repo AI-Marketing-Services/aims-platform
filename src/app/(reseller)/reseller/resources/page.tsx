@@ -33,7 +33,7 @@ export default async function ResellerResourcesPage() {
 
   // Try Dub.co links first, fall back to legacy format
   let primaryLink: string | null = null
-  const dub = getDubClient()
+  const dub = await getDubClient()
   if (dub && referral?.dubPartnerId) {
     try {
       const links = await dub.partners.retrieveLinks({ partnerId: referral.dubPartnerId })

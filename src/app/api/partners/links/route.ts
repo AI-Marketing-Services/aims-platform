@@ -31,7 +31,7 @@ export async function GET() {
       return NextResponse.json({ error: "No referral record. Register as a partner first." }, { status: 404 })
     }
 
-    const dub = getDubClient()
+    const dub = await getDubClient()
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://aimseos.com"
 
     // If Dub is configured and partner has a Dub ID, use Dub links

@@ -1,20 +1,22 @@
-import { Dub } from "dub"
-
 /**
  * Lazy-singleton Dub.co client.
  *
  * All partner/referral link operations go through this. Gracefully degrades
- * when DUB_API_KEY is not set — callers should null-check getDubClient().
+ * when DUB_API_KEY is not set - callers should null-check getDubClient().
+ *
+ * The Dub SDK is imported dynamically to avoid EBADF errors during
+ * Next.js build-time page data collection.
  */
 
-let _dub: Dub | null = null
+let _dub: unknown | null = null
 
-export function getDubClient(): Dub | null {
+export async function getDubClient() {
   if (!process.env.DUB_API_KEY) return null
   if (!_dub) {
+    const { Dub } = await import("dub")
     _dub = new Dub({ token: process.env.DUB_API_KEY })
   }
-  return _dub
+  return _dub as import("dub").Dub
 }
 
 /** Workspace ID for the AIMS Dub.co workspace */

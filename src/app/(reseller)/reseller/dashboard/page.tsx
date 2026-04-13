@@ -27,7 +27,7 @@ export default async function ResellerDashboardPage() {
   let refLink = referral
     ? `${baseUrl}/for/${referral.landingPageSlug ?? referral.code}?ref=${referral.code}`
     : ""
-  const dub = getDubClient()
+  const dub = await getDubClient()
   if (dub && referral?.dubPartnerId) {
     try {
       const links = await dub.partners.retrieveLinks({ partnerId: referral.dubPartnerId })

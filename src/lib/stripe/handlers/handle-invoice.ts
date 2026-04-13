@@ -93,7 +93,7 @@ export async function handleInvoicePaidEvent(invoice: Stripe.Invoice) {
     })
 
     // Report sale to Dub.co for attribution tracking (non-blocking)
-    const dub = getDubClient()
+    const dub = await getDubClient()
     if (dub) {
       try {
         await dub.track.sale({

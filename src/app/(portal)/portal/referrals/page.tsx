@@ -45,7 +45,7 @@ export default async function ReferralsPage() {
 
   // Try Dub.co links first, fall back to legacy ?ref= format
   let refLink = `${appUrl}?ref=${referral.code}`
-  const dub = getDubClient()
+  const dub = await getDubClient()
   if (dub && referral.dubPartnerId) {
     try {
       const links = await dub.partners.retrieveLinks({ partnerId: referral.dubPartnerId })

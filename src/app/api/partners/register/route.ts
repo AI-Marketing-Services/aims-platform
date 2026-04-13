@@ -34,7 +34,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true, alreadyRegistered: true, dubPartnerId: existing.dubPartnerId })
     }
 
-    const dub = getDubClient()
+    const dub = await getDubClient()
     const programId = getDubProgramId()
 
     let dubPartnerId: string | null = null
