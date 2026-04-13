@@ -1,8 +1,13 @@
 import { ArrowRight } from "lucide-react"
 
+const TYPEFORM_URL = "#apply"
+
 export function FinalCTASection() {
   return (
-    <section className="relative py-24 sm:py-32 border-t border-line bg-gradient-to-b from-deep to-ink overflow-hidden">
+    <section
+      id="apply"
+      className="relative py-24 sm:py-32 border-t border-line bg-gradient-to-b from-deep to-ink overflow-hidden"
+    >
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[600px] rounded-full bg-aims-gold/10 blur-[120px]" />
       </div>
@@ -15,29 +20,21 @@ export function FinalCTASection() {
 
         <p className="mt-6 text-lg text-cream/70 max-w-2xl mx-auto">
           The tools are only getting better. The layoffs are only getting bigger. The people
-          who turn their expertise into an AI practice this year own the next decade. Grab
-          the Playbook Vault now — even if you never apply, it&apos;s worth the five seconds
-          it takes to enter your email.
+          who turn their expertise into an AI practice this year own the next decade.
         </p>
 
-        <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+        <div className="mt-10">
           <a
-            href="#apply"
+            href={TYPEFORM_URL}
             className="group inline-flex items-center justify-center gap-2 rounded-sm bg-aims-gold text-ink px-7 py-4 text-sm font-bold uppercase tracking-wider hover:bg-aims-gold-light transition-all shadow-[0_0_50px_rgba(196,151,42,0.35)] hover:shadow-[0_0_70px_rgba(196,151,42,0.5)]"
           >
-            Send Me the Playbook Vault
+            Apply Now
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-          </a>
-          <a
-            href="#what-you-get"
-            className="inline-flex items-center justify-center gap-2 rounded-sm border border-line hover:border-aims-gold/40 bg-surface/40 text-cream px-7 py-4 text-sm font-bold uppercase tracking-wider transition-colors"
-          >
-            See What&apos;s Inside
           </a>
         </div>
 
         <p className="mt-6 text-xs text-cream/70 font-mono uppercase tracking-wider">
-          Free to start · No payment today · Application reviewed within 24 hours
+          No payment to apply · Application-only · Alpha cohort capped
         </p>
       </div>
     </section>

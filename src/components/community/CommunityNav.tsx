@@ -5,6 +5,8 @@ import Link from "next/link"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 
+const TYPEFORM_URL = "#apply"
+
 export function CommunityNav() {
   const [scrolled, setScrolled] = useState(false)
 
@@ -13,12 +15,6 @@ export function CommunityNav() {
     window.addEventListener("scroll", onScroll, { passive: true })
     return () => window.removeEventListener("scroll", onScroll)
   }, [])
-
-  function scrollToApply(e: React.MouseEvent) {
-    e.preventDefault()
-    const el = document.getElementById("apply")
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" })
-  }
 
   return (
     <header
@@ -60,14 +56,10 @@ export function CommunityNav() {
             <a href="#faq" className="text-cream/70 hover:text-cream transition-colors">
               FAQ
             </a>
-            <a href="#disclosures" className="text-cream/70 hover:text-cream transition-colors">
-              Disclosures
-            </a>
           </nav>
 
           <a
-            href="#apply"
-            onClick={scrollToApply}
+            href={TYPEFORM_URL}
             className="inline-flex items-center justify-center rounded-sm bg-aims-gold text-ink px-5 py-2.5 text-xs font-bold uppercase tracking-wider hover:bg-aims-gold-light transition-colors shadow-[0_0_0_1px_rgba(196,151,42,0.3)]"
           >
             Apply Now

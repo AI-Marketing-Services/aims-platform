@@ -54,13 +54,14 @@ export function ConsortiumMentors() {
       <div className="mx-auto max-w-6xl px-4">
         <div className="text-center max-w-3xl mx-auto">
           <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl text-cream leading-[1.25] pb-2">
-            Not Built By Influencers.
-            <span className="block text-aims-gold italic">Built By Operators.</span>
+            Not influencers.{" "}
+            <span className="block text-aims-gold italic">
+              People who&apos;ve actually built companies.
+            </span>
           </h2>
           <p className="mt-6 text-lg text-cream/65">
-            These aren&apos;t coaches who read about business. They built, scaled, and exited
-            real companies. They deploy the same AI systems inside their own portfolio that
-            you&apos;ll learn to build for clients.
+            They deploy the same AI systems inside their own portfolios that you&apos;ll
+            learn to build for clients.
           </p>
         </div>
 

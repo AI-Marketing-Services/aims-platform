@@ -1,16 +1,20 @@
 import type { Metadata } from "next"
 import { CommunityHero } from "@/components/community/CommunityHero"
-import { WhatIsSection } from "@/components/community/WhatIsSection"
-import { EverythingInside } from "@/components/community/EverythingInside"
-import { HowItWorksSteps } from "@/components/community/HowItWorksSteps"
-import { ConsortiumMentors } from "@/components/community/ConsortiumMentors"
-import { SolutionsGrid } from "@/components/community/SolutionsGrid"
+import { VSLPlaceholder } from "@/components/community/VSLPlaceholder"
 import { ComparisonTable } from "@/components/community/ComparisonTable"
-import { WhatHappensNext } from "@/components/community/WhatHappensNext"
-import { ApplicationCard } from "@/components/community/ApplicationCard"
+import { WhatIsSection } from "@/components/community/WhatIsSection"
+import { ConsortiumMentors } from "@/components/community/ConsortiumMentors"
 import { CommunityFAQ } from "@/components/community/CommunityFAQ"
 import { FinalCTASection } from "@/components/community/FinalCTASection"
 import { CommunityDisclosures } from "@/components/community/CommunityDisclosures"
+
+/* ─── REMOVED SECTIONS (commented out, not deleted) ───
+import { EverythingInside } from "@/components/community/EverythingInside"
+import { HowItWorksSteps } from "@/components/community/HowItWorksSteps"
+import { SolutionsGrid } from "@/components/community/SolutionsGrid"
+import { WhatHappensNext } from "@/components/community/WhatHappensNext"
+import { ApplicationCard } from "@/components/community/ApplicationCard"
+─── */
 
 export const metadata: Metadata = {
   title: "AI Operator Collective | Turn Your Career Into an AI Services Business",
@@ -55,34 +59,42 @@ const FAQ_SCHEMA = {
   mainEntity: [
     {
       "@type": "Question",
-      name: "What is the AI Operator Playbook Vault and what's in it?",
+      name: "Do I need a tech background?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "It's the collection of cold email sequences, discovery frameworks, pricing models, outreach scripts, and delivery playbooks the AIMS team uses internally. You get it as a single email the moment you submit the form — free, no strings.",
+        text: "No. You need domain expertise and a willingness to work. AI tools are taught in week 5 - after you have a business to deploy them in. The sequencing is intentional.",
       },
     },
     {
       "@type": "Question",
-      name: "Who is this built for?",
+      name: "What if I'm still in my W-2?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Displaced W-2 professionals and corporate leaders with domain expertise who want to build an AI services business rather than find another job. Not built for passive income seekers or people who won't implement.",
+        text: "Most members start while still employed. The program is designed so you can build your pipeline and get your first client before you make the leap.",
       },
     },
     {
       "@type": "Question",
-      name: "Do I need technical experience to join?",
+      name: "Will this get me clients?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "No. The first four weeks are business fundamentals: LLC, pricing, pipeline, sales process. AI tooling does not start until Week 5.",
+        text: "The program gives you the exact system AIMS operators use. Your results depend entirely on the work you put in. We make no income claims.",
       },
     },
     {
       "@type": "Question",
-      name: "Will the program get me clients?",
+      name: "What does it cost?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "No. The Collective makes no income or client claims. The program teaches the sales process and infrastructure used inside the AIMS portfolio. Whether you land clients depends entirely on the work you put in.",
+        text: "Pricing is shared over email with applicants who are offered a cohort seat. No payment to apply - ever. No surprise pitch calls.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What do I get for free right now?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "The AI Operator Playbook Vault - cold email sequences, discovery frameworks, pricing models, and outreach scripts - delivered to your inbox the moment you apply. Yours to keep regardless of whether you join.",
       },
     },
   ],
@@ -100,17 +112,21 @@ export default function LandingPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_SCHEMA) }}
       />
       <CommunityHero />
-      <WhatIsSection />
-      <EverythingInside />
-      <HowItWorksSteps />
-      <SolutionsGrid />
-      <ConsortiumMentors />
+      <VSLPlaceholder />
       <ComparisonTable />
-      <WhatHappensNext />
-      <ApplicationCard />
+      <WhatIsSection />
+      <ConsortiumMentors />
       <CommunityFAQ />
       <FinalCTASection />
       <CommunityDisclosures />
+
+      {/* ─── REMOVED SECTIONS ───
+      <EverythingInside />
+      <HowItWorksSteps />
+      <SolutionsGrid />
+      <WhatHappensNext />
+      <ApplicationCard />
+      ─── */}
     </>
   )
 }
