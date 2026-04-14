@@ -21,16 +21,16 @@ export function ComparisonTable() {
     <section className="relative py-20 sm:py-24 border-t border-line/50">
       <div className="mx-auto max-w-4xl px-4">
         <div className="text-center max-w-3xl mx-auto">
-          <p className="text-base sm:text-lg text-cream/50 leading-relaxed max-w-2xl mx-auto mb-8">
-            Every other community gives you n8n workflows and prompt packs. That&apos;s a
-            folder of automations - not a business. We sequence it correctly: business
-            fundamentals first (weeks 1–4), AI tooling second (week 5+). Because tools
-            without a business are just expensive hobbies.
-          </p>
           <h2 className="font-serif text-3xl sm:text-4xl text-cream/80 leading-[1.25] pb-2">
             The difference is sequencing{" "}
             <span className="text-aims-gold/70 italic">and skin in the game.</span>
           </h2>
+          <p className="mt-6 text-base sm:text-lg text-cream/50 leading-relaxed max-w-2xl mx-auto">
+            Every other community gives you n8n workflows and prompt packs. That&apos;s a
+            folder of automations, not a business. We sequence it correctly: business
+            fundamentals first (weeks 1-4), AI tooling second (week 5+). Because tools
+            without a business are just expensive hobbies.
+          </p>
         </div>
 
         <div className="mt-12 rounded-md border border-line/60 bg-surface/30 overflow-hidden">
