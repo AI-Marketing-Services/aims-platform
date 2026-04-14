@@ -1,6 +1,5 @@
 import type { Metadata } from "next"
 import { CommunityHero } from "@/components/community/CommunityHero"
-import { VSLPlaceholder } from "@/components/community/VSLPlaceholder"
 import { ComparisonTable } from "@/components/community/ComparisonTable"
 import { WhatIsSection } from "@/components/community/WhatIsSection"
 import { ConsortiumMentors } from "@/components/community/ConsortiumMentors"
@@ -112,7 +111,6 @@ export default function LandingPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_SCHEMA) }}
       />
       <CommunityHero />
-      <VSLPlaceholder />
       <ComparisonTable />
       <WhatIsSection />
       <ConsortiumMentors />

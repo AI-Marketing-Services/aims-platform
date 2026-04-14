@@ -26,7 +26,7 @@ export function CommunityNav() {
       )}
     >
       <div className="mx-auto max-w-6xl px-4">
-        <div className="flex h-16 items-center justify-between gap-6">
+        <div className="relative flex h-16 items-center justify-between gap-6">
           <Link href="/" className="flex items-center gap-3 flex-shrink-0">
             <Image
               src="/logo.png"
@@ -46,7 +46,7 @@ export function CommunityNav() {
             </div>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-7 text-sm">
+          <nav className="hidden md:flex items-center justify-center gap-7 text-sm absolute left-1/2 -translate-x-1/2">
             <a href="#program" className="text-cream/70 hover:text-cream transition-colors">
               Program
             </a>

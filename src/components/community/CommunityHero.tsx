@@ -14,18 +14,17 @@ export function CommunityHero() {
 
       <div className="mx-auto max-w-5xl px-4 text-center">
         <p className="text-xs sm:text-sm font-mono uppercase tracking-[0.3em] text-aims-gold mb-6">
-          For Displaced W-2 Professionals &amp; Corporate Operators
+          For Burnt-Out W-2 Professionals &amp; Corporate Operators
         </p>
 
-        <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.15] pb-2 tracking-tight text-cream">
-          AI didn&apos;t take your job.{" "}
-          <span className="block text-aims-gold italic">
-            It just created a market for your new business.
-          </span>
+        <h1 className="font-serif text-5xl sm:text-6xl md:text-7xl lg:text-[88px] leading-[1.1] pb-2 tracking-tight text-cream">
+          AI didn&apos;t take your job.
+          <span className="block text-aims-gold italic">It just created a market</span>
+          <span className="block text-aims-gold italic">for your new business.</span>
         </h1>
 
         <p className="mt-8 text-lg sm:text-xl text-cream/75 max-w-3xl mx-auto leading-relaxed">
-          Local businesses everywhere are desperate for AI guidance - and they&apos;re not
+          Local businesses everywhere are desperate for AI guidance, and they&apos;re not
           calling software companies. They&apos;re calling trusted advisors with real-world
           domain experience. We give you the entire business-out-of-a-box playbook that aligns
           with AI coaching frameworks to become an AI specialist, build a consulting flywheel,
