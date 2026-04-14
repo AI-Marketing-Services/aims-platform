@@ -36,7 +36,9 @@ const isPublicRoute = createRouteMatcher([
   "/api/ai/opportunity-audit(.*)",
   "/api/intake(.*)",
   "/api/health(.*)",
+  "/apply(.*)",
   "/api/community/lead(.*)",
+  "/api/community/apply(.*)",
   "/api/unsubscribe(.*)",
 ])
 
