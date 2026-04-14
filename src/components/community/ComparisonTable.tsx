@@ -18,8 +18,8 @@ function Cell({ value }: { value: boolean | string }) {
 
 export function ComparisonTable() {
   return (
-    <section className="relative py-20 sm:py-24 border-t border-[#E3E3E3]">
-      <div className="mx-auto max-w-[1280px] px-6">
+    <section className="relative py-20 sm:py-24 border-t border-[#E3E3E3] texture-light dot-grid-light">
+      <div className="relative z-10 mx-auto max-w-[1280px] px-6">
         <div className="text-center max-w-3xl mx-auto">
           <h2 className="font-playfair text-3xl sm:text-4xl text-[#1A1A1A] leading-[1.25] pb-2">
             The difference is sequencing{" "}

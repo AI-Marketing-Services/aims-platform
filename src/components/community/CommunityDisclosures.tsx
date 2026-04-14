@@ -35,9 +35,9 @@ export function CommunityDisclosures() {
   return (
     <section
       id="disclosures"
-      className="relative py-20 sm:py-24 border-t border-white/10 bg-[#383838] text-white"
+      className="relative py-20 sm:py-24 border-t border-white/10 bg-[#383838] text-white texture-dark dot-grid-dark"
     >
-      <div className="mx-auto max-w-3xl px-6">
+      <div className="relative z-10 mx-auto max-w-3xl px-6">
         <div className="text-center max-w-2xl mx-auto">
           <div className="inline-flex items-center justify-center w-10 h-10 rounded-md bg-crimson/10 border border-crimson/20 mb-5">
             <ShieldAlert className="w-5 h-5 text-crimson-light" />

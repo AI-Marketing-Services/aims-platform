@@ -15,8 +15,8 @@ const NOT_FIT = [
 
 export function WhatIsSection() {
   return (
-    <section id="program" className="relative py-24 sm:py-32 border-t border-[#E3E3E3]">
-      <div className="mx-auto max-w-[1280px] px-6">
+    <section id="program" className="relative py-24 sm:py-32 border-t border-[#E3E3E3] texture-light dot-grid-light">
+      <div className="relative z-10 mx-auto max-w-[1280px] px-6">
         <div className="text-center max-w-3xl mx-auto">
           <h2 className="font-playfair text-4xl sm:text-5xl md:text-6xl text-[#1A1A1A] leading-[1.25] pb-2">
             Be honest with yourself.

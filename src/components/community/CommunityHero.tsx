@@ -5,7 +5,7 @@ const TYPEFORM_URL = "#apply"
 
 export function CommunityHero() {
   return (
-    <section className="relative overflow-hidden pt-16 pb-20 sm:pt-24 sm:pb-28 bg-white">
+    <section className="relative overflow-hidden pt-16 pb-20 sm:pt-24 sm:pb-28 bg-white texture-light">
       <DotGrid />
       <div className="relative z-10 pointer-events-none mx-auto max-w-[1280px] px-6 text-center">
         <p className="text-xs sm:text-sm font-mono uppercase tracking-[0.3em] text-crimson mb-6">
