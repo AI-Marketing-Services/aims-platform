@@ -47,13 +47,13 @@ export function CommunityNav() {
           </Link>
 
           <nav className="hidden md:flex items-center justify-center gap-7 text-sm absolute left-1/2 -translate-x-1/2">
-            <a href="#program" className="text-[#737373] hover:text-[#1A1A1A] transition-colors">
+            <a href="/#program" className="text-[#737373] hover:text-[#1A1A1A] transition-colors">
               Program
             </a>
-            <a href="#mentors" className="text-[#737373] hover:text-[#1A1A1A] transition-colors">
+            <a href="/#mentors" className="text-[#737373] hover:text-[#1A1A1A] transition-colors">
               Mentors
             </a>
-            <a href="#faq" className="text-[#737373] hover:text-[#1A1A1A] transition-colors">
+            <a href="/#faq" className="text-[#737373] hover:text-[#1A1A1A] transition-colors">
               FAQ
             </a>
           </nav>
