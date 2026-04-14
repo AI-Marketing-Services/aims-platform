@@ -6,15 +6,15 @@ export function FinalCTASection() {
   return (
     <section
       id="apply"
-      className="relative py-24 sm:py-32 border-t border-white/10 bg-[#383838] text-white overflow-hidden texture-dark dot-grid-dark"
+      className="relative py-24 sm:py-32 border-t border-[#E3E3E3] bg-[#F5F5F5] overflow-hidden texture-light dot-grid-light"
     >
       <div className="relative z-10 mx-auto max-w-3xl px-6 text-center">
-        <h2 className="font-playfair text-4xl sm:text-5xl md:text-6xl text-white leading-[1.25] pb-2">
+        <h2 className="font-playfair text-4xl sm:text-5xl md:text-6xl text-[#1A1A1A] leading-[1.25] pb-2">
           Another Quarter of{" "}
-          <span className="block text-crimson-light italic">Watching This Pass You By?</span>
+          <span className="block text-crimson italic">Watching This Pass You By?</span>
         </h2>
 
-        <p className="mt-6 text-lg text-white/70 max-w-2xl mx-auto">
+        <p className="mt-6 text-lg text-[#737373] max-w-2xl mx-auto">
           The tools are only getting better. The layoffs are only getting bigger. The people
           who turn their expertise into an AI practice this year own the next decade.
         </p>
@@ -29,7 +29,7 @@ export function FinalCTASection() {
           </a>
         </div>
 
-        <p className="mt-6 text-xs text-white/50 font-mono uppercase tracking-wider">
+        <p className="mt-6 text-xs text-[#737373] font-mono uppercase tracking-wider">
           No payment to apply · Application-only · Alpha cohort capped
         </p>
       </div>
