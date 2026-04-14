@@ -11,7 +11,7 @@ export function AnnouncementBar() {
         <span className="hidden sm:inline text-[#ccc]">|</span>
         <span className="flex items-center gap-1.5 font-mono uppercase tracking-wider">
           <Users className="w-3.5 h-3.5 text-crimson" />
-          Founding Members: Limited to 100 Operators
+          First Cohort: Limited to 10 Members
         </span>
       </div>
     </div>

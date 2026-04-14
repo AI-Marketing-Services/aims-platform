@@ -30,7 +30,7 @@ export function FinalCTASection() {
         </div>
 
         <p className="mt-6 text-xs text-[#737373] font-mono uppercase tracking-wider">
-          No payment to apply · Application-only · Alpha cohort capped
+          No payment to apply · Application-only · 10 seats per cohort
         </p>
       </div>
     </section>

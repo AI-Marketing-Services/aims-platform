@@ -13,17 +13,16 @@ export function CommunityHero() {
         </p>
 
         <h1 className="font-playfair text-5xl sm:text-6xl md:text-7xl lg:text-[88px] leading-[1.1] pb-2 tracking-tight text-[#1A1A1A]">
-          AI didn&apos;t take your job.
-          <span className="block text-crimson italic">It just created a market</span>
-          <span className="block text-crimson italic">for your new business.</span>
+          Real business problems.
+          <span className="block text-crimson italic">Solved by real operators.</span>
         </h1>
 
         <p className="mt-8 text-lg sm:text-xl text-[#737373] max-w-3xl mx-auto leading-relaxed">
-          Local businesses everywhere are desperate for AI guidance, and they&apos;re not
-          calling software companies. They&apos;re calling trusted advisors with real-world
-          domain experience. We give you the entire business-out-of-a-box playbook that aligns
-          with AI coaching frameworks to become an AI specialist, build a consulting flywheel,
-          and replace your 9-to-5.
+          Every business hits the same walls: pipeline dries up, systems break, growth
+          stalls. We&apos;ve solved these problems across 100+ collective years of building
+          companies. Now we&apos;re packaging that tribal knowledge into a step-by-step
+          playbook so you can build an AI advisory practice on a foundation that actually
+          works.
         </p>
 
         {/* CTA */}
@@ -38,7 +37,7 @@ export function CommunityHero() {
         </div>
 
         <p className="mt-5 text-xs sm:text-sm text-[#737373] font-mono uppercase tracking-wider">
-          No payment to apply · Application-only · Alpha cohort capped
+          No payment to apply · Application-only · 10 seats per cohort
         </p>
       </div>
     </section>
