@@ -6,7 +6,7 @@ export function FinalCTASection() {
   return (
     <section
       id="apply"
-      className="relative py-24 sm:py-32 border-t border-white/10 bg-dark-deep text-white overflow-hidden"
+      className="relative py-24 sm:py-32 border-t border-white/10 bg-[#383838] text-white overflow-hidden"
     >
       <div className="mx-auto max-w-3xl px-6 text-center">
         <h2 className="font-playfair text-4xl sm:text-5xl md:text-6xl text-white leading-[1.25] pb-2">

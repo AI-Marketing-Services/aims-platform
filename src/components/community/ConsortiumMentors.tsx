@@ -49,7 +49,7 @@ export function ConsortiumMentors() {
   return (
     <section
       id="mentors"
-      className="relative py-24 sm:py-32 border-t border-white/10 bg-dark-deep text-white"
+      className="relative py-24 sm:py-32 border-t border-white/10 bg-[#383838] text-white"
     >
       <div className="mx-auto max-w-[1280px] px-6">
         <div className="text-center max-w-3xl mx-auto">
@@ -69,10 +69,10 @@ export function ConsortiumMentors() {
           {MENTORS.map((mentor) => (
             <div
               key={mentor.name}
-              className="group relative rounded-md border border-white/10 bg-dark-surface p-6 hover:border-crimson/40 transition-all"
+              className="group relative rounded-md border border-white/10 bg-[#4A4A4A] p-6 hover:border-crimson/40 transition-all"
             >
               <div className="flex items-start justify-between mb-5">
-                <div className="relative w-20 h-20 rounded-full overflow-hidden ring-2 ring-crimson/40 ring-offset-2 ring-offset-dark-surface shadow-[0_0_25px_rgba(153,27,27,0.2)]">
+                <div className="relative w-20 h-20 rounded-full overflow-hidden ring-2 ring-crimson/40 ring-offset-2 ring-offset-[#4A4A4A] shadow-[0_0_25px_rgba(153,27,27,0.2)]">
                   <Image
                     src={mentor.img}
                     alt={mentor.name}

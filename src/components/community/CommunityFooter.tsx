@@ -4,7 +4,7 @@ import Link from "next/link"
 export function CommunityFooter() {
   const year = new Date().getFullYear()
   return (
-    <footer className="border-t border-white/10 bg-dark-deep text-white">
+    <footer className="border-t border-white/10 bg-[#383838] text-white">
       <div className="mx-auto max-w-[1280px] px-6 py-12">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">

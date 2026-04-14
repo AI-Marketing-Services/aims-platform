@@ -35,7 +35,7 @@ export function CommunityDisclosures() {
   return (
     <section
       id="disclosures"
-      className="relative py-20 sm:py-24 border-t border-white/10 bg-dark-deep text-white"
+      className="relative py-20 sm:py-24 border-t border-white/10 bg-[#383838] text-white"
     >
       <div className="mx-auto max-w-3xl px-6">
         <div className="text-center max-w-2xl mx-auto">
@@ -55,7 +55,7 @@ export function CommunityDisclosures() {
           {DISCLOSURES.map((d) => (
             <div
               key={d.title}
-              className="rounded-md border border-white/10 bg-dark-surface p-5 sm:p-6"
+              className="rounded-md border border-white/10 bg-[#4A4A4A] p-5 sm:p-6"
             >
               <h3 className="text-xs font-mono uppercase tracking-wider text-crimson-light mb-2">
                 {d.title}
