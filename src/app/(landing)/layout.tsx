@@ -8,7 +8,7 @@ export default function LandingLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="min-h-screen flex flex-col bg-ink text-cream scroll-smooth [&_*]:scroll-smooth">
+    <div className="min-h-screen flex flex-col bg-white text-[#1A1A1A] font-inter scroll-smooth [&_*]:scroll-smooth">
       <style>{`html { scroll-behavior: smooth; scroll-padding-top: 96px; }`}</style>
       <AnnouncementBar />
       <CommunityNav />

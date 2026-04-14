@@ -11,21 +11,21 @@ const ROWS: { feature: string; yt: string | boolean; us: string | boolean; highl
 ]
 
 function Cell({ value }: { value: boolean | string }) {
-  if (value === true) return <Check className="w-5 h-5 text-aims-gold mx-auto" />
-  if (value === false) return <X className="w-5 h-5 text-cream/40 mx-auto" />
-  return <span className="text-xs font-mono uppercase tracking-wider text-cream/60">{value}</span>
+  if (value === true) return <Check className="w-5 h-5 text-crimson mx-auto" />
+  if (value === false) return <X className="w-5 h-5 text-[#737373]/60 mx-auto" />
+  return <span className="text-xs font-mono uppercase tracking-wider text-[#737373]">{value}</span>
 }
 
 export function ComparisonTable() {
   return (
-    <section className="relative py-20 sm:py-24 border-t border-line/50">
-      <div className="mx-auto max-w-4xl px-4">
+    <section className="relative py-20 sm:py-24 border-t border-[#E3E3E3]">
+      <div className="mx-auto max-w-[1280px] px-6">
         <div className="text-center max-w-3xl mx-auto">
-          <h2 className="font-serif text-3xl sm:text-4xl text-cream/80 leading-[1.25] pb-2">
+          <h2 className="font-playfair text-3xl sm:text-4xl text-[#1A1A1A] leading-[1.25] pb-2">
             The difference is sequencing{" "}
-            <span className="text-aims-gold/70 italic">and skin in the game.</span>
+            <span className="text-crimson italic">and skin in the game.</span>
           </h2>
-          <p className="mt-6 text-base sm:text-lg text-cream/50 leading-relaxed max-w-2xl mx-auto">
+          <p className="mt-6 text-base sm:text-lg text-[#737373] leading-relaxed max-w-2xl mx-auto">
             Every other community gives you n8n workflows and prompt packs. That&apos;s a
             folder of automations, not a business. We sequence it correctly: business
             fundamentals first (weeks 1-4), AI tooling second (week 5+). Because tools
@@ -33,16 +33,16 @@ export function ComparisonTable() {
           </p>
         </div>
 
-        <div className="mt-12 rounded-md border border-line/60 bg-surface/30 overflow-hidden">
+        <div className="mt-12 max-w-4xl mx-auto rounded-md border border-[#E3E3E3] overflow-hidden">
           <div className="grid grid-cols-[1.5fr_1fr_1fr] sm:grid-cols-[2fr_1fr_1fr]">
             {/* Header */}
-            <div className="p-4 sm:p-5 border-b border-line/50 text-xs font-mono uppercase tracking-wider text-cream/50">
+            <div className="p-4 sm:p-5 border-b border-[#E3E3E3] bg-[#F5F5F5] text-xs font-mono uppercase tracking-wider text-[#737373]">
               What You Need
             </div>
-            <div className="p-4 sm:p-5 border-b border-l border-line/50 text-center text-xs font-mono uppercase tracking-wider text-cream/50">
+            <div className="p-4 sm:p-5 border-b border-l border-[#E3E3E3] bg-[#F5F5F5] text-center text-xs font-mono uppercase tracking-wider text-[#737373]">
               YouTube / Skool
             </div>
-            <div className="p-4 sm:p-5 border-b border-l border-line/50 text-center text-xs font-mono uppercase tracking-wider text-aims-gold/70 bg-aims-gold/5">
+            <div className="p-4 sm:p-5 border-b border-l border-[#E3E3E3] bg-crimson/5 text-center text-xs font-mono uppercase tracking-wider text-crimson">
               The Collective
             </div>
 
@@ -53,27 +53,27 @@ export function ComparisonTable() {
                 <div key={i} className="contents">
                   <div
                     className={cn(
-                      "p-4 sm:p-5 text-sm text-cream/60",
-                      !isLast && "border-b border-line/40",
-                      row.highlight && "bg-aims-gold/5 text-cream/80 font-medium"
+                      "p-4 sm:p-5 text-sm text-[#383838]",
+                      !isLast && "border-b border-[#E3E3E3]",
+                      row.highlight && "bg-crimson/5 text-[#1A1A1A] font-medium"
                     )}
                   >
                     {row.feature}
                   </div>
                   <div
                     className={cn(
-                      "p-4 sm:p-5 border-l border-line/40 flex items-center justify-center",
-                      !isLast && "border-b border-line/40",
-                      row.highlight && "bg-aims-gold/5"
+                      "p-4 sm:p-5 border-l border-[#E3E3E3] flex items-center justify-center",
+                      !isLast && "border-b border-[#E3E3E3]",
+                      row.highlight && "bg-crimson/5"
                     )}
                   >
                     <Cell value={row.yt} />
                   </div>
                   <div
                     className={cn(
-                      "p-4 sm:p-5 border-l border-line/40 bg-aims-gold/5 flex items-center justify-center",
-                      !isLast && "border-b border-line/40",
-                      row.highlight && "bg-aims-gold/10"
+                      "p-4 sm:p-5 border-l border-[#E3E3E3] bg-crimson/5 flex items-center justify-center",
+                      !isLast && "border-b border-[#E3E3E3]",
+                      row.highlight && "bg-crimson/10"
                     )}
                   >
                     <Cell value={row.us} />

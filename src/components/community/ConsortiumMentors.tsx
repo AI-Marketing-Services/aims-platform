@@ -49,17 +49,17 @@ export function ConsortiumMentors() {
   return (
     <section
       id="mentors"
-      className="relative py-24 sm:py-32 border-t border-line bg-gradient-to-b from-deep to-ink"
+      className="relative py-24 sm:py-32 border-t border-white/10 bg-dark-deep text-white"
     >
-      <div className="mx-auto max-w-6xl px-4">
+      <div className="mx-auto max-w-[1280px] px-6">
         <div className="text-center max-w-3xl mx-auto">
-          <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl text-cream leading-[1.25] pb-2">
+          <h2 className="font-playfair text-4xl sm:text-5xl md:text-6xl text-white leading-[1.25] pb-2">
             Not influencers.{" "}
-            <span className="block text-aims-gold italic">
+            <span className="block text-crimson-light italic">
               People who&apos;ve actually built companies.
             </span>
           </h2>
-          <p className="mt-6 text-lg text-cream/65">
+          <p className="mt-6 text-lg text-white/65">
             They deploy the same AI systems inside their own portfolios that you&apos;ll
             learn to build for clients.
           </p>
@@ -69,10 +69,10 @@ export function ConsortiumMentors() {
           {MENTORS.map((mentor) => (
             <div
               key={mentor.name}
-              className="group relative rounded-md border border-line bg-panel/60 p-6 hover:border-aims-gold/40 hover:bg-panel transition-all"
+              className="group relative rounded-md border border-white/10 bg-dark-surface p-6 hover:border-crimson/40 transition-all"
             >
               <div className="flex items-start justify-between mb-5">
-                <div className="relative w-20 h-20 rounded-full overflow-hidden ring-2 ring-aims-gold/40 ring-offset-2 ring-offset-panel shadow-[0_0_25px_rgba(196,151,42,0.25)]">
+                <div className="relative w-20 h-20 rounded-full overflow-hidden ring-2 ring-crimson/40 ring-offset-2 ring-offset-dark-surface shadow-[0_0_25px_rgba(153,27,27,0.2)]">
                   <Image
                     src={mentor.img}
                     alt={mentor.name}
@@ -81,24 +81,24 @@ export function ConsortiumMentors() {
                     className="object-cover"
                   />
                 </div>
-                <span className="text-[10px] uppercase tracking-wider font-mono text-aims-gold border border-aims-gold/30 bg-aims-gold/5 px-2 py-1 rounded-sm">
+                <span className="text-[10px] uppercase tracking-wider font-mono text-crimson-light border border-crimson/30 bg-crimson/10 px-2 py-1 rounded-sm">
                   {mentor.badge}
                 </span>
               </div>
-              <h3 className="font-serif text-xl text-cream leading-tight">{mentor.name}</h3>
-              <p className="text-xs text-aims-gold/80 font-mono uppercase tracking-wider mt-1">
+              <h3 className="font-playfair text-xl text-white leading-tight">{mentor.name}</h3>
+              <p className="text-xs text-crimson-light/80 font-mono uppercase tracking-wider mt-1">
                 {mentor.title}
               </p>
-              <p className="mt-3 text-sm text-cream/60 leading-relaxed">{mentor.cred}</p>
+              <p className="mt-3 text-sm text-white/60 leading-relaxed">{mentor.cred}</p>
             </div>
           ))}
         </div>
 
         <div className="mt-12 text-center max-w-2xl mx-auto">
-          <p className="text-xs text-cream/70 font-mono uppercase tracking-wider">
+          <p className="text-xs text-white/50 font-mono uppercase tracking-wider">
             Mentor credentials sourced from public profiles and internal records
           </p>
-          <p className="mt-3 text-xs text-cream/65 leading-relaxed">
+          <p className="mt-3 text-xs text-white/45 leading-relaxed">
             Mentor availability and session formats are subject to scheduling. No specific
             mentor is guaranteed at any specific session.
           </p>

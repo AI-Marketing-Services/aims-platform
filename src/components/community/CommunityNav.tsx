@@ -21,11 +21,11 @@ export function CommunityNav() {
       className={cn(
         "sticky top-0 left-0 right-0 z-40 transition-all duration-200",
         scrolled
-          ? "bg-ink/95 backdrop-blur-md border-b border-line"
+          ? "bg-white/95 backdrop-blur-md border-b border-[#E3E3E3] shadow-sm"
           : "bg-transparent"
       )}
     >
-      <div className="mx-auto max-w-6xl px-4">
+      <div className="mx-auto max-w-[1280px] px-6">
         <div className="relative flex h-16 items-center justify-between gap-6">
           <Link href="/" className="flex items-center gap-3 flex-shrink-0">
             <Image
@@ -37,30 +37,30 @@ export function CommunityNav() {
               priority
             />
             <div className="hidden sm:flex flex-col leading-tight">
-              <span className="text-[11px] uppercase tracking-[0.2em] text-aims-gold font-mono">
+              <span className="text-[11px] uppercase tracking-[0.2em] text-crimson font-mono">
                 AI Operator Collective
               </span>
-              <span className="text-[9px] text-cream/70 uppercase tracking-wider font-mono">
+              <span className="text-[9px] text-[#737373] uppercase tracking-wider font-mono">
                 Powered by AIMS
               </span>
             </div>
           </Link>
 
           <nav className="hidden md:flex items-center justify-center gap-7 text-sm absolute left-1/2 -translate-x-1/2">
-            <a href="#program" className="text-cream/70 hover:text-cream transition-colors">
+            <a href="#program" className="text-[#737373] hover:text-[#1A1A1A] transition-colors">
               Program
             </a>
-            <a href="#mentors" className="text-cream/70 hover:text-cream transition-colors">
+            <a href="#mentors" className="text-[#737373] hover:text-[#1A1A1A] transition-colors">
               Mentors
             </a>
-            <a href="#faq" className="text-cream/70 hover:text-cream transition-colors">
+            <a href="#faq" className="text-[#737373] hover:text-[#1A1A1A] transition-colors">
               FAQ
             </a>
           </nav>
 
           <a
             href={TYPEFORM_URL}
-            className="inline-flex items-center justify-center rounded-sm bg-aims-gold text-ink px-5 py-2.5 text-xs font-bold uppercase tracking-wider hover:bg-aims-gold-light transition-colors shadow-[0_0_0_1px_rgba(196,151,42,0.3)]"
+            className="inline-flex items-center justify-center rounded-md bg-crimson text-white px-5 py-2.5 text-xs font-bold uppercase tracking-wider hover:bg-crimson-dark transition-colors shadow-[0_0_0_1px_rgba(153,27,27,0.3)]"
           >
             Apply Now
           </a>

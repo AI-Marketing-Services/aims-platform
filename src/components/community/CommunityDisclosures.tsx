@@ -35,17 +35,17 @@ export function CommunityDisclosures() {
   return (
     <section
       id="disclosures"
-      className="relative py-20 sm:py-24 border-t border-line bg-deep"
+      className="relative py-20 sm:py-24 border-t border-white/10 bg-dark-deep text-white"
     >
-      <div className="mx-auto max-w-3xl px-4">
+      <div className="mx-auto max-w-3xl px-6">
         <div className="text-center max-w-2xl mx-auto">
-          <div className="inline-flex items-center justify-center w-10 h-10 rounded-sm bg-aims-gold/10 border border-aims-gold/20 mb-5">
-            <ShieldAlert className="w-5 h-5 text-aims-gold" />
+          <div className="inline-flex items-center justify-center w-10 h-10 rounded-md bg-crimson/10 border border-crimson/20 mb-5">
+            <ShieldAlert className="w-5 h-5 text-crimson-light" />
           </div>
-          <h2 className="font-serif text-2xl sm:text-3xl text-cream leading-tight">
+          <h2 className="font-playfair text-2xl sm:text-3xl text-white leading-tight">
             Important Disclosures
           </h2>
-          <p className="mt-3 text-sm text-cream/75">
+          <p className="mt-3 text-sm text-white/65">
             Please read these in full before applying or making any business decision based on
             the information on this page.
           </p>
@@ -55,17 +55,17 @@ export function CommunityDisclosures() {
           {DISCLOSURES.map((d) => (
             <div
               key={d.title}
-              className="rounded-md border border-line bg-surface/40 p-5 sm:p-6"
+              className="rounded-md border border-white/10 bg-dark-surface p-5 sm:p-6"
             >
-              <h3 className="text-xs font-mono uppercase tracking-wider text-aims-gold mb-2">
+              <h3 className="text-xs font-mono uppercase tracking-wider text-crimson-light mb-2">
                 {d.title}
               </h3>
-              <p className="text-sm text-cream/65 leading-relaxed">{d.body}</p>
+              <p className="text-sm text-white/55 leading-relaxed">{d.body}</p>
             </div>
           ))}
         </div>
 
-        <p className="mt-10 text-center text-[11px] text-cream/60 font-mono uppercase tracking-wider">
+        <p className="mt-10 text-center text-[11px] text-white/40 font-mono uppercase tracking-wider">
           Last updated: {new Date().toLocaleDateString("en-US", { year: "numeric", month: "long" })}
         </p>
       </div>

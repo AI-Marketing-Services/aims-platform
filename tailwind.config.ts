@@ -71,6 +71,14 @@ const config = {
         "gold-dim": "#6B5A2E",
         line: "rgba(255,255,255,0.07)",
         "line-hover": "rgba(255,255,255,0.14)",
+        // Crimson rebrand (landing page)
+        crimson: {
+          DEFAULT: "#981B1B",
+          dark: "#791515",
+          light: "#C42424",
+        },
+        "dark-deep": "#121212",
+        "dark-surface": "#2E2E2E",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -81,6 +89,8 @@ const config = {
         sans: ["var(--font-dm-sans)", "system-ui", "sans-serif"],
         mono: ["var(--font-dm-mono)", "monospace"],
         serif: ["var(--font-cormorant)", "Georgia", "serif"],
+        inter: ["var(--font-inter)", "system-ui", "sans-serif"],
+        playfair: ["var(--font-playfair)", "Georgia", "serif"],
       },
       keyframes: {
         "accordion-down": {

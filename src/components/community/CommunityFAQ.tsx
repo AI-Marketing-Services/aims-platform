@@ -31,10 +31,10 @@ export function CommunityFAQ() {
   const [open, setOpen] = useState<number | null>(null)
 
   return (
-    <section id="faq" className="relative py-24 sm:py-32 border-t border-line">
-      <div className="mx-auto max-w-3xl px-4">
-        <div className="text-center max-w-3xl mx-auto">
-          <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl text-cream leading-[1.25] pb-2">
+    <section id="faq" className="relative py-24 sm:py-32 border-t border-[#E3E3E3]">
+      <div className="mx-auto max-w-3xl px-6">
+        <div className="text-center">
+          <h2 className="font-playfair text-4xl sm:text-5xl md:text-6xl text-[#1A1A1A] leading-[1.25] pb-2">
             Nothing to hide.
           </h2>
         </div>
@@ -46,8 +46,8 @@ export function CommunityFAQ() {
               <div
                 key={i}
                 className={cn(
-                  "rounded-md border bg-surface/40 overflow-hidden transition-all",
-                  isOpen ? "border-aims-gold/40" : "border-line hover:border-line-hover"
+                  "rounded-md border overflow-hidden transition-all",
+                  isOpen ? "border-crimson/30 bg-crimson/5" : "border-[#E3E3E3] bg-[#F5F5F5] hover:border-[#ccc]"
                 )}
               >
                 <button
@@ -55,16 +55,16 @@ export function CommunityFAQ() {
                   className="w-full flex items-center justify-between gap-4 px-5 sm:px-6 py-5 text-left"
                   aria-expanded={isOpen}
                 >
-                  <span className="font-serif text-lg sm:text-xl text-cream">{item.q}</span>
+                  <span className="font-playfair text-lg sm:text-xl text-[#1A1A1A]">{item.q}</span>
                   <ChevronDown
                     className={cn(
-                      "w-5 h-5 text-aims-gold flex-shrink-0 transition-transform",
+                      "w-5 h-5 text-crimson flex-shrink-0 transition-transform",
                       isOpen ? "rotate-180" : ""
                     )}
                   />
                 </button>
                 {isOpen && (
-                  <div className="px-5 sm:px-6 pb-6 text-cream/65 leading-relaxed text-sm sm:text-base">
+                  <div className="px-5 sm:px-6 pb-6 text-[#737373] leading-relaxed text-sm sm:text-base">
                     {item.a}
                   </div>
                 )}
