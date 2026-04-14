@@ -5,7 +5,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 
-const TYPEFORM_URL = "#apply"
+const APPLY_URL = "/apply"
 
 export function CommunityNav() {
   const [scrolled, setScrolled] = useState(false)
@@ -59,7 +59,7 @@ export function CommunityNav() {
           </nav>
 
           <a
-            href={TYPEFORM_URL}
+            href={APPLY_URL}
             className="inline-flex items-center justify-center rounded-md bg-crimson text-white px-5 py-2.5 text-xs font-bold uppercase tracking-wider hover:bg-crimson-dark transition-colors shadow-[0_0_0_1px_rgba(153,27,27,0.3)]"
           >
             Apply Now

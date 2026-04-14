@@ -1,7 +1,7 @@
 import { ArrowRight } from "lucide-react"
 import { DotGrid } from "@/components/marketing/DotGrid"
 
-const TYPEFORM_URL = "#apply"
+const APPLY_URL = "/apply"
 
 export function CommunityHero() {
   return (
@@ -28,7 +28,7 @@ export function CommunityHero() {
         {/* CTA */}
         <div className="mt-10 flex flex-col items-center gap-4">
           <a
-            href={TYPEFORM_URL}
+            href={APPLY_URL}
             className="pointer-events-auto group inline-flex items-center justify-center gap-2 rounded-md bg-crimson text-white px-7 py-4 text-sm font-bold uppercase tracking-wider hover:bg-crimson-dark transition-all shadow-[0_8px_24px_-4px_rgba(153,27,27,0.35)]"
           >
             Apply Now
