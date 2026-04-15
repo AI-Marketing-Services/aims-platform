@@ -346,7 +346,7 @@ function PageFooter() {
   return (
     <View style={s.footer} fixed>
       <Text style={s.footerText}>AIMS - AI Managing Services</Text>
-      <Text style={s.footerText}>aimseos.com</Text>
+      <Text style={s.footerText}>aioperatorcollective.com</Text>
     </View>
   )
 }
@@ -411,7 +411,7 @@ export function AIPlaybookDocument() {
           Roll out AI across every department without hiring or getting technical.
           Make this your playbook. It is simple, fast, and real.
         </Text>
-        <Text style={s.coverFooter}>AI Managing Services - aimseos.com</Text>
+        <Text style={s.coverFooter}>AI Managing Services - aioperatorcollective.com</Text>
       </Page>
 
       {/* ─── What You Get ─── */}
@@ -659,7 +659,7 @@ export function AIPlaybookDocument() {
             AIMS deploys AI infrastructure across your business{"\n"}
             so you can scale without adding headcount.
           </Text>
-          <Link src="https://aimseos.com/get-started">
+          <Link src="https://www.aioperatorcollective.com/get-started">
             <View style={s.ctaButton}>
               <Text style={s.ctaButtonText}>Book a Strategy Call</Text>
             </View>
@@ -983,7 +983,7 @@ Format: [OUTPUT FORMAT]. End with a CTA. Run the 3-point QA.`}
             Want AIMS to handle the heavy lifting?{"\n"}
             We deploy AI infrastructure so you can focus on growth.
           </Text>
-          <Link src="https://aimseos.com/get-started">
+          <Link src="https://www.aioperatorcollective.com/get-started">
             <View style={s.ctaButton}>
               <Text style={s.ctaButtonText}>Get Started with AIMS</Text>
             </View>

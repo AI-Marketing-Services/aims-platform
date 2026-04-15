@@ -23,10 +23,10 @@ export const metadata: Metadata = {
   title: "The AI Operating System for Business Owners | AIMS Playbook",
   description:
     "Deploy AI across every department without hiring or getting technical. A 4-part playbook with 30+ ready-to-use prompts for Marketing, Sales, Customer Success, Product, Engineering, and Operations.",
-  alternates: { canonical: "https://aimseos.com/tools/ai-operating-system" },
+  alternates: { canonical: "https://www.aioperatorcollective.com/tools/ai-operating-system" },
   openGraph: {
     type: "article",
-    url: "https://aimseos.com/tools/ai-operating-system",
+    url: "https://www.aioperatorcollective.com/tools/ai-operating-system",
     title: "The AI Operating System for Business Owners",
     description:
       "Deploy AI across every department. 4-part playbook + 30 ready-to-run prompts. Free PDF, no fluff.",

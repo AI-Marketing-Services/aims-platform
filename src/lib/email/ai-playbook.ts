@@ -24,7 +24,7 @@ export async function sendAIPlaybookEmail(params: {
 }) {
   const safeName = escapeHtml(params.name)
   const firstName = safeName.split(" ")[0] || "there"
-  const strategyUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://aimseos.com"}/get-started`
+  const strategyUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://www.aioperatorcollective.com"}/get-started`
 
   const body = `
     ${h1(`${firstName}, your AI Playbook is attached`)}
