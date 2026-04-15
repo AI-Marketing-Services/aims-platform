@@ -3,15 +3,18 @@ import PDFDocument from "pdfkit"
 // ─── Colors ──────────────────────────────────────────────────────────────────
 
 const C = {
-  gold: "#C4972A",
-  ink: "#08090D",
-  surface: "#141923",
-  cream: "#F0EBE0",
+  crimson: "#981B1B",
+  crimsonDark: "#791515",
+  crimsonLight: "#C42424",
+  ink: "#1A1A1A",
+  surface: "#F5F5F5",
+  cream: "#FFFFFF",
   white: "#FFFFFF",
-  muted: "#9CA3AF",
-  lightGray: "#F4F4F5",
-  darkText: "#1A1A2E",
+  muted: "#737373",
+  lightGray: "#F5F5F5",
+  darkText: "#1A1A1A",
   bodyText: "#374151",
+  border: "#E3E3E3",
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -32,7 +35,7 @@ function sectionHeader(doc: PDFKit.PDFDocument, step: string, title: string, goa
 
   doc
     .fontSize(9)
-    .fillColor(C.gold)
+    .fillColor(C.crimson)
     .text(step, 52, 36, { characterSpacing: 2.5 })
 
   doc
@@ -63,7 +66,7 @@ function heading3(doc: PDFKit.PDFDocument, text: string) {
   doc
     .moveDown(0.5)
     .fontSize(11)
-    .fillColor(C.gold)
+    .fillColor(C.crimson)
     .text(text)
     .moveDown(0.2)
 }
@@ -80,7 +83,7 @@ function bullet(doc: PDFKit.PDFDocument, text: string) {
   const x = doc.x
   doc
     .fontSize(10)
-    .fillColor(C.gold)
+    .fillColor(C.crimson)
     .text("- ", x, doc.y, { continued: true })
     .fillColor(C.bodyText)
     .text(text, { lineGap: 3 })
@@ -100,7 +103,7 @@ function card(doc: PDFKit.PDFDocument, title: string, body: string) {
   // Gold left border
   doc
     .rect(cardX, startY, 3, 60)
-    .fill(C.gold)
+    .fill(C.crimson)
 
   // Background
   doc
@@ -125,7 +128,7 @@ function card(doc: PDFKit.PDFDocument, title: string, body: string) {
   // Redraw background with correct height
   doc
     .rect(cardX, startY, 3, cardH)
-    .fill(C.gold)
+    .fill(C.crimson)
   doc
     .rect(cardX + 3, startY, cardW - 3, cardH)
     .fill(C.lightGray)
@@ -151,7 +154,7 @@ function callout(doc: PDFKit.PDFDocument, text: string) {
 
   doc
     .rect(x, startY, 3, 50)
-    .fill(C.gold)
+    .fill(C.crimson)
   doc
     .rect(x + 3, startY, w - 3, 50)
     .fill("#FEF9EC")
@@ -166,7 +169,7 @@ function callout(doc: PDFKit.PDFDocument, text: string) {
   // Redraw with correct height
   doc
     .rect(x, startY, 3, h)
-    .fill(C.gold)
+    .fill(C.crimson)
   doc
     .rect(x + 3, startY, w - 3, h)
     .fill("#FEF9EC")
@@ -204,7 +207,7 @@ function ctaBox(doc: PDFKit.PDFDocument, title: string, body: string, buttonText
   const btnX = x + (w - btnW) / 2
   doc
     .roundedRect(btnX, btnY, btnW, 32, 4)
-    .fill(C.gold)
+    .fill(C.crimson)
   doc
     .fontSize(9)
     .fillColor(C.white)
@@ -313,7 +316,7 @@ export function buildAIPlaybookPDF(): Promise<Buffer> {
 
     doc
       .fontSize(10)
-      .fillColor(C.gold)
+      .fillColor(C.crimson)
       .text("AIMS PLAYBOOK", 0, 260, { align: "center", characterSpacing: 3 })
 
     doc
@@ -327,7 +330,7 @@ export function buildAIPlaybookPDF(): Promise<Buffer> {
     const divX = (pw - 60) / 2
     doc
       .rect(divX, doc.y + 16, 60, 2)
-      .fill(C.gold)
+      .fill(C.crimson)
 
     doc
       .fontSize(12)
@@ -519,7 +522,7 @@ export function buildAIPlaybookPDF(): Promise<Buffer> {
 
     doc
       .fontSize(8)
-      .fillColor(C.gold)
+      .fillColor(C.crimson)
       .text("MASTER PROMPT - COPY AND CUSTOMIZE", mpX + 12, mpY + 8, { characterSpacing: 1 })
 
     doc

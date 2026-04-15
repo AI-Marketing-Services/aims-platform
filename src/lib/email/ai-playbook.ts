@@ -5,8 +5,8 @@ const REPLY_TO = "irtaza@modern-amenities.com"
 
 function playCard(num: number, title: string, body: string) {
   return `
-    <div style="border-left:3px solid #C4972A;padding:12px 16px;margin:0 0 12px;background:#F9FAFB;border-radius:0 6px 6px 0;">
-      <p style="margin:0 0 4px;font-size:11px;font-weight:700;color:#C4972A;text-transform:uppercase;letter-spacing:0.06em;">Step ${num}</p>
+    <div style="border-left:3px solid #981B1B;padding:12px 16px;margin:0 0 12px;background:#F9FAFB;border-radius:0 6px 6px 0;">
+      <p style="margin:0 0 4px;font-size:11px;font-weight:700;color:#981B1B;text-transform:uppercase;letter-spacing:0.06em;">Step ${num}</p>
       <p style="margin:0 0 4px;font-size:14px;font-weight:700;color:#111827;">${title}</p>
       <p style="margin:0;font-size:13px;color:#4B5563;line-height:1.6;">${body}</p>
     </div>

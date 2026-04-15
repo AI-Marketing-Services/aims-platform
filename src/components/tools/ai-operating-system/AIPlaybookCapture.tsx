@@ -46,16 +46,16 @@ export function AIPlaybookCapture({ variant = "hero" }: Props) {
 
   if (success) {
     return (
-      <div className="rounded-md border border-primary/40 bg-primary/5 p-6 text-center max-w-md mx-auto">
-        <CheckCircle2 className="w-10 h-10 text-primary mx-auto mb-3" />
-        <p className="text-foreground font-semibold text-lg">Your playbook is on the way.</p>
-        <p className="text-muted-foreground text-sm mt-2 leading-relaxed">
+      <div className="rounded-md border border-crimson/30 bg-crimson/5 p-6 text-center max-w-md mx-auto">
+        <CheckCircle2 className="w-10 h-10 text-crimson mx-auto mb-3" />
+        <p className="text-[#1A1A1A] font-semibold text-lg">Your playbook is on the way.</p>
+        <p className="text-[#737373] text-sm mt-2 leading-relaxed">
           Check your inbox for the AI Operating System Playbook PDF.
           If you do not see it in 2 minutes, check your spam folder.
         </p>
         <a
           href="/api/lead-magnets/ai-playbook"
-          className="inline-flex items-center gap-2 mt-4 text-sm text-primary font-semibold hover:underline"
+          className="inline-flex items-center gap-2 mt-4 text-sm text-crimson font-semibold hover:underline"
         >
           <Download className="w-3.5 h-3.5" />
           Download PDF directly
@@ -71,7 +71,7 @@ export function AIPlaybookCapture({ variant = "hero" }: Props) {
         placeholder="Your name (optional)"
         value={name}
         onChange={(e) => setName(e.target.value)}
-        className="w-full px-4 py-3.5 bg-card border border-border rounded-md text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary"
+        className="w-full px-4 py-3.5 bg-white border border-[#E3E3E3] rounded-md text-[#1A1A1A] placeholder:text-[#ccc] focus:outline-none focus:border-crimson focus:ring-1 focus:ring-crimson transition-colors text-base"
       />
       <input
         type="email"
@@ -79,12 +79,12 @@ export function AIPlaybookCapture({ variant = "hero" }: Props) {
         placeholder="you@company.com"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        className="w-full px-4 py-3.5 bg-card border border-border rounded-md text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary"
+        className="w-full px-4 py-3.5 bg-white border border-[#E3E3E3] rounded-md text-[#1A1A1A] placeholder:text-[#ccc] focus:outline-none focus:border-crimson focus:ring-1 focus:ring-crimson transition-colors text-base"
       />
       <button
         type="submit"
         disabled={loading}
-        className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-primary text-white font-semibold rounded-md hover:bg-primary/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed shadow-[0_0_30px_rgba(196,151,42,0.25)]"
+        className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-crimson text-white font-bold text-sm uppercase tracking-wider rounded-md hover:bg-crimson-dark transition-all disabled:opacity-60 disabled:cursor-not-allowed shadow-[0_8px_24px_-4px_rgba(153,27,27,0.35)]"
       >
         {loading ? (
           <Loader2 className="w-4 h-4 animate-spin" />
@@ -94,8 +94,8 @@ export function AIPlaybookCapture({ variant = "hero" }: Props) {
           </>
         )}
       </button>
-      {error && <p className="text-xs text-primary text-center">{error}</p>}
-      <p className="text-xs text-center text-muted-foreground inline-flex items-center justify-center gap-1.5 w-full">
+      {error && <p className="text-xs text-crimson text-center">{error}</p>}
+      <p className="text-xs text-center text-[#737373] inline-flex items-center justify-center gap-1.5 w-full">
         <Lock className="w-3 h-3" />
         PDF delivered instantly. No spam.
       </p>

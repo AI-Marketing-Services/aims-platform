@@ -47,7 +47,7 @@ const STEPS = [
     step: "Step 2",
     title: "Choose Tools and Build Workflows",
     description:
-      "Map the right AI tools to each function and build automated workflows with a clear Trigger → AI → Automation → Human pattern.",
+      "Map the right AI tools to each function and build automated workflows with a clear Trigger, AI, Automation, Human pattern.",
   },
   {
     icon: BarChart3,
@@ -106,19 +106,19 @@ const PROMPT_SECTIONS = [
 
 export default function AIOperatingSystemPage() {
   return (
-    <div className="min-h-screen bg-deep">
+    <div className="min-h-screen bg-white font-inter">
       {/* HERO */}
-      <section className="relative border-b border-border bg-gradient-to-b from-card to-deep">
-        <div className="max-w-4xl mx-auto px-4 py-16 sm:py-24 text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary text-xs font-mono uppercase tracking-wider rounded-full mb-6">
+      <section className="relative border-b border-[#E3E3E3] bg-white">
+        <div className="max-w-4xl mx-auto px-6 py-16 sm:py-24 text-center">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-crimson/5 text-crimson text-xs font-mono uppercase tracking-[0.2em] rounded-full mb-6 border border-crimson/15">
             <BookOpen className="w-3.5 h-3.5" />
             Free PDF Playbook
           </div>
-          <h1 className="font-serif text-4xl sm:text-6xl text-foreground leading-tight mb-6">
+          <h1 className="font-playfair text-4xl sm:text-6xl text-[#1A1A1A] leading-tight mb-6">
             The AI Operating System{" "}
-            <span className="block text-primary italic">for Business Owners.</span>
+            <span className="block text-crimson italic">for Business Owners.</span>
           </h1>
-          <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed mb-10">
+          <p className="text-lg sm:text-xl text-[#737373] max-w-2xl mx-auto leading-relaxed mb-10">
             Roll out AI across every department without hiring or getting technical.
             A 4-part deployment playbook with 30+ ready-to-use prompts.
             Copy, paste, ship.
@@ -135,10 +135,10 @@ export default function AIOperatingSystemPage() {
             ].map((item) => (
               <div
                 key={item.label}
-                className="bg-card border border-border rounded-md p-3 flex items-center gap-2"
+                className="bg-white border border-[#E3E3E3] rounded-md p-3 flex items-center gap-2"
               >
-                <item.icon className="w-4 h-4 text-primary flex-shrink-0" />
-                <span className="text-xs text-foreground">{item.label}</span>
+                <item.icon className="w-4 h-4 text-crimson flex-shrink-0" />
+                <span className="text-xs text-[#1A1A1A]">{item.label}</span>
               </div>
             ))}
           </div>
@@ -146,40 +146,42 @@ export default function AIOperatingSystemPage() {
       </section>
 
       {/* PROBLEM / HOOK */}
-      <section className="max-w-3xl mx-auto px-4 py-16">
-        <p className="text-xs font-mono uppercase tracking-wider text-primary mb-4 text-center">
-          The reality
-        </p>
-        <h2 className="font-serif text-3xl sm:text-4xl text-foreground leading-tight mb-6 text-center">
-          Most founders buy AI like a shiny object.
-        </h2>
-        <div className="space-y-5 text-base sm:text-lg text-muted-foreground leading-relaxed">
-          <p>
-            Smart founders use AI like a competitive weapon. The difference is not the tools — it is the system.
-            This playbook gives you the exact process for integrating AI across your business without needing to
-            hire additional staff, learn technical skills, or build complex systems.
+      <section className="bg-[#F5F5F5]">
+        <div className="max-w-3xl mx-auto px-6 py-16">
+          <p className="text-xs font-mono uppercase tracking-[0.2em] text-crimson mb-4 text-center">
+            The reality
           </p>
-          <p>
-            Our approach implements AI in a simple, practical way that enhances your existing operations, team,
-            and workflows. Not just automation — an operating system where AI works alongside your team, driving
-            results that feel effortless and sustainable.
-          </p>
-          <p className="text-foreground font-semibold">
-            Remove costs. Move faster. Scale without adding headcount.
-          </p>
+          <h2 className="font-playfair text-3xl sm:text-4xl text-[#1A1A1A] leading-tight mb-6 text-center">
+            Most founders buy AI like a shiny object.
+          </h2>
+          <div className="space-y-5 text-base sm:text-lg text-[#737373] leading-relaxed">
+            <p>
+              Smart founders use AI like a competitive weapon. The difference is not the tools — it is the system.
+              This playbook gives you the exact process for integrating AI across your business without needing to
+              hire additional staff, learn technical skills, or build complex systems.
+            </p>
+            <p>
+              Our approach implements AI in a simple, practical way that enhances your existing operations, team,
+              and workflows. Not just automation — an operating system where AI works alongside your team, driving
+              results that feel effortless and sustainable.
+            </p>
+            <p className="text-[#1A1A1A] font-semibold">
+              Remove costs. Move faster. Scale without adding headcount.
+            </p>
+          </div>
         </div>
       </section>
 
       {/* 4 STEPS */}
-      <section className="border-t border-border bg-gradient-to-b from-deep to-card/30">
-        <div className="max-w-4xl mx-auto px-4 py-16">
+      <section className="border-t border-[#E3E3E3] bg-white">
+        <div className="max-w-4xl mx-auto px-6 py-16">
           <div className="text-center mb-12">
-            <p className="text-xs font-mono uppercase tracking-wider text-primary mb-3">
+            <p className="text-xs font-mono uppercase tracking-[0.2em] text-crimson mb-3">
               Inside the playbook
             </p>
-            <h2 className="font-serif text-3xl sm:text-5xl text-foreground leading-tight mb-4">
+            <h2 className="font-playfair text-3xl sm:text-5xl text-[#1A1A1A] leading-tight mb-4">
               The 4-Part AI{" "}
-              <span className="text-primary italic">Deployment Playbook.</span>
+              <span className="text-crimson italic">Deployment Playbook.</span>
             </h2>
           </div>
 
@@ -187,18 +189,18 @@ export default function AIOperatingSystemPage() {
             {STEPS.map((item) => (
               <div
                 key={item.step}
-                className="bg-card border border-border rounded-lg p-6 hover:border-primary/40 transition-colors group"
+                className="bg-white border border-[#E3E3E3] rounded-md p-6 hover:border-crimson/30 hover:shadow-[0_12px_32px_-8px_rgba(0,0,0,0.1)] transition-all group"
               >
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 bg-primary/10 rounded-md flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                    <item.icon className="w-5 h-5 text-primary" />
+                  <div className="w-10 h-10 bg-crimson/5 rounded-md flex items-center justify-center border border-crimson/15 group-hover:bg-crimson/10 transition-colors">
+                    <item.icon className="w-5 h-5 text-crimson" />
                   </div>
-                  <span className="text-xs font-mono uppercase tracking-wider text-primary">
+                  <span className="text-xs font-mono uppercase tracking-[0.2em] text-crimson">
                     {item.step}
                   </span>
                 </div>
-                <h3 className="text-lg font-semibold text-foreground mb-2">{item.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
+                <h3 className="text-lg font-semibold text-[#1A1A1A] mb-2">{item.title}</h3>
+                <p className="text-sm text-[#737373] leading-relaxed">
                   {item.description}
                 </p>
               </div>
@@ -208,17 +210,17 @@ export default function AIOperatingSystemPage() {
       </section>
 
       {/* PROMPT LIBRARY PREVIEW */}
-      <section className="border-t border-border">
-        <div className="max-w-4xl mx-auto px-4 py-16">
+      <section className="border-t border-[#E3E3E3] bg-[#F5F5F5]">
+        <div className="max-w-4xl mx-auto px-6 py-16">
           <div className="text-center mb-12">
-            <p className="text-xs font-mono uppercase tracking-wider text-primary mb-3">
+            <p className="text-xs font-mono uppercase tracking-[0.2em] text-crimson mb-3">
               Also included
             </p>
-            <h2 className="font-serif text-3xl sm:text-5xl text-foreground leading-tight mb-4">
+            <h2 className="font-playfair text-3xl sm:text-5xl text-[#1A1A1A] leading-tight mb-4">
               30+ Ready-to-Deploy{" "}
-              <span className="text-primary italic">Business Prompts.</span>
+              <span className="text-crimson italic">Business Prompts.</span>
             </h2>
-            <p className="text-base text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-base text-[#737373] max-w-2xl mx-auto">
               Each prompt uses the RCCF format (Role, Context, Command, Format) for
               consistent, high-quality AI output. Copy, customize, and ship.
             </p>
@@ -228,16 +230,16 @@ export default function AIOperatingSystemPage() {
             {PROMPT_SECTIONS.map((section) => (
               <div
                 key={section.title}
-                className="bg-card border border-border rounded-lg p-5"
+                className="bg-white border border-[#E3E3E3] rounded-md p-5 hover:border-crimson/30 transition-colors"
               >
                 <div className="flex items-center gap-3 mb-3">
-                  <section.icon className="w-5 h-5 text-primary" />
-                  <h3 className="font-semibold text-foreground">{section.title}</h3>
-                  <span className="ml-auto text-xs font-mono text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+                  <section.icon className="w-5 h-5 text-crimson" />
+                  <h3 className="font-semibold text-[#1A1A1A]">{section.title}</h3>
+                  <span className="ml-auto text-xs font-mono text-crimson bg-crimson/5 px-2 py-0.5 rounded-full border border-crimson/15">
                     {section.count}
                   </span>
                 </div>
-                <p className="text-xs text-muted-foreground leading-relaxed">
+                <p className="text-xs text-[#737373] leading-relaxed">
                   {section.examples}
                 </p>
               </div>
@@ -247,39 +249,39 @@ export default function AIOperatingSystemPage() {
       </section>
 
       {/* WHAT AIMS DOES */}
-      <section className="border-y border-primary/30 bg-gradient-to-r from-primary/10 via-card to-primary/10">
-        <div className="max-w-4xl mx-auto px-4 py-12 text-center">
-          <p className="text-xs font-mono uppercase tracking-wider text-primary mb-3">
+      <section className="border-y border-crimson/20 bg-crimson/5">
+        <div className="max-w-4xl mx-auto px-6 py-12 text-center">
+          <p className="text-xs font-mono uppercase tracking-[0.2em] text-crimson mb-3">
             Or let us handle it
           </p>
-          <h3 className="font-serif text-2xl sm:text-4xl text-foreground leading-tight mb-4">
+          <h3 className="font-playfair text-2xl sm:text-4xl text-[#1A1A1A] leading-tight mb-4">
             Want AIMS to deploy this for you?
           </h3>
-          <p className="text-base text-muted-foreground mb-6 max-w-xl mx-auto">
+          <p className="text-base text-[#737373] mb-6 max-w-xl mx-auto">
             AIMS builds AI infrastructure for businesses. We audit your operations,
             deploy the right tools, and manage the workflows — so you get the results
             without the learning curve.
           </p>
           <Link
-            href="/get-started"
-            className="inline-flex items-center gap-2 px-7 py-3.5 bg-primary text-white font-semibold rounded-md hover:bg-primary/90 transition-colors"
+            href="/apply"
+            className="inline-flex items-center gap-2 px-7 py-3.5 bg-crimson text-white font-bold text-sm uppercase tracking-wider rounded-md hover:bg-crimson-dark transition-all shadow-[0_8px_24px_-4px_rgba(153,27,27,0.35)]"
           >
             Book a Free Strategy Call <ArrowRight className="w-4 h-4" />
           </Link>
-          <p className="text-xs text-muted-foreground mt-4">
+          <p className="text-xs text-[#737373] mt-4">
             No pitch. Just a working session to map AI to your business.
           </p>
         </div>
       </section>
 
       {/* FINAL CTA + EMAIL CAPTURE */}
-      <section className="border-t border-primary/30 bg-gradient-to-b from-card to-deep">
-        <div className="max-w-3xl mx-auto px-4 py-20 text-center">
-          <Sparkles className="w-10 h-10 text-primary mx-auto mb-5" />
-          <h2 className="font-serif text-3xl sm:text-5xl text-foreground leading-tight mb-5">
+      <section className="bg-white">
+        <div className="max-w-3xl mx-auto px-6 py-20 text-center">
+          <Sparkles className="w-10 h-10 text-crimson mx-auto mb-5" />
+          <h2 className="font-playfair text-3xl sm:text-5xl text-[#1A1A1A] leading-tight mb-5">
             Get the playbook. Ship today.
           </h2>
-          <p className="text-base text-muted-foreground max-w-xl mx-auto mb-10">
+          <p className="text-base text-[#737373] max-w-xl mx-auto mb-10">
             Drop your email and we will send the full AI Operating System Playbook
             PDF to your inbox. Pick one department, paste the Master Prompt, run
             one RCCF prompt, and ship one asset today.
@@ -287,13 +289,13 @@ export default function AIOperatingSystemPage() {
 
           <AIPlaybookCapture variant="footer" />
 
-          <div className="mt-12 pt-10 border-t border-border">
-            <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-4">
+          <div className="mt-12 pt-10 border-t border-[#E3E3E3]">
+            <p className="text-xs font-mono uppercase tracking-[0.2em] text-[#737373] mb-4">
               Or skip the email
             </p>
             <Link
-              href="/get-started"
-              className="inline-flex items-center gap-2 px-7 py-3.5 bg-card border border-primary/40 text-primary font-semibold rounded-md hover:border-primary hover:bg-primary/10 transition-colors"
+              href="/apply"
+              className="inline-flex items-center gap-2 px-7 py-3.5 bg-white border border-crimson/30 text-crimson font-semibold rounded-md hover:border-crimson hover:bg-crimson/5 transition-colors"
             >
               Talk to AIMS directly <ArrowRight className="w-4 h-4" />
             </Link>
@@ -302,15 +304,15 @@ export default function AIOperatingSystemPage() {
       </section>
 
       {/* DISCLOSURES */}
-      <footer className="border-t border-border bg-card">
-        <div className="max-w-3xl mx-auto px-4 py-10 text-center">
-          <p className="text-xs text-muted-foreground leading-relaxed">
+      <footer className="border-t border-[#E3E3E3] bg-[#F5F5F5]">
+        <div className="max-w-3xl mx-auto px-6 py-10 text-center">
+          <p className="text-xs text-[#737373] leading-relaxed">
             AIMS (AI Managing Services) makes no income, earnings, or outcome
             claims. This playbook is educational. Any results referenced are
             illustrative and not representative of typical outcomes. Your results
             depend on your own execution, market, and effort.
           </p>
-          <p className="text-xs text-muted-foreground mt-4">
+          <p className="text-xs text-[#737373] mt-4">
             Operated by Modern Amenities LLC · Powered by AIMS
           </p>
         </div>
