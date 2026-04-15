@@ -107,7 +107,7 @@ export function buildW2PlaybookEmail(
           ],
           cta: { label: "Apply to the alpha cohort", url: APPLY_URL },
           ctaNote: "This is the curriculum's main unlock. We've watched operators 5x their margin in 30 days once they get it.",
-          footer: `One more email in this sequence — coming in about a week. After that I'll stop emailing. The full playbook lives <a href="${PLAYBOOK_URL}" style="color:#C4972A;font-weight:600;text-decoration:none;">here</a>.`,
+          footer: `One more email in this sequence — coming in about a week. After that I'll stop emailing. The full playbook lives <a href="${PLAYBOOK_URL}" style="color:#981B1B;font-weight:600;text-decoration:none;">here</a>.`,
         }),
       }
 
@@ -123,7 +123,7 @@ export function buildW2PlaybookEmail(
           plays: [
             {
               title: "The playbook is yours forever. No paywall, no expiry.",
-              body: `Bookmark <a href="${PLAYBOOK_URL}" style="color:#C4972A;font-weight:600;text-decoration:none;">the playbook</a> — it stays live indefinitely. Even if you never engage with the Collective, every play in it is yours to run.`,
+              body: `Bookmark <a href="${PLAYBOOK_URL}" style="color:#981B1B;font-weight:600;text-decoration:none;">the playbook</a> — it stays live indefinitely. Even if you never engage with the Collective, every play in it is yours to run.`,
             },
             {
               title: "Who the Collective is genuinely a fit for.",
@@ -162,8 +162,8 @@ function section(args: SectionArgs): string {
   const playsHtml = args.plays
     .map(
       (play, i) => `
-    <div style="background:#F9FAFB;border-left:3px solid #C4972A;border-radius:6px;padding:18px 22px;margin:0 0 14px;">
-      <p style="margin:0 0 4px;font-size:11px;font-weight:700;color:#C4972A;text-transform:uppercase;letter-spacing:0.08em;">Play 0${i + 1}</p>
+    <div style="background:#F9FAFB;border-left:3px solid #981B1B;border-radius:6px;padding:18px 22px;margin:0 0 14px;">
+      <p style="margin:0 0 4px;font-size:11px;font-weight:700;color:#981B1B;text-transform:uppercase;letter-spacing:0.08em;">Play 0${i + 1}</p>
       <p style="margin:0 0 6px;font-size:15px;font-weight:700;color:#111827;">${play.title}</p>
       <p style="margin:0;font-size:13px;color:#4B5563;line-height:1.65;">${play.body}</p>
     </div>`
@@ -173,8 +173,8 @@ function section(args: SectionArgs): string {
   return `
     <p style="margin:0 0 14px;font-size:14px;color:#4B5563;">Hey ${args.greeting}</p>
 
-    <div style="background:#0b0d12;border:1px solid #C4972A;border-radius:10px;padding:22px 24px;margin:0 0 24px;">
-      <p style="margin:0 0 6px;font-size:11px;font-weight:700;color:#C4972A;text-transform:uppercase;letter-spacing:0.12em;">${args.kicker}</p>
+    <div style="background:#0b0d12;border:1px solid #981B1B;border-radius:10px;padding:22px 24px;margin:0 0 24px;">
+      <p style="margin:0 0 6px;font-size:11px;font-weight:700;color:#981B1B;text-transform:uppercase;letter-spacing:0.12em;">${args.kicker}</p>
       <p style="margin:0;font-size:22px;font-weight:800;color:#F0EBE0;line-height:1.25;">${args.headline}</p>
     </div>
 
@@ -183,7 +183,7 @@ function section(args: SectionArgs): string {
     ${playsHtml}
 
     <div style="text-align:center;margin:32px 0 8px;">
-      <a href="${args.cta.url}" style="display:inline-block;background:#C4972A;color:#ffffff;padding:14px 32px;border-radius:6px;text-decoration:none;font-weight:700;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;">${args.cta.label}</a>
+      <a href="${args.cta.url}" style="display:inline-block;background:#981B1B;color:#ffffff;padding:14px 32px;border-radius:6px;text-decoration:none;font-weight:700;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;">${args.cta.label}</a>
     </div>
     <p style="margin:0 0 24px;text-align:center;font-size:12px;color:#6B7280;font-style:italic;">${args.ctaNote}</p>
 

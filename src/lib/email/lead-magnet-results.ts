@@ -22,7 +22,7 @@ export async function sendQuizResultsEmail(params: {
   data: Record<string, unknown>
 }) {
   const score = params.score ?? 50
-  const strategyUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://aimseos.com"}/get-started`
+  const strategyUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://www.aioperatorcollective.com"}/get-started`
   const level = score < 40 ? "Early Stage" : score < 70 ? "Growing" : "Advanced"
 
   const recommendations = getQuizRecommendations(score)
@@ -30,8 +30,8 @@ export async function sendQuizResultsEmail(params: {
   const safeName = escapeHtml(params.name)
   const body = `
     ${h1(`${safeName ? `${safeName}, your` : "Your"} AI Readiness Score: ${score}/100`)}
-    <div style="background:#FEF2F2;border-left:4px solid #C4972A;border-radius:6px;padding:20px 24px;margin:0 0 24px;">
-      <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#C4972A;text-transform:uppercase;letter-spacing:0.08em;">AI Readiness Level</p>
+    <div style="background:#FEF2F2;border-left:4px solid #981B1B;border-radius:6px;padding:20px 24px;margin:0 0 24px;">
+      <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#981B1B;text-transform:uppercase;letter-spacing:0.08em;">AI Readiness Level</p>
       <p style="margin:0;font-size:42px;font-weight:800;color:#111827;line-height:1;">${score}<span style="font-size:20px;color:#6B7280;">/100</span></p>
       <p style="margin:8px 0 0;font-size:14px;font-weight:600;color:#6B7280;">${level}</p>
     </div>
@@ -44,7 +44,7 @@ export async function sendQuizResultsEmail(params: {
     ${btn("View Full Results", params.resultsUrl)}
     ${divider()}
     ${p("Want a hands-on walkthrough of your results? Our team will map specific AIMS services to your gaps - no pitch, just a working session.")}
-    <a href="${strategyUrl}" style="font-size:14px;color:#C4972A;font-weight:600;text-decoration:none;">
+    <a href="${strategyUrl}" style="font-size:14px;color:#981B1B;font-weight:600;text-decoration:none;">
       Book a free strategy call
     </a>
   `
@@ -118,14 +118,14 @@ export async function sendCalculatorResultsEmail(params: {
 }) {
   const monthlySavings = (params.results?.monthlySavings as number) ?? 0
   const annualSavings = monthlySavings * 12
-  const strategyUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://aimseos.com"}/get-started`
+  const strategyUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://www.aioperatorcollective.com"}/get-started`
 
   const safeName = escapeHtml(params.name)
   const body = `
     ${h1(`${safeName ? `${safeName}, your` : "Your"} Custom ROI Report`)}
     ${monthlySavings > 0 ? `
-    <div style="background:#FEF2F2;border-left:4px solid #C4972A;border-radius:6px;padding:20px 24px;margin:0 0 24px;">
-      <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#C4972A;text-transform:uppercase;letter-spacing:0.08em;">Projected Monthly Savings</p>
+    <div style="background:#FEF2F2;border-left:4px solid #981B1B;border-radius:6px;padding:20px 24px;margin:0 0 24px;">
+      <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#981B1B;text-transform:uppercase;letter-spacing:0.08em;">Projected Monthly Savings</p>
       <p style="margin:0;font-size:42px;font-weight:800;color:#111827;line-height:1;">$${monthlySavings.toLocaleString()}<span style="font-size:16px;color:#6B7280;">/mo</span></p>
       <p style="margin:8px 0 0;font-size:14px;color:#6B7280;">That is <strong style="color:#111827;">$${annualSavings.toLocaleString()}</strong> per year in recoverable value</p>
     </div>
@@ -150,7 +150,7 @@ export async function sendCalculatorResultsEmail(params: {
     ${btn("View Full ROI Report", params.resultsUrl)}
     ${divider()}
     ${p("Want to validate these numbers with real benchmarks from similar businesses? Our team can rebuild this model live with you in 20 minutes.")}
-    <a href="${strategyUrl}" style="font-size:14px;color:#C4972A;font-weight:600;text-decoration:none;">
+    <a href="${strategyUrl}" style="font-size:14px;color:#981B1B;font-weight:600;text-decoration:none;">
       Book a free ROI session
     </a>
   `
@@ -179,8 +179,8 @@ export async function sendAuditResultsEmail(params: {
   results: Record<string, unknown> | undefined
 }) {
   const score = params.score ?? 50
-  const strategyUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://aimseos.com"}/get-started`
-  const marketplaceUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://aimseos.com"}/marketplace`
+  const strategyUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://www.aioperatorcollective.com"}/get-started`
+  const marketplaceUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://www.aioperatorcollective.com"}/marketplace`
 
   const severity = score < 40 ? "Critical" : score < 65 ? "Moderate" : "Good"
   const recommendations = getAuditRecommendations(score)
@@ -207,7 +207,7 @@ export async function sendAuditResultsEmail(params: {
           ${btn("See Fix-It Plans", marketplaceUrl)}
         </td>
         <td>
-          <a href="${strategyUrl}" style="font-size:14px;color:#C4972A;font-weight:600;text-decoration:none;">
+          <a href="${strategyUrl}" style="font-size:14px;color:#981B1B;font-weight:600;text-decoration:none;">
             Book a strategy call
           </a>
         </td>
@@ -265,10 +265,10 @@ export async function sendCreditScoreEmail({
     ${h1(`Your Business Credit Score: ${s}/100`)}
     ${p(`Hi ${displayName},`)}
     ${p(`You just completed your Business Credit Score assessment. Here's what your results mean and what to do next.`)}
-    <div style="background:#1a1a2e;border:2px solid #C4972A;border-radius:16px;padding:28px;text-align:center;margin:24px 0;">
-      <div style="font-size:64px;font-weight:900;color:#C4972A;line-height:1;">${s}</div>
+    <div style="background:#1a1a2e;border:2px solid #981B1B;border-radius:16px;padding:28px;text-align:center;margin:24px 0;">
+      <div style="font-size:64px;font-weight:900;color:#981B1B;line-height:1;">${s}</div>
       <div style="font-size:18px;color:#F0EBE0;font-weight:600;margin-top:4px;">out of 100</div>
-      <div style="display:inline-block;margin-top:12px;padding:4px 16px;border-radius:9999px;border:1px solid #C4972A;color:#C4972A;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;">${tier}</div>
+      <div style="display:inline-block;margin-top:12px;padding:4px 16px;border-radius:9999px;border:1px solid #981B1B;color:#981B1B;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;">${tier}</div>
     </div>
     ${p(`Based on your answers across business foundation, credit profile, tradeline reporting, credit utilization, and business maturity — here are your three highest-impact next steps:`)}
     ${recommendations.join("")}
@@ -277,7 +277,7 @@ export async function sendCreditScoreEmail({
     ${p(`Your full scorecard includes a dimension-by-dimension breakdown, the specific factors helping and hurting your score, and a complete 90-day action plan.`)}
     ${divider()}
     ${p(`Want help executing your credit building plan? Book a free strategy call with the AIMS team.`)}
-    ${btn("Book Free Strategy Call", "https://aimseos.com/get-started")}
+    ${btn("Book Free Strategy Call", "https://www.aioperatorcollective.com/get-started")}
   `)
 
   return sendTrackedEmail({
@@ -343,10 +343,10 @@ export async function sendOpsAuditEmail({
     ${h1(`Your Executive Operations Audit: ${s}/100`)}
     ${p(`Hi ${displayName},`)}
     ${p(`Your Executive Operations Audit is complete. Here's your summary — and what to do with it.`)}
-    <div style="background:#1a1a2e;border:2px solid #C4972A;border-radius:16px;padding:24px;text-align:center;margin:24px 0;">
-      <div style="font-size:56px;font-weight:900;color:#C4972A;line-height:1;">${s}</div>
+    <div style="background:#1a1a2e;border:2px solid #981B1B;border-radius:16px;padding:24px;text-align:center;margin:24px 0;">
+      <div style="font-size:56px;font-weight:900;color:#981B1B;line-height:1;">${s}</div>
       <div style="font-size:16px;color:#F0EBE0;margin-top:4px;">Operational Efficiency Score</div>
-      <div style="display:inline-block;margin-top:12px;padding:4px 16px;border-radius:9999px;border:1px solid #C4972A;color:#C4972A;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;">${tier}</div>
+      <div style="display:inline-block;margin-top:12px;padding:4px 16px;border-radius:9999px;border:1px solid #981B1B;color:#981B1B;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;">${tier}</div>
     </div>
     ${costLine}
     ${roiLine}
@@ -357,7 +357,7 @@ export async function sendOpsAuditEmail({
     ${p(`Your full scorecard includes department-by-department efficiency scores, your complete pain point analysis, and a prioritized 5-step automation roadmap.`)}
     ${divider()}
     ${p(`Ready to turn this audit into a 90-day action plan? Book a free Executive Strategy Session.`)}
-    ${btn("Book Executive Strategy Session", "https://aimseos.com/get-started")}
+    ${btn("Book Executive Strategy Session", "https://www.aioperatorcollective.com/get-started")}
   `)
 
   return sendTrackedEmail({
@@ -459,8 +459,8 @@ export async function sendBusinessAIAuditEmail(params: {
   const opportunityHtml = topOpportunities
     .map(
       (opp, i) => `
-    <div style="background:#F9FAFB;border-left:3px solid #C4972A;border-radius:6px;padding:18px 22px;margin:0 0 14px;">
-      <p style="margin:0 0 4px;font-size:11px;font-weight:700;color:#C4972A;text-transform:uppercase;letter-spacing:0.08em;">Opportunity 0${i + 1}</p>
+    <div style="background:#F9FAFB;border-left:3px solid #981B1B;border-radius:6px;padding:18px 22px;margin:0 0 14px;">
+      <p style="margin:0 0 4px;font-size:11px;font-weight:700;color:#981B1B;text-transform:uppercase;letter-spacing:0.08em;">Opportunity 0${i + 1}</p>
       <p style="margin:0 0 6px;font-size:15px;font-weight:700;color:#111827;">${escapeHtml(opp.title)}</p>
       <p style="margin:0;font-size:13px;color:#4B5563;line-height:1.65;">${escapeHtml(opp.solution)}</p>
     </div>`
@@ -471,16 +471,16 @@ export async function sendBusinessAIAuditEmail(params: {
     ${h1(`${companyName}'s AI Opportunity Report is ready.`)}
     <p style="margin:0 0 18px;font-size:15px;color:#4B5563;line-height:1.7;">${greeting} we just finished scanning your site, mapping it against your industry, and identifying the highest-leverage AI moves your team should be running. Here's the short version.</p>
 
-    <div style="background:#0b0d12;border:1px solid #C4972A;border-radius:10px;padding:22px 24px;margin:0 0 24px;">
-      <p style="margin:0 0 6px;font-size:11px;font-weight:700;color:#C4972A;text-transform:uppercase;letter-spacing:0.12em;">Opportunity Score</p>
+    <div style="background:#0b0d12;border:1px solid #981B1B;border-radius:10px;padding:22px 24px;margin:0 0 24px;">
+      <p style="margin:0 0 6px;font-size:11px;font-weight:700;color:#981B1B;text-transform:uppercase;letter-spacing:0.12em;">Opportunity Score</p>
       <p style="margin:0;font-size:42px;font-weight:800;color:#F0EBE0;line-height:1;">${score}<span style="font-size:18px;color:#9CA3AF;">/100</span></p>
       <p style="margin:8px 0 0;font-size:12px;color:#9CA3AF;">Higher = more high-leverage AI opportunities we found in your business.</p>
     </div>
 
     ${
       priorityMove?.title
-        ? `<div style="background:#FEF2F2;border-left:4px solid #C4972A;border-radius:6px;padding:18px 22px;margin:0 0 24px;">
-            <p style="margin:0 0 6px;font-size:11px;font-weight:700;color:#C4972A;text-transform:uppercase;letter-spacing:0.08em;">Your priority move</p>
+        ? `<div style="background:#FEF2F2;border-left:4px solid #981B1B;border-radius:6px;padding:18px 22px;margin:0 0 24px;">
+            <p style="margin:0 0 6px;font-size:11px;font-weight:700;color:#981B1B;text-transform:uppercase;letter-spacing:0.08em;">Your priority move</p>
             <p style="margin:0 0 8px;font-size:16px;font-weight:700;color:#111827;line-height:1.35;">${escapeHtml(priorityMove.title)}</p>
             ${priorityMove.firstStep ? `<p style="margin:0;font-size:13px;color:#4B5563;line-height:1.65;"><strong style="color:#111827;">First step this week:</strong> ${escapeHtml(priorityMove.firstStep)}</p>` : ""}
           </div>`
@@ -533,8 +533,8 @@ export async function sendW2PlaybookEmail(params: {
     ${h1("The AI Operator Playbook is yours.")}
     <p style="margin:0 0 18px;font-size:15px;color:#4B5563;line-height:1.7;">${greeting} thanks for grabbing the playbook. It's everything we'd tell a corporate operator who came to us asking how to turn their domain expertise into an AI services business — without quitting their day job until the math works.</p>
 
-    <div style="background:#0b0d12;border:1px solid #C4972A;border-radius:10px;padding:22px 24px;margin:0 0 24px;">
-      <p style="margin:0 0 6px;font-size:11px;font-weight:700;color:#C4972A;text-transform:uppercase;letter-spacing:0.12em;">What's inside</p>
+    <div style="background:#0b0d12;border:1px solid #981B1B;border-radius:10px;padding:22px 24px;margin:0 0 24px;">
+      <p style="margin:0 0 6px;font-size:11px;font-weight:700;color:#981B1B;text-transform:uppercase;letter-spacing:0.12em;">What's inside</p>
       <p style="margin:0 0 6px;font-size:15px;color:#F0EBE0;line-height:1.6;">Twelve specific plays. Tools, scripts, pricing structures. The same plays AIMS portfolio operators run before they leave their W-2.</p>
     </div>
 

@@ -152,7 +152,7 @@ export function buildOperatorVaultEmail(
           ],
           cta: { label: "Join the community", url: inviteUrl },
           ctaNote: "Your invite is open — jump in whenever you're ready.",
-          footer: `Chapter 3 drops in 2 days. It's the discovery script the AIMS team uses on every first call. <a href="${applyUrl}" style="color:#C4972A;font-weight:600;text-decoration:none;">Application open here</a> if you're ready to move.`,
+          footer: `Chapter 3 drops in 2 days. It's the discovery script the AIMS team uses on every first call. <a href="${applyUrl}" style="color:#981B1B;font-weight:600;text-decoration:none;">Application open here</a> if you're ready to move.`,
         }),
       }
 
@@ -181,7 +181,7 @@ export function buildOperatorVaultEmail(
           ],
           cta: { label: "Join the community", url: inviteUrl },
           ctaNote: "Come share your first discovery call recording — the group will tear it apart for you (in the good way).",
-          footer: `Chapter 4 drops in 3 days. <a href="${applyUrl}" style="color:#C4972A;font-weight:600;text-decoration:none;">Application open here</a>.`,
+          footer: `Chapter 4 drops in 3 days. <a href="${applyUrl}" style="color:#981B1B;font-weight:600;text-decoration:none;">Application open here</a>.`,
         }),
       }
 
@@ -210,7 +210,7 @@ export function buildOperatorVaultEmail(
           ],
           cta: { label: "Join the community", url: inviteUrl },
           ctaNote: "The cohort vault includes the live pricing calculator and the editable MSA. Grab them both on your first login.",
-          footer: `One more chapter after this. <a href="${applyUrl}" style="color:#C4972A;font-weight:600;text-decoration:none;">Apply to the alpha cohort</a> — the review window is still open.`,
+          footer: `One more chapter after this. <a href="${applyUrl}" style="color:#981B1B;font-weight:600;text-decoration:none;">Apply to the alpha cohort</a> — the review window is still open.`,
         }),
       }
 
@@ -239,7 +239,7 @@ export function buildOperatorVaultEmail(
           ],
           cta: { label: "Join the community", url: inviteUrl },
           ctaNote: "The hot seat format inside the community is where members workshop their month-1 client plans before they ship them.",
-          footer: `This is the last Chapter in the free sequence. If you want the live version — the calculators, the contracts, the co-close support — <a href="${applyUrl}" style="color:#C4972A;font-weight:600;text-decoration:none;">apply to the alpha cohort</a>.`,
+          footer: `This is the last Chapter in the free sequence. If you want the live version — the calculators, the contracts, the co-close support — <a href="${applyUrl}" style="color:#981B1B;font-weight:600;text-decoration:none;">apply to the alpha cohort</a>.`,
         }),
       }
 
@@ -268,7 +268,7 @@ export function buildOperatorVaultEmail(
           ],
           cta: { label: "Apply to the alpha cohort", url: applyUrl },
           ctaNote: "No payment today. No credit card. Just a form + a real review.",
-          footer: `Whether you apply or not, the Vault is yours to keep. If you want the community invite link again, it's <a href="${inviteUrl}" style="color:#C4972A;font-weight:600;text-decoration:none;">right here</a>.`,
+          footer: `Whether you apply or not, the Vault is yours to keep. If you want the community invite link again, it's <a href="${inviteUrl}" style="color:#981B1B;font-weight:600;text-decoration:none;">right here</a>.`,
         }),
       }
 
@@ -294,8 +294,8 @@ function section(args: SectionArgs): string {
   const playsHtml = args.plays
     .map(
       (play, i) => `
-    <div style="background:#F9FAFB;border-left:3px solid #C4972A;border-radius:6px;padding:18px 22px;margin:0 0 14px;">
-      <p style="margin:0 0 4px;font-size:11px;font-weight:700;color:#C4972A;text-transform:uppercase;letter-spacing:0.08em;">Play 0${i + 1}</p>
+    <div style="background:#F9FAFB;border-left:3px solid #981B1B;border-radius:6px;padding:18px 22px;margin:0 0 14px;">
+      <p style="margin:0 0 4px;font-size:11px;font-weight:700;color:#981B1B;text-transform:uppercase;letter-spacing:0.08em;">Play 0${i + 1}</p>
       <p style="margin:0 0 6px;font-size:15px;font-weight:700;color:#111827;">${play.title}</p>
       <p style="margin:0;font-size:13px;color:#4B5563;line-height:1.65;">${play.body}</p>
     </div>`
@@ -305,8 +305,8 @@ function section(args: SectionArgs): string {
   return `
     <p style="margin:0 0 14px;font-size:14px;color:#4B5563;">Hey ${args.greeting}</p>
 
-    <div style="background:#0b0d12;border:1px solid #C4972A;border-radius:10px;padding:22px 24px;margin:0 0 24px;">
-      <p style="margin:0 0 6px;font-size:11px;font-weight:700;color:#C4972A;text-transform:uppercase;letter-spacing:0.12em;">${args.kicker}</p>
+    <div style="background:#0b0d12;border:1px solid #981B1B;border-radius:10px;padding:22px 24px;margin:0 0 24px;">
+      <p style="margin:0 0 6px;font-size:11px;font-weight:700;color:#981B1B;text-transform:uppercase;letter-spacing:0.12em;">${args.kicker}</p>
       <p style="margin:0;font-size:22px;font-weight:800;color:#F0EBE0;line-height:1.25;">${args.headline}</p>
     </div>
 
@@ -315,7 +315,7 @@ function section(args: SectionArgs): string {
     ${playsHtml}
 
     <div style="text-align:center;margin:32px 0 8px;">
-      <a href="${args.cta.url}" style="display:inline-block;background:#C4972A;color:#ffffff;padding:14px 32px;border-radius:6px;text-decoration:none;font-weight:700;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;">${args.cta.label}</a>
+      <a href="${args.cta.url}" style="display:inline-block;background:#981B1B;color:#ffffff;padding:14px 32px;border-radius:6px;text-decoration:none;font-weight:700;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;">${args.cta.label}</a>
     </div>
     <p style="margin:0 0 24px;text-align:center;font-size:12px;color:#6B7280;font-style:italic;">${args.ctaNote}</p>
 

@@ -12,12 +12,12 @@ export async function sendTicketConfirmationEmail(params: {
   ticketId: string
 }) {
   const safeSubject = escapeHtml(params.subject)
-  const portalUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://aimseos.com"}/portal/support`
+  const portalUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://www.aioperatorcollective.com"}/portal/support`
   const body = `
     ${h1("We received your support ticket")}
     ${p(`Hey ${escapeHtml(params.name)} - we got your request and our team is on it.`)}
-    <div style="background:#F9FAFB;border-left:4px solid #C4972A;border-radius:6px;padding:20px 24px;margin:0 0 24px;">
-      <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#C4972A;text-transform:uppercase;letter-spacing:0.08em;">Ticket Subject</p>
+    <div style="background:#F9FAFB;border-left:4px solid #981B1B;border-radius:6px;padding:20px 24px;margin:0 0 24px;">
+      <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#981B1B;text-transform:uppercase;letter-spacing:0.08em;">Ticket Subject</p>
       <p style="margin:0;font-size:16px;font-weight:600;color:#111827;">${safeSubject}</p>
       <p style="margin:8px 0 0;font-size:12px;color:#6B7280;">Ticket ID: ${escapeHtml(params.ticketId)}</p>
     </div>
@@ -48,10 +48,10 @@ export async function sendTicketNotificationToAdmin(params: {
   const safeSubject = escapeHtml(params.subject)
   const safeMessage = escapeHtml(params.message)
   const safeClientName = escapeHtml(params.clientName)
-  const adminUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://aimseos.com"}/admin/support`
+  const adminUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://www.aioperatorcollective.com"}/admin/support`
   const priorityLabel = params.priority === "urgent" ? "URGENT" : params.priority === "high" ? "HIGH" : params.priority
   const urgencyBar = params.priority === "urgent" || params.priority === "high"
-    ? `<div style="background:#C4972A;color:#ffffff;padding:10px 16px;border-radius:6px;font-size:13px;font-weight:700;margin-bottom:20px;">${priorityLabel.toUpperCase()} PRIORITY TICKET</div>`
+    ? `<div style="background:#981B1B;color:#ffffff;padding:10px 16px;border-radius:6px;font-size:13px;font-weight:700;margin-bottom:20px;">${priorityLabel.toUpperCase()} PRIORITY TICKET</div>`
     : ""
 
   const body = `
@@ -98,12 +98,12 @@ export async function sendReplyNotificationToClient(params: {
 }) {
   const safeSubject = escapeHtml(params.subject)
   const safeReplyMessage = escapeHtml(params.replyMessage)
-  const portalUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://aimseos.com"}/portal/support`
+  const portalUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://www.aioperatorcollective.com"}/portal/support`
   const body = `
     ${h1("New reply on your support ticket")}
     ${p(`Hey ${escapeHtml(params.clientName)} - the AIMS team has replied to your ticket.`)}
-    <div style="background:#F9FAFB;border-left:4px solid #C4972A;border-radius:6px;padding:20px 24px;margin:0 0 24px;">
-      <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#C4972A;text-transform:uppercase;letter-spacing:0.08em;">Re: ${safeSubject}</p>
+    <div style="background:#F9FAFB;border-left:4px solid #981B1B;border-radius:6px;padding:20px 24px;margin:0 0 24px;">
+      <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#981B1B;text-transform:uppercase;letter-spacing:0.08em;">Re: ${safeSubject}</p>
       <p style="margin:8px 0 0;font-size:14px;color:#374151;white-space:pre-wrap;line-height:1.7;">${safeReplyMessage}</p>
       <p style="margin:12px 0 0;font-size:12px;color:#9CA3AF;">- ${escapeHtml(params.authorName)}, AIMS Support</p>
     </div>
@@ -132,7 +132,7 @@ export async function sendTicketStatusChangeEmail(params: {
 }) {
   const safeSubject = escapeHtml(params.subject)
   const safeResolutionNote = params.resolutionNote ? escapeHtml(params.resolutionNote) : null
-  const portalUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://aimseos.com"}/portal/support`
+  const portalUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://www.aioperatorcollective.com"}/portal/support`
   const statusLabels: Record<string, string> = {
     resolved: "Resolved",
     closed: "Closed",
@@ -143,8 +143,8 @@ export async function sendTicketStatusChangeEmail(params: {
   const body = `
     ${h1(`Your support ticket has been ${statusLabel.toLowerCase()}`)}
     ${p(`Hey ${escapeHtml(params.clientName)} - we are writing to let you know your ticket has been updated.`)}
-    <div style="background:#F9FAFB;border-left:4px solid ${params.newStatus === "resolved" ? "#22C55E" : "#C4972A"};border-radius:6px;padding:20px 24px;margin:0 0 24px;">
-      <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:${params.newStatus === "resolved" ? "#22C55E" : "#C4972A"};text-transform:uppercase;letter-spacing:0.08em;">Status: ${statusLabel}</p>
+    <div style="background:#F9FAFB;border-left:4px solid ${params.newStatus === "resolved" ? "#22C55E" : "#981B1B"};border-radius:6px;padding:20px 24px;margin:0 0 24px;">
+      <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:${params.newStatus === "resolved" ? "#22C55E" : "#981B1B"};text-transform:uppercase;letter-spacing:0.08em;">Status: ${statusLabel}</p>
       <p style="margin:8px 0 0;font-size:16px;font-weight:600;color:#111827;">${safeSubject}</p>
     </div>
     ${safeResolutionNote ? `

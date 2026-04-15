@@ -47,7 +47,7 @@ const REPLY_TO = "irtaza@modern-amenities.com"
 export function emailLayout(content: string, preheader = "", recipientEmail?: string) {
   const unsubscribeHref = recipientEmail
     ? buildUnsubscribeUrl(recipientEmail)
-    : "https://aimseos.com/unsubscribe"
+    : "https://www.aioperatorcollective.com/unsubscribe"
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -68,7 +68,7 @@ export function emailLayout(content: string, preheader = "", recipientEmail?: st
               <table width="100%" cellpadding="0" cellspacing="0">
                 <tr>
                   <td>
-                    <img src="https://aimseos.com/logo.png" alt="AIMS" width="36" height="36"
+                    <img src="https://www.aioperatorcollective.com/logo.png" alt="AIMS" width="36" height="36"
                       style="display:inline-block;vertical-align:middle;margin-right:10px;" />
                     <span style="font-size:18px;font-weight:800;color:#111827;vertical-align:middle;letter-spacing:-0.5px;">AIMS</span>
                   </td>
@@ -92,18 +92,18 @@ export function emailLayout(content: string, preheader = "", recipientEmail?: st
             <td style="background:#F9FAFB;border-radius:0 0 12px 12px;padding:24px 40px;border-top:1px solid #F0F0F0;">
               <p style="margin:0 0 8px;font-size:12px;color:#6B7280;">
                 Questions? Reply to this email or reach us at
-                <a href="mailto:${REPLY_TO}" style="color:#C4972A;text-decoration:none;">${REPLY_TO}</a>
+                <a href="mailto:${REPLY_TO}" style="color:#981B1B;text-decoration:none;">${REPLY_TO}</a>
               </p>
               <p style="margin:0 0 8px;font-size:11px;color:#9CA3AF;">
                 AIMS · AI-Powered Business Infrastructure ·
-                <a href="https://aimseos.com" style="color:#9CA3AF;text-decoration:none;">aimseos.com</a>
+                <a href="https://www.aioperatorcollective.com" style="color:#9CA3AF;text-decoration:none;">www.aioperatorcollective.com</a>
               </p>
               <p style="margin:0 0 4px;font-size:11px;color:#9CA3AF;">
                 Modern Amenities Group · 8 The Green, Suite A · Dover, DE 19901
               </p>
               <p style="margin:0;font-size:11px;color:#9CA3AF;">
                 <a href="${unsubscribeHref}" style="color:#9CA3AF;text-decoration:underline;">Unsubscribe</a>
-                · <a href="https://aimseos.com/privacy" style="color:#9CA3AF;text-decoration:underline;">Privacy Policy</a>
+                · <a href="https://www.aioperatorcollective.com/privacy" style="color:#9CA3AF;text-decoration:underline;">Privacy Policy</a>
               </p>
             </td>
           </tr>
@@ -117,7 +117,7 @@ export function emailLayout(content: string, preheader = "", recipientEmail?: st
 }
 
 export function btn(text: string, url: string) {
-  return `<a href="${url}" style="display:inline-block;background:#C4972A;color:#ffffff;padding:13px 28px;border-radius:6px;text-decoration:none;font-weight:700;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;margin:8px 0;">${text}</a>`
+  return `<a href="${url}" style="display:inline-block;background:#981B1B;color:#ffffff;padding:13px 28px;border-radius:6px;text-decoration:none;font-weight:700;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;margin:8px 0;">${text}</a>`
 }
 
 export function h1(text: string) {
@@ -180,8 +180,8 @@ export async function sendLeadMagnetResults(params: {
   const body = `
     ${h1(`${params.name ? `Hey ${params.name}  - ` : "Hey  - "} your results are ready`)}
     ${params.score ? `
-      <div style="background:#FEF2F2;border-left:4px solid #C4972A;border-radius:6px;padding:20px 24px;margin:0 0 24px;">
-        <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#C4972A;text-transform:uppercase;letter-spacing:0.08em;">Your Score</p>
+      <div style="background:#FEF2F2;border-left:4px solid #981B1B;border-radius:6px;padding:20px 24px;margin:0 0 24px;">
+        <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#981B1B;text-transform:uppercase;letter-spacing:0.08em;">Your Score</p>
         <p style="margin:0;font-size:48px;font-weight:800;color:#111827;line-height:1;">${params.score}<span style="font-size:20px;color:#6B7280;">/100</span></p>
       </div>
     ` : ""}
@@ -189,7 +189,7 @@ export async function sendLeadMagnetResults(params: {
     ${btn("View Full Results →", params.resultsUrl)}
     ${divider()}
     ${p(`Want to talk through your results with our team? We'll map the right AIMS services to your exact gaps - no pitch, just a working session.`)}
-    <a href="https://aimseos.com/get-started" style="font-size:14px;color:#C4972A;font-weight:600;text-decoration:none;">
+    <a href="https://www.aioperatorcollective.com/get-started" style="font-size:14px;color:#981B1B;font-weight:600;text-decoration:none;">
       Book a free strategy call →
     </a>
   `
@@ -227,7 +227,7 @@ export async function sendFulfillmentAssignment(params: {
         </tr>
       `).join("")}
     </table>
-    ${btn("Open Admin Portal →", "https://aimseos.com/admin")}
+    ${btn("Open Admin Portal →", "https://www.aioperatorcollective.com/admin")}
     ${p("Check the admin portal for setup tasks and the fulfillment checklist.")}
   `
   return sendTrackedEmail({
@@ -247,16 +247,16 @@ export async function sendInternalNotification(params: {
   urgency?: "low" | "normal" | "high"
 }) {
   const urgencyBar = params.urgency === "high"
-    ? `<div style="background:#C4972A;color:#ffffff;padding:10px 16px;border-radius:6px;font-size:13px;font-weight:700;margin-bottom:20px;">⚠ HIGH PRIORITY</div>`
+    ? `<div style="background:#981B1B;color:#ffffff;padding:10px 16px;border-radius:6px;font-size:13px;font-weight:700;margin-bottom:20px;">⚠ HIGH PRIORITY</div>`
     : params.urgency === "normal"
-    ? `<div style="background:#FEF2F2;color:#C4972A;padding:10px 16px;border-radius:6px;font-size:13px;font-weight:600;margin-bottom:20px;">Notification</div>`
+    ? `<div style="background:#FEF2F2;color:#981B1B;padding:10px 16px;border-radius:6px;font-size:13px;font-weight:600;margin-bottom:20px;">Notification</div>`
     : ""
 
   const body = `
     ${urgencyBar}
     ${h1(params.subject)}
     <pre style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:6px;padding:16px;font-size:13px;color:#374151;white-space:pre-wrap;overflow-wrap:break-word;">${params.message}</pre>
-    ${btn("Open Admin Portal →", "https://aimseos.com/admin")}
+    ${btn("Open Admin Portal →", "https://www.aioperatorcollective.com/admin")}
   `
   return sendTrackedEmail({
     from: FROM_EMAIL,
@@ -284,7 +284,7 @@ export async function sendCancellationEmail(params: {
         <td style="padding:16px 20px;">
           <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:0.08em;">Want to restart?</p>
           <p style="margin:0 0 12px;font-size:14px;color:#374151;">You can reactivate at any time — pick up right where you left off.</p>
-          <a href="https://aimseos.com/get-started" style="font-size:13px;color:#C4972A;font-weight:700;text-decoration:none;">Restart my subscription →</a>
+          <a href="https://www.aioperatorcollective.com/get-started" style="font-size:13px;color:#981B1B;font-weight:700;text-decoration:none;">Restart my subscription →</a>
         </td>
       </tr>
     </table>
