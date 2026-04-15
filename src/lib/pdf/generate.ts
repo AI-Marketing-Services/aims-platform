@@ -1,6 +1,4 @@
-import ReactPDF from "@react-pdf/renderer"
-import { AIPlaybookDocument } from "./ai-playbook"
-import React from "react"
+import { buildAIPlaybookPDF } from "./ai-playbook"
 
 let cachedBuffer: Buffer | null = null
 let cachedAt = 0
@@ -16,16 +14,7 @@ export async function generateAIPlaybookPDF(): Promise<Buffer> {
     return cachedBuffer
   }
 
-  const stream = await ReactPDF.renderToStream(
-    React.createElement(AIPlaybookDocument)
-  )
-
-  const chunks: Uint8Array[] = []
-  for await (const chunk of stream) {
-    chunks.push(chunk instanceof Buffer ? chunk : Buffer.from(chunk))
-  }
-
-  cachedBuffer = Buffer.concat(chunks)
+  cachedBuffer = await buildAIPlaybookPDF()
   cachedAt = now
   return cachedBuffer
 }
