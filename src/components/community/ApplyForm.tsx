@@ -35,6 +35,7 @@ export function ApplyForm() {
           handleSubmit(updated)
         } else {
           setStep((s) => s + 1)
+          window.scrollTo({ top: 0, behavior: "smooth" })
         }
       }, 350)
     },
@@ -66,19 +67,20 @@ export function ApplyForm() {
     if (step > 0) {
       setSelected(null)
       setStep((s) => s - 1)
+      window.scrollTo({ top: 0, behavior: "smooth" })
     }
   }
 
   if (formState === "success") {
     return (
-      <div className="min-h-[70vh] flex flex-col items-center justify-center px-6 text-center">
-        <div className="w-16 h-16 rounded-full bg-crimson/10 flex items-center justify-center mb-6">
-          <CheckCircle2 className="w-8 h-8 text-crimson" />
+      <div className="min-h-[60vh] sm:min-h-[70vh] flex flex-col items-center justify-center px-5 sm:px-6 py-12 text-center">
+        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-crimson/10 flex items-center justify-center mb-5 sm:mb-6">
+          <CheckCircle2 className="w-7 h-7 sm:w-8 sm:h-8 text-crimson" />
         </div>
-        <h2 className="font-playfair text-3xl sm:text-4xl text-[#1A1A1A] mb-4">
+        <h2 className="font-playfair text-2xl sm:text-3xl md:text-4xl text-[#1A1A1A] mb-3 sm:mb-4">
           Application received.
         </h2>
-        <p className="text-lg text-[#737373] max-w-md">
+        <p className="text-base sm:text-lg text-[#737373] max-w-md">
           Check your inbox for the AI Operator Playbook Vault. A real operator will
           review your application within 24 hours.
         </p>
@@ -88,7 +90,7 @@ export function ApplyForm() {
 
   if (formState === "submitting") {
     return (
-      <div className="min-h-[70vh] flex flex-col items-center justify-center px-6">
+      <div className="min-h-[60vh] sm:min-h-[70vh] flex flex-col items-center justify-center px-5 sm:px-6">
         <Loader2 className="w-8 h-8 text-crimson animate-spin mb-4" />
         <p className="text-[#737373] font-mono text-sm uppercase tracking-wider">
           Submitting your application...
@@ -100,22 +102,22 @@ export function ApplyForm() {
   const currentQuestion = step > 0 ? QUESTIONS[step - 1] : null
 
   return (
-    <div className="min-h-[70vh] flex flex-col">
+    <div className="min-h-[60vh] sm:min-h-[70vh] flex flex-col">
       {/* Progress bar */}
-      <div className="w-full h-1 bg-[#E3E3E3]">
+      <div className="w-full h-1 bg-[#E3E3E3] sticky top-16 z-10">
         <div
           className="h-full bg-crimson transition-all duration-500 ease-out"
           style={{ width: `${progress}%` }}
         />
       </div>
 
-      <div className="flex-1 flex flex-col items-center justify-center px-6 py-12 sm:py-20">
+      <div className="flex-1 flex flex-col items-center justify-center px-5 sm:px-6 py-8 sm:py-12 md:py-20">
         <div className="w-full max-w-2xl">
           {/* Back button */}
           {step > 0 && (
             <button
               onClick={goBack}
-              className="flex items-center gap-2 text-sm text-[#737373] hover:text-[#1A1A1A] transition-colors mb-8"
+              className="flex items-center gap-2 text-sm text-[#737373] hover:text-[#1A1A1A] active:text-[#1A1A1A] transition-colors mb-6 sm:mb-8 min-h-[44px]"
             >
               <ArrowLeft className="w-4 h-4" />
               Back
@@ -124,27 +126,27 @@ export function ApplyForm() {
 
           {/* Step counter */}
           {step > 0 && (
-            <p className="text-xs font-mono uppercase tracking-wider text-[#737373] mb-4">
+            <p className="text-[10px] sm:text-xs font-mono uppercase tracking-wider text-[#737373] mb-3 sm:mb-4">
               Question {step} of {QUESTIONS.length}
             </p>
           )}
 
           {/* Intro step */}
           {step === 0 && (
-            <div className="space-y-6">
-              <h2 className="font-playfair text-3xl sm:text-4xl text-[#1A1A1A]">
+            <div className="space-y-5 sm:space-y-6">
+              <h2 className="font-playfair text-2xl sm:text-3xl md:text-4xl text-[#1A1A1A]">
                 Apply to the AI Operator Collective
               </h2>
-              <p className="text-[#737373] text-lg">
+              <p className="text-[#737373] text-base sm:text-lg">
                 Takes about 2 minutes. We will send you the AI Operator Playbook Vault
                 the moment you finish.
               </p>
 
-              <div className="space-y-4 max-w-md">
+              <div className="space-y-4 w-full max-w-md">
                 <div>
                   <label
                     htmlFor="apply-name"
-                    className="block text-xs font-mono uppercase tracking-wider text-[#737373] mb-2"
+                    className="block text-[10px] sm:text-xs font-mono uppercase tracking-wider text-[#737373] mb-2"
                   >
                     Full name
                   </label>
@@ -153,15 +155,16 @@ export function ApplyForm() {
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full rounded-md border border-[#E3E3E3] bg-white px-4 py-3 text-[#1A1A1A] placeholder:text-[#ccc] focus:outline-none focus:border-crimson focus:ring-1 focus:ring-crimson transition-colors"
+                    className="w-full rounded-md border border-[#E3E3E3] bg-white px-4 py-3.5 text-base text-[#1A1A1A] placeholder:text-[#ccc] focus:outline-none focus:border-crimson focus:ring-1 focus:ring-crimson transition-colors"
                     placeholder="Your name"
+                    autoComplete="name"
                     autoFocus
                   />
                 </div>
                 <div>
                   <label
                     htmlFor="apply-email"
-                    className="block text-xs font-mono uppercase tracking-wider text-[#737373] mb-2"
+                    className="block text-[10px] sm:text-xs font-mono uppercase tracking-wider text-[#737373] mb-2"
                   >
                     Email address
                   </label>
@@ -170,8 +173,9 @@ export function ApplyForm() {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full rounded-md border border-[#E3E3E3] bg-white px-4 py-3 text-[#1A1A1A] placeholder:text-[#ccc] focus:outline-none focus:border-crimson focus:ring-1 focus:ring-crimson transition-colors"
+                    className="w-full rounded-md border border-[#E3E3E3] bg-white px-4 py-3.5 text-base text-[#1A1A1A] placeholder:text-[#ccc] focus:outline-none focus:border-crimson focus:ring-1 focus:ring-crimson transition-colors"
                     placeholder="you@example.com"
+                    autoComplete="email"
                     onKeyDown={(e) => {
                       if (e.key === "Enter" && canAdvanceIntro) setStep(1)
                     }}
@@ -182,9 +186,9 @@ export function ApplyForm() {
                   onClick={() => setStep(1)}
                   disabled={!canAdvanceIntro}
                   className={cn(
-                    "w-full flex items-center justify-center gap-2 rounded-md px-6 py-3.5 text-sm font-bold uppercase tracking-wider transition-all",
+                    "w-full flex items-center justify-center gap-2 rounded-md px-6 py-4 text-sm font-bold uppercase tracking-wider transition-all min-h-[52px]",
                     canAdvanceIntro
-                      ? "bg-crimson text-white hover:bg-crimson-dark shadow-[0_8px_24px_-4px_rgba(153,27,27,0.35)]"
+                      ? "bg-crimson text-white hover:bg-crimson-dark active:bg-crimson-dark shadow-[0_8px_24px_-4px_rgba(153,27,27,0.35)]"
                       : "bg-[#E3E3E3] text-[#999] cursor-not-allowed"
                   )}
                 >
@@ -198,7 +202,7 @@ export function ApplyForm() {
           {/* Question steps */}
           {currentQuestion && (
             <div>
-              <h2 className="font-playfair text-2xl sm:text-3xl text-[#1A1A1A] mb-8">
+              <h2 className="font-playfair text-xl sm:text-2xl md:text-3xl text-[#1A1A1A] mb-6 sm:mb-8 leading-snug">
                 {currentQuestion.question}
               </h2>
 
@@ -210,7 +214,7 @@ export function ApplyForm() {
                       key={option.value}
                       onClick={() => handleSelect(currentQuestion.id, option.value)}
                       className={cn(
-                        "group relative text-left rounded-md border p-5 transition-all",
+                        "group relative text-left rounded-md border p-4 sm:p-5 transition-all min-h-[60px] active:scale-[0.98]",
                         isSelected
                           ? "border-crimson bg-crimson/5 shadow-[0_0_0_1px_rgba(153,27,27,0.3)]"
                           : "border-[#E3E3E3] bg-white hover:border-crimson/30 hover:shadow-[0_8px_24px_-6px_rgba(0,0,0,0.12),0_2px_8px_-2px_rgba(0,0,0,0.06)]"
@@ -243,7 +247,7 @@ export function ApplyForm() {
                   </p>
                   <button
                     onClick={() => handleSubmit(answers)}
-                    className="inline-flex items-center gap-2 rounded-md bg-crimson text-white px-6 py-3 text-sm font-bold uppercase tracking-wider hover:bg-crimson-dark transition-all"
+                    className="inline-flex items-center gap-2 rounded-md bg-crimson text-white px-6 py-3.5 text-sm font-bold uppercase tracking-wider hover:bg-crimson-dark active:bg-crimson-dark transition-all min-h-[48px]"
                   >
                     Retry
                   </button>
