@@ -63,6 +63,7 @@ const nextConfig: NextConfig = {
     ],
     formats: ["image/avif", "image/webp"],
   },
+  serverExternalPackages: ["pdfkit"],
   experimental: {
     optimizeCss: true,
     optimizePackageImports: [

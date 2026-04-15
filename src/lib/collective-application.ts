@@ -27,6 +27,16 @@ export const QUESTIONS: Question[] = [
     ],
   },
   {
+    id: "website",
+    question: "Do you have a website for your business or personal brand?",
+    options: [
+      { label: "Yes, and it generates leads or revenue", value: "yes_active", points: 1 },
+      { label: "Yes, but it needs work", value: "yes_needs_work", points: 2 },
+      { label: "I have a domain but no real site yet", value: "domain_only", points: 3 },
+      { label: "No, I need one built from scratch", value: "no_website", points: 3 },
+    ],
+  },
+  {
     id: "ai_familiarity",
     question: "How familiar are you with AI tools like ChatGPT, Claude, or automation platforms?",
     options: [
