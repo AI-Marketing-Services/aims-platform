@@ -161,7 +161,7 @@ export async function GET() {
       headers: {
         "Content-Type": "application/pdf",
         "Content-Disposition": "attachment; filename=AIMS-AI-Operating-System-Playbook.pdf",
-        "Cache-Control": "public, max-age=3600, s-maxage=3600",
+        "Cache-Control": "no-cache, no-store, must-revalidate",
       },
     })
   } catch (err) {
