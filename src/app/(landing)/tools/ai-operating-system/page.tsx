@@ -106,7 +106,7 @@ const PROMPT_SECTIONS = [
 
 export default function AIOperatingSystemPage() {
   return (
-    <div className="min-h-screen bg-white font-inter">
+    <div>
       {/* HERO */}
       <section className="relative border-b border-[#E3E3E3] bg-white">
         <div className="max-w-4xl mx-auto px-6 py-16 sm:py-24 text-center">
@@ -304,7 +304,7 @@ export default function AIOperatingSystemPage() {
       </section>
 
       {/* DISCLOSURES */}
-      <footer className="border-t border-[#E3E3E3] bg-[#F5F5F5]">
+      <section className="border-t border-[#E3E3E3] bg-[#F5F5F5]">
         <div className="max-w-3xl mx-auto px-6 py-10 text-center">
           <p className="text-xs text-[#737373] leading-relaxed">
             AIMS (AI Managing Services) makes no income, earnings, or outcome
@@ -312,11 +312,8 @@ export default function AIOperatingSystemPage() {
             illustrative and not representative of typical outcomes. Your results
             depend on your own execution, market, and effort.
           </p>
-          <p className="text-xs text-[#737373] mt-4">
-            Operated by Modern Amenities LLC · Powered by AIMS
-          </p>
         </div>
-      </footer>
+      </section>
     </div>
   )
 }
