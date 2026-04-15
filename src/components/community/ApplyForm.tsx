@@ -111,24 +111,22 @@ export function ApplyForm() {
         />
       </div>
 
-      <div className="flex-1 flex flex-col items-center justify-center px-5 sm:px-6 py-8 sm:py-12 md:py-20">
+      <div className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-4 sm:py-12 md:py-20">
         <div className="w-full max-w-2xl">
-          {/* Back button */}
+          {/* Back + step counter row */}
           {step > 0 && (
-            <button
-              onClick={goBack}
-              className="flex items-center gap-2 text-sm text-[#737373] hover:text-[#1A1A1A] active:text-[#1A1A1A] transition-colors mb-6 sm:mb-8 min-h-[44px]"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Back
-            </button>
-          )}
-
-          {/* Step counter */}
-          {step > 0 && (
-            <p className="text-[10px] sm:text-xs font-mono uppercase tracking-wider text-[#737373] mb-3 sm:mb-4">
-              Question {step} of {QUESTIONS.length}
-            </p>
+            <div className="flex items-center justify-between mb-3 sm:mb-6">
+              <button
+                onClick={goBack}
+                className="flex items-center gap-1.5 text-xs sm:text-sm text-[#737373] hover:text-[#1A1A1A] active:text-[#1A1A1A] transition-colors min-h-[36px]"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" />
+                Back
+              </button>
+              <p className="text-[10px] sm:text-xs font-mono uppercase tracking-wider text-[#737373]">
+                {step} / {QUESTIONS.length}
+              </p>
+            </div>
           )}
 
           {/* Intro step */}
@@ -202,11 +200,11 @@ export function ApplyForm() {
           {/* Question steps */}
           {currentQuestion && (
             <div>
-              <h2 className="font-playfair text-xl sm:text-2xl md:text-3xl text-[#1A1A1A] mb-6 sm:mb-8 leading-snug">
+              <h2 className="font-playfair text-lg sm:text-2xl md:text-3xl text-[#1A1A1A] mb-3 sm:mb-8 leading-snug">
                 {currentQuestion.question}
               </h2>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                 {currentQuestion.options.map((option, i) => {
                   const isSelected = selected === option.value || answers[currentQuestion.id] === option.value
                   return (
@@ -214,16 +212,16 @@ export function ApplyForm() {
                       key={option.value}
                       onClick={() => handleSelect(currentQuestion.id, option.value)}
                       className={cn(
-                        "group relative text-left rounded-md border p-4 sm:p-5 transition-all min-h-[60px] active:scale-[0.98]",
+                        "group relative text-left rounded-md border px-3 py-3 sm:p-5 transition-all active:scale-[0.98]",
                         isSelected
                           ? "border-crimson bg-crimson/5 shadow-[0_0_0_1px_rgba(153,27,27,0.3)]"
                           : "border-[#E3E3E3] bg-white hover:border-crimson/30 hover:shadow-[0_8px_24px_-6px_rgba(0,0,0,0.12),0_2px_8px_-2px_rgba(0,0,0,0.06)]"
                       )}
                     >
-                      <div className="flex items-start gap-3">
+                      <div className="flex items-center gap-2.5 sm:items-start sm:gap-3">
                         <span
                           className={cn(
-                            "flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-mono font-bold border transition-colors",
+                            "flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-mono font-bold border transition-colors",
                             isSelected
                               ? "bg-crimson text-white border-crimson"
                               : "bg-[#F5F5F5] text-[#737373] border-[#E3E3E3] group-hover:border-crimson/30"
@@ -231,7 +229,7 @@ export function ApplyForm() {
                         >
                           {String.fromCharCode(65 + i)}
                         </span>
-                        <span className="text-sm sm:text-base text-[#1A1A1A] leading-snug pt-0.5">
+                        <span className="text-[13px] sm:text-base text-[#1A1A1A] leading-snug">
                           {option.label}
                         </span>
                       </div>
