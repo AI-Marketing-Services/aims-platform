@@ -303,8 +303,9 @@ export function buildAIPlaybookPDF(): Promise<Buffer> {
     // Title
     usePlayfair(doc)
     doc.fontSize(38).fillColor(C.black).text("The AI Operating", 0, 226, { align: "center" })
-    doc.text("System for", { align: "center" })
-    doc.text("Business Owners.", { align: "center" })
+    doc.text("System", { align: "center" })
+    usePlayfairItalic(doc)
+    doc.fontSize(38).fillColor(C.crimson).text("for Business Owners.", { align: "center" })
 
     // Divider
     const divX = (PW - 50) / 2
