@@ -26,6 +26,7 @@
     "@dnd-kit/utilities": "^3.2.2",
     "@prisma/adapter-neon": "^7.4.2",
     "@prisma/client": "^6",
+    "@react-pdf/renderer": "^3.4.5",
     "@tailwindcss/typography": "^0.5.19",
     "@upstash/ratelimit": "^2",
     "@upstash/redis": "^1",

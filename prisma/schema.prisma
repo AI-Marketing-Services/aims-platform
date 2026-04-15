@@ -410,6 +410,7 @@ enum LeadMagnetType {
   W2_PLAYBOOK
   BUSINESS_AI_AUDIT
   COLLECTIVE_APPLICATION
+  AI_PLAYBOOK
 }
 
 // ============ REFERRALS & AFFILIATES ============
