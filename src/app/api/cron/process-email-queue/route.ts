@@ -7,6 +7,7 @@ import { buildOperatorVaultEmail } from "@/lib/email/community-sequence"
 import { buildBusinessAIAuditEmail } from "@/lib/email/business-audit-sequence"
 import { buildW2PlaybookEmail } from "@/lib/email/w2-playbook-sequence"
 import { buildPostBookingEducationEmail } from "@/lib/email/post-booking-education"
+import { AOC_FROM_EMAIL, AIMS_FROM_EMAIL, AOC_REPLY_TO } from "@/lib/email/senders"
 
 export const maxDuration = 60
 
@@ -86,11 +87,9 @@ export async function GET(req: Request) {
         }
 
         await sendTrackedEmail({
-          from: isCollectiveSequence
-            ? "AI Operator Collective <irtaza@modern-amenities.com>"
-            : "AIMS <irtaza@modern-amenities.com>",
+          from: isCollectiveSequence ? AOC_FROM_EMAIL : AIMS_FROM_EMAIL,
           to: item.recipientEmail,
-          replyTo: "irtaza@modern-amenities.com",
+          replyTo: AOC_REPLY_TO,
           subject: emailContent.subject,
           html: isCollectiveSequence ? emailLayout(emailContent.html, emailContent.subject) : emailContent.html,
           serviceArm: isCollectiveSequence ? "ai-operator-collective" : undefined,

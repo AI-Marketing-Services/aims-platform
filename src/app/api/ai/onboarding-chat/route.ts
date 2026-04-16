@@ -13,7 +13,7 @@ const SYSTEM_PROMPT = `You are the AIMS CRM Support Agent. You help vending prof
 
 Your tone is friendly, clear, and professional. You answer questions directly without unnecessary filler. When a user asks a setup question, give them step-by-step instructions. When they report a problem, troubleshoot it systematically. If you cannot resolve something, direct them to the support team.
 
-Support contact: irtaza@modern-amenities.com
+Support contact: team@aioperatorcollective.com
 Only share this email if the chatbot cannot resolve the issue after troubleshooting.
 
 PRODUCT OVERVIEW:

@@ -38,9 +38,7 @@ export async function sendTrackedEmail(params: Parameters<ReturnType<typeof getR
 }
 
 import { buildUnsubscribeUrl } from "@/app/api/unsubscribe/route"
-
-const FROM_EMAIL = "AIMS <irtaza@modern-amenities.com>"
-const REPLY_TO = "irtaza@modern-amenities.com"
+import { AIMS_FROM_EMAIL as FROM_EMAIL, AIMS_REPLY_TO as REPLY_TO } from "./senders"
 
 // ─── Branded HTML wrapper ─────────────────────────────────────────────────────
 
@@ -258,10 +256,10 @@ export async function sendInternalNotification(params: {
     <pre style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:6px;padding:16px;font-size:13px;color:#374151;white-space:pre-wrap;overflow-wrap:break-word;">${params.message}</pre>
     ${btn("Open Admin Portal →", "https://www.aioperatorcollective.com/admin")}
   `
+  const internalTo = process.env.INTERNAL_NOTIFY_TO ?? "team@aioperatorcollective.com"
   return sendTrackedEmail({
     from: FROM_EMAIL,
-    to: "irtaza@modern-amenities.com",
-    cc: "adam@modern-amenities.com",
+    to: internalTo,
     subject: `[AIMS${params.urgency === "high" ? " URGENT" : ""}] ${params.subject}`,
     html: emailLayout(body),
   })

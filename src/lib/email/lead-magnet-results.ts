@@ -1,7 +1,9 @@
 import { sendTrackedEmail, escapeHtml, emailLayout, h1, p, btn, divider } from "./index"
-
-const FROM_EMAIL = "AIMS <irtaza@modern-amenities.com>"
-const REPLY_TO = "irtaza@modern-amenities.com"
+import {
+  AIMS_FROM_EMAIL as FROM_EMAIL,
+  AIMS_REPLY_TO as REPLY_TO,
+  AOC_FROM_EMAIL,
+} from "./senders"
 
 function recommendationBlock(title: string, description: string) {
   return `
@@ -421,7 +423,7 @@ function getAuditRecommendations(score: number): Array<{ title: string; descript
 
 // ─── AI Operator Collective: Business AI Audit (inline delivery) ────────────
 
-const COLLECTIVE_FROM = "AI Operator Collective <irtaza@modern-amenities.com>"
+const COLLECTIVE_FROM = AOC_FROM_EMAIL
 const COLLECTIVE_BASE = "https://aioperatorcollective.com"
 const COLLECTIVE_APPLY = `${COLLECTIVE_BASE}/#apply`
 

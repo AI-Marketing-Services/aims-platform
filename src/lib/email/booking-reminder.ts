@@ -1,8 +1,6 @@
 import { sendTrackedEmail, escapeHtml, emailLayout, h1, p, btn } from "./index"
 import { getCalendarUrl } from "@/lib/collective-application"
-
-const FROM_EMAIL = "AI Operator Collective <irtaza@modern-amenities.com>"
-const REPLY_TO = "irtaza@modern-amenities.com"
+import { AOC_FROM_EMAIL as FROM_EMAIL, AOC_REPLY_TO as REPLY_TO } from "./senders"
 
 type ReminderDay = 2 | 5 | 9
 

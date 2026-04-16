@@ -1,7 +1,5 @@
 import { sendTrackedEmail, escapeHtml, emailLayout, h1, p, btn, divider } from "./index"
-
-const FROM_EMAIL = "AIMS <irtaza@modern-amenities.com>"
-const REPLY_TO = "irtaza@modern-amenities.com"
+import { AIMS_FROM_EMAIL as FROM_EMAIL, AIMS_REPLY_TO as REPLY_TO } from "./senders"
 
 function playCard(num: number, title: string, body: string) {
   return `

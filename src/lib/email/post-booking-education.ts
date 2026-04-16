@@ -8,9 +8,7 @@ import {
   divider,
 } from "./index"
 import { buildAIPlaybookPDF } from "@/lib/pdf/ai-playbook"
-
-const FROM_EMAIL = "AI Operator Collective <irtaza@modern-amenities.com>"
-const REPLY_TO = "irtaza@modern-amenities.com"
+import { AOC_FROM_EMAIL as FROM_EMAIL, AOC_REPLY_TO as REPLY_TO } from "./senders"
 
 export interface EmailContent {
   subject: string

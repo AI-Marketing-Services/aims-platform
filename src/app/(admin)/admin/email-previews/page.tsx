@@ -53,7 +53,7 @@ function emailLayout(content: string, preheader = "") {
             <td style="background:#F9FAFB;border-radius:0 0 12px 12px;padding:24px 40px;border-top:1px solid #F0F0F0;">
               <p style="margin:0 0 8px;font-size:12px;color:#6B7280;">
                 Questions? Reply to this email or reach us at
-                <a href="mailto:irtaza@modern-amenities.com" style="color:#C4972A;text-decoration:none;">irtaza@modern-amenities.com</a>
+                <a href="mailto:team@aioperatorcollective.com" style="color:#C4972A;text-decoration:none;">team@aioperatorcollective.com</a>
               </p>
               <p style="margin:0 0 8px;font-size:11px;color:#9CA3AF;">
                 AIMS - AI-Powered Business Infrastructure -

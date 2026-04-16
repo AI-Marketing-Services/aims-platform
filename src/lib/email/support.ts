@@ -1,7 +1,5 @@
 import { sendTrackedEmail, escapeHtml, emailLayout, h1, p, btn } from "./index"
-
-const FROM_EMAIL = "AIMS <irtaza@modern-amenities.com>"
-const REPLY_TO = "irtaza@modern-amenities.com"
+import { AIMS_FROM_EMAIL as FROM_EMAIL, AIMS_REPLY_TO as REPLY_TO } from "./senders"
 
 // ─── Ticket confirmation to client ──────────────────────────────────────────
 
@@ -78,7 +76,7 @@ export async function sendTicketNotificationToAdmin(params: {
   `
   return sendTrackedEmail({
     from: FROM_EMAIL,
-    to: "irtaza@modern-amenities.com",
+    to: process.env.INTERNAL_NOTIFY_TO ?? "team@aioperatorcollective.com",
     replyTo: REPLY_TO,
     subject: `[AIMS Support] New ticket from ${safeClientName}: ${safeSubject}`,
     html: emailLayout(body, `New support ticket from ${safeClientName}`),
