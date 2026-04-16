@@ -22,8 +22,8 @@ export function ComparisonTable() {
       <div className="relative z-10 mx-auto max-w-[1280px] px-6">
         <div className="text-center max-w-3xl mx-auto">
           <h2 className="font-playfair text-3xl sm:text-4xl text-[#1A1A1A] leading-[1.25] pb-2">
-            The difference is sequencing{" "}
-            <span className="text-crimson italic">and skin in the game.</span>
+            The difference is sequencing
+            <span className="block text-crimson italic">and skin in the game.</span>
           </h2>
           <p className="mt-6 text-base sm:text-lg text-[#737373] leading-relaxed max-w-2xl mx-auto">
             Every other community gives you n8n workflows and prompt packs. That&apos;s a

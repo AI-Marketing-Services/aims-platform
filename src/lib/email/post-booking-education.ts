@@ -61,21 +61,21 @@ export async function sendPostBookingConfirmationEmail(params: {
   const body = `
     ${h1(`${firstName}, your call is confirmed.`)}
     ${p(whenLine)}
-    ${p("We're excited to meet you. Here's how we'll spend our time together, and how to make sure you get the most out of it.")}
+    ${p(`Hey ${firstName}, Matt here. Excited to meet you. Here's how we'll spend our time together, and how to make sure you get the most out of it.`)}
 
-    ${p("<strong style='color:#111827;'>What the call is about:</strong> We'll walk you through a short presentation on where AI actually creates leverage for people like you, answer any burning questions you've been sitting on, and figure out together whether the Collective is a good fit. That's it — no high-pressure pitch.")}
+    ${p("<strong style='color:#111827;'>What the call is about:</strong> I'll walk you through a short presentation on where AI actually creates leverage for people like you, answer any burning questions you've been sitting on, and we'll figure out together whether the Collective is a good fit. That's it. No high-pressure pitch.")}
 
     ${p("A few things to lock in before we meet:")}
 
     ${playCard(
       "1.",
       "RSVP and add it to your calendar right now.",
-      "Tap the calendar invite Calendly sent you and accept it. If it landed on your phone, make sure it saved to your primary calendar — not a secondary account you never check. Double-book protection."
+      "Tap the calendar invite Calendly sent you and accept it. If it landed on your phone, make sure it saved to your primary calendar, not a secondary account you never check. Double-book protection."
     )}
     ${playCard(
       "2.",
-      "Be at a computer — not your phone.",
-      "We'll be sharing our screen and walking you through a presentation. Mobile works in a pinch, but you'll get way more out of it on a laptop or desktop. Plan to sit down somewhere quiet with no distractions."
+      "Be at a computer, not your phone.",
+      "I'll be sharing my screen and walking you through a presentation. Mobile works in a pinch, but you'll get way more out of it on a laptop or desktop. Plan to sit down somewhere quiet with no distractions."
     )}
     ${playCard(
       "3.",
@@ -85,17 +85,17 @@ export async function sendPostBookingConfirmationEmail(params: {
     ${playCard(
       "4.",
       "Skim the AI Operator Playbook (attached).",
-      "Five short chapters, ~15 minutes. Not required — but if you read it, our call goes deeper and you leave with more."
+      "Five short chapters, about 15 minutes. Not required. But if you read it, our call goes deeper and you leave with more."
     )}
 
-    ${btn(nextStepsUrl, "Prep resources + AI use cases")}
+    ${btn("Open prep resources and AI use cases", nextStepsUrl)}
 
     ${divider()}
 
     <p style="margin:0 0 8px;font-size:13px;color:#4B5563;line-height:1.6;">
       <strong style="color:#111827;">Need to reschedule?</strong>
-      ${params.rescheduleUrl ? `<a href="${params.rescheduleUrl}" style="color:#981B1B;">Pick a different time</a>` : "Reply to this email and we'll find a better time."}
-      — but please don't ghost, we held this slot for you.
+      ${params.rescheduleUrl ? `<a href="${params.rescheduleUrl}" style="color:#981B1B;">Pick a different time here</a>.` : "Reply to this email and we'll find a better time."}
+      Just please don't ghost, I held this slot for you.
     </p>
     ${
       params.meetingUrl
@@ -103,8 +103,12 @@ export async function sendPostBookingConfirmationEmail(params: {
         : ""
     }
 
+    <p style="margin:32px 0 0;font-size:13px;color:#4B5563;line-height:1.6;">
+      Matt<br/>
+      <span style="color:#9CA3AF;font-size:12px;">AI Operator Collective</span>
+    </p>
     <p style="margin:24px 0 0;font-size:11px;color:#9CA3AF;line-height:1.55;font-style:italic;">
-      Over the next few days we'll send a few short emails — a case study from a member, the top AI tools we're using ourselves, and a handful of prompts you can steal. Not a firehose. Reply "stop" anytime.
+      Over the next few days I'll send a few short emails: four proven playbook moves, my personal AI tool stack, and a handful of copy-paste prompts. Not a firehose. Reply "stop" anytime.
     </p>
   `
 
@@ -112,7 +116,7 @@ export async function sendPostBookingConfirmationEmail(params: {
     from: FROM_EMAIL,
     to: params.to,
     replyTo: REPLY_TO,
-    subject: `${firstName}, your AI Operator call is confirmed — here's how to prep`,
+    subject: `${firstName}, your AI Operator call is confirmed`,
     html: emailLayout(
       body,
       "RSVP, be at a computer, bring your burning AI questions."
@@ -143,49 +147,54 @@ export function buildPostBookingEducationEmail(
   const nextStepsUrl = `${appUrl()}/apply/next-steps`
 
   if (emailIndex === 0) {
-    // Day 1 — Playbook patterns (no fabricated names or specific dollar claims)
+    // Day 1 — Playbook patterns
     return {
       subject: "The 4 moves our best operators make in their first 90 days",
       html: `
         ${h1(`${firstName}, here's what actually moves the needle.`)}
-        ${p("Before our call, we wanted to show you the pattern we see over and over again among operators who start strong in the Collective. These aren't hypothetical — they're the moves that come up in almost every Collective call where someone is actually shipping.")}
-        ${p("Four moves. All four come up in your playbook. Read these so our call can go deeper.")}
+        ${p(`Hey ${firstName}, Matt here. Before our call I wanted to show you the pattern we see over and over among operators who start strong in the Collective. These aren't hypothetical. They come up in almost every Collective call where someone is actually shipping.`)}
+        ${p("Four moves. All four are in your playbook. Read these so our call can go deeper.")}
 
         ${playCard(
           "Move 1",
           "Pick a lane and stop hedging.",
-          "\"Small businesses\" is not an ICP. \"Anyone who needs marketing\" is not an ICP. The operators who get traction fast are the ones who pick one specific buyer they actually understand — a role, an industry, a company stage. Once you have that, everything downstream gets easier."
+          "\"Small businesses\" is not an ICP. \"Anyone who needs marketing\" is not an ICP. The operators who get traction fast are the ones who pick one specific buyer they actually understand: a role, an industry, a company stage. Once you have that, everything downstream gets easier."
         )}
         ${playCard(
           "Move 2",
           "Put your offer in one sentence.",
-          "<em>\"I help [specific buyer] [specific outcome] by [specific mechanism].\"</em> If you can't finish that sentence without hedging, you don't have an offer yet — you have a job title. This is the single hardest thing to write and the single biggest unlock."
+          "<em>\"I help [specific buyer] [specific outcome] by [specific mechanism].\"</em> If you can't finish that sentence without hedging, you don't have an offer yet. You have a job title. This is the single hardest thing to write and the single biggest unlock."
         )}
         ${playCard(
           "Move 3",
           "Use the discovery script, then price in ranges.",
-          "The playbook's discovery script is designed to surface the real pain in 25 minutes without making the prospect feel like they're being sold to. When they ask what it costs, a range (\"engagements in this space run $X–$Y depending on scope\") moves you from vendor to advisor in one sentence."
+          "The playbook's discovery script surfaces the real pain in 25 minutes without making the prospect feel like they're being sold to. When they ask what it costs, a range (\"engagements in this space run $X to $Y depending on scope\") moves you from vendor to advisor in one sentence."
         )}
         ${playCard(
           "Move 4",
           "Run the same play again instead of inventing new ones.",
-          "The operators who scale fastest aren't the ones reinventing their offer every two weeks. They're the ones running the same proven play 4–5 times. Your playbook is a set of proven plays — use them as-is, iterate on delivery, keep the same offer stable while you build momentum."
+          "The operators who scale fastest aren't the ones reinventing their offer every two weeks. They're the ones running the same proven play four or five times. Use your playbook as-is, iterate on delivery, keep the same offer stable while you build momentum."
         )}
 
-        ${p("When we talk, we'll figure out which of these four you're strongest on and which one is the current bottleneck. The whole point is to save you months of trial and error.")}
+        ${p(`When we talk, we'll figure out which of these four you're strongest on, and which one is the current bottleneck for you, ${firstName}. The whole point is to save you months of trial and error.`)}
 
-        ${btn(nextStepsUrl, "See more prep resources")}
+        ${btn("Open prep resources", nextStepsUrl)}
+
+        <p style="margin:32px 0 0;font-size:13px;color:#4B5563;line-height:1.6;">
+          Matt<br/>
+          <span style="color:#9CA3AF;font-size:12px;">AI Operator Collective</span>
+        </p>
       `,
     }
   }
 
   if (emailIndex === 1) {
-    // Day 2 — AI tools (Adam's personal stack)
+    // Day 2 — AI tools (Matt's personal stack)
     return {
       subject: "The 10 AI tools I actually use every day",
       html: `
         ${h1(`${firstName}, here's the stack I really use.`)}
-        ${p("There are 500+ \"top AI tool\" lists on LinkedIn this week. Most of them are recycled. This one is different — it's the tools I personally use multiple times a day to run the AIMS portfolio. If I stopped using any of these, my work would be slower tomorrow.")}
+        ${p(`Hey ${firstName}, Matt again. There are 500+ "top AI tool" lists on LinkedIn this week. Most are recycled. This one is different. It's the tools I personally use multiple times a day to run the AIMS portfolio. If I stopped using any of these tomorrow, my work would be slower.`)}
 
         ${playCard(
           "01",
@@ -195,27 +204,27 @@ export function buildPostBookingEducationEmail(
         ${playCard(
           "02",
           "Perplexity",
-          "The best AI-powered research tool — answers come with real citations so you can trust them. Their new browser agent (Comet) also automates research tasks across the web. I use it anytime I'd normally open 12 tabs. <a href=\"https://perplexity.ai\" style=\"color:#981B1B;\">perplexity.ai</a>"
+          "The best AI-powered research tool I've found. Answers come with real citations so you can trust them. Their new browser agent (Comet) also automates research tasks across the web. I use it anytime I'd normally open 12 tabs. <a href=\"https://perplexity.ai\" style=\"color:#981B1B;\">perplexity.ai</a>"
         )}
         ${playCard(
           "03",
           "Dex",
-          "A Chrome browser agent that works alongside you with full context of what's on your screen. You don't have to describe what you're looking at — it already sees it. Huge for anyone who lives in the browser."
+          "A Chrome browser agent that works alongside you with full context of what's on your screen. You don't have to describe what you're looking at. It already sees it. Huge for anyone who lives in the browser."
         )}
         ${playCard(
           "04",
           "Raycast",
-          "Command-K for your whole Mac. Launch apps, respond to Slack, check email, run AI prompts — all without leaving your keyboard. Once you use it for a week, using a laptop without it feels broken. <a href=\"https://raycast.com\" style=\"color:#981B1B;\">raycast.com</a>"
+          "Command-K for your whole Mac. Launch apps, respond to Slack, check email, run AI prompts, all without leaving your keyboard. Once you use it for a week, using a laptop without it feels broken. <a href=\"https://raycast.com\" style=\"color:#981B1B;\">raycast.com</a>"
         )}
         ${playCard(
           "05",
           "Wispr Flow",
-          "The best speech-to-text tool I've used. Hold a button, talk, release — your words appear wherever the cursor is. I draft entire emails and doc sections this way faster than I can type. <a href=\"https://wisprflow.ai\" style=\"color:#981B1B;\">wisprflow.ai</a>"
+          "The best speech-to-text tool I've used. Hold a button, talk, release, and your words appear wherever the cursor is. I draft entire emails and doc sections this way faster than I can type. <a href=\"https://wisprflow.ai\" style=\"color:#981B1B;\">wisprflow.ai</a>"
         )}
         ${playCard(
           "06",
           "Little Bird (honorable mention)",
-          "Joins all my calls like a meeting notetaker, records my screen during the day, AND runs any automation I describe in plain English — \"go check my email, Slack messages, and build out my to-do list for today.\" New, powerful, worth watching."
+          "Joins all my calls like a meeting notetaker, records my screen during the day, AND runs any automation I describe in plain English. \"Go check my email, Slack messages, and build out my to-do list for today.\" New, powerful, worth watching."
         )}
         ${playCard(
           "07",
@@ -230,7 +239,7 @@ export function buildPostBookingEducationEmail(
         ${playCard(
           "09",
           "Notion + Notion AI",
-          "Where my playbooks, SOPs, and research live. Notion AI actually retrieves from YOUR docs instead of generating generic text — it's like having a research assistant who's read everything you've ever written. <a href=\"https://notion.so\" style=\"color:#981B1B;\">notion.so</a>"
+          "Where my playbooks, SOPs, and research live. Notion AI actually retrieves from YOUR docs instead of generating generic text. It's like having a research assistant who's read everything you've ever written. <a href=\"https://notion.so\" style=\"color:#981B1B;\">notion.so</a>"
         )}
         ${playCard(
           "10",
@@ -238,9 +247,14 @@ export function buildPostBookingEducationEmail(
           "Turns any website into clean Markdown that an LLM can read. Every research or scraping workflow I run starts here. Feed it a URL, get a perfectly formatted doc ready to hand to Claude. <a href=\"https://firecrawl.dev\" style=\"color:#981B1B;\">firecrawl.dev</a>"
         )}
 
-        ${p("You don't need all 10 on day one. Start with Claude + Perplexity + Raycast. Those three alone will give most people 5+ hours back a week.")}
+        ${p(`You don't need all 10 on day one, ${firstName}. Start with Claude, Perplexity, and Raycast. Those three alone will give most people 5+ hours back per week.`)}
 
-        ${btn(nextStepsUrl, "See more prep resources")}
+        ${btn("Open prep resources", nextStepsUrl)}
+
+        <p style="margin:32px 0 0;font-size:13px;color:#4B5563;line-height:1.6;">
+          Matt<br/>
+          <span style="color:#9CA3AF;font-size:12px;">AI Operator Collective</span>
+        </p>
       `,
     }
   }
@@ -251,17 +265,17 @@ export function buildPostBookingEducationEmail(
       subject: "5 prompts that save Collective operators 10+ hours/week",
       html: `
         ${h1(`${firstName}, steal these 5 prompts.`)}
-        ${p("These are the prompts that members of the Collective paste into Claude or ChatGPT multiple times a day. You can steal them directly — they're designed to be copy-pasted, not admired.")}
+        ${p(`Hey ${firstName}, Matt here. These are the prompts members of the Collective paste into Claude or ChatGPT multiple times a day. Steal them directly. They're designed to be copy-pasted, not admired.`)}
 
         ${playCard(
           "Prompt 1",
           "Discovery call synthesizer",
-          "<em>Paste the transcript. Pull out: (1) the real pain (not the stated pain), (2) the exact words the prospect used for success, (3) the 3 objections most likely to come up, (4) a proposed scope + price range based on the pain size. Return as sections.</em>"
+          "<em>Paste the transcript. Pull out: (1) the real pain (not the stated pain), (2) the exact words the prospect used for success, (3) the 3 objections most likely to come up, (4) a proposed scope and price range based on the pain size. Return as sections.</em>"
         )}
         ${playCard(
           "Prompt 2",
           "ICP list cleaner",
-          "<em>I'm going to paste a list of 200 companies. Score each 1–10 on fit based on this ICP: [paste ICP]. For anything scored 7+, write a one-line \"why they fit\" I can drop into a cold email. Return as CSV: company, score, why.</em>"
+          "<em>I'm going to paste a list of 200 companies. Score each 1 to 10 on fit based on this ICP: [paste ICP]. For anything scored 7+, write a one-line \"why they fit\" I can drop into a cold email. Return as CSV: company, score, why.</em>"
         )}
         ${playCard(
           "Prompt 3",
@@ -270,7 +284,7 @@ export function buildPostBookingEducationEmail(
         )}
         ${playCard(
           "Prompt 4",
-          "Proposal → SOW converter",
+          "Proposal to SOW converter",
           "<em>Turn this proposal into a tight SOW a mid-market buyer would actually sign. Scope, deliverables, timeline, out-of-scope items, and payment terms in that order. Max 1 page. No filler.</em>"
         )}
         ${playCard(
@@ -279,9 +293,14 @@ export function buildPostBookingEducationEmail(
           "<em>Here's a raw ops note: [paste]. Turn it into a LinkedIn post in my voice: opinion up top, one specific example in the middle, one contrarian line to close. No hashtags. No \"here's why\" phrases.</em>"
         )}
 
-        ${p("On our call we'll go through which of these maps to your actual work. See you soon.")}
+        ${p(`On our call we'll go through which of these maps to your actual work. See you soon, ${firstName}.`)}
 
-        ${btn(nextStepsUrl, "Open the prompt library")}
+        ${btn("Open the prompt library", nextStepsUrl)}
+
+        <p style="margin:32px 0 0;font-size:13px;color:#4B5563;line-height:1.6;">
+          Matt<br/>
+          <span style="color:#9CA3AF;font-size:12px;">AI Operator Collective</span>
+        </p>
       `,
     }
   }
@@ -292,15 +311,20 @@ export function buildPostBookingEducationEmail(
       subject: `${firstName}, your AI Operator call is today`,
       html: `
         ${h1("Today's the day.")}
-        ${p("Quick reminder — we're on today. A few nudges so it goes smoothly:")}
+        ${p(`Hey ${firstName}, Matt here. Quick reminder that we're on today. A few nudges so it goes smoothly:`)}
 
-        ${playCard("1.", "Sit down at a computer, not your phone.", "We'll share our screen and walk you through a short presentation. Mobile will miss half of it.")}
+        ${playCard("1.", "Sit down at a computer, not your phone.", "I'll share my screen and walk you through a short presentation. Mobile will miss half of it.")}
         ${playCard("2.", "Have one or two AI questions ready.", "What are you stuck on? What would save you the most time this month if it just worked? Come with those and we'll tear through them live.")}
         ${playCard("3.", "Skim the playbook if you haven't.", "10 minutes is enough. It makes the call go deeper.")}
 
-        ${p("If something's come up and you genuinely can't make it, hit the reschedule link in your Calendly confirmation — no hard feelings. Otherwise, see you soon.")}
+        ${p("If something's come up and you genuinely can't make it, hit the reschedule link in your Calendly confirmation. No hard feelings. Otherwise, see you soon.")}
 
-        ${btn(nextStepsUrl, "Review the prep page")}
+        ${btn("Review the prep page", nextStepsUrl)}
+
+        <p style="margin:32px 0 0;font-size:13px;color:#4B5563;line-height:1.6;">
+          Matt<br/>
+          <span style="color:#9CA3AF;font-size:12px;">AI Operator Collective</span>
+        </p>
       `,
     }
   }

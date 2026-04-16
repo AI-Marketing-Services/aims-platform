@@ -13,8 +13,8 @@ export function CommunityHero() {
         </p>
 
         <h1 className="font-playfair text-5xl sm:text-6xl md:text-7xl lg:text-[88px] leading-[1.1] pb-2 tracking-tight text-[#1A1A1A]">
-          Real business problems.
-          <span className="block text-crimson italic">Solved by real operators.</span>
+          Real Business Problems
+          <span className="block text-crimson italic">Solved by Real AI Operators</span>
         </h1>
 
         <p className="mt-8 text-lg sm:text-xl text-[#737373] max-w-3xl mx-auto leading-relaxed">
@@ -29,7 +29,7 @@ export function CommunityHero() {
         <div className="mt-10 flex flex-col items-center gap-4">
           <a
             href={APPLY_URL}
-            className="pointer-events-auto group inline-flex items-center justify-center gap-2 rounded-md bg-crimson text-white px-7 py-4 text-sm font-bold uppercase tracking-wider hover:bg-crimson-dark transition-all shadow-[0_8px_24px_-4px_rgba(153,27,27,0.35)]"
+            className="pointer-events-auto group inline-flex items-center justify-center gap-3 rounded-md bg-crimson text-white px-14 py-4 text-sm font-bold uppercase tracking-wider hover:bg-crimson-dark transition-all shadow-[0_8px_24px_-4px_rgba(153,27,27,0.35)] min-w-[280px]"
           >
             Apply Now
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
