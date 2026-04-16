@@ -1,23 +1,24 @@
 import type { Metadata } from "next"
 import { ClerkProvider } from "@clerk/nextjs"
-import { Cormorant_Garamond, DM_Sans, DM_Mono, Inter, Playfair_Display } from "next/font/google"
+import { DM_Sans, DM_Mono, Playfair_Display } from "next/font/google"
 import { Toaster } from "sonner"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { Analytics } from "@vercel/analytics/next"
 
 import "./globals.css"
 
-const cormorant = Cormorant_Garamond({
-  variable: "--font-cormorant",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  display: "swap",
-})
+// Only the fonts actually used on the site are loaded. Cormorant + Inter
+// were previously imported but had zero usage across all pages — that
+// extra network weight was causing the jolty FOUT on initial paint.
 
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
   subsets: ["latin"],
   display: "swap",
+  fallback: ["system-ui", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
+  adjustFontFallback: true,
+  weight: ["400", "500", "700"],
+  preload: true,
 })
 
 const dmMono = DM_Mono({
@@ -25,19 +26,23 @@ const dmMono = DM_Mono({
   subsets: ["latin"],
   weight: ["400", "500"],
   display: "swap",
+  adjustFontFallback: false, // DM Mono is only used for small labels — don't block render
+  preload: false,
 })
 
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  display: "swap",
-})
-
+// Playfair is the headline display font. Preload it + use "optional" so the
+// browser either shows the custom font on first paint (if ready in ~100ms)
+// or stays on the fallback without swapping mid-read. This eliminates the
+// visible text jump the user was seeing.
 const playfair = Playfair_Display({
   variable: "--font-playfair",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  display: "swap",
+  weight: ["400", "700"],
+  style: ["normal", "italic"],
+  display: "optional",
+  fallback: ["Georgia", "Cambria", "Times New Roman", "serif"],
+  adjustFontFallback: true,
+  preload: true,
 })
 
 
@@ -80,7 +85,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${cormorant.variable} ${dmSans.variable} ${dmMono.variable} ${inter.variable} ${playfair.variable}`}>
+    <html lang="en" className={`${dmSans.variable} ${dmMono.variable} ${playfair.variable}`}>
       <head>
         <link rel="dns-prefetch" href="https://player.vimeo.com" />
         <link rel="dns-prefetch" href="https://api.anthropic.com" />

@@ -86,11 +86,12 @@ const config = {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        sans: ["var(--font-dm-sans)", "system-ui", "sans-serif"],
-        mono: ["var(--font-dm-mono)", "monospace"],
-        serif: ["var(--font-cormorant)", "Georgia", "serif"],
-        inter: ["var(--font-inter)", "system-ui", "sans-serif"],
-        playfair: ["var(--font-playfair)", "Georgia", "serif"],
+        // Fallbacks are picked to match Playfair / DM Sans metrics so text
+        // renders without visible layout shift while the web font loads.
+        sans: ["var(--font-dm-sans)", "system-ui", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
+        mono: ["var(--font-dm-mono)", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
+        serif: ["var(--font-playfair)", "Georgia", "Cambria", "Times New Roman", "serif"],
+        playfair: ["var(--font-playfair)", "Georgia", "Cambria", "Times New Roman", "serif"],
       },
       keyframes: {
         "accordion-down": {
