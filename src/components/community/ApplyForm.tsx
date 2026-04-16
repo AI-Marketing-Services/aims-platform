@@ -413,7 +413,7 @@ export function ApplyForm() {
                 animate="center"
                 exit="exit"
                 transition={{ duration: 0.25 }}
-                className="space-y-5 sm:space-y-6"
+                className="space-y-5 sm:space-y-6 text-center flex flex-col items-center"
               >
                 <h2 className="font-playfair text-2xl sm:text-3xl md:text-4xl text-[#1A1A1A]">
                   Apply to the AI Operator Collective
@@ -441,7 +441,7 @@ export function ApplyForm() {
                 animate="center"
                 exit="exit"
                 transition={{ duration: 0.25 }}
-                className="space-y-5 sm:space-y-6"
+                className="space-y-5 sm:space-y-6 text-center flex flex-col items-center"
               >
                 <div>
                   <h2 className="font-playfair text-2xl sm:text-3xl md:text-4xl text-[#1A1A1A] mb-2">
@@ -453,7 +453,7 @@ export function ApplyForm() {
                   </p>
                 </div>
 
-                <div className="space-y-4 w-full max-w-md">
+                <div className="space-y-4 w-full max-w-md text-left">
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label
@@ -539,6 +539,7 @@ export function ApplyForm() {
                 animate="center"
                 exit="exit"
                 transition={{ duration: 0.25 }}
+                className="text-center"
               >
                 {/* Personalized intro */}
                 <p className="text-crimson text-xs sm:text-sm font-medium mb-2 sm:mb-3">
@@ -641,7 +642,7 @@ export function ApplyForm() {
                 animate="center"
                 exit="exit"
                 transition={{ duration: 0.25 }}
-                className="space-y-5 sm:space-y-6"
+                className="space-y-5 sm:space-y-6 text-center flex flex-col items-center"
               >
                 {/* Personalized intro */}
                 <div>
@@ -665,7 +666,7 @@ export function ApplyForm() {
                   </p>
                 </div>
 
-                <div className="space-y-4 w-full max-w-md">
+                <div className="space-y-4 w-full max-w-md text-left">
                   <div>
                     <label
                       htmlFor="apply-phone"
