@@ -2,7 +2,6 @@ import { NextResponse } from "next/server"
 import crypto from "crypto"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
-import { sendOperatorVaultEmail } from "@/lib/email/operator-vault"
 import { sendPostBookingConfirmationEmail } from "@/lib/email/post-booking-education"
 import { queueEmailSequence } from "@/lib/email/queue"
 
@@ -112,13 +111,6 @@ export async function POST(req: Request) {
         logger.error("Calendly webhook: deal update failed", err)
         return NextResponse.json({ error: "Deal update failed" }, { status: 500 })
       }
-    }
-
-    // Send the Playbook Vault email (triggered by booking, not form submit)
-    try {
-      await sendOperatorVaultEmail({ to: email, name })
-    } catch (err) {
-      logger.error("Calendly webhook: vault email failed", err)
     }
 
     // Day-0 confirmation email with the AI Operator Playbook PDF attached.

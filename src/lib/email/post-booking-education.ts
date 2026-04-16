@@ -63,31 +63,41 @@ export async function sendPostBookingConfirmationEmail(params: {
   const body = `
     ${h1(`${firstName}, your call is confirmed.`)}
     ${p(whenLine)}
-    ${p("Three things to do before we talk:")}
+    ${p("We're excited to meet you. Here's how we'll spend our time together, and how to make sure you get the most out of it.")}
+
+    ${p("<strong style='color:#111827;'>What the call is about:</strong> We'll walk you through a short presentation on where AI actually creates leverage for people like you, answer any burning questions you've been sitting on, and figure out together whether the Collective is a good fit. That's it — no high-pressure pitch.")}
+
+    ${p("A few things to lock in before we meet:")}
 
     ${playCard(
       "1.",
-      "RSVP + add it to your calendar right now.",
-      "Tap the calendar invite Calendly just sent you. If you're on mobile, make sure it's saved to your primary calendar — not a secondary one that no one checks. If you need to reschedule, use the link below."
+      "RSVP and add it to your calendar right now.",
+      "Tap the calendar invite Calendly sent you and accept it. If it landed on your phone, make sure it saved to your primary calendar — not a secondary account you never check. Double-book protection."
     )}
     ${playCard(
       "2.",
-      "Read the AI Operator Playbook (attached).",
-      "This is the same playbook we use inside the AIMS portfolio. Read it before the call so we can go deep instead of covering basics. Five chapters, ~15 minutes start to finish."
+      "Be at a computer — not your phone.",
+      "We'll be sharing our screen and walking you through a presentation. Mobile works in a pinch, but you'll get way more out of it on a laptop or desktop. Plan to sit down somewhere quiet with no distractions."
     )}
     ${playCard(
       "3.",
-      "Open the next-steps page.",
-      "We put together a page with case studies, AI use cases by industry, and the exact tools operators in our community are using right now. It's the fastest way to see what's possible before we talk."
+      "Bring one or two burning AI questions.",
+      "What are you actually stuck on? What tools are you eyeing but haven't pulled the trigger on? What would save you the most time this month if it just worked? Come with those, and we'll tear through them live."
+    )}
+    ${playCard(
+      "4.",
+      "Skim the AI Operator Playbook (attached).",
+      "Five short chapters, ~15 minutes. Not required — but if you read it, our call goes deeper and you leave with more."
     )}
 
-    ${btn(nextStepsUrl, "Open Next Steps")}
+    ${btn(nextStepsUrl, "Prep resources + AI use cases")}
 
     ${divider()}
 
     <p style="margin:0 0 8px;font-size:13px;color:#4B5563;line-height:1.6;">
       <strong style="color:#111827;">Need to reschedule?</strong>
       ${params.rescheduleUrl ? `<a href="${params.rescheduleUrl}" style="color:#981B1B;">Pick a different time</a>` : "Reply to this email and we'll find a better time."}
+      — but please don't ghost, we held this slot for you.
     </p>
     ${
       params.meetingUrl
@@ -96,7 +106,7 @@ export async function sendPostBookingConfirmationEmail(params: {
     }
 
     <p style="margin:24px 0 0;font-size:11px;color:#9CA3AF;line-height:1.55;font-style:italic;">
-      Over the next few days we'll send you a short series with real case studies, the AI tools our operators swear by, and the prompts that free up the most hours each week. Reply "stop" anytime and we'll close the loop.
+      Over the next few days we'll send a few short emails — a case study from a member, the top AI tools we're using ourselves, and a handful of prompts you can steal. Not a firehose. Reply "stop" anytime.
     </p>
   `
 
@@ -104,10 +114,10 @@ export async function sendPostBookingConfirmationEmail(params: {
     from: FROM_EMAIL,
     to: params.to,
     replyTo: REPLY_TO,
-    subject: `${firstName}, your AI Operator call is confirmed — playbook attached`,
+    subject: `${firstName}, your AI Operator call is confirmed — here's how to prep`,
     html: emailLayout(
       body,
-      "RSVP, skim the playbook, open the next-steps page before we talk."
+      "RSVP, be at a computer, bring your burning AI questions."
     ),
     attachments: pdfBuffer
       ? [
@@ -228,14 +238,15 @@ export function buildPostBookingEducationEmail(
       subject: `${firstName}, your AI Operator call is today`,
       html: `
         ${h1("Today's the day.")}
-        ${p("Quick reminder — we're on today. Two things to have ready:")}
+        ${p("Quick reminder — we're on today. A few nudges so it goes smoothly:")}
 
-        ${playCard("1.", "The playbook PDF.", "Open it once before the call so the terminology lands — ICP sentence, one-paragraph offer, pricing-in-ranges. 10 minutes of skim is enough.")}
-        ${playCard("2.", "One specific blocker.", "The biggest outcome of this call is you leaving with a next move. Come with one concrete thing you're stuck on — we'll unblock it live instead of doing a generic Q&A.")}
+        ${playCard("1.", "Sit down at a computer, not your phone.", "We'll share our screen and walk you through a short presentation. Mobile will miss half of it.")}
+        ${playCard("2.", "Have one or two AI questions ready.", "What are you stuck on? What would save you the most time this month if it just worked? Come with those and we'll tear through them live.")}
+        ${playCard("3.", "Skim the playbook if you haven't.", "10 minutes is enough. It makes the call go deeper.")}
 
-        ${p("If something comes up and you need to reschedule, hit the link in your Calendly confirmation — no hard feelings. Otherwise, see you soon.")}
+        ${p("If something's come up and you genuinely can't make it, hit the reschedule link in your Calendly confirmation — no hard feelings. Otherwise, see you soon.")}
 
-        ${btn(nextStepsUrl, "Review the next-steps page")}
+        ${btn(nextStepsUrl, "Review the prep page")}
       `,
     }
   }

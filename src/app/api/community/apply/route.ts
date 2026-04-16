@@ -4,8 +4,9 @@ import { db } from "@/lib/db"
 import { formRatelimit, getIp } from "@/lib/ratelimit"
 import { logger } from "@/lib/logger"
 import { notify, notifyHotLead } from "@/lib/notifications"
-import { createCloseLead } from "@/lib/close"
-import { queueEmailSequence } from "@/lib/email/queue"
+// createCloseLead + queueEmailSequence are intentionally unimported — the
+// Close sync is disabled (no workspace) and no drip is queued at apply-submit
+// time. The post-booking drip is queued from the Calendly webhook instead.
 import { QUESTIONS, calculateScore, getCalendarUrl } from "@/lib/collective-application"
 
 const validValues = QUESTIONS.reduce<Record<string, string[]>>((acc, q) => {
@@ -166,13 +167,10 @@ export async function POST(req: Request) {
         )
     }
 
-    // Email is now sent via Calendly webhook (POST /api/webhooks/calendly)
-    // after the applicant books a call. We still queue the nurture sequence
-    // for applicants who may not book immediately.
-    queueEmailSequence(email, "operator-vault", {
-      name,
-      source: source ?? "apply-form",
-    }).catch((err) => logger.error("Failed to enqueue operator-vault sequence", err))
+    // Email drips only queue AFTER the applicant books a call (see Calendly
+    // webhook). If they never book, the nurture-unbooked cron handles day
+    // 2/5/9 booking reminders. No drip fires at apply-submit time — the
+    // prospect hasn't proven intent yet.
 
     if (deal) {
       if (tier === "hot") {
@@ -196,20 +194,9 @@ export async function POST(req: Request) {
         }).catch((err) => logger.error("Failed to notify application", err))
       }
 
-      createCloseLead({
-        contactName: name,
-        contactEmail: email,
-        source: "ai-operator-collective-application",
-        dealId: deal.id,
-      })
-        .then((closeLeadId) => {
-          if (closeLeadId) {
-            db.deal
-              .update({ where: { id: deal.id }, data: { closeLeadId } })
-              .catch((e) => logger.error("Failed to update deal with closeLeadId", e))
-          }
-        })
-        .catch((err) => logger.error("Failed to sync application to Close", err))
+      // Close CRM integration intentionally disabled — no Close workspace
+      // provisioned for this funnel yet. To re-enable, call createCloseLead
+      // from @/lib/close and persist the returned closeLeadId onto Deal.
     }
 
     return NextResponse.json({ ok: true, score: normalizedScore, tier }, { status: 201 })

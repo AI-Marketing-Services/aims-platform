@@ -111,8 +111,12 @@ describe("POST /api/community/apply — wiring", () => {
     expect(content).toMatch(/notifyHotLead\(/)
   })
 
-  it("queues the operator-vault nurture sequence", () => {
-    expect(content).toMatch(/queueEmailSequence\([^,]+,\s*"operator-vault"/)
+  it("does NOT queue any drip at apply-submit (drips only after booking)", () => {
+    expect(content).not.toMatch(/queueEmailSequence\(/)
+  })
+
+  it("does NOT call Close CRM (no workspace provisioned)", () => {
+    expect(content).not.toMatch(/createCloseLead\(/)
   })
 })
 
