@@ -1,8 +1,8 @@
 import { sendTrackedEmail, escapeHtml, emailLayout, h1, p, btn } from "./index"
+import { getCalendarUrl } from "@/lib/collective-application"
 
 const FROM_EMAIL = "AI Operator Collective <irtaza@modern-amenities.com>"
 const REPLY_TO = "irtaza@modern-amenities.com"
-const CAL_URL = "https://cal.com/adamwolfe/aoc"
 
 type ReminderDay = 2 | 5 | 9
 
@@ -40,15 +40,17 @@ export async function sendBookingReminderEmail(params: {
   to: string
   name: string
   day: ReminderDay
+  tier?: "hot" | "warm" | "cold"
 }) {
   const cfg = COPY[params.day]
   const safeName = escapeHtml(params.name || "").trim()
   const greeting = safeName ? `${safeName.split(" ")[0]}, ${cfg.opener.toLowerCase()}` : cfg.opener
+  const calUrl = getCalendarUrl(params.tier ?? "cold")
 
   const html = `
     ${h1(greeting)}
     ${p(cfg.body)}
-    ${btn(CAL_URL, cfg.cta)}
+    ${btn(calUrl, cfg.cta)}
     ${p(
       "If this isn't the right moment, just reply with \"not now\" — we'll stop the booking reminders (the Vault content stays flowing).",
     )}

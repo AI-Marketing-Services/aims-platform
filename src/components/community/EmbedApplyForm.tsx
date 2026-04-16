@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils"
 import {
   QUESTIONS,
   ALLOWED_COUNTRIES,
-  CAL_LINK,
+  getCalendarUrl,
   getStepIntro,
   getCalendarIntro,
   getContactIntro,
@@ -153,8 +153,11 @@ export function EmbedApplyForm() {
     const container = document.getElementById("cal-inline-embed-aoc")
     if (!container) return
 
+    const tier = scoreResult?.tier ?? "cold"
+    const bookingUrl = getCalendarUrl(tier)
+
     container.innerHTML = ""
-    container.setAttribute("data-url", CAL_LINK)
+    container.setAttribute("data-url", bookingUrl)
 
     const initCalendly = () => {
       const Calendly = (window as unknown as { Calendly?: { initInlineWidget: (opts: Record<string, unknown>) => void } }).Calendly
@@ -166,7 +169,7 @@ export function EmbedApplyForm() {
         text_color: "1A1A1A",
         primary_color: "981B1B",
       }).toString()
-      const url = `${CAL_LINK}${CAL_LINK.includes("?") ? "&" : "?"}${params}`
+      const url = `${bookingUrl}${bookingUrl.includes("?") ? "&" : "?"}${params}`
       Calendly.initInlineWidget({
         url,
         parentElement: container,
@@ -207,7 +210,7 @@ export function EmbedApplyForm() {
     }
 
     return () => window.removeEventListener("message", onMessage)
-  }, [phase, firstName, lastName, email])
+  }, [phase, firstName, lastName, email, scoreResult])
 
   const goBack = () => {
     if (step > 0) {

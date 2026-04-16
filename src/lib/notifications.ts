@@ -239,8 +239,10 @@ export async function notifyHotLead(params: {
                 ? [
                     {
                       type: "button",
-                      text: { type: "plain_text", text: "View Booking" },
-                      url: `https://cal.com/${params.calLink}`,
+                      text: { type: "plain_text", text: "Matt's Calendar" },
+                      url: params.calLink.startsWith("http")
+                        ? params.calLink
+                        : `https://calendly.com/${params.calLink}`,
                     },
                   ]
                 : []),

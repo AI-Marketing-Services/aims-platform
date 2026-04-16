@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils"
 import {
   QUESTIONS,
   ALLOWED_COUNTRIES,
-  CAL_LINK,
+  getCalendarUrl,
   getStepIntro,
   getCalendarIntro,
   getContactIntro,
@@ -241,8 +241,12 @@ export function ApplyForm() {
     const container = document.getElementById("cal-inline-aoc")
     if (!container) return
 
+    // Route hot leads to Matt, warm/cold to Ryan.
+    const tier = scoreResult?.tier ?? "cold"
+    const bookingUrl = getCalendarUrl(tier)
+
     container.innerHTML = ""
-    container.setAttribute("data-url", CAL_LINK)
+    container.setAttribute("data-url", bookingUrl)
 
     const initCalendly = () => {
       const Calendly = (window as unknown as { Calendly?: { initInlineWidget: (opts: Record<string, unknown>) => void } }).Calendly
@@ -255,7 +259,7 @@ export function ApplyForm() {
         primary_color: "981B1B",
       }).toString()
 
-      const url = `${CAL_LINK}${CAL_LINK.includes("?") ? "&" : "?"}${params}`
+      const url = `${bookingUrl}${bookingUrl.includes("?") ? "&" : "?"}${params}`
       Calendly.initInlineWidget({
         url,
         parentElement: container,
@@ -315,7 +319,7 @@ export function ApplyForm() {
     return () => {
       window.removeEventListener("message", onMessage)
     }
-  }, [phase, firstName, lastName, email])
+  }, [phase, firstName, lastName, email, scoreResult])
 
   /* ---- Current question (steps 2-6) ---- */
   const questionIndex = step - 2

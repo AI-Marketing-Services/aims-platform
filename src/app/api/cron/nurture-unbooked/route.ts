@@ -109,6 +109,7 @@ async function processDay(day: ReminderDay): Promise<{ sent: number; skipped: nu
         to: deal.contactEmail,
         name: deal.contactName ?? "",
         day,
+        tier: (deal.leadScoreTier as "hot" | "warm" | "cold" | null) ?? "cold",
       })
       if (result && typeof result === "object" && "error" in result && result.error) {
         throw new Error(JSON.stringify(result.error))

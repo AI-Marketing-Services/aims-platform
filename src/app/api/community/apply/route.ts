@@ -6,7 +6,7 @@ import { logger } from "@/lib/logger"
 import { notify, notifyHotLead } from "@/lib/notifications"
 import { createCloseLead } from "@/lib/close"
 import { queueEmailSequence } from "@/lib/email/queue"
-import { QUESTIONS, calculateScore } from "@/lib/collective-application"
+import { QUESTIONS, calculateScore, getCalendarUrl } from "@/lib/collective-application"
 
 const validValues = QUESTIONS.reduce<Record<string, string[]>>((acc, q) => {
   acc[q.id] = q.options.map((o) => o.value)
@@ -185,7 +185,7 @@ export async function POST(req: Request) {
           tier,
           country,
           reason,
-          calLink: "adamwolfe/aoc",
+          calLink: getCalendarUrl(tier),
         }).catch((err) => logger.error("Failed to notify hot lead", err))
       } else {
         notify({

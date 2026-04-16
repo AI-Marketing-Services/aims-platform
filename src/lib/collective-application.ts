@@ -156,23 +156,30 @@ export function calculateScore(answers: Record<string, string>) {
 /* -------------------------------------------------------------------------- */
 
 /**
- * Calendly URL used for all tiers for now.
- * Set NEXT_PUBLIC_CALENDLY_URL in Vercel env to the live booking link.
- * When Matt / Ryan get separate links, split by tier here.
+ * Calendly routing.
+ * - Hot tier (score ≥ 80) → Matt (most qualified leads, senior closer)
+ * - Warm / cold tier       → Ryan
+ *
+ * Override per-operator via NEXT_PUBLIC_CALENDLY_MATT / NEXT_PUBLIC_CALENDLY_RYAN.
  */
-export const CALENDLY_URL =
-  process.env.NEXT_PUBLIC_CALENDLY_URL ??
-  "https://calendly.com/adamwolfe100/aoc-strategy-call"
+export const CALENDLY_MATT =
+  process.env.NEXT_PUBLIC_CALENDLY_MATT ??
+  "https://calendly.com/matt-breakthroughclosing"
 
-// Kept export name to avoid touching every import; value is now a full Calendly URL.
-export const CAL_LINK = CALENDLY_URL
+export const CALENDLY_RYAN =
+  process.env.NEXT_PUBLIC_CALENDLY_RYAN ??
+  "https://calendly.com/ryan-breakthroughclosing"
 
-export function getCalendarUrl(_tier: "hot" | "warm" | "cold") {
-  return CALENDLY_URL
+// Default link used before tier is known (e.g. step-1 previews). Points at
+// Ryan because unqualified prospects shouldn't eat Matt's calendar.
+export const CAL_LINK = CALENDLY_RYAN
+
+export function getCalendarUrl(tier: "hot" | "warm" | "cold") {
+  return tier === "hot" ? CALENDLY_MATT : CALENDLY_RYAN
 }
 
 export function getCalendarOwner(tier: "hot" | "warm" | "cold") {
-  return tier === "hot" ? "Matt Miller" : "Ryan"
+  return tier === "hot" ? "Matt" : "Ryan"
 }
 
 /* -------------------------------------------------------------------------- */
