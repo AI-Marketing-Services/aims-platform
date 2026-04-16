@@ -40,7 +40,7 @@ function formatPrice(service: PublicService): string {
     return `from $${dollars.toLocaleString()}${suffix}`
   }
   if (service.basePrice && service.basePrice > 0) {
-    return `from $${service.basePrice.toLocaleString()}/mo`
+    return `from $${Math.round(service.basePrice / 100).toLocaleString()}/mo`
   }
   return "Contact for pricing"
 }

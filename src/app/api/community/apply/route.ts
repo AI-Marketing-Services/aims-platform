@@ -3,7 +3,7 @@ import { z } from "zod"
 import { db } from "@/lib/db"
 import { formRatelimit, getIp } from "@/lib/ratelimit"
 import { logger } from "@/lib/logger"
-import { notify } from "@/lib/notifications"
+import { notify, notifyHotLead } from "@/lib/notifications"
 import { createCloseLead } from "@/lib/close"
 import { queueEmailSequence } from "@/lib/email/queue"
 import { QUESTIONS, calculateScore } from "@/lib/collective-application"
@@ -162,13 +162,26 @@ export async function POST(req: Request) {
     }).catch((err) => logger.error("Failed to enqueue operator-vault sequence", err))
 
     if (deal) {
-      const urgency = tier === "hot" ? "high" : "normal"
-      notify({
-        type: "new_lead",
-        title: `New Collective Application (${tier.toUpperCase()})`,
-        message: `${name} (${email}) scored ${normalizedScore}/100. Tier: ${tier}. Phone: ${phone}. Country: ${country}.`,
-        urgency: urgency as "high" | "normal",
-      }).catch((err) => logger.error("Failed to notify application", err))
+      if (tier === "hot") {
+        notifyHotLead({
+          dealId: deal.id,
+          name,
+          email,
+          phone,
+          score: normalizedScore,
+          tier,
+          country,
+          reason,
+          calLink: "adamwolfe/aoc",
+        }).catch((err) => logger.error("Failed to notify hot lead", err))
+      } else {
+        notify({
+          type: "new_lead",
+          title: `New Collective Application (${tier.toUpperCase()})`,
+          message: `${name} (${email}) scored ${normalizedScore}/100. Tier: ${tier}. Phone: ${phone}. Country: ${country}.`,
+          urgency: "normal",
+        }).catch((err) => logger.error("Failed to notify application", err))
+      }
 
       createCloseLead({
         contactName: name,

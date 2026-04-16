@@ -166,3 +166,90 @@ export async function notifyMissedEOD(internName: string) {
     channel: "SLACK",
   })
 }
+
+export async function notifyHotLead(params: {
+  dealId: string
+  name: string
+  email: string
+  phone?: string | null
+  score: number
+  tier: string
+  country?: string | null
+  reason?: string | null
+  calLink?: string | null
+}) {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://aims-platform.vercel.app"
+  const crmUrl = `${appUrl}/admin/crm/${params.dealId}`
+
+  // In-app + email via standard notify (preserves existing behavior)
+  await notify({
+    type: "new_lead_hot",
+    title: `HOT LEAD: ${params.name} (${params.score}/100)`,
+    message: `${params.email}${params.phone ? ` | ${params.phone}` : ""}${params.country ? ` | ${params.country}` : ""}\n${params.reason ?? ""}`,
+    urgency: "high",
+    channel: "ALL",
+    metadata: { dealId: params.dealId, score: params.score, tier: params.tier },
+  })
+
+  // Rich Slack block — posted in addition to the plain Slack message above so
+  // hot leads stand out with action buttons.
+  const slack = process.env.SLACK_WEBHOOK_URL
+  if (!slack) return
+  try {
+    await fetch(slack, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        blocks: [
+          {
+            type: "header",
+            text: {
+              type: "plain_text",
+              text: `🚨 HOT LEAD: ${params.name}`,
+              emoji: true,
+            },
+          },
+          {
+            type: "section",
+            fields: [
+              { type: "mrkdwn", text: `*Score:* ${params.score}/100 (${params.tier})` },
+              { type: "mrkdwn", text: `*Email:* ${params.email}` },
+              ...(params.phone ? [{ type: "mrkdwn", text: `*Phone:* ${params.phone}` }] : []),
+              ...(params.country ? [{ type: "mrkdwn", text: `*Country:* ${params.country}` }] : []),
+            ],
+          },
+          ...(params.reason
+            ? [
+                {
+                  type: "section",
+                  text: { type: "mrkdwn", text: `*Signals:* ${params.reason}` },
+                },
+              ]
+            : []),
+          {
+            type: "actions",
+            elements: [
+              {
+                type: "button",
+                text: { type: "plain_text", text: "Open in CRM" },
+                url: crmUrl,
+                style: "primary",
+              },
+              ...(params.calLink
+                ? [
+                    {
+                      type: "button",
+                      text: { type: "plain_text", text: "View Booking" },
+                      url: `https://cal.com/${params.calLink}`,
+                    },
+                  ]
+                : []),
+            ],
+          },
+        ],
+      }),
+    })
+  } catch (err) {
+    logger.error("Failed to send hot lead Slack notification", err)
+  }
+}
