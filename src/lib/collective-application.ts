@@ -1,6 +1,14 @@
 /**
- * AI Operator Collective application questions, options, and scoring logic.
- * Shared by the client form and API validation.
+ * AI Operator Collective application questions, scoring, calendar routing,
+ * and personalization logic.
+ *
+ * Shared by the client form components and the API validation route.
+ *
+ * Flow order (VP-flip model):
+ *   1. Name + email (minimal friction)
+ *   2–6. Qualifying questions with dynamic personalization
+ *   7. Contact details (phone, zip, country, SMS consent)
+ *   8. Score-based Calendly routing
  */
 
 export interface QuestionOption {
@@ -12,103 +20,104 @@ export interface QuestionOption {
 export interface Question {
   id: string
   question: string
+  description: string
   options: QuestionOption[]
+  allowOther?: boolean
 }
 
 export const QUESTIONS: Question[] = [
   {
-    id: "situation",
-    question: "Which best describes your current professional situation?",
-    options: [
-      { label: "Recently laid off or actively job searching", value: "displaced", points: 3 },
-      { label: "Employed but exploring an exit", value: "exploring", points: 2 },
-      { label: "Already running a business or freelancing", value: "business_owner", points: 1 },
-      { label: "Student or career switcher with no corporate background", value: "student", points: 0 },
-    ],
-  },
-  {
-    id: "website",
-    question: "Do you have a website for your business or personal brand?",
-    options: [
-      { label: "Yes, and it generates leads or revenue", value: "yes_active", points: 1 },
-      { label: "Yes, but it needs work", value: "yes_needs_work", points: 2 },
-      { label: "I have a domain but no real site yet", value: "domain_only", points: 3 },
-      { label: "No, I need one built from scratch", value: "no_website", points: 3 },
-    ],
-  },
-  {
-    id: "ai_familiarity",
-    question: "How familiar are you with AI tools like ChatGPT, Claude, or automation platforms?",
-    options: [
-      { label: "I use AI tools daily in my work", value: "daily", points: 2 },
-      { label: "I have experimented but not consistently", value: "experimented", points: 3 },
-      { label: "I understand the concepts but have not used them hands-on", value: "conceptual", points: 1 },
-      { label: "Completely new to AI", value: "new", points: 0 },
-    ],
-  },
-  {
-    id: "goal",
-    question: "What is your primary goal for the next 12 months?",
-    options: [
-      { label: "Replace my W-2 income with a services business", value: "replace_income", points: 3 },
-      { label: "Build a side income stream while staying employed", value: "side_income", points: 2 },
-      { label: "Learn AI skills to advance my current career", value: "career_advance", points: 1 },
-      { label: "General curiosity, no specific goal yet", value: "curious", points: 0 },
-    ],
-  },
-  {
-    id: "experience",
-    question: "How many years of professional or industry experience do you have?",
-    options: [
-      { label: "10+ years in a specific domain", value: "10_plus", points: 3 },
-      { label: "5 to 9 years of professional experience", value: "5_to_9", points: 2 },
-      { label: "2 to 4 years of experience", value: "2_to_4", points: 1 },
-      { label: "Less than 2 years", value: "less_than_2", points: 0 },
-    ],
-  },
-  {
     id: "timeline",
-    question: "How quickly are you looking to generate revenue from an AI services business?",
+    question: "When are you looking to make a move?",
+    description:
+      "Tells us your timeline so we can match you to the right cohort start date.",
     options: [
-      { label: "Within the next 30 to 60 days", value: "30_60_days", points: 3 },
-      { label: "Within 3 to 6 months", value: "3_6_months", points: 2 },
-      { label: "Within a year", value: "within_year", points: 1 },
-      { label: "No specific timeline", value: "no_timeline", points: 0 },
+      { label: "Right now — I need this yesterday", value: "right_now", points: 3 },
+      { label: "Within the next 30 days", value: "within_30", points: 3 },
+      { label: "Next 60–90 days", value: "next_60_90", points: 2 },
+      { label: "Just researching for now", value: "researching", points: 0 },
+    ],
+  },
+  {
+    id: "revenue_goal",
+    question: "How much monthly consulting revenue are you aiming to generate?",
+    description:
+      "Helps us understand your goal so we can show you exactly what it takes to get there.",
+    options: [
+      { label: "$2,000 – $5,000 / mo", value: "2k_5k", points: 1 },
+      { label: "$5,000 – $10,000 / mo", value: "5k_10k", points: 2 },
+      { label: "$10,000 – $20,000 / mo", value: "10k_20k", points: 3 },
+      { label: "$20,000+ / mo", value: "20k_plus", points: 3 },
+    ],
+  },
+  {
+    id: "investment",
+    question:
+      "What are you comfortable investing per month to build this business?",
+    description:
+      "We\u2019re upfront: this is a professional program, not a $97 course. We ask so neither side wastes time if it\u2019s not the right fit financially.",
+    options: [
+      { label: "Under $200 / mo", value: "under_200", points: 0 },
+      { label: "$200 – $500 / mo", value: "200_500", points: 1 },
+      { label: "$500 – $1,000 / mo", value: "500_1k", points: 2 },
+      { label: "$1,000+ / mo", value: "1k_plus", points: 3 },
     ],
   },
   {
     id: "decision_maker",
-    question: "Are you the decision-maker when it comes to investing in your professional development?",
+    question:
+      "Is this your decision to make, or do you need to loop someone else in?",
+    description:
+      "Not a trick question — helps us know whether to have one conversation or two.",
     options: [
-      { label: "Yes, I make all my own investment decisions", value: "sole_decision", points: 3 },
-      { label: "Yes, but I would want to discuss with a partner or spouse first", value: "discuss_first", points: 2 },
-      { label: "I would need approval from someone else", value: "need_approval", points: 1 },
-      { label: "I am not in a position to invest right now", value: "not_ready", points: 0 },
+      { label: "My decision entirely", value: "my_decision", points: 3 },
+      {
+        label: "I\u2019ll want to run it by my partner / spouse",
+        value: "partner_spouse",
+        points: 2,
+      },
+      { label: "I need to check finances first", value: "check_finances", points: 1 },
     ],
   },
   {
-    id: "budget",
-    question: "What is your budget range for a structured business-building program?",
+    id: "background",
+    question:
+      "What best describes your current or most recent professional background?",
+    description:
+      "Helps us match you with the right advisors and use cases from day one.",
+    allowOther: true,
     options: [
-      { label: "$2,000 to $5,000+ for the right program", value: "2k_5k_plus", points: 3 },
-      { label: "$500 to $2,000", value: "500_2k", points: 2 },
-      { label: "Under $500", value: "under_500", points: 1 },
-      { label: "I am only looking for free resources", value: "free_only", points: 0 },
-    ],
-  },
-  {
-    id: "priority",
-    question: "What matters most to you in a program like this?",
-    options: [
-      { label: "Accountability and access to experienced operators", value: "accountability", points: 3 },
-      { label: "A proven step-by-step system I can follow", value: "system", points: 2 },
-      { label: "Networking and community", value: "networking", points: 1 },
-      { label: "Just the AI tools and templates", value: "tools_only", points: 0 },
+      { label: "Technology / Software / IT", value: "technology", points: 3 },
+      { label: "Sales / Business Development", value: "sales", points: 3 },
+      {
+        label: "Consulting / Professional Services",
+        value: "consulting",
+        points: 3,
+      },
+      {
+        label: "Marketing / Advertising / Communications",
+        value: "marketing",
+        points: 2,
+      },
+      { label: "Finance / Accounting / Banking", value: "finance", points: 2 },
+      {
+        label: "Operations / Supply Chain / Logistics",
+        value: "operations",
+        points: 2,
+      },
+      { label: "Real Estate", value: "real_estate", points: 2 },
+      { label: "Healthcare / Life Sciences", value: "healthcare", points: 1 },
+      { label: "Legal / Compliance / HR", value: "legal", points: 1 },
+      { label: "Other", value: "other", points: 1 },
     ],
   },
 ]
 
-export const MAX_RAW_SCORE = QUESTIONS.length * 3 // 24
+/* -------------------------------------------------------------------------- */
+/*  Scoring                                                                    */
+/* -------------------------------------------------------------------------- */
+
+export const MAX_RAW_SCORE = 15 // 3 + 3 + 3 + 3 + 3
 
 export function calculateScore(answers: Record<string, string>) {
   let rawScore = 0
@@ -126,14 +135,11 @@ export function calculateScore(answers: Record<string, string>) {
   let tier: "hot" | "warm" | "cold"
   let priority: "HIGH" | "MEDIUM" | "LOW"
 
-  if (rawScore >= 19) {
+  if (normalizedScore >= 80) {
     tier = "hot"
     priority = "HIGH"
-  } else if (rawScore >= 12) {
+  } else if (normalizedScore >= 47) {
     tier = "warm"
-    priority = "HIGH"
-  } else if (rawScore >= 6) {
-    tier = "cold"
     priority = "MEDIUM"
   } else {
     tier = "cold"
@@ -144,3 +150,127 @@ export function calculateScore(answers: Record<string, string>) {
 
   return { rawScore, normalizedScore, tier, priority, reason }
 }
+
+/* -------------------------------------------------------------------------- */
+/*  Calendar routing                                                           */
+/* -------------------------------------------------------------------------- */
+
+// TODO: Replace with actual Calendly URLs once accounts are configured
+export const CALENDLY_MATT =
+  process.env.NEXT_PUBLIC_CALENDLY_MATT ??
+  "https://calendly.com/matt-miller-aoc/strategy-call"
+
+export const CALENDLY_RYAN =
+  process.env.NEXT_PUBLIC_CALENDLY_RYAN ??
+  "https://calendly.com/ryan-aoc/strategy-call"
+
+export function getCalendarUrl(tier: "hot" | "warm" | "cold") {
+  return tier === "hot" ? CALENDLY_MATT : CALENDLY_RYAN
+}
+
+export function getCalendarOwner(tier: "hot" | "warm" | "cold") {
+  return tier === "hot" ? "Matt Miller" : "Ryan"
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Personalization helpers (used by form components)                           */
+/* -------------------------------------------------------------------------- */
+
+const REVENUE_LABELS: Record<string, string> = {
+  "2k_5k": "$2K–$5K/mo",
+  "5k_10k": "$5K–$10K/mo",
+  "10k_20k": "$10K–$20K/mo",
+  "20k_plus": "$20K+/mo",
+}
+
+/**
+ * Returns a short, conversational lead-in shown above each question.
+ * Dynamically references the applicant's name and prior answers.
+ */
+export function getStepIntro(
+  questionIndex: number,
+  firstName: string,
+  answers: Record<string, string>
+): string {
+  switch (questionIndex) {
+    case 0: // Timeline
+      return `Hey ${firstName}, let\u2019s start with timing.`
+
+    case 1: {
+      // Revenue goal — reference timeline
+      const t = answers.timeline
+      if (t === "right_now" || t === "within_30")
+        return `Love the urgency, ${firstName}. Let\u2019s talk goals.`
+      if (t === "next_60_90")
+        return `Good timing. Let\u2019s talk about where you\u2019re headed.`
+      return "Smart to do your homework. Where are you aiming?"
+    }
+
+    case 2: {
+      // Investment — reference revenue goal
+      const r = answers.revenue_goal
+      const label = REVENUE_LABELS[r] ?? "your target"
+      if (r === "20k_plus" || r === "10k_20k")
+        return `${label} \u2014 you\u2019re thinking big. Let\u2019s talk investment.`
+      return `Shooting for ${label}. One more on the financial side \u2014`
+    }
+
+    case 3: // Decision maker
+      return `Almost there, ${firstName}. Quick logistical question.`
+
+    case 4: // Background
+      return `Last one, ${firstName}. This helps us match you with the right advisors.`
+
+    default:
+      return ""
+  }
+}
+
+/**
+ * Returns the heading + subheading for the calendar booking step,
+ * personalized by score tier and answers.
+ */
+export function getCalendarIntro(
+  firstName: string,
+  tier: "hot" | "warm" | "cold",
+  answers: Record<string, string>
+): { heading: string; subheading: string } {
+  const bgOption = QUESTIONS.find((q) => q.id === "background")?.options.find(
+    (o) => o.value === answers.background
+  )
+  const bgLabel = bgOption ? bgOption.label.toLowerCase() : "your field"
+
+  if (tier === "hot") {
+    return {
+      heading: `${firstName}, you look like a strong fit.`,
+      subheading: `Based on your timeline, goals, and background in ${bgLabel}, we\u2019re connecting you with Matt Miller \u2014 one of our senior operators \u2014 for a strategy call.`,
+    }
+  }
+
+  return {
+    heading: `Great application, ${firstName}.`,
+    subheading: `Let\u2019s get you on a call with Ryan to explore how the Collective can help you hit your goals.`,
+  }
+}
+
+/** Intro shown above the contact-details step (after qualifying questions). */
+export function getContactIntro(
+  firstName: string,
+  normalizedScore: number
+): string {
+  if (normalizedScore >= 80)
+    return `${firstName}, you\u2019re looking like a strong candidate. Just a few more details to complete your application.`
+  return `Great answers, ${firstName}. Let\u2019s get your details to wrap things up.`
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Allowed countries (US / Canada / UK)                                       */
+/* -------------------------------------------------------------------------- */
+
+export const ALLOWED_COUNTRIES = [
+  { label: "United States", value: "US" },
+  { label: "Canada", value: "CA" },
+  { label: "United Kingdom", value: "UK" },
+] as const
+
+export type CountryCode = (typeof ALLOWED_COUNTRIES)[number]["value"]

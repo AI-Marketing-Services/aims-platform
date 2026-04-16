@@ -5,7 +5,6 @@ import { formRatelimit, getIp } from "@/lib/ratelimit"
 import { logger } from "@/lib/logger"
 import { notify } from "@/lib/notifications"
 import { createCloseLead } from "@/lib/close"
-import { sendOperatorVaultEmail } from "@/lib/email/operator-vault"
 import { queueEmailSequence } from "@/lib/email/queue"
 import { QUESTIONS, calculateScore } from "@/lib/collective-application"
 
@@ -20,15 +19,29 @@ const answersSchema = z.object(
   )
 )
 
-const schema = z.object({
-  name: z.string().min(1).max(120),
-  email: z.string().email().max(180),
-  answers: answersSchema,
-  source: z.string().max(60).optional(),
-  utmSource: z.string().max(60).optional(),
-  utmMedium: z.string().max(60).optional(),
-  utmCampaign: z.string().max(60).optional(),
-})
+const schema = z
+  .object({
+    firstName: z.string().min(1).max(60),
+    lastName: z.string().min(1).max(60),
+    email: z.string().email().max(180),
+    phone: z.string().min(1).max(30),
+    zipCode: z.string().min(1).max(20),
+    country: z.enum(["US", "CA", "UK"]),
+    smsConsentFollowup: z.boolean(),
+    smsConsentPromo: z.boolean(),
+    answers: answersSchema,
+    backgroundOther: z.string().max(200).optional(),
+    source: z.string().max(60).optional(),
+    utmSource: z.string().max(60).optional(),
+    utmMedium: z.string().max(60).optional(),
+    utmCampaign: z.string().max(60).optional(),
+  })
+  .refine(
+    (d) =>
+      d.answers.background !== "other" ||
+      (d.backgroundOther && d.backgroundOther.trim().length > 0),
+    { message: "Background detail required when 'Other' is selected", path: ["backgroundOther"] }
+  )
 
 export async function POST(req: Request) {
   if (formRatelimit) {
@@ -49,9 +62,25 @@ export async function POST(req: Request) {
       )
     }
 
-    const { name, email, answers, source, utmSource, utmMedium, utmCampaign } = parsed.data
-    const { normalizedScore, tier, priority, reason } = calculateScore(answers)
+    const {
+      firstName,
+      lastName,
+      email,
+      phone,
+      zipCode,
+      country,
+      smsConsentFollowup,
+      smsConsentPromo,
+      answers,
+      backgroundOther,
+      source,
+      utmSource,
+      utmMedium,
+      utmCampaign,
+    } = parsed.data
 
+    const name = `${firstName} ${lastName}`
+    const { normalizedScore, tier, priority, reason } = calculateScore(answers)
     const stage = tier === "hot" ? "QUALIFIED" : "NEW_LEAD"
 
     const [submission, deal] = await Promise.all([
@@ -61,7 +90,17 @@ export async function POST(req: Request) {
             type: "COLLECTIVE_APPLICATION",
             email,
             name,
-            data: answers,
+            data: {
+              ...answers,
+              firstName,
+              lastName,
+              phone,
+              zipCode,
+              country,
+              smsConsentFollowup,
+              smsConsentPromo,
+              backgroundOther: backgroundOther ?? null,
+            },
             score: normalizedScore,
             source: source ?? "apply-form",
             utmSource,
@@ -79,7 +118,7 @@ export async function POST(req: Request) {
             contactName: name,
             contactEmail: email,
             source: "ai-operator-collective-application",
-            sourceDetail: `Collective application form. Score: ${normalizedScore}. Tier: ${tier}.`,
+            sourceDetail: `Collective application. Score: ${normalizedScore}. Tier: ${tier}. Country: ${country}.`,
             channelTag: utmSource ?? source ?? "organic",
             utmSource,
             utmMedium,
@@ -92,7 +131,7 @@ export async function POST(req: Request) {
             activities: {
               create: {
                 type: "FORM_SUBMITTED",
-                detail: `AI Operator Collective application from ${name} (${email}). Score: ${normalizedScore}/100 (${tier}).`,
+                detail: `AI Operator Collective application from ${name} (${email}). Score: ${normalizedScore}/100 (${tier}). Phone: ${phone}. Zip: ${zipCode}. Country: ${country}.`,
               },
             },
           },
@@ -104,15 +143,19 @@ export async function POST(req: Request) {
     ])
 
     if (submission && deal) {
-      db.leadMagnetSubmission
-        .update({ where: { id: submission.id }, data: { dealId: deal.id } })
-        .catch((err) => logger.error("Failed to link submission to deal", err))
+      try {
+        await db.leadMagnetSubmission.update({
+          where: { id: submission.id },
+          data: { dealId: deal.id },
+        })
+      } catch (err) {
+        logger.error("Failed to link submission to deal", err)
+      }
     }
 
-    sendOperatorVaultEmail({ to: email, name }).catch((err) =>
-      logger.error("Failed to send operator vault email", err)
-    )
-
+    // Email is now sent via Calendly webhook (POST /api/webhooks/calendly)
+    // after the applicant books a call. We still queue the nurture sequence
+    // for applicants who may not book immediately.
     queueEmailSequence(email, "operator-vault", {
       name,
       source: source ?? "apply-form",
@@ -123,7 +166,7 @@ export async function POST(req: Request) {
       notify({
         type: "new_lead",
         title: `New Collective Application (${tier.toUpperCase()})`,
-        message: `${name} (${email}) scored ${normalizedScore}/100. Tier: ${tier}.`,
+        message: `${name} (${email}) scored ${normalizedScore}/100. Tier: ${tier}. Phone: ${phone}. Country: ${country}.`,
         urgency: urgency as "high" | "normal",
       }).catch((err) => logger.error("Failed to notify application", err))
 
