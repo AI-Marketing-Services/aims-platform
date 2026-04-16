@@ -14,10 +14,10 @@ import { cn } from "@/lib/utils"
 import {
   QUESTIONS,
   ALLOWED_COUNTRIES,
+  CAL_LINK,
   getStepIntro,
   getCalendarIntro,
   getContactIntro,
-  getCalendarUrl,
   getCalendarOwner,
   type CountryCode,
 } from "@/lib/collective-application"
@@ -205,29 +205,51 @@ export function ApplyForm() {
     }
   }
 
-  /* ---- Calendly event listener ---- */
+  /* ---- Cal.com embed loader ---- */
   useEffect(() => {
-    function handleMessage(e: MessageEvent) {
-      if (e.origin !== "https://calendly.com") return
-      if (e.data?.event === "calendly.event_scheduled") {
-        setPhase("done")
-      }
-    }
-    window.addEventListener("message", handleMessage)
-    return () => window.removeEventListener("message", handleMessage)
-  }, [])
+    if (phase !== "calendar" || typeof window === "undefined") return
 
-  /* ---- Load Calendly widget script ---- */
-  useEffect(() => {
-    if (phase === "calendar" && typeof window !== "undefined") {
-      if (!document.querySelector('script[src*="calendly"]')) {
-        const script = document.createElement("script")
-        script.src = "https://assets.calendly.com/assets/external/widget.js"
-        script.async = true
-        document.body.appendChild(script)
-      }
+    const initCal = () => {
+      const Cal = (window as unknown as Record<string, unknown>).Cal as ((...args: unknown[]) => void) & { ns: Record<string, (...args: unknown[]) => void> }
+      if (!Cal) return
+
+      Cal("init", "aoc", { origin: "https://app.cal.com" })
+
+      Cal.ns.aoc("inline", {
+        elementOrSelector: "#cal-inline-aoc",
+        config: {
+          layout: "month_view",
+          useSlotsViewOnSmallScreen: "true",
+          theme: "light",
+          name: `${firstName.trim()} ${lastName.trim()}`,
+          email: email.trim().toLowerCase(),
+        },
+        calLink: CAL_LINK,
+      })
+
+      Cal.ns.aoc("ui", {
+        theme: "light",
+        cssVarsPerTheme: { light: { "cal-brand": "#981B1B" } },
+        hideEventTypeDetails: true,
+        layout: "month_view",
+      })
+
+      Cal.ns.aoc("on", {
+        action: "bookingSuccessful",
+        callback: () => setPhase("done"),
+      })
     }
-  }, [phase])
+
+    if ((window as unknown as Record<string, unknown>).Cal) {
+      initCal()
+    } else {
+      const script = document.createElement("script")
+      script.src = "https://app.cal.com/embed/embed.js"
+      script.async = true
+      script.onload = initCal
+      document.head.appendChild(script)
+    }
+  }, [phase, firstName, lastName, email])
 
   /* ---- Current question (steps 2-6) ---- */
   const questionIndex = step - 2
@@ -304,10 +326,8 @@ export function ApplyForm() {
   /* ======================================================================== */
 
   if (phase === "calendar" && scoreResult) {
-    const calUrl = getCalendarUrl(scoreResult.tier)
     const calOwner = getCalendarOwner(scoreResult.tier)
     const intro = getCalendarIntro(firstName.trim(), scoreResult.tier, answers)
-    const prefill = `name=${encodeURIComponent(`${firstName.trim()} ${lastName.trim()}`)}&email=${encodeURIComponent(email.trim().toLowerCase())}`
 
     return (
       <div className="min-h-[60vh] flex flex-col">
@@ -337,14 +357,12 @@ export function ApplyForm() {
             </p>
           </div>
 
-          {/* Calendly inline widget */}
-          <div className="w-full max-w-2xl rounded-lg border border-[#E3E3E3] overflow-hidden bg-white">
-            <div
-              className="calendly-inline-widget"
-              data-url={`${calUrl}?hide_gdpr_banner=1&hide_landing_page_details=1&${prefill}`}
-              style={{ minWidth: "320px", height: "660px" }}
-            />
-          </div>
+          {/* Cal.com inline widget */}
+          <div
+            id="cal-inline-aoc"
+            className="w-full max-w-2xl rounded-lg overflow-hidden bg-white"
+            style={{ minWidth: "320px", height: "660px", overflow: "auto" }}
+          />
         </div>
       </div>
     )

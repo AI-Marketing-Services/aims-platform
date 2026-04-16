@@ -155,17 +155,14 @@ export function calculateScore(answers: Record<string, string>) {
 /*  Calendar routing                                                           */
 /* -------------------------------------------------------------------------- */
 
-// TODO: Replace with actual Calendly URLs once accounts are configured
-export const CALENDLY_MATT =
-  process.env.NEXT_PUBLIC_CALENDLY_MATT ??
-  "https://calendly.com/matt-miller-aoc/strategy-call"
+/**
+ * Cal.com link used for all tiers for now.
+ * When Matt / Ryan get separate links, split by tier here.
+ */
+export const CAL_LINK = "adamwolfe/aoc"
 
-export const CALENDLY_RYAN =
-  process.env.NEXT_PUBLIC_CALENDLY_RYAN ??
-  "https://calendly.com/ryan-aoc/strategy-call"
-
-export function getCalendarUrl(tier: "hot" | "warm" | "cold") {
-  return tier === "hot" ? CALENDLY_MATT : CALENDLY_RYAN
+export function getCalendarUrl(_tier: "hot" | "warm" | "cold") {
+  return CAL_LINK
 }
 
 export function getCalendarOwner(tier: "hot" | "warm" | "cold") {
