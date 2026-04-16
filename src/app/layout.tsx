@@ -64,17 +64,22 @@ export const metadata: Metadata = {
     title: "AIMS - AI-Powered Business Infrastructure",
     description:
       "More qualified meetings. Less wasted ad spend. AI-powered outbound, inbound, and reactivation systems.",
-    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+    images: [{ url: "/og-image.png?v=2", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
     title: "AIMS - AI-Powered Business Infrastructure",
     description:
       "More qualified meetings. Less wasted ad spend. AI-powered outbound, inbound, and reactivation systems.",
+    images: [{ url: "/og-image.png?v=2", width: 1200, height: 630 }],
   },
   icons: {
-    icon: "/favicon.ico",
-    apple: "/apple-icon.png",
+    icon: [
+      { url: "/favicon.ico?v=2", sizes: "any" },
+      { url: "/icon.png?v=2", type: "image/png", sizes: "32x32" },
+    ],
+    apple: "/apple-icon.png?v=2",
+    shortcut: "/favicon.ico?v=2",
   },
   robots: { index: true, follow: true },
 }

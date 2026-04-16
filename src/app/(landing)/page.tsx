@@ -27,13 +27,14 @@ export const metadata: Metadata = {
     title: "AI Operator Collective | Turn Your Career Into an AI Services Business",
     description:
       "Operator-led program for displaced W-2 professionals and corporate leaders building an AI services business. Free Playbook Vault delivered instantly on signup.",
-    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+    images: [{ url: "/og-image.png?v=2", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
     title: "AI Operator Collective | Turn Your Career Into an AI Services Business",
     description:
       "Operator-led program for professionals building an AI services business. Free Playbook Vault delivered instantly on signup.",
+    images: [{ url: "/og-image.png?v=2", width: 1200, height: 630 }],
   },
 }
 
