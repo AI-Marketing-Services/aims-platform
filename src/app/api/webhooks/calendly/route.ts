@@ -3,6 +3,8 @@ import crypto from "crypto"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
 import { sendOperatorVaultEmail } from "@/lib/email/operator-vault"
+import { sendPostBookingConfirmationEmail } from "@/lib/email/post-booking-education"
+import { queueEmailSequence } from "@/lib/email/queue"
 
 const CALENDLY_WEBHOOK_SECRET = process.env.CALENDLY_WEBHOOK_SECRET
 
@@ -61,6 +63,16 @@ export async function POST(req: Request) {
     const invitee = event.payload
     const email = invitee?.email?.toLowerCase()
     const name = invitee?.name ?? ""
+    const scheduledEvent = invitee?.scheduled_event as
+      | {
+          start_time?: string
+          location?: { join_url?: string }
+        }
+      | undefined
+    const eventStartTime = scheduledEvent?.start_time ?? null
+    const meetingUrl = scheduledEvent?.location?.join_url ?? null
+    const rescheduleUrl = (invitee?.reschedule_url as string) ?? null
+    const cancelUrl = (invitee?.cancel_url as string) ?? null
 
     if (!email) {
       logger.error("Calendly webhook: no email in payload")
@@ -107,6 +119,32 @@ export async function POST(req: Request) {
       await sendOperatorVaultEmail({ to: email, name })
     } catch (err) {
       logger.error("Calendly webhook: vault email failed", err)
+    }
+
+    // Day-0 confirmation email with the AI Operator Playbook PDF attached.
+    // Sent immediately outside the email queue because it needs the attachment.
+    try {
+      await sendPostBookingConfirmationEmail({
+        to: email,
+        name,
+        eventStartTime,
+        meetingUrl,
+        rescheduleUrl,
+        cancelUrl,
+      })
+    } catch (err) {
+      logger.error("Calendly webhook: post-booking confirmation failed", err)
+    }
+
+    // Queue the 4-email education drip (day 1, 2, 3, meeting-morning).
+    try {
+      await queueEmailSequence(email, "post-booking-education", {
+        name,
+        eventStartTime,
+        meetingUrl,
+      })
+    } catch (err) {
+      logger.error("Calendly webhook: queue post-booking education failed", err)
     }
 
     return NextResponse.json({ ok: true })

@@ -156,13 +156,19 @@ export function calculateScore(answers: Record<string, string>) {
 /* -------------------------------------------------------------------------- */
 
 /**
- * Cal.com link used for all tiers for now.
+ * Calendly URL used for all tiers for now.
+ * Set NEXT_PUBLIC_CALENDLY_URL in Vercel env to the live booking link.
  * When Matt / Ryan get separate links, split by tier here.
  */
-export const CAL_LINK = "adamwolfe/aoc"
+export const CALENDLY_URL =
+  process.env.NEXT_PUBLIC_CALENDLY_URL ??
+  "https://calendly.com/adamwolfe100/aoc-strategy-call"
+
+// Kept export name to avoid touching every import; value is now a full Calendly URL.
+export const CAL_LINK = CALENDLY_URL
 
 export function getCalendarUrl(_tier: "hot" | "warm" | "cold") {
-  return CAL_LINK
+  return CALENDLY_URL
 }
 
 export function getCalendarOwner(tier: "hot" | "warm" | "cold") {

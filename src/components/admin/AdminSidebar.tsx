@@ -43,6 +43,7 @@ const ADMIN_NAV = [
   {
     section: "CRM",
     items: [
+      { label: "Live Funnel", href: "/admin/funnel", icon: FileBarChart },
       { label: "CRM Pipeline", href: "/admin/crm", icon: Kanban },
       { label: "Clients", href: "/admin/clients", icon: Users },
       { label: "Partners", href: "/admin/partners", icon: Users },

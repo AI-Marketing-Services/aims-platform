@@ -449,6 +449,32 @@ enum LeadMagnetType {
   AI_PLAYBOOK
 }
 
+// Captures step-1 (name + email) submissions on the apply form so we can
+// follow up with anyone who bounced before completing. Upgraded to a full
+// LeadMagnetSubmission + Deal when /api/community/apply is POSTed.
+model PartialApplication {
+  id             String    @id @default(cuid())
+  firstName      String
+  lastName       String
+  email          String
+  source         String?
+  utmSource      String?
+  utmMedium      String?
+  utmCampaign    String?
+  userAgent      String?
+  ip             String?
+  completedAt    DateTime?
+  reminderSentAt DateTime?
+  dealId         String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([email])
+  @@index([completedAt])
+  @@index([reminderSentAt])
+  @@index([createdAt])
+}
+
 // ============ REFERRALS & AFFILIATES ============
 
 model Referral {

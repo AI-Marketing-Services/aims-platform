@@ -153,6 +153,19 @@ export async function POST(req: Request) {
       }
     }
 
+    // Mark any partial application for this email as completed so the
+    // abandoned-application cron stops targeting them.
+    if (deal) {
+      db.partialApplication
+        .updateMany({
+          where: { email, completedAt: null },
+          data: { completedAt: new Date(), dealId: deal.id },
+        })
+        .catch((err) =>
+          logger.error("Failed to mark partial application as completed", err)
+        )
+    }
+
     // Email is now sent via Calendly webhook (POST /api/webhooks/calendly)
     // after the applicant books a call. We still queue the nurture sequence
     // for applicants who may not book immediately.

@@ -114,6 +114,35 @@ export function ApplyForm() {
     }
   }
 
+  // Fire once per session: captures name + email so we can follow up with
+  // anyone who bounces before completing the full application.
+  const startedRef = useRef(false)
+  const savePartialApplication = useCallback(() => {
+    if (startedRef.current) return
+    startedRef.current = true
+    const body = {
+      firstName: firstName.trim(),
+      lastName: lastName.trim(),
+      email: email.trim().toLowerCase(),
+      source: "apply-form",
+    }
+    void fetch("/api/community/apply/start", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+      keepalive: true,
+    }).catch(() => {
+      // Intentionally swallow — partial capture is best-effort.
+    })
+  }, [firstName, lastName, email])
+
+  const advanceFromName = useCallback(() => {
+    if (!canAdvanceName) return
+    savePartialApplication()
+    setStep(2)
+    scrollTop()
+  }, [canAdvanceName, savePartialApplication])
+
   /* ---- Compute pre-score after last question for contact step intro ---- */
   const computePreScore = useCallback(
     (ans: Record<string, string>) => {
@@ -205,49 +234,86 @@ export function ApplyForm() {
     }
   }
 
-  /* ---- Cal.com embed loader ---- */
+  /* ---- Calendly embed loader ---- */
   useEffect(() => {
     if (phase !== "calendar" || typeof window === "undefined") return
 
-    const initCal = () => {
-      const Cal = (window as unknown as Record<string, unknown>).Cal as ((...args: unknown[]) => void) & { ns: Record<string, (...args: unknown[]) => void> }
-      if (!Cal) return
+    const container = document.getElementById("cal-inline-aoc")
+    if (!container) return
 
-      Cal("init", "aoc", { origin: "https://app.cal.com" })
+    container.innerHTML = ""
+    container.setAttribute("data-url", CAL_LINK)
 
-      Cal.ns.aoc("inline", {
-        elementOrSelector: "#cal-inline-aoc",
-        config: {
-          layout: "month_view",
-          useSlotsViewOnSmallScreen: "true",
-          theme: "light",
+    const initCalendly = () => {
+      const Calendly = (window as unknown as { Calendly?: { initInlineWidget: (opts: Record<string, unknown>) => void } }).Calendly
+      if (!Calendly) return
+      const params = new URLSearchParams({
+        hide_event_type_details: "0",
+        hide_gdpr_banner: "1",
+        background_color: "ffffff",
+        text_color: "1A1A1A",
+        primary_color: "981B1B",
+      }).toString()
+
+      const url = `${CAL_LINK}${CAL_LINK.includes("?") ? "&" : "?"}${params}`
+      Calendly.initInlineWidget({
+        url,
+        parentElement: container,
+        prefill: {
           name: `${firstName.trim()} ${lastName.trim()}`,
+          firstName: firstName.trim(),
+          lastName: lastName.trim(),
           email: email.trim().toLowerCase(),
         },
-        calLink: CAL_LINK,
-      })
-
-      Cal.ns.aoc("ui", {
-        theme: "light",
-        cssVarsPerTheme: { light: { "cal-brand": "#981B1B" } },
-        hideEventTypeDetails: true,
-        layout: "month_view",
-      })
-
-      Cal.ns.aoc("on", {
-        action: "bookingSuccessful",
-        callback: () => setPhase("done"),
       })
     }
 
-    if ((window as unknown as Record<string, unknown>).Cal) {
-      initCal()
+    // Listen for Calendly's event_scheduled postMessage → redirect to
+    // the educational next-steps page instead of the inline done screen.
+    const onMessage = (e: MessageEvent) => {
+      const data = e.data as { event?: string }
+      if (
+        typeof data === "object" &&
+        data?.event === "calendly.event_scheduled"
+      ) {
+        setPhase("done")
+        const query = new URLSearchParams({
+          email: email.trim().toLowerCase(),
+          name: `${firstName.trim()} ${lastName.trim()}`.trim(),
+        }).toString()
+        // Small delay so Calendly's own UI state settles before navigating
+        setTimeout(() => {
+          window.location.href = `/apply/next-steps?${query}`
+        }, 600)
+      }
+    }
+    window.addEventListener("message", onMessage)
+
+    // Load the Calendly script if not yet present
+    const existing = document.querySelector<HTMLScriptElement>(
+      'script[src="https://assets.calendly.com/assets/external/widget.js"]'
+    )
+    if (existing) {
+      if ((window as unknown as { Calendly?: unknown }).Calendly) {
+        initCalendly()
+      } else {
+        existing.addEventListener("load", initCalendly, { once: true })
+      }
     } else {
       const script = document.createElement("script")
-      script.src = "https://app.cal.com/embed/embed.js"
+      script.src = "https://assets.calendly.com/assets/external/widget.js"
       script.async = true
-      script.onload = initCal
+      script.onload = initCalendly
       document.head.appendChild(script)
+
+      const link = document.createElement("link")
+      link.rel = "stylesheet"
+      link.href = "https://assets.calendly.com/assets/external/widget.css"
+      document.head.appendChild(link)
+    }
+
+    return () => {
+      window.removeEventListener("message", onMessage)
     }
   }, [phase, firstName, lastName, email])
 
@@ -357,11 +423,11 @@ export function ApplyForm() {
             </p>
           </div>
 
-          {/* Cal.com inline widget */}
+          {/* Calendly inline widget */}
           <div
             id="cal-inline-aoc"
-            className="w-full max-w-2xl rounded-lg overflow-hidden bg-white"
-            style={{ minWidth: "320px", height: "660px", overflow: "auto" }}
+            className="calendly-inline-widget w-full max-w-2xl rounded-lg overflow-hidden bg-white"
+            style={{ minWidth: "320px", height: "720px" }}
           />
         </div>
       </div>
@@ -508,13 +574,13 @@ export function ApplyForm() {
                       placeholder="you@example.com"
                       autoComplete="email"
                       onKeyDown={(e) => {
-                        if (e.key === "Enter" && canAdvanceName) setStep(2)
+                        if (e.key === "Enter" && canAdvanceName) advanceFromName()
                       }}
                     />
                   </div>
 
                   <button
-                    onClick={() => setStep(2)}
+                    onClick={advanceFromName}
                     disabled={!canAdvanceName}
                     className={cn(
                       "w-full flex items-center justify-center gap-2 rounded-md px-6 py-4 text-sm font-bold uppercase tracking-wider transition-all min-h-[52px]",

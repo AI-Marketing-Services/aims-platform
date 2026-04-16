@@ -443,6 +443,15 @@ export const EMAIL_SEQUENCES = {
       { delay: 12, subject: "Last play, then I'll stop emailing you", templateKey: "w2-playbook-closing" },
     ],
   },
+  "post-booking-education": {
+    name: "Post-Booking Education (AOC)",
+    emails: [
+      { delay: 1, subject: "How a W-2 pro went to $18K/mo in 90 days", templateKey: "aoc-day-1-case-study" },
+      { delay: 2, subject: "The 10 AI tools every operator is using", templateKey: "aoc-day-2-tools" },
+      { delay: 3, subject: "5 prompts that save operators 10+ hours/week", templateKey: "aoc-day-3-prompts" },
+      { delay: 5, subject: "Your AI Operator call is today", templateKey: "aoc-meeting-morning" },
+    ],
+  },
 } as const
 
 export type SequenceKey = keyof typeof EMAIL_SEQUENCES

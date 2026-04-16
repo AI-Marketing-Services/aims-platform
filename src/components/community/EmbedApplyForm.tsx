@@ -150,46 +150,63 @@ export function EmbedApplyForm() {
   useEffect(() => {
     if (phase !== "calendar" || typeof window === "undefined") return
 
-    const initCal = () => {
-      const Cal = (window as unknown as Record<string, unknown>).Cal as ((...args: unknown[]) => void) & { ns: Record<string, (...args: unknown[]) => void> }
-      if (!Cal) return
+    const container = document.getElementById("cal-inline-embed-aoc")
+    if (!container) return
 
-      Cal("init", "aoc", { origin: "https://app.cal.com" })
+    container.innerHTML = ""
+    container.setAttribute("data-url", CAL_LINK)
 
-      Cal.ns.aoc("inline", {
-        elementOrSelector: "#cal-inline-embed-aoc",
-        config: {
-          layout: "month_view",
-          useSlotsViewOnSmallScreen: "true",
-          theme: "light",
+    const initCalendly = () => {
+      const Calendly = (window as unknown as { Calendly?: { initInlineWidget: (opts: Record<string, unknown>) => void } }).Calendly
+      if (!Calendly) return
+      const params = new URLSearchParams({
+        hide_event_type_details: "0",
+        hide_gdpr_banner: "1",
+        background_color: "ffffff",
+        text_color: "1A1A1A",
+        primary_color: "981B1B",
+      }).toString()
+      const url = `${CAL_LINK}${CAL_LINK.includes("?") ? "&" : "?"}${params}`
+      Calendly.initInlineWidget({
+        url,
+        parentElement: container,
+        prefill: {
           name: `${firstName.trim()} ${lastName.trim()}`,
+          firstName: firstName.trim(),
+          lastName: lastName.trim(),
           email: email.trim().toLowerCase(),
         },
-        calLink: CAL_LINK,
-      })
-
-      Cal.ns.aoc("ui", {
-        theme: "light",
-        cssVarsPerTheme: { light: { "cal-brand": "#981B1B" } },
-        hideEventTypeDetails: true,
-        layout: "month_view",
-      })
-
-      Cal.ns.aoc("on", {
-        action: "bookingSuccessful",
-        callback: () => setPhase("done"),
       })
     }
 
-    if ((window as unknown as Record<string, unknown>).Cal) {
-      initCal()
+    const onMessage = (e: MessageEvent) => {
+      const data = e.data as { event?: string }
+      if (typeof data === "object" && data?.event === "calendly.event_scheduled") {
+        setPhase("done")
+      }
+    }
+    window.addEventListener("message", onMessage)
+
+    const existing = document.querySelector<HTMLScriptElement>(
+      'script[src="https://assets.calendly.com/assets/external/widget.js"]'
+    )
+    if (existing) {
+      if ((window as unknown as { Calendly?: unknown }).Calendly) initCalendly()
+      else existing.addEventListener("load", initCalendly, { once: true })
     } else {
       const script = document.createElement("script")
-      script.src = "https://app.cal.com/embed/embed.js"
+      script.src = "https://assets.calendly.com/assets/external/widget.js"
       script.async = true
-      script.onload = initCal
+      script.onload = initCalendly
       document.head.appendChild(script)
+
+      const link = document.createElement("link")
+      link.rel = "stylesheet"
+      link.href = "https://assets.calendly.com/assets/external/widget.css"
+      document.head.appendChild(link)
     }
+
+    return () => window.removeEventListener("message", onMessage)
   }, [phase, firstName, lastName, email])
 
   const goBack = () => {
@@ -199,6 +216,29 @@ export function EmbedApplyForm() {
       setStep((s) => s - 1)
     }
   }
+
+  const startedRef = useRef(false)
+  const savePartialApplication = useCallback(() => {
+    if (startedRef.current) return
+    startedRef.current = true
+    void fetch("/api/community/apply/start", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        email: email.trim().toLowerCase(),
+        source: "apply-form-embed",
+      }),
+      keepalive: true,
+    }).catch(() => {})
+  }, [firstName, lastName, email])
+
+  const advanceFromName = useCallback(() => {
+    if (!canAdvanceName) return
+    savePartialApplication()
+    setStep(2)
+  }, [canAdvanceName, savePartialApplication])
 
   const questionIndex = step - 2
   const currentQuestion =
@@ -288,8 +328,8 @@ export function EmbedApplyForm() {
 
           <div
             id="cal-inline-embed-aoc"
-            className="w-full max-w-xl rounded-lg overflow-hidden bg-white"
-            style={{ minWidth: "320px", height: "600px", overflow: "auto" }}
+            className="calendly-inline-widget w-full max-w-xl rounded-lg overflow-hidden bg-white"
+            style={{ minWidth: "320px", height: "660px" }}
           />
         </div>
       </div>
@@ -412,13 +452,13 @@ export function EmbedApplyForm() {
                     placeholder="you@example.com"
                     autoComplete="email"
                     onKeyDown={(e) => {
-                      if (e.key === "Enter" && canAdvanceName) setStep(2)
+                      if (e.key === "Enter" && canAdvanceName) advanceFromName()
                     }}
                   />
                 </div>
 
                 <button
-                  onClick={() => setStep(2)}
+                  onClick={advanceFromName}
                   disabled={!canAdvanceName}
                   className={cn(
                     "w-full flex items-center justify-center gap-2 rounded-md px-6 py-3.5 text-sm font-bold uppercase tracking-wider transition-all mt-1",

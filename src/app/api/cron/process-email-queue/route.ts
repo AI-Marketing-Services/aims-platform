@@ -6,6 +6,7 @@ import { logger } from "@/lib/logger"
 import { buildOperatorVaultEmail } from "@/lib/email/community-sequence"
 import { buildBusinessAIAuditEmail } from "@/lib/email/business-audit-sequence"
 import { buildW2PlaybookEmail } from "@/lib/email/w2-playbook-sequence"
+import { buildPostBookingEducationEmail } from "@/lib/email/post-booking-education"
 
 export const maxDuration = 60
 
@@ -67,6 +68,9 @@ export async function GET(req: Request) {
           isCollectiveSequence = true
         } else if (item.sequenceKey === "w2-playbook") {
           emailContent = buildW2PlaybookEmail(item.emailIndex, meta)
+          isCollectiveSequence = true
+        } else if (item.sequenceKey === "post-booking-education") {
+          emailContent = buildPostBookingEducationEmail(item.emailIndex, meta)
           isCollectiveSequence = true
         } else {
           emailContent = buildEmailContent(item.sequenceKey, item.emailIndex, meta)

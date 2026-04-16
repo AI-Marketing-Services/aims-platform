@@ -1,0 +1,589 @@
+"use client"
+
+import { useEffect, useState, useCallback } from "react"
+import Link from "next/link"
+import {
+  RefreshCw,
+  ArrowRight,
+  ArrowUp,
+  Users,
+  Flame,
+  Calendar,
+  UserPlus,
+  CheckCircle2,
+  AlertCircle,
+  Clock,
+  Mail,
+  FileText,
+  GraduationCap,
+  TrendingUp,
+} from "lucide-react"
+import { cn, timeAgo } from "@/lib/utils"
+
+const REFRESH_INTERVAL_MS = 30_000
+
+interface FunnelResponse {
+  generatedAt: string
+  top: {
+    partialsToday: number
+    partialsWeek: number
+    partialsMonth: number
+    partialsAll: number
+    applicationsToday: number
+    applicationsYesterday: number
+    applicationsWeek: number
+    applicationsMonth: number
+    applicationsAll: number
+    hot: number
+    warm: number
+    cold: number
+    bookingsEver: number
+    invitedEver: number
+    joinedEver: number
+    invitesPending: number
+    invitesFailed: number
+  }
+  funnel: {
+    starts: number
+    completed: number
+    booked: number
+    invited: number
+    joined: number
+    completionRate: number
+    bookingRate: number
+    mightyAcceptRate: number
+    applicationToCollectiveRate: number
+  }
+  stages: Record<string, number>
+  stagesWeek: Record<string, number>
+  recentApplications: Array<{
+    id: string
+    name: string
+    email: string
+    stage: string
+    score: number | null
+    tier: string | null
+    mightyStatus: string | null
+    createdAt: string
+  }>
+  recentActivity: Array<{
+    id: string
+    type: string
+    detail: string | null
+    dealId: string
+    createdAt: string
+  }>
+}
+
+const STAGES_ORDER = [
+  "NEW_LEAD",
+  "QUALIFIED",
+  "DEMO_BOOKED",
+  "PROPOSAL_SENT",
+  "NEGOTIATION",
+  "ACTIVE_CLIENT",
+] as const
+
+const STAGE_LABELS: Record<string, string> = {
+  NEW_LEAD: "New",
+  QUALIFIED: "Qualified",
+  DEMO_BOOKED: "Booked",
+  PROPOSAL_SENT: "Proposal",
+  NEGOTIATION: "Negotiating",
+  ACTIVE_CLIENT: "Active",
+  UPSELL_OPPORTUNITY: "Upsell",
+  AT_RISK: "At Risk",
+  CHURNED: "Churned",
+  LOST: "Lost",
+}
+
+const ACTIVITY_ICONS: Record<string, React.ReactNode> = {
+  FORM_SUBMITTED: <FileText className="w-3.5 h-3.5" />,
+  DEMO_COMPLETED: <Calendar className="w-3.5 h-3.5" />,
+  MIGHTY_INVITE_SENT: <UserPlus className="w-3.5 h-3.5" />,
+  MIGHTY_MEMBER_JOINED: <CheckCircle2 className="w-3.5 h-3.5" />,
+  MIGHTY_COURSE_COMPLETED: <GraduationCap className="w-3.5 h-3.5" />,
+  EMAIL_SENT: <Mail className="w-3.5 h-3.5" />,
+  STAGE_CHANGE: <TrendingUp className="w-3.5 h-3.5" />,
+}
+
+export function FunnelDashboardClient() {
+  const [data, setData] = useState<FunnelResponse | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [lastRefreshed, setLastRefreshed] = useState<number | null>(null)
+
+  const fetchData = useCallback(async () => {
+    try {
+      const res = await fetch("/api/admin/funnel", { cache: "no-store" })
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      const json = (await res.json()) as FunnelResponse
+      setData(json)
+      setError(null)
+      setLastRefreshed(Date.now())
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to load")
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchData()
+    const iv = setInterval(fetchData, REFRESH_INTERVAL_MS)
+    return () => clearInterval(iv)
+  }, [fetchData])
+
+  if (loading && !data) {
+    return (
+      <div className="py-16 flex items-center justify-center">
+        <RefreshCw className="w-5 h-5 animate-spin text-muted-foreground" />
+      </div>
+    )
+  }
+
+  if (error && !data) {
+    return (
+      <div className="rounded-md border border-red-800 bg-red-900/10 p-4 text-red-400 text-sm">
+        Failed to load funnel: {error}
+      </div>
+    )
+  }
+
+  if (!data) return null
+
+  const { top, funnel, stages, recentApplications, recentActivity } = data
+  const dayOverDay =
+    top.applicationsYesterday > 0
+      ? ((top.applicationsToday - top.applicationsYesterday) /
+          top.applicationsYesterday) *
+        100
+      : null
+
+  const funnelSteps = [
+    { label: "Started", count: funnel.starts, icon: Users },
+    { label: "Completed", count: funnel.completed, icon: CheckCircle2 },
+    { label: "Booked", count: funnel.booked, icon: Calendar },
+    { label: "Invited", count: funnel.invited, icon: UserPlus },
+    { label: "Joined", count: funnel.joined, icon: Flame },
+  ]
+
+  return (
+    <div className="space-y-6">
+      {/* ── Status bar ── */}
+      <div className="flex items-center justify-between text-xs text-muted-foreground">
+        <div className="flex items-center gap-2">
+          <span className="inline-flex h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+          Live · refreshes every 30s
+          {lastRefreshed && (
+            <span className="ml-2 font-mono">
+              · last {timeAgo(new Date(lastRefreshed).toISOString())}
+            </span>
+          )}
+        </div>
+        <button
+          onClick={fetchData}
+          disabled={loading}
+          className="inline-flex items-center gap-1.5 px-2 py-1 text-xs hover:text-foreground transition-colors"
+        >
+          <RefreshCw className={cn("w-3 h-3", loading && "animate-spin")} />
+          Refresh now
+        </button>
+      </div>
+
+      {/* ── TOP KPIs ── */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <Kpi
+          label="Apps Today"
+          value={top.applicationsToday}
+          sub={
+            dayOverDay !== null ? (
+              <span
+                className={cn(
+                  "inline-flex items-center gap-0.5 text-xs",
+                  dayOverDay >= 0 ? "text-green-400" : "text-red-400"
+                )}
+              >
+                <ArrowUp
+                  className={cn(
+                    "w-3 h-3",
+                    dayOverDay < 0 && "rotate-180"
+                  )}
+                />
+                {Math.abs(dayOverDay).toFixed(0)}% vs yesterday
+              </span>
+            ) : (
+              <span className="text-xs text-muted-foreground">
+                first day of tracking
+              </span>
+            )
+          }
+          icon={<FileText className="w-3.5 h-3.5" />}
+        />
+        <Kpi
+          label="Hot Leads (all-time)"
+          value={top.hot}
+          sub={
+            <span className="text-xs text-muted-foreground">
+              warm {top.warm} · cold {top.cold}
+            </span>
+          }
+          icon={<Flame className="w-3.5 h-3.5" />}
+          valueClass="text-crimson"
+        />
+        <Kpi
+          label="Calls Booked (all-time)"
+          value={top.bookingsEver}
+          sub={
+            <span className="text-xs text-muted-foreground">
+              {funnel.bookingRate.toFixed(0)}% of applicants book
+            </span>
+          }
+          icon={<Calendar className="w-3.5 h-3.5" />}
+        />
+        <Kpi
+          label="Joined Collective"
+          value={top.joinedEver}
+          sub={
+            <span className="text-xs text-muted-foreground">
+              {top.invitesPending} pending · {top.invitesFailed} failed
+            </span>
+          }
+          icon={<CheckCircle2 className="w-3.5 h-3.5" />}
+          valueClass="text-green-400"
+        />
+      </div>
+
+      {/* ── FUNNEL BAR ── */}
+      <div className="rounded-md border border-line bg-surface p-5">
+        <h2 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
+          <TrendingUp className="w-4 h-4 text-muted-foreground" />
+          Conversion Funnel
+        </h2>
+
+        <div className="grid grid-cols-5 gap-2">
+          {funnelSteps.map((step, i) => {
+            const prev = i > 0 ? funnelSteps[i - 1].count : null
+            const rateFromPrev =
+              prev && prev > 0 ? (step.count / prev) * 100 : null
+            const rateFromStart =
+              funnelSteps[0].count > 0
+                ? (step.count / funnelSteps[0].count) * 100
+                : 0
+            return (
+              <div key={step.label} className="flex flex-col">
+                <div className="flex items-center gap-1.5 mb-2 text-xs text-muted-foreground">
+                  <step.icon className="w-3.5 h-3.5" />
+                  <span className="uppercase font-mono tracking-wider">
+                    {step.label}
+                  </span>
+                </div>
+                <div className="relative h-24 bg-deep rounded flex items-end overflow-hidden border border-line">
+                  <div
+                    className="w-full bg-crimson/80"
+                    style={{ height: `${Math.min(100, rateFromStart)}%` }}
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-2xl font-bold font-mono text-foreground">
+                      {step.count}
+                    </span>
+                  </div>
+                </div>
+                <div className="mt-2 text-[10px] font-mono uppercase tracking-wider text-muted-foreground">
+                  {rateFromPrev !== null ? (
+                    <>{rateFromPrev.toFixed(0)}% conv</>
+                  ) : (
+                    "100%"
+                  )}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+
+        <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-line text-xs">
+          <Metric
+            label="Form completion"
+            value={`${funnel.completionRate.toFixed(0)}%`}
+          />
+          <Metric label="Book rate" value={`${funnel.bookingRate.toFixed(0)}%`} />
+          <Metric
+            label="Invite accept rate"
+            value={`${funnel.mightyAcceptRate.toFixed(0)}%`}
+          />
+          <Metric
+            label="App → Member"
+            value={`${funnel.applicationToCollectiveRate.toFixed(0)}%`}
+            highlight
+          />
+        </div>
+      </div>
+
+      {/* ── STAGE BREAKDOWN ── */}
+      <div className="rounded-md border border-line bg-surface p-5">
+        <h2 className="text-sm font-semibold text-foreground mb-4">
+          Pipeline by Stage
+        </h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+          {STAGES_ORDER.map((s) => (
+            <div
+              key={s}
+              className="rounded-md border border-line bg-deep p-3 flex flex-col"
+            >
+              <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">
+                {STAGE_LABELS[s]}
+              </span>
+              <span className="text-2xl font-bold font-mono text-foreground mt-1">
+                {stages[s] ?? 0}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── TIME WINDOW ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <WindowCard
+          title="Today"
+          completed={top.applicationsToday}
+          starts={top.partialsToday}
+        />
+        <WindowCard
+          title="7 Days"
+          completed={top.applicationsWeek}
+          starts={top.partialsWeek}
+        />
+        <WindowCard
+          title="Month-to-Date"
+          completed={top.applicationsMonth}
+          starts={top.partialsMonth}
+        />
+      </div>
+
+      {/* ── RECENT ACTIVITY + APPLICATIONS ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Recent applications */}
+        <div className="rounded-md border border-line bg-surface p-5">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-sm font-semibold text-foreground">
+              Latest Applications
+            </h2>
+            <Link
+              href="/admin/applications"
+              className="text-xs text-[#C4972A] hover:underline"
+            >
+              View all →
+            </Link>
+          </div>
+          {recentApplications.length === 0 ? (
+            <p className="text-sm text-muted-foreground text-center py-6">
+              No applications yet.
+            </p>
+          ) : (
+            <div className="space-y-2">
+              {recentApplications.map((a) => (
+                <Link
+                  key={a.id}
+                  href={`/admin/crm/${a.id}`}
+                  className="block rounded-md border border-line bg-deep p-3 hover:border-crimson/40 transition-colors"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-foreground truncate">
+                        {a.name}
+                      </p>
+                      <p className="text-xs text-muted-foreground truncate">
+                        {a.email}
+                      </p>
+                    </div>
+                    <div className="flex-shrink-0 text-right">
+                      <span
+                        className={cn(
+                          "inline-block text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-sm border",
+                          a.tier === "hot"
+                            ? "text-red-400 border-red-800 bg-red-900/20"
+                            : a.tier === "warm"
+                              ? "text-amber-400 border-amber-800 bg-amber-900/20"
+                              : "text-muted-foreground border-border bg-deep"
+                        )}
+                      >
+                        {a.score ?? 0}/100 {a.tier ?? "—"}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="mt-2 flex items-center justify-between text-[10px] font-mono uppercase tracking-wider text-muted-foreground">
+                    <span>{STAGE_LABELS[a.stage] ?? a.stage}</span>
+                    <span>{timeAgo(a.createdAt)}</span>
+                    {a.mightyStatus && (
+                      <span
+                        className={cn(
+                          "px-1.5 py-0.5 rounded border",
+                          a.mightyStatus === "accepted"
+                            ? "text-green-400 border-green-800"
+                            : a.mightyStatus === "failed"
+                              ? "text-red-400 border-red-800"
+                              : "text-amber-400 border-amber-800"
+                        )}
+                      >
+                        Mighty: {a.mightyStatus}
+                      </span>
+                    )}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Recent activity */}
+        <div className="rounded-md border border-line bg-surface p-5">
+          <h2 className="text-sm font-semibold text-foreground mb-4">
+            Live Activity
+          </h2>
+          {recentActivity.length === 0 ? (
+            <p className="text-sm text-muted-foreground text-center py-6">
+              No activity yet.
+            </p>
+          ) : (
+            <div className="space-y-2 max-h-[480px] overflow-y-auto pr-1">
+              {recentActivity.map((act) => (
+                <Link
+                  key={act.id}
+                  href={`/admin/crm/${act.dealId}`}
+                  className="flex items-start gap-3 rounded-md border border-line bg-deep p-3 hover:border-crimson/40 transition-colors"
+                >
+                  <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md bg-surface text-muted-foreground mt-0.5">
+                    {ACTIVITY_ICONS[act.type] ?? (
+                      <Clock className="w-3.5 h-3.5" />
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-foreground font-medium capitalize">
+                      {act.type.replace(/_/g, " ").toLowerCase()}
+                    </p>
+                    {act.detail && (
+                      <p className="text-xs text-muted-foreground truncate mt-0.5">
+                        {act.detail}
+                      </p>
+                    )}
+                  </div>
+                  <span className="flex-shrink-0 text-[10px] font-mono uppercase text-muted-foreground">
+                    {timeAgo(act.createdAt)}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ── primitives ── */
+
+function Kpi({
+  label,
+  value,
+  sub,
+  icon,
+  valueClass,
+}: {
+  label: string
+  value: number | string
+  sub?: React.ReactNode
+  icon?: React.ReactNode
+  valueClass?: string
+}) {
+  return (
+    <div className="rounded-md border border-line bg-surface p-4">
+      <div className="flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider text-muted-foreground">
+        {icon}
+        <span>{label}</span>
+      </div>
+      <p className={cn("text-3xl font-bold mt-1 font-mono", valueClass ?? "text-foreground")}>
+        {value}
+      </p>
+      {sub && <div className="mt-1">{sub}</div>}
+    </div>
+  )
+}
+
+function Metric({
+  label,
+  value,
+  highlight,
+}: {
+  label: string
+  value: string
+  highlight?: boolean
+}) {
+  return (
+    <div>
+      <p className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">
+        {label}
+      </p>
+      <p
+        className={cn(
+          "text-lg font-bold font-mono mt-0.5",
+          highlight ? "text-crimson" : "text-foreground"
+        )}
+      >
+        {value}
+      </p>
+    </div>
+  )
+}
+
+function WindowCard({
+  title,
+  completed,
+  starts,
+}: {
+  title: string
+  completed: number
+  starts: number
+}) {
+  const completionRate = starts > 0 ? (completed / starts) * 100 : 0
+  return (
+    <div className="rounded-md border border-line bg-surface p-5">
+      <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-3">
+        {title}
+      </p>
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <p className="text-[10px] font-mono uppercase text-muted-foreground">
+            Starts
+          </p>
+          <p className="text-2xl font-bold font-mono text-foreground">
+            {starts}
+          </p>
+        </div>
+        <div>
+          <p className="text-[10px] font-mono uppercase text-muted-foreground">
+            Applications
+          </p>
+          <p className="text-2xl font-bold font-mono text-foreground">
+            {completed}
+          </p>
+        </div>
+      </div>
+      <div className="mt-4">
+        <div className="flex items-center justify-between text-xs mb-1">
+          <span className="font-mono uppercase text-muted-foreground">
+            Complete rate
+          </span>
+          <span className="font-mono text-foreground">
+            {completionRate.toFixed(0)}%
+          </span>
+        </div>
+        <div className="h-1.5 rounded-full bg-deep overflow-hidden">
+          <div
+            className="h-full bg-crimson transition-all"
+            style={{ width: `${Math.min(100, completionRate)}%` }}
+          />
+        </div>
+      </div>
+    </div>
+  )
+}
