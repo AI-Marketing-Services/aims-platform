@@ -11,28 +11,28 @@ const COPY: Record<
   { subject: string; preview: string; opener: string; body: string; cta: string }
 > = {
   2: {
-    subject: "Your operator review slot is still open",
-    preview: "One call. 20 minutes. Still on the table.",
-    opener: "Your application came through — the call is still open.",
+    subject: "Your AI Operator Collective call is still open",
+    preview: "A quick nudge, no pressure.",
+    opener: "Just a gentle nudge on the call.",
     body:
-      "We walked through your application. You're exactly the kind of operator we built this cohort for. The only thing left is to pick a time. Every day you wait is another day your best-fit prospects are getting picked off by the people who already moved.",
-    cta: "Book your 20-min review",
+      "Hey — we got your application a couple of days ago and noticed you haven't picked a call time yet. Totally get that life gets busy. Just wanted to make sure you didn't lose track of it. The call is 20 minutes, zero pressure — we walk you through a short presentation on where AI is actually working, answer any burning questions, and figure out if the Collective is a good fit together.",
+    cta: "Pick a time that works",
   },
   5: {
-    subject: "Five days on — are you still in?",
-    preview: "Quick nudge before we stop emailing.",
-    opener: "Checking in before your application ages out.",
+    subject: "Still holding your spot",
+    preview: "Checking in before we let the slot go.",
+    opener: "Quick check-in.",
     body:
-      "We hold review slots for 7–10 days after an application comes in, then we quietly close them out so the next cohort doesn't bottleneck. Your slot is still open — but not for much longer. If the timing's off, reply and tell me; if you're still in, grab a time below.",
-    cta: "Grab a review slot",
+      "We're still holding a review slot for you. If the timing's off right now, just reply and tell me what's in the way — we can often figure something out. If you're still in but it slipped off your plate, it takes about one click to pick a time below.",
+    cta: "Grab a time",
   },
   9: {
-    subject: "Last call — your slot closes tomorrow",
-    preview: "No hard feelings, just logistics.",
-    opener: "One last note before we close your application.",
+    subject: "Last nudge before we close the loop",
+    preview: "Promise, we'll stop emailing.",
+    opener: "Last gentle nudge.",
     body:
-      "Your review window closes tomorrow. If the moment isn't right, no worries — the Operator Vault content keeps coming either way. But if you're serious about launching an advisory practice this quarter, this is the last easy on-ramp we can offer. One click books it.",
-    cta: "Book before it closes",
+      "This is the last time we'll reach out on your application — we don't want to clutter your inbox. If the moment's not right, totally no hard feelings. If you want to pick it back up whenever, the application stays open at aioperatorcollective.com/apply. Otherwise we'll go quiet.",
+    cta: "Pick a time if you're in",
   },
 }
 
@@ -52,10 +52,10 @@ export async function sendBookingReminderEmail(params: {
     ${p(cfg.body)}
     ${btn(calUrl, cfg.cta)}
     ${p(
-      "If this isn't the right moment, just reply with \"not now\" — we'll stop the booking reminders (the Vault content stays flowing).",
+      "If this isn't the right moment, just reply with \"not now\" — we'll stop the reminders. No pressure.",
     )}
     <p style="margin:32px 0 0;font-size:12px;color:#9CA3AF;line-height:1.6;">
-      — Irtaza<br/>Operations, AI Operator Collective
+      — The AI Operator Collective team
     </p>
     <p style="margin:24px 0 0;font-size:11px;color:#9CA3AF;line-height:1.55;font-style:italic;">
       Sent because you applied to the AI Operator Collective. You'll receive up to 3 booking reminders;

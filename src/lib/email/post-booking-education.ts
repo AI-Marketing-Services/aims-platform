@@ -145,22 +145,38 @@ export function buildPostBookingEducationEmail(
   const nextStepsUrl = `${appUrl()}/apply/next-steps`
 
   if (emailIndex === 0) {
-    // Day 1 — Case study
+    // Day 1 — Playbook patterns (no fabricated names or specific dollar claims)
     return {
-      subject: "How Taylor went from W-2 to $18K/mo in 90 days",
+      subject: "The 4 moves our best operators make in their first 90 days",
       html: `
-        ${h1(`${firstName}, here's a W-2 to $18K/mo case study.`)}
-        ${p("Taylor was a senior marketing manager at a mid-size SaaS. She'd been reading AI threads on LinkedIn for 18 months without actually <em>doing</em> anything. Sound familiar?")}
-        ${p("Here's what changed once she joined the Collective:")}
+        ${h1(`${firstName}, here's what actually moves the needle.`)}
+        ${p("Before our call, we wanted to show you the pattern we see over and over again among operators who start strong in the Collective. These aren't hypothetical — they're the moves that come up in almost every Collective call where someone is actually shipping.")}
+        ${p("Four moves. All four come up in your playbook. Read these so our call can go deeper.")}
 
-        ${playCard("Week 1", "Picked her lane and stopped hedging.", "She picked one ICP — SaaS marketing leaders at companies with 20–200 employees. Not \"small businesses.\" Not \"anyone who needs marketing.\" One specific buyer she actually understood.")}
-        ${playCard("Week 2–3", "Built the offer in one sentence, then in one proposal.", "\"I help Series A/B SaaS marketing teams replace their entire content production pipeline with an AI-managed system.\" That sentence is her entire marketing.")}
-        ${playCard("Week 4", "Closed her first client using an AIMS playbook verbatim.", "She used our discovery script (it's in the Vault Chapter 3) and the pricing-in-ranges move. $4K/mo retainer, signed within 2 weeks of the first call.")}
-        ${playCard("Month 2–3", "Scaled to $18K MRR with 4 clients.", "Same playbook, just run four more times. She didn't invent anything — she executed what other operators in the Collective had already proven.")}
+        ${playCard(
+          "Move 1",
+          "Pick a lane and stop hedging.",
+          "\"Small businesses\" is not an ICP. \"Anyone who needs marketing\" is not an ICP. The operators who get traction fast are the ones who pick one specific buyer they actually understand — a role, an industry, a company stage. Once you have that, everything downstream gets easier."
+        )}
+        ${playCard(
+          "Move 2",
+          "Put your offer in one sentence.",
+          "<em>\"I help [specific buyer] [specific outcome] by [specific mechanism].\"</em> If you can't finish that sentence without hedging, you don't have an offer yet — you have a job title. This is the single hardest thing to write and the single biggest unlock."
+        )}
+        ${playCard(
+          "Move 3",
+          "Use the discovery script, then price in ranges.",
+          "The playbook's discovery script is designed to surface the real pain in 25 minutes without making the prospect feel like they're being sold to. When they ask what it costs, a range (\"engagements in this space run $X–$Y depending on scope\") moves you from vendor to advisor in one sentence."
+        )}
+        ${playCard(
+          "Move 4",
+          "Run the same play again instead of inventing new ones.",
+          "The operators who scale fastest aren't the ones reinventing their offer every two weeks. They're the ones running the same proven play 4–5 times. Your playbook is a set of proven plays — use them as-is, iterate on delivery, keep the same offer stable while you build momentum."
+        )}
 
-        ${p("Your call with us is where we figure out which of these moves fits your current position. Don't overthink prep — just read the playbook.")}
+        ${p("When we talk, we'll figure out which of these four you're strongest on and which one is the current bottleneck. The whole point is to save you months of trial and error.")}
 
-        ${btn(nextStepsUrl, "See more case studies")}
+        ${btn(nextStepsUrl, "See more prep resources")}
       `,
     }
   }
@@ -205,8 +221,8 @@ export function buildPostBookingEducationEmail(
         )}
         ${playCard(
           "07",
-          "Velo",
-          "For building app mockups or small websites fast. Type what you want, get a working prototype in minutes. Great for validating ideas without hiring a designer."
+          "v0 (by Vercel)",
+          "For building app mockups or small websites fast. Type what you want, get a working prototype in minutes. Great for validating ideas without hiring a designer. <a href=\"https://v0.dev\" style=\"color:#981B1B;\">v0.dev</a>"
         )}
         ${playCard(
           "08",
@@ -301,9 +317,8 @@ export function buildPostBookingEducationEmail(
 export const POST_BOOKING_EDUCATION_SEQUENCE = {
   name: "Post-Booking Education (AOC)",
   emails: [
-    { delay: 1, subject: "How a W-2 pro went to $18K/mo in 90 days", templateKey: "aoc-day-1-case-study" },
-    { delay: 2, subject: "The 10 AI tools every operator is using", templateKey: "aoc-day-2-tools" },
+    { delay: 1, subject: "The 4 moves our best operators make early", templateKey: "aoc-day-1-playbook-moves" },
+    { delay: 2, subject: "The 10 AI tools I actually use every day", templateKey: "aoc-day-2-tools" },
     { delay: 3, subject: "5 prompts that save operators 10+ hours/week", templateKey: "aoc-day-3-prompts" },
-    { delay: 5, subject: "Your AI Operator call is today", templateKey: "aoc-meeting-morning" },
   ],
 } as const

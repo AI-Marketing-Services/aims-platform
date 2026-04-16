@@ -35,89 +35,78 @@ interface UseCase {
   before: string
   after: string
   tools: string[]
-  hoursSavedPerWeek: number
 }
 
 const USE_CASES: UseCase[] = [
   {
     niche: "Marketing consultant",
     title: "AI SEO Content Engine",
-    before: "Writing 1 blog post per week, 8 hours each, competing with agencies that publish daily.",
-    after: "4× content output with AI research → outline → draft → human-edit pipeline. 90+ Surfer SEO score per post.",
-    tools: ["Perplexity", "Surfer", "Notion", "Claude"],
-    hoursSavedPerWeek: 22,
+    before: "Writing one blog post per week, eight hours each, competing with agencies that publish daily.",
+    after: "AI research → outline → draft → human-edit pipeline. Higher content volume without scaling headcount.",
+    tools: ["Perplexity", "Claude", "Notion"],
   },
   {
     niche: "Sales rep / BDR",
     title: "Hyper-personalized cold outbound",
-    before: "Reading 50 LinkedIn profiles to write 5 warm cold emails. 2% reply rate.",
-    after: "Apollo → Clay enrichment → Claygent research → Instantly sequence. 30%+ open rates.",
-    tools: ["Apollo", "Clay", "Claygent", "Instantly"],
-    hoursSavedPerWeek: 14,
+    before: "Reading LinkedIn profiles manually to write warm cold emails, one at a time.",
+    after: "Enrichment → Claygent research → Instantly sequence. Personalization at scale without sounding templated.",
+    tools: ["Apollo", "Clay", "Instantly"],
   },
   {
     niche: "Customer success / support",
     title: "AI tier-1 support agent",
-    before: "CS team drowning in repetitive tickets. Founder still pulled into support every day.",
-    after: "Notion KB → Intercom Fin handles 50–60% of tier-1 with CSAT maintained.",
-    tools: ["Notion", "Intercom Fin", "Linear"],
-    hoursSavedPerWeek: 18,
+    before: "Support team drowning in repetitive tickets. Founder pulled into support every day.",
+    after: "Notion KB feeding an AI agent that handles common tier-1 questions while humans focus on the hard ones.",
+    tools: ["Notion", "Intercom Fin"],
   },
   {
     niche: "Engineering manager",
     title: "AI engineering velocity stack",
-    before: "PR review backlogs. Two-week cycles to ship small changes.",
-    after: "Cursor + CodeRabbit + Linear. 40% faster cycles, time-to-merge collapses.",
-    tools: ["Cursor", "CodeRabbit", "Linear", "GitHub"],
-    hoursSavedPerWeek: 10,
+    before: "PR review backlogs. Long cycles to ship small changes.",
+    after: "Claude Code + Cursor + Linear. Shorter review cycles, fewer bottlenecks.",
+    tools: ["Claude Code", "Cursor", "Linear"],
   },
   {
     niche: "Operations / RevOps",
     title: "AI tool research pipeline",
-    before: "Evaluating new SaaS takes 3 days. Vendor calls and scattered notes.",
-    after: "Trackr → Perplexity deep-dive → scorecard in Notion. 30 minutes, one source of truth.",
-    tools: ["Trackr", "Perplexity", "Notion", "Claude"],
-    hoursSavedPerWeek: 6,
+    before: "Evaluating new SaaS takes days. Vendor calls and scattered notes.",
+    after: "Perplexity deep-dive → scorecard in Notion. Minutes instead of days with one source of truth.",
+    tools: ["Perplexity", "Notion", "Claude"],
   },
   {
     niche: "Content / media",
     title: "AI video marketing machine",
     before: "One polished YouTube video per month. No shorts. No repurposing.",
-    after: "Runway + Canva + Descript pipeline. 5–7 pieces of content per week from one recording.",
-    tools: ["Runway", "Canva", "Descript", "Claude"],
-    hoursSavedPerWeek: 15,
+    after: "A single recording fans out into short-form, posts, and newsletter with AI handling the repurposing.",
+    tools: ["Runway", "Canva", "Descript"],
   },
   {
     niche: "Founder / CEO",
-    title: "AI-native agency OS",
+    title: "AI-native operating system",
     before: "Hiring for every function. Payroll eating margin.",
-    after: "Agent-heavy ops. Humans lead strategy + client relationships; agents run content, research, ops.",
-    tools: ["n8n", "Claude Code", "Linear", "Notion"],
-    hoursSavedPerWeek: 30,
+    after: "Agent-heavy ops. Humans lead strategy + client relationships; agents run content, research, admin.",
+    tools: ["n8n", "Claude Code", "Linear"],
   },
   {
     niche: "Analytics / data",
     title: "Self-serve AI analytics stack",
     before: "Ad-hoc SQL requests from every team. Analyst pulled in every day.",
-    after: "PostHog + Metabase + Claude for natural-language queries. Team self-serves.",
-    tools: ["PostHog", "Metabase", "Claude", "dbt"],
-    hoursSavedPerWeek: 12,
+    after: "Team self-serves through natural-language queries into the warehouse.",
+    tools: ["PostHog", "Metabase", "Claude"],
   },
   {
     niche: "People ops / HR",
     title: "AI-automated onboarding",
     before: "Week-long new-hire onboarding, manual SaaS provisioning across 10 tools.",
-    after: "Rippling + Notion templates fully provision on day 1. 70% less HR overhead.",
-    tools: ["Rippling", "Notion", "Ramp", "Slack"],
-    hoursSavedPerWeek: 8,
+    after: "Templates fully provision on day 1. Less HR overhead, new hires productive faster.",
+    tools: ["Rippling", "Notion", "Ramp"],
   },
   {
     niche: "RevOps / inbound leader",
     title: "Multi-thread inbound leads playbook",
     before: "Inbound trial signups get the same generic nurture. Reps pick the best ones manually.",
-    after: "Webhook → Clay enrichment → score + route tiered pipeline with Slack alerts per reply.",
-    tools: ["Clay", "Apollo", "Slack", "HubSpot"],
-    hoursSavedPerWeek: 9,
+    after: "Enrichment + scoring + tiered routing with alerts so the best-fit leads never get lost in the noise.",
+    tools: ["Clay", "Apollo", "Slack"],
   },
 ]
 
@@ -128,7 +117,7 @@ const OPERATOR_TOOLS = [
   { name: "Raycast", category: "Launcher", score: "9.8" },
   { name: "Wispr Flow", category: "Speech-to-Text", score: "9.5" },
   { name: "Little Bird", category: "Meeting AI", score: "9.0" },
-  { name: "Velo", category: "App Builder", score: "8.9" },
+  { name: "v0", category: "App Builder", score: "9.0" },
   { name: "Instantly", category: "Cold Email", score: "9.3" },
   { name: "Notion", category: "Knowledge", score: "9.1" },
   { name: "Firecrawl", category: "Web-to-LLM", score: "9.2" },
@@ -231,20 +220,20 @@ export default function PostBookingNextStepsPage() {
           <h2 className="font-playfair text-2xl sm:text-4xl mb-4 leading-tight">
             It is not too late.
             <span className="block italic text-crimson mt-1">
-              You&apos;re earlier than 96% of W-2 professionals.
+              You&apos;re earlier than most W-2 professionals.
             </span>
           </h2>
           <p className="text-[#9CA3AF] text-base sm:text-lg leading-relaxed max-w-2xl mb-6">
-            The first wave of &quot;AI operators&quot; was hype. Consultants
-            selling AI courses about AI. The second wave — the one you&apos;re
-            joining — is operators who ship. Members in the Collective are
-            running real P&amp;Ls using the tools below, sharing what works and
-            what doesn&apos;t every week.
+            The first wave of &quot;AI operators&quot; was hype — consultants
+            selling AI courses about AI. The second wave is operators who
+            actually ship. Members in the Collective are real professionals
+            running their own work with these tools and sharing what&apos;s
+            working every week.
           </p>
           <p className="text-[#9CA3AF] text-base sm:text-lg leading-relaxed max-w-2xl">
-            You don&apos;t have to figure it out alone or bet your career on a
-            thread. You ride behind operators who already have the
-            receipts.
+            You don&apos;t have to figure it out alone or bet your next move on
+            a LinkedIn thread. You learn alongside operators who are building
+            in real time.
           </p>
         </div>
       </section>
@@ -271,23 +260,13 @@ export default function PostBookingNextStepsPage() {
                 key={i}
                 className="bg-white rounded-xl border border-[#E3E3E3] p-6 hover:border-crimson/40 transition-colors"
               >
-                <div className="flex items-start justify-between gap-3 mb-3">
-                  <div>
-                    <p className="text-[10px] font-mono uppercase tracking-wider text-crimson mb-1">
-                      {uc.niche}
-                    </p>
-                    <h3 className="font-semibold text-[#1A1A1A] text-lg leading-tight">
-                      {uc.title}
-                    </h3>
-                  </div>
-                  <div className="flex-shrink-0 text-right">
-                    <p className="text-[10px] font-mono uppercase text-[#999]">
-                      Hours/wk
-                    </p>
-                    <p className="font-mono font-bold text-xl text-crimson">
-                      {uc.hoursSavedPerWeek}
-                    </p>
-                  </div>
+                <div className="mb-3">
+                  <p className="text-[10px] font-mono uppercase tracking-wider text-crimson mb-1">
+                    {uc.niche}
+                  </p>
+                  <h3 className="font-semibold text-[#1A1A1A] text-lg leading-tight">
+                    {uc.title}
+                  </h3>
                 </div>
 
                 <div className="space-y-2 text-sm">
