@@ -84,40 +84,88 @@ export async function POST(req: Request) {
     const { normalizedScore, tier, priority, reason } = calculateScore(answers)
     const stage = tier === "hot" ? "QUALIFIED" : "NEW_LEAD"
 
-    const [submission, deal] = await Promise.all([
-      db.leadMagnetSubmission
-        .create({
+    // Always create a new submission record (full audit of every answer set).
+    const submission = await db.leadMagnetSubmission
+      .create({
+        data: {
+          type: "COLLECTIVE_APPLICATION",
+          email,
+          name,
           data: {
-            type: "COLLECTIVE_APPLICATION",
-            email,
-            name,
-            data: {
-              ...answers,
-              firstName,
-              lastName,
-              phone,
-              zipCode,
-              country,
-              smsConsentFollowup,
-              smsConsentPromo,
-              backgroundOther: backgroundOther ?? null,
-            },
-            score: normalizedScore,
-            source: source ?? "apply-form",
-            utmSource,
-            utmMedium,
-            utmCampaign,
+            ...answers,
+            firstName,
+            lastName,
+            phone,
+            zipCode,
+            country,
+            smsConsentFollowup,
+            smsConsentPromo,
+            backgroundOther: backgroundOther ?? null,
           },
+          score: normalizedScore,
+          source: source ?? "apply-form",
+          utmSource,
+          utmMedium,
+          utmCampaign,
+        },
+      })
+      .catch((err) => {
+        logger.error("Failed to create application submission", err)
+        return null
+      })
+
+    // Dedup the Deal. If this email already has an active deal (anything
+    // other than CHURNED/LOST), update it instead of creating a duplicate.
+    // This prevents pipeline bloat + duplicate drips when someone re-applies.
+    const existingDeal = await db.deal.findFirst({
+      where: {
+        contactEmail: { equals: email, mode: "insensitive" },
+        source: "ai-operator-collective-application",
+        stage: { notIn: ["CHURNED", "LOST"] },
+      },
+      orderBy: { createdAt: "desc" },
+    })
+
+    let deal: { id: string } | null = null
+
+    if (existingDeal) {
+      try {
+        // Only upgrade score if the new one is higher. Never downgrade stage.
+        const shouldUpgradeScore =
+          existingDeal.leadScore == null || normalizedScore > existingDeal.leadScore
+        deal = await db.deal.update({
+          where: { id: existingDeal.id },
+          data: {
+            contactName: name,
+            phone: phone,
+            ...(shouldUpgradeScore
+              ? {
+                  leadScore: normalizedScore,
+                  leadScoreTier: tier,
+                  leadScoreReason: reason,
+                  priority,
+                }
+              : {}),
+            activities: {
+              create: {
+                type: "FORM_SUBMITTED",
+                detail: `Re-applied. New score: ${normalizedScore}/100 (${tier}).${shouldUpgradeScore ? " Deal score upgraded." : " Existing score kept (higher)."}`,
+              },
+            },
+          },
+          select: { id: true },
         })
-        .catch((err) => {
-          logger.error("Failed to create application submission", err)
-          return null
-        }),
-      db.deal
+      } catch (err) {
+        logger.error("Failed to update existing deal on re-apply", err)
+        deal = null
+      }
+    } else {
+      deal = await db.deal
         .create({
           data: {
             contactName: name,
             contactEmail: email,
+            phone,
             source: "ai-operator-collective-application",
             sourceDetail: `Collective application. Score: ${normalizedScore}. Tier: ${tier}. Country: ${country}.`,
             channelTag: utmSource ?? source ?? "organic",
@@ -136,12 +184,13 @@ export async function POST(req: Request) {
               },
             },
           },
+          select: { id: true },
         })
         .catch((err) => {
           logger.error("Failed to create deal from application", err)
           return null
-        }),
-    ])
+        })
+    }
 
     if (submission && deal) {
       try {

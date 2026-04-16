@@ -128,7 +128,7 @@ export async function POST(req: Request) {
       logger.error("Calendly webhook: post-booking confirmation failed", err)
     }
 
-    // Queue the 4-email education drip (day 1, 2, 3, meeting-morning).
+    // Queue the 3-email education drip (day 1 case study, day 2 tools, day 3 prompts).
     try {
       await queueEmailSequence(email, "post-booking-education", {
         name,
@@ -137,6 +137,44 @@ export async function POST(req: Request) {
       })
     } catch (err) {
       logger.error("Calendly webhook: queue post-booking education failed", err)
+    }
+
+    // Morning-of reminder: fires 3 hours before the actual call.
+    // Dynamic schedule based on Calendly's start_time, not a fixed delay.
+    // Skipped if the call is less than 30 minutes away (too late to be useful).
+    try {
+      if (eventStartTime) {
+        const startMs = new Date(eventStartTime).getTime()
+        const threeHoursBefore = startMs - 3 * 3600_000
+        const thirtyMinutesFromNow = Date.now() + 30 * 60_000
+        const scheduledFor = new Date(Math.max(threeHoursBefore, thirtyMinutesFromNow))
+
+        // Only queue if call is >30 min in the future
+        if (startMs > thirtyMinutesFromNow) {
+          // Dedup across 90d window (same logic as queueEmailSequence)
+          const cooldown = new Date(Date.now() - 90 * 86400_000)
+          const existing = await db.emailQueueItem.findFirst({
+            where: {
+              recipientEmail: email,
+              sequenceKey: "post-booking-morning-of",
+              createdAt: { gte: cooldown },
+            },
+          })
+          if (!existing) {
+            await db.emailQueueItem.create({
+              data: {
+                recipientEmail: email,
+                sequenceKey: "post-booking-morning-of",
+                emailIndex: 0,
+                scheduledFor,
+                metadata: { name, eventStartTime, meetingUrl },
+              },
+            })
+          }
+        }
+      }
+    } catch (err) {
+      logger.error("Calendly webhook: morning-of reminder schedule failed", err)
     }
 
     return NextResponse.json({ ok: true })

@@ -72,6 +72,10 @@ export async function GET(req: Request) {
         } else if (item.sequenceKey === "post-booking-education") {
           emailContent = buildPostBookingEducationEmail(item.emailIndex, meta)
           isCollectiveSequence = true
+        } else if (item.sequenceKey === "post-booking-morning-of") {
+          // Morning-of email uses emailIndex 3 of the post-booking-education builder.
+          emailContent = buildPostBookingEducationEmail(3, meta)
+          isCollectiveSequence = true
         } else {
           emailContent = buildEmailContent(item.sequenceKey, item.emailIndex, meta)
         }

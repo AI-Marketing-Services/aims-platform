@@ -166,27 +166,67 @@ export function buildPostBookingEducationEmail(
   }
 
   if (emailIndex === 1) {
-    // Day 2 — AI tools
+    // Day 2 — AI tools (Adam's personal stack)
     return {
-      subject: "The 10 AI tools every operator in the Collective is using",
+      subject: "The 10 AI tools I actually use every day",
       html: `
-        ${h1(`${firstName}, here's the operator stack.`)}
-        ${p("This is the actual tool stack the top operators in the AIMS portfolio run. Not theoretical. Not \"what's trending.\" The 10 tools that most operators have paid for in the last 90 days.")}
+        ${h1(`${firstName}, here's the stack I really use.`)}
+        ${p("There are 500+ \"top AI tool\" lists on LinkedIn this week. Most of them are recycled. This one is different — it's the tools I personally use multiple times a day to run the AIMS portfolio. If I stopped using any of these, my work would be slower tomorrow.")}
 
-        ${playCard("01", "Clay", "Enrichment + outbound. The single highest-leverage tool in the outbound stack. Waterfall enrichment means your list is actually deliverable; Claygent means your personalization is specific, not generic.")}
-        ${playCard("02", "Cursive", "AI meeting copilot that writes your follow-ups instantly. Turns a 30-min discovery into a rev-ready follow-up email before the prospect closes their laptop.")}
-        ${playCard("03", "Instantly.ai", "Cold email platform with unlimited sending accounts. If you're running outbound and not on Instantly or Smartlead, you're leaving meetings on the table.")}
-        ${playCard("04", "N8N", "Self-hostable workflow builder. Beats Zapier at scale because you own the instance and can run long-running jobs without per-step pricing.")}
-        ${playCard("05", "Firecrawl", "Web scraping API that returns clean Markdown for LLMs. Every research workflow starts here — feed it a URL, get an agent-ready doc.")}
-        ${playCard("06", "Tavily", "AI-optimized search API. Built for agents. When you need an LLM to do research, Tavily is the tool you pipe in.")}
-        ${playCard("07", "Linear", "Issue tracker for operators who treat their business like a product. Nothing else has this much signal per click.")}
-        ${playCard("08", "Claude Code", "The coding agent that ships features while you're asleep. Most operators underestimate this until they see what a good plan + a solid agent loop can produce overnight.")}
-        ${playCard("09", "Anthropic Claude", "Primary reasoning model. Better than GPT for writing, analysis, and long-context work. Every member of the Collective has the Max plan.")}
-        ${playCard("10", "Notion + Notion AI", "Where the playbooks live. Internal knowledge base + AI that can actually retrieve and compose from your own docs.")}
+        ${playCard(
+          "01",
+          "Claude",
+          "My primary thinking partner. I use it for analysis, strategy sessions, coding, spreadsheet work, and building micro-tools with no-code directly inside of Claude. If I had to pick one AI tool to keep and delete everything else, this is it. <a href=\"https://claude.ai\" style=\"color:#981B1B;\">claude.ai</a>"
+        )}
+        ${playCard(
+          "02",
+          "Perplexity",
+          "The best AI-powered research tool — answers come with real citations so you can trust them. Their new browser agent (Comet) also automates research tasks across the web. I use it anytime I'd normally open 12 tabs. <a href=\"https://perplexity.ai\" style=\"color:#981B1B;\">perplexity.ai</a>"
+        )}
+        ${playCard(
+          "03",
+          "Dex",
+          "A Chrome browser agent that works alongside you with full context of what's on your screen. You don't have to describe what you're looking at — it already sees it. Huge for anyone who lives in the browser."
+        )}
+        ${playCard(
+          "04",
+          "Raycast",
+          "Command-K for your whole Mac. Launch apps, respond to Slack, check email, run AI prompts — all without leaving your keyboard. Once you use it for a week, using a laptop without it feels broken. <a href=\"https://raycast.com\" style=\"color:#981B1B;\">raycast.com</a>"
+        )}
+        ${playCard(
+          "05",
+          "Wispr Flow",
+          "The best speech-to-text tool I've used. Hold a button, talk, release — your words appear wherever the cursor is. I draft entire emails and doc sections this way faster than I can type. <a href=\"https://wisprflow.ai\" style=\"color:#981B1B;\">wisprflow.ai</a>"
+        )}
+        ${playCard(
+          "06",
+          "Little Bird (honorable mention)",
+          "Joins all my calls like a meeting notetaker, records my screen during the day, AND runs any automation I describe in plain English — \"go check my email, Slack messages, and build out my to-do list for today.\" New, powerful, worth watching."
+        )}
+        ${playCard(
+          "07",
+          "Velo",
+          "For building app mockups or small websites fast. Type what you want, get a working prototype in minutes. Great for validating ideas without hiring a designer."
+        )}
+        ${playCard(
+          "08",
+          "Instantly",
+          "My cold outreach workhorse. Manages sending accounts, warmup, sequences, and reply handling. If you're running any outbound campaign to businesses, this is the engine. <a href=\"https://instantly.ai\" style=\"color:#981B1B;\">instantly.ai</a>"
+        )}
+        ${playCard(
+          "09",
+          "Notion + Notion AI",
+          "Where my playbooks, SOPs, and research live. Notion AI actually retrieves from YOUR docs instead of generating generic text — it's like having a research assistant who's read everything you've ever written. <a href=\"https://notion.so\" style=\"color:#981B1B;\">notion.so</a>"
+        )}
+        ${playCard(
+          "10",
+          "Firecrawl",
+          "Turns any website into clean Markdown that an LLM can read. Every research or scraping workflow I run starts here. Feed it a URL, get a perfectly formatted doc ready to hand to Claude. <a href=\"https://firecrawl.dev\" style=\"color:#981B1B;\">firecrawl.dev</a>"
+        )}
 
-        ${p("The full 195-tool stack library (with scorecards) is on the next-steps page. Full transparency: we maintain it because we actually use it.")}
+        ${p("You don't need all 10 on day one. Start with Claude + Perplexity + Raycast. Those three alone will give most people 5+ hours back a week.")}
 
-        ${btn(nextStepsUrl, "Open the tool library")}
+        ${btn(nextStepsUrl, "See more prep resources")}
       `,
     }
   }

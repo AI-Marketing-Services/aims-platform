@@ -1,6 +1,8 @@
 import { db } from "@/lib/db"
 import { EMAIL_SEQUENCES } from "./index"
 
+const REQUEUE_COOLDOWN_DAYS = 90
+
 export async function queueEmailSequence(
   email: string,
   sequenceKey: keyof typeof EMAIL_SEQUENCES,
@@ -9,9 +11,16 @@ export async function queueEmailSequence(
   const sequence = EMAIL_SEQUENCES[sequenceKey]
   if (!sequence) return
 
-  // Check if already queued to avoid duplicates
+  // Dedup: block re-queue if this recipient got this sequence in the last
+  // 90 days. Covers anyone who re-applies, re-books, or double-submits —
+  // we never want them receiving the same drip twice in a quarter.
+  const cooldown = new Date(Date.now() - REQUEUE_COOLDOWN_DAYS * 86400000)
   const existing = await db.emailQueueItem.findFirst({
-    where: { recipientEmail: email, sequenceKey, status: "pending" },
+    where: {
+      recipientEmail: email,
+      sequenceKey,
+      createdAt: { gte: cooldown },
+    },
   })
   if (existing) return
 

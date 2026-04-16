@@ -122,18 +122,16 @@ const USE_CASES: UseCase[] = [
 ]
 
 const OPERATOR_TOOLS = [
-  { name: "Clay", category: "Outbound", score: "9.9" },
-  { name: "Cursive", category: "Meetings", score: "10.0" },
-  { name: "Instantly", category: "Cold Email", score: "8.4" },
-  { name: "n8n", category: "Automation", score: "9.9" },
-  { name: "Firecrawl", category: "Research", score: "9.2" },
-  { name: "Tavily", category: "Agent Search", score: "9.1" },
-  { name: "Claude", category: "Reasoning", score: "9.4" },
-  { name: "Claude Code", category: "Coding", score: "9.7" },
-  { name: "Cursor", category: "IDE", score: "9.5" },
-  { name: "Linear", category: "Project Mgmt", score: "9.2" },
+  { name: "Claude", category: "Reasoning", score: "10.0" },
+  { name: "Perplexity", category: "Research", score: "9.7" },
+  { name: "Dex", category: "Browser Agent", score: "9.2" },
+  { name: "Raycast", category: "Launcher", score: "9.8" },
+  { name: "Wispr Flow", category: "Speech-to-Text", score: "9.5" },
+  { name: "Little Bird", category: "Meeting AI", score: "9.0" },
+  { name: "Velo", category: "App Builder", score: "8.9" },
+  { name: "Instantly", category: "Cold Email", score: "9.3" },
   { name: "Notion", category: "Knowledge", score: "9.1" },
-  { name: "Apollo", category: "Data", score: "8.8" },
+  { name: "Firecrawl", category: "Web-to-LLM", score: "9.2" },
 ]
 
 /* -------------------------------------------------------------------------- */

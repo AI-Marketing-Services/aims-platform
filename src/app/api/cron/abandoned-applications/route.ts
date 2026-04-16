@@ -4,12 +4,12 @@ import { sendAbandonedApplicationEmail } from "@/lib/email/abandoned-application
 import { logCronExecution } from "@/lib/cron-log"
 import { logger } from "@/lib/logger"
 
-// Runs hourly. Finds PartialApplication rows that are 4–72 hours old,
-// still not marked completed, and have no prior reminder sent. Sends one
-// "you forgot something" email and stamps reminderSentAt so we never
-// double-send.
+// Runs every 15 minutes. Finds PartialApplication rows that are 30 min to
+// 72 hours old, still not marked completed, and have no prior reminder
+// sent. Sends one warm "your playbook is waiting" email and stamps
+// reminderSentAt so we never double-send.
 
-const MIN_AGE_HOURS = 4
+const MIN_AGE_MINUTES = 30
 const MAX_AGE_HOURS = 72
 const MAX_PER_RUN = 200
 
@@ -21,7 +21,7 @@ export async function GET(req: Request) {
 
   const startTime = Date.now()
   const now = Date.now()
-  const minAge = new Date(now - MIN_AGE_HOURS * 3600_000)
+  const minAge = new Date(now - MIN_AGE_MINUTES * 60_000)
   const maxAge = new Date(now - MAX_AGE_HOURS * 3600_000)
 
   try {
@@ -34,11 +34,33 @@ export async function GET(req: Request) {
       take: MAX_PER_RUN,
     })
 
+    // Dedup: pull all emails that have already received a reminder recently
+    // (regardless of whether the original partial was later completed). This
+    // handles people who abandon, come back, abandon again — they won't get
+    // spammed with repeat reminders.
+    const recentlyReminded = new Set(
+      (
+        await db.partialApplication.findMany({
+          where: {
+            reminderSentAt: { gte: new Date(now - 90 * 24 * 3600_000) },
+            email: { in: candidates.map((c) => c.email) },
+          },
+          select: { email: true },
+        })
+      ).map((r) => r.email.toLowerCase())
+    )
+
     let sent = 0
     let skipped = 0
     let errors = 0
 
     for (const partial of candidates) {
+      // Skip if they already got a reminder in the last 90 days
+      if (recentlyReminded.has(partial.email.toLowerCase())) {
+        skipped++
+        continue
+      }
+
       // Defensive: skip if a full application has landed for this email
       // in the meantime (race between form submit and cron).
       const completedDeal = await db.deal.findFirst({
