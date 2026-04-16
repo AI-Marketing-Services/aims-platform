@@ -59,6 +59,10 @@ export default async function AdminDealDetailPage({ params }: { params: Promise<
     orderBy: { createdAt: "desc" },
   }).catch(() => null)
 
+  const mightyInvites = await db.mightyInvite
+    .findMany({ where: { dealId }, orderBy: { sentAt: "desc" } })
+    .catch(() => [])
+
   const submissionResultsUrl = linkedSubmission && TYPES_WITH_RESULTS_PAGE.has(linkedSubmission.type)
     ? `/tools/${linkedSubmission.type.toLowerCase().replace(/_/g, "-")}/results/${linkedSubmission.id}`
     : null
@@ -134,6 +138,21 @@ export default async function AdminDealDetailPage({ params }: { params: Promise<
         utmCampaign={deal.utmCampaign}
         createdAt={deal.createdAt.toISOString()}
         submissionResultsUrl={submissionResultsUrl}
+        mightyInvites={mightyInvites.map((i) => ({
+          id: i.id,
+          email: i.email,
+          planId: i.planId,
+          planName: i.planName ?? null,
+          mightyInviteId: i.mightyInviteId ?? null,
+          mightyMemberId: i.mightyMemberId ?? null,
+          status: i.status,
+          errorMessage: i.errorMessage ?? null,
+          sentAt: i.sentAt.toISOString(),
+          acceptedAt: i.acceptedAt ? i.acceptedAt.toISOString() : null,
+          resentAt: i.resentAt ? i.resentAt.toISOString() : null,
+        }))}
+        mightyInviteStatus={(deal as { mightyInviteStatus?: string | null }).mightyInviteStatus ?? null}
+        mightyMemberId={(deal as { mightyMemberId?: number | null }).mightyMemberId ?? null}
       />
     </div>
   )

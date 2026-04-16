@@ -103,6 +103,10 @@ model Deal {
 
   closeLeadId String? @unique
 
+  mightyInvites      MightyInvite[]
+  mightyInviteStatus String?       // 'pending' | 'accepted' | 'failed' | null
+  mightyMemberId     Int?          // populated when member joins
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -111,6 +115,8 @@ model Deal {
   @@index([assignedTo])
   @@index([channelTag])
   @@index([createdAt])
+  @@index([mightyInviteStatus])
+  @@index([mightyMemberId])
 }
 
 enum DealStage {
@@ -186,6 +192,36 @@ enum ActivityType {
   PAYMENT_RECEIVED
   TASK_CREATED
   FORM_SUBMITTED
+  MIGHTY_INVITE_SENT
+  MIGHTY_INVITE_FAILED
+  MIGHTY_INVITE_RESENT
+  MIGHTY_MEMBER_JOINED
+  MIGHTY_MEMBER_LEFT
+  MIGHTY_COURSE_COMPLETED
+  MIGHTY_PLAN_PURCHASED
+}
+
+model MightyInvite {
+  id              String    @id @default(cuid())
+  dealId          String
+  deal            Deal      @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  email           String
+  planId          Int
+  planName        String?
+  mightyInviteId  Int?
+  mightyMemberId  Int?
+  status          String    @default("pending") // pending | sent | accepted | failed | expired
+  errorMessage    String?   @db.Text
+  sentAt          DateTime  @default(now())
+  acceptedAt      DateTime?
+  resentAt        DateTime?
+  invitedByClerkId String?
+  metadata        Json?
+
+  @@index([dealId])
+  @@index([email])
+  @@index([status])
+  @@index([mightyMemberId])
 }
 
 // ============ SERVICES & PRODUCTS ============

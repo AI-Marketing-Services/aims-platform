@@ -1,7 +1,9 @@
 import { auth } from "@clerk/nextjs/server"
+import Link from "next/link"
 import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
 import { QUESTIONS } from "@/lib/collective-application"
+import { InviteButton } from "./InviteButton"
 
 const TIER_COLORS: Record<string, string> = {
   hot: "bg-red-100 text-red-700 border-red-200",
@@ -24,6 +26,17 @@ export default async function ApplicationsPage() {
     ? await db.deal.findMany({ where: { id: { in: dealIds } } })
     : []
   const dealMap = new Map(deals.map((d) => [d.id, d]))
+
+  const invited = dealIds.length > 0
+    ? await db.mightyInvite.findMany({
+        where: { dealId: { in: dealIds } },
+        orderBy: { sentAt: "desc" },
+      })
+    : []
+  const inviteByDeal = new Map<string, typeof invited[number]>()
+  for (const inv of invited) {
+    if (!inviteByDeal.has(inv.dealId)) inviteByDeal.set(inv.dealId, inv)
+  }
 
   const now = new Date()
   const thisMonth = submissions.filter(
@@ -101,6 +114,9 @@ export default async function ApplicationsPage() {
                 <th className="text-center p-3 text-xs font-mono uppercase tracking-wider text-cream/60">
                   Stage
                 </th>
+                <th className="text-center p-3 text-xs font-mono uppercase tracking-wider text-cream/60">
+                  Collective
+                </th>
                 <th className="text-right p-3 text-xs font-mono uppercase tracking-wider text-cream/60">
                   Date
                 </th>
@@ -110,11 +126,30 @@ export default async function ApplicationsPage() {
               {submissions.map((s) => {
                 const deal = s.dealId ? dealMap.get(s.dealId) : null
                 const tier = deal?.leadScoreTier ?? "cold"
+                const inviteStatus = s.dealId
+                  ? (deal as { mightyInviteStatus?: string | null })?.mightyInviteStatus
+                    ?? inviteByDeal.get(s.dealId)?.status
+                    ?? null
+                  : null
+                const inviteMemberId = s.dealId
+                  ? (deal as { mightyMemberId?: number | null })?.mightyMemberId
+                    ?? inviteByDeal.get(s.dealId)?.mightyMemberId
+                    ?? null
+                  : null
 
                 return (
                   <tr key={s.id} className="border-b border-line last:border-0 group">
                     <td className="p-3 text-cream font-medium">
-                      {s.name ?? "-"}
+                      {s.dealId ? (
+                        <Link
+                          href={`/admin/crm/${s.dealId}`}
+                          className="hover:text-[#C4972A] hover:underline"
+                        >
+                          {s.name ?? "-"}
+                        </Link>
+                      ) : (
+                        s.name ?? "-"
+                      )}
                     </td>
                     <td className="p-3 text-cream/70">{s.email}</td>
                     <td className="p-3 text-center">
@@ -132,6 +167,15 @@ export default async function ApplicationsPage() {
                     <td className="p-3 text-center text-cream/60 text-xs font-mono uppercase">
                       {deal?.stage ?? "-"}
                     </td>
+                    <td className="p-3 text-center">
+                      <InviteButton
+                        dealId={s.dealId ?? null}
+                        contactEmail={s.email}
+                        contactName={s.name ?? s.email}
+                        initialStatus={inviteStatus}
+                        initialMightyMemberId={inviteMemberId}
+                      />
+                    </td>
                     <td className="p-3 text-right text-cream/60 text-xs">
                       {s.createdAt.toLocaleDateString("en-US", {
                         month: "short",
@@ -145,7 +189,7 @@ export default async function ApplicationsPage() {
               {submissions.length === 0 && (
                 <tr>
                   <td
-                    colSpan={6}
+                    colSpan={7}
                     className="p-8 text-center text-cream/50 text-sm"
                   >
                     No applications yet.

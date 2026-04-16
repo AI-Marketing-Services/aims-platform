@@ -1,121 +1,272 @@
 import { NextRequest, NextResponse } from "next/server"
+import crypto from "node:crypto"
+import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
+import { getMemberByEmail } from "@/lib/mighty"
 import type { MightyWebhookEvent } from "@/lib/mighty/types"
 
 /**
  * POST /api/webhooks/mighty
- * Inbound webhook handler for Mighty Networks events.
  *
  * Configure in Mighty Networks Admin > Settings > Webhooks:
- *   URL: https://aioperatorcollective.com/api/webhooks/mighty
+ *   URL:    https://aioperatorcollective.com/api/webhooks/mighty
+ *   Secret: set MIGHTY_WEBHOOK_SECRET env var to the same value
  *
- * Events we care about:
- *   - MemberJoined: sync to AIMS CRM, send welcome sequence
- *   - MemberLeft: update CRM status
- *   - MemberCourseProgressCompleted: award badge, notify admin
- *   - MemberPurchased: sync subscription to AIMS platform
+ * Handled events: MemberJoined, MemberLeft, MemberCourseProgressCompleted,
+ * MemberPurchased.
  */
-export async function POST(req: NextRequest) {
+
+function verifySignature(raw: string, signatureHeader: string | null): boolean {
+  const secret = process.env.MIGHTY_WEBHOOK_SECRET
+  if (!secret) return true // verification disabled until configured in Mighty
+  if (!signatureHeader) return false
+  const expected = crypto
+    .createHmac("sha256", secret)
+    .update(raw)
+    .digest("hex")
   try {
-    const event = (await req.json()) as MightyWebhookEvent
+    return crypto.timingSafeEqual(
+      Buffer.from(expected),
+      Buffer.from(signatureHeader.replace(/^sha256=/, ""))
+    )
+  } catch {
+    return false
+  }
+}
 
-    logger.info(`[Mighty Webhook] ${event.event_type}`, {
-      action: "webhook",
-      endpoint: "/api/webhooks/mighty",
-    })
+export async function POST(req: NextRequest) {
+  const raw = await req.text()
+  const signature =
+    req.headers.get("x-mighty-signature") ??
+    req.headers.get("x-signature") ??
+    null
 
+  if (!verifySignature(raw, signature)) {
+    logger.warn("[Mighty Webhook] Invalid signature", { action: "webhook" })
+    return NextResponse.json({ error: "Invalid signature" }, { status: 401 })
+  }
+
+  let event: MightyWebhookEvent
+  try {
+    event = JSON.parse(raw) as MightyWebhookEvent
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 })
+  }
+
+  logger.info(`[Mighty Webhook] ${event.event_type}`, {
+    action: "webhook",
+    endpoint: "/api/webhooks/mighty",
+  })
+
+  try {
     switch (event.event_type) {
       case "MemberJoined":
         await handleMemberJoined(event)
         break
-
       case "MemberLeft":
         await handleMemberLeft(event)
         break
-
       case "MemberCourseProgressCompleted":
         await handleCourseCompleted(event)
         break
-
       case "MemberPurchased":
         await handleMemberPurchased(event)
         break
-
       default:
-        // Log but don't fail on unhandled events
         logger.info(`[Mighty Webhook] Unhandled event: ${event.event_type}`, {
           action: "webhook_unhandled",
         })
     }
-
-    // Always return 200 to prevent webhook retries
     return NextResponse.json({ received: true })
   } catch (err) {
-    logger.error("[Mighty Webhook] Processing failed", err, {
+    // Return 500 so Mighty retries; also log for visibility
+    logger.error("[Mighty Webhook] Handler failed", err, {
       action: "webhook_error",
+      endpoint: "/api/webhooks/mighty",
     })
-    // Still return 200 to prevent retries on our processing errors
-    return NextResponse.json({ received: true, error: "processing_failed" })
+    return NextResponse.json(
+      { received: false, error: "handler_failed" },
+      { status: 500 }
+    )
   }
 }
 
-async function handleMemberJoined(event: MightyWebhookEvent): Promise<void> {
-  const { data } = event
-  const email = data.email as string | undefined
-  const name = data.name as string | undefined
+type MemberEventData = {
+  email?: string
+  name?: string
+  first_name?: string
+  last_name?: string
+  member_id?: number
+  plan_id?: number
+  plan_name?: string
+  course_id?: number
+  course_name?: string
+}
 
+async function findDealByEmail(email: string) {
+  // Case-insensitive lookup; contactEmail is stored lower-case in apply flow
+  return db.deal.findFirst({
+    where: { contactEmail: { equals: email, mode: "insensitive" } },
+    orderBy: { createdAt: "desc" },
+  })
+}
+
+async function handleMemberJoined(event: MightyWebhookEvent): Promise<void> {
+  const data = event.data as MemberEventData
+  const email = data.email
   if (!email) return
 
-  logger.info(`[Mighty] New member joined: ${name ?? email}`, {
-    action: "member_joined",
+  // Try to resolve mighty member ID if not provided
+  let mightyMemberId = data.member_id ?? null
+  if (!mightyMemberId) {
+    const member = await getMemberByEmail(email)
+    mightyMemberId = member?.id ?? null
+  }
+
+  // Find any pending invite for this email
+  const invite = await db.mightyInvite.findFirst({
+    where: { email: { equals: email, mode: "insensitive" } },
+    orderBy: { sentAt: "desc" },
   })
 
-  // TODO: Sync to AIMS CRM (create/update deal)
-  // TODO: Trigger welcome email sequence via Resend
-  // TODO: Add "New Member" tag in Mighty
+  if (invite) {
+    await db.mightyInvite.update({
+      where: { id: invite.id },
+      data: {
+        status: "accepted",
+        acceptedAt: new Date(),
+        mightyMemberId: mightyMemberId ?? undefined,
+      },
+    })
+  }
+
+  // Find deal via invite or fallback email match
+  const deal = invite
+    ? await db.deal.findUnique({ where: { id: invite.dealId } })
+    : await findDealByEmail(email)
+
+  if (deal) {
+    await db.deal.update({
+      where: { id: deal.id },
+      data: {
+        mightyInviteStatus: "accepted",
+        mightyMemberId: mightyMemberId ?? undefined,
+        stage: deal.stage === "DEMO_BOOKED" ? "ACTIVE_CLIENT" : deal.stage,
+      },
+    })
+    await db.dealActivity.create({
+      data: {
+        dealId: deal.id,
+        type: "MIGHTY_MEMBER_JOINED",
+        detail: `${data.name ?? email} joined the Collective`,
+        metadata: {
+          mightyMemberId,
+          email,
+          receivedAt: new Date().toISOString(),
+        },
+      },
+    })
+  } else {
+    // Member joined without a matching deal — still log for visibility
+    logger.info(
+      `[Mighty] Member joined without matching deal: ${email}`,
+      { action: "member_joined_no_deal" }
+    )
+  }
 }
 
 async function handleMemberLeft(event: MightyWebhookEvent): Promise<void> {
-  const { data } = event
-  const email = data.email as string | undefined
-
+  const data = event.data as MemberEventData
+  const email = data.email
   if (!email) return
 
-  logger.info(`[Mighty] Member left: ${email}`, {
-    action: "member_left",
-  })
+  const deal = await findDealByEmail(email)
+  if (!deal) return
 
-  // TODO: Update CRM status
-  // TODO: Trigger win-back email sequence
+  await db.deal.update({
+    where: { id: deal.id },
+    data: {
+      mightyInviteStatus: "accepted", // leave history
+      stage: deal.stage === "ACTIVE_CLIENT" ? "CHURNED" : deal.stage,
+    },
+  })
+  await db.dealActivity.create({
+    data: {
+      dealId: deal.id,
+      type: "MIGHTY_MEMBER_LEFT",
+      detail: `${email} left the Collective`,
+      metadata: { email, receivedAt: new Date().toISOString() },
+    },
+  })
 }
 
 async function handleCourseCompleted(event: MightyWebhookEvent): Promise<void> {
-  const { data } = event
-  const memberId = data.member_id as number | undefined
+  const data = event.data as MemberEventData
+  const email = data.email
+  const memberId = data.member_id
+  const courseName = data.course_name ?? "a course"
 
-  if (!memberId) return
+  // Prefer email lookup; fall back to member_id via MightyInvite
+  let deal = email ? await findDealByEmail(email) : null
+  if (!deal && memberId) {
+    const invite = await db.mightyInvite.findFirst({
+      where: { mightyMemberId: memberId },
+      orderBy: { sentAt: "desc" },
+    })
+    if (invite) {
+      deal = await db.deal.findUnique({ where: { id: invite.dealId } })
+    }
+  }
+  if (!deal) return
 
-  logger.info(`[Mighty] Course completed by member: ${memberId}`, {
-    action: "course_completed",
+  await db.dealActivity.create({
+    data: {
+      dealId: deal.id,
+      type: "MIGHTY_COURSE_COMPLETED",
+      detail: `Completed ${courseName}`,
+      metadata: {
+        memberId,
+        email,
+        courseId: data.course_id,
+        courseName,
+        receivedAt: new Date().toISOString(),
+      },
+    },
   })
-
-  // TODO: Award "Course Complete" badge
-  // TODO: Notify admin
-  // TODO: Trigger congratulations email
 }
 
 async function handleMemberPurchased(event: MightyWebhookEvent): Promise<void> {
-  const { data } = event
-  const email = data.email as string | undefined
-  const planId = data.plan_id as number | undefined
-
+  const data = event.data as MemberEventData
+  const email = data.email
+  const planId = data.plan_id
   if (!email || !planId) return
 
-  logger.info(`[Mighty] Member purchased plan ${planId}: ${email}`, {
-    action: "member_purchased",
+  const deal = await findDealByEmail(email)
+  if (!deal) return
+
+  await db.dealActivity.create({
+    data: {
+      dealId: deal.id,
+      type: "MIGHTY_PLAN_PURCHASED",
+      detail: `Purchased ${data.plan_name ?? `plan ${planId}`}`,
+      metadata: {
+        email,
+        planId,
+        planName: data.plan_name,
+        receivedAt: new Date().toISOString(),
+      },
+    },
   })
 
-  // TODO: Sync subscription to AIMS platform
-  // TODO: Update CRM deal stage
-  // TODO: Grant appropriate access
+  // Upgrade deal stage if sitting in DEMO_BOOKED or earlier
+  if (
+    ["NEW_LEAD", "QUALIFIED", "DEMO_BOOKED", "PROPOSAL_SENT", "NEGOTIATION"].includes(
+      deal.stage
+    )
+  ) {
+    await db.deal.update({
+      where: { id: deal.id },
+      data: { stage: "ACTIVE_CLIENT" },
+    })
+  }
 }

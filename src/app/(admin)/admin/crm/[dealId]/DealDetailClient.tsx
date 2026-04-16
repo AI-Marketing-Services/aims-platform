@@ -27,8 +27,15 @@ import {
   AlertTriangle,
   CreditCard,
   ClipboardList,
+  UserPlus,
+  UserMinus,
+  GraduationCap,
+  RefreshCw,
+  AlertCircle,
+  ShoppingBag,
 } from "lucide-react"
 import { cn, timeAgo } from "@/lib/utils"
+import { MightyInvitePanel, type MightyInviteRecord } from "./MightyInvitePanel"
 
 type ActivityType =
   | "EMAIL_SENT"
@@ -41,6 +48,13 @@ type ActivityType =
   | "PAYMENT_RECEIVED"
   | "TASK_CREATED"
   | "FORM_SUBMITTED"
+  | "MIGHTY_INVITE_SENT"
+  | "MIGHTY_INVITE_FAILED"
+  | "MIGHTY_INVITE_RESENT"
+  | "MIGHTY_MEMBER_JOINED"
+  | "MIGHTY_MEMBER_LEFT"
+  | "MIGHTY_COURSE_COMPLETED"
+  | "MIGHTY_PLAN_PURCHASED"
 
 interface Activity {
   id: string
@@ -98,6 +112,9 @@ interface Props {
   utmCampaign?: string | null
   createdAt?: string
   submissionResultsUrl?: string | null
+  mightyInvites?: MightyInviteRecord[]
+  mightyInviteStatus?: string | null
+  mightyMemberId?: number | null
 }
 
 const ACTIVITY_ICONS: Record<ActivityType, React.ReactNode> = {
@@ -111,6 +128,13 @@ const ACTIVITY_ICONS: Record<ActivityType, React.ReactNode> = {
   PAYMENT_RECEIVED: <CreditCard className="w-3.5 h-3.5" />,
   TASK_CREATED: <ClipboardList className="w-3.5 h-3.5" />,
   FORM_SUBMITTED: <FileText className="w-3.5 h-3.5" />,
+  MIGHTY_INVITE_SENT: <Send className="w-3.5 h-3.5" />,
+  MIGHTY_INVITE_FAILED: <AlertCircle className="w-3.5 h-3.5" />,
+  MIGHTY_INVITE_RESENT: <RefreshCw className="w-3.5 h-3.5" />,
+  MIGHTY_MEMBER_JOINED: <UserPlus className="w-3.5 h-3.5" />,
+  MIGHTY_MEMBER_LEFT: <UserMinus className="w-3.5 h-3.5" />,
+  MIGHTY_COURSE_COMPLETED: <GraduationCap className="w-3.5 h-3.5" />,
+  MIGHTY_PLAN_PURCHASED: <ShoppingBag className="w-3.5 h-3.5" />,
 }
 
 const ACTIVITY_TYPE_OPTIONS: { value: ActivityType; label: string }[] = [
@@ -244,6 +268,9 @@ export function DealDetailClient({
   utmCampaign,
   createdAt,
   submissionResultsUrl,
+  mightyInvites = [],
+  mightyInviteStatus = null,
+  mightyMemberId = null,
 }: Props) {
   const router = useRouter()
   const [stage, setStage] = useState(currentStage)
@@ -792,6 +819,16 @@ export function DealDetailClient({
               )}
             </div>
           </div>
+
+          {/* Mighty Networks Invite */}
+          <MightyInvitePanel
+            dealId={dealId}
+            contactEmail={email || null}
+            contactName={contactName}
+            initialInvites={mightyInvites}
+            initialStatus={mightyInviteStatus}
+            initialMightyMemberId={mightyMemberId}
+          />
 
           {/* Score & Priority Card */}
           <div className="bg-card border border-border rounded-xl p-5">
