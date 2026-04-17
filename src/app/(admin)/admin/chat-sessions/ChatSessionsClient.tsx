@@ -269,7 +269,7 @@ function SessionRow({
       {isExpanded && (
         <tr>
           <td colSpan={6} className="p-0">
-            <div className="bg-[#0D0F14] border-t border-border px-6 py-4 max-h-[400px] overflow-y-auto custom-scrollbar">
+            <div className="bg-muted/30 border-t border-border px-6 py-4 max-h-[400px] overflow-y-auto custom-scrollbar">
               <div className="space-y-3 max-w-2xl">
                 {session.messages.map((msg, idx) => {
                   const text = getMessageText(msg)
@@ -279,9 +279,9 @@ function SessionRow({
                     <div key={idx} className={`flex ${role === "user" ? "justify-end" : "justify-start"}`}>
                       <div
                         className={cn(
-                          "max-w-[80%] rounded-xl px-3 py-2 text-sm leading-relaxed whitespace-pre-wrap",
+                          "max-w-[80%] rounded-xl px-3 py-2 text-sm leading-relaxed whitespace-pre-wrap shadow-sm",
                           role === "user"
-                            ? "bg-primary/20 text-foreground rounded-br-sm"
+                            ? "bg-primary/10 text-foreground border border-primary/20 rounded-br-sm"
                             : "bg-card border border-border text-foreground rounded-bl-sm"
                         )}
                       >

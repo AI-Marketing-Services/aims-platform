@@ -3,7 +3,13 @@ import { auth } from "@clerk/nextjs/server"
 import { z } from "zod"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
-import { inviteToPlan, resendInvite, MIGHTY_IDS, getPlan } from "@/lib/mighty"
+import {
+  inviteToPlan,
+  resendInvite,
+  MIGHTY_IDS,
+  getPlan,
+  type MightyErrorBag,
+} from "@/lib/mighty"
 
 const schema = z.object({
   planId: z.number().int().positive().optional(),
@@ -58,20 +64,32 @@ export async function POST(
 
   const { planId, planName } = resolvePlanId(parsed.data)
 
-  // Resend path — reuse last invite for this deal+plan
+  // Resend path. Two cases:
+  // 1. Prior attempt succeeded on Mighty's side (mightyInviteId set) -> hit
+  //    Mighty's /invites/:id/resend endpoint to re-send the same invite.
+  // 2. Prior attempt failed before Mighty ever recorded it (mightyInviteId
+  //    null) -> fall through to create a fresh invite attempt below.
   if (parsed.data.resend) {
     const last = await db.mightyInvite.findFirst({
       where: { dealId: id, planId },
       orderBy: { sentAt: "desc" },
     })
     if (last?.mightyInviteId) {
-      const ok = await resendInvite(last.mightyInviteId)
+      const errorBag: MightyErrorBag = { message: "" }
+      const ok = await resendInvite(last.mightyInviteId, errorBag)
       if (!ok) {
-        return NextResponse.json({ error: "Resend failed" }, { status: 502 })
+        await db.mightyInvite.update({
+          where: { id: last.id },
+          data: { errorMessage: errorBag.message || "Resend failed" },
+        })
+        return NextResponse.json(
+          { error: errorBag.message || "Resend failed" },
+          { status: 502 }
+        )
       }
       const updated = await db.mightyInvite.update({
         where: { id: last.id },
-        data: { resentAt: new Date(), status: "sent" },
+        data: { resentAt: new Date(), status: "sent", errorMessage: null },
       })
       await db.dealActivity.create({
         data: {
@@ -84,29 +102,33 @@ export async function POST(
       })
       return NextResponse.json({ ok: true, invite: updated })
     }
-    return NextResponse.json({ error: "No prior invite found to resend" }, { status: 404 })
+    // Fall through to create a fresh attempt if prior attempt never reached Mighty.
   }
 
-  // Dedupe: don't double-invite if there's a pending/sent/accepted record for same plan
-  const existing = await db.mightyInvite.findFirst({
-    where: {
-      dealId: id,
-      planId,
-      status: { in: ["pending", "sent", "accepted"] },
-    },
-    orderBy: { sentAt: "desc" },
-  })
-  if (existing && existing.status === "accepted") {
-    return NextResponse.json(
-      { error: "Prospect has already accepted this invite", invite: existing },
-      { status: 409 }
-    )
-  }
-  if (existing && existing.status !== "failed") {
-    return NextResponse.json(
-      { error: "Invite already sent. Use resend instead.", invite: existing },
-      { status: 409 }
-    )
+  // Dedupe: don't double-invite if there's a pending/sent/accepted record
+  // for the same plan. On explicit resend we always want a fresh attempt,
+  // even when the prior attempt left the record in `pending`/`sent`/`failed`.
+  if (!parsed.data.resend) {
+    const existing = await db.mightyInvite.findFirst({
+      where: {
+        dealId: id,
+        planId,
+        status: { in: ["pending", "sent", "accepted"] },
+      },
+      orderBy: { sentAt: "desc" },
+    })
+    if (existing && existing.status === "accepted") {
+      return NextResponse.json(
+        { error: "Prospect has already accepted this invite", invite: existing },
+        { status: 409 }
+      )
+    }
+    if (existing && existing.status !== "failed") {
+      return NextResponse.json(
+        { error: "Invite already sent. Use resend instead.", invite: existing },
+        { status: 409 }
+      )
+    }
   }
 
   const [firstName, ...rest] = (deal.contactName ?? "").trim().split(/\s+/)
@@ -125,34 +147,45 @@ export async function POST(
   })
 
   // Verify plan is reachable (optional sanity; catches misconfigured token fast)
-  const plan = await getPlan(planId)
+  const planErrorBag: MightyErrorBag = { message: "" }
+  const plan = await getPlan(planId, planErrorBag)
   if (!plan) {
+    const reason = planErrorBag.message || "Plan not found or token invalid"
     await db.mightyInvite.update({
       where: { id: record.id },
-      data: { status: "failed", errorMessage: "Plan not found or token invalid" },
+      data: { status: "failed", errorMessage: reason },
     })
     await db.dealActivity.create({
       data: {
         dealId: id,
         type: "MIGHTY_INVITE_FAILED",
-        detail: `Could not resolve plan ${planId} (${planName})`,
+        detail: `Could not resolve plan ${planId} (${planName}): ${reason}`,
         authorId: userId,
-        metadata: { planId },
+        metadata: { planId, status: planErrorBag.status },
       },
     })
-    return NextResponse.json({ error: "Plan unreachable", invite: record }, { status: 502 })
+    return NextResponse.json(
+      { error: reason, invite: { ...record, errorMessage: reason } },
+      { status: 502 }
+    )
   }
 
-  const invite = await inviteToPlan(planId, {
-    recipient_email: deal.contactEmail,
-    recipient_first_name: firstName || undefined,
-    recipient_last_name: lastName,
-  })
+  const inviteErrorBag: MightyErrorBag = { message: "" }
+  const invite = await inviteToPlan(
+    planId,
+    {
+      recipient_email: deal.contactEmail,
+      recipient_first_name: firstName || undefined,
+      recipient_last_name: lastName,
+    },
+    inviteErrorBag
+  )
 
   if (!invite) {
+    const reason = inviteErrorBag.message || "Mighty API call failed"
     await db.mightyInvite.update({
       where: { id: record.id },
-      data: { status: "failed", errorMessage: "Mighty API call failed" },
+      data: { status: "failed", errorMessage: reason },
     })
     await db.deal.update({
       where: { id },
@@ -162,15 +195,18 @@ export async function POST(
       data: {
         dealId: id,
         type: "MIGHTY_INVITE_FAILED",
-        detail: `Failed to invite ${deal.contactEmail} to ${planName}`,
+        detail: `Failed to invite ${deal.contactEmail} to ${planName}: ${reason}`,
         authorId: userId,
-        metadata: { planId },
+        metadata: { planId, status: inviteErrorBag.status },
       },
     })
-    logger.error(`[Mighty] invite failed dealId=${id}`, null, {
+    logger.error(`[Mighty] invite failed dealId=${id} reason=${reason}`, null, {
       action: "invite_to_mighty",
     })
-    return NextResponse.json({ error: "Invite failed", invite: record }, { status: 502 })
+    return NextResponse.json(
+      { error: reason, invite: { ...record, errorMessage: reason } },
+      { status: 502 }
+    )
   }
 
   const updated = await db.mightyInvite.update({

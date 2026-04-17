@@ -194,7 +194,7 @@ export default async function AdminCommunitySequencePage() {
           {steps.map((step) => (
             <li
               key={step.key}
-              className="relative rounded-sm border border-line bg-ink/40 p-4"
+              className="relative rounded-sm border border-line bg-muted/30 p-4"
             >
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0 inline-flex items-center justify-center w-10 h-10 rounded-sm bg-surface border border-line">
@@ -253,7 +253,7 @@ export default async function AdminCommunitySequencePage() {
                     })
                   }
                   return (
-                    <tr key={rec.email} className="border-b border-line/60 hover:bg-ink/40">
+                    <tr key={rec.email} className="border-b border-line/60 hover:bg-muted/30">
                       <td className="px-5 py-4 text-ink font-mono text-xs break-all">
                         {rec.email}
                       </td>

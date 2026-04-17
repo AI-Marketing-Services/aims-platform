@@ -2,7 +2,8 @@
 
 import { useMemo, useState } from "react"
 import Link from "next/link"
-import { Search, AlertCircle, CheckCircle2, Clock, Send } from "lucide-react"
+import { toast } from "sonner"
+import { Search, AlertCircle, CheckCircle2, Clock, Send, RefreshCw } from "lucide-react"
 import { cn, timeAgo } from "@/lib/utils"
 
 export type AuditRow = {
@@ -38,9 +39,61 @@ const STATUS_ICONS: Record<string, React.ReactNode> = {
 
 const STATUS_FILTERS = ["all", "failed", "pending", "sent", "accepted", "expired"] as const
 
-export function MightyInviteAuditTable({ rows }: { rows: AuditRow[] }) {
+const TIER_FROM_PLAN: Record<string, "community" | "accelerator" | "innerCircle"> = {
+  Community: "community",
+  Accelerator: "accelerator",
+  "Inner Circle": "innerCircle",
+}
+
+export function MightyInviteAuditTable({ rows: initialRows }: { rows: AuditRow[] }) {
+  const [rows, setRows] = useState(initialRows)
   const [query, setQuery] = useState("")
   const [status, setStatus] = useState<(typeof STATUS_FILTERS)[number]>("all")
+  const [busyId, setBusyId] = useState<string | null>(null)
+
+  async function retry(row: AuditRow) {
+    if (busyId) return
+    setBusyId(row.id)
+    const tier = TIER_FROM_PLAN[row.planName] ?? "community"
+    try {
+      const res = await fetch(`/api/admin/deals/${row.dealId}/invite-to-mighty`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tier, resend: true }),
+      })
+      const body = await res.json()
+      if (!res.ok) {
+        toast.error(body.error ?? "Retry failed")
+        // Update the error message inline so the admin sees why
+        if (body.invite?.errorMessage) {
+          setRows((prev) =>
+            prev.map((r) =>
+              r.id === row.id ? { ...r, errorMessage: body.invite.errorMessage, status: "failed" } : r
+            )
+          )
+        }
+        return
+      }
+      toast.success(`Invite re-sent to ${row.contactName}`)
+      setRows((prev) =>
+        prev.map((r) =>
+          r.id === body.invite.id
+            ? {
+                ...r,
+                status: body.invite.status,
+                errorMessage: body.invite.errorMessage ?? null,
+                resentAt: body.invite.resentAt ?? new Date().toISOString(),
+                mightyInviteId: body.invite.mightyInviteId ?? r.mightyInviteId,
+              }
+            : r
+        )
+      )
+    } catch {
+      toast.error("Network error")
+    } finally {
+      setBusyId(null)
+    }
+  }
 
   const filtered = useMemo(() => {
     const q = query.toLowerCase().trim()
@@ -92,20 +145,21 @@ export function MightyInviteAuditTable({ rows }: { rows: AuditRow[] }) {
 
       <div className="bg-card border border-border rounded-xl overflow-hidden">
         <table className="w-full text-sm">
-          <thead className="bg-deep/60 border-b border-border">
+          <thead className="bg-muted/40 border-b border-border">
             <tr className="text-left text-xs uppercase tracking-wider text-muted-foreground">
               <th className="px-4 py-3 font-medium">Contact</th>
               <th className="px-4 py-3 font-medium">Plan</th>
               <th className="px-4 py-3 font-medium">Status</th>
               <th className="px-4 py-3 font-medium">Sent</th>
               <th className="px-4 py-3 font-medium">Outcome</th>
+              <th className="px-4 py-3 font-medium text-right">Actions</th>
             </tr>
           </thead>
           <tbody>
             {filtered.map((r) => (
               <tr
                 key={r.id}
-                className="border-b border-border last:border-0 hover:bg-deep/30 transition-colors"
+                className="border-b border-border last:border-0 hover:bg-muted/40 transition-colors"
               >
                 <td className="px-4 py-3">
                   <Link
@@ -155,11 +209,24 @@ export function MightyInviteAuditTable({ rows }: { rows: AuditRow[] }) {
                     <span className="text-muted-foreground">Invite expired</span>
                   )}
                 </td>
+                <td className="px-4 py-3 text-right">
+                  {r.status !== "accepted" && (
+                    <button
+                      onClick={() => retry(r)}
+                      disabled={busyId === r.id}
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg border border-border bg-card text-foreground hover:bg-primary/5 hover:border-primary/40 hover:text-primary disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                      title={r.status === "failed" ? "Re-run invite with latest data" : "Re-send invite email"}
+                    >
+                      <RefreshCw className={cn("w-3 h-3", busyId === r.id && "animate-spin")} />
+                      {busyId === r.id ? "Retrying…" : "Retry"}
+                    </button>
+                  )}
+                </td>
               </tr>
             ))}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-4 py-12 text-center text-muted-foreground text-sm">
+                <td colSpan={6} className="px-4 py-12 text-center text-muted-foreground text-sm">
                   No invites match those filters.
                 </td>
               </tr>

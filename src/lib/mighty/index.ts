@@ -65,15 +65,22 @@ function basePath(): string | null {
 
 // ─── HTTP Client ─────────────────────────────────────────
 
+// An errorBag lets callers see the actual Mighty-side failure reason
+// (e.g. "401 Unauthorized", "404 plan not found") instead of a null return.
+export type MightyErrorBag = { status?: number; message: string }
+
 async function mightyFetch<T>(
   path: string,
-  options: RequestInit & { context: string }
+  options: RequestInit & { context: string; errorBag?: MightyErrorBag }
 ): Promise<T | null> {
   const config = getConfig()
-  if (!config) return null
+  if (!config) {
+    if (options.errorBag) options.errorBag.message = "MIGHTY_API_TOKEN or MIGHTY_NETWORK_ID not configured"
+    return null
+  }
 
   const url = `${MIGHTY_API_BASE}/networks/${config.networkId}${path}`
-  const { context, ...fetchOpts } = options
+  const { context, errorBag, ...fetchOpts } = options
 
   for (let attempt = 0; attempt <= MIGHTY_MAX_RETRIES; attempt++) {
     try {
@@ -109,6 +116,10 @@ async function mightyFetch<T>(
           action: context,
           endpoint: path,
         })
+        if (errorBag) {
+          errorBag.status = res.status
+          errorBag.message = extractMightyError(body, res.status, res.statusText)
+        }
         return null
       }
 
@@ -128,11 +139,40 @@ async function mightyFetch<T>(
       }
 
       logger.error(`[Mighty] ${context} failed`, err, { action: context })
+      if (errorBag) {
+        errorBag.message = isTimeout
+          ? "Mighty API timeout (15s)"
+          : isNetworkError
+          ? "Network error reaching Mighty API"
+          : err instanceof Error
+          ? err.message
+          : "Unknown error"
+      }
       return null
     }
   }
 
   return null
+}
+
+function extractMightyError(body: string, status: number, statusText: string): string {
+  // Mighty returns JSON errors like {"error": "..."} or {"message": "..."} or
+  // {"errors": [{"detail": "..."}]}. Fall back to raw body snippet.
+  try {
+    const parsed = JSON.parse(body) as Record<string, unknown>
+    const candidate =
+      (typeof parsed.error === "string" && parsed.error) ||
+      (typeof parsed.message === "string" && parsed.message) ||
+      (Array.isArray(parsed.errors) &&
+        parsed.errors[0] &&
+        (((parsed.errors[0] as Record<string, unknown>).detail as string) ||
+          ((parsed.errors[0] as Record<string, unknown>).message as string)))
+    if (candidate) return `${status}: ${candidate}`
+  } catch {
+    // not JSON
+  }
+  const snippet = body.slice(0, 200).replace(/\s+/g, " ").trim()
+  return snippet ? `${status} ${statusText}: ${snippet}` : `${status} ${statusText}`
 }
 
 /** Multipart form data variant for asset uploads */
@@ -559,19 +599,24 @@ export async function createInvite(
 
 export async function inviteToPlan(
   planId: number,
-  params: CreateInviteParams
+  params: CreateInviteParams,
+  errorBag?: MightyErrorBag
 ): Promise<MightyInvite | null> {
   return mightyFetch<MightyInvite>(`/plans/${planId}/invites`, {
     method: "POST",
     body: JSON.stringify(params),
     context: "inviteToPlan",
+    errorBag,
   })
 }
 
-export async function resendInvite(inviteId: number): Promise<boolean> {
+export async function resendInvite(
+  inviteId: number,
+  errorBag?: MightyErrorBag
+): Promise<boolean> {
   const result = await mightyFetch<Record<string, unknown>>(
     `/invites/${inviteId}/resend`,
-    { method: "POST", context: "resendInvite" }
+    { method: "POST", context: "resendInvite", errorBag }
   )
   return result !== null
 }
@@ -689,10 +734,14 @@ export async function listPlans(): Promise<MightyPlan[]> {
   return fetchAllPages<MightyPlan>("/plans", "listPlans")
 }
 
-export async function getPlan(planId: number): Promise<MightyPlan | null> {
+export async function getPlan(
+  planId: number,
+  errorBag?: MightyErrorBag
+): Promise<MightyPlan | null> {
   return mightyFetch<MightyPlan>(`/plans/${planId}`, {
     method: "GET",
     context: "getPlan",
+    errorBag,
   })
 }
 
