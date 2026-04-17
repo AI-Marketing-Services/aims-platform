@@ -1,21 +1,46 @@
 import { redirect } from "next/navigation"
+import { SignUp } from "@clerk/nextjs"
+import { Suspense } from "react"
 
-// The AI Operator Collective doesn't support user self-signup. The only
-// way in is the /apply funnel + a human-approved invite by the admin
-// team, at which point we provision the Mighty Networks member directly
-// (see /api/admin/deals/:id/invite-to-mighty).
+// The AI Operator Collective doesn't do user self-signup. The only way
+// into the community is the /apply funnel + a human-approved invite
+// by the admin team, at which point we provision the Mighty Networks
+// member directly (see /api/admin/deals/:id/invite-to-mighty).
 //
-// Admins who need a Clerk account are created by another admin in the
-// Clerk dashboard, not through this page.
+// EXCEPTION — admin invitations:
+// When an admin invites a teammate from the Clerk dashboard (Users ->
+// Invite), Clerk emails them a link like
+// /sign-up?__clerk_ticket=<ticket>&__clerk_status=sign_up. If that
+// ticket param is present we must render the actual SignUp component,
+// otherwise the teammate can't set their password + finish account
+// creation. Without the ticket, we redirect casual visitors to /apply.
 //
-// We preserve the `ref` / `dub_id` query params so referral attribution
-// still tracks when someone lands here from a partner link.
-export default async function SignUpRedirect({
+// Preserves ref / dub_id query params so referral attribution survives
+// the redirect.
+export default async function SignUpPage({
   searchParams,
 }: {
-  searchParams: Promise<{ ref?: string; dub_id?: string; [key: string]: string | string[] | undefined }>
+  searchParams: Promise<{
+    __clerk_ticket?: string
+    __clerk_status?: string
+    ref?: string
+    dub_id?: string
+    [key: string]: string | string[] | undefined
+  }>
 }) {
   const params = await searchParams
+
+  // Clerk-invited admin. Render the real SignUp UI so they can finish
+  // account creation with the ticket. Clerk handles the rest.
+  if (typeof params.__clerk_ticket === "string" && params.__clerk_ticket.length > 0) {
+    return (
+      <Suspense fallback={null}>
+        <SignUp />
+      </Suspense>
+    )
+  }
+
+  // Not invited — send them through the application funnel.
   const qs = new URLSearchParams()
   if (typeof params.dub_id === "string") qs.set("dub_id", params.dub_id)
   if (typeof params.ref === "string") qs.set("ref", params.ref)

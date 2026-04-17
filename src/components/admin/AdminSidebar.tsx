@@ -97,6 +97,7 @@ const ADMIN_NAV = [
       { label: "Live Funnel", href: "/admin/funnel", icon: FileBarChart },
       { label: "CRM Pipeline", href: "/admin/crm", icon: Kanban },
       { label: "Mighty Invites", href: "/admin/mighty-invites", icon: UserPlus },
+      { label: "Close CRM", href: "/admin/close", icon: DollarSign },
       { label: "Clients", href: "/admin/clients", icon: Users },
       { label: "Partners", href: "/admin/partners", icon: Users },
       { label: "Fulfillment", href: "/admin/fulfillment", icon: ClipboardCheck },

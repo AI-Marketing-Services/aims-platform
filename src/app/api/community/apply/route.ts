@@ -4,9 +4,9 @@ import { db } from "@/lib/db"
 import { formRatelimit, getIp } from "@/lib/ratelimit"
 import { logger } from "@/lib/logger"
 import { notify, notifyHotLead } from "@/lib/notifications"
-// createCloseLead + queueEmailSequence are intentionally unimported — the
-// Close sync is disabled (no workspace) and no drip is queued at apply-submit
-// time. The post-booking drip is queued from the Calendly webhook instead.
+import { createCloseLead } from "@/lib/close"
+// No drip is queued at apply-submit time — the post-booking drip fires
+// from the Calendly webhook instead, once the applicant has booked.
 import { QUESTIONS, calculateScore, getCalendarUrl } from "@/lib/collective-application"
 
 const validValues = QUESTIONS.reduce<Record<string, string[]>>((acc, q) => {
@@ -294,9 +294,38 @@ export async function POST(req: Request) {
       }).catch((err) => logger.error("Failed to notify application", err))
     }
 
-    // Close CRM integration intentionally disabled — no Close workspace
-    // provisioned for this funnel yet. To re-enable, call createCloseLead
-    // from @/lib/close and persist the returned closeLeadId onto Deal.
+    // Push the applicant into Close as an AOC-tagged lead. This runs
+    // async (no await) so apply response stays fast; errors are logged.
+    // createCloseLead auto-stamps BTC Business Line = AOC so Stephen's
+    // shared-workspace automation recognises it as ours.
+    if (process.env.CLOSE_API_KEY) {
+      createCloseLead({
+        contactName: name,
+        contactEmail: email,
+        phone,
+        source: `ai-operator-collective-application (${tier})`,
+        dealId: deal.id,
+      })
+        .then((closeLeadId) => {
+          if (closeLeadId) {
+            db.deal
+              .update({
+                where: { id: deal.id },
+                data: { closeLeadId },
+              })
+              .catch((err) =>
+                logger.error("Failed to persist closeLeadId", err, {
+                  action: "apply_close_persist_id",
+                })
+              )
+          }
+        })
+        .catch((err) =>
+          logger.error("Failed to create Close lead from apply", err, {
+            action: "apply_close_create",
+          })
+        )
+    }
 
     return NextResponse.json({ ok: true, score: normalizedScore, tier }, { status: 201 })
   } catch (err) {
