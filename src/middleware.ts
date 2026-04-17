@@ -26,6 +26,11 @@ const isPublicRoute = createRouteMatcher([
   "/sign-in(.*)",
   "/sign-up(.*)",
   "/api/webhooks(.*)",
+  // Bootstrap endpoint authenticates with a shared secret, not Clerk.
+  // Leaving it out of the public list would force Clerk auth ahead of
+  // the route's own secret check, making it impossible to promote the
+  // first admin on a fresh instance.
+  "/api/admin/bootstrap(.*)",
   "/api/lead-magnets/submit(.*)",
   "/api/lead-magnets/ai-playbook(.*)",
   "/api/referrals/track(.*)",
