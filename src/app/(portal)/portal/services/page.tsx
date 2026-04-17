@@ -18,27 +18,27 @@ import Link from "next/link"
 import { db } from "@/lib/db"
 
 const PILLAR_COLORS: Record<string, string> = {
-  MARKETING: "bg-green-900/20 text-green-400",
-  SALES: "bg-blue-900/20 text-blue-400",
-  OPERATIONS: "bg-orange-900/20 text-orange-400",
-  FINANCE: "bg-purple-900/20 text-purple-400",
+  MARKETING: "bg-primary/5 text-primary/80",
+  SALES: "bg-primary/10 text-primary",
+  OPERATIONS: "bg-primary/15 text-primary",
+  FINANCE: "bg-muted/50 text-muted-foreground",
 }
 
 const statusConfig = {
   ACTIVE: {
     icon: CheckCircle,
     label: "Active",
-    class: "text-green-400 bg-green-900/15 border-green-800",
+    class: "text-emerald-700 bg-emerald-50 border-emerald-200",
   },
   TRIALING: {
     icon: CheckCircle,
     label: "Trial",
-    class: "text-blue-400 bg-blue-900/20 border-blue-800",
+    class: "text-primary bg-primary/5 border-primary/30",
   },
   PENDING_SETUP: {
     icon: Clock,
     label: "Setting Up",
-    class: "text-yellow-400 bg-yellow-900/20 border-yellow-800",
+    class: "text-primary/70 bg-primary/5 border-primary/20",
   },
   PAST_DUE: {
     icon: AlertCircle,
@@ -319,7 +319,7 @@ export default async function PortalServicesPage() {
                             className="flex items-center gap-3 px-4 py-2.5"
                           >
                             {isDone ? (
-                              <CheckCircle className="w-4 h-4 text-green-400 shrink-0" />
+                              <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
                             ) : (
                               <Circle className="w-4 h-4 text-muted-foreground shrink-0" />
                             )}
@@ -335,10 +335,10 @@ export default async function PortalServicesPage() {
                             <span
                               className={`text-xs px-2 py-0.5 rounded-full ${
                                 isDone
-                                  ? "bg-green-900/15 text-green-400"
+                                  ? "bg-emerald-50 text-emerald-700"
                                   : task.status === "in_progress"
-                                  ? "bg-blue-900/20 text-blue-400"
-                                  : "bg-deep text-muted-foreground"
+                                  ? "bg-primary/10 text-primary"
+                                  : "bg-muted/40 text-muted-foreground"
                               }`}
                             >
                               {task.status === "done"

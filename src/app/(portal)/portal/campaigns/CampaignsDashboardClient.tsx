@@ -195,9 +195,9 @@ export function CampaignsDashboardClient() {
             <RefreshCw className={cn("h-3.5 w-3.5", refreshing && "animate-spin")} />
             Refresh
           </button>
-          <div className="flex items-center gap-2 rounded-full border border-green-800 bg-green-900/15 px-3 py-1.5">
-            <span className="h-2 w-2 rounded-full bg-green-400 animate-pulse" />
-            <span className="text-xs font-medium text-green-400">Connected</span>
+          <div className="flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5">
+            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-xs font-medium text-emerald-700">Connected</span>
           </div>
         </div>
       </div>
@@ -219,8 +219,8 @@ export function CampaignsDashboardClient() {
         <div className="rounded-xl border border-border bg-card p-5">
           <div className="flex items-center justify-between mb-3">
             <p className="text-xs text-muted-foreground">People Contacted</p>
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-900/20">
-              <Users className="h-3.5 w-3.5 text-blue-400" />
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/5">
+              <Users className="h-3.5 w-3.5 text-primary/70" />
             </div>
           </div>
           <p className="text-2xl font-bold text-foreground font-mono">
@@ -231,8 +231,8 @@ export function CampaignsDashboardClient() {
         <div className="rounded-xl border border-border bg-card p-5">
           <div className="flex items-center justify-between mb-3">
             <p className="text-xs text-muted-foreground">Reply Rate</p>
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-green-900/15">
-              <MessageSquare className="h-3.5 w-3.5 text-green-400" />
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-50">
+              <MessageSquare className="h-3.5 w-3.5 text-emerald-600" />
             </div>
           </div>
           <p className="text-2xl font-bold text-foreground font-mono">
@@ -246,8 +246,8 @@ export function CampaignsDashboardClient() {
         <div className="rounded-xl border border-border bg-card p-5">
           <div className="flex items-center justify-between mb-3">
             <p className="text-xs text-muted-foreground">Bounce Rate</p>
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-orange-900/20">
-              <TrendingUp className="h-3.5 w-3.5 text-orange-400" />
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10">
+              <TrendingUp className="h-3.5 w-3.5 text-primary" />
             </div>
           </div>
           <p className="text-2xl font-bold text-foreground font-mono">
@@ -311,13 +311,13 @@ export function CampaignsDashboardClient() {
                     <td className="px-4 py-3">
                       <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium ${
                         campaign.status === "active" || campaign.status === "running"
-                          ? "border-green-800 bg-green-900/15 text-green-400"
+                          ? "border-emerald-200 bg-emerald-50 text-emerald-700"
                           : campaign.status === "paused"
-                          ? "border-yellow-800 bg-yellow-900/20 text-yellow-400"
-                          : "border-border bg-deep text-muted-foreground"
+                          ? "border-primary/30 bg-primary/5 text-primary"
+                          : "border-border bg-muted/40 text-muted-foreground"
                       }`}>
                         {campaign.status === "active" || campaign.status === "running" ? (
-                          <span className="h-1.5 w-1.5 rounded-full bg-green-400" />
+                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
                         ) : null}
                         {campaign.status}
                       </span>

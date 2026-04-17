@@ -7,26 +7,26 @@ import { cn } from "@/lib/utils"
 import { Breadcrumbs } from "@/components/shared/Breadcrumbs"
 
 const PILLAR_PILL: Record<string, string> = {
-  MARKETING: "bg-green-900/15 text-green-400 border-green-800",
-  SALES: "bg-blue-900/20 text-blue-400 border-blue-800",
-  OPERATIONS: "bg-orange-900/20 text-orange-400 border-orange-800",
-  FINANCE: "bg-purple-900/20 text-purple-400 border-purple-800",
+  MARKETING: "bg-primary/5 text-primary/80 border-primary/20",
+  SALES: "bg-primary/10 text-primary border-primary/30",
+  OPERATIONS: "bg-primary/15 text-primary border-primary/40",
+  FINANCE: "bg-muted/50 text-muted-foreground border-border",
 }
 
 const STATUS_CONFIG: Record<string, { icon: React.FC<{ className?: string }>; label: string; color: string }> = {
-  done: { icon: CheckCircle2, label: "Complete", color: "text-green-400" },
-  in_progress: { icon: Clock, label: "In Progress", color: "text-yellow-400" },
+  done: { icon: CheckCircle2, label: "Complete", color: "text-emerald-700" },
+  in_progress: { icon: Clock, label: "In Progress", color: "text-primary" },
   blocked: { icon: AlertCircle, label: "Blocked", color: "text-primary" },
   todo: { icon: Circle, label: "Pending", color: "text-muted-foreground" },
 }
 
 const FULFILLMENT_LABELS: Record<string, { label: string; color: string }> = {
-  PENDING_SETUP: { label: "Pending Setup", color: "text-yellow-400 bg-yellow-900/20 border-yellow-800" },
-  IN_PROGRESS: { label: "In Progress", color: "text-blue-400 bg-blue-900/20 border-blue-800" },
-  ACTIVE_MANAGED: { label: "Active", color: "text-green-400 bg-green-900/15 border-green-800" },
+  PENDING_SETUP: { label: "Pending Setup", color: "text-muted-foreground bg-muted/50 border-border" },
+  IN_PROGRESS: { label: "In Progress", color: "text-primary bg-primary/5 border-primary/30" },
+  ACTIVE_MANAGED: { label: "Active", color: "text-emerald-700 bg-emerald-50 border-emerald-200" },
   NEEDS_ATTENTION: { label: "Needs Attention", color: "text-primary bg-primary/10 border-primary/30" },
-  COMPLETED: { label: "Completed", color: "text-green-400 bg-green-900/15 border-green-800" },
-  ON_HOLD: { label: "On Hold", color: "text-muted-foreground bg-deep border-border" },
+  COMPLETED: { label: "Completed", color: "text-emerald-700 bg-emerald-50 border-emerald-200" },
+  ON_HOLD: { label: "On Hold", color: "text-muted-foreground bg-muted/40 border-border" },
 }
 
 export default async function PortalServiceDetailPage({

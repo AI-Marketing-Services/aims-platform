@@ -159,8 +159,8 @@ export default async function ReferralsPage() {
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-bold text-green-400">${c.amount.toFixed(2)}</p>
-                  <p className={`text-[11px] uppercase tracking-wide ${c.status === "PAID" ? "text-green-400" : "text-yellow-400"}`}>
+                  <p className="text-sm font-bold text-emerald-700">${c.amount.toFixed(2)}</p>
+                  <p className={`text-[11px] uppercase tracking-wide ${c.status === "PAID" ? "text-emerald-700" : "text-primary"}`}>
                     {c.status === "PAID" ? "Paid" : "Pending"}
                   </p>
                 </div>
@@ -199,28 +199,28 @@ export default async function ReferralsPage() {
       </div>
 
       {/* Earning projections */}
-      <div className="bg-green-900/15 border border-green-800 rounded-xl p-6 mb-6">
+      <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-6 mb-6">
         <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
-          <TrendingUp className="w-4 h-4 text-green-400" />
+          <TrendingUp className="w-4 h-4 text-emerald-700" />
           Earning Potential
         </h3>
         <div className="space-y-4">
-          <div className="bg-card border border-green-900/40 rounded-lg p-4">
+          <div className="bg-card border border-emerald-200 rounded-lg p-4">
             <p className="text-sm text-muted-foreground mb-1">If 10 referrals sign up at $297/mo:</p>
             <p className="text-sm font-medium text-foreground">
               You earn:{" "}
-              <span className="text-green-400 font-bold">$594/mo for 3 months</span>
+              <span className="text-emerald-700 font-bold">$594/mo for 3 months</span>
               <span className="text-muted-foreground"> = </span>
-              <span className="text-green-400 font-bold">$1,782 total</span>
+              <span className="text-emerald-700 font-bold">$1,782 total</span>
             </p>
           </div>
-          <div className="bg-card border border-green-900/40 rounded-lg p-4">
+          <div className="bg-card border border-emerald-200 rounded-lg p-4">
             <p className="text-sm text-muted-foreground mb-1">If 5 referrals sign up at $497/mo:</p>
             <p className="text-sm font-medium text-foreground">
               You earn:{" "}
-              <span className="text-green-400 font-bold">$497/mo for 3 months</span>
+              <span className="text-emerald-700 font-bold">$497/mo for 3 months</span>
               <span className="text-muted-foreground"> = </span>
-              <span className="text-green-400 font-bold">$1,491 total</span>
+              <span className="text-emerald-700 font-bold">$1,491 total</span>
             </p>
           </div>
         </div>
@@ -231,10 +231,10 @@ export default async function ReferralsPage() {
       {pendingPayout > 0 && (
         <div className="bg-card border border-border rounded-xl p-6 mb-6">
           <div className="flex items-start gap-3">
-            <Clock className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
+            <Clock className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
             <div>
               <h3 className="font-semibold text-foreground mb-1">Pending Payout</h3>
-              <p className="text-2xl font-bold text-yellow-400 mb-2">${pendingPayout.toFixed(2)}</p>
+              <p className="text-2xl font-bold text-primary mb-2">${pendingPayout.toFixed(2)}</p>
               <p className="text-sm text-muted-foreground">
                 Payouts are processed monthly. Contact your account manager to set up or confirm your payout method.
               </p>

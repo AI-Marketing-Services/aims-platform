@@ -25,11 +25,11 @@ import { timeAgo } from "@/lib/utils"
 export const metadata: Metadata = { title: "Dashboard" }
 
 const statusColors: Record<string, string> = {
-  ACTIVE: "bg-green-900/20 text-green-400",
-  TRIALING: "bg-blue-900/20 text-blue-400",
-  PAST_DUE: "bg-orange-900/20 text-orange-400",
-  PAUSED: "bg-deep text-muted-foreground",
-  CANCELLED: "bg-primary/15 text-primary",
+  ACTIVE: "bg-emerald-50 text-emerald-700 border border-emerald-200",
+  TRIALING: "bg-primary/5 text-primary border border-primary/30",
+  PAST_DUE: "bg-primary/10 text-primary border border-primary/30",
+  PAUSED: "bg-muted/40 text-muted-foreground border border-border",
+  CANCELLED: "bg-primary/15 text-primary border border-primary/40",
 }
 
 export default async function PortalDashboard({
@@ -185,7 +185,7 @@ export default async function PortalDashboard({
     <div className="space-y-8">
       {/* Checkout success banner */}
       {checkout === "success" && (
-        <div className="rounded-xl border border-green-800 bg-green-900/15 px-5 py-4 text-sm text-green-400 font-medium">
+        <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-700 font-medium">
           Your subscription is active. Our team will begin setup within 24 hours - check your email for next steps.
         </div>
       )}
@@ -223,16 +223,16 @@ export default async function PortalDashboard({
                 title: "Get Support",
                 description: "Our team is here to help. Open a ticket or chat with us about your needs.",
                 href: "/portal/support",
-                color: "text-blue-400",
-                bg: "bg-blue-900/20",
+                color: "text-primary",
+                bg: "bg-primary/10",
               },
               {
                 icon: BarChart2,
                 title: "Learn More",
                 description: "Take the AI Readiness Quiz to see which services will have the biggest impact.",
                 href: "/tools/ai-readiness-quiz",
-                color: "text-green-400",
-                bg: "bg-green-900/15",
+                color: "text-emerald-700",
+                bg: "bg-emerald-50",
               },
             ].map(({ icon: Icon, title, description, href, color, bg }) => (
               <Link
@@ -290,12 +290,12 @@ export default async function PortalDashboard({
                     <div
                       className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${
                         item.checked
-                          ? "border-green-500 bg-green-900/15"
+                          ? "border-emerald-500 bg-emerald-50"
                           : "border-border bg-muted"
                       }`}
                     >
                       {item.checked && (
-                        <Check className="h-3 w-3 text-green-400" />
+                        <Check className="h-3 w-3 text-emerald-700" />
                       )}
                     </div>
                     <span
@@ -358,7 +358,7 @@ export default async function PortalDashboard({
                 </div>
               </div>
               <p className="text-3xl font-bold font-mono text-foreground">{value}</p>
-              <p className={`mt-1 text-xs font-medium ${active ? "text-green-400" : "text-muted-foreground"}`}>
+              <p className={`mt-1 text-xs font-medium ${active ? "text-emerald-700" : "text-muted-foreground"}`}>
                 {active ? "↑ Active" : "-"}
               </p>
             </div>
@@ -492,31 +492,31 @@ export default async function PortalDashboard({
                 label: "Emails Sent",
                 value: emailCampaignData.totals.emailsSent.toLocaleString(),
                 icon: Mail,
-                color: "text-blue-400",
-                bg: "bg-blue-900/20",
+                color: "text-primary/70",
+                bg: "bg-primary/5",
               },
               {
                 label: "People Contacted",
                 value: emailCampaignData.totals.peopleContacted.toLocaleString(),
                 icon: Users,
-                color: "text-purple-400",
-                bg: "bg-purple-900/20",
+                color: "text-primary",
+                bg: "bg-primary/10",
               },
               {
                 label: "Replies",
                 value: `${emailCampaignData.totals.replies.toLocaleString()}`,
                 sub: `${emailCampaignData.replyRate}% rate`,
                 icon: MessageSquare,
-                color: "text-green-400",
-                bg: "bg-green-900/15",
+                color: "text-emerald-700",
+                bg: "bg-emerald-50",
               },
               {
                 label: "Bounced",
                 value: `${emailCampaignData.totals.bounced.toLocaleString()}`,
                 sub: `${emailCampaignData.bounceRate}% rate`,
                 icon: AlertTriangle,
-                color: "text-orange-400",
-                bg: "bg-orange-900/20",
+                color: "text-primary",
+                bg: "bg-primary/10",
               },
             ].map(({ label, value, sub, icon: Icon, color, bg }) => (
               <div key={label} className="px-5 py-4">
@@ -566,7 +566,7 @@ export default async function PortalDashboard({
                       <span
                         className={`text-xs px-2 py-0.5 rounded-full font-medium ${
                           c.status === "active"
-                            ? "bg-green-900/15 text-green-400 border border-green-800"
+                            ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
                             : "bg-muted text-muted-foreground border border-border"
                         }`}
                       >

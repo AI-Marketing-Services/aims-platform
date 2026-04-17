@@ -29,12 +29,12 @@ const statusConfig = {
   in_progress: {
     icon: Clock,
     label: "In Progress",
-    className: "text-amber-400 bg-amber-900/20 border-amber-800",
+    className: "text-primary/80 bg-primary/5 border-primary/20",
   },
   resolved: {
     icon: CheckCircle,
     label: "Resolved",
-    className: "text-green-400 bg-green-900/15 border-green-800",
+    className: "text-emerald-700 bg-emerald-50 border-emerald-200",
   },
   closed: {
     icon: CheckCircle,
@@ -45,9 +45,9 @@ const statusConfig = {
 
 const priorityConfig: Record<string, string> = {
   low: "text-muted-foreground",
-  normal: "text-blue-400",
-  high: "text-orange-400",
-  urgent: "text-primary",
+  normal: "text-primary/70",
+  high: "text-primary",
+  urgent: "text-primary font-bold",
 }
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -402,7 +402,7 @@ export default function SupportPage() {
 
       {/* Error banner */}
       {submitError && (
-        <div className="flex items-center gap-3 p-4 bg-red-900/15 border border-red-800 rounded-xl text-red-400 text-sm">
+        <div className="flex items-center gap-3 p-4 bg-primary/10 border border-primary/30 rounded-xl text-primary text-sm">
           <AlertCircle className="w-4 h-4 flex-shrink-0" />
           {submitError}
         </div>
@@ -410,7 +410,7 @@ export default function SupportPage() {
 
       {/* Success banner */}
       {submitted && (
-        <div className="flex items-center gap-3 p-4 bg-green-900/15 border border-green-800 rounded-xl text-green-400 text-sm">
+        <div className="flex items-center gap-3 p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-700 text-sm">
           <CheckCircle className="w-4 h-4 flex-shrink-0" />
           Your ticket has been submitted. You will receive a confirmation email shortly. Our team typically responds within 24 hours.
         </div>

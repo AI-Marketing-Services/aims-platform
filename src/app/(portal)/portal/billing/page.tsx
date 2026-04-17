@@ -204,10 +204,10 @@ export default async function BillingPage() {
                   <span
                     className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
                       inv.status === "paid"
-                        ? "bg-green-900/15 text-green-400"
+                        ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
                         : inv.status === "open"
-                          ? "bg-yellow-900/20 text-yellow-400"
-                          : "bg-deep text-muted-foreground"
+                          ? "bg-primary/10 text-primary border border-primary/30"
+                          : "bg-muted/40 text-muted-foreground border border-border"
                     }`}
                   >
                     {inv.status}
@@ -264,7 +264,7 @@ export default async function BillingPage() {
       </div>
 
       {/* Invoice note */}
-      <div className="flex items-start gap-3 p-4 bg-blue-900/20 border border-blue-800 rounded-xl text-sm text-blue-400 mb-6">
+      <div className="flex items-start gap-3 p-4 bg-muted/50 border border-border rounded-xl text-sm text-muted-foreground mb-6">
         <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" />
         <span>
           Your invoice history and receipts are available in the{" "}

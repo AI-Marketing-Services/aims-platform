@@ -49,10 +49,10 @@ const PILLAR_TABS = [
 ]
 
 const PILLAR_PILL: Record<Pillar, string> = {
-  MARKETING: "bg-green-900/15 text-green-400 border-green-800",
-  SALES: "bg-blue-900/20 text-blue-400 border-blue-800",
-  OPERATIONS: "bg-orange-900/20 text-orange-400 border-orange-800",
-  FINANCE: "bg-purple-900/20 text-purple-400 border-purple-800",
+  MARKETING: "bg-primary/5 text-primary/80 border-primary/20",
+  SALES: "bg-primary/10 text-primary border-primary/30",
+  OPERATIONS: "bg-primary/15 text-primary border-primary/40",
+  FINANCE: "bg-muted/50 text-muted-foreground border-border",
 }
 
 const TOOL_MAP: Record<string, { name: string; domain: string }[]> = {
@@ -321,12 +321,12 @@ export function PortalMarketplaceClient({ services, subscribedIds, subscribedSer
 
                   <div className="flex flex-col items-end gap-1 flex-shrink-0">
                     {isSubscribed && (
-                      <span className="bg-green-900/15 text-green-400 border border-green-800 text-xs font-semibold rounded-full px-2 py-0.5">
+                      <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold rounded-full px-2 py-0.5">
                         Active
                       </span>
                     )}
                     {svc.status === "BETA" && !isSubscribed && (
-                      <span className="text-[11px] font-semibold text-amber-400 border border-amber-500/20 bg-amber-500/10 px-2 py-0.5 rounded-full">
+                      <span className="text-[11px] font-semibold text-primary border border-primary/30 bg-primary/10 px-2 py-0.5 rounded-full">
                         Beta
                       </span>
                     )}

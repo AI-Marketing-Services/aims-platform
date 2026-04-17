@@ -46,7 +46,7 @@ export default async function OnboardingPage({
       <div className="max-w-2xl mx-auto">
         <div className="bg-card border border-border rounded-2xl p-10 text-center">
           <div className="flex justify-center mb-4">
-            <CheckCircle className="w-12 h-12 text-green-400" />
+            <CheckCircle className="w-12 h-12 text-emerald-600" />
           </div>
           <h2 className="text-xl font-semibold text-foreground mb-2">
             Onboarding Already Completed
@@ -77,7 +77,7 @@ export default async function OnboardingPage({
       <div className="max-w-2xl mx-auto">
         <div className="bg-card border border-border rounded-2xl p-10 text-center">
           <div className="flex justify-center mb-4">
-            <Info className="w-12 h-12 text-blue-500" />
+            <Info className="w-12 h-12 text-primary" />
           </div>
           <h2 className="text-xl font-semibold text-foreground mb-2">
             Your Service is Being Set Up

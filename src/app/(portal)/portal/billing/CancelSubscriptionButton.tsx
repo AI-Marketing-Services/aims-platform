@@ -40,7 +40,7 @@ export function CancelSubscriptionButton({
 
   if (cancelled) {
     return (
-      <span className="text-sm text-orange-400 font-medium">
+      <span className="text-sm text-primary font-medium">
         Cancels at period end
       </span>
     )
