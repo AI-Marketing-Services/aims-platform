@@ -89,6 +89,24 @@ async function resolveRole(
 }
 
 export default clerkMiddleware(async (auth, req) => {
+  // Apex -> www canonical-host redirect.
+  //
+  // The same rule exists in next.config.ts, but in practice it doesn't
+  // always fire on Vercel — likely because edge-level host handling
+  // rewrites the Host header before Next's redirect matcher sees it.
+  // Doing it here in middleware is 100% reliable because we read the
+  // x-forwarded-host header (which Vercel always sets to the original
+  // hostname the user typed) directly, and the redirect happens before
+  // any Clerk/auth logic runs.
+  const forwardedHost = req.headers.get("x-forwarded-host") ?? req.headers.get("host")
+  if (forwardedHost === "aioperatorcollective.com") {
+    const url = new URL(req.url)
+    url.host = "www.aioperatorcollective.com"
+    url.protocol = "https:"
+    url.port = ""
+    return NextResponse.redirect(url, 308)
+  }
+
   if (isPublicRoute(req)) return NextResponse.next()
 
   const { userId, sessionClaims } = await auth()
