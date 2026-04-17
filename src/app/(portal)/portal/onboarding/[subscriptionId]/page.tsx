@@ -58,7 +58,7 @@ export default async function OnboardingPage({
           </p>
           <Link
             href="/portal/services"
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#C4972A] text-white text-sm font-medium rounded-lg hover:bg-[#A17D22] transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#981B1B] text-white text-sm font-medium rounded-lg hover:bg-[#791515] transition-colors"
           >
             Back to Services
           </Link>
@@ -89,7 +89,7 @@ export default async function OnboardingPage({
           </p>
           <Link
             href="/portal/services"
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#C4972A] text-white text-sm font-medium rounded-lg hover:bg-[#A17D22] transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#981B1B] text-white text-sm font-medium rounded-lg hover:bg-[#791515] transition-colors"
           >
             Back to Services
           </Link>

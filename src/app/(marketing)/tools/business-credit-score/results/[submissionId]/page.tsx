@@ -308,7 +308,7 @@ export default async function BusinessCreditScoreResultsPage({ params }: Props) 
           {/* Subtle glow behind score */}
           <div
             className="absolute top-0 left-1/2 -translate-x-1/2 w-72 h-72 rounded-full opacity-5 blur-3xl pointer-events-none"
-            style={{ background: "#C4972A" }}
+            style={{ background: "#981B1B" }}
           />
 
           <div className="relative text-center">
@@ -500,7 +500,7 @@ export default async function BusinessCreditScoreResultsPage({ params }: Props) 
         <div className="bg-card border border-primary/25 rounded-2xl p-8 sm:p-10 text-center mb-6 relative overflow-hidden">
           <div
             className="absolute inset-0 opacity-5 pointer-events-none"
-            style={{ background: "radial-gradient(ellipse at center, #C4972A, transparent 70%)" }}
+            style={{ background: "radial-gradient(ellipse at center, #981B1B, transparent 70%)" }}
           />
           <div className="relative">
             <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-3">

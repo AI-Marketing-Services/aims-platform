@@ -78,12 +78,12 @@ function EditableField({
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="flex-1 rounded border border-border bg-background px-2 py-1 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-[#C4972A]/50"
+            className="flex-1 rounded border border-border bg-background px-2 py-1 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-[#981B1B]/50"
           />
           <button
             onClick={handleSave}
             disabled={saving}
-            className="flex h-6 w-6 items-center justify-center rounded bg-[#C4972A] text-white hover:bg-[#A17D22] disabled:opacity-50 transition-colors"
+            className="flex h-6 w-6 items-center justify-center rounded bg-[#981B1B] text-white hover:bg-[#791515] disabled:opacity-50 transition-colors"
           >
             <Check className="h-3.5 w-3.5" />
           </button>
@@ -147,7 +147,7 @@ function EditableSelectField({
           value={draft}
           onChange={(e) => { setDraft(e.target.value); handleSave(e.target.value) }}
           disabled={saving}
-          className="rounded border border-border bg-background px-2 py-1 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-[#C4972A]/50 disabled:opacity-50"
+          className="rounded border border-border bg-background px-2 py-1 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-[#981B1B]/50 disabled:opacity-50"
         >
           <option value="">Select...</option>
           {options.map((o) => (
@@ -217,7 +217,7 @@ function NotifToggle({
       </div>
       <button
         onClick={() => onChange(!value)}
-        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${value ? "bg-[#C4972A]" : "bg-muted"}`}
+        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${value ? "bg-[#981B1B]" : "bg-muted"}`}
       >
         <span
           className={`inline-block h-4 w-4 transform rounded-full bg-card shadow transition-transform ${value ? "translate-x-6" : "translate-x-1"}`}
@@ -399,7 +399,7 @@ export function PortalSettingsClient({ clerkUser, dbUser }: Props) {
               href="https://accounts.clerk.dev/user"
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-2 text-sm font-medium text-[#C4972A] hover:underline"
+              className="inline-flex items-center gap-2 text-sm font-medium text-[#981B1B] hover:underline"
             >
               Edit profile in account settings
               <ExternalLink className="h-3.5 w-3.5" />
@@ -480,7 +480,7 @@ export function PortalSettingsClient({ clerkUser, dbUser }: Props) {
             <button
               onClick={saveNotificationPreferences}
               disabled={notifSaving}
-              className="rounded-lg bg-[#C4972A] px-4 py-2 text-sm font-medium text-white hover:bg-[#A17D22] disabled:opacity-50 transition-colors"
+              className="rounded-lg bg-[#981B1B] px-4 py-2 text-sm font-medium text-white hover:bg-[#791515] disabled:opacity-50 transition-colors"
             >
               {notifSaving ? "Saving..." : "Save Preferences"}
             </button>
@@ -532,7 +532,7 @@ export function PortalSettingsClient({ clerkUser, dbUser }: Props) {
                 <span className="text-xs text-muted-foreground">Not connected</span>
                 <a
                   href={`/get-started?integration=${encodeURIComponent(integration.name.toLowerCase().replace(/\s+/g, "-"))}`}
-                  className="text-sm text-[#C4972A] font-medium hover:underline"
+                  className="text-sm text-[#981B1B] font-medium hover:underline"
                 >
                   Connect
                 </a>

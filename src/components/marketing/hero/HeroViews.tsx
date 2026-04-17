@@ -122,12 +122,12 @@ export function DashboardView() {
           <svg viewBox="0 0 260 70" className="w-full" preserveAspectRatio="none">
             <defs>
               <linearGradient id="rg" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#C4972A" stopOpacity="0.18" />
-                <stop offset="100%" stopColor="#C4972A" stopOpacity="0.01" />
+                <stop offset="0%" stopColor="#981B1B" stopOpacity="0.18" />
+                <stop offset="100%" stopColor="#981B1B" stopOpacity="0.01" />
               </linearGradient>
             </defs>
             <motion.path d="M0,62 C40,52 80,34 120,29 C160,24 200,32 235,22 L260,17 L260,70 L0,70 Z" fill="url(#rg)" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.9 }} />
-            <motion.path d="M0,62 C40,52 80,34 120,29 C160,24 200,32 235,22 L260,17" fill="none" stroke="#C4972A" strokeWidth="1.5" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 0.9, duration: 1.2 }} />
+            <motion.path d="M0,62 C40,52 80,34 120,29 C160,24 200,32 235,22 L260,17" fill="none" stroke="#981B1B" strokeWidth="1.5" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 0.9, duration: 1.2 }} />
             {["Q2", "Q3", "Q4", "Q1-25", "Q2-25"].map((l, i) => (
               <text key={l} x={i * 55 + 8} y="69" fontSize="6.5" fill="#9CA3AF">{l}</text>
             ))}
@@ -148,7 +148,7 @@ export function DashboardView() {
                   <p className="text-[10px] font-semibold text-foreground">Revenue Breakdown</p>
                   <button onClick={() => setShowBreakdown(false)}><X className="h-3 w-3 text-muted-foreground" /></button>
                 </div>
-                {[["#C4972A", "Closed Won", "$1.2M"], ["#8B6914", "Email", "$950K"], ["#E8C46A", "LinkedIn", "$950K"], ["#F87171", "Partner", "$450K"]].map(([c, l, v]) => (
+                {[["#981B1B", "Closed Won", "$1.2M"], ["#8B6914", "Email", "$950K"], ["#C42424", "LinkedIn", "$950K"], ["#F87171", "Partner", "$450K"]].map(([c, l, v]) => (
                   <div key={l} className="flex items-center gap-1.5 mb-1">
                     <span className="h-2 w-2 rounded-full flex-shrink-0" style={{ background: c }} />
                     <span className="text-[9px] text-muted-foreground flex-1">{l}</span>
@@ -622,14 +622,14 @@ export function ReportsView() {
             <svg viewBox="0 0 280 90" className="flex-1 h-[90px]" preserveAspectRatio="none">
               <defs>
                 <linearGradient id="rg2" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#C4972A" stopOpacity="0.2" />
-                  <stop offset="100%" stopColor="#C4972A" stopOpacity="0" />
+                  <stop offset="0%" stopColor="#981B1B" stopOpacity="0.2" />
+                  <stop offset="100%" stopColor="#981B1B" stopOpacity="0" />
                 </linearGradient>
               </defs>
               <line x1="0" y1="30" x2="280" y2="30" stroke="rgba(255,255,255,0.07)" strokeWidth="0.5" strokeDasharray="4 4" />
               <line x1="0" y1="60" x2="280" y2="60" stroke="rgba(255,255,255,0.07)" strokeWidth="0.5" strokeDasharray="4 4" />
               <motion.path d="M0,75 C30,65 60,50 90,42 C120,34 150,38 180,28 C210,20 240,15 280,10 L280,90 L0,90 Z" fill="url(#rg2)" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }} />
-              <motion.path d="M0,75 C30,65 60,50 90,42 C120,34 150,38 180,28 C210,20 240,15 280,10" fill="none" stroke="#C4972A" strokeWidth="2" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 0.4, duration: 1.2 }} />
+              <motion.path d="M0,75 C30,65 60,50 90,42 C120,34 150,38 180,28 C210,20 240,15 280,10" fill="none" stroke="#981B1B" strokeWidth="2" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 0.4, duration: 1.2 }} />
               {["Jan", "Feb", "Mar", "Apr", "May", "Jun"].map((m, i) => (
                 <text key={m} x={i * 50 + 10} y="89" fontSize="7" fill="#9CA3AF">{m}</text>
               ))}
@@ -764,7 +764,7 @@ export function SettingsView() {
       <div className="rounded-sm border border-border px-3 py-2.5 mb-3">
         <p className="text-[10px] font-semibold text-foreground mb-1.5">Team Members</p>
         <div className="flex -space-x-2">
-          {["#C4972A", "#8B6914", "#7F1D1D", "#A17D22"].map((c, i) => (
+          {["#981B1B", "#8B6914", "#7F1D1D", "#791515"].map((c, i) => (
             <div key={i} className="h-6 w-6 rounded-full border-2 border-card flex items-center justify-center text-[8px] font-bold text-white" style={{ background: c }}>
               {["A", "B", "C", "D"][i]}
             </div>

@@ -47,7 +47,7 @@ export function SubmissionsByTypeChart({
   const chartData = data.map((d) => ({
     name: TYPE_SHORT[d.type] ?? d.type,
     count: d.count,
-    fill: TYPE_COLOR[d.type] ?? "#C4972A",
+    fill: TYPE_COLOR[d.type] ?? "#981B1B",
   }))
 
   return (
@@ -72,9 +72,9 @@ export function SubmissionsByTypeChart({
           contentStyle={{
             fontSize: 12,
             borderRadius: 8,
-            background: "#141923",
+            background: "#FFFFFF",
             border: "1px solid hsl(220 13% 20%)",
-            color: "#F0EBE0",
+            color: "#1A1A1A",
           }}
           formatter={(v: number) => [v, "Submissions"]}
         />
@@ -101,8 +101,8 @@ export function SubmissionsOverTimeChart({
       >
         <defs>
           <linearGradient id="submissionGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="#C4972A" stopOpacity={0.3} />
-            <stop offset="95%" stopColor="#C4972A" stopOpacity={0} />
+            <stop offset="5%" stopColor="#981B1B" stopOpacity={0.3} />
+            <stop offset="95%" stopColor="#981B1B" stopOpacity={0} />
           </linearGradient>
         </defs>
         <CartesianGrid
@@ -127,16 +127,16 @@ export function SubmissionsOverTimeChart({
           contentStyle={{
             fontSize: 12,
             borderRadius: 8,
-            background: "#141923",
+            background: "#FFFFFF",
             border: "1px solid hsl(220 13% 20%)",
-            color: "#F0EBE0",
+            color: "#1A1A1A",
           }}
           formatter={(v: number) => [v, "Submissions"]}
         />
         <Area
           type="monotone"
           dataKey="count"
-          stroke="#C4972A"
+          stroke="#981B1B"
           strokeWidth={2}
           fill="url(#submissionGradient)"
           dot={false}
@@ -173,16 +173,16 @@ export function VendorComparisonChart({
           contentStyle={{
             fontSize: 12,
             borderRadius: 8,
-            background: "#141923",
+            background: "#FFFFFF",
             border: "1px solid hsl(220 13% 20%)",
-            color: "#F0EBE0",
+            color: "#1A1A1A",
           }}
           formatter={(v: number, name: string) => [
             `$${v.toLocaleString()}/mo`,
             name === "current" ? "Current Cost" : "After Replacement",
           ]}
         />
-        <Bar dataKey="current" fill="#C4972A" radius={[4, 4, 0, 0]} maxBarSize={24} name="current" />
+        <Bar dataKey="current" fill="#981B1B" radius={[4, 4, 0, 0]} maxBarSize={24} name="current" />
         <Bar dataKey="replacement" fill="#22C55E" radius={[4, 4, 0, 0]} maxBarSize={24} name="replacement" />
       </BarChart>
     </ResponsiveContainer>

@@ -42,8 +42,8 @@ export function LogoTicker() {
         </p>
         <div className="relative overflow-hidden">
           {/* Fade edges */}
-          <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-24 bg-gradient-to-r from-[#08090D] to-transparent" />
-          <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-24 bg-gradient-to-l from-[#08090D] to-transparent" />
+          <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-24 bg-gradient-to-r from-[#F5F5F5] to-transparent" />
+          <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-24 bg-gradient-to-l from-[#F5F5F5] to-transparent" />
 
           {/* Ticker track - animates translateX(0) → translateX(-33.333%) seamlessly */}
           <div className="flex will-change-transform animate-ticker-seamless items-center">

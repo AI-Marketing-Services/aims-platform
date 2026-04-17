@@ -96,19 +96,19 @@ export function OnboardingChatWidget() {
       )}
 
       {open && (
-        <div className="fixed bottom-6 right-6 z-50 w-[calc(100vw-2rem)] sm:w-[420px] h-[520px] rounded-2xl border border-primary/20 bg-[#141923] shadow-2xl shadow-black/40 flex flex-col overflow-hidden">
+        <div className="fixed bottom-6 right-6 z-50 w-[calc(100vw-2rem)] sm:w-[420px] h-[520px] rounded-2xl border border-primary/20 bg-[#FFFFFF] shadow-2xl shadow-black/40 flex flex-col overflow-hidden">
           <div className="flex items-center justify-between px-4 py-3 border-b border-primary/20 bg-[#0D0F14] flex-shrink-0">
             <div className="flex items-center gap-2">
               <div className="h-7 w-7 rounded-full bg-primary/20 flex items-center justify-center">
                 <Bot className="h-4 w-4 text-primary" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-[#F0EBE0]">Setup Assistant</p>
-                <p className="text-[10px] text-[#F0EBE0]/40">AIMS CRM Onboarding Help</p>
+                <p className="text-sm font-semibold text-[#1A1A1A]">Setup Assistant</p>
+                <p className="text-[10px] text-[#1A1A1A]/40">AIMS CRM Onboarding Help</p>
               </div>
             </div>
             <button onClick={() => setOpen(false)} className="p-1 rounded hover:bg-white/5 transition-colors">
-              <X className="h-4 w-4 text-[#F0EBE0]/40" />
+              <X className="h-4 w-4 text-[#1A1A1A]/40" />
             </button>
           </div>
 
@@ -118,10 +118,10 @@ export function OnboardingChatWidget() {
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 border border-primary/20 mb-4">
                 <Mail className="h-5 w-5 text-primary" />
               </div>
-              <h3 className="text-base font-semibold text-[#F0EBE0] mb-1 text-center">
+              <h3 className="text-base font-semibold text-[#1A1A1A] mb-1 text-center">
                 Chat with our setup assistant
               </h3>
-              <p className="text-sm text-[#F0EBE0]/50 mb-6 text-center max-w-[280px]">
+              <p className="text-sm text-[#1A1A1A]/50 mb-6 text-center max-w-[280px]">
                 Enter your email to get help with your CRM setup, domain connection, and automations.
               </p>
               <form onSubmit={handleEmailSubmit} className="w-full max-w-[300px] space-y-3">
@@ -134,7 +134,7 @@ export function OnboardingChatWidget() {
                       if (emailError) setEmailError("")
                     }}
                     placeholder="you@company.com"
-                    className="w-full rounded-lg border border-primary/20 bg-[#0D0F14] px-3 py-2.5 text-sm text-[#F0EBE0] placeholder:text-[#F0EBE0]/30 focus:outline-none focus:ring-1 focus:ring-primary/50"
+                    className="w-full rounded-lg border border-primary/20 bg-[#0D0F14] px-3 py-2.5 text-sm text-[#1A1A1A] placeholder:text-[#1A1A1A]/30 focus:outline-none focus:ring-1 focus:ring-primary/50"
                     autoFocus
                   />
                   {emailError && (
@@ -169,18 +169,18 @@ export function OnboardingChatWidget() {
                       <div className={`max-w-[82%] rounded-xl px-3 py-2 text-sm leading-relaxed ${
                         m.role === "user"
                           ? "bg-primary text-white rounded-br-sm"
-                          : "bg-white/5 text-[#F0EBE0]/90 rounded-bl-sm"
+                          : "bg-white/5 text-[#1A1A1A]/90 rounded-bl-sm"
                       }`}>
                         {m.role === "user" ? text : (
                           <ReactMarkdown
                             components={{
                               p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
-                              strong: ({ children }) => <strong className="font-semibold text-[#F0EBE0]">{children}</strong>,
+                              strong: ({ children }) => <strong className="font-semibold text-[#1A1A1A]">{children}</strong>,
                               ol: ({ children }) => <ol className="list-decimal list-outside ml-4 space-y-1 mb-2">{children}</ol>,
                               ul: ({ children }) => <ul className="list-disc list-outside ml-4 space-y-1 mb-2">{children}</ul>,
                               li: ({ children }) => <li className="leading-relaxed">{children}</li>,
-                              code: ({ children }) => <code className="bg-black/30 rounded px-1 py-0.5 text-xs font-mono text-[#C4972A]">{children}</code>,
-                              a: ({ href, children }) => <a href={href} target="_blank" rel="noopener noreferrer" className="text-[#C4972A] underline underline-offset-2 hover:text-[#C4972A]/80">{children}</a>,
+                              code: ({ children }) => <code className="bg-black/30 rounded px-1 py-0.5 text-xs font-mono text-[#981B1B]">{children}</code>,
+                              a: ({ href, children }) => <a href={href} target="_blank" rel="noopener noreferrer" className="text-[#981B1B] underline underline-offset-2 hover:text-[#981B1B]/80">{children}</a>,
                             }}
                           >
                             {text}
@@ -202,8 +202,8 @@ export function OnboardingChatWidget() {
                 )}
                 {error && (
                   <div className="flex items-center justify-center gap-2 py-2">
-                    <AlertCircle className="h-3.5 w-3.5 text-[#F0EBE0]/60" />
-                    <p className="text-xs text-[#F0EBE0]/60">Our assistant is temporarily unavailable. Please try again later.</p>
+                    <AlertCircle className="h-3.5 w-3.5 text-[#1A1A1A]/60" />
+                    <p className="text-xs text-[#1A1A1A]/60">Our assistant is temporarily unavailable. Please try again later.</p>
                   </div>
                 )}
                 <div ref={messagesEndRef} />
@@ -215,7 +215,7 @@ export function OnboardingChatWidget() {
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     placeholder="Ask a setup question..."
-                    className="flex-1 rounded-lg border border-primary/20 bg-[#141923] px-3 py-2 text-sm text-[#F0EBE0] placeholder:text-[#F0EBE0]/30 focus:outline-none focus:ring-1 focus:ring-primary/50"
+                    className="flex-1 rounded-lg border border-primary/20 bg-[#FFFFFF] px-3 py-2 text-sm text-[#1A1A1A] placeholder:text-[#1A1A1A]/30 focus:outline-none focus:ring-1 focus:ring-primary/50"
                     disabled={isStreaming}
                     maxLength={1500}
                   />

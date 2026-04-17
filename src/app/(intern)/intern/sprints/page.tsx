@@ -60,9 +60,9 @@ export default async function InternSprintsPage() {
 
       {/* Active sprint */}
       {activeGoal ? (
-        <div className="rounded-xl border border-[#C4972A]/20 bg-[#C4972A]/5 p-6">
+        <div className="rounded-xl border border-[#981B1B]/20 bg-[#981B1B]/5 p-6">
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs font-semibold text-[#C4972A] uppercase tracking-wider">Active Sprint</span>
+            <span className="text-xs font-semibold text-[#981B1B] uppercase tracking-wider">Active Sprint</span>
           </div>
           <h2 className="text-lg font-bold text-foreground mb-1">{activeGoal.title}</h2>
           <div className="text-xs text-muted-foreground mb-4">
@@ -79,7 +79,7 @@ export default async function InternSprintsPage() {
                   <span className="font-mono text-foreground">{pct}%</span>
                 </div>
                 <div className="h-2 w-full bg-muted rounded-full overflow-hidden mb-5">
-                  <div className="h-full rounded-full bg-[#C4972A] transition-all" style={{ width: `${pct}%` }} />
+                  <div className="h-full rounded-full bg-[#981B1B] transition-all" style={{ width: `${pct}%` }} />
                 </div>
               </>
             )

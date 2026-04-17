@@ -207,7 +207,7 @@ function InlineField({
             if (e.key === "Escape") setDraft(value ?? "")
           }}
           autoFocus
-          className="flex-1 bg-card border border-border rounded px-2 py-0.5 text-sm text-foreground focus:outline-none focus:border-[#C4972A] focus:ring-1 focus:ring-[#C4972A]/20"
+          className="flex-1 bg-card border border-border rounded px-2 py-0.5 text-sm text-foreground focus:outline-none focus:border-[#981B1B] focus:ring-1 focus:ring-[#981B1B]/20"
         />
       </div>
     )
@@ -448,7 +448,7 @@ export function DealDetailClient({
       <div className="bg-card border border-border rounded-xl p-6">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div className="flex items-start gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#C4972A]/10 text-[#C4972A] font-bold text-lg flex-shrink-0">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#981B1B]/10 text-[#981B1B] font-bold text-lg flex-shrink-0">
               {contactName.charAt(0).toUpperCase()}
             </div>
             <div>
@@ -482,7 +482,7 @@ export function DealDetailClient({
               className={cn(
                 "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors",
                 isEditingContact
-                  ? "border-[#C4972A] text-[#C4972A] bg-primary/10"
+                  ? "border-[#981B1B] text-[#981B1B] bg-primary/10"
                   : "border-border text-muted-foreground hover:text-foreground hover:bg-surface"
               )}
             >
@@ -542,7 +542,7 @@ export function DealDetailClient({
           <div className="bg-card border border-border rounded-xl p-5">
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-sm font-semibold text-foreground">Service Arms</h2>
-              <button className="flex items-center gap-1.5 text-xs text-[#C4972A] hover:text-[#A17D22] font-medium transition-colors">
+              <button className="flex items-center gap-1.5 text-xs text-[#981B1B] hover:text-[#791515] font-medium transition-colors">
                 <Plus className="w-3.5 h-3.5" />
                 Add Service
               </button>
@@ -597,7 +597,7 @@ export function DealDetailClient({
               </h2>
               <button
                 onClick={() => setAddActivityOpen(!addActivityOpen)}
-                className="flex items-center gap-1.5 text-xs text-[#C4972A] hover:text-[#A17D22] font-medium transition-colors"
+                className="flex items-center gap-1.5 text-xs text-[#981B1B] hover:text-[#791515] font-medium transition-colors"
               >
                 <Plus className="w-3.5 h-3.5" />
                 Add Activity
@@ -609,7 +609,7 @@ export function DealDetailClient({
                 <select
                   value={newActivityType}
                   onChange={(e) => setNewActivityType(e.target.value as ActivityType)}
-                  className="w-full bg-card border border-border rounded px-2 py-1.5 text-sm text-foreground focus:outline-none focus:border-[#C4972A]"
+                  className="w-full bg-card border border-border rounded px-2 py-1.5 text-sm text-foreground focus:outline-none focus:border-[#981B1B]"
                 >
                   {ACTIVITY_TYPE_OPTIONS.map((opt) => (
                     <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -621,13 +621,13 @@ export function DealDetailClient({
                   onChange={(e) => setNewActivityDetail(e.target.value)}
                   placeholder="Activity detail..."
                   onKeyDown={(e) => e.key === "Enter" && handleAddActivity()}
-                  className="w-full bg-card border border-border rounded px-2 py-1.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-[#C4972A]"
+                  className="w-full bg-card border border-border rounded px-2 py-1.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-[#981B1B]"
                 />
                 <div className="flex gap-2">
                   <button
                     onClick={handleAddActivity}
                     disabled={!newActivityDetail.trim()}
-                    className="px-3 py-1.5 bg-[#C4972A] text-white text-xs font-medium rounded-lg hover:bg-[#A17D22] disabled:opacity-40 transition-colors"
+                    className="px-3 py-1.5 bg-[#981B1B] text-white text-xs font-medium rounded-lg hover:bg-[#791515] disabled:opacity-40 transition-colors"
                   >
                     Add
                   </button>
@@ -682,7 +682,7 @@ export function DealDetailClient({
                 onChange={(e) => setNoteText(e.target.value)}
                 placeholder="Add a note..."
                 rows={3}
-                className="w-full px-3 py-2.5 bg-deep border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-[#C4972A]/20 focus:border-[#C4972A]"
+                className="w-full px-3 py-2.5 bg-deep border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-[#981B1B]/20 focus:border-[#981B1B]"
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleAddNote()
                 }}
@@ -692,7 +692,7 @@ export function DealDetailClient({
                 <button
                   onClick={handleAddNote}
                   disabled={!noteText.trim()}
-                  className="flex items-center gap-2 px-4 py-1.5 bg-[#C4972A] text-white text-sm font-medium rounded-lg hover:bg-[#A17D22] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                  className="flex items-center gap-2 px-4 py-1.5 bg-[#981B1B] text-white text-sm font-medium rounded-lg hover:bg-[#791515] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                 >
                   <Send className="h-3.5 w-3.5" />
                   Save Note
@@ -766,7 +766,7 @@ export function DealDetailClient({
                   setPriority(e.target.value)
                   await patchDeal({ priority: e.target.value })
                 }}
-                className="w-full bg-card border border-border rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-[#C4972A]"
+                className="w-full bg-card border border-border rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-[#981B1B]"
               >
                 {PRIORITY_OPTIONS.map((p) => (
                   <option key={p} value={p}>{p[0] + p.slice(1).toLowerCase()}</option>
@@ -783,7 +783,7 @@ export function DealDetailClient({
                 onChange={(e) => setAssignedTo(e.target.value)}
                 onBlur={async () => await patchDeal({ assignedTo: assignedTo || null })}
                 placeholder="Enter assignee..."
-                className="w-full bg-card border border-border rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-[#C4972A]"
+                className="w-full bg-card border border-border rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-[#981B1B]"
               />
             </div>
 
@@ -862,7 +862,7 @@ export function DealDetailClient({
                   href={submissionResultsUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-1.5 mb-3 text-xs font-semibold text-[#C4972A] hover:underline"
+                  className="inline-flex items-center gap-1.5 mb-3 text-xs font-semibold text-[#981B1B] hover:underline"
                 >
                   View full lead magnet report →
                 </a>

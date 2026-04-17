@@ -80,7 +80,7 @@ export function HowItWorks() {
         {/* Timeline bar */}
         <div className="mt-10 flex flex-col sm:flex-row items-stretch gap-0 overflow-hidden rounded-sm border border-border bg-card">
           {[
-            { week: "Week 1-3", label: "Discovery & Diagnostic", color: "bg-[#E8C46A]" },
+            { week: "Week 1-3", label: "Discovery & Diagnostic", color: "bg-[#C42424]" },
             { week: "Week 3-8", label: "Deploy & Integrate", color: "bg-primary" },
             { week: "Week 8+", label: "Measure & Expand", color: "bg-[#8B6914]" },
           ].map((phase) => (

@@ -13,7 +13,7 @@ export default function ExecutiveOpsAuditResultsLoading() {
         </div>
 
         {/* Executive Summary Banner */}
-        <div className="bg-card border border-border rounded-2xl p-8 mb-6 border-l-4 border-l-[#C4972A]">
+        <div className="bg-card border border-border rounded-2xl p-8 mb-6 border-l-4 border-l-[#981B1B]">
           <div className="h-3 w-56 bg-surface rounded mb-4" />
           <div className="h-6 w-72 bg-surface rounded mb-2" />
           <div className="h-4 w-40 bg-surface rounded mb-8" />

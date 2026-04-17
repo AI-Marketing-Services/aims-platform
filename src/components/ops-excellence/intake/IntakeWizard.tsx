@@ -362,9 +362,9 @@ export default function IntakeWizard() {
                   <div
                     className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold transition-colors ${
                       isCompleted
-                        ? "bg-[#C4972A] text-white"
+                        ? "bg-[#981B1B] text-white"
                         : isActive
-                          ? "bg-[#C4972A]/15 text-[#C4972A] ring-2 ring-[#C4972A]/30"
+                          ? "bg-[#981B1B]/15 text-[#981B1B] ring-2 ring-[#981B1B]/30"
                           : "bg-panel text-muted-foreground"
                     }`}
                   >
@@ -377,7 +377,7 @@ export default function IntakeWizard() {
                   <span
                     className={`mt-1.5 text-[10px] font-medium text-center hidden sm:block ${
                       isActive
-                        ? "text-[#C4972A]"
+                        ? "text-[#981B1B]"
                         : isCompleted
                           ? "text-foreground"
                           : "text-muted-foreground"
@@ -391,7 +391,7 @@ export default function IntakeWizard() {
                   <div className="flex-1 mx-2 sm:mx-3">
                     <div
                       className={`h-0.5 rounded-full transition-colors ${
-                        idx < currentStep ? "bg-[#C4972A]" : "bg-border"
+                        idx < currentStep ? "bg-[#981B1B]" : "bg-border"
                       }`}
                     />
                   </div>
@@ -485,7 +485,7 @@ export default function IntakeWizard() {
             type="button"
             onClick={handleSubmit}
             disabled={submitting}
-            className="flex items-center gap-2 rounded-lg bg-[#C4972A] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#A17D22] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 rounded-lg bg-[#981B1B] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#791515] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {submitting ? (
               <>
@@ -503,7 +503,7 @@ export default function IntakeWizard() {
           <button
             type="button"
             onClick={goNext}
-            className="flex items-center gap-1.5 rounded-lg bg-[#C4972A] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#A17D22] transition-colors"
+            className="flex items-center gap-1.5 rounded-lg bg-[#981B1B] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#791515] transition-colors"
           >
             Next
             <ChevronRight className="h-4 w-4" />

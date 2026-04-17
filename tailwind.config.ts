@@ -57,28 +57,33 @@ const config = {
           "4": "hsl(var(--chart-4))",
           "5": "hsl(var(--chart-5))",
         },
-        // AIMS custom
-        aims: {
-          gold: "#C4972A",
-          "gold-dark": "#A17D22",
-          "gold-light": "#E8C46A",
-        },
-        ink: "#08090D",
-        deep: "#0E1219",
-        surface: "#141923",
-        panel: "#1A2030",
-        cream: "#F0EBE0",
-        "gold-dim": "#6B5A2E",
-        line: "rgba(255,255,255,0.07)",
-        "line-hover": "rgba(255,255,255,0.14)",
-        // Crimson rebrand (landing page)
+        // AI Operator Collective palette — the (landing) pages already
+        // reference these via hex; the aliases below mean the same values
+        // now back every `bg-ink` / `text-cream` / `bg-surface` use in
+        // the portal/admin/intern/reseller trees so the whole product
+        // matches the landing aesthetic. Old "aims gold" aliases point
+        // at crimson so any legacy classname keeps rendering a brand
+        // colour rather than a raw yellow.
         crimson: {
           DEFAULT: "#981B1B",
           dark: "#791515",
           light: "#C42424",
         },
-        "dark-deep": "#121212",
-        "dark-surface": "#2E2E2E",
+        aims: {
+          gold: "#981B1B",
+          "gold-dark": "#791515",
+          "gold-light": "#C42424",
+        },
+        ink: "#1A1A1A",
+        deep: "#FFFFFF",
+        surface: "#FFFFFF",
+        panel: "#F5F5F5",
+        cream: "#F5F5F5",
+        "gold-dim": "#981B1B",
+        line: "rgba(0,0,0,0.08)",
+        "line-hover": "rgba(0,0,0,0.14)",
+        "dark-deep": "#FFFFFF",
+        "dark-surface": "#F5F5F5",
       },
       borderRadius: {
         lg: "var(--radius)",

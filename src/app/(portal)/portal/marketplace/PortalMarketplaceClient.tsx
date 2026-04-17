@@ -255,7 +255,7 @@ export function PortalMarketplaceClient({ services, subscribedIds, subscribedSer
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search services..."
-            className="w-full pl-9 pr-4 py-2 bg-card border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C4972A]/30 focus:border-[#C4972A]"
+            className="w-full pl-9 pr-4 py-2 bg-card border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#981B1B]/30 focus:border-[#981B1B]"
           />
         </div>
         <div className="flex flex-wrap gap-1.5">
@@ -266,7 +266,7 @@ export function PortalMarketplaceClient({ services, subscribedIds, subscribedSer
               className={cn(
                 "px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors",
                 pillar === tab.value
-                  ? "bg-[#C4972A] text-white border-[#C4972A]"
+                  ? "bg-[#981B1B] text-white border-[#981B1B]"
                   : "bg-card text-muted-foreground border-border hover:text-foreground hover:border-border/80"
               )}
             >
@@ -308,7 +308,7 @@ export function PortalMarketplaceClient({ services, subscribedIds, subscribedSer
                 <div className="flex items-start justify-between mb-3 gap-2">
                   <div className="flex flex-col gap-1">
                     {isRecommended && (
-                      <span className="self-start bg-primary/10 text-[#C4972A] border border-primary/30 text-[10px] font-bold uppercase tracking-wider rounded-full px-2 py-0.5">
+                      <span className="self-start bg-primary/10 text-[#981B1B] border border-primary/30 text-[10px] font-bold uppercase tracking-wider rounded-full px-2 py-0.5">
                         Recommended for you
                       </span>
                     )}
@@ -363,7 +363,7 @@ export function PortalMarketplaceClient({ services, subscribedIds, subscribedSer
                 ) : custom ? (
                   <button
                     onClick={() => router.push(`/get-started?service=${svc.slug}`)}
-                    className="w-full flex items-center justify-center gap-2 py-2.5 bg-[#C4972A] text-white text-xs font-semibold rounded-lg hover:bg-[#A17D22] transition-colors"
+                    className="w-full flex items-center justify-center gap-2 py-2.5 bg-[#981B1B] text-white text-xs font-semibold rounded-lg hover:bg-[#791515] transition-colors"
                   >
                     Request Quote
                     <ArrowRight className="h-3.5 w-3.5" />
@@ -372,7 +372,7 @@ export function PortalMarketplaceClient({ services, subscribedIds, subscribedSer
                   <button
                     onClick={() => handleCheckout(svc)}
                     disabled={checkingOut === svc.id}
-                    className="w-full flex items-center justify-center gap-2 py-2.5 bg-[#C4972A] text-white text-xs font-semibold rounded-lg hover:bg-[#A17D22] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full flex items-center justify-center gap-2 py-2.5 bg-[#981B1B] text-white text-xs font-semibold rounded-lg hover:bg-[#791515] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {checkingOut === svc.id ? "Loading..." : "Add to Plan"}
                     {checkingOut !== svc.id && <ArrowRight className="h-3.5 w-3.5" />}
@@ -390,7 +390,7 @@ export function PortalMarketplaceClient({ services, subscribedIds, subscribedSer
           <p className="text-muted-foreground text-sm">No services match your search.</p>
           <button
             onClick={() => { setPillar("ALL"); setSearch("") }}
-            className="mt-3 text-sm font-medium text-[#C4972A] hover:underline"
+            className="mt-3 text-sm font-medium text-[#981B1B] hover:underline"
           >
             Clear filters
           </button>

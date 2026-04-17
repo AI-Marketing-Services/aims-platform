@@ -273,7 +273,7 @@ function ProgressBar({ phase }: { phase: Phase }) {
   return (
     <div className="w-full h-0.5 bg-white/10 mb-8">
       <motion.div
-        className="h-full bg-[#C4972A]"
+        className="h-full bg-[#981B1B]"
         initial={{ width: 0 }}
         animate={{ width: `${pct}%` }}
         transition={{ duration: 0.4, ease: "easeOut" }}
@@ -447,22 +447,22 @@ export default function ExecutiveOpsAuditClient() {
   const scores = data.scores ?? computeScores(data)
 
   return (
-    <div className="min-h-screen bg-[#08090D] text-[#F0EBE0]">
+    <div className="min-h-screen bg-[#F5F5F5] text-[#1A1A1A]">
       <div className="max-w-3xl mx-auto px-4 py-12 md:py-20">
         <AnimatePresence mode="wait">
           {/* ── INTRO ─────────────────────────────────────────────────────── */}
           {phase === "intro" && (
             <motion.div key="intro" {...fadeUp} className="text-center">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#C4972A]/40 bg-[#C4972A]/10 text-[#C4972A] text-xs font-mono uppercase tracking-widest mb-8">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#981B1B]/40 bg-[#981B1B]/10 text-[#981B1B] text-xs font-mono uppercase tracking-widest mb-8">
                 For Executives &amp; Operators
               </div>
 
-              <h1 className="font-serif text-4xl md:text-6xl font-light text-[#F0EBE0] mb-6 leading-tight">
+              <h1 className="font-serif text-4xl md:text-6xl font-light text-[#1A1A1A] mb-6 leading-tight">
                 Map Every AI Bottleneck{" "}
-                <span className="text-[#C4972A]">in Your Business</span>
+                <span className="text-[#981B1B]">in Your Business</span>
               </h1>
 
-              <p className="text-lg text-[#F0EBE0]/70 mb-12 max-w-2xl mx-auto leading-relaxed">
+              <p className="text-lg text-[#1A1A1A]/70 mb-12 max-w-2xl mx-auto leading-relaxed">
                 Answer questions about your departments, spend, and workflows. Get a custom
                 executive scorecard showing your cost of inefficiency and exactly where AI
                 automation would generate the highest ROI.
@@ -489,23 +489,23 @@ export default function ExecutiveOpsAuditClient() {
                 ].map((item) => (
                   <div
                     key={item.label}
-                    className="flex items-start gap-3 p-4 rounded-lg bg-[#141923] border border-white/8 text-left"
+                    className="flex items-start gap-3 p-4 rounded-lg bg-[#FFFFFF] border border-white/8 text-left"
                   >
-                    <item.icon className="w-5 h-5 text-[#C4972A] mt-0.5 shrink-0" />
-                    <span className="text-sm text-[#F0EBE0]/80">{item.label}</span>
+                    <item.icon className="w-5 h-5 text-[#981B1B] mt-0.5 shrink-0" />
+                    <span className="text-sm text-[#1A1A1A]/80">{item.label}</span>
                   </div>
                 ))}
               </div>
 
               <button
                 onClick={() => goTo("snapshot")}
-                className="inline-flex items-center gap-2 px-8 py-4 bg-[#C4972A] hover:bg-[#C4972A]/90 text-[#08090D] font-semibold rounded-lg transition-all duration-200 text-base group"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-[#981B1B] hover:bg-[#981B1B]/90 text-[#F5F5F5] font-semibold rounded-lg transition-all duration-200 text-base group"
               >
                 Start Executive Audit
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
               </button>
 
-              <p className="text-xs text-[#F0EBE0]/40 mt-4">
+              <p className="text-xs text-[#1A1A1A]/40 mt-4">
                 Takes 5–7 minutes — used by 200+ business owners and operators
               </p>
             </motion.div>
@@ -523,11 +523,11 @@ export default function ExecutiveOpsAuditClient() {
 
               <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-[#F0EBE0]/70 mb-2">
+                  <label className="block text-sm font-medium text-[#1A1A1A]/70 mb-2">
                     How many people work in your business?
                   </label>
                   <select
-                    className="w-full bg-[#141923] border border-white/10 rounded-lg px-4 py-3 text-[#F0EBE0] focus:outline-none focus:border-[#C4972A]/60 transition-colors"
+                    className="w-full bg-[#FFFFFF] border border-white/10 rounded-lg px-4 py-3 text-[#1A1A1A] focus:outline-none focus:border-[#981B1B]/60 transition-colors"
                     value={data.snapshot?.headcount ?? ""}
                     onChange={(e) => updateSnapshot("headcount", e.target.value)}
                   >
@@ -545,11 +545,11 @@ export default function ExecutiveOpsAuditClient() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[#F0EBE0]/70 mb-2">
+                  <label className="block text-sm font-medium text-[#1A1A1A]/70 mb-2">
                     Annual revenue?
                   </label>
                   <select
-                    className="w-full bg-[#141923] border border-white/10 rounded-lg px-4 py-3 text-[#F0EBE0] focus:outline-none focus:border-[#C4972A]/60 transition-colors"
+                    className="w-full bg-[#FFFFFF] border border-white/10 rounded-lg px-4 py-3 text-[#1A1A1A] focus:outline-none focus:border-[#981B1B]/60 transition-colors"
                     value={data.snapshot?.revenue ?? ""}
                     onChange={(e) => updateSnapshot("revenue", e.target.value)}
                   >
@@ -572,26 +572,26 @@ export default function ExecutiveOpsAuditClient() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[#F0EBE0]/70 mb-2">
+                  <label className="block text-sm font-medium text-[#1A1A1A]/70 mb-2">
                     What industry are you in?
                   </label>
                   <input
                     type="text"
                     placeholder="e.g. Professional Services, SaaS, E-commerce..."
-                    className="w-full bg-[#141923] border border-white/10 rounded-lg px-4 py-3 text-[#F0EBE0] placeholder-[#F0EBE0]/30 focus:outline-none focus:border-[#C4972A]/60 transition-colors"
+                    className="w-full bg-[#FFFFFF] border border-white/10 rounded-lg px-4 py-3 text-[#1A1A1A] placeholder-[#1A1A1A]/30 focus:outline-none focus:border-[#981B1B]/60 transition-colors"
                     value={data.snapshot?.industry ?? ""}
                     onChange={(e) => updateSnapshot("industry", e.target.value)}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[#F0EBE0]/70 mb-2">
+                  <label className="block text-sm font-medium text-[#1A1A1A]/70 mb-2">
                     What&apos;s your #1 business goal for the next 12 months?
                   </label>
                   <textarea
                     rows={3}
                     placeholder="Be specific — e.g. 'Grow from $2M to $5M ARR without hiring more than 3 people'"
-                    className="w-full bg-[#141923] border border-white/10 rounded-lg px-4 py-3 text-[#F0EBE0] placeholder-[#F0EBE0]/30 focus:outline-none focus:border-[#C4972A]/60 transition-colors resize-none"
+                    className="w-full bg-[#FFFFFF] border border-white/10 rounded-lg px-4 py-3 text-[#1A1A1A] placeholder-[#1A1A1A]/30 focus:outline-none focus:border-[#981B1B]/60 transition-colors resize-none"
                     value={data.snapshot?.topGoal ?? ""}
                     onChange={(e) => updateSnapshot("topGoal", e.target.value)}
                   />
@@ -614,7 +614,7 @@ export default function ExecutiveOpsAuditClient() {
                 label="Select Your Departments"
                 onBack={goBack}
               />
-              <p className="text-[#F0EBE0]/60 mb-8 text-sm">
+              <p className="text-[#1A1A1A]/60 mb-8 text-sm">
                 Select every department that exists in your business. We&apos;ll ask targeted
                 questions about each one.
               </p>
@@ -626,25 +626,25 @@ export default function ExecutiveOpsAuditClient() {
                     className={cn(
                       "rounded-lg border transition-all duration-200 overflow-hidden",
                       dept.selected
-                        ? "border-[#C4972A]/60 bg-[#C4972A]/5"
-                        : "border-white/10 bg-[#141923] hover:border-white/20"
+                        ? "border-[#981B1B]/60 bg-[#981B1B]/5"
+                        : "border-white/10 bg-[#FFFFFF] hover:border-white/20"
                     )}
                   >
                     <button
                       onClick={() => toggleDept(dept.id)}
                       className="w-full flex items-center justify-between p-4 text-left"
                     >
-                      <span className="text-sm font-medium text-[#F0EBE0]">{dept.name}</span>
+                      <span className="text-sm font-medium text-[#1A1A1A]">{dept.name}</span>
                       <div
                         className={cn(
                           "w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-200 shrink-0",
                           dept.selected
-                            ? "border-[#C4972A] bg-[#C4972A]"
+                            ? "border-[#981B1B] bg-[#981B1B]"
                             : "border-white/30"
                         )}
                       >
                         {dept.selected && (
-                          <CheckCircle2 className="w-3 h-3 text-[#08090D]" />
+                          <CheckCircle2 className="w-3 h-3 text-[#F5F5F5]" />
                         )}
                       </div>
                     </button>
@@ -658,16 +658,16 @@ export default function ExecutiveOpsAuditClient() {
                           transition={{ duration: 0.2 }}
                           className="overflow-hidden"
                         >
-                          <div className="px-4 pb-4 pt-0 space-y-4 border-t border-[#C4972A]/20">
+                          <div className="px-4 pb-4 pt-0 space-y-4 border-t border-[#981B1B]/20">
                             <div className="pt-3">
-                              <label className="block text-xs text-[#F0EBE0]/50 mb-2">
+                              <label className="block text-xs text-[#1A1A1A]/50 mb-2">
                                 How many people in this department?
                               </label>
                               <input
                                 type="number"
                                 min={1}
                                 max={500}
-                                className="w-full bg-[#0E1219] border border-white/10 rounded-md px-3 py-2 text-sm text-[#F0EBE0] focus:outline-none focus:border-[#C4972A]/60 transition-colors"
+                                className="w-full bg-[#FFFFFF] border border-white/10 rounded-md px-3 py-2 text-sm text-[#1A1A1A] focus:outline-none focus:border-[#981B1B]/60 transition-colors"
                                 value={dept.headcount}
                                 onChange={(e) =>
                                   updateDeptHeadcount(dept.id, parseInt(e.target.value) || 1)
@@ -675,9 +675,9 @@ export default function ExecutiveOpsAuditClient() {
                               />
                             </div>
                             <div>
-                              <label className="block text-xs text-[#F0EBE0]/50 mb-2">
+                              <label className="block text-xs text-[#1A1A1A]/50 mb-2">
                                 Hours/week on manual tasks:{" "}
-                                <span className="text-[#C4972A] font-medium">
+                                <span className="text-[#981B1B] font-medium">
                                   {dept.manualHoursPerWeek}h
                                 </span>
                               </label>
@@ -686,13 +686,13 @@ export default function ExecutiveOpsAuditClient() {
                                 min={0}
                                 max={100}
                                 step={1}
-                                className="w-full accent-[#C4972A]"
+                                className="w-full accent-[#981B1B]"
                                 value={dept.manualHoursPerWeek}
                                 onChange={(e) =>
                                   updateDeptManualHours(dept.id, parseInt(e.target.value))
                                 }
                               />
-                              <div className="flex justify-between text-xs text-[#F0EBE0]/30 mt-1">
+                              <div className="flex justify-between text-xs text-[#1A1A1A]/30 mt-1">
                                 <span>0h</span>
                                 <span>100h</span>
                               </div>
@@ -734,26 +734,26 @@ export default function ExecutiveOpsAuditClient() {
                       goBack()
                     }
                   }}
-                  className="flex items-center gap-1.5 text-[#F0EBE0]/50 hover:text-[#F0EBE0] transition-colors text-sm"
+                  className="flex items-center gap-1.5 text-[#1A1A1A]/50 hover:text-[#1A1A1A] transition-colors text-sm"
                 >
                   <ChevronLeft className="w-4 h-4" />
                   Back
                 </button>
-                <span className="text-xs text-[#F0EBE0]/40 font-mono">
+                <span className="text-xs text-[#1A1A1A]/40 font-mono">
                   Department {currentDeptIndex + 1} of {selectedDepts.length}
                 </span>
               </div>
 
               <div className="mb-2">
-                <span className="text-xs font-mono text-[#C4972A] uppercase tracking-widest">
+                <span className="text-xs font-mono text-[#981B1B] uppercase tracking-widest">
                   Step 3 of 6 — Department Deep Dive
                 </span>
               </div>
 
-              <h2 className="text-xl font-semibold text-[#F0EBE0] mb-1">
+              <h2 className="text-xl font-semibold text-[#1A1A1A] mb-1">
                 {selectedDepts[currentDeptIndex]?.name}
               </h2>
-              <p className="text-sm text-[#F0EBE0]/50 mb-8">
+              <p className="text-sm text-[#1A1A1A]/50 mb-8">
                 Answer honestly — these drive your department efficiency scores.
               </p>
 
@@ -762,12 +762,12 @@ export default function ExecutiveOpsAuditClient() {
                   (d) => d.id === selectedDepts[currentDeptIndex]?.id
                 )?.questions.map((q, qIdx) => (
                   <div key={qIdx}>
-                    <label className="block text-sm font-medium text-[#F0EBE0]/80 mb-2">
+                    <label className="block text-sm font-medium text-[#1A1A1A]/80 mb-2">
                       {q}
                     </label>
                     <textarea
                       rows={3}
-                      className="w-full bg-[#141923] border border-white/10 rounded-lg px-4 py-3 text-[#F0EBE0] placeholder-[#F0EBE0]/30 focus:outline-none focus:border-[#C4972A]/60 transition-colors resize-none text-sm"
+                      className="w-full bg-[#FFFFFF] border border-white/10 rounded-lg px-4 py-3 text-[#1A1A1A] placeholder-[#1A1A1A]/30 focus:outline-none focus:border-[#981B1B]/60 transition-colors resize-none text-sm"
                       placeholder="Be specific — your answers are used to build your scorecard"
                       value={selectedDepts[currentDeptIndex]?.answers[qIdx] ?? ""}
                       onChange={(e) =>
@@ -791,7 +791,7 @@ export default function ExecutiveOpsAuditClient() {
                       goTo("bottlenecks")
                     }
                   }}
-                  className="flex items-center gap-2 px-6 py-3 bg-[#C4972A] hover:bg-[#C4972A]/90 text-[#08090D] font-semibold rounded-lg transition-all duration-200 text-sm"
+                  className="flex items-center gap-2 px-6 py-3 bg-[#981B1B] hover:bg-[#981B1B]/90 text-[#F5F5F5] font-semibold rounded-lg transition-all duration-200 text-sm"
                 >
                   {currentDeptIndex < selectedDepts.length - 1
                     ? "Next Department"
@@ -807,7 +807,7 @@ export default function ExecutiveOpsAuditClient() {
                       goTo("bottlenecks")
                     }
                   }}
-                  className="text-sm text-[#F0EBE0]/40 hover:text-[#F0EBE0]/70 transition-colors"
+                  className="text-sm text-[#1A1A1A]/40 hover:text-[#1A1A1A]/70 transition-colors"
                 >
                   Skip this department
                 </button>
@@ -824,7 +824,7 @@ export default function ExecutiveOpsAuditClient() {
                 label="Your Biggest Pain Points"
                 onBack={goBack}
               />
-              <p className="text-[#F0EBE0]/60 mb-8 text-sm">
+              <p className="text-[#1A1A1A]/60 mb-8 text-sm">
                 Answer honestly. The more specific you are, the more accurate your scorecard.
               </p>
 
@@ -859,13 +859,13 @@ export default function ExecutiveOpsAuditClient() {
                   },
                 ] as const).map((item) => (
                   <div key={item.field}>
-                    <label className="block text-sm font-medium text-[#F0EBE0]/80 mb-2">
+                    <label className="block text-sm font-medium text-[#1A1A1A]/80 mb-2">
                       {item.label}
                     </label>
                     <textarea
                       rows={3}
                       placeholder={item.placeholder}
-                      className="w-full bg-[#141923] border border-white/10 rounded-lg px-4 py-3 text-[#F0EBE0] placeholder-[#F0EBE0]/30 focus:outline-none focus:border-[#C4972A]/60 transition-colors resize-none text-sm"
+                      className="w-full bg-[#FFFFFF] border border-white/10 rounded-lg px-4 py-3 text-[#1A1A1A] placeholder-[#1A1A1A]/30 focus:outline-none focus:border-[#981B1B]/60 transition-colors resize-none text-sm"
                       value={data.bottlenecks?.[item.field] ?? ""}
                       onChange={(e) => updateBottleneck(item.field, e.target.value)}
                     />
@@ -889,28 +889,28 @@ export default function ExecutiveOpsAuditClient() {
 
               <div className="space-y-8">
                 <div>
-                  <label className="block text-sm font-medium text-[#F0EBE0]/80 mb-1">
+                  <label className="block text-sm font-medium text-[#1A1A1A]/80 mb-1">
                     Across your entire team, roughly how many hours per week are spent on
                     manual, repetitive tasks?
                   </label>
                   <div className="flex items-center gap-3 mb-3">
-                    <span className="text-2xl font-semibold text-[#C4972A]">
+                    <span className="text-2xl font-semibold text-[#981B1B]">
                       {data.costCapacity?.manualHoursWeekly ?? 0}h
                     </span>
-                    <span className="text-xs text-[#F0EBE0]/40">/ week</span>
+                    <span className="text-xs text-[#1A1A1A]/40">/ week</span>
                   </div>
                   <input
                     type="range"
                     min={0}
                     max={500}
                     step={5}
-                    className="w-full accent-[#C4972A]"
+                    className="w-full accent-[#981B1B]"
                     value={data.costCapacity?.manualHoursWeekly ?? 0}
                     onChange={(e) =>
                       updateCostCapacity("manualHoursWeekly", parseInt(e.target.value))
                     }
                   />
-                  <div className="flex justify-between text-xs text-[#F0EBE0]/30 mt-1 mb-3">
+                  <div className="flex justify-between text-xs text-[#1A1A1A]/30 mt-1 mb-3">
                     <span>0h</span>
                     <span>500h</span>
                   </div>
@@ -922,7 +922,7 @@ export default function ExecutiveOpsAuditClient() {
                       className="flex items-center gap-2 px-4 py-3 rounded-lg bg-red-950/30 border border-red-500/20"
                     >
                       <DollarSign className="w-4 h-4 text-red-400 shrink-0" />
-                      <span className="text-sm text-[#F0EBE0]/80">
+                      <span className="text-sm text-[#1A1A1A]/80">
                         That&apos;s approximately{" "}
                         <span className="text-red-400 font-semibold">
                           {formatDollars(
@@ -936,40 +936,40 @@ export default function ExecutiveOpsAuditClient() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[#F0EBE0]/80 mb-1">
+                  <label className="block text-sm font-medium text-[#1A1A1A]/80 mb-1">
                     Monthly spend on software and tools?
                   </label>
                   <div className="flex items-center gap-3 mb-3">
-                    <span className="text-2xl font-semibold text-[#C4972A]">
+                    <span className="text-2xl font-semibold text-[#981B1B]">
                       {formatDollars(data.costCapacity?.monthlyToolSpend ?? 0)}
                     </span>
-                    <span className="text-xs text-[#F0EBE0]/40">/ month</span>
+                    <span className="text-xs text-[#1A1A1A]/40">/ month</span>
                   </div>
                   <input
                     type="range"
                     min={0}
                     max={50000}
                     step={500}
-                    className="w-full accent-[#C4972A]"
+                    className="w-full accent-[#981B1B]"
                     value={data.costCapacity?.monthlyToolSpend ?? 0}
                     onChange={(e) =>
                       updateCostCapacity("monthlyToolSpend", parseInt(e.target.value))
                     }
                   />
-                  <div className="flex justify-between text-xs text-[#F0EBE0]/30 mt-1">
+                  <div className="flex justify-between text-xs text-[#1A1A1A]/30 mt-1">
                     <span>$0</span>
                     <span>$50K</span>
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[#F0EBE0]/80 mb-2">
+                  <label className="block text-sm font-medium text-[#1A1A1A]/80 mb-2">
                     If those manual hours were freed up, what would your team do instead?
                   </label>
                   <textarea
                     rows={3}
                     placeholder="e.g. 'Focus on closing deals, building client relationships, product development...'"
-                    className="w-full bg-[#141923] border border-white/10 rounded-lg px-4 py-3 text-[#F0EBE0] placeholder-[#F0EBE0]/30 focus:outline-none focus:border-[#C4972A]/60 transition-colors resize-none text-sm"
+                    className="w-full bg-[#FFFFFF] border border-white/10 rounded-lg px-4 py-3 text-[#1A1A1A] placeholder-[#1A1A1A]/30 focus:outline-none focus:border-[#981B1B]/60 transition-colors resize-none text-sm"
                     value={data.costCapacity?.extraHoursUse ?? ""}
                     onChange={(e) => updateCostCapacity("extraHoursUse", e.target.value)}
                   />
@@ -989,7 +989,7 @@ export default function ExecutiveOpsAuditClient() {
                 label="Current Tech & AI Readiness"
                 onBack={goBack}
               />
-              <p className="text-[#F0EBE0]/60 mb-8 text-sm">
+              <p className="text-[#1A1A1A]/60 mb-8 text-sm">
                 Select every tool your team currently uses:
               </p>
 
@@ -1003,8 +1003,8 @@ export default function ExecutiveOpsAuditClient() {
                       className={cn(
                         "px-3 py-1.5 rounded-full text-sm border transition-all duration-150",
                         selected
-                          ? "bg-[#C4972A] border-[#C4972A] text-[#08090D] font-medium"
-                          : "bg-[#141923] border-white/10 text-[#F0EBE0]/70 hover:border-white/20 hover:text-[#F0EBE0]"
+                          ? "bg-[#981B1B] border-[#981B1B] text-[#F5F5F5] font-medium"
+                          : "bg-[#FFFFFF] border-white/10 text-[#1A1A1A]/70 hover:border-white/20 hover:text-[#1A1A1A]"
                       )}
                     >
                       {tool.label}
@@ -1015,13 +1015,13 @@ export default function ExecutiveOpsAuditClient() {
 
               <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-[#F0EBE0]/80 mb-2">
+                  <label className="block text-sm font-medium text-[#1A1A1A]/80 mb-2">
                     Have you previously tried to automate or implement AI tools? What happened?
                   </label>
                   <textarea
                     rows={3}
                     placeholder="e.g. 'We tried Zapier but it broke constantly. We piloted ChatGPT for content but never made it systematic.'"
-                    className="w-full bg-[#141923] border border-white/10 rounded-lg px-4 py-3 text-[#F0EBE0] placeholder-[#F0EBE0]/30 focus:outline-none focus:border-[#C4972A]/60 transition-colors resize-none text-sm"
+                    className="w-full bg-[#FFFFFF] border border-white/10 rounded-lg px-4 py-3 text-[#1A1A1A] placeholder-[#1A1A1A]/30 focus:outline-none focus:border-[#981B1B]/60 transition-colors resize-none text-sm"
                     value={data.aiReadiness?.automationAttempts ?? ""}
                     onChange={(e) =>
                       updateAiReadiness("automationAttempts", e.target.value)
@@ -1030,14 +1030,14 @@ export default function ExecutiveOpsAuditClient() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[#F0EBE0]/80 mb-2">
+                  <label className="block text-sm font-medium text-[#1A1A1A]/80 mb-2">
                     Which department in your business is most resistant to new tools or process
                     changes?
                   </label>
                   <input
                     type="text"
                     placeholder="e.g. Sales, Finance, Operations..."
-                    className="w-full bg-[#141923] border border-white/10 rounded-lg px-4 py-3 text-[#F0EBE0] placeholder-[#F0EBE0]/30 focus:outline-none focus:border-[#C4972A]/60 transition-colors text-sm"
+                    className="w-full bg-[#FFFFFF] border border-white/10 rounded-lg px-4 py-3 text-[#1A1A1A] placeholder-[#1A1A1A]/30 focus:outline-none focus:border-[#981B1B]/60 transition-colors text-sm"
                     value={data.aiReadiness?.resistantDept ?? ""}
                     onChange={(e) => updateAiReadiness("resistantDept", e.target.value)}
                   />
@@ -1054,17 +1054,17 @@ export default function ExecutiveOpsAuditClient() {
               <ProgressBar phase={phase} />
 
               <div className="mb-2">
-                <span className="text-xs font-mono text-[#C4972A] uppercase tracking-widest">
+                <span className="text-xs font-mono text-[#981B1B] uppercase tracking-widest">
                   Your scorecard is ready
                 </span>
               </div>
 
-              <h2 className="text-3xl font-serif font-light text-[#F0EBE0] mb-4">
+              <h2 className="text-3xl font-serif font-light text-[#1A1A1A] mb-4">
                 Enter your details to see your full{" "}
-                <span className="text-[#C4972A]">Executive Operations Audit</span>
+                <span className="text-[#981B1B]">Executive Operations Audit</span>
               </h2>
 
-              <p className="text-sm text-[#F0EBE0]/60 mb-8 max-w-lg mx-auto">
+              <p className="text-sm text-[#1A1A1A]/60 mb-8 max-w-lg mx-auto">
                 Including your estimated annual cost of inefficiency and department-by-department
                 automation roadmap.
               </p>
@@ -1075,7 +1075,7 @@ export default function ExecutiveOpsAuditClient() {
                   animate={{ opacity: 1, scale: 1 }}
                   className="inline-flex flex-col items-center px-8 py-6 rounded-xl bg-red-950/30 border border-red-500/20 mb-8"
                 >
-                  <span className="text-xs text-[#F0EBE0]/50 uppercase tracking-widest font-mono mb-1">
+                  <span className="text-xs text-[#1A1A1A]/50 uppercase tracking-widest font-mono mb-1">
                     Estimated Annual Inefficiency Cost
                   </span>
                   <span className="text-4xl font-semibold text-red-400 tabular-nums">
@@ -1091,42 +1091,42 @@ export default function ExecutiveOpsAuditClient() {
 
               <div className="max-w-md mx-auto space-y-4 text-left">
                 <div>
-                  <label className="block text-sm font-medium text-[#F0EBE0]/70 mb-2">
+                  <label className="block text-sm font-medium text-[#1A1A1A]/70 mb-2">
                     Your name
                   </label>
                   <input
                     type="text"
                     required
                     placeholder="First and last name"
-                    className="w-full bg-[#141923] border border-white/10 rounded-lg px-4 py-3 text-[#F0EBE0] placeholder-[#F0EBE0]/30 focus:outline-none focus:border-[#C4972A]/60 transition-colors"
+                    className="w-full bg-[#FFFFFF] border border-white/10 rounded-lg px-4 py-3 text-[#1A1A1A] placeholder-[#1A1A1A]/30 focus:outline-none focus:border-[#981B1B]/60 transition-colors"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[#F0EBE0]/70 mb-2">
+                  <label className="block text-sm font-medium text-[#1A1A1A]/70 mb-2">
                     Work email
                   </label>
                   <input
                     type="email"
                     required
                     placeholder="you@company.com"
-                    className="w-full bg-[#141923] border border-white/10 rounded-lg px-4 py-3 text-[#F0EBE0] placeholder-[#F0EBE0]/30 focus:outline-none focus:border-[#C4972A]/60 transition-colors"
+                    className="w-full bg-[#FFFFFF] border border-white/10 rounded-lg px-4 py-3 text-[#1A1A1A] placeholder-[#1A1A1A]/30 focus:outline-none focus:border-[#981B1B]/60 transition-colors"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[#F0EBE0]/70 mb-2">
+                  <label className="block text-sm font-medium text-[#1A1A1A]/70 mb-2">
                     Company name
                   </label>
                   <input
                     type="text"
                     required
                     placeholder="Your company"
-                    className="w-full bg-[#141923] border border-white/10 rounded-lg px-4 py-3 text-[#F0EBE0] placeholder-[#F0EBE0]/30 focus:outline-none focus:border-[#C4972A]/60 transition-colors"
+                    className="w-full bg-[#FFFFFF] border border-white/10 rounded-lg px-4 py-3 text-[#1A1A1A] placeholder-[#1A1A1A]/30 focus:outline-none focus:border-[#981B1B]/60 transition-colors"
                     value={company}
                     onChange={(e) => setCompany(e.target.value)}
                   />
@@ -1135,13 +1135,13 @@ export default function ExecutiveOpsAuditClient() {
                 <button
                   onClick={handleSubmit}
                   disabled={!name || !email || !company}
-                  className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-[#C4972A] hover:bg-[#C4972A]/90 disabled:opacity-40 disabled:cursor-not-allowed text-[#08090D] font-semibold rounded-lg transition-all duration-200"
+                  className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-[#981B1B] hover:bg-[#981B1B]/90 disabled:opacity-40 disabled:cursor-not-allowed text-[#F5F5F5] font-semibold rounded-lg transition-all duration-200"
                 >
                   Generate My Scorecard
                   <ArrowRight className="w-4 h-4" />
                 </button>
 
-                <p className="text-xs text-[#F0EBE0]/30 text-center">
+                <p className="text-xs text-[#1A1A1A]/30 text-center">
                   Your data is private and used only to generate your scorecard.
                 </p>
               </div>
@@ -1149,7 +1149,7 @@ export default function ExecutiveOpsAuditClient() {
               <div className="mt-6">
                 <button
                   onClick={goBack}
-                  className="flex items-center gap-1.5 text-[#F0EBE0]/40 hover:text-[#F0EBE0]/70 transition-colors text-sm mx-auto"
+                  className="flex items-center gap-1.5 text-[#1A1A1A]/40 hover:text-[#1A1A1A]/70 transition-colors text-sm mx-auto"
                 >
                   <ChevronLeft className="w-4 h-4" />
                   Back
@@ -1161,8 +1161,8 @@ export default function ExecutiveOpsAuditClient() {
           {/* ── SUBMITTING ────────────────────────────────────────────────── */}
           {phase === "submitting" && (
             <motion.div key="submitting" {...fadeUp} className="text-center py-20">
-              <Loader2 className="w-10 h-10 text-[#C4972A] animate-spin mx-auto mb-6" />
-              <h2 className="text-2xl font-serif font-light text-[#F0EBE0] mb-8">
+              <Loader2 className="w-10 h-10 text-[#981B1B] animate-spin mx-auto mb-6" />
+              <h2 className="text-2xl font-serif font-light text-[#1A1A1A] mb-8">
                 Analyzing your operations...
               </h2>
               <div className="space-y-3 max-w-xs mx-auto text-left">
@@ -1180,55 +1180,55 @@ export default function ExecutiveOpsAuditClient() {
           {/* ── RESULTS ───────────────────────────────────────────────────── */}
           {phase === "results" && (
             <motion.div key="results" {...fadeUp} className="text-center">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#C4972A]/40 bg-[#C4972A]/10 text-[#C4972A] text-xs font-mono uppercase tracking-widest mb-6">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#981B1B]/40 bg-[#981B1B]/10 text-[#981B1B] text-xs font-mono uppercase tracking-widest mb-6">
                 Executive Ops Audit Complete
               </div>
 
-              <h2 className="text-3xl font-serif font-light text-[#F0EBE0] mb-10">
+              <h2 className="text-3xl font-serif font-light text-[#1A1A1A] mb-10">
                 Here&apos;s your operations overview
               </h2>
 
-              <div className="rounded-2xl border border-white/10 bg-[#141923] p-8 mb-6 text-left">
+              <div className="rounded-2xl border border-white/10 bg-[#FFFFFF] p-8 mb-6 text-left">
                 {/* Overall score */}
                 <div className="flex items-center justify-between mb-8 pb-8 border-b border-white/8">
                   <div>
-                    <p className="text-xs font-mono text-[#F0EBE0]/50 uppercase tracking-widest mb-1">
+                    <p className="text-xs font-mono text-[#1A1A1A]/50 uppercase tracking-widest mb-1">
                       Overall Efficiency Score
                     </p>
-                    <p className="text-xs text-[#F0EBE0]/40">
+                    <p className="text-xs text-[#1A1A1A]/40">
                       Higher is better — 100 = fully optimized
                     </p>
                   </div>
                   <div className="text-right">
-                    <span className="text-6xl font-semibold text-[#C4972A] tabular-nums">
+                    <span className="text-6xl font-semibold text-[#981B1B] tabular-nums">
                       {scores.overall}
                     </span>
-                    <span className="text-2xl text-[#F0EBE0]/40">/100</span>
+                    <span className="text-2xl text-[#1A1A1A]/40">/100</span>
                   </div>
                 </div>
 
                 {/* Key stats */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
                   <div className="p-4 rounded-xl bg-red-950/25 border border-red-500/20">
-                    <p className="text-xs font-mono text-[#F0EBE0]/50 uppercase tracking-widest mb-1">
+                    <p className="text-xs font-mono text-[#1A1A1A]/50 uppercase tracking-widest mb-1">
                       Annual Cost of Inefficiency
                     </p>
                     <p className="text-2xl font-semibold text-red-400 tabular-nums">
                       {formatDollars(scores.costOfInefficiency)}
                     </p>
-                    <p className="text-xs text-[#F0EBE0]/40 mt-1">
+                    <p className="text-xs text-[#1A1A1A]/40 mt-1">
                       Based on {data.costCapacity?.manualHoursWeekly ?? 0}h/wk @ $55/hr
                     </p>
                   </div>
 
                   <div className="p-4 rounded-xl bg-emerald-950/25 border border-emerald-500/20">
-                    <p className="text-xs font-mono text-[#F0EBE0]/50 uppercase tracking-widest mb-1">
+                    <p className="text-xs font-mono text-[#1A1A1A]/50 uppercase tracking-widest mb-1">
                       Projected AI ROI Potential
                     </p>
                     <p className="text-2xl font-semibold text-emerald-400 tabular-nums">
                       {formatDollars(scores.aiRoiPotential)}/yr
                     </p>
-                    <p className="text-xs text-[#F0EBE0]/40 mt-1">
+                    <p className="text-xs text-[#1A1A1A]/40 mt-1">
                       65% of inefficiency costs recoverable via AI
                     </p>
                   </div>
@@ -1237,7 +1237,7 @@ export default function ExecutiveOpsAuditClient() {
                 {/* Dept scores */}
                 {Object.keys(scores.byDepartment).length > 0 && (
                   <div>
-                    <p className="text-xs font-mono text-[#F0EBE0]/50 uppercase tracking-widest mb-4">
+                    <p className="text-xs font-mono text-[#1A1A1A]/50 uppercase tracking-widest mb-4">
                       Department Efficiency
                     </p>
                     <div className="space-y-3">
@@ -1246,7 +1246,7 @@ export default function ExecutiveOpsAuditClient() {
                         return (
                           <div key={dept.id}>
                             <div className="flex items-center justify-between mb-1">
-                              <span className="text-sm text-[#F0EBE0]/70">{dept.name}</span>
+                              <span className="text-sm text-[#1A1A1A]/70">{dept.name}</span>
                               <span
                                 className={cn(
                                   "text-sm font-medium tabular-nums",
@@ -1288,7 +1288,7 @@ export default function ExecutiveOpsAuditClient() {
                 {submissionId && (
                   <a
                     href={`/tools/executive-ops-audit/results/${submissionId}`}
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-[#C4972A] hover:bg-[#C4972A]/90 text-[#08090D] font-semibold rounded-lg transition-all duration-200 text-sm"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-[#981B1B] hover:bg-[#981B1B]/90 text-[#F5F5F5] font-semibold rounded-lg transition-all duration-200 text-sm"
                   >
                     <BarChart3 className="w-4 h-4" />
                     View Full Executive Scorecard
@@ -1298,7 +1298,7 @@ export default function ExecutiveOpsAuditClient() {
 
                 <button
                   onClick={copyResultsLink}
-                  className="inline-flex items-center gap-2 px-5 py-3 border border-white/10 hover:border-white/20 text-[#F0EBE0]/70 hover:text-[#F0EBE0] rounded-lg transition-all duration-200 text-sm"
+                  className="inline-flex items-center gap-2 px-5 py-3 border border-white/10 hover:border-white/20 text-[#1A1A1A]/70 hover:text-[#1A1A1A] rounded-lg transition-all duration-200 text-sm"
                 >
                   {copied ? (
                     <>
@@ -1314,7 +1314,7 @@ export default function ExecutiveOpsAuditClient() {
                 </button>
               </div>
 
-              <p className="text-xs text-[#F0EBE0]/30 mt-6">
+              <p className="text-xs text-[#1A1A1A]/30 mt-6">
                 Your full scorecard has been sent to {email}
               </p>
             </motion.div>
@@ -1340,15 +1340,15 @@ function StepHeader({
     <div className="mb-8">
       <button
         onClick={onBack}
-        className="flex items-center gap-1.5 text-[#F0EBE0]/50 hover:text-[#F0EBE0] transition-colors text-sm mb-4"
+        className="flex items-center gap-1.5 text-[#1A1A1A]/50 hover:text-[#1A1A1A] transition-colors text-sm mb-4"
       >
         <ChevronLeft className="w-4 h-4" />
         Back
       </button>
-      <span className="text-xs font-mono text-[#C4972A] uppercase tracking-widest block mb-2">
+      <span className="text-xs font-mono text-[#981B1B] uppercase tracking-widest block mb-2">
         {step}
       </span>
-      <h2 className="text-2xl font-semibold text-[#F0EBE0]">{label}</h2>
+      <h2 className="text-2xl font-semibold text-[#1A1A1A]">{label}</h2>
     </div>
   )
 }
@@ -1366,7 +1366,7 @@ function ContinueButton({
     <button
       onClick={onClick}
       disabled={disabled}
-      className="mt-8 inline-flex items-center gap-2 px-6 py-3 bg-[#C4972A] hover:bg-[#C4972A]/90 disabled:opacity-40 disabled:cursor-not-allowed text-[#08090D] font-semibold rounded-lg transition-all duration-200 text-sm"
+      className="mt-8 inline-flex items-center gap-2 px-6 py-3 bg-[#981B1B] hover:bg-[#981B1B]/90 disabled:opacity-40 disabled:cursor-not-allowed text-[#F5F5F5] font-semibold rounded-lg transition-all duration-200 text-sm"
     >
       {label}
       <ArrowRight className="w-4 h-4" />
@@ -1388,9 +1388,9 @@ function SubmittingItem({ label, delay }: { label: string; delay: number }) {
         <motion.div
           initial={{ opacity: 0, x: -8 }}
           animate={{ opacity: 1, x: 0 }}
-          className="flex items-center gap-2 text-sm text-[#F0EBE0]/60"
+          className="flex items-center gap-2 text-sm text-[#1A1A1A]/60"
         >
-          <CheckCircle2 className="w-4 h-4 text-[#C4972A] shrink-0" />
+          <CheckCircle2 className="w-4 h-4 text-[#981B1B] shrink-0" />
           {label}
         </motion.div>
       )}

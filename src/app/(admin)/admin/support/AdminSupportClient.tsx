@@ -206,7 +206,7 @@ export function AdminSupportClient({ tickets: initialTickets, stats }: Props) {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search tickets by subject, name, or email..."
-          className="w-full pl-9 pr-4 py-2 bg-card border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-[#C4972A] focus:ring-1 focus:ring-[#C4972A]/20"
+          className="w-full pl-9 pr-4 py-2 bg-card border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-[#981B1B] focus:ring-1 focus:ring-[#981B1B]/20"
         />
       </div>
 
@@ -224,7 +224,7 @@ export function AdminSupportClient({ tickets: initialTickets, stats }: Props) {
             onClick={() => setStatusFilter(tab.value)}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
               statusFilter === tab.value
-                ? "bg-[#C4972A] text-white border-[#C4972A]"
+                ? "bg-[#981B1B] text-white border-[#981B1B]"
                 : "bg-card text-muted-foreground border-border hover:text-foreground"
             }`}
           >
@@ -338,12 +338,12 @@ export function AdminSupportClient({ tickets: initialTickets, stats }: Props) {
                         value={replyTexts[ticket.id] ?? ""}
                         onChange={(e) => setReplyTexts((prev) => ({ ...prev, [ticket.id]: e.target.value }))}
                         placeholder="Type your reply..."
-                        className="w-full px-4 py-3 bg-background border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C4972A]/20 focus:border-[#C4972A] resize-none"
+                        className="w-full px-4 py-3 bg-background border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#981B1B]/20 focus:border-[#981B1B] resize-none"
                       />
                       <button
                         onClick={() => handleReply(ticket.id)}
                         disabled={!(replyTexts[ticket.id] ?? "").trim() || sending}
-                        className="mt-2 flex items-center gap-2 px-4 py-2 bg-[#C4972A] text-white text-xs font-medium rounded-lg hover:bg-[#A17D22] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="mt-2 flex items-center gap-2 px-4 py-2 bg-[#981B1B] text-white text-xs font-medium rounded-lg hover:bg-[#791515] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <Send className="w-3.5 h-3.5" />
                         {sending ? "Sending..." : "Send Reply"}
@@ -359,7 +359,7 @@ export function AdminSupportClient({ tickets: initialTickets, stats }: Props) {
                           value={statusNotes[ticket.id] ?? ""}
                           onChange={(e) => setStatusNotes((prev) => ({ ...prev, [ticket.id]: e.target.value }))}
                           placeholder="Brief resolution summary..."
-                          className="w-full px-3 py-2 bg-background border border-border rounded-lg text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C4972A]/20 focus:border-[#C4972A]"
+                          className="w-full px-3 py-2 bg-background border border-border rounded-lg text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#981B1B]/20 focus:border-[#981B1B]"
                         />
                       </div>
                       <div className="flex gap-2">

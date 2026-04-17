@@ -131,7 +131,7 @@ function DealCardInner({ deal, isDraggingOverlay = false }: { deal: Deal; isDrag
         )}
         {deal.assignedTo && (
           <div
-            className="flex-shrink-0 ml-2 w-6 h-6 rounded-full bg-[#C4972A]/20 border border-[#C4972A]/30 flex items-center justify-center text-[10px] font-bold text-[#C4972A]"
+            className="flex-shrink-0 ml-2 w-6 h-6 rounded-full bg-[#981B1B]/20 border border-[#981B1B]/30 flex items-center justify-center text-[10px] font-bold text-[#981B1B]"
             title={deal.assignedTo}
           >
             {getInitials(deal.assignedTo)}
@@ -399,7 +399,7 @@ export function CRMKanban({ initialDeals }: { initialDeals: Deal[] }) {
             type="checkbox"
             checked={showClosed}
             onChange={(e) => setShowClosed(e.target.checked)}
-            className="w-3.5 h-3.5 accent-[#C4972A] cursor-pointer"
+            className="w-3.5 h-3.5 accent-[#981B1B] cursor-pointer"
           />
           Show Closed
         </label>
@@ -414,7 +414,7 @@ export function CRMKanban({ initialDeals }: { initialDeals: Deal[] }) {
         {/* Add Deal button */}
         <button
           onClick={() => setAddingToStage("NEW_LEAD")}
-          className="ml-auto flex items-center gap-2 px-4 py-2 bg-[#C4972A] hover:bg-[#A17D22] text-white text-sm font-medium rounded-lg transition-colors"
+          className="ml-auto flex items-center gap-2 px-4 py-2 bg-[#981B1B] hover:bg-[#791515] text-white text-sm font-medium rounded-lg transition-colors"
         >
           <Plus className="w-3.5 h-3.5" />
           Add Deal
@@ -437,7 +437,7 @@ export function CRMKanban({ initialDeals }: { initialDeals: Deal[] }) {
           </p>
           <button
             onClick={() => setAddingToStage("NEW_LEAD")}
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#C4972A] hover:bg-[#A17D22] text-white text-sm font-medium rounded-lg transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#981B1B] hover:bg-[#791515] text-white text-sm font-medium rounded-lg transition-colors"
           >
             <Plus className="w-3.5 h-3.5" />
             Add Your First Deal

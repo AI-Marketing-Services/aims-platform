@@ -40,7 +40,7 @@ function WildDucksDemo() {
             key={d.label}
             onClick={() => setTab(i)}
             className="flex-1 rounded-md px-1 py-1.5 text-center transition-all text-[10px] font-semibold"
-            style={{ backgroundColor: tab === i ? "#C4972A" : "#141923", color: tab === i ? "white" : "#9CA3AF" }}
+            style={{ backgroundColor: tab === i ? "#981B1B" : "#FFFFFF", color: tab === i ? "white" : "#9CA3AF" }}
           >
             {d.label}
           </button>
@@ -54,7 +54,7 @@ function WildDucksDemo() {
               <span className="text-[9px] font-bold text-foreground">{scanProgress}%</span>
             </div>
             <div className="h-1 rounded-full bg-deep overflow-hidden">
-              <motion.div animate={{ width: `${scanProgress}%` }} transition={{ duration: 0.05 }} className="h-full bg-gradient-to-r from-primary to-[#E8C46A] rounded-full" />
+              <motion.div animate={{ width: `${scanProgress}%` }} transition={{ duration: 0.05 }} className="h-full bg-gradient-to-r from-primary to-[#C42424] rounded-full" />
             </div>
           </div>
           {dept.sinks.map((sink) => (
@@ -105,7 +105,7 @@ function SteelTrapDemo() {
         {TRAP_STAGES_GRID.map((s, i) => (
           <motion.div
             key={i}
-            animate={{ backgroundColor: i <= stage ? "#2563EB" : "#141923", color: i <= stage ? "#fff" : "#6B7280" }}
+            animate={{ backgroundColor: i <= stage ? "#2563EB" : "#FFFFFF", color: i <= stage ? "#fff" : "#6B7280" }}
             transition={{ duration: 0.3 }}
             className="flex-1 rounded-md px-0.5 py-1.5 text-center"
           >
@@ -138,7 +138,7 @@ function SteelTrapDemo() {
             <span className="text-[9px] font-semibold text-muted-foreground">7x Rule</span>
           </div>
           <div className="h-1 rounded-full bg-card overflow-hidden">
-            <motion.div animate={{ width: `${sevenXPct}%` }} className="h-full rounded-full" style={{ backgroundColor: sevenXPct >= 100 ? "#16A34A" : "#C4972A" }} />
+            <motion.div animate={{ width: `${sevenXPct}%` }} className="h-full rounded-full" style={{ backgroundColor: sevenXPct >= 100 ? "#16A34A" : "#981B1B" }} />
           </div>
         </div>
         <div className="rounded-lg bg-deep border border-border px-2 py-1.5 text-center">
@@ -305,7 +305,7 @@ function ContentDemo() {
             onClick={() => setActive(i)}
             className="flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-semibold transition-all border"
             style={{
-              backgroundColor: active === i ? p.color : "#141923",
+              backgroundColor: active === i ? p.color : "#FFFFFF",
               color: active === i ? "white" : "#9CA3AF",
               borderColor: active === i ? p.color : "rgba(255,255,255,0.07)",
             }}
@@ -397,7 +397,7 @@ function ReactivationDemo() {
           <motion.div
             animate={{ width: `${(count / 2783) * 100}%` }}
             transition={{ duration: 0.05 }}
-            className="h-full bg-gradient-to-r from-primary to-[#E8C46A] rounded-full"
+            className="h-full bg-gradient-to-r from-primary to-[#C42424] rounded-full"
           />
         </div>
       </div>
@@ -539,7 +539,7 @@ const SERVICES: ServiceCard[] = [
     icon: <Zap className="h-5 w-5" />,
     tools: ["/integrations/openai-svgrepo-com.svg", "/integrations/notion.svg", "/integrations/slack.png"],
     Demo: WildDucksDemo,
-    accentColor: "#C4972A",
+    accentColor: "#981B1B",
     tags: ["Time Intelligence", "Dept Discovery", "Opportunity Map", "AI Deployment"],
   },
   {
@@ -561,7 +561,7 @@ const SERVICES: ServiceCard[] = [
     icon: <DollarSign className="h-5 w-5" />,
     tools: ["/integrations/openai-svgrepo-com.svg", "/integrations/hubspot-svgrepo-com.svg", "/integrations/slack.png"],
     Demo: MoneyPageGridDemo,
-    accentColor: "#C4972A",
+    accentColor: "#981B1B",
     tags: ["C.O.M.", "MOIC", "AI Recovery", "Elasticity"],
   },
 ]

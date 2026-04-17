@@ -21,7 +21,7 @@ interface CapacityChartProps {
 const CHART_THEME = {
   grid: "rgba(255,255,255,0.05)",
   text: "#8B8B9E",
-  tooltip: { bg: "#1A2030", border: "#2A3040", text: "#F0EBE0" },
+  tooltip: { bg: "#F5F5F5", border: "#2A3040", text: "#1A1A1A" },
 }
 
 function HealthDot({ score }: { score: number | null }) {
@@ -107,7 +107,7 @@ export default function CapacityChart({ metrics }: CapacityChartProps) {
       label: "Value Freed / mo",
       value: formatCurrency(metrics.totalDollarValuePerMonth),
       icon: DollarSign,
-      color: "text-[#C4972A]",
+      color: "text-[#981B1B]",
       bg: "bg-primary/10",
     },
     {
@@ -202,7 +202,7 @@ export default function CapacityChart({ metrics }: CapacityChartProps) {
                       yAxisId="dollars"
                       dataKey="dollarValue"
                       name="Dollar Value"
-                      fill="#C4972A"
+                      fill="#981B1B"
                       radius={[4, 4, 0, 0]}
                       maxBarSize={40}
                     />

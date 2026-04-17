@@ -28,7 +28,7 @@ export type PartnerRow = {
 const TIER_STYLES: Record<string, string> = {
   AFFILIATE: "text-blue-400 bg-blue-500/10 border-blue-500/20",
   COMMUNITY_PARTNER: "text-purple-400 bg-purple-500/10 border-purple-500/20",
-  RESELLER: "text-[#C4972A] bg-[#C4972A]/10 border-[#C4972A]/30",
+  RESELLER: "text-[#981B1B] bg-[#981B1B]/10 border-[#981B1B]/30",
 }
 
 const fmtMoney = (n: number) =>

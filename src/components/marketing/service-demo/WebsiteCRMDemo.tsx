@@ -101,7 +101,7 @@ export function WebsiteCRMDemo() {
             key={i}
             onClick={() => setTab(i)}
             className="flex-1 rounded-lg px-1 py-2 text-center transition-all text-[11px] font-semibold"
-            style={{ backgroundColor: tab === i ? "#C4972A" : "#141923", color: tab === i ? "white" : "#9CA3AF" }}
+            style={{ backgroundColor: tab === i ? "#981B1B" : "#FFFFFF", color: tab === i ? "white" : "#9CA3AF" }}
           >
             {t.label}
           </button>

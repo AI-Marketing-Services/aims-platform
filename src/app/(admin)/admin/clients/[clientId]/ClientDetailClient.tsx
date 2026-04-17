@@ -220,7 +220,7 @@ export function ClientDetailClient({
       <div className="bg-card border border-border rounded-xl p-6">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div className="flex items-start gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#C4972A]/10 text-[#C4972A] font-bold text-lg flex-shrink-0">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#981B1B]/10 text-[#981B1B] font-bold text-lg flex-shrink-0">
               {(user.name ?? user.email).charAt(0).toUpperCase()}
             </div>
             <div>
@@ -293,7 +293,7 @@ export function ClientDetailClient({
               className={cn(
                 "flex items-center gap-2 px-5 py-3 text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0",
                 activeTab === tab.value
-                  ? "text-foreground border-b-2 border-[#C4972A]"
+                  ? "text-foreground border-b-2 border-[#981B1B]"
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
@@ -468,7 +468,7 @@ export function ClientDetailClient({
                     >
                       <div className="flex items-start justify-between gap-3 mb-2">
                         <div>
-                          <p className="text-sm font-medium text-foreground group-hover:text-[#C4972A] transition-colors">
+                          <p className="text-sm font-medium text-foreground group-hover:text-[#981B1B] transition-colors">
                             {deal.contactName}
                           </p>
                           {deal.company && <p className="text-xs text-muted-foreground">{deal.company}</p>}

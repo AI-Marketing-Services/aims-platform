@@ -11,11 +11,11 @@ interface StepCompanyProfileProps {
 
 const labelClass = "block text-sm font-medium text-foreground mb-1.5"
 const inputClass =
-  "w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C4972A]/20 focus:border-[#C4972A]"
+  "w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#981B1B]/20 focus:border-[#981B1B]"
 const errorClass = "mt-1 text-xs text-red-400"
 
 function RequiredMark() {
-  return <span className="text-[#C4972A] ml-0.5">*</span>
+  return <span className="text-[#981B1B] ml-0.5">*</span>
 }
 
 export function StepCompanyProfile({ data, onChange, errors }: StepCompanyProfileProps) {

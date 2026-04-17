@@ -176,13 +176,13 @@ export function ClientsTable({ rows }: Props) {
             onChange={(e) => { setSearch(e.target.value); setPage(1) }}
             placeholder="Search by name, email, or company..."
             data-search
-            className="w-full pl-9 pr-4 py-2 bg-card border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-[#C4972A] focus:ring-1 focus:ring-[#C4972A]/20"
+            className="w-full pl-9 pr-4 py-2 bg-card border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-[#981B1B] focus:ring-1 focus:ring-[#981B1B]/20"
           />
         </div>
         <select
           value={stageFilter}
           onChange={(e) => { setStageFilter(e.target.value); setPage(1) }}
-          className="px-3 py-2 bg-card border border-border rounded-lg text-sm text-foreground focus:outline-none focus:border-[#C4972A]"
+          className="px-3 py-2 bg-card border border-border rounded-lg text-sm text-foreground focus:outline-none focus:border-[#981B1B]"
         >
           <option value="all">All Stages</option>
           {ALL_STAGES.map((s) => (
@@ -302,7 +302,7 @@ export function ClientsTable({ rows }: Props) {
                           <Link
                             href={`/admin/clients/${r.userId}`}
                             onClick={(e) => e.stopPropagation()}
-                            className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-[#C4972A] transition-colors"
+                            className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-[#981B1B] transition-colors"
                             title="View client profile"
                           >
                             <User className="w-3.5 h-3.5" />

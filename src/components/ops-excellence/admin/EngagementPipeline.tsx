@@ -57,7 +57,7 @@ function ScoreBar({ score }: { score: number | null }) {
       <span className="text-sm font-medium text-foreground w-8 text-right">{score}</span>
       <div className="w-16 h-1.5 rounded-full bg-muted overflow-hidden">
         <div
-          className="h-full rounded-full bg-[#C4972A] transition-all"
+          className="h-full rounded-full bg-[#981B1B] transition-all"
           style={{ width: `${pct}%` }}
         />
       </div>
@@ -141,7 +141,7 @@ export function EngagementPipeline({ engagements }: Props) {
             placeholder="Search by company name..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full rounded-lg border border-border bg-card pl-10 pr-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C4972A]/50"
+            className="w-full rounded-lg border border-border bg-card pl-10 pr-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#981B1B]/50"
           />
         </div>
 
@@ -157,7 +157,7 @@ export function EngagementPipeline({ engagements }: Props) {
                 className={cn(
                   "px-3 py-2 text-sm font-medium whitespace-nowrap transition-colors",
                   stageFilter === tab.value
-                    ? "border-b-2 border-[#C4972A] text-foreground"
+                    ? "border-b-2 border-[#981B1B] text-foreground"
                     : "text-muted-foreground hover:text-foreground"
                 )}
               >
@@ -239,7 +239,7 @@ export function EngagementPipeline({ engagements }: Props) {
                     <td className="px-4 py-3 text-right">
                       <Link
                         href={`/admin/ops-excellence/${e.id}`}
-                        className="inline-flex items-center gap-1.5 text-xs font-medium text-[#C4972A] hover:text-[#A17D22] transition-colors"
+                        className="inline-flex items-center gap-1.5 text-xs font-medium text-[#981B1B] hover:text-[#791515] transition-colors"
                       >
                         <Eye className="h-3.5 w-3.5" />
                         View

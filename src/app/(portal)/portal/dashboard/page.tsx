@@ -203,7 +203,7 @@ export default async function PortalDashboard({
                 title: "Browse Services",
                 description: "Explore our AI-powered service marketplace and find the right tools for your business.",
                 href: "/portal/marketplace",
-                color: "text-[#C4972A]",
+                color: "text-[#981B1B]",
                 bg: "bg-primary/10",
               },
               {
@@ -231,13 +231,13 @@ export default async function PortalDashboard({
                 <div className={`mb-3 flex h-10 w-10 items-center justify-center rounded-xl ${bg}`}>
                   <Icon className={`h-5 w-5 ${color}`} />
                 </div>
-                <h3 className="text-sm font-semibold text-foreground group-hover:text-[#C4972A] transition-colors">
+                <h3 className="text-sm font-semibold text-foreground group-hover:text-[#981B1B] transition-colors">
                   {title}
                 </h3>
                 <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
                   {description}
                 </p>
-                <span className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-[#C4972A]">
+                <span className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-[#981B1B]">
                   Get started <ArrowRight className="h-3 w-3" />
                 </span>
               </Link>
@@ -247,7 +247,7 @@ export default async function PortalDashboard({
           {/* Getting Started Checklist */}
           <div className="rounded-2xl border border-border bg-card p-6">
             <div className="flex items-center gap-2 mb-4">
-              <Check className="h-4 w-4 text-[#C4972A]" />
+              <Check className="h-4 w-4 text-[#981B1B]" />
               <h2 className="text-sm font-semibold text-foreground">Getting Started</h2>
             </div>
 
@@ -261,7 +261,7 @@ export default async function PortalDashboard({
               </div>
               <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
                 <div
-                  className="h-full rounded-full bg-[#C4972A] transition-all"
+                  className="h-full rounded-full bg-[#981B1B] transition-all"
                   style={{ width: `${progressPct}%` }}
                 />
               </div>
@@ -299,7 +299,7 @@ export default async function PortalDashboard({
                   {!item.checked && item.href && (
                     <Link
                       href={item.href}
-                      className="shrink-0 flex items-center gap-1 text-sm font-medium text-[#C4972A] hover:text-[#A17D22] transition-colors"
+                      className="shrink-0 flex items-center gap-1 text-sm font-medium text-[#981B1B] hover:text-[#791515] transition-colors"
                     >
                       Go <ArrowRight className="h-3.5 w-3.5" />
                     </Link>
@@ -342,7 +342,7 @@ export default async function PortalDashboard({
               <div className="flex items-center justify-between mb-3">
                 <p className="text-sm text-muted-foreground">{label}</p>
                 <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
-                  <Icon className="h-4 w-4 text-[#C4972A]" />
+                  <Icon className="h-4 w-4 text-[#981B1B]" />
                 </div>
               </div>
               <p className="text-3xl font-bold font-mono text-foreground">{value}</p>
@@ -380,17 +380,17 @@ export default async function PortalDashboard({
       >
         <div className="flex items-center gap-4">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 border border-primary/20">
-            <Gauge className="h-6 w-6 text-[#C4972A]" />
+            <Gauge className="h-6 w-6 text-[#981B1B]" />
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="text-sm font-semibold text-foreground group-hover:text-[#C4972A] transition-colors">
+            <h3 className="text-sm font-semibold text-foreground group-hover:text-[#981B1B] transition-colors">
               Operational Excellence Dashboard
             </h3>
             <p className="text-xs text-muted-foreground mt-0.5">
               View your operational credit score, capacity ROI, and spend efficiency metrics.
             </p>
           </div>
-          <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground group-hover:text-[#C4972A] group-hover:translate-x-1 transition-all" />
+          <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground group-hover:text-[#981B1B] group-hover:translate-x-1 transition-all" />
         </div>
       </Link>
 
@@ -410,7 +410,7 @@ export default async function PortalDashboard({
             </p>
             <Link
               href="/portal/marketplace"
-              className="inline-flex items-center gap-2 rounded-lg bg-[#C4972A] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#A17D22] transition"
+              className="inline-flex items-center gap-2 rounded-lg bg-[#981B1B] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#791515] transition"
             >
               Browse Services <ArrowRight className="h-4 w-4" />
             </Link>
@@ -463,7 +463,7 @@ export default async function PortalDashboard({
         <div className="rounded-2xl border border-border bg-card overflow-hidden">
           <div className="px-5 py-4 border-b border-border flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Mail className="h-4 w-4 text-[#C4972A]" />
+              <Mail className="h-4 w-4 text-[#981B1B]" />
               <h2 className="text-lg font-semibold">Email Campaigns</h2>
               {emailWorkspaceName && (
                 <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
@@ -541,7 +541,7 @@ export default async function PortalDashboard({
                         <div className="flex items-center gap-2">
                           <div className="w-24 h-1.5 rounded-full bg-muted overflow-hidden">
                             <div
-                              className="h-full rounded-full bg-[#C4972A] transition-all"
+                              className="h-full rounded-full bg-[#981B1B] transition-all"
                               style={{ width: `${Math.min(c.completion_percentage, 100)}%` }}
                             />
                           </div>
@@ -570,10 +570,10 @@ export default async function PortalDashboard({
       )}
 
       {/* ── SMART UPSELL BANNER ── */}
-      <div className="border border-border rounded-2xl bg-card p-5 border-l-4 border-l-[#C4972A]">
+      <div className="border border-border rounded-2xl bg-card p-5 border-l-4 border-l-[#981B1B]">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-[#C4972A] mb-1">
+            <p className="text-xs font-semibold uppercase tracking-widest text-[#981B1B] mb-1">
               Recommended for you
             </p>
             <p className="font-semibold text-foreground">{upsellService}</p>
@@ -582,7 +582,7 @@ export default async function PortalDashboard({
           </div>
           <Link
             href="/portal/marketplace"
-            className="shrink-0 inline-flex items-center gap-1.5 rounded-lg bg-[#C4972A] px-4 py-2 text-sm font-semibold text-white hover:bg-[#A17D22] transition whitespace-nowrap"
+            className="shrink-0 inline-flex items-center gap-1.5 rounded-lg bg-[#981B1B] px-4 py-2 text-sm font-semibold text-white hover:bg-[#791515] transition whitespace-nowrap"
           >
             Add to Plan <ArrowRight className="h-3.5 w-3.5" />
           </Link>

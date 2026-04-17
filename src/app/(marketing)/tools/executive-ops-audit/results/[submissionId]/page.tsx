@@ -219,10 +219,10 @@ export default async function ExecutiveOpsAuditResultsPage({ params }: Props) {
         {/* ══════════════════════════════════════════════════════════════════════
             SECTION 1 — Executive Summary Banner
         ══════════════════════════════════════════════════════════════════════ */}
-        <div className="bg-card border border-border border-l-4 border-l-[#C4972A] rounded-2xl p-8 mb-6 relative overflow-hidden shadow-lg">
+        <div className="bg-card border border-border border-l-4 border-l-[#981B1B] rounded-2xl p-8 mb-6 relative overflow-hidden shadow-lg">
           <div
             className="absolute top-0 right-0 w-96 h-96 opacity-[0.03] blur-3xl pointer-events-none"
-            style={{ background: "radial-gradient(circle, #C4972A, transparent 70%)" }}
+            style={{ background: "radial-gradient(circle, #981B1B, transparent 70%)" }}
           />
           <div className="relative">
             {/* Label row */}
@@ -824,7 +824,7 @@ export default async function ExecutiveOpsAuditResultsPage({ params }: Props) {
         <div className="bg-card border border-primary/25 rounded-2xl p-8 sm:p-12 text-center relative overflow-hidden">
           <div
             className="absolute inset-0 opacity-[0.06] pointer-events-none"
-            style={{ background: "radial-gradient(ellipse at center, #C4972A, transparent 65%)" }}
+            style={{ background: "radial-gradient(ellipse at center, #981B1B, transparent 65%)" }}
           />
           <div className="relative">
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full tracking-widest uppercase mb-5">

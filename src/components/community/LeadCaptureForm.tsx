@@ -54,13 +54,13 @@ export function LeadCaptureForm({
     return (
       <div className="rounded-md border border-aims-gold/40 bg-aims-gold/5 p-6 text-center">
         <CheckCircle2 className="w-10 h-10 text-aims-gold mx-auto mb-3" />
-        <p className="text-cream font-semibold text-lg">Check your inbox.</p>
-        <p className="text-cream/70 text-sm mt-2 leading-relaxed">
+        <p className="text-ink font-semibold text-lg">Check your inbox.</p>
+        <p className="text-ink/70 text-sm mt-2 leading-relaxed">
           The <span className="text-aims-gold font-semibold">AI Operator Playbook Vault</span>{" "}
           is on its way right now. If you don&apos;t see it in 2 minutes, check your spam or
           promotions folder — it&apos;s worth digging for.
         </p>
-        <p className="text-cream/70 text-xs mt-3 font-mono uppercase tracking-wider">
+        <p className="text-ink/70 text-xs mt-3 font-mono uppercase tracking-wider">
           Your application is in the review queue
         </p>
       </div>
@@ -75,7 +75,7 @@ export function LeadCaptureForm({
           placeholder="Your name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="w-full rounded-sm bg-surface border border-line px-4 py-3.5 text-cream placeholder:text-cream/55 focus:outline-none focus:border-aims-gold transition-colors"
+          className="w-full rounded-sm bg-surface border border-line px-4 py-3.5 text-ink placeholder:text-ink/55 focus:outline-none focus:border-aims-gold transition-colors"
           required
         />
         <input
@@ -83,7 +83,7 @@ export function LeadCaptureForm({
           placeholder="Your email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full rounded-sm bg-surface border border-line px-4 py-3.5 text-cream placeholder:text-cream/55 focus:outline-none focus:border-aims-gold transition-colors"
+          className="w-full rounded-sm bg-surface border border-line px-4 py-3.5 text-ink placeholder:text-ink/55 focus:outline-none focus:border-aims-gold transition-colors"
           required
         />
         <button
@@ -107,7 +107,7 @@ export function LeadCaptureForm({
         placeholder="Your name"
         value={name}
         onChange={(e) => setName(e.target.value)}
-        className="flex-1 bg-transparent px-3 py-3 text-cream placeholder:text-cream/55 focus:outline-none"
+        className="flex-1 bg-transparent px-3 py-3 text-ink placeholder:text-ink/55 focus:outline-none"
         required
       />
       <div className="hidden sm:block w-px bg-line" />
@@ -116,7 +116,7 @@ export function LeadCaptureForm({
         placeholder="Your email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        className="flex-1 bg-transparent px-3 py-3 text-cream placeholder:text-cream/55 focus:outline-none"
+        className="flex-1 bg-transparent px-3 py-3 text-ink placeholder:text-ink/55 focus:outline-none"
         required
       />
       <button

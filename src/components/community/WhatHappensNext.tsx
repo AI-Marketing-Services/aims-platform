@@ -38,11 +38,11 @@ export function WhatHappensNext() {
           <p className="text-xs font-mono uppercase tracking-[0.2em] text-aims-gold mb-4">
             What Happens After You Sign Up
           </p>
-          <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl text-cream leading-[1.25] pb-2">
+          <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl text-ink leading-[1.25] pb-2">
             No Guessing.{" "}
             <span className="block text-aims-gold italic">You Know Exactly What Comes Next.</span>
           </h2>
-          <p className="mt-6 text-lg text-cream/65">
+          <p className="mt-6 text-lg text-ink/65">
             Most landing pages go dark the second you hit submit. Here&apos;s the full
             sequence from the moment you drop your email.
           </p>
@@ -64,10 +64,10 @@ export function WhatHappensNext() {
                     <p className="text-[10px] font-mono uppercase tracking-wider text-aims-gold mb-1">
                       Step 0{idx + 1} · {step.when}
                     </p>
-                    <h3 className="font-serif text-xl text-cream mb-2 leading-tight">
+                    <h3 className="font-serif text-xl text-ink mb-2 leading-tight">
                       {step.title}
                     </h3>
-                    <p className="text-sm text-cream/60 leading-relaxed">{step.body}</p>
+                    <p className="text-sm text-ink/60 leading-relaxed">{step.body}</p>
                   </div>
                 </div>
               </div>

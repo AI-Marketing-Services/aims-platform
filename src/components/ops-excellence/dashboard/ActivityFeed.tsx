@@ -26,7 +26,7 @@ const MAX_VISIBLE = 15
 const TYPE_ICONS: Record<string, { icon: LucideIcon; color: string; bg: string }> = {
   SCORE_CALCULATED: {
     icon: TrendingUp,
-    color: "text-[#C4972A]",
+    color: "text-[#981B1B]",
     bg: "bg-primary/10",
   },
   AUTOMATION_DEPLOYED: {

@@ -315,7 +315,7 @@ export default function SupportPage() {
           </button>
           <button
             onClick={() => setShowNew(!showNew)}
-            className="flex items-center gap-2 px-4 py-2 bg-[#C4972A] text-white text-sm font-medium rounded-lg hover:bg-[#A17D22] transition-colors btn-lift"
+            className="flex items-center gap-2 px-4 py-2 bg-[#981B1B] text-white text-sm font-medium rounded-lg hover:bg-[#791515] transition-colors btn-lift"
           >
             <Plus className="w-4 h-4" />
             New Ticket
@@ -338,7 +338,7 @@ export default function SupportPage() {
               <select
                 value={serviceContext}
                 onChange={(e) => setServiceContext(e.target.value)}
-                className="w-full px-4 py-3 bg-background border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#C4972A]/20 focus:border-[#C4972A]"
+                className="w-full px-4 py-3 bg-background border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#981B1B]/20 focus:border-[#981B1B]"
               >
                 <option value="">General / Other</option>
                 {services.map((s) => (
@@ -360,7 +360,7 @@ export default function SupportPage() {
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
                 placeholder="Brief description of your issue"
-                className="w-full px-4 py-3 bg-background border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C4972A]/20 focus:border-[#C4972A]"
+                className="w-full px-4 py-3 bg-background border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#981B1B]/20 focus:border-[#981B1B]"
               />
             </div>
 
@@ -375,7 +375,7 @@ export default function SupportPage() {
                 value={message}
                 onChange={(e) => setMessage(e.target.value.slice(0, 2000))}
                 placeholder="Describe the issue in detail. Include any relevant context..."
-                className="w-full px-4 py-3 bg-background border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C4972A]/20 focus:border-[#C4972A] resize-none"
+                className="w-full px-4 py-3 bg-background border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#981B1B]/20 focus:border-[#981B1B] resize-none"
               />
               <p className="text-xs text-muted-foreground text-right mt-1">{message.length}/2000</p>
             </div>
@@ -383,7 +383,7 @@ export default function SupportPage() {
             <div className="flex gap-3">
               <button
                 type="submit"
-                className="flex items-center gap-2 px-5 py-2.5 bg-[#C4972A] text-white text-sm font-medium rounded-lg hover:bg-[#A17D22] transition-colors"
+                className="flex items-center gap-2 px-5 py-2.5 bg-[#981B1B] text-white text-sm font-medium rounded-lg hover:bg-[#791515] transition-colors"
               >
                 <Send className="w-4 h-4" />
                 Submit Ticket
@@ -557,12 +557,12 @@ export default function SupportPage() {
                           value={replyTexts[ticket.id] ?? ""}
                           onChange={(e) => setReplyTexts((prev) => ({ ...prev, [ticket.id]: e.target.value }))}
                           placeholder="Type your reply..."
-                          className="w-full px-4 py-3 bg-background border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C4972A]/20 focus:border-[#C4972A] resize-none"
+                          className="w-full px-4 py-3 bg-background border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#981B1B]/20 focus:border-[#981B1B] resize-none"
                         />
                         <button
                           onClick={() => handleReply(ticket.id)}
                           disabled={!(replyTexts[ticket.id] ?? "").trim() || sending}
-                          className="mt-2 flex items-center gap-2 px-4 py-2 bg-[#C4972A] text-white text-xs font-medium rounded-lg hover:bg-[#A17D22] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="mt-2 flex items-center gap-2 px-4 py-2 bg-[#981B1B] text-white text-xs font-medium rounded-lg hover:bg-[#791515] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           <Send className="w-3.5 h-3.5" />
                           {sending ? "Sending..." : "Send Reply"}

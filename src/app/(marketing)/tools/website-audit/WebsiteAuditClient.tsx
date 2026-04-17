@@ -42,7 +42,7 @@ function ScoreRing({ score, label, size = 80 }: { score: number; label: string; 
   const radius = (size - 12) / 2
   const circumference = 2 * Math.PI * radius
   const fill = (score / 100) * circumference
-  const color = score >= 70 ? "#16A34A" : score >= 50 ? "#EA580C" : "#C4972A"
+  const color = score >= 70 ? "#16A34A" : score >= 50 ? "#EA580C" : "#981B1B"
 
   return (
     <div className="flex flex-col items-center gap-1">

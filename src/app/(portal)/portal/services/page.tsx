@@ -134,7 +134,7 @@ export default async function PortalServicesPage() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8 stagger-in">
         <div className="bg-card border border-border rounded-2xl p-5 flex items-start gap-4">
           <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-            <DollarSign className="w-4 h-4 text-[#C4972A]" />
+            <DollarSign className="w-4 h-4 text-[#981B1B]" />
           </div>
           <div>
             <div className="text-sm text-muted-foreground mb-1">Monthly Investment</div>
@@ -147,7 +147,7 @@ export default async function PortalServicesPage() {
 
         <div className="bg-card border border-border rounded-2xl p-5 flex items-start gap-4">
           <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-            <Layers className="w-4 h-4 text-[#C4972A]" />
+            <Layers className="w-4 h-4 text-[#981B1B]" />
           </div>
           <div>
             <div className="text-sm text-muted-foreground mb-1">Active Services</div>
@@ -160,7 +160,7 @@ export default async function PortalServicesPage() {
 
         <div className="bg-card border border-border rounded-2xl p-5 flex items-start gap-4">
           <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-            <Package className="w-4 h-4 text-[#C4972A]" />
+            <Package className="w-4 h-4 text-[#981B1B]" />
           </div>
           <div>
             <div className="text-sm text-muted-foreground mb-1">Total Services</div>
@@ -190,18 +190,18 @@ export default async function PortalServicesPage() {
               <Link
                 key={svc.name}
                 href="/portal/marketplace"
-                className="rounded-xl border border-border bg-card p-4 hover:border-[#C4972A]/40 transition-all cursor-pointer group"
+                className="rounded-xl border border-border bg-card p-4 hover:border-[#981B1B]/40 transition-all cursor-pointer group"
               >
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <span className="font-semibold text-foreground text-sm leading-snug">
                     {svc.name}
                   </span>
-                  <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-[#C4972A] transition-colors shrink-0 mt-0.5" />
+                  <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-[#981B1B] transition-colors shrink-0 mt-0.5" />
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-sm text-muted-foreground">{svc.price}</span>
                   {svc.badge && (
-                    <span className="text-xs px-1.5 py-0.5 rounded-full bg-[#C4972A]/10 text-[#C4972A] font-medium">
+                    <span className="text-xs px-1.5 py-0.5 rounded-full bg-[#981B1B]/10 text-[#981B1B] font-medium">
                       {svc.badge}
                     </span>
                   )}
@@ -214,7 +214,7 @@ export default async function PortalServicesPage() {
             Or{" "}
             <Link
               href="/portal/marketplace"
-              className="text-[#C4972A] font-medium hover:underline"
+              className="text-[#981B1B] font-medium hover:underline"
             >
               browse all 21 AI services &rarr;
             </Link>
@@ -287,7 +287,7 @@ export default async function PortalServicesPage() {
                   </div>
                   <div className="w-full h-1.5 bg-deep rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-[#C4972A] rounded-full transition-all"
+                      className="h-full bg-[#981B1B] rounded-full transition-all"
                       style={{ width: `${progress}%` }}
                     />
                   </div>
@@ -366,7 +366,7 @@ export default async function PortalServicesPage() {
                     svc.serviceArm.onboardingFormSchema && (
                       <Link
                         href={`/portal/onboarding/${svc.id}`}
-                        className="px-4 py-1.5 text-sm font-medium rounded-lg bg-[#C4972A] text-white hover:bg-[#A17D22] transition-colors"
+                        className="px-4 py-1.5 text-sm font-medium rounded-lg bg-[#981B1B] text-white hover:bg-[#791515] transition-colors"
                       >
                         Complete Onboarding
                       </Link>
@@ -376,7 +376,7 @@ export default async function PortalServicesPage() {
                     className={`px-4 py-1.5 text-sm font-medium rounded-lg transition-colors ${
                       !svc.onboardingCompletedAt && svc.serviceArm.onboardingFormSchema
                         ? "border border-border text-foreground hover:bg-surface"
-                        : "bg-[#C4972A] text-white hover:bg-[#A17D22]"
+                        : "bg-[#981B1B] text-white hover:bg-[#791515]"
                     }`}
                   >
                     View Details
@@ -401,11 +401,11 @@ export default async function PortalServicesPage() {
       )}
 
       {/* Upsell banner */}
-      <div className="mt-8 border-l-4 border-l-[#C4972A] border border-border rounded-2xl bg-card p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="mt-8 border-l-4 border-l-[#981B1B] border border-border rounded-2xl bg-card p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <Zap className="w-4 h-4 text-[#C4972A]" />
-            <span className="font-bold text-[#C4972A]">AIMS</span>
+            <Zap className="w-4 h-4 text-[#981B1B]" />
+            <span className="font-bold text-[#981B1B]">AIMS</span>
             <span className="text-foreground font-semibold">Ready to scale further?</span>
           </div>
           <p className="text-muted-foreground text-sm">
@@ -414,7 +414,7 @@ export default async function PortalServicesPage() {
         </div>
         <Link
           href="/portal/marketplace"
-          className="px-5 py-2.5 bg-[#C4972A] text-white text-sm font-medium rounded-lg hover:bg-[#A17D22] transition-colors whitespace-nowrap shrink-0"
+          className="px-5 py-2.5 bg-[#981B1B] text-white text-sm font-medium rounded-lg hover:bg-[#791515] transition-colors whitespace-nowrap shrink-0"
         >
           Browse 21 AI Services &rarr;
         </Link>

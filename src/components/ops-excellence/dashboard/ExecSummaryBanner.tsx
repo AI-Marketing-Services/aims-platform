@@ -21,7 +21,7 @@ interface Recommendation {
 function getScoreLabel(score: number): { label: string; color: string } {
   if (score >= 85) return { label: "World-Class", color: "text-emerald-400" }
   if (score >= 70) return { label: "Optimized", color: "text-blue-400" }
-  if (score >= 50) return { label: "Advanced", color: "text-[#C4972A]" }
+  if (score >= 50) return { label: "Advanced", color: "text-[#981B1B]" }
   if (score >= 30) return { label: "Developing", color: "text-yellow-400" }
   return { label: "Emerging", color: "text-muted-foreground" }
 }
@@ -236,7 +236,7 @@ export default function ExecSummaryBanner({
         {/* Recommendations column */}
         <div className="px-6 py-5">
           <div className="flex items-center gap-2 mb-4">
-            <AlertCircle className="h-4 w-4 text-[#C4972A] shrink-0" />
+            <AlertCircle className="h-4 w-4 text-[#981B1B] shrink-0" />
             <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
               Recommended Next Actions
             </span>

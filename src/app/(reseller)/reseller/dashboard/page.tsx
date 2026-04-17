@@ -51,12 +51,12 @@ export default async function ResellerDashboardPage() {
         <div className="rounded-xl border border-border bg-card p-5">
           <p className="text-xs text-muted-foreground mb-2 font-medium uppercase tracking-wider">Your Referral Link</p>
           <div className="flex items-center gap-3">
-            <code className="flex-1 text-sm font-mono text-[#C4972A] bg-muted px-3 py-2 rounded-lg overflow-x-auto">
+            <code className="flex-1 text-sm font-mono text-[#981B1B] bg-muted px-3 py-2 rounded-lg overflow-x-auto">
               {refLink}
             </code>
             <Link
               href="/reseller/resources"
-              className="px-4 py-2 bg-[#C4972A] text-white text-sm font-medium rounded-lg hover:bg-[#A17D22] transition-colors whitespace-nowrap"
+              className="px-4 py-2 bg-[#981B1B] text-white text-sm font-medium rounded-lg hover:bg-[#791515] transition-colors whitespace-nowrap"
             >
               Copy &amp; Share
             </Link>

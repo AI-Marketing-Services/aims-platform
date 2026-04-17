@@ -67,7 +67,7 @@ export function InternInviteDialog() {
       {/* Trigger */}
       <button
         onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-2 rounded-lg bg-[#C4972A] px-4 py-2 text-sm font-medium text-white hover:bg-[#A17D22] transition-colors"
+        className="inline-flex items-center gap-2 rounded-lg bg-[#981B1B] px-4 py-2 text-sm font-medium text-white hover:bg-[#791515] transition-colors"
       >
         <UserPlus className="h-4 w-4" />
         Invite Intern
@@ -98,7 +98,7 @@ export function InternInviteDialog() {
             <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
               <div>
                 <label className="block text-xs font-medium text-muted-foreground mb-1.5">
-                  Full Name <span className="text-[#C4972A]">*</span>
+                  Full Name <span className="text-[#981B1B]">*</span>
                 </label>
                 <input
                   required
@@ -106,13 +106,13 @@ export function InternInviteDialog() {
                   value={form.name}
                   onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
                   placeholder="Enter full name"
-                  className="w-full h-9 rounded-lg border border-border bg-muted px-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-[#C4972A]/50"
+                  className="w-full h-9 rounded-lg border border-border bg-muted px-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-[#981B1B]/50"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-medium text-muted-foreground mb-1.5">
-                  Email <span className="text-[#C4972A]">*</span>
+                  Email <span className="text-[#981B1B]">*</span>
                 </label>
                 <input
                   required
@@ -120,19 +120,19 @@ export function InternInviteDialog() {
                   value={form.email}
                   onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
                   placeholder="intern@example.com"
-                  className="w-full h-9 rounded-lg border border-border bg-muted px-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-[#C4972A]/50"
+                  className="w-full h-9 rounded-lg border border-border bg-muted px-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-[#981B1B]/50"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-medium text-muted-foreground mb-1.5">
-                  Role <span className="text-[#C4972A]">*</span>
+                  Role <span className="text-[#981B1B]">*</span>
                 </label>
                 <select
                   required
                   value={form.role}
                   onChange={(e) => setForm((f) => ({ ...f, role: e.target.value }))}
-                  className="w-full h-9 rounded-lg border border-border bg-muted px-3 text-sm text-foreground focus:outline-none focus:border-[#C4972A]/50"
+                  className="w-full h-9 rounded-lg border border-border bg-muted px-3 text-sm text-foreground focus:outline-none focus:border-[#981B1B]/50"
                 >
                   <option value="AI_BUILDER">AI Builder</option>
                   <option value="BDR">BDR</option>
@@ -150,7 +150,7 @@ export function InternInviteDialog() {
                   value={form.university}
                   onChange={(e) => setForm((f) => ({ ...f, university: e.target.value }))}
                   placeholder="e.g. University of Michigan"
-                  className="w-full h-9 rounded-lg border border-border bg-muted px-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-[#C4972A]/50"
+                  className="w-full h-9 rounded-lg border border-border bg-muted px-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-[#981B1B]/50"
                 />
               </div>
 
@@ -166,7 +166,7 @@ export function InternInviteDialog() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex-1 h-9 rounded-lg bg-[#C4972A] text-sm font-medium text-white hover:bg-[#A17D22] disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+                  className="flex-1 h-9 rounded-lg bg-[#981B1B] text-sm font-medium text-white hover:bg-[#791515] disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
                 >
                   {loading ? "Inviting…" : "Send Invite"}
                 </button>

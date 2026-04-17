@@ -216,7 +216,7 @@ export function AdminDashboardClient({ data }: { data: DashboardData }) {
               <Icon className="h-4 w-4" />
               {label}
               {badge !== undefined && (
-                <span className="ml-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-primary/20 px-1.5 text-[11px] font-semibold text-[#C4972A]">
+                <span className="ml-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-primary/20 px-1.5 text-[11px] font-semibold text-[#981B1B]">
                   {badge}
                 </span>
               )}
@@ -234,7 +234,7 @@ export function AdminDashboardClient({ data }: { data: DashboardData }) {
           {[
             { label: "New Deals", value: weekSummary.newDeals, icon: TrendingUp, color: "text-blue-400", bg: "bg-blue-900/20" },
             { label: "Tickets Resolved", value: weekSummary.ticketsResolved, icon: TicketCheck, color: "text-green-400", bg: "bg-green-900/15" },
-            { label: "Revenue", value: `$${weekSummary.revenue.toLocaleString()}`, icon: DollarSign, color: "text-[#C4972A]", bg: "bg-primary/10" },
+            { label: "Revenue", value: `$${weekSummary.revenue.toLocaleString()}`, icon: DollarSign, color: "text-[#981B1B]", bg: "bg-primary/10" },
             { label: "Chats", value: weekSummary.chats, icon: MessageSquare, color: "text-purple-400", bg: "bg-purple-900/20" },
           ].map(({ label, value, icon: Icon, color, bg }) => (
             <div key={label} className="rounded-lg border border-border bg-card px-4 py-3">
@@ -262,7 +262,7 @@ export function AdminDashboardClient({ data }: { data: DashboardData }) {
               </p>
               <div className="flex items-center gap-2">
                 {mrrSparkline.length > 1 && <Sparkline data={mrrSparkline} />}
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-[#C4972A]">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-[#981B1B]">
                   <DollarSign className="h-4 w-4" />
                 </div>
               </div>
@@ -292,7 +292,7 @@ export function AdminDashboardClient({ data }: { data: DashboardData }) {
               </p>
               <div className="flex items-center gap-2">
                 {clientSparkline.length > 1 && <Sparkline data={clientSparkline} color="#22c55e" />}
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-[#C4972A]">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-[#981B1B]">
                   <Users className="h-4 w-4" />
                 </div>
               </div>
@@ -319,7 +319,7 @@ export function AdminDashboardClient({ data }: { data: DashboardData }) {
               </p>
               <div className="flex items-center gap-2">
                 {pipelineSparkline.length > 1 && <Sparkline data={pipelineSparkline} color="#60a5fa" />}
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-[#C4972A]">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-[#981B1B]">
                   <Layers className="h-4 w-4" />
                 </div>
               </div>
@@ -344,7 +344,7 @@ export function AdminDashboardClient({ data }: { data: DashboardData }) {
               <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Hot Leads
               </p>
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-[#C4972A] relative">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-[#981B1B] relative">
                 <Flame className="h-4 w-4" />
                 {hotLeads.length > 0 && (
                   <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
@@ -446,7 +446,7 @@ export function AdminDashboardClient({ data }: { data: DashboardData }) {
                       )}
                     </div>
                     <div className="flex flex-col items-end gap-1 flex-shrink-0">
-                      <span className="rounded bg-primary/10 border border-primary/30 px-1.5 py-0.5 text-[11px] font-semibold text-[#C4972A]">
+                      <span className="rounded bg-primary/10 border border-primary/30 px-1.5 py-0.5 text-[11px] font-semibold text-[#981B1B]">
                         {lead.leadScore}
                       </span>
                       <Link

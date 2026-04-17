@@ -10,7 +10,7 @@ interface StepScheduleProps {
 
 const labelClass = "block text-sm font-medium text-foreground mb-1.5"
 const inputClass =
-  "w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C4972A]/20 focus:border-[#C4972A]"
+  "w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#981B1B]/20 focus:border-[#981B1B]"
 
 export function StepSchedule({ data, onChange }: StepScheduleProps) {
   function updateField<K extends keyof IntakeScheduleData>(
@@ -129,22 +129,22 @@ export function StepSchedule({ data, onChange }: StepScheduleProps) {
       </div>
 
       {/* What Happens Next */}
-      <div className="rounded-2xl border border-[#C4972A]/20 bg-[#C4972A]/5 p-5">
+      <div className="rounded-2xl border border-[#981B1B]/20 bg-[#981B1B]/5 p-5">
         <div className="flex items-start gap-3">
-          <CalendarCheck className="h-5 w-5 shrink-0 text-[#C4972A] mt-0.5" />
+          <CalendarCheck className="h-5 w-5 shrink-0 text-[#981B1B] mt-0.5" />
           <div>
             <p className="text-sm font-semibold text-foreground mb-1">What happens next</p>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li className="flex items-start gap-2">
-                <ArrowRight className="h-3.5 w-3.5 shrink-0 mt-0.5 text-[#C4972A]" />
+                <ArrowRight className="h-3.5 w-3.5 shrink-0 mt-0.5 text-[#981B1B]" />
                 We review your responses and prepare a preliminary assessment.
               </li>
               <li className="flex items-start gap-2">
-                <ArrowRight className="h-3.5 w-3.5 shrink-0 mt-0.5 text-[#C4972A]" />
+                <ArrowRight className="h-3.5 w-3.5 shrink-0 mt-0.5 text-[#981B1B]" />
                 We confirm your discovery call within 24 hours.
               </li>
               <li className="flex items-start gap-2">
-                <ArrowRight className="h-3.5 w-3.5 shrink-0 mt-0.5 text-[#C4972A]" />
+                <ArrowRight className="h-3.5 w-3.5 shrink-0 mt-0.5 text-[#981B1B]" />
                 On the call, we walk through your CFO Test results and discuss the engagement plan.
               </li>
             </ul>

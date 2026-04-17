@@ -157,7 +157,7 @@ export function AdminCampaignDashboard() {
         <div className="rounded-xl border border-border bg-card p-4 micro-card">
           <div className="flex items-center justify-between mb-2">
             <p className="text-xs text-muted-foreground">Total Emails Sent</p>
-            <Mail className="h-3.5 w-3.5 text-[#C4972A]" />
+            <Mail className="h-3.5 w-3.5 text-[#981B1B]" />
           </div>
           <p className="text-xl font-bold text-foreground font-mono">
             {globalTotals.emailsSent.toLocaleString()}
@@ -298,7 +298,7 @@ export function AdminCampaignDashboard() {
                                     <div className="flex items-center gap-2">
                                       <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
                                         <div
-                                          className="h-full bg-[#C4972A] rounded-full"
+                                          className="h-full bg-[#981B1B] rounded-full"
                                           style={{ width: `${Math.min(campaign.completion_percentage, 100)}%` }}
                                         />
                                       </div>

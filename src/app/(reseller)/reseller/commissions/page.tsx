@@ -65,10 +65,10 @@ export default async function ResellerCommissionsPage() {
       </div>
 
       {/* Tier card */}
-      <div className="rounded-xl border border-[#C4972A]/20 bg-gradient-to-r from-[#C4972A]/10 to-[#C4972A]/5 p-6">
+      <div className="rounded-xl border border-[#981B1B]/20 bg-gradient-to-r from-[#981B1B]/10 to-[#981B1B]/5 p-6">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-xs font-semibold text-[#C4972A] uppercase tracking-wider mb-1">Your Tier</p>
+            <p className="text-xs font-semibold text-[#981B1B] uppercase tracking-wider mb-1">Your Tier</p>
             <p className="text-2xl font-bold text-foreground">{tierLabel}</p>
             <p className="text-sm text-muted-foreground mt-1">
               Earn <span className="text-foreground font-semibold">{commissionRate}</span> on every client you refer

@@ -51,11 +51,11 @@ export function EverythingInside() {
           <p className="text-xs font-mono uppercase tracking-[0.2em] text-aims-gold mb-4">
             What You Get
           </p>
-          <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl text-cream leading-[1.25] pb-2">
+          <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl text-ink leading-[1.25] pb-2">
             Six Assets That Remove{" "}
             <span className="block text-aims-gold italic">Every Excuse to Not Start.</span>
           </h2>
-          <p className="mt-6 text-lg text-cream/65">
+          <p className="mt-6 text-lg text-ink/65">
             Each asset below is the exact thing an AIMS operator uses to win business. You
             don&apos;t build them from scratch — we hand you ours, and you modify them for
             your market.
@@ -75,10 +75,10 @@ export function EverythingInside() {
                   <div className="inline-flex items-center justify-center w-10 h-10 rounded-sm bg-aims-gold/10 border border-aims-gold/20 mb-4">
                     <Icon className="w-5 h-5 text-aims-gold" />
                   </div>
-                  <h3 className="font-serif text-xl text-cream mb-2 leading-tight">
+                  <h3 className="font-serif text-xl text-ink mb-2 leading-tight">
                     {feature.title}
                   </h3>
-                  <p className="text-sm text-cream/60 leading-relaxed">{feature.body}</p>
+                  <p className="text-sm text-ink/60 leading-relaxed">{feature.body}</p>
                 </div>
               </div>
             )

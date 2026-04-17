@@ -25,7 +25,7 @@ const TYPE_COLOR: Record<string, string> = {
   BUSINESS_CREDIT_SCORE: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
   EXECUTIVE_OPS_AUDIT: "text-cyan-400 bg-cyan-500/10 border-cyan-500/20",
   W2_PLAYBOOK: "text-pink-400 bg-pink-500/10 border-pink-500/20",
-  BUSINESS_AI_AUDIT: "text-[#C4972A] bg-[#C4972A]/10 border-[#C4972A]/30",
+  BUSINESS_AI_AUDIT: "text-[#981B1B] bg-[#981B1B]/10 border-[#981B1B]/30",
 }
 
 // Lead magnet types that have a public /tools/*/results/[submissionId] page
@@ -113,9 +113,9 @@ export function LeadMagnetTable({
   function SortIcon({ k }: { k: SortKey }) {
     if (sortKey !== k) return <ChevronDown className="h-3 w-3 opacity-30 inline ml-1" />
     return sortDir === "asc" ? (
-      <ChevronUp className="h-3 w-3 inline ml-1 text-[#C4972A]" />
+      <ChevronUp className="h-3 w-3 inline ml-1 text-[#981B1B]" />
     ) : (
-      <ChevronDown className="h-3 w-3 inline ml-1 text-[#C4972A]" />
+      <ChevronDown className="h-3 w-3 inline ml-1 text-[#981B1B]" />
     )
   }
 
@@ -131,7 +131,7 @@ export function LeadMagnetTable({
             placeholder="Search name or email…"
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(0) }}
-            className="h-8 pl-8 pr-3 text-xs rounded-lg bg-muted border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-[#C4972A]/50 w-56"
+            className="h-8 pl-8 pr-3 text-xs rounded-lg bg-muted border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-[#981B1B]/50 w-56"
           />
         </div>
       </div>
@@ -233,7 +233,7 @@ export function LeadMagnetTable({
                                     href={buildResultsUrl(sub.type, sub.id) ?? "#"}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#C4972A] hover:underline"
+                                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#981B1B] hover:underline"
                                     onClick={(e) => e.stopPropagation()}
                                   >
                                     View full report →
@@ -242,7 +242,7 @@ export function LeadMagnetTable({
                                 {sub.dealId && (
                                   <a
                                     href={`/admin/crm/${sub.dealId}`}
-                                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#C4972A] hover:underline"
+                                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#981B1B] hover:underline"
                                     onClick={(e) => e.stopPropagation()}
                                   >
                                     Open deal in CRM →

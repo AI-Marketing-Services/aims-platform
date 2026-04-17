@@ -30,7 +30,7 @@ export default function DiscoveryMetrics({ metrics }: DiscoveryMetricsProps) {
       label: "Validated",
       value: metrics.validated,
       icon: BadgeCheck,
-      color: "#C4972A",
+      color: "#981B1B",
     },
     {
       label: "Departments Covered",

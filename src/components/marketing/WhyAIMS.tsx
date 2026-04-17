@@ -124,8 +124,8 @@ export function WhyAIMS() {
             Your full tech stack, orchestrated by AIMS
           </p>
           <div className="relative overflow-hidden">
-            <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-20 bg-gradient-to-r from-[#08090D] to-transparent" />
-            <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-20 bg-gradient-to-l from-[#08090D] to-transparent" />
+            <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-20 bg-gradient-to-r from-[#F5F5F5] to-transparent" />
+            <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-20 bg-gradient-to-l from-[#F5F5F5] to-transparent" />
             <div className="flex animate-ticker whitespace-nowrap items-end pb-1">
               {[...TOOLS, ...TOOLS].map((tool, i) => (
                 <div key={i} className="mx-6 inline-flex flex-col items-center gap-2 flex-shrink-0">

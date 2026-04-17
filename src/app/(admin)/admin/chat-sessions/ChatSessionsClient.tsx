@@ -139,7 +139,7 @@ export function ChatSessionsClient({ sessions }: ChatSessionsClientProps) {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search by email or message content..."
-          className="w-full pl-9 pr-4 py-2 bg-card border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-[#C4972A] focus:ring-1 focus:ring-[#C4972A]/20"
+          className="w-full pl-9 pr-4 py-2 bg-card border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-[#981B1B] focus:ring-1 focus:ring-[#981B1B]/20"
         />
       </div>
 

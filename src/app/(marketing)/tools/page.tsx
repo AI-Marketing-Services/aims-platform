@@ -99,7 +99,7 @@ const TOOLS = [
 
 export default function ToolsIndexPage() {
   return (
-    <div className="min-h-screen bg-[#08090D]">
+    <div className="min-h-screen bg-[#F5F5F5]">
       {/* Hero */}
       <section className="border-b border-border py-20">
         <div className="container mx-auto max-w-4xl px-4 text-center">
@@ -134,7 +134,7 @@ export default function ToolsIndexPage() {
                 <Link
                   key={tool.href}
                   href={tool.href}
-                  className="group relative flex flex-col rounded-xl border border-primary/30 bg-gradient-to-br from-[#141923] to-[#0E1219] p-8 transition-all hover:border-primary/60 hover:shadow-[0_0_40px_rgba(196,151,42,0.15)]"
+                  className="group relative flex flex-col rounded-xl border border-primary/30 bg-gradient-to-br from-[#FFFFFF] to-[#FFFFFF] p-8 transition-all hover:border-primary/60 hover:shadow-[0_0_40px_rgba(196,151,42,0.15)]"
                 >
                   <div className="mb-5 flex items-center justify-between">
                     <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/15 border border-primary/30">
@@ -175,13 +175,13 @@ export default function ToolsIndexPage() {
                 <Link
                   key={tool.href}
                   href={tool.href}
-                  className="group flex flex-col rounded-xl border border-border bg-[#141923] p-6 transition-all hover:border-primary/40 hover:shadow-[0_0_20px_rgba(196,151,42,0.08)] animated-glow-card"
+                  className="group flex flex-col rounded-xl border border-border bg-[#FFFFFF] p-6 transition-all hover:border-primary/40 hover:shadow-[0_0_20px_rgba(196,151,42,0.08)] animated-glow-card"
                 >
                   <div className="mb-4 flex items-center justify-between">
                     <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
                       <Icon className="h-5 w-5 text-primary" />
                     </div>
-                    <span className="rounded-full border border-border bg-[#0E1219] px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
+                    <span className="rounded-full border border-border bg-[#FFFFFF] px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
                       {tool.badge}
                     </span>
                   </div>
