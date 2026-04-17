@@ -114,7 +114,7 @@ export async function POST(req: Request) {
 
     const submission = await createLeadMagnetSubmission(parsed.data)
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://aimseos.com"
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.aioperatorcollective.com"
     const typeSlug = parsed.data.type.toLowerCase().replace(/_/g, "-")
 
     // Score the lead

@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/portal/", "/admin/", "/intern/", "/reseller/", "/api/", "/sign-in", "/sign-up"],
       },
     ],
-    sitemap: "https://aimseos.com/sitemap.xml",
+    sitemap: "https://www.aioperatorcollective.com/sitemap.xml",
   }
 }

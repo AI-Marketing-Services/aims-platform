@@ -33,7 +33,7 @@ function emailLayout(content: string, preheader = "") {
               <table width="100%" cellpadding="0" cellspacing="0">
                 <tr>
                   <td>
-                    <img src="https://aimseos.com/logo.png" alt="AIMS" width="36" height="36"
+                    <img src="https://www.aioperatorcollective.com/logo.png" alt="AIMS" width="36" height="36"
                       style="display:inline-block;vertical-align:middle;margin-right:10px;" />
                     <span style="font-size:18px;font-weight:800;color:#111827;vertical-align:middle;letter-spacing:-0.5px;">AIMS</span>
                   </td>
@@ -57,14 +57,14 @@ function emailLayout(content: string, preheader = "") {
               </p>
               <p style="margin:0 0 8px;font-size:11px;color:#9CA3AF;">
                 AIMS - AI-Powered Business Infrastructure -
-                <a href="https://aimseos.com" style="color:#9CA3AF;text-decoration:none;">aimseos.com</a>
+                <a href="https://www.aioperatorcollective.com" style="color:#9CA3AF;text-decoration:none;">aimseos.com</a>
               </p>
               <p style="margin:0 0 4px;font-size:11px;color:#9CA3AF;">
                 Modern Amenities Group - 8 The Green, Suite A - Dover, DE 19901
               </p>
               <p style="margin:0;font-size:11px;color:#9CA3AF;">
-                <a href="https://aimseos.com/unsubscribe" style="color:#9CA3AF;text-decoration:underline;">Unsubscribe</a>
-                - <a href="https://aimseos.com/privacy" style="color:#9CA3AF;text-decoration:underline;">Privacy Policy</a>
+                <a href="https://www.aioperatorcollective.com/unsubscribe" style="color:#9CA3AF;text-decoration:underline;">Unsubscribe</a>
+                - <a href="https://www.aioperatorcollective.com/privacy" style="color:#9CA3AF;text-decoration:underline;">Privacy Policy</a>
               </p>
             </td>
           </tr>
@@ -122,14 +122,14 @@ function getDefaultFields(template: TemplateType): Record<string, string> {
         name: "Jane Doe",
         serviceName: "Wild Ducks (AI Website + CRM Chatbot)",
         tier: "Growth",
-        portalUrl: "https://aimseos.com/portal/dashboard",
+        portalUrl: "https://www.aioperatorcollective.com/portal/dashboard",
       }
     case "lead-magnet-results":
       return {
         name: "John Smith",
         type: "ai-readiness-quiz",
         score: "72",
-        resultsUrl: "https://aimseos.com/results/abc123",
+        resultsUrl: "https://www.aioperatorcollective.com/results/abc123",
       }
     case "fulfillment-assignment":
       return {
@@ -271,7 +271,7 @@ function buildEmailHtml(template: TemplateType, fields: Record<string, string>):
         ${btn("View Full Results", fields.resultsUrl)}
         ${divider()}
         ${p("Want to talk through your results with our team? We'll map the right AIMS services to your exact gaps - no pitch, just a working session.")}
-        <a href="https://aimseos.com/get-started" style="font-size:14px;color:#981B1B;font-weight:600;text-decoration:none;">
+        <a href="https://www.aioperatorcollective.com/get-started" style="font-size:14px;color:#981B1B;font-weight:600;text-decoration:none;">
           Book a free strategy call
         </a>
       `
@@ -298,7 +298,7 @@ function buildEmailHtml(template: TemplateType, fields: Record<string, string>):
             </tr>
           `).join("")}
         </table>
-        ${btn("Open Admin Portal", "https://aimseos.com/admin")}
+        ${btn("Open Admin Portal", "https://www.aioperatorcollective.com/admin")}
         ${p("Check the admin portal for setup tasks and the fulfillment checklist.")}
       `
       return emailLayout(body, `New fulfillment: ${escapeHtml(fields.clientName)} signed up for ${escapeHtml(fields.serviceName)}.`)
@@ -314,13 +314,13 @@ function buildEmailHtml(template: TemplateType, fields: Record<string, string>):
         ${urgencyBar}
         ${h1(escapeHtml(fields.subject))}
         <pre style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:6px;padding:16px;font-size:13px;color:#374151;white-space:pre-wrap;overflow-wrap:break-word;">${escapeHtml(fields.message)}</pre>
-        ${btn("Open Admin Portal", "https://aimseos.com/admin")}
+        ${btn("Open Admin Portal", "https://www.aioperatorcollective.com/admin")}
       `
       return emailLayout(body)
     }
 
     case "support-ticket-created": {
-      const portalUrl = "https://aimseos.com/portal/support"
+      const portalUrl = "https://www.aioperatorcollective.com/portal/support"
       const safeSubject = escapeHtml(fields.subject)
       const body = `
         ${h1("We received your support ticket")}
@@ -338,7 +338,7 @@ function buildEmailHtml(template: TemplateType, fields: Record<string, string>):
     }
 
     case "support-reply": {
-      const portalUrl = "https://aimseos.com/portal/support"
+      const portalUrl = "https://www.aioperatorcollective.com/portal/support"
       const safeSubject = escapeHtml(fields.subject)
       const body = `
         ${h1("New reply on your support ticket")}
@@ -355,7 +355,7 @@ function buildEmailHtml(template: TemplateType, fields: Record<string, string>):
     }
 
     case "support-status-change": {
-      const portalUrl = "https://aimseos.com/portal/support"
+      const portalUrl = "https://www.aioperatorcollective.com/portal/support"
       const safeSubject = escapeHtml(fields.subject)
       const statusLabels: Record<string, string> = {
         resolved: "Resolved",

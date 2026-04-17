@@ -40,7 +40,7 @@ export default async function ReferralsPage() {
     })
   }
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://aimseos.com"
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.aioperatorcollective.com"
   const commissionRate = formatCommissionRate(getCommissionRate(referral.tier))
 
   // Try Dub.co links first, fall back to legacy ?ref= format

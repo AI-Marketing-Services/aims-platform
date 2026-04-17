@@ -32,7 +32,7 @@ const FAQ = dynamic(
 export const metadata: Metadata = {
   title: "AIMS Platform - Forward-Deployed AI Consulting",
   description: "AIMS embeds senior AI engineers directly in your operations to diagnose bottlenecks, build custom AI solutions, and deliver measurable efficiency gains in 90 days.",
-  alternates: { canonical: "https://aimseos.com/aims-platform" },
+  alternates: { canonical: "https://www.aioperatorcollective.com/aims-platform" },
   robots: { index: false, follow: false },
   openGraph: {
     title: "AIMS Platform - Forward-Deployed AI Consulting",
@@ -44,8 +44,8 @@ const ORG_SCHEMA = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: "AIMS",
-  url: "https://aimseos.com",
-  logo: "https://aimseos.com/logo.png",
+  url: "https://www.aioperatorcollective.com",
+  logo: "https://www.aioperatorcollective.com/logo.png",
   description: "Forward-deployed AI consulting firm. We embed senior engineers in your operations to diagnose bottlenecks, build custom AI solutions, and deliver measurable efficiency gains.",
   contactPoint: {
     "@type": "ContactPoint",

@@ -49,7 +49,7 @@ const ORG_SCHEMA = {
   parentOrganization: {
     "@type": "Organization",
     name: "AIMS",
-    url: "https://aimseos.com",
+    url: "https://www.aioperatorcollective.com",
   },
 }
 

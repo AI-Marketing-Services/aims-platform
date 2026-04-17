@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: "Services Marketplace | AIMS",
   description:
     "Browse the full AIMS catalog of productized AI services. Self-serve SKUs you can buy today, plus custom engagements that start with a consultation.",
-  alternates: { canonical: "https://aimseos.com/marketplace" },
+  alternates: { canonical: "https://www.aioperatorcollective.com/marketplace" },
 }
 
 // Revalidate every 10 minutes so catalog edits in admin propagate without a deploy.

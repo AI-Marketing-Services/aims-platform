@@ -32,7 +32,7 @@ export async function GET() {
     }
 
     const dub = await getDubClient()
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://aimseos.com"
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.aioperatorcollective.com"
 
     // If Dub is configured and partner has a Dub ID, use Dub links
     if (dub && referral.dubPartnerId) {

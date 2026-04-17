@@ -193,8 +193,8 @@ export default function AIReadinessQuizClient() {
 
   const shareText = `I scored ${pct}/100 on the AIMS AI Readiness Quiz - ${category.label}. See where your business stands:`
   const shareUrl = submissionId
-    ? `${typeof window !== "undefined" ? window.location.origin : "https://aimseos.com"}/tools/ai-readiness-quiz/results/${submissionId}`
-    : "https://aimseos.com/tools/ai-readiness-quiz"
+    ? `${typeof window !== "undefined" ? window.location.origin : "https://www.aioperatorcollective.com"}/tools/ai-readiness-quiz/results/${submissionId}`
+    : "https://www.aioperatorcollective.com/tools/ai-readiness-quiz"
 
   return (
     <div className="min-h-screen bg-deep">

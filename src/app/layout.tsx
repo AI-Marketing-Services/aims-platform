@@ -54,12 +54,12 @@ export const metadata: Metadata = {
   description:
     "Your always-on AI-powered lead generation partner. Outbound campaigns, AI calling systems, and lead reactivation programs that fill your pipeline.",
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_APP_URL ?? "https://aimseos.com"
+    process.env.NEXT_PUBLIC_APP_URL ?? "https://www.aioperatorcollective.com"
   ),
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://aimseos.com",
+    url: "https://www.aioperatorcollective.com",
     siteName: "AIMS",
     title: "AIMS - AI-Powered Business Infrastructure",
     description:

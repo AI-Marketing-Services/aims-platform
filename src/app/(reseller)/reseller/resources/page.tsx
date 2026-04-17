@@ -28,7 +28,7 @@ export default async function ResellerResourcesPage() {
   if (!dbUser) redirect("/sign-in")
 
   const referral = await db.referral.findFirst({ where: { referrerId: dbUser.id } })
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://aimseos.com"
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.aioperatorcollective.com"
   const refCode = referral?.code ?? ""
 
   // Try Dub.co links first, fall back to legacy format

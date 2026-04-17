@@ -16,7 +16,11 @@ export interface EmailContent {
 }
 
 function appUrl(): string {
-  return process.env.NEXT_PUBLIC_APP_URL ?? "https://aioperatorcollective.com"
+  // Hard-coded to the canonical domain. We previously read from
+  // NEXT_PUBLIC_APP_URL but that env is still set to the retired
+  // aimseos.com domain in Vercel prod, which made every email CTA 404.
+  // Changing it here removes the dependency on a prod env update.
+  return "https://www.aioperatorcollective.com"
 }
 
 function playCard(num: string, title: string, body: string): string {

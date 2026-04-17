@@ -497,7 +497,7 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
     FINANCE: "bg-primary/10 text-primary border-primary/30",
   }
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://aimseos.com"
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.aioperatorcollective.com"
 
   const jsonLd = {
     "@context": "https://schema.org",

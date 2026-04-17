@@ -226,8 +226,8 @@ function buildEmailContent(
   const monthlySavings = metadata.monthlySavings as number | undefined
   const auditScore = metadata.auditScore as number | undefined
   const serviceName = (metadata.serviceName as string) || "AIMS Service"
-  const portalUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://aimseos.com"}/portal/dashboard`
-  const strategyUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://aimseos.com"}/get-started`
+  const portalUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://www.aioperatorcollective.com"}/portal/dashboard`
+  const strategyUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://www.aioperatorcollective.com"}/get-started`
 
   const wrap = (content: string) => `<!DOCTYPE html><html><head><meta charset="UTF-8"/></head>
 <body style="margin:0;padding:32px 16px;background:#F5F5F5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
@@ -238,11 +238,11 @@ function buildEmailContent(
 </td></tr>
 <tr><td style="padding:32px;">${content}</td></tr>
 <tr><td style="padding:20px 32px;background:#F9FAFB;border-top:1px solid #F0F0F0;">
-  <p style="margin:0;font-size:12px;color:#9CA3AF;">AIMS · <a href="https://aimseos.com" style="color:#9CA3AF;">aimseos.com</a></p>
+  <p style="margin:0;font-size:12px;color:#9CA3AF;">AIMS · <a href="https://www.aioperatorcollective.com" style="color:#9CA3AF;">aimseos.com</a></p>
 </td></tr>
 </table></body></html>`
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://aimseos.com"
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.aioperatorcollective.com"
   const marketplaceUrl = `${baseUrl}/marketplace`
   const resellerUrl = `${baseUrl}/reseller/dashboard`
   const cta = (text: string, url: string) =>

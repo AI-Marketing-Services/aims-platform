@@ -104,7 +104,7 @@ export default async function BlogPostPage({ params }: Props) {
     .filter((p) => p.slug !== slug)
     .slice(0, 3)
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://aimseos.com"
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.aioperatorcollective.com"
 
   const jsonLd = {
     "@context": "https://schema.org",

@@ -14,7 +14,7 @@ export function generateUnsubscribeToken(email: string): string {
 /** Build a full unsubscribe URL with signed token */
 export function buildUnsubscribeUrl(email: string): string {
   const token = generateUnsubscribeToken(email)
-  const base = process.env.NEXT_PUBLIC_APP_URL ?? "https://aimseos.com"
+  const base = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.aioperatorcollective.com"
   return `${base}/unsubscribe?email=${encodeURIComponent(email)}&token=${token}`
 }
 

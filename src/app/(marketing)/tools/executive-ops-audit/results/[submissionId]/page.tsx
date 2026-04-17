@@ -177,7 +177,7 @@ export default async function ExecutiveOpsAuditResultsPage({ params }: Props) {
   else if (toolCount <= 8) toolReadinessLabel = "Growing stack — integration gaps are likely creating data silos."
   else toolReadinessLabel = "Complex stack — consolidation and orchestration would reduce friction significantly."
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://aimseos.com"
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.aioperatorcollective.com"
   const shareUrl = `${appUrl}/tools/executive-ops-audit/results/${submissionId}`
 
   // ── Service recommendations by score tier ─────────────────────────────────

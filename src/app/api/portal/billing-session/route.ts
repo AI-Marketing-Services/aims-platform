@@ -9,7 +9,7 @@ export async function POST(req: Request) {
   if (!clerkId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
   const { returnUrl } = await req.json().catch(() => ({}))
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://aimseos.com"
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.aioperatorcollective.com"
   const allowedHost = new URL(appUrl).hostname
 
   // Validate returnUrl to prevent open redirect

@@ -3,7 +3,7 @@ import { db } from "@/lib/db"
 import { getAllSlugs } from "@/lib/blog"
 import { logger } from "@/lib/logger"
 
-const BASE = "https://aimseos.com"
+const BASE = "https://www.aioperatorcollective.com"
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date()

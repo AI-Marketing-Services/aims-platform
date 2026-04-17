@@ -69,12 +69,23 @@ function addPageFooters(doc: PDFKit.PDFDocument) {
   const range = doc.bufferedPageRange()
   for (let i = 0; i < range.count; i++) {
     doc.switchToPage(i)
+    // Temporarily clear the bottom margin so doc.text() at the footer
+    // position doesn't auto-overflow into a new blank page. Writing at
+    // page.height - 30 is below the usable content area (page.height -
+    // M.bottom = 742), which PDFKit's text engine treats as an overflow
+    // and responds to by emitting an empty follower page. That's what
+    // was doubling our page count. Restore the margin after.
+    const savedBottomMargin = doc.page.margins.bottom
+    doc.page.margins.bottom = 0
+
     // Crimson bottom accent line
     doc.moveTo(M.left, doc.page.height - 38).lineTo(PW - M.right, doc.page.height - 38).lineWidth(0.5).strokeColor(C.border).stroke()
     applyInter(doc)
     doc.fontSize(7).fillColor(C.muted)
     doc.text("The AI Operator Playbook", M.left, doc.page.height - 30, { lineBreak: false })
     doc.text("aioperatorcollective.com", PW - M.right - 120, doc.page.height - 30, { lineBreak: false, width: 120, align: "right" })
+
+    doc.page.margins.bottom = savedBottomMargin
   }
 }
 
@@ -328,31 +339,60 @@ export function buildAIPlaybookPDF(): Promise<Buffer> {
     // ═══════════════════════════════════════════════════════════════════════
     doc.rect(0, 0, PW, 4).fill(C.crimson)
 
+    // Everything on the cover is centered against the same horizontal
+    // axis: pass x=0 + full page width so PDFKit centers within the
+    // full page, independent of margins. Using mixed widths (0 vs 80 +
+    // PW-160) here was why the divider visually drifted off-center
+    // relative to the title.
     applyInter(doc)
-    doc.fontSize(8).fillColor(C.crimson).text("THE OPERATOR PLAYBOOK", 0, 200, { align: "center", characterSpacing: 3 })
+    doc.fontSize(8).fillColor(C.crimson).text(
+      "THE OPERATOR PLAYBOOK",
+      0, 200,
+      { align: "center", width: PW, characterSpacing: 3 }
+    )
 
     applyPlayfair(doc)
-    doc.fontSize(44).fillColor(C.black).text("The AI Operator", 0, 226, { align: "center" })
-    doc.text("Playbook", { align: "center" })
+    doc.fontSize(44).fillColor(C.black).text(
+      "The AI Operator",
+      0, 226,
+      { align: "center", width: PW }
+    )
+    doc.text("Playbook", 0, doc.y, { align: "center", width: PW })
 
-    const divX = (PW - 50) / 2
-    doc.rect(divX, doc.y + 14, 50, 2).fill(C.crimson)
+    // Divider: dead-centered on the page width, regardless of margins.
+    const dividerW = 50
+    const dividerX = (PW - dividerW) / 2
+    doc.rect(dividerX, doc.y + 14, dividerW, 2).fill(C.crimson)
 
     applyPlayfairItalic(doc)
     doc.fontSize(16).fillColor(C.crimson).text(
       "How to Launch and Run a",
-      80, doc.y + 30, { align: "center", width: PW - 160 }
+      0, doc.y + 30,
+      { align: "center", width: PW }
     )
-    doc.text("Recurring-Revenue AI Advisory Practice", { align: "center", width: PW - 160 })
+    doc.text(
+      "Recurring-Revenue AI Advisory Practice",
+      0, doc.y,
+      { align: "center", width: PW }
+    )
 
     applyInter(doc)
     doc.fontSize(10).fillColor(C.muted).text(
       "The operator's guide to starting the business, landing the client, and delivering the work.",
-      80, doc.y + 20, { align: "center", width: PW - 160, lineGap: 4 }
+      0, doc.y + 20,
+      { align: "center", width: PW, lineGap: 4 }
     )
 
-    doc.fontSize(8).fillColor(C.muted).text("AI Operator Collective", 0, doc.page.height - 80, { align: "center", characterSpacing: 2 })
-    doc.fontSize(7).fillColor(C.border).text("aioperatorcollective.com", 0, doc.y + 4, { align: "center" })
+    doc.fontSize(8).fillColor(C.muted).text(
+      "AI Operator Collective",
+      0, doc.page.height - 80,
+      { align: "center", width: PW, characterSpacing: 2 }
+    )
+    doc.fontSize(7).fillColor(C.border).text(
+      "aioperatorcollective.com",
+      0, doc.y + 4,
+      { align: "center", width: PW }
+    )
 
     // ═══════════════════════════════════════════════════════════════════════
     // TABLE OF CONTENTS

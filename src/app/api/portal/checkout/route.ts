@@ -59,7 +59,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "You already have an active subscription for this service" }, { status: 409 })
     }
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://aimseos.com"
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.aioperatorcollective.com"
 
     const session = await createCheckoutSession({
       userId: dbUser.id,

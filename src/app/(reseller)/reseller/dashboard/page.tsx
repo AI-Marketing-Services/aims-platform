@@ -23,7 +23,7 @@ export default async function ResellerDashboardPage() {
     : 0
 
   // Resolve Dub.co short link or fall back to legacy
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://aimseos.com"
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.aioperatorcollective.com"
   let refLink = referral
     ? `${baseUrl}/for/${referral.landingPageSlug ?? referral.code}?ref=${referral.code}`
     : ""
