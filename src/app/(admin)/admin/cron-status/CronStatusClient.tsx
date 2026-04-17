@@ -203,7 +203,7 @@ export function CronStatusClient() {
                         job.isOverdue
                           ? "bg-primary/15 text-primary"
                           : job.lastStatus === "success"
-                            ? "bg-green-900/20 text-green-400"
+                            ? "bg-emerald-50 text-emerald-700"
                             : "bg-primary/15 text-primary"
                       )}
                     >
@@ -290,7 +290,7 @@ export function CronStatusClient() {
                               </td>
                               <td className="px-2 py-1.5">
                                 {exec.status === "success" ? (
-                                  <span className="flex items-center gap-1 text-green-400">
+                                  <span className="flex items-center gap-1 text-emerald-700">
                                     <CheckCircle2 className="h-3 w-3" />
                                     OK
                                   </span>

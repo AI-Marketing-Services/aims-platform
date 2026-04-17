@@ -6,9 +6,9 @@ import { QUESTIONS } from "@/lib/collective-application"
 import { InviteButton } from "./InviteButton"
 
 const TIER_COLORS: Record<string, string> = {
-  hot: "bg-red-100 text-red-700 border-red-200",
-  warm: "bg-amber-100 text-amber-700 border-amber-200",
-  cold: "bg-blue-100 text-blue-700 border-blue-200",
+  hot: "bg-primary/10 text-primary border-primary/30",
+  warm: "bg-primary/5 text-primary/70 border-primary/20",
+  cold: "bg-muted/50 text-muted-foreground border-border",
 }
 
 export default async function ApplicationsPage() {
@@ -83,7 +83,7 @@ export default async function ApplicationsPage() {
           <p className="text-xs font-mono uppercase tracking-wider text-ink/60">
             Hot Leads
           </p>
-          <p className="text-3xl font-bold text-red-400 mt-1">{hotLeads.length}</p>
+          <p className="text-3xl font-bold text-primary mt-1">{hotLeads.length}</p>
         </div>
         <div className="rounded-md border border-line bg-surface p-4">
           <p className="text-xs font-mono uppercase tracking-wider text-ink/60">

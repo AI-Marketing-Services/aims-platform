@@ -20,10 +20,10 @@ type SequenceStatus = "pending" | "sent" | "cancelled" | "failed"
 
 function statusPill(status: string) {
   const map: Record<string, { label: string; bg: string; color: string; Icon: typeof Clock }> = {
-    pending: { label: "Pending", bg: "bg-amber-500/10 border-amber-500/30", color: "text-amber-400", Icon: Clock },
-    sent: { label: "Sent", bg: "bg-emerald-500/10 border-emerald-500/30", color: "text-emerald-400", Icon: CheckCircle2 },
-    cancelled: { label: "Cancelled", bg: "bg-slate-500/10 border-slate-500/30", color: "text-slate-400", Icon: XCircle },
-    failed: { label: "Failed", bg: "bg-red-500/10 border-red-500/30", color: "text-red-400", Icon: AlertTriangle },
+    pending: { label: "Pending", bg: "bg-muted/50 border-border", color: "text-muted-foreground", Icon: Clock },
+    sent: { label: "Sent", bg: "bg-emerald-50 border-emerald-200", color: "text-emerald-700", Icon: CheckCircle2 },
+    cancelled: { label: "Cancelled", bg: "bg-muted/30 border-border", color: "text-muted-foreground", Icon: XCircle },
+    failed: { label: "Failed", bg: "bg-primary/10 border-primary/30", color: "text-primary", Icon: AlertTriangle },
   }
   const cfg = map[status] ?? map.pending
   const Icon = cfg.Icon
@@ -119,14 +119,14 @@ export default async function AdminCommunitySequencePage() {
 
       {/* Config warning if invite URL isn't set */}
       {inviteUrlIsPlaceholder && (
-        <div className="rounded-md border border-amber-500/30 bg-amber-500/10 p-5">
+        <div className="rounded-md border border-primary/30 bg-primary/5 p-5">
           <div className="flex items-start gap-3">
-            <AlertTriangle className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
+            <AlertTriangle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-amber-200">
+              <p className="text-sm font-semibold text-primary">
                 COMMUNITY_INVITE_URL is not set.
               </p>
-              <p className="mt-1 text-xs text-amber-200/75 leading-relaxed">
+              <p className="mt-1 text-xs text-primary/80 leading-relaxed">
                 Emails currently link community buttons back to the landing page&apos;s
                 application anchor (<code className="font-mono text-[11px]">{inviteUrl}</code>).
                 Set <code className="font-mono text-[11px]">COMMUNITY_INVITE_URL</code> (or{" "}
@@ -271,7 +271,7 @@ export default async function AdminCommunitySequencePage() {
                           {rec.totalSent}/{steps.length} sent
                         </span>
                         {rec.totalFailed > 0 && (
-                          <span className="ml-2 text-[10px] font-mono text-red-400">
+                          <span className="ml-2 text-[10px] font-mono text-primary">
                             · {rec.totalFailed} failed
                           </span>
                         )}
@@ -329,7 +329,7 @@ function StatCard({
     <div
       className={`rounded-md border p-4 ${
         tone === "warn" && value > 0
-          ? "border-amber-500/30 bg-amber-500/5"
+          ? "border-primary/30 bg-primary/5"
           : "border-line bg-surface/40"
       }`}
     >

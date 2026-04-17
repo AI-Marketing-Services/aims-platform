@@ -184,16 +184,16 @@ function PurchasePanel() {
         {result && !result.success && (
           <div className="rounded-lg p-3 border flex items-start gap-3 bg-primary/100/10 border-primary/20">
             <AlertCircle className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-            <p className="text-xs text-red-400">{result.error}</p>
+            <p className="text-xs text-primary">{result.error}</p>
           </div>
         )}
 
         {/* Success */}
         {result?.success && (
-          <div className="rounded-lg border border-green-500/20 bg-green-400/5 p-4 space-y-3">
+          <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-4 space-y-3">
             <div className="flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 text-green-400" />
-              <p className="text-xs font-semibold text-green-300">Purchase simulated</p>
+              <CheckCircle className="w-4 h-4 text-emerald-600" />
+              <p className="text-xs font-semibold text-emerald-700">Purchase simulated</p>
             </div>
             <div className="space-y-1.5">
               {[
@@ -205,9 +205,9 @@ function PurchasePanel() {
               ].map((c) => (
                 <div key={c.label} className="flex items-center gap-2">
                   {c.ok ? (
-                    <CheckCircle className="w-3 h-3 text-green-400 flex-shrink-0" />
+                    <CheckCircle className="w-3 h-3 text-emerald-600 flex-shrink-0" />
                   ) : (
-                    <AlertCircle className="w-3 h-3 text-yellow-400 flex-shrink-0" />
+                    <AlertCircle className="w-3 h-3 text-primary/70 flex-shrink-0" />
                   )}
                   <span className="text-xs text-foreground">{c.label}</span>
                   {c.value && <span className="text-xs text-muted-foreground font-mono ml-auto">{c.value}</span>}
@@ -246,7 +246,7 @@ function LeadMagnetPanel() {
   const [result, setResult] = useState<LeadResult | null>(null)
 
   const scoreColor =
-    score >= 70 ? "text-primary" : score >= 40 ? "text-yellow-400" : "text-muted-foreground"
+    score >= 70 ? "text-primary" : score >= 40 ? "text-primary/70" : "text-muted-foreground"
 
   const scoreThumbColor =
     score >= 70 ? "#981B1B" : score >= 40 ? "#EAB308" : "#6B7280"
@@ -371,16 +371,16 @@ function LeadMagnetPanel() {
         {result && !result.success && (
           <div className="rounded-lg p-3 border flex items-start gap-3 bg-primary/100/10 border-primary/20">
             <AlertCircle className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-            <p className="text-xs text-red-400">{result.error}</p>
+            <p className="text-xs text-primary">{result.error}</p>
           </div>
         )}
 
         {/* Success */}
         {result?.success && (
-          <div className="rounded-lg border border-green-500/20 bg-green-400/5 p-4 space-y-3">
+          <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-4 space-y-3">
             <div className="flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 text-green-400" />
-              <p className="text-xs font-semibold text-green-300">Lead submission created</p>
+              <CheckCircle className="w-4 h-4 text-emerald-600" />
+              <p className="text-xs font-semibold text-emerald-700">Lead submission created</p>
             </div>
             <div className="space-y-1.5">
               {[
@@ -397,9 +397,9 @@ function LeadMagnetPanel() {
               ].map((c) => (
                 <div key={c.label} className="flex items-center gap-2">
                   {c.ok ? (
-                    <CheckCircle className="w-3 h-3 text-green-400 flex-shrink-0" />
+                    <CheckCircle className="w-3 h-3 text-emerald-600 flex-shrink-0" />
                   ) : (
-                    <AlertCircle className="w-3 h-3 text-yellow-400 flex-shrink-0" />
+                    <AlertCircle className="w-3 h-3 text-primary/70 flex-shrink-0" />
                   )}
                   <span className="text-xs text-foreground">{c.label}</span>
                   {c.value && <span className="text-xs text-muted-foreground font-mono ml-auto">{c.value}</span>}
@@ -436,8 +436,8 @@ export default function SimulatePage() {
           E2E testing tools for purchases and lead submissions. Use for demos, QA, and training.
         </p>
         {process.env.NODE_ENV === "production" && (
-          <div className="mt-3 rounded-lg bg-yellow-500/10 border border-yellow-500/30 px-4 py-2.5">
-            <p className="text-xs font-semibold text-yellow-400">
+          <div className="mt-3 rounded-lg bg-primary/10 border border-primary/30 px-4 py-2.5">
+            <p className="text-xs font-semibold text-primary">
               Production environment - purchase simulation is disabled unless ALLOW_SIMULATE=true is set.
             </p>
           </div>

@@ -15,9 +15,9 @@ interface Props {
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  accepted: "text-green-400 bg-green-900/15 border-green-800",
-  sent: "text-blue-400 bg-blue-900/15 border-blue-800",
-  pending: "text-amber-400 bg-amber-900/15 border-amber-800",
+  accepted: "text-emerald-700 bg-emerald-50 border-emerald-200",
+  sent: "text-muted-foreground bg-muted/50 border-border",
+  pending: "text-muted-foreground bg-muted/50 border-border",
   failed: "text-primary bg-primary/10 border-primary/30",
 }
 

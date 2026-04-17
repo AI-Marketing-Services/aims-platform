@@ -107,8 +107,8 @@ interface DashboardData {
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function trendClass(n: number) {
-  if (n > 0) return "text-green-400"
-  if (n < 0) return "text-red-400"
+  if (n > 0) return "text-emerald-700"
+  if (n < 0) return "text-primary"
   return "text-muted-foreground"
 }
 
@@ -471,7 +471,7 @@ export function AdminDashboardClient({ data }: { data: DashboardData }) {
 
             {overdueTasks.length === 0 ? (
               <div className="flex flex-col items-center justify-center gap-2 py-6 text-center">
-                <CheckCircle2 className="h-8 w-8 text-green-500" />
+                <CheckCircle2 className="h-8 w-8 text-emerald-600" />
                 <p className="text-sm font-medium text-foreground">
                   All fulfillment on track
                 </p>

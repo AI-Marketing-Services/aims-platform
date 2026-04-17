@@ -145,7 +145,7 @@ export function FunnelDashboardClient() {
 
   if (error && !data) {
     return (
-      <div className="rounded-md border border-red-800 bg-red-900/10 p-4 text-red-400 text-sm">
+      <div className="rounded-md border border-primary/30 bg-primary/10 p-4 text-primary text-sm">
         Failed to load funnel: {error}
       </div>
     )

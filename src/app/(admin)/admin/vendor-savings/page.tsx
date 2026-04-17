@@ -21,22 +21,22 @@ const STATUS_CONFIG: Record<
 > = {
   completed: {
     label: "Deployed",
-    color: "text-green-400 bg-green-400/10 border-green-500/20",
+    color: "text-emerald-700 bg-emerald-50 border-emerald-200",
     icon: CheckCircle2,
   },
   deployed: {
     label: "Deployed",
-    color: "text-green-400 bg-green-400/10 border-green-500/20",
+    color: "text-emerald-700 bg-emerald-50 border-emerald-200",
     icon: CheckCircle2,
   },
   ready: {
     label: "Ready",
-    color: "text-blue-400 bg-blue-500/10 border-blue-500/20",
+    color: "text-primary bg-primary/5 border-primary/30",
     icon: CheckCircle2,
   },
   in_progress: {
     label: "In Progress",
-    color: "text-yellow-400 bg-yellow-500/10 border-yellow-500/20",
+    color: "text-primary/70 bg-primary/5 border-primary/20",
     icon: Clock,
   },
   not_started: {
@@ -143,8 +143,8 @@ export default async function AdminVendorSavingsPage() {
             <div className="rounded-xl border border-border bg-card p-6">
               <div className="flex items-center justify-between mb-4">
                 <p className="text-xs text-muted-foreground">Projected Monthly Savings</p>
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-yellow-500/10">
-                  <TrendingDown className="h-4 w-4 text-yellow-400" />
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+                  <TrendingDown className="h-4 w-4 text-primary" />
                 </div>
               </div>
               <p className="text-3xl font-bold text-foreground font-mono">
@@ -157,14 +157,14 @@ export default async function AdminVendorSavingsPage() {
               </p>
             </div>
 
-            <div className="rounded-xl border border-green-500/20 bg-green-400/5 p-6">
+            <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-6">
               <div className="flex items-center justify-between mb-4">
                 <p className="text-xs text-muted-foreground">Actual Savings Realized</p>
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-green-400/10">
-                  <CheckCircle2 className="h-4 w-4 text-green-400" />
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-100">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-600" />
                 </div>
               </div>
-              <p className="text-3xl font-bold text-green-400 font-mono">
+              <p className="text-3xl font-bold text-emerald-700 font-mono">
                 ${totalActual.toLocaleString()}
               </p>
               <p className="text-xs text-muted-foreground mt-1">
@@ -254,7 +254,7 @@ export default async function AdminVendorSavingsPage() {
                           <span
                             className={cn(
                               "text-sm font-mono font-semibold",
-                              v.projectedSavings > 0 ? "text-green-400" : "text-muted-foreground"
+                              v.projectedSavings > 0 ? "text-emerald-700" : "text-muted-foreground"
                             )}
                           >
                             {v.projectedSavings > 0
@@ -266,7 +266,7 @@ export default async function AdminVendorSavingsPage() {
                           <span
                             className={cn(
                               "text-sm font-mono font-semibold",
-                              v.actualSavings > 0 ? "text-green-400" : "text-muted-foreground"
+                              v.actualSavings > 0 ? "text-emerald-700" : "text-muted-foreground"
                             )}
                           >
                             {v.actualSavings > 0
@@ -294,7 +294,7 @@ export default async function AdminVendorSavingsPage() {
               <p className="text-sm text-foreground">
                 <span className="font-semibold text-[#981B1B]">Next highest-impact replacement: </span>
                 <span className="font-semibold">{nextBest.vendorName}</span> at{" "}
-                <span className="font-semibold text-green-400">
+                <span className="font-semibold text-emerald-700">
                   ${nextBest.projectedSavings.toLocaleString()}/mo savings
                 </span>
                 . Currently{" "}

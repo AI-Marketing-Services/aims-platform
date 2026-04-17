@@ -151,7 +151,7 @@ export function EmailCampaignsClient({ users }: Props) {
                   </td>
                   <td className="px-4 py-3">
                     {isConnected ? (
-                      <span className="inline-flex items-center gap-1.5 rounded-full bg-green-900/15 border border-green-800 px-2.5 py-1 text-xs font-medium text-green-400">
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 border border-emerald-200 px-2.5 py-1 text-xs font-medium text-emerald-700">
                         <Plug className="h-3 w-3" />
                         Connected
                       </span>
@@ -169,7 +169,7 @@ export function EmailCampaignsClient({ users }: Props) {
                       className={cn(
                         "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors",
                         isSaved
-                          ? "bg-green-900/15 text-green-400 border border-green-800"
+                          ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
                           : "bg-[#981B1B] text-white hover:bg-[#791515]"
                       )}
                     >

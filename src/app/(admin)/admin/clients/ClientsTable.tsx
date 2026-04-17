@@ -51,8 +51,8 @@ function relativeDate(isoStr: string): string {
 
 function scoreColor(score: number | null): string {
   if (score === null) return "bg-muted-foreground"
-  if (score >= 70) return "bg-primary/100"
-  if (score >= 40) return "bg-yellow-900/200"
+  if (score >= 70) return "bg-primary"
+  if (score >= 40) return "bg-primary/50"
   return "bg-muted-foreground"
 }
 

@@ -63,10 +63,10 @@ export default async function AdminPartnersPage() {
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 stagger-in">
         {[
-          { label: "Total Partners", value: totalPartners, icon: Users, tone: "text-blue-400 bg-blue-500/10" },
-          { label: "Total Earned (all)", value: fmt(totalEarned), icon: DollarSign, tone: "text-green-400 bg-green-500/10" },
-          { label: "Pending Payouts", value: fmt(totalPending), icon: TrendingUp, tone: "text-amber-400 bg-amber-500/10" },
-          { label: "Dub.co Connected", value: `${dubConnected} / ${totalPartners}`, icon: UserPlus, tone: "text-purple-400 bg-purple-500/10" },
+          { label: "Total Partners", value: totalPartners, icon: Users, tone: "text-primary bg-primary/10" },
+          { label: "Total Earned (all)", value: fmt(totalEarned), icon: DollarSign, tone: "text-emerald-700 bg-emerald-50" },
+          { label: "Pending Payouts", value: fmt(totalPending), icon: TrendingUp, tone: "text-primary/70 bg-primary/5" },
+          { label: "Dub.co Connected", value: `${dubConnected} / ${totalPartners}`, icon: UserPlus, tone: "text-muted-foreground bg-muted/50" },
         ].map(({ label, value, icon: Icon, tone }) => (
           <div key={label} className="rounded-xl border border-border bg-card p-5 micro-card">
             <div className="flex items-center justify-between mb-3">

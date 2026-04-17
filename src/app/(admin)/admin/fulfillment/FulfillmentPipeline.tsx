@@ -36,10 +36,10 @@ type FulfillmentTask = {
 
 const COLUMNS = [
   { key: "todo", label: "Pending Setup", color: "border-muted-foreground" },
-  { key: "in_progress", label: "In Progress", color: "border-blue-500" },
-  { key: "needs_attention", label: "Needs Attention", color: "border-orange-500" },
-  { key: "in_review", label: "In Review", color: "border-purple-500" },
-  { key: "done", label: "Completed", color: "border-green-500" },
+  { key: "in_progress", label: "In Progress", color: "border-primary/40" },
+  { key: "needs_attention", label: "Needs Attention", color: "border-primary" },
+  { key: "in_review", label: "In Review", color: "border-primary/60" },
+  { key: "done", label: "Completed", color: "border-emerald-500" },
 ]
 
 const STATUS_OPTIONS = [
@@ -51,10 +51,10 @@ const STATUS_OPTIONS = [
 ]
 
 const PRIORITY_COLORS: Record<string, string> = {
-  urgent: "bg-primary/15 text-primary border-primary/30",
-  high: "bg-orange-900/20 text-orange-400 border-orange-800",
-  medium: "bg-yellow-900/20 text-yellow-400 border-yellow-800",
-  low: "bg-deep text-muted-foreground border-border",
+  urgent: "bg-primary/15 text-primary border-primary/40",
+  high: "bg-primary/10 text-primary border-primary/30",
+  medium: "bg-primary/5 text-primary/70 border-primary/20",
+  low: "bg-muted/40 text-muted-foreground border-border",
 }
 
 function PriorityBadge({ priority }: { priority: string }) {
@@ -109,7 +109,7 @@ function TaskCardInner({
         </div>
         {task.assignedTo && (
           <div
-            className="flex-shrink-0 ml-2 w-6 h-6 rounded-full bg-blue-900/20 border border-blue-800 flex items-center justify-center text-[10px] font-bold text-blue-400"
+            className="flex-shrink-0 ml-2 w-6 h-6 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center text-[10px] font-bold text-primary"
             title={task.assignedTo}
           >
             {getInitials(task.assignedTo)}

@@ -166,7 +166,7 @@ export function AdminCampaignDashboard() {
         <div className="rounded-xl border border-border bg-card p-4 micro-card">
           <div className="flex items-center justify-between mb-2">
             <p className="text-xs text-muted-foreground">People Contacted</p>
-            <Users className="h-3.5 w-3.5 text-blue-400" />
+            <Users className="h-3.5 w-3.5 text-primary/70" />
           </div>
           <p className="text-xl font-bold text-foreground font-mono">
             {globalTotals.peopleContacted.toLocaleString()}
@@ -175,7 +175,7 @@ export function AdminCampaignDashboard() {
         <div className="rounded-xl border border-border bg-card p-4 micro-card">
           <div className="flex items-center justify-between mb-2">
             <p className="text-xs text-muted-foreground">Total Replies</p>
-            <MessageSquare className="h-3.5 w-3.5 text-green-400" />
+            <MessageSquare className="h-3.5 w-3.5 text-emerald-600" />
           </div>
           <p className="text-xl font-bold text-foreground font-mono">
             {globalTotals.replies.toLocaleString()}
@@ -185,7 +185,7 @@ export function AdminCampaignDashboard() {
         <div className="rounded-xl border border-border bg-card p-4 micro-card">
           <div className="flex items-center justify-between mb-2">
             <p className="text-xs text-muted-foreground">Bounced</p>
-            <TrendingUp className="h-3.5 w-3.5 text-orange-400" />
+            <TrendingUp className="h-3.5 w-3.5 text-primary" />
           </div>
           <p className="text-xl font-bold text-foreground font-mono">
             {globalTotals.bounced.toLocaleString()}
@@ -265,10 +265,10 @@ export function AdminCampaignDashboard() {
                                     <span className={cn(
                                       "text-xs px-1.5 py-0.5 rounded border font-medium",
                                       campaign.status === "active" || campaign.status === "running"
-                                        ? "text-green-400 bg-green-900/15 border-green-800"
+                                        ? "text-emerald-700 bg-emerald-50 border-emerald-200"
                                         : campaign.status === "paused"
-                                        ? "text-yellow-400 bg-yellow-900/20 border-yellow-800"
-                                        : "text-muted-foreground bg-deep border-border"
+                                        ? "text-primary bg-primary/5 border-primary/30"
+                                        : "text-muted-foreground bg-muted/40 border-border"
                                     )}>
                                       {campaign.status}
                                     </span>

@@ -162,15 +162,15 @@ export default async function AdminRevenuePage() {
                 {marginRows.map((row) => {
                   const bg =
                     row.margin >= 10
-                      ? "bg-green-900/15"
+                      ? "bg-emerald-50"
                       : row.margin >= 5
-                      ? "bg-yellow-900/20"
+                      ? "bg-primary/5"
                       : "bg-primary/10"
                   const multipleColor =
                     row.margin >= 10
-                      ? "text-green-400"
+                      ? "text-emerald-700"
                       : row.margin >= 5
-                      ? "text-yellow-400"
+                      ? "text-primary/70"
                       : "text-primary"
                   return (
                     <tr key={row.slug} className={bg}>

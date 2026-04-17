@@ -158,7 +158,7 @@ export default function ServicesConfigClient() {
                             />
                             {getVal(svc, "ctaUrl") && (
                               <a href={getVal(svc, "ctaUrl") as string} target="_blank" rel="noopener noreferrer">
-                                <ExternalLink className="h-3.5 w-3.5 text-muted-foreground hover:text-green-400" />
+                                <ExternalLink className="h-3.5 w-3.5 text-muted-foreground hover:text-primary" />
                               </a>
                             )}
                           </div>
@@ -197,7 +197,7 @@ export default function ServicesConfigClient() {
                           <button
                             onClick={() => save(svc)}
                             disabled={state === "saving"}
-                            className="inline-flex items-center gap-1.5 rounded-md bg-green-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-green-700 disabled:opacity-50"
+                            className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-white hover:bg-primary/90 disabled:opacity-50"
                           >
                             {state === "saving" && <RefreshCw className="h-3 w-3 animate-spin" />}
                             {state === "saved" && <CheckCircle2 className="h-3 w-3" />}

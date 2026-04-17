@@ -246,7 +246,7 @@ export default async function AdminLeadMagnetsPage() {
             <span className="font-semibold text-[#981B1B]">Insight: </span>
             Your highest-converting tool is{" "}
             <span className="font-semibold">{TYPE_LABEL[bestType] ?? bestType}</span> at{" "}
-            <span className="font-semibold text-green-400">{bestConvRate}% conversion</span>.{" "}
+            <span className="font-semibold text-emerald-700">{bestConvRate}% conversion</span>.{" "}
             {bestConvRate > 0
               ? "Consider driving more traffic to this tool."
               : "No conversions recorded yet - consider improving follow-up sequences."}

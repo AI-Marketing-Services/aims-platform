@@ -80,9 +80,9 @@ export default async function AdminInternOpsPage() {
 
   const TASK_STATUS_DISPLAY = [
     { key: "TODO", label: "To Do", color: "text-muted-foreground" },
-    { key: "IN_PROGRESS", label: "In Progress", color: "text-yellow-400" },
-    { key: "IN_REVIEW", label: "In Review", color: "text-blue-400" },
-    { key: "DONE", label: "Done", color: "text-green-400" },
+    { key: "IN_PROGRESS", label: "In Progress", color: "text-primary/70" },
+    { key: "IN_REVIEW", label: "In Review", color: "text-primary" },
+    { key: "DONE", label: "Done", color: "text-emerald-700" },
     { key: "BLOCKED", label: "Blocked", color: "text-primary" },
   ]
 
@@ -161,7 +161,7 @@ export default async function AdminInternOpsPage() {
             key={label}
             className={cn(
               "rounded-xl border bg-card p-5",
-              alert ? "border-orange-500/30" : "border-border"
+              alert ? "border-primary/30" : "border-border"
             )}
           >
             <div className="flex items-center justify-between mb-3">
@@ -169,13 +169,13 @@ export default async function AdminInternOpsPage() {
               <div
                 className={cn(
                   "flex h-7 w-7 items-center justify-center rounded-lg",
-                  alert ? "bg-orange-500/10" : "bg-muted"
+                  alert ? "bg-primary/10" : "bg-muted"
                 )}
               >
                 <Icon
                   className={cn(
                     "h-3.5 w-3.5",
-                    alert ? "text-orange-400" : "text-muted-foreground"
+                    alert ? "text-primary" : "text-muted-foreground"
                   )}
                 />
               </div>
@@ -183,7 +183,7 @@ export default async function AdminInternOpsPage() {
             <p
               className={cn(
                 "text-xl font-bold font-mono",
-                alert ? "text-orange-400" : "text-foreground"
+                alert ? "text-primary" : "text-foreground"
               )}
             >
               {value}
@@ -210,10 +210,10 @@ export default async function AdminInternOpsPage() {
 
       {/* Missing EOD alert */}
       {internsWithoutEODToday.length > 0 && (
-        <div className="rounded-xl border border-orange-500/20 bg-orange-500/5 px-5 py-4 flex items-start gap-3">
-          <AlertTriangle className="h-4 w-4 text-orange-400 mt-0.5 flex-shrink-0" />
+        <div className="rounded-xl border border-primary/30 bg-primary/5 px-5 py-4 flex items-start gap-3">
+          <AlertTriangle className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
           <div>
-            <p className="text-sm font-medium text-orange-400">Missing EOD Reports</p>
+            <p className="text-sm font-medium text-primary">Missing EOD Reports</p>
             <p className="text-xs text-muted-foreground mt-0.5">
               {internsWithoutEODToday.map((i) => i.user.name ?? i.user.email).join(", ")}{" "}
               {internsWithoutEODToday.length === 1 ? "has" : "have"} not submitted an EOD report
@@ -274,7 +274,7 @@ export default async function AdminInternOpsPage() {
                         key={i}
                         className="text-xs text-muted-foreground flex items-start gap-1.5"
                       >
-                        <Check className="h-3 w-3 text-green-500 mt-0.5 flex-shrink-0" />
+                        <Check className="h-3 w-3 text-emerald-600 mt-0.5 flex-shrink-0" />
                         {item}
                       </li>
                     ))}

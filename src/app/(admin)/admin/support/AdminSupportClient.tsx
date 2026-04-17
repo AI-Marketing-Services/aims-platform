@@ -59,17 +59,17 @@ interface Props {
 // ─── Config ───────────────────────────────────────────────────────────────────
 
 const statusConfig: Record<string, { label: string; className: string; icon: typeof AlertCircle }> = {
-  open: { label: "Open", className: "text-red-400 bg-red-900/20 border-red-800", icon: AlertCircle },
-  in_progress: { label: "In Progress", className: "text-amber-400 bg-amber-900/20 border-amber-800", icon: Clock },
-  resolved: { label: "Resolved", className: "text-green-400 bg-green-900/15 border-green-800", icon: CheckCircle },
+  open: { label: "Open", className: "text-primary bg-primary/10 border-primary/30", icon: AlertCircle },
+  in_progress: { label: "In Progress", className: "text-primary/80 bg-primary/5 border-primary/20", icon: Clock },
+  resolved: { label: "Resolved", className: "text-emerald-700 bg-emerald-50 border-emerald-200", icon: CheckCircle },
   closed: { label: "Closed", className: "text-muted-foreground bg-muted/30 border-border", icon: CheckCircle },
 }
 
 const priorityConfig: Record<string, string> = {
   low: "text-muted-foreground",
-  normal: "text-blue-400",
-  high: "text-orange-400",
-  urgent: "text-red-400 font-bold",
+  normal: "text-primary/70",
+  high: "text-primary",
+  urgent: "text-primary font-bold",
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -186,9 +186,9 @@ export function AdminSupportClient({ tickets: initialTickets, stats }: Props) {
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 stagger-in">
         {[
           { label: "Total", value: stats.total, color: "text-foreground" },
-          { label: "Open", value: stats.open, color: "text-red-400" },
-          { label: "In Progress", value: stats.inProgress, color: "text-amber-400" },
-          { label: "Resolved", value: stats.resolved, color: "text-green-400" },
+          { label: "Open", value: stats.open, color: "text-primary" },
+          { label: "In Progress", value: stats.inProgress, color: "text-primary/70" },
+          { label: "Resolved", value: stats.resolved, color: "text-emerald-700" },
         ].map(({ label, value, color }) => (
           <div key={label} className="rounded-xl border border-border bg-card p-4 micro-card">
             <p className="text-xs text-muted-foreground mb-1">{label}</p>
@@ -366,7 +366,7 @@ export function AdminSupportClient({ tickets: initialTickets, stats }: Props) {
                         {ticket.status !== "in_progress" && (
                           <button
                             onClick={() => handleStatusChange(ticket.id, "in_progress")}
-                            className="px-3 py-2 text-xs font-medium text-amber-400 border border-amber-800 rounded-lg hover:bg-amber-900/20 transition-colors"
+                            className="px-3 py-2 text-xs font-medium text-primary/80 border border-primary/20 rounded-lg hover:bg-primary/5 transition-colors"
                           >
                             In Progress
                           </button>
@@ -374,7 +374,7 @@ export function AdminSupportClient({ tickets: initialTickets, stats }: Props) {
                         {ticket.status !== "resolved" && (
                           <button
                             onClick={() => handleStatusChange(ticket.id, "resolved")}
-                            className="px-3 py-2 text-xs font-medium text-green-400 border border-green-800 rounded-lg hover:bg-green-900/20 transition-colors"
+                            className="px-3 py-2 text-xs font-medium text-emerald-700 border border-emerald-200 rounded-lg hover:bg-emerald-50 transition-colors"
                           >
                             Resolve
                           </button>
@@ -390,7 +390,7 @@ export function AdminSupportClient({ tickets: initialTickets, stats }: Props) {
                         {(ticket.status === "resolved" || ticket.status === "closed") && (
                           <button
                             onClick={() => handleStatusChange(ticket.id, "open")}
-                            className="px-3 py-2 text-xs font-medium text-red-400 border border-red-800 rounded-lg hover:bg-red-900/20 transition-colors"
+                            className="px-3 py-2 text-xs font-medium text-primary border border-primary/30 rounded-lg hover:bg-primary/10 transition-colors"
                           >
                             Reopen
                           </button>

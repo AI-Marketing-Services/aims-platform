@@ -106,28 +106,28 @@ export default async function AdminCommissionsPage() {
             value: fmt(totals.pending),
             sub: `${counts.pending} commissions`,
             icon: Clock,
-            tone: "text-amber-400 bg-amber-500/10",
+            tone: "text-primary/70 bg-primary/5",
           },
           {
             label: "Approved (Owed)",
             value: fmt(totals.approved),
             sub: `${counts.approved} awaiting payout`,
             icon: CheckCircle2,
-            tone: "text-blue-400 bg-blue-500/10",
+            tone: "text-primary bg-primary/10",
           },
           {
             label: "Paid All-Time",
             value: fmt(totals.paid),
             sub: `${counts.paid} transactions`,
             icon: Send,
-            tone: "text-green-400 bg-green-500/10",
+            tone: "text-emerald-700 bg-emerald-50",
           },
           {
             label: "Rejected",
             value: fmt(totals.rejected),
             sub: `${counts.rejected} rejected`,
             icon: DollarSign,
-            tone: "text-red-400 bg-red-500/10",
+            tone: "text-muted-foreground bg-muted/50",
           },
         ].map(({ label, value, sub, icon: Icon, tone }) => (
           <div key={label} className="rounded-xl border border-border bg-card p-5 micro-card">

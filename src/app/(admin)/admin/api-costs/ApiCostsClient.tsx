@@ -98,7 +98,7 @@ export default function ApiCostsClient({
               ${costs30.total.toFixed(2)}
             </span>
             {trendPct !== null && (
-              <div className={`flex items-center gap-1.5 mb-1 ${trendPct > 0 ? "text-primary" : "text-green-400"}`}>
+              <div className={`flex items-center gap-1.5 mb-1 ${trendPct > 0 ? "text-primary" : "text-emerald-700"}`}>
                 {trendPct > 0 ? (
                   <TrendingUp className="w-4 h-4" />
                 ) : (
@@ -208,10 +208,10 @@ export default function ApiCostsClient({
                       <td className="py-3 pr-4 text-muted-foreground">{row.service}</td>
                       <td className="py-3 pr-4 text-right font-mono text-foreground">${row.revenue.toFixed(2)}</td>
                       <td className="py-3 pr-4 text-right font-mono text-foreground">${row.apiCost.toFixed(2)}</td>
-                      <td className={`py-3 pr-4 text-right font-mono ${row.profit < 0 ? "text-primary" : "text-green-400"}`}>
+                      <td className={`py-3 pr-4 text-right font-mono ${row.profit < 0 ? "text-primary" : "text-emerald-700"}`}>
                         ${row.profit.toFixed(2)}
                       </td>
-                      <td className={`py-3 text-right font-mono font-semibold ${row.margin < 0 ? "text-primary" : row.margin < 20 ? "text-yellow-400" : "text-green-400"}`}>
+                      <td className={`py-3 text-right font-mono font-semibold ${row.margin < 0 ? "text-primary" : row.margin < 20 ? "text-primary/70" : "text-emerald-700"}`}>
                         {row.margin}%
                       </td>
                     </tr>
@@ -236,7 +236,7 @@ export default function ApiCostsClient({
                 className="flex items-center gap-3 rounded-lg border border-primary/30 bg-primary/100/10 px-4 py-3"
               >
                 <AlertTriangle className="w-4 h-4 text-primary flex-shrink-0" />
-                <p className="text-sm text-red-400">
+                <p className="text-sm text-primary">
                   <span className="font-semibold">{a.provider}</span> costs up{" "}
                   <span className="font-mono font-bold">{a.pct}%</span> this week
                 </p>
@@ -244,9 +244,9 @@ export default function ApiCostsClient({
             ))}
           </div>
         ) : (
-          <div className="flex items-center gap-3 rounded-lg border border-green-500/20 bg-green-400/5 px-4 py-3">
-            <CheckCircle className="w-4 h-4 text-green-400 flex-shrink-0" />
-            <p className="text-sm text-green-300">No cost anomalies detected</p>
+          <div className="flex items-center gap-3 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3">
+            <CheckCircle className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+            <p className="text-sm text-emerald-700">No cost anomalies detected</p>
           </div>
         )}
       </div>
