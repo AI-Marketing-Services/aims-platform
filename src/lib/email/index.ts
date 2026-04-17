@@ -85,17 +85,14 @@ export function emailLayout(content: string, preheader = "", recipientEmail?: st
             </td>
           </tr>
 
-          <!-- Footer -->
+          <!-- Footer — compliance-minimum only. Dropped the "Questions?
+               Reply to this email" block and the AIMS · AI-Powered
+               Business Infrastructure line per product direction; the
+               tone is already human/first-person at the signature so the
+               corporate footer was redundant. CAN-SPAM still requires a
+               physical address + unsubscribe; those stay. -->
           <tr>
-            <td style="background:#F9FAFB;border-radius:0 0 12px 12px;padding:24px 40px;border-top:1px solid #F0F0F0;">
-              <p style="margin:0 0 8px;font-size:12px;color:#6B7280;">
-                Questions? Reply to this email or reach us at
-                <a href="mailto:${REPLY_TO}" style="color:#981B1B;text-decoration:none;">${REPLY_TO}</a>
-              </p>
-              <p style="margin:0 0 8px;font-size:11px;color:#9CA3AF;">
-                AIMS · AI-Powered Business Infrastructure ·
-                <a href="https://www.aioperatorcollective.com" style="color:#9CA3AF;text-decoration:none;">www.aioperatorcollective.com</a>
-              </p>
+            <td style="background:#F9FAFB;border-radius:0 0 12px 12px;padding:20px 40px;border-top:1px solid #F0F0F0;">
               <p style="margin:0 0 4px;font-size:11px;color:#9CA3AF;">
                 Modern Amenities Group · 8 The Green, Suite A · Dover, DE 19901
               </p>

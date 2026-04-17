@@ -60,6 +60,7 @@ const ADMIN_NAV = [
       { label: "Commissions", href: "/admin/commissions", icon: DollarSign },
       { label: "Lead Magnets", href: "/admin/lead-magnets", icon: FileBarChart },
       { label: "Applications", href: "/admin/applications", icon: ClipboardCheck },
+      { label: "Follow-ups", href: "/admin/follow-ups", icon: Inbox },
       { label: "Community Sequence", href: "/admin/community-sequence", icon: Inbox },
     ],
   },

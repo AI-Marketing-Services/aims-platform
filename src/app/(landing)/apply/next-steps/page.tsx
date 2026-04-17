@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import Image from "next/image"
 import Link from "next/link"
 import {
   CheckCircle2,
@@ -110,17 +111,26 @@ const USE_CASES: UseCase[] = [
   },
 ]
 
-const OPERATOR_TOOLS = [
-  { name: "Claude", category: "Reasoning", score: "10.0" },
-  { name: "Perplexity", category: "Research", score: "9.7" },
-  { name: "Dex", category: "Browser Agent", score: "9.2" },
-  { name: "Raycast", category: "Launcher", score: "9.8" },
-  { name: "Wispr Flow", category: "Speech-to-Text", score: "9.5" },
-  { name: "Little Bird", category: "Meeting AI", score: "9.0" },
-  { name: "v0", category: "App Builder", score: "9.0" },
-  { name: "Instantly", category: "Cold Email", score: "9.3" },
-  { name: "Notion", category: "Knowledge", score: "9.1" },
-  { name: "Firecrawl", category: "Web-to-LLM", score: "9.2" },
+// Domain is what we pass to logo.clearbit.com for the favicon, URL is where
+// the card links to. Domain doubled as href when the tool's root domain +
+// their product page are the same.
+const OPERATOR_TOOLS: {
+  name: string
+  category: string
+  score: string
+  domain: string
+  url: string
+}[] = [
+  { name: "Claude",     category: "Reasoning",       score: "10.0", domain: "anthropic.com",  url: "https://claude.ai" },
+  { name: "Perplexity", category: "Research",        score: "9.7",  domain: "perplexity.ai",  url: "https://www.perplexity.ai" },
+  { name: "Dex",        category: "Browser Agent",   score: "9.2",  domain: "getdex.com",     url: "https://getdex.com" },
+  { name: "Raycast",    category: "Launcher",        score: "9.8",  domain: "raycast.com",    url: "https://raycast.com" },
+  { name: "Wispr Flow", category: "Speech-to-Text",  score: "9.5",  domain: "wisprflow.ai",   url: "https://wisprflow.ai" },
+  { name: "Little Bird",category: "Meeting AI",      score: "9.0",  domain: "littlebird.com", url: "https://www.littlebird.com" },
+  { name: "v0",         category: "App Builder",     score: "9.0",  domain: "v0.app",         url: "https://v0.app" },
+  { name: "Instantly",  category: "Cold Email",      score: "9.3",  domain: "instantly.ai",   url: "https://instantly.ai" },
+  { name: "Notion",     category: "Knowledge",       score: "9.1",  domain: "notion.so",      url: "https://www.notion.so" },
+  { name: "Firecrawl",  category: "Web-to-LLM",      score: "9.2",  domain: "firecrawl.dev",  url: "https://www.firecrawl.dev" },
 ]
 
 /* -------------------------------------------------------------------------- */
@@ -136,12 +146,12 @@ export default function PostBookingNextStepsPage() {
             <span className="text-xs font-mono uppercase tracking-wider">Your call is confirmed</span>
           </div>
           <h1 className="font-playfair text-3xl sm:text-5xl md:text-6xl text-[#1A1A1A] mb-5 leading-[1.05]">
-            Prep once. Show up sharp.<br />
-            <span className="italic text-crimson">Get more out of the call.</span>
+            Excited to speak soon.<br />
+            <span className="italic text-crimson">Here&apos;s everything you need to prep.</span>
           </h1>
           <p className="text-base sm:text-lg text-[#4B5563] max-w-2xl mx-auto">
-            Below is everything we&apos;ve sent to your inbox, plus the case
-            studies, AI use cases by industry, and tool stack used by operators
+            You&apos;ll find everything we&apos;ve sent to your inbox below —
+            plus the AI use cases, tool stack, and case studies from operators
             already inside the Collective. Skim it before we talk.
           </p>
         </div>
@@ -208,29 +218,30 @@ export default function PostBookingNextStepsPage() {
         </div>
       </section>
 
-      {/* ── IT'S NOT TOO LATE ── */}
+      {/* ── IT'S NOT TOO LATE ── clean light card, matches the rest of the
+          AOC palette (no more dark stripe). */}
       <section className="px-5 sm:px-8 pb-12 sm:pb-16">
-        <div className="max-w-4xl mx-auto bg-[#08090D] text-[#F0EBE0] rounded-2xl p-8 sm:p-12">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-crimson/20 text-crimson mb-4">
+        <div className="max-w-4xl mx-auto bg-white border border-[#E3E3E3] rounded-2xl p-8 sm:p-12 shadow-sm">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-crimson/10 text-crimson mb-4">
             <Sparkles className="w-4 h-4" />
             <span className="text-xs font-mono uppercase tracking-wider">
               Real operators, real results
             </span>
           </div>
-          <h2 className="font-playfair text-2xl sm:text-4xl mb-4 leading-tight">
+          <h2 className="font-playfair text-2xl sm:text-4xl mb-4 leading-tight text-[#1A1A1A]">
             It is not too late.
             <span className="block italic text-crimson mt-1">
               You&apos;re earlier than most W-2 professionals.
             </span>
           </h2>
-          <p className="text-[#9CA3AF] text-base sm:text-lg leading-relaxed max-w-2xl mb-6">
+          <p className="text-[#4B5563] text-base sm:text-lg leading-relaxed max-w-2xl mb-4">
             The first wave of &quot;AI operators&quot; was hype — consultants
             selling AI courses about AI. The second wave is operators who
             actually ship. Members in the Collective are real professionals
             running their own work with these tools and sharing what&apos;s
             working every week.
           </p>
-          <p className="text-[#9CA3AF] text-base sm:text-lg leading-relaxed max-w-2xl">
+          <p className="text-[#4B5563] text-base sm:text-lg leading-relaxed max-w-2xl">
             You don&apos;t have to figure it out alone or bet your next move on
             a LinkedIn thread. You learn alongside operators who are building
             in real time.
@@ -254,41 +265,41 @@ export default function PostBookingNextStepsPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {USE_CASES.map((uc, i) => (
               <article
                 key={i}
-                className="bg-white rounded-xl border border-[#E3E3E3] p-6 hover:border-crimson/40 transition-colors"
+                className="bg-white rounded-xl border border-[#E3E3E3] p-5 hover:border-crimson/40 transition-colors flex flex-col"
               >
                 <div className="mb-3">
                   <p className="text-[10px] font-mono uppercase tracking-wider text-crimson mb-1">
                     {uc.niche}
                   </p>
-                  <h3 className="font-semibold text-[#1A1A1A] text-lg leading-tight">
+                  <h3 className="font-semibold text-[#1A1A1A] text-base leading-tight">
                     {uc.title}
                   </h3>
                 </div>
 
-                <div className="space-y-2 text-sm">
+                <div className="space-y-2 text-[13px] flex-1">
                   <div>
-                    <span className="text-[10px] font-mono uppercase text-[#999] block mb-0.5">
+                    <span className="text-[9px] font-mono uppercase text-[#999] block mb-0.5 tracking-wider">
                       Before
                     </span>
                     <p className="text-[#4B5563] leading-snug">{uc.before}</p>
                   </div>
                   <div>
-                    <span className="text-[10px] font-mono uppercase text-[#999] block mb-0.5">
+                    <span className="text-[9px] font-mono uppercase text-[#999] block mb-0.5 tracking-wider">
                       After
                     </span>
                     <p className="text-[#1A1A1A] leading-snug">{uc.after}</p>
                   </div>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-[#F0F0F0] flex flex-wrap gap-1.5">
+                <div className="mt-3 pt-3 border-t border-[#F0F0F0] flex flex-wrap gap-1">
                   {uc.tools.map((t) => (
                     <span
                       key={t}
-                      className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 bg-[#FAFAF7] text-[#4B5563] rounded border border-[#E3E3E3]"
+                      className="text-[9px] font-mono uppercase tracking-wider px-1.5 py-0.5 bg-[#FAFAF7] text-[#4B5563] rounded border border-[#E3E3E3]"
                     >
                       {t}
                     </span>
@@ -319,20 +330,44 @@ export default function PostBookingNextStepsPage() {
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
             {OPERATOR_TOOLS.map((tool) => (
-              <div
+              <a
                 key={tool.name}
-                className="bg-white rounded-lg border border-[#E3E3E3] p-4 flex items-center justify-between gap-2 hover:border-crimson/30 transition-colors"
+                href={tool.url}
+                target="_blank"
+                rel="noreferrer"
+                className="group bg-white rounded-lg border border-[#E3E3E3] p-4 flex items-center gap-3 hover:border-crimson/40 hover:shadow-sm transition-all"
               >
-                <div>
-                  <p className="text-xs font-mono uppercase tracking-wider text-[#999] mb-0.5">
+                {/* Favicon pulled live from Clearbit. Hosts are whitelisted
+                    in next.config.ts; fallback to the tool's first initial
+                    in a pale-crimson tile if the logo request fails. */}
+                <div className="relative flex-shrink-0 w-9 h-9 rounded-md bg-[#FDF2F2] border border-[#E3E3E3] overflow-hidden flex items-center justify-center">
+                  {/* Absolute-positioned initial tile sits underneath the
+                      Clearbit favicon; if the logo 404s the img tag simply
+                      shows its alt-text void and the initial peeks through. */}
+                  <span className="absolute inset-0 flex items-center justify-center font-semibold text-crimson text-sm pointer-events-none">
+                    {tool.name[0]}
+                  </span>
+                  <Image
+                    src={`https://logo.clearbit.com/${tool.domain}?size=80`}
+                    alt={`${tool.name} logo`}
+                    width={36}
+                    height={36}
+                    unoptimized
+                    className="relative w-full h-full object-contain p-1 bg-[#FDF2F2]"
+                  />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[10px] font-mono uppercase tracking-wider text-[#999] mb-0.5 truncate">
                     {tool.category}
                   </p>
-                  <p className="font-semibold text-[#1A1A1A]">{tool.name}</p>
+                  <p className="font-semibold text-[#1A1A1A] truncate group-hover:text-crimson transition-colors">
+                    {tool.name}
+                  </p>
                 </div>
-                <span className="font-mono font-bold text-crimson text-lg">
+                <span className="font-mono font-bold text-crimson text-lg shrink-0">
                   {tool.score}
                 </span>
-              </div>
+              </a>
             ))}
           </div>
         </div>

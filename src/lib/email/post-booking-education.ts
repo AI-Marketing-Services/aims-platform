@@ -90,19 +90,6 @@ export async function sendPostBookingConfirmationEmail(params: {
 
     ${btn("Open prep resources and AI use cases", nextStepsUrl)}
 
-    ${divider()}
-
-    <p style="margin:0 0 8px;font-size:13px;color:#4B5563;line-height:1.6;">
-      <strong style="color:#111827;">Need to reschedule?</strong>
-      ${params.rescheduleUrl ? `<a href="${params.rescheduleUrl}" style="color:#981B1B;">Pick a different time here</a>.` : "Reply to this email and we'll find a better time."}
-      Just please don't ghost, I held this slot for you.
-    </p>
-    ${
-      params.meetingUrl
-        ? `<p style="margin:0 0 8px;font-size:13px;color:#4B5563;line-height:1.6;"><strong style="color:#111827;">Meeting link:</strong> <a href="${params.meetingUrl}" style="color:#981B1B;">${params.meetingUrl}</a></p>`
-        : ""
-    }
-
     <p style="margin:32px 0 0;font-size:13px;color:#4B5563;line-height:1.6;">
       Matt<br/>
       <span style="color:#9CA3AF;font-size:12px;">AI Operator Collective</span>

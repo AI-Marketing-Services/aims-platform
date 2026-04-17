@@ -457,6 +457,7 @@ model PartialApplication {
   firstName      String
   lastName       String
   email          String
+  phone          String?
   source         String?
   utmSource      String?
   utmMedium      String?
@@ -465,6 +466,12 @@ model PartialApplication {
   ip             String?
   completedAt    DateTime?
   reminderSentAt DateTime?
+  // Manual-outreach tracking — admins mark these when they call/text a
+  // lead whose auto-reminder email still didn't convert them.
+  contactedAt    DateTime?
+  contactedBy    String?
+  contactNote    String?   @db.Text
+  dismissedAt    DateTime? // "stop bothering me about this one" toggle
   dealId         String?
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
@@ -472,6 +479,8 @@ model PartialApplication {
   @@index([email])
   @@index([completedAt])
   @@index([reminderSentAt])
+  @@index([contactedAt])
+  @@index([dismissedAt])
   @@index([createdAt])
 }
 
