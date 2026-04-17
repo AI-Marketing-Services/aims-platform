@@ -50,26 +50,34 @@ export function CampaignsDashboardClient() {
   const [refreshing, setRefreshing] = useState(false)
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null)
 
-  const fetchData = useCallback(async (showSpinner = false) => {
+  const fetchData = useCallback(async (showSpinner = false, signal?: AbortSignal) => {
     if (showSpinner) setRefreshing(true)
     try {
-      const res = await fetch("/api/portal/email-campaign")
+      const res = await fetch("/api/portal/email-campaign", { signal })
       if (!res.ok) throw new Error("Failed to fetch")
       const json = await res.json()
+      if (signal?.aborted) return
       setData(json)
       setLastRefresh(new Date())
-    } catch {
+    } catch (err) {
+      if ((err as { name?: string })?.name === "AbortError") return
       setData({ connected: false })
     } finally {
-      setLoading(false)
-      setRefreshing(false)
+      if (!signal?.aborted) {
+        setLoading(false)
+        setRefreshing(false)
+      }
     }
   }, [])
 
   useEffect(() => {
-    fetchData()
-    const interval = setInterval(() => fetchData(), 60_000)
-    return () => clearInterval(interval)
+    const controller = new AbortController()
+    fetchData(false, controller.signal)
+    const interval = setInterval(() => fetchData(false, controller.signal), 60_000)
+    return () => {
+      controller.abort()
+      clearInterval(interval)
+    }
   }, [fetchData])
 
   if (loading) {

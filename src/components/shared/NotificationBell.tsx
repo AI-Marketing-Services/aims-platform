@@ -12,25 +12,33 @@ export function NotificationBell({ variant = "light" }: { variant?: "light" | "d
   const [loading, setLoading] = useState(false)
   const panelRef = useRef<HTMLDivElement>(null)
 
-  const fetchNotifications = useCallback(async () => {
+  const fetchNotifications = useCallback(async (signal?: AbortSignal) => {
     setLoading(true)
     try {
-      const res = await fetch("/api/notifications?limit=20")
+      const res = await fetch("/api/notifications?limit=20", { signal })
       if (res.ok) {
         const data = await res.json()
+        if (signal?.aborted) return
         setNotifications(data.notifications ?? [])
         setUnread(data.unreadCount ?? 0)
       }
-    } catch {
-      // Silently fail - bell will just show no notifications
+    } catch (err) {
+      if ((err as { name?: string })?.name === "AbortError") return
+    } finally {
+      if (!signal?.aborted) setLoading(false)
     }
-    setLoading(false)
   }, [])
 
   useEffect(() => {
-    fetchNotifications()
-    const interval = setInterval(fetchNotifications, 30000)
-    return () => clearInterval(interval)
+    const controller = new AbortController()
+    fetchNotifications(controller.signal)
+    const interval = setInterval(() => {
+      fetchNotifications(controller.signal)
+    }, 30000)
+    return () => {
+      controller.abort()
+      clearInterval(interval)
+    }
   }, [fetchNotifications])
 
   // Close on click outside

@@ -53,28 +53,35 @@ export function AdminCampaignDashboard() {
   const [expandedClient, setExpandedClient] = useState<string | null>(null)
   const [refreshing, setRefreshing] = useState(false)
 
-  const fetchData = useCallback(async (showSpinner = false) => {
+  const fetchData = useCallback(async (showSpinner = false, signal?: AbortSignal) => {
     if (showSpinner) setRefreshing(true)
     try {
-      const res = await fetch("/api/admin/emailbison/dashboard")
+      const res = await fetch("/api/admin/emailbison/dashboard", { signal })
       if (!res.ok) throw new Error("Failed to fetch")
       const data = await res.json()
+      if (signal?.aborted) return
       setClients(data.clients ?? [])
       setError(null)
       setLastRefresh(new Date())
-    } catch {
+    } catch (err) {
+      if ((err as { name?: string })?.name === "AbortError") return
       setError("Failed to load campaign data")
     } finally {
-      setLoading(false)
-      setRefreshing(false)
+      if (!signal?.aborted) {
+        setLoading(false)
+        setRefreshing(false)
+      }
     }
   }, [])
 
-  // Initial fetch + auto-refresh every 60 seconds
   useEffect(() => {
-    fetchData()
-    const interval = setInterval(() => fetchData(), 60_000)
-    return () => clearInterval(interval)
+    const controller = new AbortController()
+    fetchData(false, controller.signal)
+    const interval = setInterval(() => fetchData(false, controller.signal), 60_000)
+    return () => {
+      controller.abort()
+      clearInterval(interval)
+    }
   }, [fetchData])
 
   if (loading) {
