@@ -39,3 +39,5 @@ next-env.d.ts
 
 # Design source files (not shipped)
 design-assets/
+
+.claude/
