@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useMemo } from "react"
+import Link from "next/link"
 import { motion } from "framer-motion"
 import { Calculator, TrendingUp, DollarSign, Users, ArrowRight, Info } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -279,12 +280,12 @@ export default function ROICalculatorClient() {
             ) : (
               <div className="bg-green-900/15 border border-green-800 rounded-2xl p-6 text-center">
                 <div className="text-green-400 font-semibold mb-2">Report sent to {email}</div>
-                <a
+                <Link
                   href="/#apply"
                   className="inline-flex items-center gap-2 text-primary font-medium hover:underline"
                 >
                   Apply to the AI Operator Collective <ArrowRight className="w-4 h-4" />
-                </a>
+                </Link>
               </div>
             )}
           </div>

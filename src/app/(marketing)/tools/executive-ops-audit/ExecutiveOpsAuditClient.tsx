@@ -586,7 +586,7 @@ export default function ExecutiveOpsAuditClient() {
 
                 <div>
                   <label className="block text-sm font-medium text-[#F0EBE0]/70 mb-2">
-                    What's your #1 business goal for the next 12 months?
+                    What&apos;s your #1 business goal for the next 12 months?
                   </label>
                   <textarea
                     rows={3}
@@ -615,7 +615,7 @@ export default function ExecutiveOpsAuditClient() {
                 onBack={goBack}
               />
               <p className="text-[#F0EBE0]/60 mb-8 text-sm">
-                Select every department that exists in your business. We'll ask targeted
+                Select every department that exists in your business. We&apos;ll ask targeted
                 questions about each one.
               </p>
 
@@ -923,7 +923,7 @@ export default function ExecutiveOpsAuditClient() {
                     >
                       <DollarSign className="w-4 h-4 text-red-400 shrink-0" />
                       <span className="text-sm text-[#F0EBE0]/80">
-                        That's approximately{" "}
+                        That&apos;s approximately{" "}
                         <span className="text-red-400 font-semibold">
                           {formatDollars(
                             Math.round((data.costCapacity?.manualHoursWeekly ?? 0) * 55 * 52)
@@ -1185,7 +1185,7 @@ export default function ExecutiveOpsAuditClient() {
               </div>
 
               <h2 className="text-3xl font-serif font-light text-[#F0EBE0] mb-10">
-                Here's your operations overview
+                Here&apos;s your operations overview
               </h2>
 
               <div className="rounded-2xl border border-white/10 bg-[#141923] p-8 mb-6 text-left">

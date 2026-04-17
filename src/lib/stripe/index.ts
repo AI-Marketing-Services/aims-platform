@@ -2,7 +2,6 @@ import Stripe from "stripe"
 import { db } from "@/lib/db"
 
 if (!process.env.STRIPE_SECRET_KEY) {
-  // eslint-disable-next-line no-console
   console.warn("STRIPE_SECRET_KEY is not configured - Stripe operations will fail")
 }
 

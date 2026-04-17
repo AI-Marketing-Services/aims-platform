@@ -44,17 +44,17 @@ const CW = PW - M.left - M.right // content width
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-function useInter(doc: PDFKit.PDFDocument) {
+function applyInter(doc: PDFKit.PDFDocument) {
   try { doc.font("Inter"); return } catch { /* fallback */ }
   doc.font("Helvetica")
 }
 
-function usePlayfair(doc: PDFKit.PDFDocument) {
+function applyPlayfair(doc: PDFKit.PDFDocument) {
   try { doc.font("Playfair"); return } catch { /* fallback */ }
   doc.font("Times-Roman")
 }
 
-function usePlayfairItalic(doc: PDFKit.PDFDocument) {
+function applyPlayfairItalic(doc: PDFKit.PDFDocument) {
   try { doc.font("Playfair-Italic"); return } catch { /* fallback */ }
   doc.font("Times-Roman")
 }
@@ -71,7 +71,7 @@ function addPageFooters(doc: PDFKit.PDFDocument) {
     doc.switchToPage(i)
     // Crimson bottom accent line
     doc.moveTo(M.left, doc.page.height - 38).lineTo(PW - M.right, doc.page.height - 38).lineWidth(0.5).strokeColor(C.border).stroke()
-    useInter(doc)
+    applyInter(doc)
     doc.fontSize(7).fillColor(C.muted)
     doc.text("The AI Operator Playbook", M.left, doc.page.height - 30, { lineBreak: false })
     doc.text("aioperatorcollective.com", PW - M.right - 120, doc.page.height - 30, { lineBreak: false, width: 120, align: "right" })
@@ -85,42 +85,42 @@ function divider(doc: PDFKit.PDFDocument) {
 
 function stepBadge(doc: PDFKit.PDFDocument, text: string) {
   ensureSpace(doc, 24)
-  useInter(doc)
+  applyInter(doc)
   doc.fontSize(8).fillColor(C.crimson).text(text.toUpperCase(), M.left, doc.y, { characterSpacing: 2.5 })
   doc.moveDown(0.3)
 }
 
 function heading1(doc: PDFKit.PDFDocument, text: string) {
   ensureSpace(doc, 40)
-  usePlayfair(doc)
+  applyPlayfair(doc)
   doc.fontSize(26).fillColor(C.black).text(text, M.left, doc.y, { width: CW })
   doc.moveDown(0.5)
 }
 
 function heading2(doc: PDFKit.PDFDocument, text: string) {
   ensureSpace(doc, 30)
-  usePlayfair(doc)
+  applyPlayfair(doc)
   doc.fontSize(16).fillColor(C.black).text(text, M.left, doc.y, { width: CW })
   doc.moveDown(0.4)
 }
 
 function heading3(doc: PDFKit.PDFDocument, text: string) {
   ensureSpace(doc, 22)
-  useInter(doc)
+  applyInter(doc)
   doc.fontSize(11).fillColor(C.crimson).text(text, M.left, doc.y, { width: CW })
   doc.moveDown(0.2)
 }
 
 function para(doc: PDFKit.PDFDocument, text: string) {
   ensureSpace(doc, 20)
-  useInter(doc)
+  applyInter(doc)
   doc.fontSize(10).fillColor(C.body).text(text, M.left, doc.y, { width: CW, lineGap: 4 })
   doc.moveDown(0.4)
 }
 
 function bullet(doc: PDFKit.PDFDocument, text: string) {
   ensureSpace(doc, 16)
-  useInter(doc)
+  applyInter(doc)
   doc.fontSize(10).fillColor(C.crimson).text("•  ", M.left + 4, doc.y, { continued: true })
   doc.fillColor(C.body).text(text, { lineGap: 3 })
   doc.moveDown(0.15)
@@ -130,7 +130,7 @@ function card(doc: PDFKit.PDFDocument, title: string, body: string) {
   ensureSpace(doc, 60)
   const y = doc.y + 4
 
-  useInter(doc)
+  applyInter(doc)
   const titleH = doc.fontSize(10).heightOfString(title, { width: CW - 32 })
   const bodyH = doc.fontSize(9).heightOfString(body, { width: CW - 32, lineGap: 3 })
   const cardH = titleH + bodyH + 28
@@ -148,7 +148,7 @@ function callout(doc: PDFKit.PDFDocument, text: string) {
   ensureSpace(doc, 50)
   const y = doc.y + 6
 
-  useInter(doc)
+  applyInter(doc)
   const textH = doc.fontSize(10).heightOfString(text, { width: CW - 32, lineGap: 4 })
   const boxH = textH + 24
 
@@ -167,10 +167,10 @@ function ctaBox(doc: PDFKit.PDFDocument, title: string, body: string, buttonText
   doc.roundedRect(M.left, y, CW, 110, 6).fill(C.calloutBg)
   doc.roundedRect(M.left, y, CW, 110, 6).lineWidth(1).strokeColor(C.crimson).strokeOpacity(0.2).stroke()
 
-  usePlayfair(doc)
+  applyPlayfair(doc)
   doc.fontSize(16).fillColor(C.black).text(title, M.left + 24, y + 16, { width: CW - 48, align: "center" })
 
-  useInter(doc)
+  applyInter(doc)
   doc.fontSize(9).fillColor(C.muted).text(body, M.left + 24, doc.y + 6, { width: CW - 48, align: "center", lineGap: 3 })
 
   const btnW = 180
@@ -188,12 +188,12 @@ function tableRow(doc: PDFKit.PDFDocument, cols: string[], widths: number[], isH
 
   if (isHeader) {
     doc.roundedRect(M.left, y, CW, rowHeight, 2).fill(C.crimson)
-    useInter(doc)
+    applyInter(doc)
     doc.fontSize(7.5).fillColor(C.white)
   } else {
     doc.rect(M.left, y, CW, rowHeight).fill(C.white)
     doc.moveTo(M.left, y + rowHeight).lineTo(PW - M.right, y + rowHeight).lineWidth(0.3).strokeColor(C.border).stroke()
-    useInter(doc)
+    applyInter(doc)
     doc.fontSize(8.5).fillColor(C.body)
   }
 
@@ -212,7 +212,7 @@ function tableRow(doc: PDFKit.PDFDocument, cols: string[], widths: number[], isH
 
 // Table row that allows text wrapping (dynamic height)
 function tableRowWrap(doc: PDFKit.PDFDocument, cols: string[], widths: number[]) {
-  useInter(doc)
+  applyInter(doc)
   doc.fontSize(8.5).fillColor(C.body)
 
   // Measure the tallest cell
@@ -242,7 +242,7 @@ function promptCard(doc: PDFKit.PDFDocument, num: number, title: string, role: s
   ensureSpace(doc, 100)
   const y = doc.y + 2
 
-  useInter(doc)
+  applyInter(doc)
   const lines = [`Role: ${role}`, `Context: ${context}`, `Command: ${command}`, `Format: ${format}`]
   const titleH = doc.fontSize(10).heightOfString(title, { width: CW - 44 })
   let bodyH = 0
@@ -259,7 +259,7 @@ function promptCard(doc: PDFKit.PDFDocument, num: number, title: string, role: s
   doc.fontSize(10).fillColor(C.black).text(title, M.left + 32, y + 9, { width: CW - 44 })
 
   let fieldY = doc.y + 4
-  useInter(doc)
+  applyInter(doc)
   for (const line of lines) {
     const [label, ...rest] = line.split(": ")
     doc.fontSize(8.5).fillColor(C.crimson).text(`${label}: `, M.left + 14, fieldY, { continued: true, width: CW - 28 })
@@ -275,16 +275,16 @@ function partCover(doc: PDFKit.PDFDocument, part: string, title: string, kicker:
   // Top crimson bar
   doc.rect(0, 0, PW, 4).fill(C.crimson)
 
-  useInter(doc)
+  applyInter(doc)
   doc.fontSize(9).fillColor(C.crimson).text(part.toUpperCase(), M.left, 200, { characterSpacing: 3, width: CW })
 
-  usePlayfair(doc)
+  applyPlayfair(doc)
   doc.fontSize(34).fillColor(C.black).text(title, M.left, 230, { width: CW })
 
   // Accent bar
   doc.rect(M.left, doc.y + 14, 60, 2).fill(C.crimson)
 
-  useInter(doc)
+  applyInter(doc)
   doc.fontSize(12).fillColor(C.muted).text(kicker, M.left, doc.y + 28, { width: CW, lineGap: 5 })
 }
 
@@ -295,7 +295,7 @@ function tocEntry(doc: PDFKit.PDFDocument, label: string, body: string) {
   // Left accent
   doc.rect(M.left, y + 2, 2, 20).fill(C.crimson)
 
-  useInter(doc)
+  applyInter(doc)
   doc.fontSize(10).fillColor(C.black).text(label, M.left + 12, y, { width: CW - 14 })
   doc.fontSize(8.5).fillColor(C.muted).text(body, M.left + 12, doc.y + 1, { width: CW - 14, lineGap: 2 })
   doc.moveDown(0.4)
@@ -328,24 +328,24 @@ export function buildAIPlaybookPDF(): Promise<Buffer> {
     // ═══════════════════════════════════════════════════════════════════════
     doc.rect(0, 0, PW, 4).fill(C.crimson)
 
-    useInter(doc)
+    applyInter(doc)
     doc.fontSize(8).fillColor(C.crimson).text("THE OPERATOR PLAYBOOK", 0, 200, { align: "center", characterSpacing: 3 })
 
-    usePlayfair(doc)
+    applyPlayfair(doc)
     doc.fontSize(44).fillColor(C.black).text("The AI Operator", 0, 226, { align: "center" })
     doc.text("Playbook", { align: "center" })
 
     const divX = (PW - 50) / 2
     doc.rect(divX, doc.y + 14, 50, 2).fill(C.crimson)
 
-    usePlayfairItalic(doc)
+    applyPlayfairItalic(doc)
     doc.fontSize(16).fillColor(C.crimson).text(
       "How to Launch and Run a",
       80, doc.y + 30, { align: "center", width: PW - 160 }
     )
     doc.text("Recurring-Revenue AI Advisory Practice", { align: "center", width: PW - 160 })
 
-    useInter(doc)
+    applyInter(doc)
     doc.fontSize(10).fillColor(C.muted).text(
       "The operator's guide to starting the business, landing the client, and delivering the work.",
       80, doc.y + 20, { align: "center", width: PW - 160, lineGap: 4 }
@@ -664,7 +664,7 @@ When you write or decide: give concrete options, cite specifics from the busines
 
 If information is missing, ask up to 3 short questions. Otherwise, act."`
 
-    useInter(doc)
+    applyInter(doc)
     const mptH = doc.fontSize(9).heightOfString(mptText, { width: CW - 28, lineGap: 3 })
     const mptY = doc.y + 4
     const mptBoxH = mptH + 30

@@ -26,18 +26,18 @@ export function CommunityFooter() {
           </div>
 
           <nav className="flex items-center gap-5 text-xs font-mono uppercase tracking-wider text-[#737373]">
-            <a href="/#program" className="hover:text-[#1A1A1A] transition-colors">
+            <Link href="/#program" className="hover:text-[#1A1A1A] transition-colors">
               Program
-            </a>
-            <a href="/#mentors" className="hover:text-[#1A1A1A] transition-colors">
+            </Link>
+            <Link href="/#mentors" className="hover:text-[#1A1A1A] transition-colors">
               Mentors
-            </a>
-            <a href="/#faq" className="hover:text-[#1A1A1A] transition-colors">
+            </Link>
+            <Link href="/#faq" className="hover:text-[#1A1A1A] transition-colors">
               FAQ
-            </a>
-            <a href="/#disclosures" className="hover:text-[#1A1A1A] transition-colors">
+            </Link>
+            <Link href="/#disclosures" className="hover:text-[#1A1A1A] transition-colors">
               Disclosures
-            </a>
+            </Link>
             <Link href="/privacy" className="hover:text-[#1A1A1A] transition-colors">
               Privacy
             </Link>

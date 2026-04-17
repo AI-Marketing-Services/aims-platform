@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
 import { ChevronRight, CheckCircle, AlertCircle, XCircle, Zap, ArrowRight, Copy, Share2 } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -467,13 +468,13 @@ export default function AIReadinessQuizClient() {
                   business should run — with playbooks, tooling, and people who&apos;ve
                   already shipped what you&apos;re trying to build. Apply below.
                 </p>
-                <a
+                <Link
                   href="/#apply"
                   className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 transition-colors"
                 >
                   Apply to the Collective
                   <ArrowRight className="w-5 h-5" />
-                </a>
+                </Link>
               </div>
             </motion.div>
           )}
