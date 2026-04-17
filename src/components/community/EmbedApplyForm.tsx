@@ -332,8 +332,36 @@ export function EmbedApplyForm() {
           <div
             id="cal-inline-embed-aoc"
             className="calendly-inline-widget w-full max-w-xl rounded-lg overflow-hidden bg-white"
-            style={{ minWidth: "320px", height: "660px" }}
-          />
+            style={{ minWidth: "320px", height: "min(1000px, calc(100vh - 80px))", minHeight: "820px" }}
+          >
+            <noscript>
+              <p className="p-6 text-center text-sm text-[#4B5563]">
+                JavaScript is required to load the calendar. You can book
+                directly at{" "}
+                <a
+                  className="text-crimson font-semibold underline"
+                  href={getCalendarUrl(scoreResult.tier)}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {getCalendarUrl(scoreResult.tier)}
+                </a>
+                .
+              </p>
+            </noscript>
+            <p className="p-6 text-center text-sm text-[#4B5563]">
+              Loading calendar…{" "}
+              <a
+                className="text-crimson font-semibold underline"
+                href={getCalendarUrl(scoreResult.tier)}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Open in a new tab
+              </a>{" "}
+              if it does not appear.
+            </p>
+          </div>
         </div>
       </div>
     )

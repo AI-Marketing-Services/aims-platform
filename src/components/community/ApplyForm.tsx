@@ -427,12 +427,49 @@ export function ApplyForm() {
             </p>
           </div>
 
-          {/* Calendly inline widget */}
-          <div
-            id="cal-inline-aoc"
-            className="calendly-inline-widget w-full max-w-2xl rounded-lg overflow-hidden bg-white"
-            style={{ minWidth: "320px", height: "720px" }}
-          />
+          {/* Calendly inline widget — tall enough to show the full month +
+              time-slot panel without an inner scrollbar, with a resilient
+              fallback link for visitors whose browsers block the Calendly
+              script (ad-blockers, Brave, strict tracking protection). */}
+          <div className="w-full max-w-2xl">
+            <div
+              id="cal-inline-aoc"
+              className="calendly-inline-widget w-full rounded-lg overflow-hidden bg-white"
+              style={{ minWidth: "320px", height: "min(1100px, calc(100vh - 160px))", minHeight: "900px" }}
+            >
+              {/* Fallback rendered synchronously. Calendly.initInlineWidget
+                  replaces innerHTML of this container once the script loads,
+                  so this block only ever ends up visible when the script
+                  failed to load. */}
+              <noscript>
+                <p className="p-6 text-center text-sm text-[#4B5563]">
+                  JavaScript is required to load the calendar. You can book
+                  directly at{" "}
+                  <a
+                    className="text-crimson font-semibold underline"
+                    href={getCalendarUrl(scoreResult.tier)}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {getCalendarUrl(scoreResult.tier)}
+                  </a>
+                  .
+                </p>
+              </noscript>
+              <p className="p-6 text-center text-sm text-[#4B5563]">
+                Loading calendar…{" "}
+                <a
+                  className="text-crimson font-semibold underline"
+                  href={getCalendarUrl(scoreResult.tier)}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Open in a new tab
+                </a>{" "}
+                if it does not appear in a few seconds.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     )

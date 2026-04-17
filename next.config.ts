@@ -77,6 +77,15 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
+      // Apex → www. Clerk cookies + JS are tied to www.aioperatorcollective.com;
+      // loading on the naked domain makes Clerk components render blank and
+      // auth round-trips strip the session. Keep one canonical host.
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "aioperatorcollective.com" }],
+        destination: "https://www.aioperatorcollective.com/:path*",
+        permanent: true,
+      },
       // Common auth paths → Clerk routes
       { source: "/login", destination: "/sign-in", permanent: false },
       { source: "/signin", destination: "/sign-in", permanent: false },
