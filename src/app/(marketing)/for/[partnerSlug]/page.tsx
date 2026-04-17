@@ -56,8 +56,9 @@ export default async function PartnerLandingPage({ params, searchParams }: Props
   cookieStore.set("aims_ref", referral.code, {
     maxAge: 60 * 60 * 24 * 30, // 30 days
     path: "/",
-    httpOnly: false,
+    httpOnly: false, // client-side referral handler reads this
     sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
   })
 
   // Track click
