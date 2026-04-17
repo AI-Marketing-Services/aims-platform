@@ -232,10 +232,10 @@ export function AdminDashboardClient({ data }: { data: DashboardData }) {
           transition={{ duration: 0.4, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
         >
           {[
-            { label: "New Deals", value: weekSummary.newDeals, icon: TrendingUp, color: "text-blue-400", bg: "bg-blue-900/20" },
-            { label: "Tickets Resolved", value: weekSummary.ticketsResolved, icon: TicketCheck, color: "text-green-400", bg: "bg-green-900/15" },
+            { label: "New Deals", value: weekSummary.newDeals, icon: TrendingUp, color: "text-[#981B1B]", bg: "bg-primary/10" },
+            { label: "Tickets Resolved", value: weekSummary.ticketsResolved, icon: TicketCheck, color: "text-[#981B1B]", bg: "bg-primary/10" },
             { label: "Revenue", value: `$${weekSummary.revenue.toLocaleString()}`, icon: DollarSign, color: "text-[#981B1B]", bg: "bg-primary/10" },
-            { label: "Chats", value: weekSummary.chats, icon: MessageSquare, color: "text-purple-400", bg: "bg-purple-900/20" },
+            { label: "Chats", value: weekSummary.chats, icon: MessageSquare, color: "text-[#981B1B]", bg: "bg-primary/10" },
           ].map(({ label, value, icon: Icon, color, bg }) => (
             <div key={label} className="rounded-lg border border-border bg-card px-4 py-3">
               <div className="flex items-center gap-2 mb-1.5">
@@ -291,7 +291,7 @@ export function AdminDashboardClient({ data }: { data: DashboardData }) {
                 Active Clients
               </p>
               <div className="flex items-center gap-2">
-                {clientSparkline.length > 1 && <Sparkline data={clientSparkline} color="#22c55e" />}
+                {clientSparkline.length > 1 && <Sparkline data={clientSparkline} />}
                 <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-[#981B1B]">
                   <Users className="h-4 w-4" />
                 </div>
@@ -318,7 +318,7 @@ export function AdminDashboardClient({ data }: { data: DashboardData }) {
                 Pipeline Value
               </p>
               <div className="flex items-center gap-2">
-                {pipelineSparkline.length > 1 && <Sparkline data={pipelineSparkline} color="#60a5fa" />}
+                {pipelineSparkline.length > 1 && <Sparkline data={pipelineSparkline} />}
                 <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-[#981B1B]">
                   <Layers className="h-4 w-4" />
                 </div>

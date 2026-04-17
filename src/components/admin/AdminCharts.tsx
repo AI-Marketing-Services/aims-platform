@@ -24,7 +24,16 @@ export interface RevenueByServiceEntry {
 
 // ─── Pipeline Funnel Chart ─────────────────────────────────────────────────────
 
-const FUNNEL_COLORS = ["#C42424", "#F87171", "#EF4444", "#981B1B", "#791515"]
+// Crimson gradient — darkest to lightest, so the biggest-volume stage reads
+// as the deepest brand colour and the rest step down consistently.
+const FUNNEL_COLORS = [
+  "#791515",
+  "#981B1B",
+  "#B31B1B",
+  "#C42424",
+  "#DB4545",
+  "#E07373",
+]
 
 export function PipelineFunnelChart({ data }: { data: PipelineFunnelEntry[] }) {
   return (
@@ -76,13 +85,16 @@ export function PipelineFunnelChart({ data }: { data: PipelineFunnelEntry[] }) {
 
 // ─── Revenue by Service Arm Chart ─────────────────────────────────────────────
 
+// Same crimson gradient — dark at top (biggest MRR), progressively lighter.
 const SERVICE_COLORS = [
-  "#981B1B",
   "#791515",
-  "#8B6914",
-  "#EF4444",
-  "#F87171",
+  "#981B1B",
+  "#B31B1B",
   "#C42424",
+  "#DB4545",
+  "#E07373",
+  "#EA9999",
+  "#F4B8B8",
 ]
 
 export function RevenueByServiceChart({

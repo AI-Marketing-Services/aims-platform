@@ -21,12 +21,14 @@ const TYPE_SHORT: Record<string, string> = {
   STACK_CONFIGURATOR: "Stack",
 }
 
+// Crimson gradient so the per-type distribution reads as one brand palette
+// instead of a rainbow.
 const TYPE_COLOR: Record<string, string> = {
-  AI_READINESS_QUIZ: "#3B82F6",
-  ROI_CALCULATOR: "#22C55E",
-  WEBSITE_AUDIT: "#A855F7",
-  SEGMENT_EXPLORER: "#F97316",
-  STACK_CONFIGURATOR: "#EAB308",
+  AI_READINESS_QUIZ: "#791515",
+  ROI_CALCULATOR: "#981B1B",
+  WEBSITE_AUDIT: "#B31B1B",
+  SEGMENT_EXPLORER: "#C42424",
+  STACK_CONFIGURATOR: "#DB4545",
 }
 
 export interface SubmissionsByTypeEntry {
@@ -182,8 +184,8 @@ export function VendorComparisonChart({
             name === "current" ? "Current Cost" : "After Replacement",
           ]}
         />
-        <Bar dataKey="current" fill="#981B1B" radius={[4, 4, 0, 0]} maxBarSize={24} name="current" />
-        <Bar dataKey="replacement" fill="#22C55E" radius={[4, 4, 0, 0]} maxBarSize={24} name="replacement" />
+        <Bar dataKey="current" fill="#791515" radius={[4, 4, 0, 0]} maxBarSize={24} name="current" />
+        <Bar dataKey="replacement" fill="#C42424" radius={[4, 4, 0, 0]} maxBarSize={24} name="replacement" />
       </BarChart>
     </ResponsiveContainer>
   )

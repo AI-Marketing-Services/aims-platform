@@ -70,12 +70,13 @@
     --pillar-operations: 25 85% 45%;
     --pillar-finance: 270 45% 45%;
 
-    /* Chart colors — crimson palette with neutral accents for contrast */
-    --chart-1: 0 70% 35%;
-    --chart-2: 0 70% 50%;
-    --chart-3: 0 0% 45%;
-    --chart-4: 0 0% 65%;
-    --chart-5: 0 70% 75%;
+    /* Chart colors — single crimson gradient, dark → light. Keeps every
+       chart on one brand palette rather than introducing a rainbow. */
+    --chart-1: 0 70% 28%;
+    --chart-2: 0 70% 35%;
+    --chart-3: 0 70% 45%;
+    --chart-4: 0 62% 57%;
+    --chart-5: 0 60% 75%;
   }
 }
 

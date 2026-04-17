@@ -38,7 +38,17 @@ interface Props {
   revenueByChannel: ChannelPoint[]
 }
 
-const PIE_COLORS = ["#981B1B", "#EF4444", "#F87171", "#C42424", "#FECACA", "rgba(196,151,42,0.15)"]
+// Crimson gradient dark → light, no rogue brights or leftover gold.
+const PIE_COLORS = [
+  "#791515",
+  "#981B1B",
+  "#B31B1B",
+  "#C42424",
+  "#DB4545",
+  "#E07373",
+  "#EA9999",
+  "#F4B8B8",
+]
 
 const tooltipStyle = {
   backgroundColor: "#FFFFFF",
