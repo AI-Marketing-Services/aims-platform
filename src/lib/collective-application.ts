@@ -156,30 +156,28 @@ export function calculateScore(answers: Record<string, string>) {
 /* -------------------------------------------------------------------------- */
 
 /**
- * Calendly routing.
- * - Hot tier (score ≥ 80) → Matt (most qualified leads, senior closer)
- * - Warm / cold tier       → Ryan
- *
- * Override per-operator via NEXT_PUBLIC_CALENDLY_MATT / NEXT_PUBLIC_CALENDLY_RYAN.
+ * Single AI Operator Collective consult calendar. Every tier books the
+ * same link — no more tier-routing between Matt and Ryan, no more
+ * accidental fallbacks to breakthroughclosing.com. Override with
+ * NEXT_PUBLIC_CALENDLY_AOC if we ever need to swap it instance-wide.
  */
-export const CALENDLY_MATT =
-  process.env.NEXT_PUBLIC_CALENDLY_MATT ??
-  "https://calendly.com/matt-breakthroughclosing"
+export const CALENDLY_AOC =
+  process.env.NEXT_PUBLIC_CALENDLY_AOC ??
+  "https://calendly.com/d/cvnj-4rm-9t6/ai-operator-collective-consult-call"
 
-export const CALENDLY_RYAN =
-  process.env.NEXT_PUBLIC_CALENDLY_RYAN ??
-  "https://calendly.com/ryan-breakthroughclosing"
+// Kept for callers that still import these names. Both alias the single
+// AOC consult link so removing the old per-operator routing never
+// silently drops a lead onto a stale calendar.
+export const CALENDLY_MATT = CALENDLY_AOC
+export const CALENDLY_RYAN = CALENDLY_AOC
+export const CAL_LINK = CALENDLY_AOC
 
-// Default link used before tier is known (e.g. step-1 previews). Points at
-// Ryan because unqualified prospects shouldn't eat Matt's calendar.
-export const CAL_LINK = CALENDLY_RYAN
-
-export function getCalendarUrl(tier: "hot" | "warm" | "cold") {
-  return tier === "hot" ? CALENDLY_MATT : CALENDLY_RYAN
+export function getCalendarUrl(_tier: "hot" | "warm" | "cold") {
+  return CALENDLY_AOC
 }
 
-export function getCalendarOwner(tier: "hot" | "warm" | "cold") {
-  return tier === "hot" ? "Matt" : "Ryan"
+export function getCalendarOwner(_tier: "hot" | "warm" | "cold") {
+  return "the AI Operator Collective team"
 }
 
 /* -------------------------------------------------------------------------- */
@@ -253,13 +251,13 @@ export function getCalendarIntro(
   if (tier === "hot") {
     return {
       heading: `${firstName}, you look like a strong fit.`,
-      subheading: `Based on your timeline, goals, and background in ${bgLabel}, we\u2019re connecting you with Matt Miller \u2014 one of our senior operators \u2014 for a strategy call.`,
+      subheading: `Based on your timeline, goals, and background in ${bgLabel}, let\u2019s get you on a strategy call with the AI Operator Collective team.`,
     }
   }
 
   return {
     heading: `Great application, ${firstName}.`,
-    subheading: `Let\u2019s get you on a call with Ryan to explore how the Collective can help you hit your goals.`,
+    subheading: `Let\u2019s get you on a call with the AI Operator Collective team to explore how the Collective can help you hit your goals.`,
   }
 }
 

@@ -163,7 +163,9 @@ export function EmbedApplyForm() {
       const Calendly = (window as unknown as { Calendly?: { initInlineWidget: (opts: Record<string, unknown>) => void } }).Calendly
       if (!Calendly) return
       const params = new URLSearchParams({
-        hide_event_type_details: "0",
+        // "1" = skip Calendly's own event-details card since we render our
+        // own branded version above the iframe.
+        hide_event_type_details: "1",
         hide_gdpr_banner: "1",
         background_color: "ffffff",
         text_color: "1A1A1A",
@@ -304,7 +306,6 @@ export function EmbedApplyForm() {
 
   /* ---- Calendar ---- */
   if (phase === "calendar" && scoreResult) {
-    const calOwner = getCalendarOwner(scoreResult.tier)
     const intro = getCalendarIntro(firstName.trim(), scoreResult.tier, answers)
 
     return (
@@ -318,7 +319,7 @@ export function EmbedApplyForm() {
             <div className="inline-flex items-center gap-2 text-[#981B1B] mb-2">
               <Calendar className="w-4 h-4" />
               <span className="text-xs font-mono uppercase tracking-wider">
-                Book your call with {calOwner}
+                Book your consult call
               </span>
             </div>
             <h2 className="font-serif text-xl sm:text-2xl text-[#1A1A1A] mb-2">
@@ -327,6 +328,39 @@ export function EmbedApplyForm() {
             <p className="text-[#737373] text-sm max-w-md mx-auto">
               {intro.subheading}
             </p>
+          </div>
+
+          <div className="w-full max-w-xl mb-5 rounded-xl border border-[#E3E3E3] bg-white p-4 sm:p-5 text-left">
+            <h3 className="font-semibold text-[#1A1A1A] text-sm sm:text-base mb-2">
+              AI Operator Collective Consult Call
+            </h3>
+            <p className="text-xs sm:text-sm text-[#4B5563] leading-relaxed mb-2.5">
+              45-minute virtual discovery call designed to have an open
+              conversation about your goals and explore whether we&apos;re the
+              right fit. We&apos;ll cover:
+            </p>
+            <ul className="space-y-1 text-xs sm:text-sm text-[#4B5563]">
+              <li className="flex gap-2">
+                <span className="text-[#981B1B] shrink-0">•</span>
+                Who we are and how our approach works.
+              </li>
+              <li className="flex gap-2">
+                <span className="text-[#981B1B] shrink-0">•</span>
+                Your background, goals, and what you&apos;re hoping to build.
+              </li>
+              <li className="flex gap-2">
+                <span className="text-[#981B1B] shrink-0">•</span>
+                Investment expectations, cost overview, and potential ROI.
+              </li>
+              <li className="flex gap-2">
+                <span className="text-[#981B1B] shrink-0">•</span>
+                Whether this is the right time for you to start a business.
+              </li>
+              <li className="flex gap-2">
+                <span className="text-[#981B1B] shrink-0">•</span>
+                Mutual fit and what next steps could look like.
+              </li>
+            </ul>
           </div>
 
           <div

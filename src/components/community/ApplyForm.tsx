@@ -252,7 +252,9 @@ export function ApplyForm() {
       const Calendly = (window as unknown as { Calendly?: { initInlineWidget: (opts: Record<string, unknown>) => void } }).Calendly
       if (!Calendly) return
       const params = new URLSearchParams({
-        hide_event_type_details: "0",
+        // "1" = hide Calendly's own event-details card. We render our own
+        // branded card above the iframe so users don't see two copies.
+        hide_event_type_details: "1",
         hide_gdpr_banner: "1",
         background_color: "ffffff",
         text_color: "1A1A1A",
@@ -396,7 +398,6 @@ export function ApplyForm() {
   /* ======================================================================== */
 
   if (phase === "calendar" && scoreResult) {
-    const calOwner = getCalendarOwner(scoreResult.tier)
     const intro = getCalendarIntro(firstName.trim(), scoreResult.tier, answers)
 
     return (
@@ -411,7 +412,7 @@ export function ApplyForm() {
             <div className="inline-flex items-center gap-2 text-crimson mb-3">
               <Calendar className="w-5 h-5" />
               <span className="text-xs font-mono uppercase tracking-wider">
-                Book your call with {calOwner}
+                Book your consult call
               </span>
             </div>
             <h2 className="font-playfair text-2xl sm:text-3xl text-[#1A1A1A] mb-3">
@@ -420,11 +421,44 @@ export function ApplyForm() {
             <p className="text-[#737373] text-sm sm:text-base max-w-lg mx-auto">
               {intro.subheading}
             </p>
-            <p className="text-xs text-[#999] mt-3">
-              This will be a 45-minute virtual discovery call. We&apos;ll cover
-              your goals, how our approach works, and whether it&apos;s the right
-              fit.
+          </div>
+
+          {/* What this call covers — branded pre-booking card. Mirrors the
+              event-details copy so the attendee knows what to expect before
+              they give up a calendar slot. Calendly's own event-details
+              screen is disabled (hide_event_type_details=1) so users don't
+              see a duplicate list. */}
+          <div className="w-full max-w-2xl mb-6 rounded-xl border border-[#E3E3E3] bg-white p-6 text-left">
+            <h3 className="font-semibold text-[#1A1A1A] text-base sm:text-lg mb-2">
+              AI Operator Collective Consult Call
+            </h3>
+            <p className="text-sm text-[#4B5563] leading-relaxed mb-3">
+              45-minute virtual discovery call designed to have an open
+              conversation about your goals and explore whether we&apos;re the
+              right fit to work together. We&apos;ll cover:
             </p>
+            <ul className="space-y-1.5 text-sm text-[#4B5563]">
+              <li className="flex gap-2">
+                <span className="text-crimson shrink-0">•</span>
+                Who we are and how our approach works.
+              </li>
+              <li className="flex gap-2">
+                <span className="text-crimson shrink-0">•</span>
+                Your background, goals, and what you&apos;re hoping to build.
+              </li>
+              <li className="flex gap-2">
+                <span className="text-crimson shrink-0">•</span>
+                Investment expectations, cost overview, and potential ROI.
+              </li>
+              <li className="flex gap-2">
+                <span className="text-crimson shrink-0">•</span>
+                Whether this is the right time for you to start a business.
+              </li>
+              <li className="flex gap-2">
+                <span className="text-crimson shrink-0">•</span>
+                Mutual fit and what next steps could look like.
+              </li>
+            </ul>
           </div>
 
           {/* Calendly inline widget — tall enough to show the full month +
