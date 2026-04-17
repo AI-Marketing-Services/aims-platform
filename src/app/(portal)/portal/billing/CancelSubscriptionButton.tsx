@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { Loader2 } from "lucide-react"
+import { toast } from "sonner"
 
 export function CancelSubscriptionButton({
   subscriptionId,
@@ -26,11 +27,12 @@ export function CancelSubscriptionButton({
       if (res.ok) {
         setCancelled(true)
         setShowConfirm(false)
+        toast.success(`${serviceName} will cancel at the end of the billing period.`)
       } else {
-        alert(data.error ?? "Failed to cancel. Please contact support.")
+        toast.error(data.error ?? "Failed to cancel. Please contact support.")
       }
     } catch {
-      alert("Something went wrong. Please try again.")
+      toast.error("Something went wrong. Please try again.")
     } finally {
       setLoading(false)
     }

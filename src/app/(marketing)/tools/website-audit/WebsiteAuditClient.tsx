@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
+import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
 import { Globe, CheckCircle2, Loader2, AlertCircle, ArrowRight, Search, Zap, TrendingDown, Shield, BarChart2 } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -437,13 +438,13 @@ export default function WebsiteAuditClient() {
               <div className="bg-card border border-primary/20 rounded-2xl p-8 text-center">
                 <h3 className="text-2xl font-bold text-foreground mb-3">You know what to fix. Shipping it is the hard part.</h3>
                 <p className="text-muted-foreground mb-6 text-sm">The AI Operator Collective is where operators workshop audits like this with people who&apos;ve already shipped the fixes. Apply below.</p>
-                <a
+                <Link
                   href="/#apply"
                   className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 transition-colors"
                 >
                   Apply to the Collective
                   <ArrowRight className="w-5 h-5" />
-                </a>
+                </Link>
               </div>
             </motion.div>
           )}

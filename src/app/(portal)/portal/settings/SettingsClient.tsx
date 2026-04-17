@@ -313,12 +313,12 @@ export function PortalSettingsClient({ clerkUser, dbUser }: Props) {
       if (res.ok) {
         router.push("/")
       } else {
-        alert("Failed to delete account. Please contact support.")
+        toast.error("Failed to delete account. Please contact support.")
         setDeleting(false)
         setDeleteConfirm(false)
       }
     } catch {
-      alert("Failed to delete account. Please contact support.")
+      toast.error("Failed to delete account. Please contact support.")
       setDeleting(false)
       setDeleteConfirm(false)
     }

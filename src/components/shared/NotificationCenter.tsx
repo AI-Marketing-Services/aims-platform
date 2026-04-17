@@ -152,6 +152,7 @@ export function NotificationCenter({
           )}
           <button
             onClick={onClose}
+            aria-label="Close notifications"
             className="p-0.5 rounded text-muted-foreground hover:text-foreground transition-colors"
           >
             <X className="h-3.5 w-3.5" />

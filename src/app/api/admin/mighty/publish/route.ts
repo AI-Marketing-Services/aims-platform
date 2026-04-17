@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server"
-import { auth } from "@clerk/nextjs/server"
-import { createPost, createEvent, createPoll, MIGHTY_IDS } from "@/lib/mighty"
+import { createPost, MIGHTY_IDS } from "@/lib/mighty"
 import {
   publishArticle,
   createRecurringEvent,
   createEngagementPoll,
 } from "@/lib/mighty/content-pipeline"
+import { requireAdmin } from "@/lib/auth"
 import { logger } from "@/lib/logger"
 
 /**
@@ -17,9 +17,9 @@ import { logger } from "@/lib/logger"
  *   - ...type-specific fields
  */
 export async function POST(req: NextRequest) {
-  const { userId } = await auth()
+  const userId = await requireAdmin()
   if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   }
 
   try {

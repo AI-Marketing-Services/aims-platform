@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useMemo, useRef } from "react"
+import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
 import { Search, Users, TrendingUp, ArrowRight, Lock, Filter, Target } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -255,13 +256,13 @@ export default function SegmentExplorerClient() {
                   </div>
                 </div>
                 {unlocked && (
-                  <a
+                  <Link
                     href="/#apply"
                     className="flex-shrink-0 inline-flex items-center gap-1.5 px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors"
                   >
                     Apply
                     <ArrowRight className="w-3.5 h-3.5" />
-                  </a>
+                  </Link>
                 )}
               </div>
             </motion.div>
@@ -342,13 +343,13 @@ export default function SegmentExplorerClient() {
             <p className="text-muted-foreground mb-6">
               Operators inside the AI Operator Collective workshop exactly these campaigns together — targeting, messaging, automation, and the AI tooling that makes them work.
             </p>
-            <a
+            <Link
               href="/#apply"
               className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 transition-colors"
             >
               Apply to the Collective
               <ArrowRight className="w-5 h-5" />
-            </a>
+            </Link>
           </motion.div>
         )}
       </div>

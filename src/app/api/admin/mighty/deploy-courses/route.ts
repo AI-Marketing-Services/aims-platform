@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server"
-import { auth } from "@clerk/nextjs/server"
 import {
   buildCourseModule,
   publishCourse,
   setupCommunityTags,
   AI_OPERATOR_MODULES,
 } from "@/lib/mighty/content-pipeline"
+import { requireAdmin } from "@/lib/auth"
 import { logger } from "@/lib/logger"
 
 /**
@@ -18,9 +18,9 @@ import { logger } from "@/lib/logger"
  *   - tags?: boolean      — also create community tags (default: false)
  */
 export async function POST(req: NextRequest) {
-  const { userId } = await auth()
+  const userId = await requireAdmin()
   if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   }
 
   try {

@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
 import { Check, ChevronRight, ArrowRight, Zap, Lock } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -479,13 +480,13 @@ export default function StackConfiguratorClient() {
                         </div>
                         <p className="text-sm text-muted-foreground">{rec.description}</p>
                       </div>
-                      <a
+                      <Link
                         href="/#apply"
                         className="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-primary border border-primary/30 rounded-lg hover:bg-primary/10 transition-colors"
                       >
                         Apply
                         <ChevronRight className="w-3 h-3" />
-                      </a>
+                      </Link>
                     </motion.div>
                   ))}
                 </div>
@@ -497,13 +498,13 @@ export default function StackConfiguratorClient() {
               <p className="text-muted-foreground mb-6">
                 The AI Operator Collective is where operators workshop stack rollouts like this together — with people who&apos;ve already shipped the exact tools you&apos;re considering.
               </p>
-              <a
+              <Link
                 href="/#apply"
                 className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 transition-colors"
               >
                 Apply to the Collective
                 <ArrowRight className="w-5 h-5" />
-              </a>
+              </Link>
             </div>
           </motion.div>
         )}

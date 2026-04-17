@@ -47,13 +47,14 @@ export async function POST(
     return NextResponse.json({ error: "Invalid data", details: parsed.error.flatten() }, { status: 400 })
   }
 
-  const deal = await db.deal.findUnique({ where: { id } })
-  if (!deal) {
-    return NextResponse.json({ error: "Deal not found" }, { status: 404 })
-  }
-  if (!deal.contactEmail) {
-    return NextResponse.json({ error: "Deal is missing contactEmail" }, { status: 400 })
-  }
+  try {
+    const deal = await db.deal.findUnique({ where: { id } })
+    if (!deal) {
+      return NextResponse.json({ error: "Deal not found" }, { status: 404 })
+    }
+    if (!deal.contactEmail) {
+      return NextResponse.json({ error: "Deal is missing contactEmail" }, { status: 400 })
+    }
 
   const { planId, planName } = resolvePlanId(parsed.data)
 
@@ -196,7 +197,14 @@ export async function POST(
     },
   })
 
-  return NextResponse.json({ ok: true, invite: updated, mightyInvite: invite })
+    return NextResponse.json({ ok: true, invite: updated, mightyInvite: invite })
+  } catch (err) {
+    logger.error(`[Mighty] invite-to-mighty POST failed dealId=${id}`, err)
+    return NextResponse.json(
+      { error: "Invite operation failed" },
+      { status: 500 }
+    )
+  }
 }
 
 export async function GET(
@@ -210,10 +218,18 @@ export async function GET(
   if (!role || !["ADMIN", "SUPER_ADMIN"].includes(role)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   }
-  const { id } = await params
-  const invites = await db.mightyInvite.findMany({
-    where: { dealId: id },
-    orderBy: { sentAt: "desc" },
-  })
-  return NextResponse.json({ invites })
+  try {
+    const { id } = await params
+    const invites = await db.mightyInvite.findMany({
+      where: { dealId: id },
+      orderBy: { sentAt: "desc" },
+    })
+    return NextResponse.json({ invites })
+  } catch (err) {
+    logger.error("[Mighty] invite-to-mighty GET failed", err)
+    return NextResponse.json(
+      { error: "Failed to fetch invites" },
+      { status: 500 }
+    )
+  }
 }

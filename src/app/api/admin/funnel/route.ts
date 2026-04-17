@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { db } from "@/lib/db"
+import { logger } from "@/lib/logger"
 
 /**
  * GET /api/admin/funnel
@@ -15,6 +16,7 @@ export async function GET() {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   }
 
+  try {
   const now = new Date()
   const todayStart = new Date(now)
   todayStart.setHours(0, 0, 0, 0)
@@ -254,4 +256,11 @@ export async function GET() {
       createdAt: a.createdAt.toISOString(),
     })),
   })
+  } catch (err) {
+    logger.error("[Admin] funnel metrics failed", err)
+    return NextResponse.json(
+      { error: "Failed to compute funnel metrics" },
+      { status: 500 }
+    )
+  }
 }

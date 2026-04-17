@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { ExternalLink, Loader2 } from "lucide-react"
+import { toast } from "sonner"
 
 export function BillingPortalButton() {
   const [loading, setLoading] = useState(false)
@@ -18,10 +19,11 @@ export function BillingPortalButton() {
       if (data.url) {
         window.location.href = data.url
       } else {
-        alert(data.error ?? "Unable to open billing portal. Please contact support.")
+        toast.error(data.error ?? "Unable to open billing portal. Please contact support.")
         setLoading(false)
       }
     } catch {
+      toast.error("Network error. Please try again.")
       setLoading(false)
     }
   }

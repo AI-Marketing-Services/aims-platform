@@ -113,25 +113,31 @@ export function FunnelDashboardClient() {
   const [error, setError] = useState<string | null>(null)
   const [lastRefreshed, setLastRefreshed] = useState<number | null>(null)
 
-  const fetchData = useCallback(async () => {
+  const fetchData = useCallback(async (signal?: AbortSignal) => {
     try {
-      const res = await fetch("/api/admin/funnel", { cache: "no-store" })
+      const res = await fetch("/api/admin/funnel", { cache: "no-store", signal })
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
       const json = (await res.json()) as FunnelResponse
+      if (signal?.aborted) return
       setData(json)
       setError(null)
       setLastRefreshed(Date.now())
     } catch (err) {
+      if ((err as { name?: string })?.name === "AbortError") return
       setError(err instanceof Error ? err.message : "Failed to load")
     } finally {
-      setLoading(false)
+      if (!signal?.aborted) setLoading(false)
     }
   }, [])
 
   useEffect(() => {
-    fetchData()
-    const iv = setInterval(fetchData, REFRESH_INTERVAL_MS)
-    return () => clearInterval(iv)
+    const controller = new AbortController()
+    fetchData(controller.signal)
+    const iv = setInterval(() => fetchData(controller.signal), REFRESH_INTERVAL_MS)
+    return () => {
+      controller.abort()
+      clearInterval(iv)
+    }
   }, [fetchData])
 
   if (loading && !data) {
@@ -182,7 +188,7 @@ export function FunnelDashboardClient() {
           )}
         </div>
         <button
-          onClick={fetchData}
+          onClick={() => fetchData()}
           disabled={loading}
           className="inline-flex items-center gap-1.5 px-2 py-1 text-xs hover:text-foreground transition-colors"
         >

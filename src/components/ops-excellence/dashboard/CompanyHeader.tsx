@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import { motion } from "framer-motion"
 import { Calendar, TrendingUp } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -41,9 +42,12 @@ export default function CompanyHeader({ engagement, score }: CompanyHeaderProps)
       {/* Left: Company identity */}
       <div className="flex items-center gap-4">
         {engagement.companyLogo ? (
-          <img
+          <Image
             src={engagement.companyLogo}
             alt={engagement.companyName}
+            width={56}
+            height={56}
+            unoptimized
             className="h-14 w-14 shrink-0 rounded-full object-cover border-2 border-border"
           />
         ) : (

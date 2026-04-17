@@ -186,17 +186,6 @@ export async function updateCloseLeadStatus(
   return true
 }
 
-// Reverse mapping: Close status ID → label (for looking up current status)
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const CLOSE_STATUS_ID_TO_LABEL: Record<string, string> = Object.entries(CLOSE_STATUS_MAP).reduce(
-  (acc, [stage, statusId]) => {
-    if (statusId) {
-      return { ...acc, [statusId]: stage }
-    }
-    return acc
-  },
-  {} as Record<string, string>
-)
 
 /**
  * Sync a deal stage change FROM AIMS TO Close CRM.
