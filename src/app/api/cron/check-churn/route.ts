@@ -51,13 +51,20 @@ export async function GET(req: Request) {
         mrr: totalMrr,
       }).catch((err) => logger.error(`Churn risk notification failed for ${user.email}:`, err))
 
-      // Also update any associated deals to AT_RISK
-      await db.deal.updateMany({
-        where: {
-          userId: user.id,
-          stage: "ACTIVE_CLIENT",
-        },
-        data: { stage: "AT_RISK" },
+      // Log a deal activity so the audit trail shows who the cron flagged.
+      // Stage stays MEMBER_JOINED until the user actually leaves the
+      // community — the community model has no intermediate "AT_RISK".
+      await db.dealActivity.createMany({
+        data: (
+          await db.deal.findMany({
+            where: { userId: user.id, stage: "MEMBER_JOINED" },
+            select: { id: true },
+          })
+        ).map((d) => ({
+          dealId: d.id,
+          type: "NOTE_ADDED" as const,
+          detail: `Churn-risk: ${daysSinceLogin}d since last login`,
+        })),
       })
 
       notified++

@@ -26,6 +26,7 @@ import {
   MessageSquare,
   LifeBuoy,
   Gauge,
+  UserPlus,
 } from "lucide-react"
 import { useState } from "react"
 import { motion } from "framer-motion"
@@ -45,6 +46,7 @@ const ADMIN_NAV = [
     items: [
       { label: "Live Funnel", href: "/admin/funnel", icon: FileBarChart },
       { label: "CRM Pipeline", href: "/admin/crm", icon: Kanban },
+      { label: "Mighty Invites", href: "/admin/mighty-invites", icon: UserPlus },
       { label: "Clients", href: "/admin/clients", icon: Users },
       { label: "Partners", href: "/admin/partners", icon: Users },
       { label: "Fulfillment", href: "/admin/fulfillment", icon: ClipboardCheck },

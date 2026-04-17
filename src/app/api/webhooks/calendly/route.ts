@@ -98,11 +98,11 @@ export async function POST(req: Request) {
         await db.deal.update({
           where: { id: submission.dealId },
           data: {
-            stage: "DEMO_BOOKED",
+            stage: "CONSULT_BOOKED",
             activities: {
               create: {
                 type: "DEMO_COMPLETED",
-                detail: `Calendly call booked by ${name} (${email}).`,
+                detail: `Calendly consult booked by ${name} (${email}).`,
               },
             },
           },

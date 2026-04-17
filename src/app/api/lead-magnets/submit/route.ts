@@ -138,7 +138,7 @@ export async function POST(req: Request) {
         leadScoreTier: tier,
         leadScoreReason: reason,
         priority,
-        stage: tier === "hot" ? "QUALIFIED" : "NEW_LEAD",
+        stage: "APPLICATION_SUBMITTED",
         activities: {
           create: {
             type: "FORM_SUBMITTED",

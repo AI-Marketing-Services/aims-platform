@@ -77,7 +77,7 @@ model Deal {
   industry     String?
   website      String?
 
-  stage    DealStage    @default(NEW_LEAD)
+  stage    DealStage    @default(APPLICATION_SUBMITTED)
   value    Float        @default(0)
   mrr      Float        @default(0)
   priority DealPriority @default(MEDIUM)
@@ -120,15 +120,11 @@ model Deal {
 }
 
 enum DealStage {
-  NEW_LEAD
-  QUALIFIED
-  DEMO_BOOKED
-  PROPOSAL_SENT
-  NEGOTIATION
-  ACTIVE_CLIENT
-  UPSELL_OPPORTUNITY
-  AT_RISK
-  CHURNED
+  APPLICATION_SUBMITTED
+  CONSULT_BOOKED
+  CONSULT_COMPLETED
+  MIGHTY_INVITED
+  MEMBER_JOINED
   LOST
 }
 

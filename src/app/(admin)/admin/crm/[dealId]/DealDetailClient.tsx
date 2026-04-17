@@ -428,15 +428,11 @@ export function DealDetailClient({
     stage === currentStage
       ? stageColor
       : {
-          NEW_LEAD: "text-muted-foreground bg-deep border-border",
-          QUALIFIED: "text-blue-400 bg-blue-900/20 border-blue-800",
-          DEMO_BOOKED: "text-purple-400 bg-purple-900/20 border-purple-800",
-          PROPOSAL_SENT: "text-yellow-400 bg-yellow-900/20 border-yellow-800",
-          NEGOTIATION: "text-orange-400 bg-orange-900/20 border-orange-800",
-          ACTIVE_CLIENT: "text-green-400 bg-green-900/20 border-green-800",
-          UPSELL_OPPORTUNITY: "text-emerald-400 bg-emerald-900/20 border-emerald-800",
-          AT_RISK: "text-primary bg-primary/10 border-primary/30",
-          CHURNED: "text-muted-foreground bg-deep border-border",
+          APPLICATION_SUBMITTED: "text-muted-foreground bg-deep border-border",
+          CONSULT_BOOKED: "text-blue-400 bg-blue-900/20 border-blue-800",
+          CONSULT_COMPLETED: "text-purple-400 bg-purple-900/20 border-purple-800",
+          MIGHTY_INVITED: "text-amber-400 bg-amber-900/20 border-amber-800",
+          MEMBER_JOINED: "text-green-400 bg-green-900/20 border-green-800",
           LOST: "text-muted-foreground bg-deep border-border",
         }[stage] ?? stageColor
 

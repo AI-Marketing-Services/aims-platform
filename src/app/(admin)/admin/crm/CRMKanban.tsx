@@ -21,13 +21,11 @@ import { CSS } from "@dnd-kit/utilities"
 import { cn, getInitials } from "@/lib/utils"
 
 type DealStage =
-  | "NEW_LEAD"
-  | "QUALIFIED"
-  | "DEMO_BOOKED"
-  | "PROPOSAL_SENT"
-  | "NEGOTIATION"
-  | "ACTIVE_CLIENT"
-  | "CHURNED"
+  | "APPLICATION_SUBMITTED"
+  | "CONSULT_BOOKED"
+  | "CONSULT_COMPLETED"
+  | "MIGHTY_INVITED"
+  | "MEMBER_JOINED"
   | "LOST"
 
 type Deal = {
@@ -47,17 +45,15 @@ type Deal = {
 }
 
 const KANBAN_STAGES: { key: DealStage; label: string; color: string }[] = [
-  { key: "NEW_LEAD", label: "New Lead", color: "border-muted-foreground" },
-  { key: "QUALIFIED", label: "Qualified", color: "border-blue-500" },
-  { key: "DEMO_BOOKED", label: "Demo Booked", color: "border-purple-500" },
-  { key: "PROPOSAL_SENT", label: "Proposal Sent", color: "border-yellow-500" },
-  { key: "NEGOTIATION", label: "Negotiation", color: "border-orange-500" },
-  { key: "ACTIVE_CLIENT", label: "Active Client", color: "border-green-500" },
+  { key: "APPLICATION_SUBMITTED", label: "Application Submitted", color: "border-muted-foreground" },
+  { key: "CONSULT_BOOKED", label: "Consult Booked", color: "border-blue-500" },
+  { key: "CONSULT_COMPLETED", label: "Consult Completed", color: "border-purple-500" },
+  { key: "MIGHTY_INVITED", label: "Mighty Invited", color: "border-amber-500" },
+  { key: "MEMBER_JOINED", label: "Member Joined", color: "border-green-500" },
 ]
 
 const CLOSED_STAGES: { key: DealStage; label: string; color: string }[] = [
-  { key: "CHURNED", label: "Churned", color: "border-muted-foreground" },
-  { key: "LOST", label: "Lost", color: "border-primary" },
+  { key: "LOST", label: "Lost / Ghosted", color: "border-primary" },
 ]
 
 const SOURCE_OPTIONS = [
@@ -413,7 +409,7 @@ export function CRMKanban({ initialDeals }: { initialDeals: Deal[] }) {
 
         {/* Add Deal button */}
         <button
-          onClick={() => setAddingToStage("NEW_LEAD")}
+          onClick={() => setAddingToStage("APPLICATION_SUBMITTED")}
           className="ml-auto flex items-center gap-2 px-4 py-2 bg-[#981B1B] hover:bg-[#791515] text-white text-sm font-medium rounded-lg transition-colors"
         >
           <Plus className="w-3.5 h-3.5" />
@@ -423,7 +419,7 @@ export function CRMKanban({ initialDeals }: { initialDeals: Deal[] }) {
 
       {addingToStage && (
         <AddDealModal
-          stage={addingToStage as "NEW_LEAD" | "QUALIFIED" | "DEMO_BOOKED" | "PROPOSAL_SENT" | "NEGOTIATION" | "ACTIVE_CLIENT"}
+          stage={addingToStage}
           onClose={() => setAddingToStage(null)}
           onCreated={(deal) => setDeals((prev) => [deal as Deal, ...prev])}
         />
@@ -433,10 +429,10 @@ export function CRMKanban({ initialDeals }: { initialDeals: Deal[] }) {
         <div className="rounded-xl border border-dashed border-border bg-muted/30 py-12 text-center mb-6">
           <p className="text-lg font-semibold text-foreground mb-1">No deals yet</p>
           <p className="text-sm text-muted-foreground mb-4">
-            Deals will appear here when leads come in through the intake form, lead magnets, or manual entry.
+            Applications will appear here when someone applies to the AI Operator Collective.
           </p>
           <button
-            onClick={() => setAddingToStage("NEW_LEAD")}
+            onClick={() => setAddingToStage("APPLICATION_SUBMITTED")}
             className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#981B1B] hover:bg-[#791515] text-white text-sm font-medium rounded-lg transition-colors"
           >
             <Plus className="w-3.5 h-3.5" />

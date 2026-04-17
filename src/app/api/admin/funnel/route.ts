@@ -186,19 +186,20 @@ export async function GET() {
   // Funnel rate calculations (lifetime)
   const starts = partialsAll
   const completed = appsAll
-  const booked = stageCounts.DEMO_BOOKED ?? 0 // current stage only
+  const booked = stageCounts.CONSULT_BOOKED ?? 0 // current stage only
   const allBookedEver = momentCounts.DEMO_COMPLETED ?? 0 // activity log ≈ ever booked
   const invited = invitesAll
   const joined = invitesAccepted
 
   const completionRate = starts > 0 ? (completed / starts) * 100 : 0
-  // Booking rate relative to applications that exist (proxy)
+  // Booking rate relative to applications that exist (proxy): anyone past the
+  // application stage is someone who has booked at some point.
   const bookedEverEstimate = Math.max(
     allBookedEver,
-    stageCounts.DEMO_BOOKED ?? 0,
-    stageCounts.PROPOSAL_SENT ?? 0,
-    stageCounts.NEGOTIATION ?? 0,
-    stageCounts.ACTIVE_CLIENT ?? 0
+    stageCounts.CONSULT_BOOKED ?? 0,
+    stageCounts.CONSULT_COMPLETED ?? 0,
+    stageCounts.MIGHTY_INVITED ?? 0,
+    stageCounts.MEMBER_JOINED ?? 0
   )
   const bookingRate = completed > 0 ? (bookedEverEstimate / completed) * 100 : 0
   const mightyAcceptRate = invited > 0 ? (joined / invited) * 100 : 0

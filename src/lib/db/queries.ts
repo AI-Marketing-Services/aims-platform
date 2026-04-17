@@ -71,15 +71,11 @@ export async function getDealById(id: string) {
 
 export async function getDealsByStage() {
   const STAGES: DealStage[] = [
-    "NEW_LEAD",
-    "QUALIFIED",
-    "DEMO_BOOKED",
-    "PROPOSAL_SENT",
-    "NEGOTIATION",
-    "ACTIVE_CLIENT",
-    "UPSELL_OPPORTUNITY",
-    "AT_RISK",
-    "CHURNED",
+    "APPLICATION_SUBMITTED",
+    "CONSULT_BOOKED",
+    "CONSULT_COMPLETED",
+    "MIGHTY_INVITED",
+    "MEMBER_JOINED",
     "LOST",
   ]
 
@@ -144,7 +140,7 @@ export async function updateDealStage(
     where: { id: dealId },
     data: {
       stage,
-      closedAt: ["ACTIVE_CLIENT", "CHURNED", "LOST"].includes(stage)
+      closedAt: ["MEMBER_JOINED", "LOST"].includes(stage)
         ? new Date()
         : undefined,
       activities: {

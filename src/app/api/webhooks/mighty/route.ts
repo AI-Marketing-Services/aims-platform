@@ -146,12 +146,23 @@ async function handleMemberJoined(event: MightyWebhookEvent): Promise<void> {
     : await findDealByEmail(email)
 
   if (deal) {
+    // Member accepted their invite -> they've actually joined. Bump any
+    // pre-MEMBER_JOINED stage forward so the kanban reflects reality.
+    const preJoinedStages: string[] = [
+      "APPLICATION_SUBMITTED",
+      "CONSULT_BOOKED",
+      "CONSULT_COMPLETED",
+      "MIGHTY_INVITED",
+    ]
+    const nextStage = preJoinedStages.includes(deal.stage)
+      ? "MEMBER_JOINED"
+      : deal.stage
     await db.deal.update({
       where: { id: deal.id },
       data: {
         mightyInviteStatus: "accepted",
         mightyMemberId: mightyMemberId ?? undefined,
-        stage: deal.stage === "DEMO_BOOKED" ? "ACTIVE_CLIENT" : deal.stage,
+        stage: nextStage,
       },
     })
     await db.dealActivity.create({
@@ -187,7 +198,7 @@ async function handleMemberLeft(event: MightyWebhookEvent): Promise<void> {
     where: { id: deal.id },
     data: {
       mightyInviteStatus: "accepted", // leave history
-      stage: deal.stage === "ACTIVE_CLIENT" ? "CHURNED" : deal.stage,
+      stage: deal.stage === "MEMBER_JOINED" ? "LOST" : deal.stage,
     },
   })
   await db.dealActivity.create({
@@ -258,15 +269,18 @@ async function handleMemberPurchased(event: MightyWebhookEvent): Promise<void> {
     },
   })
 
-  // Upgrade deal stage if sitting in DEMO_BOOKED or earlier
-  if (
-    ["NEW_LEAD", "QUALIFIED", "DEMO_BOOKED", "PROPOSAL_SENT", "NEGOTIATION"].includes(
-      deal.stage
-    )
-  ) {
+  // Any Mighty-plan purchase implies the user joined the community, so bump
+  // earlier funnel stages forward.
+  const preJoinedStages: string[] = [
+    "APPLICATION_SUBMITTED",
+    "CONSULT_BOOKED",
+    "CONSULT_COMPLETED",
+    "MIGHTY_INVITED",
+  ]
+  if (preJoinedStages.includes(deal.stage)) {
     await db.deal.update({
       where: { id: deal.id },
-      data: { stage: "ACTIVE_CLIENT" },
+      data: { stage: "MEMBER_JOINED" },
     })
   }
 }

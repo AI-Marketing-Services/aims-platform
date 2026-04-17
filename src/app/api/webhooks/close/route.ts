@@ -13,23 +13,23 @@ import { logger } from "@/lib/logger"
  * Set the webhook secret in env: CLOSE_WEBHOOK_SECRET
  */
 
-// Close status label → AIMS DealStage mapping
+// Close status label -> AIMS DealStage mapping (community funnel)
 const CLOSE_STATUS_TO_AIMS: Record<string, DealStage> = {
-  "Potential":            DealStage.NEW_LEAD,
-  "Qualified":            DealStage.QUALIFIED,
-  "Demo Scheduled":       DealStage.DEMO_BOOKED,
-  "Proposal":             DealStage.PROPOSAL_SENT,
-  "Proposal Sent":        DealStage.PROPOSAL_SENT,
-  "Negotiation":          DealStage.NEGOTIATION,
-  "Won":                  DealStage.ACTIVE_CLIENT,
-  "Active Client":        DealStage.ACTIVE_CLIENT,
+  "Potential":            DealStage.APPLICATION_SUBMITTED,
+  "Qualified":            DealStage.APPLICATION_SUBMITTED,
+  "Demo Scheduled":       DealStage.CONSULT_BOOKED,
+  "Call Booked":          DealStage.CONSULT_BOOKED,
+  "Consult Booked":       DealStage.CONSULT_BOOKED,
+  "Follow Up":            DealStage.CONSULT_COMPLETED,
+  "Proposal":             DealStage.CONSULT_COMPLETED,
+  "Proposal Sent":        DealStage.CONSULT_COMPLETED,
+  "Negotiation":          DealStage.CONSULT_COMPLETED,
+  "Won":                  DealStage.MEMBER_JOINED,
+  "Active Client":        DealStage.MEMBER_JOINED,
+  "Joined":               DealStage.MEMBER_JOINED,
   "Lost":                 DealStage.LOST,
-  "Upsell Opportunity":   DealStage.UPSELL_OPPORTUNITY,
-  "Upsell":               DealStage.UPSELL_OPPORTUNITY,
-  "At Risk":              DealStage.AT_RISK,
-  "At-Risk":              DealStage.AT_RISK,
-  "Churned":              DealStage.CHURNED,
-  "Cancelled":            DealStage.CHURNED,
+  "Churned":              DealStage.LOST,
+  "Cancelled":            DealStage.LOST,
 }
 
 function verifyWebhook(req: NextRequest): boolean {
@@ -108,7 +108,7 @@ export async function POST(req: NextRequest) {
 
     const oldStage = deal.stage
 
-    const terminalStages = new Set<DealStage>([DealStage.ACTIVE_CLIENT, DealStage.LOST, DealStage.CHURNED])
+    const terminalStages = new Set<DealStage>([DealStage.MEMBER_JOINED, DealStage.LOST])
 
     // Update the deal stage
     await db.deal.update({

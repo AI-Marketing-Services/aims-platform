@@ -82,7 +82,10 @@ export async function POST(req: Request) {
 
     const name = `${firstName} ${lastName}`
     const { normalizedScore, tier, priority, reason } = calculateScore(answers)
-    const stage = tier === "hot" ? "QUALIFIED" : "NEW_LEAD"
+    // All fresh applications start at APPLICATION_SUBMITTED. Hot/warm/cold
+    // lives on leadScoreTier — the stage reflects where they are in the
+    // community funnel, not the score.
+    const stage = "APPLICATION_SUBMITTED" as const
 
     // Always create a new submission record (full audit of every answer set).
     const submission = await db.leadMagnetSubmission
@@ -115,13 +118,13 @@ export async function POST(req: Request) {
       })
 
     // Dedup the Deal. If this email already has an active deal (anything
-    // other than CHURNED/LOST), update it instead of creating a duplicate.
-    // This prevents pipeline bloat + duplicate drips when someone re-applies.
+    // other than LOST), update it instead of creating a duplicate. This
+    // prevents pipeline bloat + duplicate drips when someone re-applies.
     const existingDeal = await db.deal.findFirst({
       where: {
         contactEmail: { equals: email, mode: "insensitive" },
         source: "ai-operator-collective-application",
-        stage: { notIn: ["CHURNED", "LOST"] },
+        stage: { notIn: ["LOST"] },
       },
       orderBy: { createdAt: "desc" },
     })

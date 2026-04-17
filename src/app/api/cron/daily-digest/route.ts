@@ -45,10 +45,10 @@ export async function GET(req: Request) {
     db.subscription.count({ where: { createdAt: { gte: yesterday }, status: "ACTIVE" } }),
     db.subscription.groupBy({ by: ["userId"], where: { status: "ACTIVE" } }).then(r => r.length),
     db.deal.count({ where: { createdAt: { gte: yesterday } } }),
-    db.deal.count({ where: { leadScoreTier: "hot", stage: { in: ["NEW_LEAD", "QUALIFIED", "DEMO_BOOKED"] }, createdAt: { gte: yesterday } } }),
+    db.deal.count({ where: { leadScoreTier: "hot", stage: { in: ["APPLICATION_SUBMITTED", "CONSULT_BOOKED"] }, createdAt: { gte: yesterday } } }),
     db.deal.count({ where: { leadScoreTier: "warm", createdAt: { gte: yesterday } } }),
     db.deal.count({ where: { leadScoreTier: "cold", createdAt: { gte: yesterday } } }),
-    db.deal.findMany({ where: { stage: { in: ["NEGOTIATION", "PROPOSAL_SENT"] } }, select: { contactName: true, value: true } }),
+    db.deal.findMany({ where: { stage: "CONSULT_COMPLETED" }, select: { contactName: true, value: true } }),
     db.user.findMany({
       where: { lastLoginAt: { lt: new Date(now.getTime() - 14 * 86400000) }, subscriptions: { some: { status: "ACTIVE" } } },
       include: { subscriptions: { where: { status: "ACTIVE" }, select: { monthlyAmount: true } } },

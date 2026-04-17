@@ -45,7 +45,7 @@ export async function POST(req: Request) {
       data: {
         contactName: name,
         contactEmail: email,
-        stage: "NEW_LEAD",
+        stage: "APPLICATION_SUBMITTED",
         leadScore: score ?? 0,
         channelTag: type.toLowerCase(),
         value: 0,

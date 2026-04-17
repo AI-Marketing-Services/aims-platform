@@ -4,9 +4,9 @@ import { sendBookingReminderEmail } from "@/lib/email/booking-reminder"
 import { logCronExecution } from "@/lib/cron-log"
 import { logger } from "@/lib/logger"
 
-// Runs daily. For every applicant whose deal is still in NEW_LEAD/QUALIFIED
-// (i.e. they applied but didn't book a demo), send a nudge on day 2, 5, or 9
-// from application. Marks each reminder with a DealActivity to dedupe.
+// Runs daily. For every applicant still in APPLICATION_SUBMITTED (i.e. they
+// applied but didn't book a consult), send a nudge on day 2, 5, or 9 from
+// application. Marks each reminder with a DealActivity to dedupe.
 
 const REMINDER_DAYS = [2, 5, 9] as const
 type ReminderDay = (typeof REMINDER_DAYS)[number]
@@ -65,7 +65,7 @@ async function processDay(day: ReminderDay): Promise<{ sent: number; skipped: nu
   const deals = await db.deal.findMany({
     where: {
       source: "ai-operator-collective-application",
-      stage: { in: ["NEW_LEAD", "QUALIFIED"] },
+      stage: "APPLICATION_SUBMITTED",
       createdAt: { gte: new Date(ageStart), lt: new Date(ageEnd) },
     },
     take: MAX_PER_RUN,

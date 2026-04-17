@@ -70,13 +70,13 @@ export async function POST(req: Request) {
       tier,
     })
 
-    // Create a deal as ACTIVE_CLIENT
+    // Create a deal as MEMBER_JOINED (simulated member who already subscribed)
     const serviceArm = await db.serviceArm.findUnique({ where: { id: serviceArmId }, select: { name: true } })
     const deal = await db.deal.create({
       data: {
         contactName: clientName,
         contactEmail: clientEmail,
-        stage: "ACTIVE_CLIENT",
+        stage: "MEMBER_JOINED",
         source: "simulate-purchase",
         sourceDetail: `Simulated purchase of ${serviceArm?.name ?? "service"}`,
         mrr: monthlyAmount,

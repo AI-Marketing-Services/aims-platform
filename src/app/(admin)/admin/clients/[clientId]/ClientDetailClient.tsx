@@ -113,16 +113,12 @@ interface Props {
 // ── Helpers ──
 
 const STAGE_CONFIG: Record<string, { label: string; class: string }> = {
-  NEW_LEAD: { label: "New Lead", class: "text-muted-foreground bg-deep border-border" },
-  QUALIFIED: { label: "Qualified", class: "text-blue-400 bg-blue-900/20 border-blue-800" },
-  DEMO_BOOKED: { label: "Demo Booked", class: "text-purple-400 bg-purple-900/20 border-purple-800" },
-  PROPOSAL_SENT: { label: "Proposal Sent", class: "text-yellow-400 bg-yellow-900/20 border-yellow-800" },
-  NEGOTIATION: { label: "Negotiation", class: "text-orange-400 bg-orange-900/20 border-orange-800" },
-  ACTIVE_CLIENT: { label: "Active Client", class: "text-green-400 bg-green-900/15 border-green-800" },
-  UPSELL_OPPORTUNITY: { label: "Upsell", class: "text-emerald-400 bg-emerald-900/20 border-emerald-800" },
-  AT_RISK: { label: "At Risk", class: "text-primary bg-primary/10 border-primary/30" },
-  CHURNED: { label: "Churned", class: "text-primary bg-primary/15 border-primary/30" },
-  LOST: { label: "Lost", class: "text-muted-foreground bg-deep border-border" },
+  APPLICATION_SUBMITTED: { label: "Applied",           class: "text-muted-foreground bg-deep border-border" },
+  CONSULT_BOOKED:        { label: "Consult Booked",    class: "text-blue-400 bg-blue-900/20 border-blue-800" },
+  CONSULT_COMPLETED:     { label: "Consult Completed", class: "text-purple-400 bg-purple-900/20 border-purple-800" },
+  MIGHTY_INVITED:        { label: "Mighty Invited",    class: "text-amber-400 bg-amber-900/20 border-amber-800" },
+  MEMBER_JOINED:         { label: "Member Joined",     class: "text-green-400 bg-green-900/15 border-green-800" },
+  LOST:                  { label: "Lost / Ghosted",    class: "text-muted-foreground bg-deep border-border" },
 }
 
 const SUB_STATUS_CONFIG: Record<string, { label: string; class: string }> = {

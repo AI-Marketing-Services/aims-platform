@@ -6,11 +6,11 @@ import { AdminDashboardClient } from "./AdminDashboardClient"
 // ─── Constants ───────────────────────────────────────────────────────────────
 
 const FUNNEL_ORDER = [
-  { key: "NEW_LEAD", label: "New Lead" },
-  { key: "QUALIFIED", label: "Qualified" },
-  { key: "DEMO_BOOKED", label: "Demo Booked" },
-  { key: "PROPOSAL_SENT", label: "Proposal Sent" },
-  { key: "ACTIVE_CLIENT", label: "Active Client" },
+  { key: "APPLICATION_SUBMITTED", label: "Applied" },
+  { key: "CONSULT_BOOKED", label: "Consult Booked" },
+  { key: "CONSULT_COMPLETED", label: "Consult Done" },
+  { key: "MIGHTY_INVITED", label: "Invited" },
+  { key: "MEMBER_JOINED", label: "Joined" },
 ] as const
 
 const MRR_TARGET = 100_000
@@ -61,7 +61,7 @@ async function getDashboardData() {
     }),
     // 2. Pipeline deals
     db.deal.findMany({
-      where: { stage: { notIn: ["CHURNED", "LOST"] } },
+      where: { stage: { notIn: ["LOST"] } },
       select: { value: true, createdAt: true },
     }),
     // 3. Hot leads

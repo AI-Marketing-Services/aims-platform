@@ -4,12 +4,12 @@ import { useState } from "react"
 import { X } from "lucide-react"
 
 type DealStage =
-  | "NEW_LEAD"
-  | "QUALIFIED"
-  | "DEMO_BOOKED"
-  | "PROPOSAL_SENT"
-  | "NEGOTIATION"
-  | "ACTIVE_CLIENT"
+  | "APPLICATION_SUBMITTED"
+  | "CONSULT_BOOKED"
+  | "CONSULT_COMPLETED"
+  | "MIGHTY_INVITED"
+  | "MEMBER_JOINED"
+  | "LOST"
 
 type NewDeal = {
   id: string

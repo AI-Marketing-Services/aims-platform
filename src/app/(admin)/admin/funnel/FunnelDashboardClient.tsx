@@ -76,24 +76,19 @@ interface FunnelResponse {
 }
 
 const STAGES_ORDER = [
-  "NEW_LEAD",
-  "QUALIFIED",
-  "DEMO_BOOKED",
-  "PROPOSAL_SENT",
-  "NEGOTIATION",
-  "ACTIVE_CLIENT",
+  "APPLICATION_SUBMITTED",
+  "CONSULT_BOOKED",
+  "CONSULT_COMPLETED",
+  "MIGHTY_INVITED",
+  "MEMBER_JOINED",
 ] as const
 
 const STAGE_LABELS: Record<string, string> = {
-  NEW_LEAD: "New",
-  QUALIFIED: "Qualified",
-  DEMO_BOOKED: "Booked",
-  PROPOSAL_SENT: "Proposal",
-  NEGOTIATION: "Negotiating",
-  ACTIVE_CLIENT: "Active",
-  UPSELL_OPPORTUNITY: "Upsell",
-  AT_RISK: "At Risk",
-  CHURNED: "Churned",
+  APPLICATION_SUBMITTED: "Applied",
+  CONSULT_BOOKED: "Consult Booked",
+  CONSULT_COMPLETED: "Consult Done",
+  MIGHTY_INVITED: "Invited",
+  MEMBER_JOINED: "Joined",
   LOST: "Lost",
 }
 

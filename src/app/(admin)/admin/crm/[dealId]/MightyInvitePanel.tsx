@@ -201,32 +201,63 @@ export function MightyInvitePanel({
 
       {invites.length > 0 && (
         <div className="mt-4 pt-4 border-t border-border">
-          <h3 className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wider">
-            Invite History
-          </h3>
-          <div className="space-y-2">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              Invite History
+            </h3>
+            <span className="text-[10px] font-mono text-muted-foreground">
+              {invites.length} attempt{invites.length === 1 ? "" : "s"}
+            </span>
+          </div>
+          <div className="space-y-3">
             {invites.map((inv) => (
-              <div key={inv.id} className="flex items-start justify-between gap-2 text-xs">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5">
+              <div
+                key={inv.id}
+                className="text-xs border border-border rounded-lg p-2.5 bg-deep/40"
+              >
+                <div className="flex items-center justify-between gap-2 mb-1">
+                  <div className="flex items-center gap-1.5 min-w-0">
                     <span
                       className={cn(
-                        "px-1.5 py-0.5 rounded border font-medium capitalize inline-flex items-center gap-1",
+                        "px-1.5 py-0.5 rounded border font-medium capitalize inline-flex items-center gap-1 flex-shrink-0",
                         STATUS_COLORS[inv.status] ?? STATUS_COLORS.pending
                       )}
                     >
                       {STATUS_ICONS[inv.status]}
                       {inv.status}
                     </span>
-                    <span className="text-foreground truncate">{inv.planName ?? `plan ${inv.planId}`}</span>
+                    <span className="text-foreground truncate font-medium">
+                      {inv.planName ?? `plan ${inv.planId}`}
+                    </span>
                   </div>
-                  {inv.errorMessage && (
-                    <p className="text-primary mt-0.5 truncate">{inv.errorMessage}</p>
-                  )}
+                  <span className="text-muted-foreground flex-shrink-0 font-mono">
+                    {timeAgo(inv.resentAt ?? inv.sentAt)}
+                  </span>
                 </div>
-                <span className="text-muted-foreground flex-shrink-0">
-                  {timeAgo(inv.resentAt ?? inv.sentAt)}
-                </span>
+                <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-[11px] text-muted-foreground font-mono">
+                  <span title={new Date(inv.sentAt).toLocaleString()}>
+                    sent {new Date(inv.sentAt).toLocaleDateString()}
+                  </span>
+                  {inv.resentAt && (
+                    <span title={new Date(inv.resentAt).toLocaleString()}>
+                      resent {new Date(inv.resentAt).toLocaleDateString()}
+                    </span>
+                  )}
+                  {inv.acceptedAt && (
+                    <span
+                      className="text-green-400"
+                      title={new Date(inv.acceptedAt).toLocaleString()}
+                    >
+                      accepted {new Date(inv.acceptedAt).toLocaleDateString()}
+                    </span>
+                  )}
+                  {inv.mightyInviteId && <span>invite #{inv.mightyInviteId}</span>}
+                </div>
+                {inv.errorMessage && (
+                  <p className="mt-1.5 text-primary text-[11px] whitespace-pre-wrap break-words">
+                    {inv.errorMessage}
+                  </p>
+                )}
               </div>
             ))}
           </div>

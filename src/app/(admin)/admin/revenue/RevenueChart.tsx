@@ -162,8 +162,8 @@ export function RevenueCharts({ mrrOverTime, revenueByService, revenueByChannel 
 
         {/* Revenue by Source Channel */}
         <div className="bg-card border border-border rounded-xl p-6">
-          <h3 className="font-semibold text-foreground mb-1">Active Clients by Channel</h3>
-          <p className="text-xs text-muted-foreground mb-5">Source breakdown of ACTIVE_CLIENT deals</p>
+          <h3 className="font-semibold text-foreground mb-1">Collective Members by Channel</h3>
+          <p className="text-xs text-muted-foreground mb-5">Source breakdown of members who joined the Collective</p>
 
           {revenueByChannel.length === 0 ? (
             <div className="flex items-center justify-center h-48 text-muted-foreground text-sm border border-dashed border-border rounded-lg">

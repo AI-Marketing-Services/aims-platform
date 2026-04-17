@@ -19,7 +19,7 @@ export default async function AdminCRMPage() {
         id: d.id,
         contactName: d.contactName,
         company: d.company ?? undefined,
-        stage: d.stage as "NEW_LEAD" | "QUALIFIED" | "DEMO_BOOKED" | "PROPOSAL_SENT" | "NEGOTIATION" | "ACTIVE_CLIENT" | "CHURNED" | "LOST",
+        stage: d.stage as "APPLICATION_SUBMITTED" | "CONSULT_BOOKED" | "CONSULT_COMPLETED" | "MIGHTY_INVITED" | "MEMBER_JOINED" | "LOST",
         value: d.value,
         mrr: d.mrr,
         source: d.source ?? undefined,

@@ -8,9 +8,12 @@ import { logger } from "@/lib/logger"
 
 const updateDealSchema = z.object({
   stage: z.enum([
-    "NEW_LEAD", "QUALIFIED", "DEMO_BOOKED", "PROPOSAL_SENT",
-    "NEGOTIATION", "ACTIVE_CLIENT", "UPSELL_OPPORTUNITY",
-    "AT_RISK", "CHURNED", "LOST",
+    "APPLICATION_SUBMITTED",
+    "CONSULT_BOOKED",
+    "CONSULT_COMPLETED",
+    "MIGHTY_INVITED",
+    "MEMBER_JOINED",
+    "LOST",
   ]).optional(),
   contactName: z.string().optional(),
   contactEmail: z.string().email().optional(),

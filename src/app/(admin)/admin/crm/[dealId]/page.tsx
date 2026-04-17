@@ -16,28 +16,20 @@ const TYPES_WITH_RESULTS_PAGE = new Set([
 ])
 
 const STAGE_OPTIONS = [
-  { value: "NEW_LEAD", label: "New Lead" },
-  { value: "QUALIFIED", label: "Qualified" },
-  { value: "DEMO_BOOKED", label: "Demo Booked" },
-  { value: "PROPOSAL_SENT", label: "Proposal Sent" },
-  { value: "NEGOTIATION", label: "Negotiation" },
-  { value: "ACTIVE_CLIENT", label: "Active Client" },
-  { value: "UPSELL_OPPORTUNITY", label: "Upsell Opportunity" },
-  { value: "AT_RISK", label: "At Risk" },
-  { value: "CHURNED", label: "Churned" },
-  { value: "LOST", label: "Lost" },
+  { value: "APPLICATION_SUBMITTED", label: "Application Submitted" },
+  { value: "CONSULT_BOOKED", label: "Consult Booked" },
+  { value: "CONSULT_COMPLETED", label: "Consult Completed" },
+  { value: "MIGHTY_INVITED", label: "Mighty Invited" },
+  { value: "MEMBER_JOINED", label: "Member Joined" },
+  { value: "LOST", label: "Lost / Ghosted" },
 ]
 
 const STAGE_COLORS: Record<string, string> = {
-  NEW_LEAD: "text-muted-foreground bg-deep border-border",
-  QUALIFIED: "text-blue-400 bg-blue-900/20 border-blue-800",
-  DEMO_BOOKED: "text-purple-400 bg-purple-900/20 border-purple-800",
-  PROPOSAL_SENT: "text-yellow-400 bg-yellow-900/20 border-yellow-800",
-  NEGOTIATION: "text-orange-400 bg-orange-900/20 border-orange-800",
-  ACTIVE_CLIENT: "text-green-400 bg-green-900/15 border-green-800",
-  UPSELL_OPPORTUNITY: "text-emerald-400 bg-emerald-900/20 border-emerald-800",
-  AT_RISK: "text-primary bg-primary/10 border-primary/30",
-  CHURNED: "text-muted-foreground bg-deep border-border",
+  APPLICATION_SUBMITTED: "text-muted-foreground bg-deep border-border",
+  CONSULT_BOOKED: "text-blue-400 bg-blue-900/20 border-blue-800",
+  CONSULT_COMPLETED: "text-purple-400 bg-purple-900/20 border-purple-800",
+  MIGHTY_INVITED: "text-amber-400 bg-amber-900/20 border-amber-800",
+  MEMBER_JOINED: "text-green-400 bg-green-900/15 border-green-800",
   LOST: "text-muted-foreground bg-deep border-border",
 }
 
@@ -91,7 +83,7 @@ export default async function AdminDealDetailPage({ params }: { params: Promise<
     activatedAt: sa.activatedAt ? sa.activatedAt.toISOString() : null,
   }))
 
-  const stageColor = STAGE_COLORS[deal.stage] ?? STAGE_COLORS.NEW_LEAD
+  const stageColor = STAGE_COLORS[deal.stage] ?? STAGE_COLORS.APPLICATION_SUBMITTED
   const stageLabel = STAGE_OPTIONS.find((s) => s.value === deal.stage)?.label ?? deal.stage
 
   const daysInPipeline = Math.max(0, Math.floor((Date.now() - new Date(deal.createdAt).getTime()) / 86_400_000))

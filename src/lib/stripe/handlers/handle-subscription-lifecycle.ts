@@ -137,16 +137,16 @@ export async function handleSubscriptionDeletedEvent(sub: Stripe.Subscription) {
 
   await handleSubscriptionDeleted(sub)
 
-  // Mark associated deals as churned
+  // Mark associated deals as lost (community model: no intermediate "churned")
   if (existingSub?.userId) {
     const deal = await db.deal.findFirst({
-      where: { userId: existingSub.userId, stage: "ACTIVE_CLIENT" },
+      where: { userId: existingSub.userId, stage: "MEMBER_JOINED" },
     })
     if (deal) {
       await db.deal.update({
         where: { id: deal.id },
         data: {
-          stage: "CHURNED",
+          stage: "LOST",
           activities: {
             create: {
               type: "SUBSCRIPTION_CANCELLED",

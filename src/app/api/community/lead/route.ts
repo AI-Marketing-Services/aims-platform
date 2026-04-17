@@ -49,7 +49,7 @@ export async function POST(req: Request) {
           utmSource,
           utmMedium,
           utmCampaign,
-          stage: "NEW_LEAD",
+          stage: "APPLICATION_SUBMITTED",
           priority: "HIGH",
           leadScore: 70,
           leadScoreTier: "warm",

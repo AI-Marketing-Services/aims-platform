@@ -199,9 +199,9 @@ export async function handleSubscriptionCreated(sub: Stripe.Subscription) {
     })
   }
 
-  // Update deal to ACTIVE_CLIENT if exists
+  // Update deal to MEMBER_JOINED if exists (they've paid = they're in)
   const deal = await db.deal.findFirst({
-    where: { userId, stage: { not: "ACTIVE_CLIENT" } },
+    where: { userId, stage: { not: "MEMBER_JOINED" } },
     orderBy: { createdAt: "desc" },
   })
 
@@ -209,7 +209,7 @@ export async function handleSubscriptionCreated(sub: Stripe.Subscription) {
     await db.deal.update({
       where: { id: deal.id },
       data: {
-        stage: "ACTIVE_CLIENT",
+        stage: "MEMBER_JOINED",
         closedAt: new Date(),
         activities: {
           create: {

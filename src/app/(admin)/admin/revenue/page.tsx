@@ -27,7 +27,7 @@ export default async function AdminRevenuePage() {
       select: { slug: true, name: true, deliveryCost: true },
     }),
     db.deal.findMany({
-      where: { stage: "ACTIVE_CLIENT" },
+      where: { stage: "MEMBER_JOINED" },
       select: { channelTag: true },
     }),
   ])

@@ -62,7 +62,7 @@ export default async function AdminLeadMagnetsPage() {
     db.leadMagnetSubmission.count({
       where: { createdAt: { gte: startOfMonth } },
     }),
-    // Converted to deal where deal stage is ACTIVE_CLIENT
+    // Converted to deal (any funnel stage)
     db.leadMagnetSubmission.count({
       where: {
         convertedToDeal: true,

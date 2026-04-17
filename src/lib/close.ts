@@ -10,18 +10,16 @@ const CLOSE_API_BASE = "https://api.close.com/api/v1"
 const CLOSE_TIMEOUT_MS = 10_000
 const CLOSE_MAX_RETRIES = 2
 
-// Stage → Close status ID mapping
+// Stage -> Close status ID mapping (Close integration is currently disabled;
+// this stays for when it's re-enabled for outbound sales, not the community
+// funnel).
 export const CLOSE_STATUS_MAP: Record<string, string> = {
-  NEW_LEAD:            "",                                               // no status on creation
-  QUALIFIED:           "stat_kY1aMGKOui3jjlgniY2LQWMadXN78cr7vTHVMPDCliy", // Follow Up
-  DEMO_BOOKED:         "stat_lGHxEKwhbVswuchbpRo6XcMMSXz0fV4CID9qFWT8KCO", // Call Booked
-  PROPOSAL_SENT:       "stat_vL6LDuMPhQHcpNvvT6bA6Ofc0soHWDBks1azdq8UTJk", // Contract Sent
-  NEGOTIATION:         "stat_vL6LDuMPhQHcpNvvT6bA6Ofc0soHWDBks1azdq8UTJk", // Contract Sent
-  ACTIVE_CLIENT:       "stat_0oW3iRpVp9z5DJq0cuwI1HgR0XhHAhykEPPIq4TFsxd", // Closed / Won
-  UPSELL_OPPORTUNITY:  "stat_mRxbAkfEqzEcmEF2Z5CkucMQocXAbwzs0hSlD0SzHEh", // Long Term Follow Up
-  AT_RISK:             "stat_kY1aMGKOui3jjlgniY2LQWMadXN78cr7vTHVMPDCliy", // Follow Up
-  CHURNED:             "stat_aR2jBa8YnTNZmHAnPsnlQuinBdaXpSBCkZGP3UvoBlV", // Lost
-  LOST:                "stat_aR2jBa8YnTNZmHAnPsnlQuinBdaXpSBCkZGP3UvoBlV", // Lost
+  APPLICATION_SUBMITTED: "",                                               // no status on creation
+  CONSULT_BOOKED:        "stat_lGHxEKwhbVswuchbpRo6XcMMSXz0fV4CID9qFWT8KCO", // Call Booked
+  CONSULT_COMPLETED:     "stat_kY1aMGKOui3jjlgniY2LQWMadXN78cr7vTHVMPDCliy", // Follow Up
+  MIGHTY_INVITED:        "stat_kY1aMGKOui3jjlgniY2LQWMadXN78cr7vTHVMPDCliy", // Follow Up
+  MEMBER_JOINED:         "stat_0oW3iRpVp9z5DJq0cuwI1HgR0XhHAhykEPPIq4TFsxd", // Closed / Won
+  LOST:                  "stat_aR2jBa8YnTNZmHAnPsnlQuinBdaXpSBCkZGP3UvoBlV", // Lost
 }
 
 function closeHeaders(): HeadersInit | null {
