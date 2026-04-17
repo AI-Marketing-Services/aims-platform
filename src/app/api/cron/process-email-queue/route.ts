@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { getResend, sendTrackedEmail, emailLayout } from "@/lib/email"
+import { sendTrackedEmail, emailLayout } from "@/lib/email"
 import { logCronExecution } from "@/lib/cron-log"
 import { logger } from "@/lib/logger"
 import { buildOperatorVaultEmail } from "@/lib/email/community-sequence"
@@ -10,6 +10,46 @@ import { buildPostBookingEducationEmail } from "@/lib/email/post-booking-educati
 import { AOC_FROM_EMAIL, AIMS_FROM_EMAIL, AOC_REPLY_TO } from "@/lib/email/senders"
 
 export const maxDuration = 60
+
+// Retry policy. If Resend is rate-limiting or briefly down we don't want
+// to permanently fail a whole drip sequence. Classify the error; retry
+// transient ones with exponential backoff; only mark `failed` for
+// 4xx (bad address, unauth, etc.) where retrying would just keep failing.
+const MAX_RETRIES = 6
+const BACKOFF_MS = [
+  2 * 60_000,       // attempt 1 -> 2 min
+  10 * 60_000,      // attempt 2 -> 10 min
+  30 * 60_000,      // attempt 3 -> 30 min
+  2 * 3600_000,     // attempt 4 -> 2 hours
+  6 * 3600_000,     // attempt 5 -> 6 hours
+  24 * 3600_000,    // attempt 6 -> 24 hours (last)
+]
+
+type SendErrorKind = "transient" | "permanent"
+
+function classifySendError(err: unknown): { kind: SendErrorKind; message: string; status?: number } {
+  // Resend client errors usually come through as thrown Error with
+  // `statusCode` or as plain objects. We inspect common shapes to find
+  // an HTTP-ish status code and decide whether it's worth retrying.
+  const raw = err as { statusCode?: number; status?: number; message?: string; name?: string; code?: string }
+  const status = raw?.statusCode ?? raw?.status
+  const message =
+    raw?.message ??
+    (err instanceof Error ? err.message : String(err ?? "unknown email error"))
+
+  // Network timeouts / fetch failures — transient.
+  if (raw?.name === "AbortError" || raw?.code === "ETIMEDOUT" || raw?.code === "ECONNRESET") {
+    return { kind: "transient", message, status }
+  }
+
+  if (typeof status === "number") {
+    if (status === 429 || status >= 500) return { kind: "transient", message, status }
+    if (status >= 400) return { kind: "permanent", message, status }
+  }
+
+  // No status at all -> assume transient so we don't lose the send on a flaky code path.
+  return { kind: "transient", message, status }
+}
 
 export async function GET(req: Request) {
   // Verify cron secret on production
@@ -38,6 +78,7 @@ export async function GET(req: Request) {
 
     let sent = 0
     let failed = 0
+    let retried = 0
 
     for (const item of pending) {
       try {
@@ -97,20 +138,70 @@ export async function GET(req: Request) {
 
         await db.emailQueueItem.update({
           where: { id: item.id },
-          data: { status: "sent", sentAt: new Date() },
+          data: {
+            status: "sent",
+            sentAt: new Date(),
+            lastAttemptAt: new Date(),
+            lastError: null,
+          },
         })
         sent++
       } catch (err) {
-        logger.error(`Failed to send email queue item ${item.id}:`, err)
-        await db.emailQueueItem.update({ where: { id: item.id }, data: { status: "failed" } })
-        failed++
+        const classified = classifySendError(err)
+        const nextRetryCount = item.retryCount + 1
+
+        if (classified.kind === "permanent" || nextRetryCount >= MAX_RETRIES) {
+          // Give up — bad address / unauth / exhausted retries. Mark failed
+          // and record the last error so admin can see why in the queue UI.
+          await db.emailQueueItem.update({
+            where: { id: item.id },
+            data: {
+              status: "failed",
+              retryCount: nextRetryCount,
+              lastAttemptAt: new Date(),
+              lastError: classified.message.slice(0, 500),
+            },
+          })
+          logger.error(
+            `Email queue item ${item.id} permanently failed (${classified.status ?? "?"}): ${classified.message}`,
+            err,
+            { action: "email_queue_permanent_fail" }
+          )
+          failed++
+        } else {
+          // Transient — keep in pending, push out the next attempt with
+          // exponential backoff. Process-email-queue cron will pick it up
+          // again when scheduledFor passes.
+          const backoff = BACKOFF_MS[Math.min(nextRetryCount - 1, BACKOFF_MS.length - 1)]
+          const nextAttempt = new Date(Date.now() + backoff)
+          await db.emailQueueItem.update({
+            where: { id: item.id },
+            data: {
+              status: "pending",
+              retryCount: nextRetryCount,
+              lastAttemptAt: new Date(),
+              lastError: classified.message.slice(0, 500),
+              scheduledFor: nextAttempt,
+            },
+          })
+          logger.warn(
+            `Email queue item ${item.id} transient failure (${classified.status ?? "?"}), retry ${nextRetryCount}/${MAX_RETRIES} at ${nextAttempt.toISOString()}`,
+            { action: "email_queue_transient_retry" }
+          )
+          retried++
+        }
       }
     }
 
     const duration = Date.now() - startTime
-    await logCronExecution("process-email-queue", "success", `Processed: ${pending.length}, Sent: ${sent}, Failed: ${failed}`, duration)
+    await logCronExecution(
+      "process-email-queue",
+      "success",
+      `Processed: ${pending.length}, Sent: ${sent}, Retried: ${retried}, Failed: ${failed}`,
+      duration
+    )
 
-    return NextResponse.json({ processed: pending.length, sent, failed })
+    return NextResponse.json({ processed: pending.length, sent, retried, failed })
   } catch (err) {
     const duration = Date.now() - startTime
     const errorMessage = err instanceof Error ? err.message : "Unknown error"

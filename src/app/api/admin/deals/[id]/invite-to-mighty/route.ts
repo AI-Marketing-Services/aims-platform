@@ -15,7 +15,24 @@ const schema = z.object({
   planId: z.number().int().positive().optional(),
   tier: z.enum(["community", "accelerator", "innerCircle"]).optional(),
   resend: z.boolean().optional(),
+  // Optional custom invite body. If omitted we build a sensible default
+  // using the deal's first name + plan name. Mighty renders this text
+  // in the body of the invite email between the divider and the sender
+  // card — without it the email shows an empty gap.
+  message: z.string().max(1000).optional(),
 })
+
+function defaultInviteMessage(firstName: string | null, planName: string): string {
+  const name = firstName?.trim() || "there"
+  const plan = planName === "Community" ? "the AI Operator Collective" : `the ${planName} tier of the AI Operator Collective`
+  return `Hey ${name}, you're in. Click Access Now to create your profile and start exploring ${plan}.
+
+Inside, you'll find the operator curriculum, weekly live sessions, the scored tool library, and a community of people already running AI inside their businesses.
+
+See you in there.
+
+Adam & the AI Operator Collective team`
+}
 
 type PlanTier = "community" | "accelerator" | "innerCircle"
 
@@ -171,12 +188,16 @@ export async function POST(
   }
 
   const inviteErrorBag: MightyErrorBag = { message: "" }
+  const inviteMessage =
+    parsed.data.message?.trim() || defaultInviteMessage(firstName, planName)
+
   const invite = await inviteToPlan(
     planId,
     {
       recipient_email: deal.contactEmail,
       recipient_first_name: firstName || undefined,
       recipient_last_name: lastName,
+      message: inviteMessage,
     },
     inviteErrorBag
   )

@@ -797,6 +797,21 @@ model ApiCostLog {
   @@index([createdAt])
 }
 
+// ============ WEBHOOK IDEMPOTENCY ============
+//
+// Every inbound webhook stores its event ID here before processing so that
+// provider retries (Calendly 24-hour retry, Stripe exponential backoff,
+// Mighty automatic resend) can't double-process and queue duplicate emails
+// or activity-log entries.
+model WebhookEvent {
+  id         String   @id @default(cuid())
+  source     String   // "calendly" | "mighty" | "stripe" | "clerk" | "close" | "dub"
+  eventUri   String   @unique
+  receivedAt DateTime @default(now())
+
+  @@index([source, receivedAt])
+}
+
 // ============ EMAIL QUEUE ============
 
 model EmailQueueItem {
@@ -806,8 +821,15 @@ model EmailQueueItem {
   emailIndex     Int
   scheduledFor   DateTime
   sentAt         DateTime?
-  status         String    @default("pending")
+  status         String    @default("pending") // pending | sent | failed | cancelled
   metadata       Json?
+  // Retry bookkeeping. On transient failures (Resend 5xx / 429 / network)
+  // the cron bumps retryCount and pushes scheduledFor out with exponential
+  // backoff. Permanent failures (4xx, invalid address) mark status=failed
+  // and set lastError so the admin can see why.
+  retryCount     Int       @default(0)
+  lastError      String?   @db.Text
+  lastAttemptAt  DateTime?
   createdAt      DateTime  @default(now())
 
   @@index([status, scheduledFor])

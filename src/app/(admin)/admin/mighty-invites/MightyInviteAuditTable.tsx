@@ -1,6 +1,7 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
+import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { toast } from "sonner"
 import { Search, AlertCircle, CheckCircle2, Clock, Send, RefreshCw } from "lucide-react"
@@ -49,10 +50,31 @@ const TIER_FROM_PLAN: Record<string, "community" | "accelerator" | "innerCircle"
 }
 
 export function MightyInviteAuditTable({ rows: initialRows }: { rows: AuditRow[] }) {
+  const router = useRouter()
   const [rows, setRows] = useState(initialRows)
   const [query, setQuery] = useState("")
   const [status, setStatus] = useState<(typeof STATUS_FILTERS)[number]>("all")
   const [busyId, setBusyId] = useState<string | null>(null)
+
+  // Reconcile with server whenever the user returns to this tab.
+  // Covers the common case of inviting from a deal drawer and then flipping
+  // back to this page — without this we'd show stale state until manual
+  // refresh. The useEffect above on initialRows then picks up the new data
+  // and rehydrates the table.
+  useEffect(() => {
+    function onFocus() {
+      router.refresh()
+    }
+    window.addEventListener("focus", onFocus)
+    return () => window.removeEventListener("focus", onFocus)
+  }, [router])
+
+  // If the server data changes (e.g. after router.refresh() from a focus
+  // event, or after a retry), re-hydrate local state so new invites appear
+  // and status transitions are reflected.
+  useEffect(() => {
+    setRows(initialRows)
+  }, [initialRows])
 
   async function retry(row: AuditRow) {
     if (busyId) return
