@@ -75,6 +75,17 @@ const nextConfig: NextConfig = {
       "@dnd-kit/utilities",
     ],
   },
+  async redirects() {
+    return [
+      // Common auth paths → Clerk routes
+      { source: "/login", destination: "/sign-in", permanent: false },
+      { source: "/signin", destination: "/sign-in", permanent: false },
+      { source: "/log-in", destination: "/sign-in", permanent: false },
+      { source: "/signup", destination: "/sign-up", permanent: false },
+      { source: "/register", destination: "/sign-up", permanent: false },
+      { source: "/logout", destination: "/sign-in", permanent: false },
+    ]
+  },
   async headers() {
     return [
       {
