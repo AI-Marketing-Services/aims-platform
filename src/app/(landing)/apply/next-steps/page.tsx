@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
-import Image from "next/image"
 import Link from "next/link"
+import { ToolLogo } from "./ToolLogo"
 import {
   CheckCircle2,
   ArrowRight,
@@ -123,14 +123,16 @@ const OPERATOR_TOOLS: {
 }[] = [
   { name: "Claude",     category: "Reasoning",       score: "10.0", domain: "anthropic.com",  url: "https://claude.ai" },
   { name: "Perplexity", category: "Research",        score: "9.7",  domain: "perplexity.ai",  url: "https://www.perplexity.ai" },
-  { name: "Dex",        category: "Browser Agent",   score: "9.2",  domain: "getdex.com",     url: "https://getdex.com" },
   { name: "Raycast",    category: "Launcher",        score: "9.8",  domain: "raycast.com",    url: "https://raycast.com" },
+  { name: "Cursor",     category: "AI Code Editor",  score: "9.6",  domain: "cursor.com",     url: "https://cursor.com" },
   { name: "Wispr Flow", category: "Speech-to-Text",  score: "9.5",  domain: "wisprflow.ai",   url: "https://wisprflow.ai" },
-  { name: "Little Bird",category: "Meeting AI",      score: "9.0",  domain: "littlebird.com", url: "https://www.littlebird.com" },
-  { name: "v0",         category: "App Builder",     score: "9.0",  domain: "v0.app",         url: "https://v0.app" },
   { name: "Instantly",  category: "Cold Email",      score: "9.3",  domain: "instantly.ai",   url: "https://instantly.ai" },
-  { name: "Notion",     category: "Knowledge",       score: "9.1",  domain: "notion.so",      url: "https://www.notion.so" },
   { name: "Firecrawl",  category: "Web-to-LLM",      score: "9.2",  domain: "firecrawl.dev",  url: "https://www.firecrawl.dev" },
+  { name: "Dex",        category: "Browser Agent",   score: "9.2",  domain: "getdex.com",     url: "https://getdex.com" },
+  { name: "Notion",     category: "Knowledge",       score: "9.1",  domain: "notion.so",      url: "https://www.notion.so" },
+  { name: "v0",         category: "App Builder",     score: "9.0",  domain: "v0.app",         url: "https://v0.app" },
+  { name: "Little Bird",category: "Meeting AI",      score: "9.0",  domain: "littlebird.com", url: "https://www.littlebird.com" },
+  { name: "ElevenLabs", category: "Voice Gen",       score: "8.9",  domain: "elevenlabs.io",  url: "https://elevenlabs.io" },
 ]
 
 /* -------------------------------------------------------------------------- */
@@ -337,25 +339,7 @@ export default function PostBookingNextStepsPage() {
                 rel="noreferrer"
                 className="group bg-white rounded-lg border border-[#E3E3E3] p-4 flex items-center gap-3 hover:border-crimson/40 hover:shadow-sm transition-all"
               >
-                {/* Favicon pulled live from Clearbit. Hosts are whitelisted
-                    in next.config.ts; fallback to the tool's first initial
-                    in a pale-crimson tile if the logo request fails. */}
-                <div className="relative flex-shrink-0 w-9 h-9 rounded-md bg-[#FDF2F2] border border-[#E3E3E3] overflow-hidden flex items-center justify-center">
-                  {/* Absolute-positioned initial tile sits underneath the
-                      Clearbit favicon; if the logo 404s the img tag simply
-                      shows its alt-text void and the initial peeks through. */}
-                  <span className="absolute inset-0 flex items-center justify-center font-semibold text-crimson text-sm pointer-events-none">
-                    {tool.name[0]}
-                  </span>
-                  <Image
-                    src={`https://logo.clearbit.com/${tool.domain}?size=80`}
-                    alt={`${tool.name} logo`}
-                    width={36}
-                    height={36}
-                    unoptimized
-                    className="relative w-full h-full object-contain p-1 bg-[#FDF2F2]"
-                  />
-                </div>
+                <ToolLogo name={tool.name} domain={tool.domain} />
                 <div className="flex-1 min-w-0">
                   <p className="text-[10px] font-mono uppercase tracking-wider text-[#999] mb-0.5 truncate">
                     {tool.category}

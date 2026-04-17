@@ -44,7 +44,7 @@ const securityHeaders = [
       // Fonts
       "font-src 'self' https://fonts.gstatic.com https://client.crisp.chat",
       // Images: self + Clerk CDN + Clearbit logos + data URIs
-      "img-src 'self' data: blob: https://img.clerk.com https://images.clerk.dev https://logo.clearbit.com https://lh3.googleusercontent.com https://image.crisp.chat https://client.crisp.chat https://storage.crisp.chat",
+      "img-src 'self' data: blob: https://img.clerk.com https://images.clerk.dev https://logo.clearbit.com https://www.google.com https://lh3.googleusercontent.com https://image.crisp.chat https://client.crisp.chat https://storage.crisp.chat",
       // Connect: API calls to AI services, Stripe, Clerk
       "connect-src 'self' https://*.clerk.accounts.dev https://*.clerk.com https://api.stripe.com https://generativelanguage.googleapis.com https://api.anthropic.com https://api.tavily.com https://api.mn.co https://upstash.io https://*.upstash.io wss://ws.clerk.com https://client.crisp.chat https://storage.crisp.chat wss://client.relay.crisp.chat wss://stream.relay.crisp.chat",
       // Frames: Stripe embedded UI only
