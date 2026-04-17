@@ -37,17 +37,17 @@ export default async function InternDashboardPage() {
 
   const PRIORITY_COLOR: Record<string, string> = {
     URGENT: "text-primary",
-    HIGH: "text-orange-400",
-    MEDIUM: "text-yellow-400",
+    HIGH: "text-primary/80",
+    MEDIUM: "text-primary/60",
     LOW: "text-muted-foreground",
   }
 
   const STATUS_ICON = {
     TODO: <Clock className="h-3.5 w-3.5 text-muted-foreground" />,
-    IN_PROGRESS: <TrendingUp className="h-3.5 w-3.5 text-blue-400" />,
+    IN_PROGRESS: <TrendingUp className="h-3.5 w-3.5 text-primary/70" />,
     BLOCKED: <AlertCircle className="h-3.5 w-3.5 text-primary" />,
-    IN_REVIEW: <Clock className="h-3.5 w-3.5 text-yellow-400" />,
-    DONE: <CheckSquare className="h-3.5 w-3.5 text-green-400" />,
+    IN_REVIEW: <Clock className="h-3.5 w-3.5 text-primary/70" />,
+    DONE: <CheckSquare className="h-3.5 w-3.5 text-emerald-600" />,
   }
 
   return (

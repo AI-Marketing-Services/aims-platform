@@ -89,16 +89,16 @@ export default async function ResellerDashboardPage() {
 
       {/* Pending payout */}
       {referral && referral.pendingPayout > 0 && (
-        <div className="rounded-xl border border-green-500/20 bg-green-400/5 p-5 flex items-center justify-between">
+        <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-5 flex items-center justify-between">
           <div>
             <p className="text-sm font-semibold text-foreground">Pending Payout</p>
-            <p className="text-2xl font-bold text-green-400 font-mono mt-1">
+            <p className="text-2xl font-bold text-emerald-700 font-mono mt-1">
               ${referral.pendingPayout.toLocaleString()}
             </p>
           </div>
           <Link
             href="/reseller/commissions"
-            className="px-4 py-2 bg-green-400/10 border border-green-500/20 text-green-400 text-sm font-medium rounded-lg hover:bg-green-400/20 transition-colors"
+            className="px-4 py-2 bg-emerald-100 border border-emerald-200 text-emerald-700 text-sm font-medium rounded-lg hover:bg-emerald-100/70 transition-colors"
           >
             View Details
           </Link>

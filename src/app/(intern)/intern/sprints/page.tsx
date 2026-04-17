@@ -8,9 +8,9 @@ export const metadata = { title: "Sprints" }
 
 const TASK_STATUS_COLOR: Record<string, string> = {
   TODO: "text-muted-foreground",
-  IN_PROGRESS: "text-blue-400",
-  IN_REVIEW: "text-yellow-400",
-  DONE: "text-green-400",
+  IN_PROGRESS: "text-primary/70",
+  IN_REVIEW: "text-primary",
+  DONE: "text-emerald-700",
   BLOCKED: "text-primary",
 }
 

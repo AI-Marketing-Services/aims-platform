@@ -42,7 +42,7 @@ export default async function ResellerLayout({
       <div className="lg:hidden flex items-center justify-between h-14 px-4 bg-deep border-b border-border sticky top-0 z-40">
         <Link href="/reseller/dashboard" className="flex items-center gap-2">
           <Image src="/logo.png" alt="" width={32} height={32} className="object-contain h-7 w-7" />
-          <span className="text-[10px] font-medium text-amber-500 uppercase tracking-wider">Partner</span>
+          <span className="text-[10px] font-medium text-primary uppercase tracking-wider">Partner</span>
         </Link>
         <UserButton />
       </div>
@@ -52,7 +52,7 @@ export default async function ResellerLayout({
           <div className="flex h-16 items-center px-4 border-b border-border">
             <Link href="/reseller/dashboard" className="flex items-center gap-2.5">
               <Image src="/logo.png" alt="" width={36} height={36} className="object-contain h-8 w-8" />
-              <span className="text-[10px] font-medium text-amber-500 uppercase tracking-wider">Partner</span>
+              <span className="text-[10px] font-medium text-primary uppercase tracking-wider">Partner</span>
             </Link>
           </div>
           <nav className="flex-1 py-4 px-2 space-y-0.5">

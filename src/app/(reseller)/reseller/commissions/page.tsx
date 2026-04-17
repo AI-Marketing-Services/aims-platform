@@ -112,21 +112,21 @@ export default async function ResellerCommissionsPage() {
         <h2 className="text-sm font-semibold text-foreground mb-4">Payout Information</h2>
         <div className="space-y-3 text-sm">
           <div className="flex items-start gap-3">
-            <CheckCircle2 className="h-4 w-4 text-green-400 mt-0.5 flex-shrink-0" />
+            <CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 flex-shrink-0" />
             <p className="text-muted-foreground">Commissions are paid monthly, on the 15th of each month</p>
           </div>
           <div className="flex items-start gap-3">
-            <CheckCircle2 className="h-4 w-4 text-green-400 mt-0.5 flex-shrink-0" />
+            <CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 flex-shrink-0" />
             <p className="text-muted-foreground">Minimum payout threshold: $50</p>
           </div>
           <div className="flex items-start gap-3">
-            <CheckCircle2 className="h-4 w-4 text-green-400 mt-0.5 flex-shrink-0" />
+            <CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 flex-shrink-0" />
             <p className="text-muted-foreground">Payments via ACH or Stripe Connect</p>
           </div>
           {!referral?.stripeConnectId && (
-            <div className="mt-4 rounded-lg border border-amber-800 bg-amber-900/20 p-4">
-              <p className="text-sm text-amber-400 font-medium">Stripe Connect setup required for direct payouts</p>
-              <p className="text-xs text-amber-400/80 mt-1">
+            <div className="mt-4 rounded-lg border border-primary/30 bg-primary/5 p-4">
+              <p className="text-sm text-primary font-medium">Stripe Connect setup required for direct payouts</p>
+              <p className="text-xs text-primary/80 mt-1">
                 Once your account reaches the $50 minimum, our team will send you a Stripe Connect
                 onboarding link. After connecting, payouts are processed automatically on the 15th of
                 each month via ACH direct deposit. Until then, you can request a manual payout by

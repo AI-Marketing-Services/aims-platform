@@ -78,9 +78,9 @@ export function EODReportClient({ internId, recentReports, recentCompletedTasks 
 
   if (submitted) {
     return (
-      <div className="rounded-xl border border-green-500/20 bg-green-400/5 p-8 text-center">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-400/10 mx-auto mb-4">
-          <Send className="h-6 w-6 text-green-400" />
+      <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-8 text-center">
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 mx-auto mb-4">
+          <Send className="h-6 w-6 text-emerald-700" />
         </div>
         <h3 className="text-lg font-semibold text-foreground">Report Submitted</h3>
         <p className="text-sm text-muted-foreground mt-1">
@@ -272,7 +272,7 @@ export function EODReportClient({ internId, recentReports, recentCompletedTasks 
                     <ul className="space-y-1">
                       {items.slice(0, 3).map((item, i) => (
                         <li key={i} className="text-xs text-muted-foreground flex items-start gap-1.5">
-                          <Check className="h-3.5 w-3.5 text-green-400 mt-0.5" />
+                          <Check className="h-3.5 w-3.5 text-emerald-600 mt-0.5" />
                           {item}
                         </li>
                       ))}

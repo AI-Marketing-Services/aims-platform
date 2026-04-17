@@ -78,14 +78,14 @@ export default async function ResellerClientsPage() {
                     </div>
                     {totalMRR > 0 ? (
                       <div className="text-right">
-                        <span className="flex items-center gap-1 text-xs text-green-400">
+                        <span className="flex items-center gap-1 text-xs text-emerald-700">
                           <CheckCircle2 className="h-3 w-3" />
                           Active
                         </span>
                         <p className="text-sm font-mono font-semibold text-foreground">${totalMRR}/mo</p>
                       </div>
                     ) : (
-                      <span className="flex items-center gap-1 text-xs text-yellow-400">
+                      <span className="flex items-center gap-1 text-xs text-primary/70">
                         <Clock className="h-3 w-3" />
                         Pending
                       </span>

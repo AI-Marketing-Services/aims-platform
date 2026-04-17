@@ -16,22 +16,22 @@ interface Commission {
 const statusConfig: Record<string, { label: string; className: string; icon: typeof Clock }> = {
   PENDING: {
     label: "Pending",
-    className: "text-amber-400 bg-amber-900/20 border-amber-800",
+    className: "text-primary/80 bg-primary/5 border-primary/20",
     icon: Clock,
   },
   APPROVED: {
     label: "Approved",
-    className: "text-blue-400 bg-blue-900/20 border-blue-800",
+    className: "text-primary bg-primary/10 border-primary/30",
     icon: CheckCircle2,
   },
   PAID: {
     label: "Paid",
-    className: "text-green-400 bg-green-900/15 border-green-800",
+    className: "text-emerald-700 bg-emerald-50 border-emerald-200",
     icon: DollarSign,
   },
   REJECTED: {
     label: "Rejected",
-    className: "text-red-400 bg-red-900/20 border-red-800",
+    className: "text-muted-foreground bg-muted/40 border-border",
     icon: XCircle,
   },
 }

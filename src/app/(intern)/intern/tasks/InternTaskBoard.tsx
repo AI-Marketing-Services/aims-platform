@@ -34,17 +34,17 @@ interface Task {
 
 const COLUMNS: { key: TaskStatus; label: string; color: string; icon: React.FC<{ className?: string }> }[] = [
   { key: "TODO", label: "To Do", color: "border-muted-foreground", icon: Clock },
-  { key: "IN_PROGRESS", label: "In Progress", color: "border-blue-500", icon: TrendingUp },
-  { key: "IN_REVIEW", label: "In Review", color: "border-yellow-500", icon: Eye },
-  { key: "DONE", label: "Done", color: "border-green-500", icon: CheckSquare },
+  { key: "IN_PROGRESS", label: "In Progress", color: "border-primary/40", icon: TrendingUp },
+  { key: "IN_REVIEW", label: "In Review", color: "border-primary/60", icon: Eye },
+  { key: "DONE", label: "Done", color: "border-emerald-500", icon: CheckSquare },
   { key: "BLOCKED", label: "Blocked", color: "border-primary", icon: AlertCircle },
 ]
 
 const PRIORITY_COLOR: Record<string, string> = {
-  URGENT: "text-primary bg-primary/10 border-primary/30",
+  URGENT: "text-primary bg-primary/15 border-primary/40",
   HIGH: "text-primary bg-primary/10 border-primary/30",
-  MEDIUM: "text-yellow-400 bg-yellow-900/20 border-yellow-800",
-  LOW: "text-muted-foreground bg-deep border-border",
+  MEDIUM: "text-primary/70 bg-primary/5 border-primary/20",
+  LOW: "text-muted-foreground bg-muted/40 border-border",
 }
 
 function TaskCardInner({ task }: { task: Task }) {
