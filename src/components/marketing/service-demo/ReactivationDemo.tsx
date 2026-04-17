@@ -38,7 +38,7 @@ export function ReactivationDemo() {
           <motion.div
             animate={{ width: `${(count / 2783) * 100}%` }}
             transition={{ duration: 0.05 }}
-            className="h-full bg-gradient-to-r from-primary to-[#E8C46A] rounded-full"
+            className="h-full bg-gradient-to-r from-primary to-[#C42424] rounded-full"
           />
         </div>
       </div>

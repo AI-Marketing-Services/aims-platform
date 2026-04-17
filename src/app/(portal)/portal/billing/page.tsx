@@ -171,7 +171,7 @@ export default async function BillingPage() {
           </p>
           <Link
             href="/portal/marketplace"
-            className="inline-flex items-center gap-2 rounded-lg bg-[#C4972A] px-5 py-2 text-sm font-semibold text-white hover:bg-[#A17D22] transition"
+            className="inline-flex items-center gap-2 rounded-lg bg-[#981B1B] px-5 py-2 text-sm font-semibold text-white hover:bg-[#791515] transition"
           >
             Browse Services
           </Link>
@@ -280,7 +280,7 @@ export default async function BillingPage() {
         </p>
         <Link
           href="/portal/marketplace"
-          className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#C4972A] text-white text-sm font-medium rounded-lg hover:bg-[#A17D22] transition-colors whitespace-nowrap shrink-0"
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#981B1B] text-white text-sm font-medium rounded-lg hover:bg-[#791515] transition-colors whitespace-nowrap shrink-0"
         >
           Browse Marketplace
           <ArrowRight className="w-4 h-4" />

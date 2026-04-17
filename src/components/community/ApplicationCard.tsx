@@ -20,11 +20,11 @@ export function ApplicationCard() {
           <p className="text-xs font-mono uppercase tracking-[0.2em] text-aims-gold mb-4">
             Free Download
           </p>
-          <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl text-cream leading-[1.25] pb-2">
+          <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl text-ink leading-[1.25] pb-2">
             Get Our{" "}
             <span className="block text-aims-gold italic">AI Playbook</span>
           </h2>
-          <p className="mt-6 text-lg text-cream/65 max-w-2xl mx-auto">
+          <p className="mt-6 text-lg text-ink/65 max-w-2xl mx-auto">
             Drop your name and email. The AI Operator Playbook Vault hits your inbox
             immediately — the same frameworks, scripts, and pricing models we use internally.
           </p>
@@ -39,17 +39,17 @@ export function ApplicationCard() {
                 <Zap className="w-3.5 h-3.5" />
                 Free Resource + Application
               </div>
-              <p className="font-serif text-3xl sm:text-4xl text-cream leading-tight">
+              <p className="font-serif text-3xl sm:text-4xl text-ink leading-tight">
                 The AI Operator Playbook Vault
               </p>
-              <p className="mt-2 text-sm text-cream/75">
+              <p className="mt-2 text-sm text-ink/75">
                 Delivered to your inbox the moment you submit
               </p>
             </div>
 
             <ul className="space-y-3 mb-8 w-fit mx-auto">
               {INCLUDED.map((item) => (
-                <li key={item} className="flex items-start gap-3 text-sm text-cream/80">
+                <li key={item} className="flex items-start gap-3 text-sm text-ink/80">
                   <Check className="w-4 h-4 text-aims-gold mt-0.5 flex-shrink-0" />
                   <span>{item}</span>
                 </li>
@@ -62,11 +62,11 @@ export function ApplicationCard() {
               ctaLabel="Send Me the Vault"
             />
 
-            <p className="mt-5 text-center text-xs text-cream/70 font-mono uppercase tracking-wider">
+            <p className="mt-5 text-center text-xs text-ink/70 font-mono uppercase tracking-wider">
               No payment to apply. No credit card. Unsubscribe any time.
             </p>
 
-            <p className="mt-3 text-center text-[11px] text-cream/60 leading-relaxed max-w-sm mx-auto">
+            <p className="mt-3 text-center text-[11px] text-ink/60 leading-relaxed max-w-sm mx-auto">
               The Collective makes no income claims. Individual results vary and depend on
               the work each operator puts in. See full disclosures below.
             </p>

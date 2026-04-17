@@ -126,7 +126,7 @@ export default async function PortalServiceDetailPage({
           {/* Progress bar */}
           <div className="mb-5 h-2 w-full rounded-full bg-muted overflow-hidden">
             <div
-              className="h-full rounded-full bg-[#C4972A] transition-all duration-500"
+              className="h-full rounded-full bg-[#981B1B] transition-all duration-500"
               style={{ width: `${progress}%` }}
             />
           </div>

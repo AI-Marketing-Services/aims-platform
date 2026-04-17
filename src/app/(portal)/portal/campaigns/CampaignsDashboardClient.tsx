@@ -152,13 +152,13 @@ export function CampaignsDashboardClient() {
               <a
                 key={name}
                 href={href}
-                className="rounded-xl border border-border bg-card p-4 hover:border-[#C4972A]/40 transition-all group flex items-center justify-between"
+                className="rounded-xl border border-border bg-card p-4 hover:border-[#981B1B]/40 transition-all group flex items-center justify-between"
               >
                 <div>
                   <p className="text-sm font-semibold text-foreground">{name}</p>
                   <p className="text-xs text-muted-foreground mt-0.5">Custom pricing</p>
                 </div>
-                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-[#C4972A] transition-colors flex-shrink-0" />
+                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-[#981B1B] transition-colors flex-shrink-0" />
               </a>
             ))}
           </div>
@@ -208,7 +208,7 @@ export function CampaignsDashboardClient() {
           <div className="flex items-center justify-between mb-3">
             <p className="text-xs text-muted-foreground">Emails Sent</p>
             <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10">
-              <Mail className="h-3.5 w-3.5 text-[#C4972A]" />
+              <Mail className="h-3.5 w-3.5 text-[#981B1B]" />
             </div>
           </div>
           <p className="text-2xl font-bold text-foreground font-mono">
@@ -339,7 +339,7 @@ export function CampaignsDashboardClient() {
                       <div className="flex items-center gap-2">
                         <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
                           <div
-                            className="h-full bg-[#C4972A] rounded-full transition-all"
+                            className="h-full bg-[#981B1B] rounded-full transition-all"
                             style={{ width: `${Math.min(campaign.completion_percentage, 100)}%` }}
                           />
                         </div>

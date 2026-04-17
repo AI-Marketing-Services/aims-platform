@@ -1,6 +1,6 @@
 export default function OpsExcellenceLoading() {
   return (
-    <div className="min-h-screen bg-ink p-6">
+    <div className="min-h-screen bg-background p-6">
       <div className="max-w-6xl mx-auto space-y-8 animate-pulse">
         {/* Company header skeleton */}
         <div className="flex items-center gap-4 pb-6 border-b border-border">

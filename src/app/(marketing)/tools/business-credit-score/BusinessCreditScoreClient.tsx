@@ -240,7 +240,7 @@ function ProgressBar({ current, total }: { current: number; total: number }) {
       </div>
       <div className="h-1 w-full rounded-full bg-white/10 overflow-hidden">
         <motion.div
-          className="h-full rounded-full bg-[#C4972A]"
+          className="h-full rounded-full bg-[#981B1B]"
           initial={{ width: 0 }}
           animate={{ width: `${pct}%` }}
           transition={{ duration: 0.5, ease: "easeOut" }}
@@ -267,12 +267,12 @@ function DimensionBar({
       className="space-y-1.5"
     >
       <div className="flex items-center justify-between">
-        <span className="text-sm text-[#F0EBE0]/70">{label}</span>
-        <span className="text-sm font-mono text-[#C4972A]">{value}</span>
+        <span className="text-sm text-[#1A1A1A]/70">{label}</span>
+        <span className="text-sm font-mono text-[#981B1B]">{value}</span>
       </div>
       <div className="h-1.5 w-full rounded-full bg-white/10 overflow-hidden">
         <motion.div
-          className="h-full rounded-full bg-[#C4972A]"
+          className="h-full rounded-full bg-[#981B1B]"
           initial={{ width: 0 }}
           animate={{ width: `${value}%` }}
           transition={{ delay: delay + 0.1, duration: 0.7, ease: "easeOut" }}
@@ -397,7 +397,7 @@ export default function BusinessCreditScoreClient() {
   // -------------------------------------------------------------------------
 
   return (
-    <div className="min-h-screen bg-[#08090D] flex flex-col">
+    <div className="min-h-screen bg-[#F5F5F5] flex flex-col">
       <AnimatePresence mode="wait">
 
         {/* ------------------------------------------------------------------ */}
@@ -420,8 +420,8 @@ export default function BusinessCreditScoreClient() {
                 transition={{ delay: 0.05, duration: 0.4 }}
                 className="flex items-center gap-2"
               >
-                <BarChart3 className="w-4 h-4 text-[#C4972A]" />
-                <span className="text-xs font-mono tracking-[0.2em] uppercase text-[#C4972A]">
+                <BarChart3 className="w-4 h-4 text-[#981B1B]" />
+                <span className="text-xs font-mono tracking-[0.2em] uppercase text-[#981B1B]">
                   Free Assessment
                 </span>
               </motion.div>
@@ -431,11 +431,11 @@ export default function BusinessCreditScoreClient() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1, duration: 0.5 }}
-                className="text-4xl sm:text-5xl font-light tracking-tight text-[#F0EBE0] leading-tight"
+                className="text-4xl sm:text-5xl font-light tracking-tight text-[#1A1A1A] leading-tight"
                 style={{ fontFamily: "'Cormorant Garamond', serif" }}
               >
                 What&apos;s Your Business<br />
-                <span className="text-[#C4972A]">Credit Score?</span>
+                <span className="text-[#981B1B]">Credit Score?</span>
               </motion.h1>
 
               {/* Subheading */}
@@ -443,7 +443,7 @@ export default function BusinessCreditScoreClient() {
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.18, duration: 0.45 }}
-                className="text-base text-[#F0EBE0]/60 leading-relaxed"
+                className="text-base text-[#1A1A1A]/60 leading-relaxed"
               >
                 Answer 10 quick questions and get a detailed scorecard showing exactly
                 what&apos;s working, what&apos;s not, and the exact steps to build elite
@@ -463,8 +463,8 @@ export default function BusinessCreditScoreClient() {
                   "Your 90-day credit building action plan",
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-3">
-                    <CheckCircle2 className="w-4 h-4 text-[#C4972A] mt-0.5 shrink-0" />
-                    <span className="text-sm text-[#F0EBE0]/80">{item}</span>
+                    <CheckCircle2 className="w-4 h-4 text-[#981B1B] mt-0.5 shrink-0" />
+                    <span className="text-sm text-[#1A1A1A]/80">{item}</span>
                   </li>
                 ))}
               </motion.ul>
@@ -478,12 +478,12 @@ export default function BusinessCreditScoreClient() {
               >
                 <button
                   onClick={handleStart}
-                  className="group w-full flex items-center justify-center gap-2.5 bg-[#C4972A] hover:bg-[#d4a73a] text-[#08090D] font-medium text-sm px-6 py-3.5 rounded transition-colors duration-200"
+                  className="group w-full flex items-center justify-center gap-2.5 bg-[#981B1B] hover:bg-[#d4a73a] text-[#F5F5F5] font-medium text-sm px-6 py-3.5 rounded transition-colors duration-200"
                 >
                   Start Free Assessment
                   <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5" />
                 </button>
-                <p className="text-center text-xs text-[#F0EBE0]/30">
+                <p className="text-center text-xs text-[#1A1A1A]/30">
                   Takes about 2 minutes — no credit card required
                 </p>
               </motion.div>
@@ -509,7 +509,7 @@ export default function BusinessCreditScoreClient() {
                 {currentQ > 0 && (
                   <button
                     onClick={handleBack}
-                    className="flex items-center gap-1 text-xs text-[#F0EBE0]/40 hover:text-[#F0EBE0]/70 transition-colors"
+                    className="flex items-center gap-1 text-xs text-[#1A1A1A]/40 hover:text-[#1A1A1A]/70 transition-colors"
                     aria-label="Previous question"
                   >
                     <ChevronLeft className="w-4 h-4" />
@@ -529,7 +529,7 @@ export default function BusinessCreditScoreClient() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -6 }}
                   transition={{ duration: 0.2 }}
-                  className="inline-block text-[10px] font-mono tracking-[0.18em] uppercase text-[#C4972A]/80 border border-[#C4972A]/20 rounded px-2 py-0.5"
+                  className="inline-block text-[10px] font-mono tracking-[0.18em] uppercase text-[#981B1B]/80 border border-[#981B1B]/20 rounded px-2 py-0.5"
                 >
                   {QUESTIONS[currentQ].category}
                 </motion.span>
@@ -552,7 +552,7 @@ export default function BusinessCreditScoreClient() {
                   >
                     {/* Question text */}
                     <h2
-                      className="text-2xl sm:text-3xl font-light text-[#F0EBE0] leading-snug"
+                      className="text-2xl sm:text-3xl font-light text-[#1A1A1A] leading-snug"
                       style={{ fontFamily: "'Cormorant Garamond', serif" }}
                     >
                       {QUESTIONS[currentQ].question}
@@ -575,10 +575,10 @@ export default function BusinessCreditScoreClient() {
                             onClick={() => handleSelectOption(opt.score, i)}
                             className={cn(
                               "w-full text-left px-5 py-4 rounded border transition-all duration-200",
-                              "bg-[#141923] border-white/10 text-[#F0EBE0]/80 hover:border-[#C4972A]/50 hover:text-[#F0EBE0]",
-                              "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#C4972A]",
+                              "bg-[#FFFFFF] border-white/10 text-[#1A1A1A]/80 hover:border-[#981B1B]/50 hover:text-[#1A1A1A]",
+                              "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#981B1B]",
                               (isSelected || isPreviouslyAnswered) &&
-                                "border-[#C4972A] bg-[#C4972A]/10 text-[#F0EBE0]"
+                                "border-[#981B1B] bg-[#981B1B]/10 text-[#1A1A1A]"
                             )}
                           >
                             <div className="flex items-center gap-4">
@@ -586,8 +586,8 @@ export default function BusinessCreditScoreClient() {
                                 className={cn(
                                   "flex-shrink-0 w-6 h-6 rounded-full border flex items-center justify-center text-xs font-mono transition-colors duration-200",
                                   isSelected || isPreviouslyAnswered
-                                    ? "border-[#C4972A] bg-[#C4972A] text-[#08090D]"
-                                    : "border-white/20 text-[#F0EBE0]/40"
+                                    ? "border-[#981B1B] bg-[#981B1B] text-[#F5F5F5]"
+                                    : "border-white/20 text-[#1A1A1A]/40"
                                 )}
                               >
                                 {isSelected || isPreviouslyAnswered ? (
@@ -630,7 +630,7 @@ export default function BusinessCreditScoreClient() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.05 }}
-                  className="text-xs font-mono tracking-[0.2em] uppercase text-[#C4972A]"
+                  className="text-xs font-mono tracking-[0.2em] uppercase text-[#981B1B]"
                 >
                   Almost there...
                 </motion.p>
@@ -638,7 +638,7 @@ export default function BusinessCreditScoreClient() {
                   initial={{ opacity: 0, y: 14 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 }}
-                  className="text-3xl sm:text-4xl font-light text-[#F0EBE0]"
+                  className="text-3xl sm:text-4xl font-light text-[#1A1A1A]"
                   style={{ fontFamily: "'Cormorant Garamond', serif" }}
                 >
                   Your score is ready.
@@ -647,7 +647,7 @@ export default function BusinessCreditScoreClient() {
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.16 }}
-                  className="text-sm text-[#F0EBE0]/55"
+                  className="text-sm text-[#1A1A1A]/55"
                 >
                   Enter your details to see your full Business Credit Scorecard.
                 </motion.p>
@@ -664,9 +664,9 @@ export default function BusinessCreditScoreClient() {
                 <div className="space-y-1.5">
                   <label
                     htmlFor="name"
-                    className="block text-xs font-mono text-[#F0EBE0]/40 tracking-wider uppercase"
+                    className="block text-xs font-mono text-[#1A1A1A]/40 tracking-wider uppercase"
                   >
-                    Full Name <span className="text-[#C4972A]">*</span>
+                    Full Name <span className="text-[#981B1B]">*</span>
                   </label>
                   <input
                     id="name"
@@ -675,16 +675,16 @@ export default function BusinessCreditScoreClient() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Jane Smith"
-                    className="w-full bg-[#141923] border border-white/10 rounded px-4 py-3 text-sm text-[#F0EBE0] placeholder:text-[#F0EBE0]/25 focus:outline-none focus:border-[#C4972A]/60 transition-colors"
+                    className="w-full bg-[#FFFFFF] border border-white/10 rounded px-4 py-3 text-sm text-[#1A1A1A] placeholder:text-[#1A1A1A]/25 focus:outline-none focus:border-[#981B1B]/60 transition-colors"
                   />
                 </div>
 
                 <div className="space-y-1.5">
                   <label
                     htmlFor="email"
-                    className="block text-xs font-mono text-[#F0EBE0]/40 tracking-wider uppercase"
+                    className="block text-xs font-mono text-[#1A1A1A]/40 tracking-wider uppercase"
                   >
-                    Business Email <span className="text-[#C4972A]">*</span>
+                    Business Email <span className="text-[#981B1B]">*</span>
                   </label>
                   <input
                     id="email"
@@ -693,17 +693,17 @@ export default function BusinessCreditScoreClient() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="jane@company.com"
-                    className="w-full bg-[#141923] border border-white/10 rounded px-4 py-3 text-sm text-[#F0EBE0] placeholder:text-[#F0EBE0]/25 focus:outline-none focus:border-[#C4972A]/60 transition-colors"
+                    className="w-full bg-[#FFFFFF] border border-white/10 rounded px-4 py-3 text-sm text-[#1A1A1A] placeholder:text-[#1A1A1A]/25 focus:outline-none focus:border-[#981B1B]/60 transition-colors"
                   />
                 </div>
 
                 <div className="space-y-1.5">
                   <label
                     htmlFor="company"
-                    className="block text-xs font-mono text-[#F0EBE0]/40 tracking-wider uppercase"
+                    className="block text-xs font-mono text-[#1A1A1A]/40 tracking-wider uppercase"
                   >
                     Company Name{" "}
-                    <span className="text-[#F0EBE0]/25 normal-case tracking-normal font-sans text-[11px]">
+                    <span className="text-[#1A1A1A]/25 normal-case tracking-normal font-sans text-[11px]">
                       (optional)
                     </span>
                   </label>
@@ -713,13 +713,13 @@ export default function BusinessCreditScoreClient() {
                     value={company}
                     onChange={(e) => setCompany(e.target.value)}
                     placeholder="Acme Corp"
-                    className="w-full bg-[#141923] border border-white/10 rounded px-4 py-3 text-sm text-[#F0EBE0] placeholder:text-[#F0EBE0]/25 focus:outline-none focus:border-[#C4972A]/60 transition-colors"
+                    className="w-full bg-[#FFFFFF] border border-white/10 rounded px-4 py-3 text-sm text-[#1A1A1A] placeholder:text-[#1A1A1A]/25 focus:outline-none focus:border-[#981B1B]/60 transition-colors"
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="group w-full flex items-center justify-center gap-2.5 bg-[#C4972A] hover:bg-[#d4a73a] text-[#08090D] font-medium text-sm px-6 py-3.5 rounded transition-colors duration-200 mt-2"
+                  className="group w-full flex items-center justify-center gap-2.5 bg-[#981B1B] hover:bg-[#d4a73a] text-[#F5F5F5] font-medium text-sm px-6 py-3.5 rounded transition-colors duration-200 mt-2"
                 >
                   See My Credit Score
                   <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5" />
@@ -742,12 +742,12 @@ export default function BusinessCreditScoreClient() {
             className="flex-1 flex items-center justify-center px-4"
           >
             <div className="text-center space-y-5">
-              <Loader2 className="w-8 h-8 text-[#C4972A] animate-spin mx-auto" />
+              <Loader2 className="w-8 h-8 text-[#981B1B] animate-spin mx-auto" />
               <div className="space-y-1.5">
-                <p className="text-sm font-medium text-[#F0EBE0]">
+                <p className="text-sm font-medium text-[#1A1A1A]">
                   Calculating your business credit score...
                 </p>
-                <p className="text-xs text-[#F0EBE0]/40">
+                <p className="text-xs text-[#1A1A1A]/40">
                   Analyzing your answers across 5 dimensions
                 </p>
               </div>
@@ -773,7 +773,7 @@ export default function BusinessCreditScoreClient() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.08 }}
-                  className="text-xs font-mono tracking-[0.2em] uppercase text-[#F0EBE0]/40"
+                  className="text-xs font-mono tracking-[0.2em] uppercase text-[#1A1A1A]/40"
                 >
                   Your Business Credit Score
                 </motion.p>
@@ -785,12 +785,12 @@ export default function BusinessCreditScoreClient() {
                   className="relative inline-flex flex-col items-center"
                 >
                   <span
-                    className="text-8xl sm:text-9xl font-light text-[#C4972A] leading-none tabular-nums"
+                    className="text-8xl sm:text-9xl font-light text-[#981B1B] leading-none tabular-nums"
                     style={{ fontFamily: "'Cormorant Garamond', serif" }}
                   >
                     {pct}
                   </span>
-                  <span className="text-sm font-mono text-[#F0EBE0]/30 -mt-1">/ 100</span>
+                  <span className="text-sm font-mono text-[#1A1A1A]/30 -mt-1">/ 100</span>
                 </motion.div>
 
                 {/* Tier badge */}
@@ -814,7 +814,7 @@ export default function BusinessCreditScoreClient() {
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.35 }}
-                  className="text-sm text-[#F0EBE0]/55 max-w-sm mx-auto leading-relaxed"
+                  className="text-sm text-[#1A1A1A]/55 max-w-sm mx-auto leading-relaxed"
                 >
                   {tier.desc}
                 </motion.p>
@@ -825,9 +825,9 @@ export default function BusinessCreditScoreClient() {
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
-                className="bg-[#141923] border border-white/8 rounded-lg p-6 space-y-5"
+                className="bg-[#FFFFFF] border border-white/8 rounded-lg p-6 space-y-5"
               >
-                <h3 className="text-xs font-mono tracking-[0.18em] uppercase text-[#F0EBE0]/40">
+                <h3 className="text-xs font-mono tracking-[0.18em] uppercase text-[#1A1A1A]/40">
                   Score Breakdown
                 </h3>
                 <div className="space-y-4">
@@ -849,7 +849,7 @@ export default function BusinessCreditScoreClient() {
                 {submissionId && (
                   <a
                     href={`/tools/business-credit-score/results/${submissionId}`}
-                    className="group flex-1 flex items-center justify-center gap-2.5 bg-[#C4972A] hover:bg-[#d4a73a] text-[#08090D] font-medium text-sm px-6 py-3.5 rounded transition-colors duration-200"
+                    className="group flex-1 flex items-center justify-center gap-2.5 bg-[#981B1B] hover:bg-[#d4a73a] text-[#F5F5F5] font-medium text-sm px-6 py-3.5 rounded transition-colors duration-200"
                   >
                     View Full Scorecard
                     <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5" />
@@ -861,8 +861,8 @@ export default function BusinessCreditScoreClient() {
                   className={cn(
                     "flex items-center justify-center gap-2 px-5 py-3.5 rounded border text-sm transition-all duration-200",
                     copied
-                      ? "border-[#C4972A]/40 bg-[#C4972A]/10 text-[#C4972A]"
-                      : "border-white/10 bg-[#141923] text-[#F0EBE0]/60 hover:border-white/20 hover:text-[#F0EBE0]/80"
+                      ? "border-[#981B1B]/40 bg-[#981B1B]/10 text-[#981B1B]"
+                      : "border-white/10 bg-[#FFFFFF] text-[#1A1A1A]/60 hover:border-white/20 hover:text-[#1A1A1A]/80"
                   )}
                 >
                   {copied ? (
@@ -897,7 +897,7 @@ export default function BusinessCreditScoreClient() {
                     setEmail("")
                     setCompany("")
                   }}
-                  className="text-xs text-[#F0EBE0]/25 hover:text-[#F0EBE0]/50 transition-colors underline underline-offset-2"
+                  className="text-xs text-[#1A1A1A]/25 hover:text-[#1A1A1A]/50 transition-colors underline underline-offset-2"
                 >
                   Retake assessment
                 </button>

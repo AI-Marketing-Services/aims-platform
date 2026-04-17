@@ -15,7 +15,7 @@ interface StepTechnologyProps {
 
 const labelClass = "block text-sm font-medium text-foreground mb-1.5"
 const inputClass =
-  "w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C4972A]/20 focus:border-[#C4972A]"
+  "w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#981B1B]/20 focus:border-[#981B1B]"
 
 export function StepTechnology({ data, onChange }: StepTechnologyProps) {
   function updateField<K extends keyof IntakeTechnologyData>(
@@ -46,7 +46,7 @@ export function StepTechnology({ data, onChange }: StepTechnologyProps) {
                 key={tool}
                 className={`flex items-center gap-2.5 rounded-lg border px-3 py-2.5 cursor-pointer text-sm transition-colors ${
                   selected
-                    ? "border-[#C4972A]/40 bg-[#C4972A]/5 text-foreground"
+                    ? "border-[#981B1B]/40 bg-[#981B1B]/5 text-foreground"
                     : "border-border bg-card text-muted-foreground hover:border-border hover:bg-panel"
                 }`}
               >
@@ -54,7 +54,7 @@ export function StepTechnology({ data, onChange }: StepTechnologyProps) {
                   type="checkbox"
                   checked={selected}
                   onChange={() => toggleTool(tool)}
-                  className="h-3.5 w-3.5 rounded border-border accent-[#C4972A]"
+                  className="h-3.5 w-3.5 rounded border-border accent-[#981B1B]"
                 />
                 <span>{tool}</span>
               </label>
@@ -111,13 +111,13 @@ export function StepTechnology({ data, onChange }: StepTechnologyProps) {
                 onClick={() => updateField("dataMaturit", opt.value)}
                 className={`rounded-xl border px-4 py-4 text-left transition-all ${
                   selected
-                    ? "border-[#C4972A]/50 bg-[#C4972A]/5 ring-1 ring-[#C4972A]/20"
+                    ? "border-[#981B1B]/50 bg-[#981B1B]/5 ring-1 ring-[#981B1B]/20"
                     : "border-border bg-card hover:border-border hover:bg-panel"
                 }`}
               >
                 <p
                   className={`text-sm font-semibold ${
-                    selected ? "text-[#C4972A]" : "text-foreground"
+                    selected ? "text-[#981B1B]" : "text-foreground"
                   }`}
                 >
                   {opt.label}

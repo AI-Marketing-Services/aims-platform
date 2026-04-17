@@ -289,10 +289,10 @@ export default async function AdminVendorSavingsPage() {
 
           {/* Insight card */}
           {nextBest && (
-            <div className="rounded-xl border border-[#C4972A]/20 bg-[#C4972A]/5 p-5 flex items-start gap-3">
-              <Lightbulb className="h-4 w-4 text-[#C4972A] mt-0.5 flex-shrink-0" />
+            <div className="rounded-xl border border-[#981B1B]/20 bg-[#981B1B]/5 p-5 flex items-start gap-3">
+              <Lightbulb className="h-4 w-4 text-[#981B1B] mt-0.5 flex-shrink-0" />
               <p className="text-sm text-foreground">
-                <span className="font-semibold text-[#C4972A]">Next highest-impact replacement: </span>
+                <span className="font-semibold text-[#981B1B]">Next highest-impact replacement: </span>
                 <span className="font-semibold">{nextBest.vendorName}</span> at{" "}
                 <span className="font-semibold text-green-400">
                   ${nextBest.projectedSavings.toLocaleString()}/mo savings

@@ -1,6 +1,6 @@
 export default function IntakeLoading() {
   return (
-    <div className="min-h-screen bg-ink">
+    <div className="min-h-screen bg-background">
       <div className="mx-auto max-w-3xl px-4 py-8 animate-pulse">
         <div className="mb-8 space-y-2">
           <div className="h-8 w-72 rounded bg-surface" />

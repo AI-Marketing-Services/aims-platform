@@ -86,8 +86,8 @@ export default function ScoreGauge({
         >
           <defs>
             <linearGradient id="score-gauge-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#C4972A" stopOpacity="0.7" />
-              <stop offset="50%" stopColor="#C4972A" stopOpacity="1" />
+              <stop offset="0%" stopColor="#981B1B" stopOpacity="0.7" />
+              <stop offset="50%" stopColor="#981B1B" stopOpacity="1" />
               <stop offset="100%" stopColor="#D4A73A" stopOpacity="1" />
             </linearGradient>
             <filter id="score-gauge-glow">
@@ -171,7 +171,7 @@ export default function ScoreGauge({
       >
         <span
           className="inline-block h-1.5 w-1.5 rounded-full"
-          style={{ backgroundColor: "#C4972A" }}
+          style={{ backgroundColor: "#981B1B" }}
         />
         {tierConfig.label} Confidence
       </motion.div>

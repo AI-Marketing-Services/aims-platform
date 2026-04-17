@@ -53,7 +53,7 @@ export function DonutChart({ pct, value }: { pct: number; value: string }) {
       <svg width="72" height="72" viewBox="0 0 72 72" className="-rotate-90">
         <circle cx="36" cy="36" r={r} fill="none" stroke="#f3f4f6" strokeWidth="8" />
         <motion.circle
-          cx="36" cy="36" r={r} fill="none" stroke="#C4972A" strokeWidth="8"
+          cx="36" cy="36" r={r} fill="none" stroke="#981B1B" strokeWidth="8"
           strokeLinecap="round"
           strokeDasharray={`${dash} ${circ}`}
           initial={{ strokeDasharray: `0 ${circ}` }}

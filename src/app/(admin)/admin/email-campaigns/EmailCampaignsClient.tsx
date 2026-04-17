@@ -136,7 +136,7 @@ export function EmailCampaignsClient({ users }: Props) {
                               [user.id]: ws ? { id: ws.id, name: ws.name } : null,
                             }))
                           }}
-                          className="w-full appearance-none rounded-lg border border-border bg-background px-3 py-2 pr-8 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#C4972A]/20 focus:border-[#C4972A]"
+                          className="w-full appearance-none rounded-lg border border-border bg-background px-3 py-2 pr-8 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#981B1B]/20 focus:border-[#981B1B]"
                         >
                           <option value=""> -  No workspace  - </option>
                           {workspaces.map((ws) => (
@@ -170,7 +170,7 @@ export function EmailCampaignsClient({ users }: Props) {
                         "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors",
                         isSaved
                           ? "bg-green-900/15 text-green-400 border border-green-800"
-                          : "bg-[#C4972A] text-white hover:bg-[#A17D22]"
+                          : "bg-[#981B1B] text-white hover:bg-[#791515]"
                       )}
                     >
                       {isSaving ? (

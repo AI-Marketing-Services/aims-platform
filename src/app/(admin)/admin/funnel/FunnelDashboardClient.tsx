@@ -376,7 +376,7 @@ export function FunnelDashboardClient() {
             </h2>
             <Link
               href="/admin/applications"
-              className="text-xs text-[#C4972A] hover:underline"
+              className="text-xs text-[#981B1B] hover:underline"
             >
               View all →
             </Link>

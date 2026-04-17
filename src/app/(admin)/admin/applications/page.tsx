@@ -59,8 +59,8 @@ export default async function ApplicationsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-cream">Collective Applications</h1>
-        <p className="text-sm text-cream/60 mt-1">
+        <h1 className="text-2xl font-bold text-ink">Collective Applications</h1>
+        <p className="text-sm text-ink/60 mt-1">
           AI Operator Collective application submissions with lead scoring.
         </p>
       </div>
@@ -68,28 +68,28 @@ export default async function ApplicationsPage() {
       {/* KPI cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="rounded-md border border-line bg-surface p-4">
-          <p className="text-xs font-mono uppercase tracking-wider text-cream/60">
+          <p className="text-xs font-mono uppercase tracking-wider text-ink/60">
             Total Applications
           </p>
-          <p className="text-3xl font-bold text-cream mt-1">{submissions.length}</p>
+          <p className="text-3xl font-bold text-ink mt-1">{submissions.length}</p>
         </div>
         <div className="rounded-md border border-line bg-surface p-4">
-          <p className="text-xs font-mono uppercase tracking-wider text-cream/60">
+          <p className="text-xs font-mono uppercase tracking-wider text-ink/60">
             This Month
           </p>
-          <p className="text-3xl font-bold text-cream mt-1">{thisMonth.length}</p>
+          <p className="text-3xl font-bold text-ink mt-1">{thisMonth.length}</p>
         </div>
         <div className="rounded-md border border-line bg-surface p-4">
-          <p className="text-xs font-mono uppercase tracking-wider text-cream/60">
+          <p className="text-xs font-mono uppercase tracking-wider text-ink/60">
             Hot Leads
           </p>
           <p className="text-3xl font-bold text-red-400 mt-1">{hotLeads.length}</p>
         </div>
         <div className="rounded-md border border-line bg-surface p-4">
-          <p className="text-xs font-mono uppercase tracking-wider text-cream/60">
+          <p className="text-xs font-mono uppercase tracking-wider text-ink/60">
             Avg Score
           </p>
-          <p className="text-3xl font-bold text-cream mt-1">{avgScore}/100</p>
+          <p className="text-3xl font-bold text-ink mt-1">{avgScore}/100</p>
         </div>
       </div>
 
@@ -99,25 +99,25 @@ export default async function ApplicationsPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-line bg-panel">
-                <th className="text-left p-3 text-xs font-mono uppercase tracking-wider text-cream/60">
+                <th className="text-left p-3 text-xs font-mono uppercase tracking-wider text-ink/60">
                   Name
                 </th>
-                <th className="text-left p-3 text-xs font-mono uppercase tracking-wider text-cream/60">
+                <th className="text-left p-3 text-xs font-mono uppercase tracking-wider text-ink/60">
                   Email
                 </th>
-                <th className="text-center p-3 text-xs font-mono uppercase tracking-wider text-cream/60">
+                <th className="text-center p-3 text-xs font-mono uppercase tracking-wider text-ink/60">
                   Score
                 </th>
-                <th className="text-center p-3 text-xs font-mono uppercase tracking-wider text-cream/60">
+                <th className="text-center p-3 text-xs font-mono uppercase tracking-wider text-ink/60">
                   Tier
                 </th>
-                <th className="text-center p-3 text-xs font-mono uppercase tracking-wider text-cream/60">
+                <th className="text-center p-3 text-xs font-mono uppercase tracking-wider text-ink/60">
                   Stage
                 </th>
-                <th className="text-center p-3 text-xs font-mono uppercase tracking-wider text-cream/60">
+                <th className="text-center p-3 text-xs font-mono uppercase tracking-wider text-ink/60">
                   Collective
                 </th>
-                <th className="text-right p-3 text-xs font-mono uppercase tracking-wider text-cream/60">
+                <th className="text-right p-3 text-xs font-mono uppercase tracking-wider text-ink/60">
                   Date
                 </th>
               </tr>
@@ -139,11 +139,11 @@ export default async function ApplicationsPage() {
 
                 return (
                   <tr key={s.id} className="border-b border-line last:border-0 group">
-                    <td className="p-3 text-cream font-medium">
+                    <td className="p-3 text-ink font-medium">
                       {s.dealId ? (
                         <Link
                           href={`/admin/crm/${s.dealId}`}
-                          className="hover:text-[#C4972A] hover:underline"
+                          className="hover:text-[#981B1B] hover:underline"
                         >
                           {s.name ?? "-"}
                         </Link>
@@ -151,9 +151,9 @@ export default async function ApplicationsPage() {
                         s.name ?? "-"
                       )}
                     </td>
-                    <td className="p-3 text-cream/70">{s.email}</td>
+                    <td className="p-3 text-ink/70">{s.email}</td>
                     <td className="p-3 text-center">
-                      <span className="text-cream font-mono font-bold">
+                      <span className="text-ink font-mono font-bold">
                         {s.score ?? 0}
                       </span>
                     </td>
@@ -164,7 +164,7 @@ export default async function ApplicationsPage() {
                         {tier}
                       </span>
                     </td>
-                    <td className="p-3 text-center text-cream/60 text-xs font-mono uppercase">
+                    <td className="p-3 text-center text-ink/60 text-xs font-mono uppercase">
                       {deal?.stage ?? "-"}
                     </td>
                     <td className="p-3 text-center">
@@ -176,7 +176,7 @@ export default async function ApplicationsPage() {
                         initialMightyMemberId={inviteMemberId}
                       />
                     </td>
-                    <td className="p-3 text-right text-cream/60 text-xs">
+                    <td className="p-3 text-right text-ink/60 text-xs">
                       {s.createdAt.toLocaleDateString("en-US", {
                         month: "short",
                         day: "numeric",
@@ -190,7 +190,7 @@ export default async function ApplicationsPage() {
                 <tr>
                   <td
                     colSpan={7}
-                    className="p-8 text-center text-cream/50 text-sm"
+                    className="p-8 text-center text-ink/50 text-sm"
                   >
                     No applications yet.
                   </td>
@@ -204,7 +204,7 @@ export default async function ApplicationsPage() {
       {/* Answer breakdown for each submission (expandable via details) */}
       {submissions.length > 0 && (
         <div className="space-y-3">
-          <h2 className="text-lg font-bold text-cream">Answer Breakdown</h2>
+          <h2 className="text-lg font-bold text-ink">Answer Breakdown</h2>
           {submissions.slice(0, 20).map((s) => {
             const answers = (s.data ?? {}) as Record<string, string>
             return (
@@ -212,9 +212,9 @@ export default async function ApplicationsPage() {
                 key={s.id}
                 className="rounded-md border border-line bg-surface overflow-hidden"
               >
-                <summary className="p-4 cursor-pointer text-sm text-cream hover:bg-panel transition-colors">
+                <summary className="p-4 cursor-pointer text-sm text-ink hover:bg-panel transition-colors">
                   <span className="font-medium">{s.name ?? s.email}</span>
-                  <span className="text-cream/50 ml-2">
+                  <span className="text-ink/50 ml-2">
                     Score: {s.score ?? 0}/100
                   </span>
                 </summary>
@@ -226,14 +226,14 @@ export default async function ApplicationsPage() {
                     )
                     return (
                       <div key={q.id} className="flex gap-3 text-sm">
-                        <span className="text-cream/50 flex-shrink-0 w-5 font-mono">
+                        <span className="text-ink/50 flex-shrink-0 w-5 font-mono">
                           Q{QUESTIONS.indexOf(q) + 1}
                         </span>
                         <div>
-                          <p className="text-cream/70">{q.question}</p>
-                          <p className="text-cream font-medium">
+                          <p className="text-ink/70">{q.question}</p>
+                          <p className="text-ink font-medium">
                             {selectedOption?.label ?? selectedValue ?? "-"}
-                            <span className="text-cream/40 ml-2">
+                            <span className="text-ink/40 ml-2">
                               ({selectedOption?.points ?? 0} pts)
                             </span>
                           </p>

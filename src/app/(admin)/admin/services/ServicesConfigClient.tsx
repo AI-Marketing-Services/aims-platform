@@ -154,7 +154,7 @@ export default function ServicesConfigClient() {
                               placeholder="https://..."
                               value={(getVal(svc, "ctaUrl") as string) ?? ""}
                               onChange={(e) => setEdit(svc.id, "ctaUrl", e.target.value)}
-                              className="w-48 rounded-md border border-border px-2.5 py-1.5 text-xs focus:border-[#C4972A] focus:outline-none focus:ring-1 focus:ring-[#C4972A]/20"
+                              className="w-48 rounded-md border border-border px-2.5 py-1.5 text-xs focus:border-[#981B1B] focus:outline-none focus:ring-1 focus:ring-[#981B1B]/20"
                             />
                             {getVal(svc, "ctaUrl") && (
                               <a href={getVal(svc, "ctaUrl") as string} target="_blank" rel="noopener noreferrer">
@@ -169,7 +169,7 @@ export default function ServicesConfigClient() {
                           <select
                             value={(getVal(svc, "asanaProjectGid") as string) ?? ""}
                             onChange={(e) => setEdit(svc.id, "asanaProjectGid", e.target.value)}
-                            className="w-48 rounded-md border border-border px-2.5 py-1.5 text-xs focus:border-[#C4972A] focus:outline-none focus:ring-1 focus:ring-[#C4972A]/20"
+                            className="w-48 rounded-md border border-border px-2.5 py-1.5 text-xs focus:border-[#981B1B] focus:outline-none focus:ring-1 focus:ring-[#981B1B]/20"
                           >
                             <option value=""> -  No project  - </option>
                             {projects.map((p) => (
@@ -183,7 +183,7 @@ export default function ServicesConfigClient() {
                           <select
                             value={(getVal(svc, "asanaAssigneeGid") as string) ?? ""}
                             onChange={(e) => setEdit(svc.id, "asanaAssigneeGid", e.target.value)}
-                            className="w-44 rounded-md border border-border px-2.5 py-1.5 text-xs focus:border-[#C4972A] focus:outline-none focus:ring-1 focus:ring-[#C4972A]/20"
+                            className="w-44 rounded-md border border-border px-2.5 py-1.5 text-xs focus:border-[#981B1B] focus:outline-none focus:ring-1 focus:ring-[#981B1B]/20"
                           >
                             <option value=""> -  Unassigned  - </option>
                             {users.map((u) => (
@@ -222,7 +222,7 @@ export default function ServicesConfigClient() {
                                   placeholder="New Client: {{client}} - {{service}}"
                                   value={template?.name ?? ""}
                                   onChange={(e) => setEdit(svc.id, "asanaTaskTemplate", { ...template, name: e.target.value })}
-                                  className="w-full rounded-md border border-border px-2.5 py-1.5 text-xs focus:border-[#C4972A] focus:outline-none focus:ring-1 focus:ring-[#C4972A]/20"
+                                  className="w-full rounded-md border border-border px-2.5 py-1.5 text-xs focus:border-[#981B1B] focus:outline-none focus:ring-1 focus:ring-[#981B1B]/20"
                                 />
                               </div>
                               <div>
@@ -232,7 +232,7 @@ export default function ServicesConfigClient() {
                                   placeholder={"Client: {{client}}\nEmail: {{email}}\nService: {{service}}"}
                                   value={template?.notes ?? ""}
                                   onChange={(e) => setEdit(svc.id, "asanaTaskTemplate", { ...template, notes: e.target.value })}
-                                  className="w-full rounded-md border border-border px-2.5 py-1.5 text-xs focus:border-[#C4972A] focus:outline-none focus:ring-1 focus:ring-[#C4972A]/20"
+                                  className="w-full rounded-md border border-border px-2.5 py-1.5 text-xs focus:border-[#981B1B] focus:outline-none focus:ring-1 focus:ring-[#981B1B]/20"
                                 />
                               </div>
                               <div>
@@ -245,7 +245,7 @@ export default function ServicesConfigClient() {
                                     ...template,
                                     subtasks: e.target.value.split("\n").filter(Boolean),
                                   })}
-                                  className="w-full rounded-md border border-border px-2.5 py-1.5 text-xs focus:border-[#C4972A] focus:outline-none focus:ring-1 focus:ring-[#C4972A]/20"
+                                  className="w-full rounded-md border border-border px-2.5 py-1.5 text-xs focus:border-[#981B1B] focus:outline-none focus:ring-1 focus:ring-[#981B1B]/20"
                                 />
                               </div>
                             </div>

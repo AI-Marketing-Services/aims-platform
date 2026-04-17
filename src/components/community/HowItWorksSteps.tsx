@@ -35,11 +35,11 @@ export function HowItWorksSteps() {
           <p className="text-xs font-mono uppercase tracking-[0.2em] text-aims-gold mb-4">
             How It Works
           </p>
-          <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl text-cream leading-[1.25] pb-2">
+          <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl text-ink leading-[1.25] pb-2">
             Business Fundamentals First.{" "}
             <span className="block text-aims-gold italic">AI Tooling Second.</span>
           </h2>
-          <p className="mt-6 text-lg text-cream/65">
+          <p className="mt-6 text-lg text-ink/65">
             Four phases. Sequenced the way an operator actually builds a services company.
           </p>
         </div>
@@ -55,12 +55,12 @@ export function HowItWorksSteps() {
                   </div>
                   <div className="flex-1 pt-1">
                     <div className="flex items-baseline justify-between gap-4 mb-1">
-                      <h3 className="font-serif text-2xl text-cream">{step.title}</h3>
+                      <h3 className="font-serif text-2xl text-ink">{step.title}</h3>
                       <span className="text-[10px] sm:text-xs font-mono uppercase tracking-wider text-aims-gold whitespace-nowrap">
                         {step.weeks}
                       </span>
                     </div>
-                    <p className="text-cream/60 leading-relaxed">{step.body}</p>
+                    <p className="text-ink/60 leading-relaxed">{step.body}</p>
                   </div>
                 </div>
 

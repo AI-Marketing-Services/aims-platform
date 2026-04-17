@@ -47,7 +47,7 @@ export function WildDucksDemo() {
             key={d.label}
             onClick={() => { setTab(i); setPhase("scan"); setDeployed(false) }}
             className="flex-1 rounded-lg px-1 py-2 text-center transition-all text-[11px] font-semibold"
-            style={{ backgroundColor: tab === i ? "#C4972A" : "#141923", color: tab === i ? "white" : "#9CA3AF" }}
+            style={{ backgroundColor: tab === i ? "#981B1B" : "#FFFFFF", color: tab === i ? "white" : "#9CA3AF" }}
           >
             {d.label}
           </button>
@@ -63,7 +63,7 @@ export function WildDucksDemo() {
                 <span className="text-[10px] font-bold text-foreground">{scanProgress}%</span>
               </div>
               <div className="h-1.5 rounded-full bg-deep overflow-hidden">
-                <motion.div animate={{ width: `${scanProgress}%` }} transition={{ duration: 0.05 }} className="h-full bg-gradient-to-r from-primary to-[#E8C46A] rounded-full" />
+                <motion.div animate={{ width: `${scanProgress}%` }} transition={{ duration: 0.05 }} className="h-full bg-gradient-to-r from-primary to-[#C42424] rounded-full" />
               </div>
             </div>
             <div className="space-y-1.5">

@@ -346,7 +346,7 @@ export const DIMENSION_CONFIG = {
     shortLabel: "FC",
     description: "Can the CEO answer basic financial questions about their own business?",
     maxScore: 25,
-    color: "#C4972A",
+    color: "#981B1B",
   },
   aiReadiness: {
     label: "AI Readiness",

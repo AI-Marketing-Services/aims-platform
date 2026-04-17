@@ -136,7 +136,7 @@ export default async function ResellerResourcesPage() {
                 href={res.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#C4972A] text-sm font-medium hover:underline"
+                className="text-[#981B1B] text-sm font-medium hover:underline"
               >
                 {res.type === "Call" ? "Book" : "Watch"}
               </a>

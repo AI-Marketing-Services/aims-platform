@@ -114,7 +114,7 @@ export default async function AdminRevenuePage() {
           </div>
           <div className="text-right">
             <p className="text-xs text-muted-foreground mb-1">Target: $100,000/mo</p>
-            <p className="text-2xl font-mono font-bold text-[#C4972A]">
+            <p className="text-2xl font-mono font-bold text-[#981B1B]">
               {mrrProgress.toFixed(1)}%
             </p>
           </div>
@@ -122,7 +122,7 @@ export default async function AdminRevenuePage() {
         {/* Progress bar */}
         <div className="h-2 bg-muted rounded-full overflow-hidden">
           <div
-            className="h-2 bg-[#C4972A] rounded-full transition-all"
+            className="h-2 bg-[#981B1B] rounded-full transition-all"
             style={{ width: `${mrrProgress}%` }}
           />
         </div>

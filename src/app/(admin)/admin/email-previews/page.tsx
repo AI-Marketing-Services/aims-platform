@@ -53,7 +53,7 @@ function emailLayout(content: string, preheader = "") {
             <td style="background:#F9FAFB;border-radius:0 0 12px 12px;padding:24px 40px;border-top:1px solid #F0F0F0;">
               <p style="margin:0 0 8px;font-size:12px;color:#6B7280;">
                 Questions? Reply to this email or reach us at
-                <a href="mailto:team@aioperatorcollective.com" style="color:#C4972A;text-decoration:none;">team@aioperatorcollective.com</a>
+                <a href="mailto:team@aioperatorcollective.com" style="color:#981B1B;text-decoration:none;">team@aioperatorcollective.com</a>
               </p>
               <p style="margin:0 0 8px;font-size:11px;color:#9CA3AF;">
                 AIMS - AI-Powered Business Infrastructure -
@@ -77,7 +77,7 @@ function emailLayout(content: string, preheader = "") {
 }
 
 function btn(text: string, url: string) {
-  return `<a href="${url}" style="display:inline-block;background:#C4972A;color:#ffffff;padding:13px 28px;border-radius:6px;text-decoration:none;font-weight:700;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;margin:8px 0;">${text}</a>`
+  return `<a href="${url}" style="display:inline-block;background:#981B1B;color:#ffffff;padding:13px 28px;border-radius:6px;text-decoration:none;font-weight:700;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;margin:8px 0;">${text}</a>`
 }
 
 function h1(text: string) {
@@ -262,8 +262,8 @@ function buildEmailHtml(template: TemplateType, fields: Record<string, string>):
       const body = `
         ${h1(`${fields.name ? `Hey ${escapeHtml(fields.name)} - ` : "Hey - "} your results are ready`)}
         ${score ? `
-          <div style="background:#FEF2F2;border-left:4px solid #C4972A;border-radius:6px;padding:20px 24px;margin:0 0 24px;">
-            <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#C4972A;text-transform:uppercase;letter-spacing:0.08em;">Your Score</p>
+          <div style="background:#FEF2F2;border-left:4px solid #981B1B;border-radius:6px;padding:20px 24px;margin:0 0 24px;">
+            <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#981B1B;text-transform:uppercase;letter-spacing:0.08em;">Your Score</p>
             <p style="margin:0;font-size:48px;font-weight:800;color:#111827;line-height:1;">${score}<span style="font-size:20px;color:#6B7280;">/100</span></p>
           </div>
         ` : ""}
@@ -271,7 +271,7 @@ function buildEmailHtml(template: TemplateType, fields: Record<string, string>):
         ${btn("View Full Results", fields.resultsUrl)}
         ${divider()}
         ${p("Want to talk through your results with our team? We'll map the right AIMS services to your exact gaps - no pitch, just a working session.")}
-        <a href="https://aimseos.com/get-started" style="font-size:14px;color:#C4972A;font-weight:600;text-decoration:none;">
+        <a href="https://aimseos.com/get-started" style="font-size:14px;color:#981B1B;font-weight:600;text-decoration:none;">
           Book a free strategy call
         </a>
       `
@@ -306,9 +306,9 @@ function buildEmailHtml(template: TemplateType, fields: Record<string, string>):
 
     case "internal-notification": {
       const urgencyBar = fields.urgency === "high"
-        ? `<div style="background:#C4972A;color:#ffffff;padding:10px 16px;border-radius:6px;font-size:13px;font-weight:700;margin-bottom:20px;">HIGH PRIORITY</div>`
+        ? `<div style="background:#981B1B;color:#ffffff;padding:10px 16px;border-radius:6px;font-size:13px;font-weight:700;margin-bottom:20px;">HIGH PRIORITY</div>`
         : fields.urgency === "normal"
-        ? `<div style="background:#FEF2F2;color:#C4972A;padding:10px 16px;border-radius:6px;font-size:13px;font-weight:600;margin-bottom:20px;">Notification</div>`
+        ? `<div style="background:#FEF2F2;color:#981B1B;padding:10px 16px;border-radius:6px;font-size:13px;font-weight:600;margin-bottom:20px;">Notification</div>`
         : ""
       const body = `
         ${urgencyBar}
@@ -325,8 +325,8 @@ function buildEmailHtml(template: TemplateType, fields: Record<string, string>):
       const body = `
         ${h1("We received your support ticket")}
         ${p(`Hey ${escapeHtml(fields.name)} - we got your request and our team is on it.`)}
-        <div style="background:#F9FAFB;border-left:4px solid #C4972A;border-radius:6px;padding:20px 24px;margin:0 0 24px;">
-          <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#C4972A;text-transform:uppercase;letter-spacing:0.08em;">Ticket Subject</p>
+        <div style="background:#F9FAFB;border-left:4px solid #981B1B;border-radius:6px;padding:20px 24px;margin:0 0 24px;">
+          <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#981B1B;text-transform:uppercase;letter-spacing:0.08em;">Ticket Subject</p>
           <p style="margin:0;font-size:16px;font-weight:600;color:#111827;">${safeSubject}</p>
           <p style="margin:8px 0 0;font-size:12px;color:#6B7280;">Ticket ID: ${escapeHtml(fields.ticketId)}</p>
         </div>
@@ -343,8 +343,8 @@ function buildEmailHtml(template: TemplateType, fields: Record<string, string>):
       const body = `
         ${h1("New reply on your support ticket")}
         ${p(`Hey ${escapeHtml(fields.clientName)} - the AIMS team has replied to your ticket.`)}
-        <div style="background:#F9FAFB;border-left:4px solid #C4972A;border-radius:6px;padding:20px 24px;margin:0 0 24px;">
-          <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#C4972A;text-transform:uppercase;letter-spacing:0.08em;">Re: ${safeSubject}</p>
+        <div style="background:#F9FAFB;border-left:4px solid #981B1B;border-radius:6px;padding:20px 24px;margin:0 0 24px;">
+          <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#981B1B;text-transform:uppercase;letter-spacing:0.08em;">Re: ${safeSubject}</p>
           <p style="margin:8px 0 0;font-size:14px;color:#374151;white-space:pre-wrap;line-height:1.7;">${escapeHtml(fields.replyMessage)}</p>
           <p style="margin:12px 0 0;font-size:12px;color:#9CA3AF;">- ${escapeHtml(fields.authorName)}, AIMS Support</p>
         </div>
@@ -366,8 +366,8 @@ function buildEmailHtml(template: TemplateType, fields: Record<string, string>):
       const body = `
         ${h1(`Your support ticket has been ${statusLabel.toLowerCase()}`)}
         ${p(`Hey ${escapeHtml(fields.clientName)} - we are writing to let you know your ticket has been updated.`)}
-        <div style="background:#F9FAFB;border-left:4px solid ${fields.newStatus === "resolved" ? "#22C55E" : "#C4972A"};border-radius:6px;padding:20px 24px;margin:0 0 24px;">
-          <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:${fields.newStatus === "resolved" ? "#22C55E" : "#C4972A"};text-transform:uppercase;letter-spacing:0.08em;">Status: ${statusLabel}</p>
+        <div style="background:#F9FAFB;border-left:4px solid ${fields.newStatus === "resolved" ? "#22C55E" : "#981B1B"};border-radius:6px;padding:20px 24px;margin:0 0 24px;">
+          <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:${fields.newStatus === "resolved" ? "#22C55E" : "#981B1B"};text-transform:uppercase;letter-spacing:0.08em;">Status: ${statusLabel}</p>
           <p style="margin:8px 0 0;font-size:16px;font-weight:600;color:#111827;">${safeSubject}</p>
         </div>
         ${fields.resolutionNote ? `

@@ -35,11 +35,11 @@ export function SolutionsGrid() {
           <p className="text-xs font-mono uppercase tracking-[0.2em] text-aims-gold mb-4">
             Four Service Lines You Can Sell
           </p>
-          <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl text-cream leading-[1.25] pb-2">
+          <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl text-ink leading-[1.25] pb-2">
             One Operator Stack.{" "}
             <span className="block text-aims-gold italic">Four Ways to Get Paid.</span>
           </h2>
-          <p className="mt-6 text-lg text-cream/65">
+          <p className="mt-6 text-lg text-ink/65">
             These are the four service lines AIMS runs internally — and the four you&apos;ll
             be trained to package, price, and deliver to your own clients.
           </p>
@@ -57,14 +57,14 @@ export function SolutionsGrid() {
                   <div className="inline-flex items-center justify-center w-12 h-12 rounded-sm bg-aims-gold/10 border border-aims-gold/20">
                     <Icon className="w-6 h-6 text-aims-gold" />
                   </div>
-                  <span className="text-[10px] uppercase tracking-wider font-mono text-cream/70 border border-line px-2 py-1 rounded-sm">
+                  <span className="text-[10px] uppercase tracking-wider font-mono text-ink/70 border border-line px-2 py-1 rounded-sm">
                     {solution.tag}
                   </span>
                 </div>
-                <h3 className="font-serif text-2xl text-cream mb-3 leading-tight">
+                <h3 className="font-serif text-2xl text-ink mb-3 leading-tight">
                   {solution.title}
                 </h3>
-                <p className="text-sm text-cream/60 leading-relaxed">{solution.body}</p>
+                <p className="text-sm text-ink/60 leading-relaxed">{solution.body}</p>
               </div>
             )
           })}

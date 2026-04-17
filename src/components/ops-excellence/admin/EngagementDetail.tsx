@@ -133,7 +133,7 @@ function TabButton({
       className={cn(
         "flex items-center gap-2 px-3 py-2 text-sm font-medium whitespace-nowrap transition-colors",
         active
-          ? "border-b-2 border-[#C4972A] text-foreground"
+          ? "border-b-2 border-[#981B1B] text-foreground"
           : "text-muted-foreground hover:text-foreground"
       )}
     >
@@ -187,7 +187,7 @@ function FormInput({
         max={max}
         step={step}
         required={required}
-        className="mt-1 w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C4972A]/50"
+        className="mt-1 w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#981B1B]/50"
       />
     </label>
   )
@@ -216,7 +216,7 @@ function FormSelect({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         required={required}
-        className="mt-1 w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#C4972A]/50"
+        className="mt-1 w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#981B1B]/50"
       >
         <option value="">Select...</option>
         {options.map((o) => (
@@ -243,7 +243,7 @@ function PrimaryButton({
       onClick={onClick}
       disabled={disabled || loading}
       className={cn(
-        "bg-[#C4972A] text-white hover:bg-[#A17D22] rounded-lg px-4 py-2 text-sm font-medium transition-colors",
+        "bg-[#981B1B] text-white hover:bg-[#791515] rounded-lg px-4 py-2 text-sm font-medium transition-colors",
         "disabled:opacity-50 disabled:cursor-not-allowed",
         "inline-flex items-center gap-2"
       )}
@@ -730,7 +730,7 @@ function IntakeTab({
                   <select
                     value={response?.score ?? "YELLOW"}
                     onChange={(e) => updateResponse(q.id, "score", e.target.value)}
-                    className="rounded-lg border border-border bg-card px-3 py-1.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#C4972A]/50 min-w-[100px]"
+                    className="rounded-lg border border-border bg-card px-3 py-1.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#981B1B]/50 min-w-[100px]"
                   >
                     <option value="GREEN">Green</option>
                     <option value="YELLOW">Yellow</option>
@@ -756,7 +756,7 @@ function IntakeTab({
                   value={response?.notes ?? ""}
                   onChange={(e) => updateResponse(q.id, "notes", e.target.value)}
                   placeholder="Admin notes..."
-                  className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C4972A]/50"
+                  className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#981B1B]/50"
                 />
               </div>
             )
@@ -778,7 +778,7 @@ function IntakeTab({
           onChange={(e) => setCallNotes(e.target.value)}
           placeholder="Record notes from the discovery call..."
           rows={6}
-          className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C4972A]/50 resize-y"
+          className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#981B1B]/50 resize-y"
         />
         <div className="mt-4">
           <PrimaryButton onClick={saveCallNotes} loading={savingNotes}>
@@ -1008,7 +1008,7 @@ function DiscoveryTab({ engagementId }: { engagementId: string }) {
                       <td className="px-4 py-3">
                         <button
                           onClick={() => setExpandedId(isExpanded ? null : card.id)}
-                          className="flex items-center gap-1.5 text-foreground hover:text-[#C4972A] transition-colors font-medium"
+                          className="flex items-center gap-1.5 text-foreground hover:text-[#981B1B] transition-colors font-medium"
                         >
                           {isExpanded ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
                           {card.processName}
@@ -1313,7 +1313,7 @@ function SpendTab({ engagementId }: { engagementId: string }) {
                           value={d.status}
                           onChange={(e) => handleStatusUpdate(d.id, e.target.value)}
                           className={cn(
-                            "text-xs font-medium px-2 py-0.5 rounded-full border-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#C4972A]/50",
+                            "text-xs font-medium px-2 py-0.5 rounded-full border-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#981B1B]/50",
                             statusColors[d.status] ?? "text-muted-foreground bg-muted/20"
                           )}
                         >
@@ -1651,7 +1651,7 @@ function AutomationsTab({ engagementId }: { engagementId: string }) {
                   <div className="mt-3">
                     <button
                       onClick={() => startEdit(card)}
-                      className="text-xs text-[#C4972A] hover:text-[#A17D22] font-medium transition-colors"
+                      className="text-xs text-[#981B1B] hover:text-[#791515] font-medium transition-colors"
                     >
                       Edit Post-Deployment Metrics
                     </button>
@@ -1807,7 +1807,7 @@ function ScoreTab({
           step={5}
           value={value}
           onChange={(e) => onChange(Number(e.target.value))}
-          className="w-full h-2 rounded-full appearance-none bg-muted cursor-pointer accent-[#C4972A]"
+          className="w-full h-2 rounded-full appearance-none bg-muted cursor-pointer accent-[#981B1B]"
         />
       </label>
     )

@@ -74,7 +74,7 @@ export function StepCFOTest({ data, onChange }: StepCFOTestProps) {
       <div className="flex items-center gap-2">
         <div className="h-1.5 flex-1 rounded-full bg-muted overflow-hidden">
           <div
-            className="h-full rounded-full bg-[#C4972A] transition-all duration-300"
+            className="h-full rounded-full bg-[#981B1B] transition-all duration-300"
             style={{ width: `${(answeredCount / totalQuestions) * 100}%` }}
           />
         </div>
@@ -157,8 +157,8 @@ export function StepCFOTest({ data, onChange }: StepCFOTestProps) {
             </div>
           </div>
           {redCount >= 3 && (
-            <div className="rounded-lg border border-[#C4972A]/30 bg-[#C4972A]/5 px-4 py-3">
-              <p className="text-sm text-[#C4972A]">
+            <div className="rounded-lg border border-[#981B1B]/30 bg-[#981B1B]/5 px-4 py-3">
+              <p className="text-sm text-[#981B1B]">
                 Your Financial Clarity Package will address these gaps in Week 1.
               </p>
             </div>

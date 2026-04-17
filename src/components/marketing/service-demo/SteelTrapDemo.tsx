@@ -36,7 +36,7 @@ export function SteelTrapDemo() {
         {TRAP_STAGES.map((s, i) => (
           <motion.div
             key={i}
-            animate={{ backgroundColor: i <= stage ? "#2563EB" : "#141923", color: i <= stage ? "#fff" : "#6B7280" }}
+            animate={{ backgroundColor: i <= stage ? "#2563EB" : "#FFFFFF", color: i <= stage ? "#fff" : "#6B7280" }}
             transition={{ duration: 0.3 }}
             className="flex-1 rounded-lg px-1 py-2 text-center"
           >
@@ -85,7 +85,7 @@ export function SteelTrapDemo() {
               animate={{ width: `${sevenXPct}%` }}
               transition={{ duration: 0.4 }}
               className="h-full rounded-full"
-              style={{ backgroundColor: sevenXPct >= 100 ? "#16A34A" : sevenXPct >= 57 ? "#C4972A" : "#EF4444" }}
+              style={{ backgroundColor: sevenXPct >= 100 ? "#16A34A" : sevenXPct >= 57 ? "#981B1B" : "#EF4444" }}
             />
           </div>
           <p className="text-[10px] text-muted-foreground mt-1">{touchCount}/7 contacts made</p>

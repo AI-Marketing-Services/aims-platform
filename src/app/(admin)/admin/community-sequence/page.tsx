@@ -109,8 +109,8 @@ export default async function AdminCommunitySequencePage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-cream">Community Sequence</h1>
-        <p className="mt-1 text-sm text-cream/60">
+        <h1 className="text-2xl font-bold text-ink">Community Sequence</h1>
+        <p className="mt-1 text-sm text-ink/60">
           The AI Operator Collective post-signup drip. Chapter 1 + community invite fires inline
           on form submission. Chapters 2–5 + the closing email are scheduled here and dispatched
           hourly by the email queue cron.
@@ -151,8 +151,8 @@ export default async function AdminCommunitySequencePage() {
       <section className="rounded-md border border-line bg-surface/40 p-6">
         <div className="flex items-start justify-between mb-5 gap-4">
           <div>
-            <h2 className="text-lg font-semibold text-cream">Sequence timeline</h2>
-            <p className="text-xs text-cream/55 mt-1">
+            <h2 className="text-lg font-semibold text-ink">Sequence timeline</h2>
+            <p className="text-xs text-ink/55 mt-1">
               {OPERATOR_VAULT_SEQUENCE.description}
             </p>
           </div>
@@ -175,14 +175,14 @@ export default async function AdminCommunitySequencePage() {
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-baseline justify-between gap-3 flex-wrap">
-                  <p className="text-sm font-semibold text-cream">
+                  <p className="text-sm font-semibold text-ink">
                     Chapter 1: Your First 5 Operator Moves (+ community invite)
                   </p>
                   <span className="text-[10px] font-mono uppercase tracking-wider text-aims-gold whitespace-nowrap">
                     T + 0 · immediate
                   </span>
                 </div>
-                <p className="mt-1 text-xs text-cream/55 leading-relaxed">
+                <p className="mt-1 text-xs text-ink/55 leading-relaxed">
                   Fires inline from <code className="font-mono">/api/community/lead</code> via{" "}
                   <code className="font-mono">sendOperatorVaultEmail()</code>. Not scheduled in
                   the queue because it must land before the success toast on the form.
@@ -198,17 +198,17 @@ export default async function AdminCommunitySequencePage() {
             >
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0 inline-flex items-center justify-center w-10 h-10 rounded-sm bg-surface border border-line">
-                  <Mail className="w-4 h-4 text-cream/70" />
+                  <Mail className="w-4 h-4 text-ink/70" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-baseline justify-between gap-3 flex-wrap">
-                    <p className="text-sm font-semibold text-cream">{step.subject}</p>
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-cream/55 whitespace-nowrap">
+                    <p className="text-sm font-semibold text-ink">{step.subject}</p>
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-ink/55 whitespace-nowrap">
                       T + {step.delayDays}d
                     </span>
                   </div>
-                  <p className="mt-1 text-xs text-cream/55 leading-relaxed">{step.preview}</p>
-                  <p className="mt-1 text-[11px] text-cream/40 italic">Purpose: {step.purpose}</p>
+                  <p className="mt-1 text-xs text-ink/55 leading-relaxed">{step.preview}</p>
+                  <p className="mt-1 text-[11px] text-ink/40 italic">Purpose: {step.purpose}</p>
                 </div>
               </div>
             </li>
@@ -219,15 +219,15 @@ export default async function AdminCommunitySequencePage() {
       {/* Enrolled leads */}
       <section className="rounded-md border border-line bg-surface/40">
         <div className="p-6 border-b border-line">
-          <h2 className="text-lg font-semibold text-cream">Enrolled leads</h2>
-          <p className="text-xs text-cream/55 mt-1">
+          <h2 className="text-lg font-semibold text-ink">Enrolled leads</h2>
+          <p className="text-xs text-ink/55 mt-1">
             Latest 500 queue items grouped by recipient. Click through the per-step status to
             audit individual sends.
           </p>
         </div>
 
         {recipients.length === 0 ? (
-          <div className="p-10 text-center text-sm text-cream/55">
+          <div className="p-10 text-center text-sm text-ink/55">
             No one has been enrolled in the operator-vault sequence yet. Submissions from the
             landing page form will show up here.
           </div>
@@ -235,7 +235,7 @@ export default async function AdminCommunitySequencePage() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-[11px] font-mono uppercase tracking-wider text-cream/45 border-b border-line">
+                <tr className="text-left text-[11px] font-mono uppercase tracking-wider text-ink/45 border-b border-line">
                   <th className="px-5 py-3">Recipient</th>
                   <th className="px-5 py-3">Enrolled</th>
                   <th className="px-5 py-3">Progress</th>
@@ -254,10 +254,10 @@ export default async function AdminCommunitySequencePage() {
                   }
                   return (
                     <tr key={rec.email} className="border-b border-line/60 hover:bg-ink/40">
-                      <td className="px-5 py-4 text-cream font-mono text-xs break-all">
+                      <td className="px-5 py-4 text-ink font-mono text-xs break-all">
                         {rec.email}
                       </td>
-                      <td className="px-5 py-4 text-cream/55 text-xs whitespace-nowrap">
+                      <td className="px-5 py-4 text-ink/55 text-xs whitespace-nowrap">
                         {rec.enrolledAt
                           ? new Date(rec.enrolledAt).toLocaleDateString("en-US", {
                               month: "short",
@@ -267,7 +267,7 @@ export default async function AdminCommunitySequencePage() {
                           : "—"}
                       </td>
                       <td className="px-5 py-4 whitespace-nowrap">
-                        <span className="text-xs text-cream/80 font-mono">
+                        <span className="text-xs text-ink/80 font-mono">
                           {rec.totalSent}/{steps.length} sent
                         </span>
                         {rec.totalFailed > 0 && (
@@ -293,7 +293,7 @@ export default async function AdminCommunitySequencePage() {
                                       : ""
                                 }`}
                               >
-                                <span className="text-[10px] font-mono text-cream/40">
+                                <span className="text-[10px] font-mono text-ink/40">
                                   {step.index + 2}
                                 </span>
                                 {statusPill(status)}
@@ -333,11 +333,11 @@ function StatCard({
           : "border-line bg-surface/40"
       }`}
     >
-      <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-wider text-cream/45">
+      <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-wider text-ink/45">
         <Icon className="w-3.5 h-3.5" />
         {label}
       </div>
-      <p className="mt-2 text-2xl font-bold text-cream">{value}</p>
+      <p className="mt-2 text-2xl font-bold text-ink">{value}</p>
     </div>
   )
 }

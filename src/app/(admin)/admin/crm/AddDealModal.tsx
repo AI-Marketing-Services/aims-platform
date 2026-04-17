@@ -159,7 +159,7 @@ export function AddDealModal({ stage, onClose, onCreated }: Props) {
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 px-4 py-2.5 rounded-lg bg-[#C4972A] text-sm font-medium text-white hover:bg-[#A17D22] transition-colors disabled:opacity-50"
+              className="flex-1 px-4 py-2.5 rounded-lg bg-[#981B1B] text-sm font-medium text-white hover:bg-[#791515] transition-colors disabled:opacity-50"
             >
               {loading ? "Creating..." : "Create Deal"}
             </button>

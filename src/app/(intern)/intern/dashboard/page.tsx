@@ -62,14 +62,14 @@ export default async function InternDashboardPage() {
 
       {/* EOD reminder */}
       {!hasEODToday && (
-        <div className="rounded-xl border border-[#C4972A]/30 bg-[#C4972A]/5 p-4 flex items-center justify-between">
+        <div className="rounded-xl border border-[#981B1B]/30 bg-[#981B1B]/5 p-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <AlertCircle className="h-4 w-4 text-[#C4972A]" />
+            <AlertCircle className="h-4 w-4 text-[#981B1B]" />
             <p className="text-sm font-medium text-foreground">EOD report not submitted today</p>
           </div>
           <Link
             href="/intern/eod-report"
-            className="text-sm font-medium text-[#C4972A] hover:underline"
+            className="text-sm font-medium text-[#981B1B] hover:underline"
           >
             Submit now
           </Link>
@@ -103,7 +103,7 @@ export default async function InternDashboardPage() {
         <div className="rounded-xl border border-border bg-card overflow-hidden">
           <div className="px-5 py-4 border-b border-border flex items-center justify-between">
             <h2 className="text-sm font-semibold text-foreground">Open Tasks</h2>
-            <Link href="/intern/tasks" className="text-xs text-[#C4972A] hover:underline">View all</Link>
+            <Link href="/intern/tasks" className="text-xs text-[#981B1B] hover:underline">View all</Link>
           </div>
           {profile.tasks.length === 0 ? (
             <div className="p-8 text-center">

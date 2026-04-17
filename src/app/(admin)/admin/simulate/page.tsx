@@ -61,7 +61,7 @@ const LEAD_TYPES = [
 // ============ SHARED STYLES ============
 
 const inputCls =
-  "w-full bg-background border border-border rounded-lg px-3 py-2 text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C4972A]"
+  "w-full bg-background border border-border rounded-lg px-3 py-2 text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#981B1B]"
 
 // ============ PURCHASE PANEL ============
 
@@ -127,7 +127,7 @@ function PurchasePanel() {
                   key={s.slug}
                   className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
                     active
-                      ? "border-[#C4972A] bg-[#C4972A]/10"
+                      ? "border-[#981B1B] bg-[#981B1B]/10"
                       : "border-border hover:border-border"
                   }`}
                 >
@@ -141,7 +141,7 @@ function PurchasePanel() {
                   />
                   <div
                     className="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0"
-                    style={{ background: active ? "#C4972A" : "#F3F4F6" }}
+                    style={{ background: active ? "#981B1B" : "#F3F4F6" }}
                   >
                     <Icon className="w-3.5 h-3.5 text-foreground" />
                   </div>
@@ -215,9 +215,9 @@ function PurchasePanel() {
               ))}
             </div>
             <div className="flex gap-3 pt-1 border-t border-border text-xs">
-              <Link href="/admin/clients" className="text-[#C4972A] hover:underline">Clients &rarr;</Link>
-              <Link href="/admin/fulfillment" className="text-[#C4972A] hover:underline">Tasks &rarr;</Link>
-              <Link href="/admin/crm" className="text-[#C4972A] hover:underline">CRM &rarr;</Link>
+              <Link href="/admin/clients" className="text-[#981B1B] hover:underline">Clients &rarr;</Link>
+              <Link href="/admin/fulfillment" className="text-[#981B1B] hover:underline">Tasks &rarr;</Link>
+              <Link href="/admin/crm" className="text-[#981B1B] hover:underline">CRM &rarr;</Link>
             </div>
           </div>
         )}
@@ -225,7 +225,7 @@ function PurchasePanel() {
         <button
           type="submit"
           disabled={submitting || !serviceSlug || !clientName || !clientEmail}
-          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-[#C4972A] hover:bg-[#A17D22] disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-lg transition-colors"
+          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-[#981B1B] hover:bg-[#791515] disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-lg transition-colors"
         >
           {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
           {submitting ? "Simulating..." : "Simulate Purchase"}
@@ -249,7 +249,7 @@ function LeadMagnetPanel() {
     score >= 70 ? "text-primary" : score >= 40 ? "text-yellow-400" : "text-muted-foreground"
 
   const scoreThumbColor =
-    score >= 70 ? "#C4972A" : score >= 40 ? "#EAB308" : "#6B7280"
+    score >= 70 ? "#981B1B" : score >= 40 ? "#EAB308" : "#6B7280"
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -300,7 +300,7 @@ function LeadMagnetPanel() {
                   key={t.value}
                   className={`flex items-center gap-2 p-3 rounded-lg border cursor-pointer transition-colors ${
                     active
-                      ? "border-[#C4972A] bg-[#C4972A]/10"
+                      ? "border-[#981B1B] bg-[#981B1B]/10"
                       : "border-border hover:border-border"
                   }`}
                 >
@@ -312,7 +312,7 @@ function LeadMagnetPanel() {
                     onChange={() => setLeadType(t.value)}
                     className="sr-only"
                   />
-                  <Icon className={`w-3.5 h-3.5 flex-shrink-0 ${active ? "text-[#C4972A]" : "text-muted-foreground"}`} />
+                  <Icon className={`w-3.5 h-3.5 flex-shrink-0 ${active ? "text-[#981B1B]" : "text-muted-foreground"}`} />
                   <span className="text-xs font-medium text-foreground leading-tight">{t.label}</span>
                 </label>
               )
@@ -406,7 +406,7 @@ function LeadMagnetPanel() {
                 </div>
               ))}
             </div>
-            <Link href="/admin/crm" className="block text-xs text-[#C4972A] hover:underline pt-1 border-t border-border">
+            <Link href="/admin/crm" className="block text-xs text-[#981B1B] hover:underline pt-1 border-t border-border">
               View in CRM &rarr;
             </Link>
           </div>
@@ -415,7 +415,7 @@ function LeadMagnetPanel() {
         <button
           type="submit"
           disabled={submitting || !leadType || !name || !email}
-          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-[#C4972A] hover:bg-[#A17D22] disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-lg transition-colors"
+          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-[#981B1B] hover:bg-[#791515] disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-lg transition-colors"
         >
           {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
           {submitting ? "Simulating..." : "Simulate Submission"}

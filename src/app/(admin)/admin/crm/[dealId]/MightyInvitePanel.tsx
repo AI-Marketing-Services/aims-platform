@@ -149,7 +149,7 @@ export function MightyInvitePanel({
           href={`https://${networkSubdomain}/members/${mightyMemberId}`}
           target="_blank"
           rel="noreferrer"
-          className="flex items-center gap-1.5 mb-3 text-xs font-semibold text-[#C4972A] hover:underline"
+          className="flex items-center gap-1.5 mb-3 text-xs font-semibold text-[#981B1B] hover:underline"
         >
           View member in Mighty
           <ExternalLink className="w-3 h-3" />
@@ -163,7 +163,7 @@ export function MightyInvitePanel({
           onChange={(e) =>
             setTier(e.target.value as "community" | "accelerator" | "innerCircle")
           }
-          className="w-full bg-card border border-border rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-[#C4972A]"
+          className="w-full bg-card border border-border rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-[#981B1B]"
           disabled={busy}
         >
           {TIER_OPTIONS.map((t) => (
@@ -178,7 +178,7 @@ export function MightyInvitePanel({
         <button
           onClick={sendInvite}
           disabled={busy || !contactEmail}
-          className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-[#C4972A] text-white text-xs font-medium rounded-lg hover:bg-[#A17D22] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-[#981B1B] text-white text-xs font-medium rounded-lg hover:bg-[#791515] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
           <Send className="w-3.5 h-3.5" />
           {busy ? "Sending..." : invites.length > 0 ? "Send new invite" : "Invite to Collective"}

@@ -24,8 +24,8 @@ export default function SpendSummary({ metrics }: SpendSummaryProps) {
     {
       label: "Savings Identified",
       value: formatCurrency(metrics.totalSavingsIdentified),
-      color: "text-[#C4972A]",
-      borderColor: "border-l-[#C4972A]",
+      color: "text-[#981B1B]",
+      borderColor: "border-l-[#981B1B]",
     },
     {
       label: "Savings Realized",

@@ -97,7 +97,7 @@ export function InviteButton({
     <button
       onClick={sendInvite}
       disabled={busy}
-      className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider rounded-sm border border-[#C4972A]/40 text-[#C4972A] hover:bg-[#C4972A]/10 disabled:opacity-40 transition-colors"
+      className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider rounded-sm border border-[#981B1B]/40 text-[#981B1B] hover:bg-[#981B1B]/10 disabled:opacity-40 transition-colors"
     >
       <Send className="w-3 h-3" />
       {busy ? "..." : "Invite"}

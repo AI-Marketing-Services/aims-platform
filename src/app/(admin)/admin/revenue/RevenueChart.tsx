@@ -38,15 +38,15 @@ interface Props {
   revenueByChannel: ChannelPoint[]
 }
 
-const PIE_COLORS = ["#C4972A", "#EF4444", "#F87171", "#E8C46A", "#FECACA", "rgba(196,151,42,0.15)"]
+const PIE_COLORS = ["#981B1B", "#EF4444", "#F87171", "#C42424", "#FECACA", "rgba(196,151,42,0.15)"]
 
 const tooltipStyle = {
-  backgroundColor: "#141923",
+  backgroundColor: "#FFFFFF",
   border: "1px solid hsl(220 13% 20%)",
   borderRadius: "8px",
-  color: "#F0EBE0",
+  color: "#1A1A1A",
 }
-const labelStyle = { color: "#F0EBE0", fontSize: 12 }
+const labelStyle = { color: "#1A1A1A", fontSize: 12 }
 
 export function RevenueCharts({ mrrOverTime, revenueByService, revenueByChannel }: Props) {
   const hasEnoughMrrData = mrrOverTime.length >= 3
@@ -68,7 +68,7 @@ export function RevenueCharts({ mrrOverTime, revenueByService, revenueByChannel 
               <defs>
                 <linearGradient id="mrrGrad" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#7F1D1D" stopOpacity={0.6} />
-                  <stop offset="95%" stopColor="#C4972A" stopOpacity={0} />
+                  <stop offset="95%" stopColor="#981B1B" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
@@ -87,17 +87,17 @@ export function RevenueCharts({ mrrOverTime, revenueByService, revenueByChannel 
               <Tooltip
                 contentStyle={tooltipStyle}
                 labelStyle={labelStyle}
-                itemStyle={{ color: "#C4972A", fontWeight: 600 }}
+                itemStyle={{ color: "#981B1B", fontWeight: 600 }}
                 formatter={(v: number) => [`$${v.toLocaleString()}`, "MRR"]}
               />
               <Area
                 type="monotone"
                 dataKey="mrr"
-                stroke="#C4972A"
+                stroke="#981B1B"
                 strokeWidth={2}
                 fill="url(#mrrGrad)"
                 dot={false}
-                activeDot={{ r: 4, fill: "#C4972A" }}
+                activeDot={{ r: 4, fill: "#981B1B" }}
               />
             </AreaChart>
           </ResponsiveContainer>
@@ -141,10 +141,10 @@ export function RevenueCharts({ mrrOverTime, revenueByService, revenueByChannel 
                 <Tooltip
                   contentStyle={tooltipStyle}
                   labelStyle={labelStyle}
-                  itemStyle={{ color: "#C4972A", fontWeight: 600 }}
+                  itemStyle={{ color: "#981B1B", fontWeight: 600 }}
                   formatter={(v: number) => [`$${v.toLocaleString()}`, "MRR"]}
                 />
-                <Bar dataKey="revenue" fill="#C4972A" radius={[0, 4, 4, 0]} maxBarSize={24} />
+                <Bar dataKey="revenue" fill="#981B1B" radius={[0, 4, 4, 0]} maxBarSize={24} />
               </BarChart>
             </ResponsiveContainer>
           )}
