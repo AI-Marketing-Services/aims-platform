@@ -174,7 +174,7 @@ export function FunnelDashboardClient() {
       {/* ── Status bar ── */}
       <div className="flex items-center justify-between text-xs text-muted-foreground">
         <div className="flex items-center gap-2">
-          <span className="inline-flex h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+          <span className="inline-flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
           Live · refreshes every 30s
           {lastRefreshed && (
             <span className="ml-2 font-mono">
@@ -202,7 +202,7 @@ export function FunnelDashboardClient() {
               <span
                 className={cn(
                   "inline-flex items-center gap-0.5 text-xs",
-                  dayOverDay >= 0 ? "text-green-400" : "text-red-400"
+                  dayOverDay >= 0 ? "text-emerald-600" : "text-primary"
                 )}
               >
                 <ArrowUp
@@ -251,7 +251,7 @@ export function FunnelDashboardClient() {
             </span>
           }
           icon={<CheckCircle2 className="w-3.5 h-3.5" />}
-          valueClass="text-green-400"
+          valueClass="text-emerald-700"
         />
       </div>
 
@@ -402,10 +402,10 @@ export function FunnelDashboardClient() {
                         className={cn(
                           "inline-block text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-sm border",
                           a.tier === "hot"
-                            ? "text-red-400 border-red-800 bg-red-900/20"
+                            ? "text-primary border-primary/40 bg-primary/10"
                             : a.tier === "warm"
-                              ? "text-amber-400 border-amber-800 bg-amber-900/20"
-                              : "text-muted-foreground border-border bg-deep"
+                              ? "text-primary/70 border-primary/20 bg-primary/5"
+                              : "text-muted-foreground border-border bg-muted/40"
                         )}
                       >
                         {a.score ?? 0}/100 {a.tier ?? "—"}
@@ -420,10 +420,10 @@ export function FunnelDashboardClient() {
                         className={cn(
                           "px-1.5 py-0.5 rounded border",
                           a.mightyStatus === "accepted"
-                            ? "text-green-400 border-green-800"
+                            ? "text-emerald-700 border-emerald-200 bg-emerald-50"
                             : a.mightyStatus === "failed"
-                              ? "text-red-400 border-red-800"
-                              : "text-amber-400 border-amber-800"
+                              ? "text-primary border-primary/30 bg-primary/10"
+                              : "text-muted-foreground border-border bg-muted/40"
                         )}
                       >
                         Mighty: {a.mightyStatus}

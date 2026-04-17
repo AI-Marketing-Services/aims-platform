@@ -7,12 +7,12 @@ import Link from "next/link"
 import { cn } from "@/lib/utils"
 
 const STAGE_CONFIG: Record<string, { label: string; class: string }> = {
-  APPLICATION_SUBMITTED: { label: "Applied",           class: "text-muted-foreground bg-deep border-border" },
-  CONSULT_BOOKED:        { label: "Consult Booked",    class: "text-blue-400 bg-blue-900/20 border-blue-800" },
-  CONSULT_COMPLETED:     { label: "Consult Completed", class: "text-purple-400 bg-purple-900/20 border-purple-800" },
-  MIGHTY_INVITED:        { label: "Mighty Invited",    class: "text-amber-400 bg-amber-900/20 border-amber-800" },
-  MEMBER_JOINED:         { label: "Member Joined",     class: "text-green-400 bg-green-900/15 border-green-800" },
-  LOST:                  { label: "Lost / Ghosted",    class: "text-primary bg-primary/15 border-primary/30" },
+  APPLICATION_SUBMITTED: { label: "Applied",           class: "text-muted-foreground bg-muted/50 border-border" },
+  CONSULT_BOOKED:        { label: "Consult Booked",    class: "text-primary bg-primary/5 border-primary/30" },
+  CONSULT_COMPLETED:     { label: "Consult Completed", class: "text-primary bg-primary/10 border-primary/40" },
+  MIGHTY_INVITED:        { label: "Mighty Invited",    class: "text-primary bg-primary/15 border-primary/50" },
+  MEMBER_JOINED:         { label: "Member Joined",     class: "text-emerald-700 bg-emerald-50 border-emerald-200" },
+  LOST:                  { label: "Lost / Ghosted",    class: "text-muted-foreground bg-muted/30 border-border" },
 }
 
 const ALL_STAGES = Object.keys(STAGE_CONFIG)

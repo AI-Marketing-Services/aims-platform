@@ -9,7 +9,7 @@ import { logger } from "@/lib/logger"
  *
  * Close sends webhooks for lead/contact/opportunity events.
  * Configure at: Settings > Webhooks in Close dashboard.
- * Set the webhook URL to: https://aimseos.com/api/webhooks/close
+ * Set the webhook URL to: https://www.aioperatorcollective.com/api/webhooks/close
  * Set the webhook secret in env: CLOSE_WEBHOOK_SECRET
  */
 

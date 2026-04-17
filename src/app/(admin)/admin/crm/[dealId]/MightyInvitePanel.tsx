@@ -245,7 +245,7 @@ export function MightyInvitePanel({
                   )}
                   {inv.acceptedAt && (
                     <span
-                      className="text-green-400"
+                      className="text-emerald-700 font-medium"
                       title={new Date(inv.acceptedAt).toLocaleString()}
                     >
                       accepted {new Date(inv.acceptedAt).toLocaleDateString()}

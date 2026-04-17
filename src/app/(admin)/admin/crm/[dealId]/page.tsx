@@ -25,12 +25,12 @@ const STAGE_OPTIONS = [
 ]
 
 const STAGE_COLORS: Record<string, string> = {
-  APPLICATION_SUBMITTED: "text-muted-foreground bg-deep border-border",
-  CONSULT_BOOKED: "text-blue-400 bg-blue-900/20 border-blue-800",
-  CONSULT_COMPLETED: "text-purple-400 bg-purple-900/20 border-purple-800",
-  MIGHTY_INVITED: "text-amber-400 bg-amber-900/20 border-amber-800",
-  MEMBER_JOINED: "text-green-400 bg-green-900/15 border-green-800",
-  LOST: "text-muted-foreground bg-deep border-border",
+  APPLICATION_SUBMITTED: "text-muted-foreground bg-muted/50 border-border",
+  CONSULT_BOOKED: "text-primary bg-primary/5 border-primary/30",
+  CONSULT_COMPLETED: "text-primary bg-primary/10 border-primary/40",
+  MIGHTY_INVITED: "text-primary bg-primary/15 border-primary/50",
+  MEMBER_JOINED: "text-emerald-700 bg-emerald-50 border-emerald-200",
+  LOST: "text-muted-foreground bg-muted/30 border-border",
 }
 
 export default async function AdminDealDetailPage({ params }: { params: Promise<{ dealId: string }> }) {

@@ -45,15 +45,18 @@ type Deal = {
 }
 
 const KANBAN_STAGES: { key: DealStage; label: string; color: string }[] = [
-  { key: "APPLICATION_SUBMITTED", label: "Application Submitted", color: "border-muted-foreground" },
-  { key: "CONSULT_BOOKED", label: "Consult Booked", color: "border-blue-500" },
-  { key: "CONSULT_COMPLETED", label: "Consult Completed", color: "border-purple-500" },
-  { key: "MIGHTY_INVITED", label: "Mighty Invited", color: "border-amber-500" },
-  { key: "MEMBER_JOINED", label: "Member Joined", color: "border-green-500" },
+  // Progressive crimson ramp — each stage is a deeper shade of the brand
+  // color as the funnel advances. MEMBER_JOINED is the one emerald
+  // accent since it's the actual win.
+  { key: "APPLICATION_SUBMITTED", label: "Application Submitted", color: "border-primary/20" },
+  { key: "CONSULT_BOOKED", label: "Consult Booked", color: "border-primary/40" },
+  { key: "CONSULT_COMPLETED", label: "Consult Completed", color: "border-primary/60" },
+  { key: "MIGHTY_INVITED", label: "Mighty Invited", color: "border-primary/80" },
+  { key: "MEMBER_JOINED", label: "Member Joined", color: "border-emerald-500" },
 ]
 
 const CLOSED_STAGES: { key: DealStage; label: string; color: string }[] = [
-  { key: "LOST", label: "Lost / Ghosted", color: "border-primary" },
+  { key: "LOST", label: "Lost / Ghosted", color: "border-muted-foreground/40" },
 ]
 
 const SOURCE_OPTIONS = [
@@ -96,8 +99,8 @@ function LeadScoreDot({ score }: { score?: number }) {
   if (score >= 40) {
     return (
       <span className="flex items-center gap-1">
-        <span className="w-1.5 h-1.5 rounded-full bg-amber-500 flex-shrink-0" />
-        <span className="text-xs text-amber-400 font-mono">Warm</span>
+        <span className="w-1.5 h-1.5 rounded-full bg-primary/60 flex-shrink-0" />
+        <span className="text-xs text-primary/80 font-mono">Warm</span>
       </span>
     )
   }
@@ -141,7 +144,7 @@ function DealCardInner({ deal, isDraggingOverlay = false }: { deal: Deal; isDrag
           ${deal.mrr.toLocaleString()}/mo
         </span>
         {deal.channelTag && (
-          <span className="text-xs px-1.5 py-0.5 bg-blue-900/20 text-blue-400 border border-blue-800 rounded">
+          <span className="text-xs px-1.5 py-0.5 bg-muted text-muted-foreground border border-border rounded">
             {deal.channelTag}
           </span>
         )}

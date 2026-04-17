@@ -36,10 +36,12 @@ const SOURCE_LABELS: Record<string, string> = {
 }
 
 const SOURCE_COLORS: Record<string, string> = {
-  intake: "bg-blue-500/10 text-blue-400 border-blue-500/20",
-  onboarding: "bg-amber-500/10 text-amber-400 border-amber-500/20",
-  portal: "bg-green-500/10 text-green-400 border-green-500/20",
-  marketing: "bg-purple-500/10 text-purple-400 border-purple-500/20",
+  // Unified crimson ramp — each source lights a slightly different shade of
+  // the brand so the badges are still distinguishable without going rainbow.
+  intake:     "bg-primary/5 text-primary/80 border-primary/20",
+  onboarding: "bg-primary/10 text-primary border-primary/30",
+  portal:     "bg-emerald-50 text-emerald-700 border-emerald-200",
+  marketing:  "bg-muted/50 text-muted-foreground border-border",
 }
 
 function getMessageText(msg: StoredMessage): string {

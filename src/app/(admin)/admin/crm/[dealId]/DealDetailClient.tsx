@@ -149,10 +149,10 @@ const ACTIVITY_TYPE_OPTIONS: { value: ActivityType; label: string }[] = [
 const PRIORITY_OPTIONS = ["LOW", "MEDIUM", "HIGH", "URGENT"]
 
 const PRIORITY_COLORS: Record<string, string> = {
-  LOW: "text-muted-foreground bg-deep",
-  MEDIUM: "text-blue-400 bg-blue-900/20",
-  HIGH: "text-orange-400 bg-orange-900/20",
-  URGENT: "text-primary bg-primary/10",
+  LOW: "text-muted-foreground bg-muted/40",
+  MEDIUM: "text-primary/70 bg-primary/5",
+  HIGH: "text-primary bg-primary/10",
+  URGENT: "text-primary bg-primary/15 border border-primary/40",
 }
 
 
@@ -163,8 +163,8 @@ function leadScoreBadge(score: number | null | undefined, tier: string | null | 
     label === "hot"
       ? "text-primary bg-primary/10 border-primary/30"
       : label === "warm"
-        ? "text-amber-400 bg-amber-900/20 border-amber-800"
-        : "text-muted-foreground bg-deep border-border"
+        ? "text-primary/70 bg-primary/5 border-primary/20"
+        : "text-muted-foreground bg-muted/40 border-border"
   return { label, colors }
 }
 
@@ -222,7 +222,7 @@ function InlineField({
             href={href}
             target={href.startsWith("http") ? "_blank" : undefined}
             rel="noopener noreferrer"
-            className="flex-1 text-sm text-blue-400 hover:underline truncate"
+            className="flex-1 text-sm text-primary hover:underline truncate"
           >
             {value}
           </a>
@@ -428,12 +428,12 @@ export function DealDetailClient({
     stage === currentStage
       ? stageColor
       : {
-          APPLICATION_SUBMITTED: "text-muted-foreground bg-deep border-border",
-          CONSULT_BOOKED: "text-blue-400 bg-blue-900/20 border-blue-800",
-          CONSULT_COMPLETED: "text-purple-400 bg-purple-900/20 border-purple-800",
-          MIGHTY_INVITED: "text-amber-400 bg-amber-900/20 border-amber-800",
-          MEMBER_JOINED: "text-green-400 bg-green-900/20 border-green-800",
-          LOST: "text-muted-foreground bg-deep border-border",
+          APPLICATION_SUBMITTED: "text-muted-foreground bg-muted/50 border-border",
+          CONSULT_BOOKED: "text-primary bg-primary/5 border-primary/30",
+          CONSULT_COMPLETED: "text-primary bg-primary/10 border-primary/40",
+          MIGHTY_INVITED: "text-primary bg-primary/15 border-primary/50",
+          MEMBER_JOINED: "text-emerald-700 bg-emerald-50 border-emerald-200",
+          LOST: "text-muted-foreground bg-muted/30 border-border",
         }[stage] ?? stageColor
 
   const scoreBadge = leadScoreBadge(leadScore, leadScoreTier)
@@ -566,8 +566,8 @@ export function DealDetailClient({
                         className={cn(
                           "text-xs px-2 py-0.5 rounded border font-medium",
                           sa.status === "active"
-                            ? "text-green-400 bg-green-900/20 border-green-800"
-                            : "text-muted-foreground bg-deep border-border"
+                            ? "text-emerald-700 bg-emerald-50 border-emerald-200"
+                            : "text-muted-foreground bg-muted/40 border-border"
                         )}
                       >
                         {sa.status}
@@ -832,7 +832,7 @@ export function DealDetailClient({
             <div className="text-center py-2">
               <p className={cn(
                 "text-4xl font-bold font-mono",
-                leadScore == null ? "text-muted-foreground" : leadScore >= 70 ? "text-primary" : leadScore >= 40 ? "text-amber-400" : "text-muted-foreground"
+                leadScore == null ? "text-muted-foreground" : leadScore >= 70 ? "text-primary" : leadScore >= 40 ? "text-primary/70" : "text-muted-foreground"
               )}>
                 {leadScore ?? "--"}
               </p>
@@ -867,7 +867,7 @@ export function DealDetailClient({
                 {source && (
                   <div className="flex items-center justify-between">
                     <span className="text-muted-foreground">Source</span>
-                    <span className="px-2 py-0.5 bg-blue-900/20 text-blue-400 border border-blue-800 rounded font-medium">
+                    <span className="px-2 py-0.5 bg-muted text-muted-foreground border border-border rounded font-medium">
                       {source}
                     </span>
                   </div>

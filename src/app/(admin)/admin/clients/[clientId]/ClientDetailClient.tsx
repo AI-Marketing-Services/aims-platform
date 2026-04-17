@@ -113,43 +113,43 @@ interface Props {
 // ── Helpers ──
 
 const STAGE_CONFIG: Record<string, { label: string; class: string }> = {
-  APPLICATION_SUBMITTED: { label: "Applied",           class: "text-muted-foreground bg-deep border-border" },
-  CONSULT_BOOKED:        { label: "Consult Booked",    class: "text-blue-400 bg-blue-900/20 border-blue-800" },
-  CONSULT_COMPLETED:     { label: "Consult Completed", class: "text-purple-400 bg-purple-900/20 border-purple-800" },
-  MIGHTY_INVITED:        { label: "Mighty Invited",    class: "text-amber-400 bg-amber-900/20 border-amber-800" },
-  MEMBER_JOINED:         { label: "Member Joined",     class: "text-green-400 bg-green-900/15 border-green-800" },
-  LOST:                  { label: "Lost / Ghosted",    class: "text-muted-foreground bg-deep border-border" },
+  APPLICATION_SUBMITTED: { label: "Applied",           class: "text-muted-foreground bg-muted/50 border-border" },
+  CONSULT_BOOKED:        { label: "Consult Booked",    class: "text-primary bg-primary/5 border-primary/30" },
+  CONSULT_COMPLETED:     { label: "Consult Completed", class: "text-primary bg-primary/10 border-primary/40" },
+  MIGHTY_INVITED:        { label: "Mighty Invited",    class: "text-primary bg-primary/15 border-primary/50" },
+  MEMBER_JOINED:         { label: "Member Joined",     class: "text-emerald-700 bg-emerald-50 border-emerald-200" },
+  LOST:                  { label: "Lost / Ghosted",    class: "text-muted-foreground bg-muted/30 border-border" },
 }
 
 const SUB_STATUS_CONFIG: Record<string, { label: string; class: string }> = {
-  ACTIVE: { label: "Active", class: "text-green-400 bg-green-900/15 border-green-800" },
-  TRIALING: { label: "Trialing", class: "text-blue-400 bg-blue-900/20 border-blue-800" },
+  ACTIVE: { label: "Active", class: "text-emerald-700 bg-emerald-50 border-emerald-200" },
+  TRIALING: { label: "Trialing", class: "text-primary bg-primary/5 border-primary/30" },
   PAST_DUE: { label: "Past Due", class: "text-primary bg-primary/10 border-primary/30" },
-  CANCELLED: { label: "Cancelled", class: "text-muted-foreground bg-deep border-border" },
-  PAUSED: { label: "Paused", class: "text-yellow-400 bg-yellow-900/20 border-yellow-800" },
+  CANCELLED: { label: "Cancelled", class: "text-muted-foreground bg-muted/40 border-border" },
+  PAUSED: { label: "Paused", class: "text-muted-foreground bg-muted/50 border-border" },
 }
 
 const FULFILLMENT_STATUS_CONFIG: Record<string, { label: string; class: string }> = {
-  PENDING_SETUP: { label: "Pending Setup", class: "text-yellow-400 bg-yellow-900/20 border-yellow-800" },
-  IN_PROGRESS: { label: "In Progress", class: "text-blue-400 bg-blue-900/20 border-blue-800" },
-  ACTIVE_MANAGED: { label: "Active", class: "text-green-400 bg-green-900/15 border-green-800" },
+  PENDING_SETUP: { label: "Pending Setup", class: "text-muted-foreground bg-muted/50 border-border" },
+  IN_PROGRESS: { label: "In Progress", class: "text-primary bg-primary/5 border-primary/30" },
+  ACTIVE_MANAGED: { label: "Active", class: "text-emerald-700 bg-emerald-50 border-emerald-200" },
   NEEDS_ATTENTION: { label: "Needs Attention", class: "text-primary bg-primary/10 border-primary/30" },
-  COMPLETED: { label: "Completed", class: "text-muted-foreground bg-deep border-border" },
-  ON_HOLD: { label: "On Hold", class: "text-muted-foreground bg-deep border-border" },
+  COMPLETED: { label: "Completed", class: "text-muted-foreground bg-muted/40 border-border" },
+  ON_HOLD: { label: "On Hold", class: "text-muted-foreground bg-muted/40 border-border" },
 }
 
 const TICKET_STATUS_CONFIG: Record<string, { label: string; class: string }> = {
-  open: { label: "Open", class: "text-blue-400 bg-blue-900/20 border-blue-800" },
-  in_progress: { label: "In Progress", class: "text-yellow-400 bg-yellow-900/20 border-yellow-800" },
-  resolved: { label: "Resolved", class: "text-green-400 bg-green-900/15 border-green-800" },
-  closed: { label: "Closed", class: "text-muted-foreground bg-deep border-border" },
+  open: { label: "Open", class: "text-primary bg-primary/5 border-primary/30" },
+  in_progress: { label: "In Progress", class: "text-primary bg-primary/10 border-primary/40" },
+  resolved: { label: "Resolved", class: "text-emerald-700 bg-emerald-50 border-emerald-200" },
+  closed: { label: "Closed", class: "text-muted-foreground bg-muted/40 border-border" },
 }
 
 
 function healthColor(score: number): string {
-  if (score >= 70) return "text-green-400 bg-green-900/15 border-green-800"
-  if (score >= 40) return "text-yellow-400 bg-yellow-900/20 border-yellow-800"
-  return "text-primary bg-primary/10 border-primary/30"
+  if (score >= 70) return "text-emerald-700 bg-emerald-50 border-emerald-200"
+  if (score >= 40) return "text-primary bg-primary/10 border-primary/30"
+  return "text-primary bg-primary/15 border-primary/40"
 }
 
 function healthLabel(score: number): string {
@@ -238,7 +238,7 @@ export function ClientDetailClient({
                   </span>
                 )}
                 {user.website && (
-                  <a href={user.website.startsWith("http") ? user.website : `https://${user.website}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-blue-400 hover:underline">
+                  <a href={user.website.startsWith("http") ? user.website : `https://${user.website}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-primary hover:underline">
                     <Globe className="w-3 h-3" /> {user.website}
                   </a>
                 )}
@@ -338,11 +338,11 @@ export function ClientDetailClient({
                             {sub.tier && <span className="text-xs text-muted-foreground">{sub.tier}</span>}
                             <span className={cn("text-xs px-2 py-0.5 rounded border", fs.class)}>{fs.label}</span>
                             {sub.onboardingCompletedAt ? (
-                              <span className="text-xs text-green-400 flex items-center gap-1">
+                              <span className="text-xs text-emerald-700 flex items-center gap-1">
                                 <CheckCircle2 className="w-3 h-3" /> Onboarded
                               </span>
                             ) : (
-                              <span className="text-xs text-amber-400 flex items-center gap-1">
+                              <span className="text-xs text-primary flex items-center gap-1">
                                 <AlertCircle className="w-3 h-3" /> Onboarding
                               </span>
                             )}
@@ -402,11 +402,11 @@ export function ClientDetailClient({
                         <span className={cn("text-xs px-2 py-0.5 rounded border", ss.class)}>{ss.label}</span>
                         <span className={cn("text-xs px-2 py-0.5 rounded border", fs.class)}>{fs.label}</span>
                         {sub.onboardingCompletedAt ? (
-                          <span className="text-xs text-green-400 flex items-center gap-1">
+                          <span className="text-xs text-emerald-700 flex items-center gap-1">
                             <CheckCircle2 className="w-3 h-3" /> Onboarded {formatDate(sub.onboardingCompletedAt)}
                           </span>
                         ) : (
-                          <span className="text-xs text-amber-400 flex items-center gap-1">
+                          <span className="text-xs text-primary flex items-center gap-1">
                             <AlertCircle className="w-3 h-3" /> Onboarding pending
                           </span>
                         )}
@@ -427,9 +427,9 @@ export function ClientDetailClient({
                                 </span>
                                 <span className={cn(
                                   "px-1.5 py-0.5 rounded",
-                                  task.status === "done" ? "text-green-400 bg-green-900/15" :
-                                  task.status === "in_progress" ? "text-blue-400 bg-blue-900/20" :
-                                  "text-muted-foreground bg-deep"
+                                  task.status === "done" ? "text-emerald-700 bg-emerald-50" :
+                                  task.status === "in_progress" ? "text-primary bg-primary/10" :
+                                  "text-muted-foreground bg-muted/40"
                                 )}>
                                   {task.status}
                                 </span>
@@ -533,9 +533,9 @@ export function ClientDetailClient({
                   <div key={item.id + item.createdAt} className="flex items-start gap-3">
                     <div className={cn(
                       "flex h-7 w-7 items-center justify-center rounded-lg flex-shrink-0 mt-0.5",
-                      item.type === "deal" ? "bg-blue-900/20 text-blue-400" :
-                      item.type === "ticket" ? "bg-amber-900/20 text-amber-400" :
-                      "bg-green-900/20 text-green-400"
+                      item.type === "deal" ? "bg-primary/10 text-primary" :
+                      item.type === "ticket" ? "bg-primary/5 text-primary/70" :
+                      "bg-emerald-50 text-emerald-700"
                     )}>
                       {item.type === "deal" && <TrendingUp className="w-3.5 h-3.5" />}
                       {item.type === "ticket" && <Headphones className="w-3.5 h-3.5" />}

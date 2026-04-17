@@ -270,7 +270,7 @@ export function FollowUpsClient({
                     <span>Auto-reminder {timeAgo(row.reminderSentAt)}</span>
                   )}
                   {row.contactedAt && (
-                    <span className="text-green-600">
+                    <span className="text-emerald-700">
                       Contacted {timeAgo(row.contactedAt)}
                     </span>
                   )}
