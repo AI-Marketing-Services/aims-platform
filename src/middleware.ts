@@ -79,17 +79,11 @@ async function resolveRole(
 ): Promise<string> {
   const claimRole =
     sessionClaims?.metadata?.role ?? sessionClaims?.publicMetadata?.role
-  if (claimRole) {
-    console.log(`[middleware] role from claim: ${claimRole} user=${userId}`)
-    return claimRole
-  }
+  if (claimRole) return claimRole
   try {
     const user = await (await clerkClient()).users.getUser(userId)
-    const role = (user.publicMetadata as { role?: string })?.role ?? "CLIENT"
-    console.log(`[middleware] role from api fallback: ${role} user=${userId} publicMetadata=${JSON.stringify(user.publicMetadata)}`)
-    return role
-  } catch (err) {
-    console.error(`[middleware] clerkClient fallback threw for user=${userId}:`, err)
+    return (user.publicMetadata as { role?: string })?.role ?? "CLIENT"
+  } catch {
     return "CLIENT"
   }
 }
