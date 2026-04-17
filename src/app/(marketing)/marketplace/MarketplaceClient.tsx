@@ -159,6 +159,7 @@ export function MarketplaceClient({ services }: { services: PublicService[] }) {
   const [search, setSearch] = useState("")
 
   const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase()
     return services.filter((s) => {
       const matchPillar = pillar === "ALL" || s.pillar === pillar
       const matchType =
@@ -166,14 +167,17 @@ export function MarketplaceClient({ services }: { services: PublicService[] }) {
         (typeFilter === "SELF_SERVE" && s.isSelfServe) ||
         (typeFilter === "CUSTOM" && !s.isSelfServe)
       const matchSearch =
-        !search ||
-        s.name.toLowerCase().includes(search.toLowerCase()) ||
-        s.shortDesc.toLowerCase().includes(search.toLowerCase())
+        !q ||
+        s.name.toLowerCase().includes(q) ||
+        s.shortDesc.toLowerCase().includes(q)
       return matchPillar && matchType && matchSearch
     })
   }, [services, pillar, typeFilter, search])
 
-  const selfServeCount = services.filter((s) => s.isSelfServe).length
+  const selfServeCount = useMemo(
+    () => services.filter((s) => s.isSelfServe).length,
+    [services]
+  )
 
   return (
     <div className="min-h-screen bg-background">
