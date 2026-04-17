@@ -599,12 +599,19 @@ export async function createInvite(
 
 export async function inviteToPlan(
   planId: number,
-  params: CreateInviteParams,
+  params: CreateInviteParams & { message?: string },
   errorBag?: MightyErrorBag
 ): Promise<MightyInvite | null> {
-  return mightyFetch<MightyInvite>(`/plans/${planId}/invites`, {
+  // Per Mighty Networks API (v1): plan-specific invite takes QUERY PARAMS
+  // (email, user_id, message) — NOT a JSON body. Sending recipient_email /
+  // recipient_first_name / recipient_last_name returns 400 "Unexpected
+  // parameters". first/last name come back in the response but are not
+  // accepted as request parameters on this endpoint.
+  const qs = new URLSearchParams()
+  qs.set("email", params.recipient_email)
+  if (params.message) qs.set("message", params.message)
+  return mightyFetch<MightyInvite>(`/plans/${planId}/invites?${qs.toString()}`, {
     method: "POST",
-    body: JSON.stringify(params),
     context: "inviteToPlan",
     errorBag,
   })

@@ -70,10 +70,10 @@ export default async function MightyInviteAuditPage() {
 
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-6">
         <Stat label="Total" value={counts.total} tone="muted" />
-        <Stat label="Sent" value={counts.sent} tone="blue" />
-        <Stat label="Pending" value={counts.pending} tone="amber" />
-        <Stat label="Accepted" value={counts.accepted} tone="green" />
-        <Stat label="Failed" value={counts.failed} tone="red" />
+        <Stat label="Sent" value={counts.sent} tone="muted" />
+        <Stat label="Pending" value={counts.pending} tone="muted" />
+        <Stat label="Accepted" value={counts.accepted} tone="strong" />
+        <Stat label="Failed" value={counts.failed} tone="accent" />
       </div>
 
       {rows.length === 0 ? (
@@ -98,14 +98,15 @@ function Stat({
 }: {
   label: string
   value: number
-  tone: "muted" | "blue" | "amber" | "green" | "red"
+  tone: "muted" | "accent" | "strong"
 }) {
+  // Keep the palette on-brand: neutral for informational counts, crimson
+  // highlight for anything that needs the admin's attention (failures),
+  // deeper crimson for success milestones.
   const toneClass: Record<typeof tone, string> = {
-    muted: "text-muted-foreground border-border",
-    blue: "text-blue-400 border-blue-800",
-    amber: "text-amber-400 border-amber-800",
-    green: "text-green-400 border-green-800",
-    red: "text-primary border-primary/30",
+    muted: "text-foreground border-border",
+    accent: "text-primary border-primary/40 bg-primary/5",
+    strong: "text-primary border-primary/30",
   }
   return (
     <div className={`bg-card border rounded-lg px-4 py-3 ${toneClass[tone]}`}>

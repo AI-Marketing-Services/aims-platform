@@ -22,12 +22,15 @@ export type AuditRow = {
   acceptedAt: string | null
 }
 
+// Single-brand palette: neutral for in-progress / informational states,
+// crimson for outcomes that need attention. Green reserved for the one happy
+// terminal state (accepted) since that's the actual win.
 const STATUS_COLORS: Record<string, string> = {
-  accepted: "text-green-400 bg-green-900/15 border-green-800",
-  sent: "text-blue-400 bg-blue-900/15 border-blue-800",
-  pending: "text-amber-400 bg-amber-900/15 border-amber-800",
+  accepted: "text-emerald-700 bg-emerald-50 border-emerald-200",
+  sent: "text-muted-foreground bg-muted/50 border-border",
+  pending: "text-muted-foreground bg-muted/50 border-border",
   failed: "text-primary bg-primary/10 border-primary/30",
-  expired: "text-muted-foreground bg-deep border-border",
+  expired: "text-muted-foreground bg-muted/30 border-border",
 }
 
 const STATUS_ICONS: Record<string, React.ReactNode> = {
@@ -190,7 +193,7 @@ export function MightyInviteAuditTable({ rows: initialRows }: { rows: AuditRow[]
                 </td>
                 <td className="px-4 py-3 text-xs max-w-md">
                   {r.status === "accepted" && r.acceptedAt && (
-                    <span className="text-green-400">
+                    <span className="text-emerald-700 font-medium">
                       Joined {timeAgo(r.acceptedAt)}
                     </span>
                   )}
