@@ -88,7 +88,7 @@ export function AddDealModal({ stage, onClose, onCreated }: Props) {
       <div className="relative bg-card border border-border rounded-2xl p-6 w-full max-w-md mx-4 shadow-2xl">
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-base font-semibold text-foreground">Add Deal</h2>
-          <button onClick={onClose} className="p-1 hover:bg-accent rounded-lg transition-colors text-muted-foreground hover:text-foreground">
+          <button onClick={onClose} aria-label="Close dialog" className="p-1 hover:bg-accent rounded-lg transition-colors text-muted-foreground hover:text-foreground">
             <X className="w-4 h-4" />
           </button>
         </div>

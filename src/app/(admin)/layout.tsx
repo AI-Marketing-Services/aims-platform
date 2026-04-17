@@ -35,7 +35,7 @@ export default async function AdminLayout({
 
       <div className="flex h-[calc(100dvh-3.5rem)] lg:h-screen overflow-hidden">
         <AdminSidebar />
-        <main className="flex-1 overflow-y-auto custom-scrollbar">
+        <main id="main-content" className="flex-1 overflow-y-auto custom-scrollbar">
           <PageTransition>
             <div className="p-4 pb-20 lg:p-6 lg:pb-8 xl:p-8">{children}</div>
           </PageTransition>

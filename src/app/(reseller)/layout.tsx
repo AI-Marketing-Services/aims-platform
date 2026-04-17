@@ -71,7 +71,7 @@ export default async function ResellerLayout({
             <UserButton />
           </div>
         </aside>
-        <main className="flex-1 overflow-y-auto custom-scrollbar">
+        <main id="main-content" className="flex-1 overflow-y-auto custom-scrollbar">
           <PageTransition>
             <div className="p-4 pb-20 lg:p-6 lg:pb-8 xl:p-8">{children}</div>
           </PageTransition>

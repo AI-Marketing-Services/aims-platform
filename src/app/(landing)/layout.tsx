@@ -12,7 +12,7 @@ export default function LandingLayout({
       <style>{`html { scroll-behavior: smooth; scroll-padding-top: 96px; }`}</style>
       <AnnouncementBar />
       <CommunityNav />
-      <main className="flex-1">{children}</main>
+      <main id="main-content" className="flex-1">{children}</main>
       <CommunityFooter />
     </div>
   )
