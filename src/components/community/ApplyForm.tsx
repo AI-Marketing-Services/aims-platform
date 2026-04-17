@@ -18,7 +18,6 @@ import {
   getStepIntro,
   getCalendarIntro,
   getContactIntro,
-  getCalendarOwner,
   type CountryCode,
 } from "@/lib/collective-application"
 
