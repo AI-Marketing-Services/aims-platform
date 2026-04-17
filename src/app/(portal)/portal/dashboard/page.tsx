@@ -42,7 +42,19 @@ export default async function PortalDashboard({
   const user = await currentUser()
 
   const userEmail = user?.emailAddresses?.[0]?.emailAddress ?? ""
-  const firstName = user?.firstName ?? "there"
+  // Clerk's firstName is null for accounts created via SSO/email-only signup.
+  // Fall back to the first word of fullName, then the email local-part,
+  // then a neutral greeting. Capitalise the email-derived fallback.
+  const emailLocalPart = userEmail.split("@")[0] ?? ""
+  const capitalisedEmailName = emailLocalPart
+    .replace(/[._-]/g, " ")
+    .split(" ")[0]
+    ?.replace(/^\w/, (c) => c.toUpperCase())
+  const firstName =
+    user?.firstName ||
+    user?.fullName?.split(" ")[0] ||
+    capitalisedEmailName ||
+    "there"
 
   const dbUser = clerkId
     ? await db.user.findUnique({
