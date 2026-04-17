@@ -537,21 +537,25 @@ export async function getMember(memberId: number): Promise<MightyMember | null> 
 }
 
 export async function getMemberByEmail(
-  email: string
+  email: string,
+  errorBag?: MightyErrorBag
 ): Promise<MightyMember | null> {
   return mightyFetch<MightyMember>(`/members/email/${encodeURIComponent(email)}`, {
     method: "GET",
     context: "getMemberByEmail",
+    errorBag,
   })
 }
 
 export async function createMember(
-  params: CreateMemberParams
+  params: CreateMemberParams,
+  errorBag?: MightyErrorBag
 ): Promise<MightyMember | null> {
   return mightyFetch<MightyMember>("/members", {
     method: "POST",
     body: JSON.stringify(params),
     context: "createMember",
+    errorBag,
   })
 }
 
@@ -754,7 +758,8 @@ export async function getPlan(
 
 export async function addMemberToPlan(
   planId: number,
-  memberId: number
+  memberId: number,
+  errorBag?: MightyErrorBag
 ): Promise<boolean> {
   const result = await mightyFetch<Record<string, unknown>>(
     `/plans/${planId}/members`,
@@ -762,13 +767,100 @@ export async function addMemberToPlan(
       method: "POST",
       body: JSON.stringify({ member_id: memberId }),
       context: "addMemberToPlan",
+      errorBag,
     }
   )
   return result !== null
 }
 
-// ─── Convenience: Known IDs ──────────────────────────────
-// These are the live IDs from the AI Operator Collective network.
+// ─── High-level: provision a community member in one call ──────────────
+//
+// The canonical way to invite someone to the Collective WITHOUT routing
+// them through Mighty's approval queue. Upserts the member (create if
+// new, reuse if existing) and adds them to the specified plan. Returns
+// the resolved MightyMember so we can surface the Mighty subdomain login
+// link back in our own branded email.
+//
+// Why this instead of `inviteToPlan`:
+//   - Mighty's invite email looks barren and still gates the user behind
+//     a "Pending Approval" screen per the network's approval settings.
+//   - Direct member provisioning is instant — no approval, no signup
+//     flow from the user's side.
+//   - We send our own branded email (with Mighty login URL) from Resend.
+export async function provisionCollectiveMember(
+  params: {
+    email: string
+    firstName?: string | null
+    lastName?: string | null
+    planId: number
+  },
+  errorBag?: MightyErrorBag
+): Promise<{
+  member: MightyMember
+  createdMember: boolean
+  addedToPlan: boolean
+  alreadyOnPlan: boolean
+} | null> {
+  // 1. Look for an existing member first. Dedup avoids a create call that
+  //    would 409-Conflict and churn the errorBag with a misleading reason.
+  const existing = await getMemberByEmail(params.email, errorBag)
+  let member: MightyMember | null = existing
+  let createdMember = false
+
+  if (!member) {
+    // Clear the "not found" errorBag before the create attempt — it's
+    // expected that email lookup 404s on new members.
+    if (errorBag) {
+      errorBag.message = ""
+      errorBag.status = undefined
+    }
+    member = await createMember(
+      {
+        email: params.email,
+        first_name: params.firstName ?? undefined,
+        last_name: params.lastName ?? undefined,
+      },
+      errorBag
+    )
+    if (!member) return null
+    createdMember = true
+  }
+
+  // 2. Add them to the specified plan. If Mighty returns a "already on
+  //    this plan" response (2xx no-op or 409) we still count as success.
+  const planErrorBag: MightyErrorBag = { message: "" }
+  const addResult = await addMemberToPlan(params.planId, member.id, planErrorBag)
+  const alreadyOnPlan =
+    !addResult && (planErrorBag.status === 409 || /already/i.test(planErrorBag.message))
+
+  if (!addResult && !alreadyOnPlan) {
+    if (errorBag) {
+      errorBag.message = planErrorBag.message || "Failed to add member to plan"
+      errorBag.status = planErrorBag.status
+    }
+    return null
+  }
+
+  return {
+    member,
+    createdMember,
+    addedToPlan: addResult,
+    alreadyOnPlan,
+  }
+}
+
+// ─── Convenience: Known IDs + URLs ───────────────────────
+// Live IDs from the AI Operator Collective network.
+
+export const MIGHTY_SUBDOMAIN = "aioperatorcollective"
+export const MIGHTY_NETWORK_URL = `https://${MIGHTY_SUBDOMAIN}.mn.co`
+
+/** URL we send new members to for magic-link login. */
+export function mightyLoginUrl(email?: string): string {
+  const base = `${MIGHTY_NETWORK_URL}/log-in`
+  if (!email) return base
+  return `${base}?email=${encodeURIComponent(email)}`
+}
 
 export const MIGHTY_IDS = {
   network: 23411751,

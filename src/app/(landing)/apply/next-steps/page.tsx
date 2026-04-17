@@ -1,9 +1,7 @@
 import type { Metadata } from "next"
-import Link from "next/link"
 import { ToolLogo } from "./ToolLogo"
 import {
   CheckCircle2,
-  ArrowRight,
   Calendar,
   FileText,
   Sparkles,
@@ -451,16 +449,12 @@ export default function PostBookingNextStepsPage() {
             See you on the call.
           </h2>
           <p className="text-[#4B5563] max-w-xl mx-auto mb-6 text-base sm:text-lg">
-            Save this page — we&apos;ll keep adding case studies and playbooks
-            here so your pre-call prep stays fresh.
+            Bookmark this page — we&apos;ll keep adding case studies,
+            playbooks, and tools here so your pre-call prep stays fresh.
           </p>
-          <Link
-            href="/apply"
-            className="inline-flex items-center gap-2 text-sm font-mono uppercase tracking-wider text-crimson hover:text-crimson-dark"
-          >
-            Back to application
-            <ArrowRight className="w-4 h-4" />
-          </Link>
+          <p className="text-xs font-mono uppercase tracking-wider text-[#9CA3AF]">
+            AI Operator Collective · aioperatorcollective.com
+          </p>
         </div>
       </section>
     </main>
