@@ -87,6 +87,37 @@ export async function POST(req: Request) {
     // community funnel, not the score.
     const stage = "APPLICATION_SUBMITTED" as const
 
+    // 30-second double-submit guard. If the same email just submitted the
+    // form, return the prior result instead of inserting a duplicate
+    // submission + activity log entry. Rate limit already catches spam;
+    // this catches the mundane "user double-clicked Submit" case.
+    const recentSubmission = await db.leadMagnetSubmission
+      .findFirst({
+        where: {
+          email,
+          type: "COLLECTIVE_APPLICATION",
+          createdAt: { gte: new Date(Date.now() - 30 * 1000) },
+        },
+        select: { id: true, score: true, createdAt: true },
+      })
+      .catch(() => null)
+
+    if (recentSubmission) {
+      logger.info(
+        `Ignored duplicate apply-submit within 30s for ${email}`,
+        { action: "apply_duplicate_submit" }
+      )
+      return NextResponse.json(
+        {
+          ok: true,
+          duplicate: true,
+          score: recentSubmission.score ?? normalizedScore,
+          tier,
+        },
+        { status: 200 }
+      )
+    }
+
     // Always create a new submission record (full audit of every answer set).
     const submission = await db.leadMagnetSubmission
       .create({
@@ -206,50 +237,66 @@ export async function POST(req: Request) {
       }
     }
 
+    // Critical: the Deal is what makes this applicant visible in the admin
+    // CRM. If the Deal write failed we have either a phantom submission
+    // (admin never sees them) or nothing at all. Return 500 so the form
+    // shows a real error and the applicant can try again, and so the
+    // failure surfaces in Vercel logs instead of being swept away.
+    if (!deal) {
+      logger.error(
+        `apply: Deal creation failed for ${email} — applicant will NOT surface in CRM`,
+        null,
+        { action: "apply_deal_write_failed", endpoint: "POST /api/community/apply" }
+      )
+      return NextResponse.json(
+        {
+          error:
+            "We couldn't save your application. Please try again or email noreply@aioperatorcollective.com if this keeps happening.",
+        },
+        { status: 500 }
+      )
+    }
+
     // Mark any partial application for this email as completed so the
     // abandoned-application cron stops targeting them.
-    if (deal) {
-      db.partialApplication
-        .updateMany({
-          where: { email, completedAt: null },
-          data: { completedAt: new Date(), dealId: deal.id },
-        })
-        .catch((err) =>
-          logger.error("Failed to mark partial application as completed", err)
-        )
-    }
+    db.partialApplication
+      .updateMany({
+        where: { email, completedAt: null },
+        data: { completedAt: new Date(), dealId: deal.id },
+      })
+      .catch((err) =>
+        logger.error("Failed to mark partial application as completed", err)
+      )
 
     // Email drips only queue AFTER the applicant books a call (see Calendly
     // webhook). If they never book, the nurture-unbooked cron handles day
     // 2/5/9 booking reminders. No drip fires at apply-submit time — the
     // prospect hasn't proven intent yet.
 
-    if (deal) {
-      if (tier === "hot") {
-        notifyHotLead({
-          dealId: deal.id,
-          name,
-          email,
-          phone,
-          score: normalizedScore,
-          tier,
-          country,
-          reason,
-          calLink: getCalendarUrl(tier),
-        }).catch((err) => logger.error("Failed to notify hot lead", err))
-      } else {
-        notify({
-          type: "new_lead",
-          title: `New Collective Application (${tier.toUpperCase()})`,
-          message: `${name} (${email}) scored ${normalizedScore}/100. Tier: ${tier}. Phone: ${phone}. Country: ${country}.`,
-          urgency: "normal",
-        }).catch((err) => logger.error("Failed to notify application", err))
-      }
-
-      // Close CRM integration intentionally disabled — no Close workspace
-      // provisioned for this funnel yet. To re-enable, call createCloseLead
-      // from @/lib/close and persist the returned closeLeadId onto Deal.
+    if (tier === "hot") {
+      notifyHotLead({
+        dealId: deal.id,
+        name,
+        email,
+        phone,
+        score: normalizedScore,
+        tier,
+        country,
+        reason,
+        calLink: getCalendarUrl(tier),
+      }).catch((err) => logger.error("Failed to notify hot lead", err))
+    } else {
+      notify({
+        type: "new_lead",
+        title: `New Collective Application (${tier.toUpperCase()})`,
+        message: `${name} (${email}) scored ${normalizedScore}/100. Tier: ${tier}. Phone: ${phone}. Country: ${country}.`,
+        urgency: "normal",
+      }).catch((err) => logger.error("Failed to notify application", err))
     }
+
+    // Close CRM integration intentionally disabled — no Close workspace
+    // provisioned for this funnel yet. To re-enable, call createCloseLead
+    // from @/lib/close and persist the returned closeLeadId onto Deal.
 
     return NextResponse.json({ ok: true, score: normalizedScore, tier }, { status: 201 })
   } catch (err) {

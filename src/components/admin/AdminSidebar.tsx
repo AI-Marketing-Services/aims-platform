@@ -28,10 +28,60 @@ import {
   Gauge,
   UserPlus,
 } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { NotificationBell } from "@/components/shared/NotificationBell"
+
+// Badge counts keyed by nav href. Fetched from /api/admin/nav-counts on
+// mount + every 60s. Misses degrade gracefully — no badge shown.
+type NavCounts = {
+  applications: number
+  crm: number
+  mightyInvites: number
+  followUps: number
+  support: number
+}
+
+const HREF_TO_BADGE_KEY: Partial<Record<string, keyof NavCounts>> = {
+  "/admin/applications": "applications",
+  "/admin/crm": "crm",
+  "/admin/mighty-invites": "mightyInvites",
+  "/admin/follow-ups": "followUps",
+  "/admin/support": "support",
+}
+
+function useNavCounts(): NavCounts {
+  const [counts, setCounts] = useState<NavCounts>({
+    applications: 0,
+    crm: 0,
+    mightyInvites: 0,
+    followUps: 0,
+    support: 0,
+  })
+
+  useEffect(() => {
+    let cancelled = false
+    async function load() {
+      try {
+        const res = await fetch("/api/admin/nav-counts", { cache: "no-store" })
+        if (!res.ok) return
+        const body = (await res.json()) as { counts?: NavCounts }
+        if (!cancelled && body?.counts) setCounts(body.counts)
+      } catch {
+        // ignore — badges are informational
+      }
+    }
+    load()
+    const interval = setInterval(load, 60_000)
+    return () => {
+      cancelled = true
+      clearInterval(interval)
+    }
+  }, [])
+
+  return counts
+}
 
 const ADMIN_NAV = [
   {
@@ -88,6 +138,7 @@ const ADMIN_NAV = [
 export function AdminSidebar() {
   const pathname = usePathname()
   const [collapsed, setCollapsed] = useState(false)
+  const counts = useNavCounts()
 
   return (
     <aside
@@ -162,14 +213,33 @@ export function AdminSidebar() {
                     <Link
                       href={item.href}
                       className={cn(
-                        "flex items-center gap-3 rounded-lg py-2 text-sm font-medium transition-all duration-150",
+                        "relative flex items-center gap-3 rounded-lg py-2 text-sm font-medium transition-all duration-150",
                         isActive
                           ? "border-l-2 border-primary pl-[10px] pr-3 bg-primary/10 text-primary"
                           : "border-l-2 border-transparent pl-[10px] pr-3 text-muted-foreground hover:text-foreground hover:bg-surface/80 hover:pl-[14px]"
                       )}
                     >
                       <item.icon className="h-4 w-4 shrink-0" />
-                      {!collapsed && <span>{item.label}</span>}
+                      {!collapsed && <span className="flex-1">{item.label}</span>}
+                      {(() => {
+                        const badgeKey = HREF_TO_BADGE_KEY[item.href]
+                        const badgeCount = badgeKey ? counts[badgeKey] : 0
+                        if (!badgeCount || badgeCount <= 0) return null
+                        return (
+                          <span
+                            className={cn(
+                              "shrink-0 min-w-[20px] h-[18px] px-1.5 rounded-full text-[10px] font-semibold inline-flex items-center justify-center font-mono",
+                              item.href === "/admin/mighty-invites" && badgeCount > 0
+                                ? "bg-primary text-white"
+                                : "bg-primary/15 text-primary",
+                              collapsed && "absolute top-1 right-1 min-w-[14px] h-[14px] px-0.5 text-[9px]"
+                            )}
+                            aria-label={`${badgeCount} pending`}
+                          >
+                            {badgeCount > 99 ? "99+" : badgeCount}
+                          </span>
+                        )
+                      })()}
                     </Link>
                   </motion.div>
                 )

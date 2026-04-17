@@ -1,6 +1,8 @@
+import { Suspense } from "react"
 import { DealStage } from "@prisma/client"
 import { db } from "@/lib/db"
 import type { PipelineFunnelEntry, RevenueByServiceEntry } from "@/components/admin/AdminCharts"
+import { ActionInbox } from "@/components/admin/ActionInbox"
 import { AdminDashboardClient } from "./AdminDashboardClient"
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -395,5 +397,25 @@ export default async function AdminDashboard() {
     openTickets: data.openTickets,
   }
 
-  return <AdminDashboardClient data={serializedData} />
+  return (
+    <div className="space-y-6">
+      {/* Action Inbox streams independently — dashboard shell renders even
+          if ActionInbox's queries are slow. */}
+      <Suspense
+        fallback={
+          <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+            <div className="h-5 w-32 bg-muted/60 rounded animate-pulse mb-4" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="h-24 bg-muted/30 rounded-xl animate-pulse" />
+              ))}
+            </div>
+          </div>
+        }
+      >
+        <ActionInbox />
+      </Suspense>
+      <AdminDashboardClient data={serializedData} />
+    </div>
+  )
 }
