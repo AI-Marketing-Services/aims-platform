@@ -27,6 +27,8 @@ import {
   LifeBuoy,
   Gauge,
   UserPlus,
+  ShieldCheck,
+  Plug,
 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
@@ -83,53 +85,53 @@ function useNavCounts(): NavCounts {
   return counts
 }
 
+// Sidebar trimmed to the community-funnel surfaces + the integrations
+// that drive it. Paying-client / reseller / intern surfaces stay routable
+// but out of the primary nav — they were noise for a community-first
+// launch. Reachable via the "More" group for when they're needed.
 const ADMIN_NAV = [
   {
-    section: "Overview",
+    section: "Community",
     items: [
       { label: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
-      { label: "Services", href: "/admin/services", icon: Settings },
+      { label: "CRM Pipeline", href: "/admin/crm", icon: Kanban },
+      { label: "Applications", href: "/admin/applications", icon: ClipboardCheck },
+      { label: "Follow-ups", href: "/admin/follow-ups", icon: Inbox },
+      { label: "Mighty Invites", href: "/admin/mighty-invites", icon: UserPlus },
     ],
   },
   {
-    section: "CRM",
+    section: "Integrations",
     items: [
-      { label: "Live Funnel", href: "/admin/funnel", icon: FileBarChart },
-      { label: "CRM Pipeline", href: "/admin/crm", icon: Kanban },
-      { label: "Mighty Invites", href: "/admin/mighty-invites", icon: UserPlus },
-      { label: "Close CRM", href: "/admin/close", icon: DollarSign },
-      { label: "Clients", href: "/admin/clients", icon: Users },
-      { label: "Partners", href: "/admin/partners", icon: Users },
-      { label: "Fulfillment", href: "/admin/fulfillment", icon: ClipboardCheck },
+      { label: "Close CRM", href: "/admin/close", icon: Plug },
       { label: "Email Campaigns", href: "/admin/email-campaigns", icon: Mail },
+      { label: "Community Sequence", href: "/admin/community-sequence", icon: Inbox },
+      { label: "Live Funnel", href: "/admin/funnel", icon: FileBarChart },
+    ],
+  },
+  {
+    section: "Team",
+    items: [
+      { label: "Team Access", href: "/admin/users", icon: ShieldCheck },
       { label: "Support Tickets", href: "/admin/support", icon: LifeBuoy },
       { label: "Chat Sessions", href: "/admin/chat-sessions", icon: MessageSquare },
     ],
   },
   {
-    section: "Revenue",
+    section: "More",
     items: [
+      { label: "Clients", href: "/admin/clients", icon: Users },
+      { label: "Services", href: "/admin/services", icon: Settings },
       { label: "Revenue", href: "/admin/revenue", icon: DollarSign },
+      { label: "Fulfillment", href: "/admin/fulfillment", icon: ClipboardCheck },
+      { label: "Partners", href: "/admin/partners", icon: Users },
       { label: "Commissions", href: "/admin/commissions", icon: DollarSign },
       { label: "Lead Magnets", href: "/admin/lead-magnets", icon: FileBarChart },
-      { label: "Applications", href: "/admin/applications", icon: ClipboardCheck },
-      { label: "Follow-ups", href: "/admin/follow-ups", icon: Inbox },
-      { label: "Community Sequence", href: "/admin/community-sequence", icon: Inbox },
-    ],
-  },
-  {
-    section: "Operations",
-    items: [
-      { label: "Ops Excellence", href: "/admin/ops-excellence", icon: Gauge },
       { label: "Intern Ops", href: "/admin/intern-ops", icon: GraduationCap },
+      { label: "Ops Excellence", href: "/admin/ops-excellence", icon: Gauge },
       { label: "Vendor Savings", href: "/admin/vendor-savings", icon: PiggyBank },
       { label: "API Costs", href: "/admin/api-costs", icon: Cpu },
       { label: "Cron Status", href: "/admin/cron-status", icon: Timer },
-    ],
-  },
-  {
-    section: "Dev Tools",
-    items: [
       { label: "Simulate", href: "/admin/simulate", icon: FlaskConical },
       { label: "Email Previews", href: "/admin/email-previews", icon: MailOpen },
     ],

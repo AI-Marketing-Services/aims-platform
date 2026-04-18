@@ -1,406 +1,110 @@
 import { Suspense } from "react"
-import { DealStage } from "@prisma/client"
+import Link from "next/link"
+import {
+  UserPlus,
+  Calendar,
+  ClipboardCheck,
+  FlaskConical,
+  Mail,
+  TrendingUp,
+  ArrowRight,
+} from "lucide-react"
 import { db } from "@/lib/db"
-import type { PipelineFunnelEntry, RevenueByServiceEntry } from "@/components/admin/AdminCharts"
 import { ActionInbox } from "@/components/admin/ActionInbox"
-import { AdminDashboardClient } from "./AdminDashboardClient"
+import { CommunityFunnelChart } from "@/components/admin/CommunityFunnelChart"
 
-// ─── Constants ───────────────────────────────────────────────────────────────
+export const dynamic = "force-dynamic"
 
-const FUNNEL_ORDER = [
-  { key: "APPLICATION_SUBMITTED", label: "Applied" },
-  { key: "CONSULT_BOOKED", label: "Consult Booked" },
-  { key: "CONSULT_COMPLETED", label: "Consult Done" },
-  { key: "MIGHTY_INVITED", label: "Invited" },
-  { key: "MEMBER_JOINED", label: "Joined" },
-] as const
-
-const MRR_TARGET = 100_000
-
-function startOfWeek(): Date {
-  const now = new Date()
-  const day = now.getDay()
-  const diff = now.getDate() - day + (day === 0 ? -6 : 1) // Monday start
-  const start = new Date(now)
-  start.setDate(diff)
-  start.setHours(0, 0, 0, 0)
-  return start
-}
-
-// ─── Data Fetching ────────────────────────────────────────────────────────────
-
-async function getDashboardData() {
-  const now = new Date()
-  const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
-  const sixtyDaysAgo = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000)
-  const weekStart = startOfWeek()
-
-  // Fire all independent DB queries in parallel via Promise.allSettled
-  const [
-    subsResult,
-    pipelineResult,
-    hotLeadsResult,
-    funnelResult,
-    revenueResult,
-    overdueResult,
-    activityResult,
-    workloadResult,
-    // This Week Summary queries
-    weekDealsResult,
-    weekTicketsResolvedResult,
-    weekRevenueResult,
-    weekChatsResult,
-    // Quick Actions: open ticket count
-    openTicketsResult,
-    // Enriched activity feed: support tickets + subscriptions + chat sessions
-    recentTicketsResult,
-    recentSubscriptionsResult,
-  ] = await Promise.allSettled([
-    // 1. Active subscriptions (for MRR + client counts)
-    db.subscription.findMany({
-      where: { status: "ACTIVE" },
-      select: { monthlyAmount: true, createdAt: true, userId: true },
-    }),
-    // 2. Pipeline deals
-    db.deal.findMany({
-      where: { stage: { notIn: ["LOST"] } },
-      select: { value: true, createdAt: true },
-    }),
-    // 3. Hot leads
-    db.deal.findMany({
-      where: { leadScore: { gte: 70 } },
-      orderBy: { leadScore: "desc" },
-      take: 5,
-      select: {
-        id: true,
-        contactName: true,
-        company: true,
-        leadScore: true,
-        source: true,
-        channelTag: true,
-      },
-    }),
-    // 4. Pipeline funnel stage counts
+/**
+ * Minimal community-focused admin dashboard.
+ *
+ * The platform has a lot of dormant paying-client surfaces (MRR,
+ * fulfillment, service revenue, reseller commissions) that are noise
+ * until the software arm launches. This default view shows only what
+ * matters day-one:
+ *
+ *   1. Action Inbox — what needs your attention right now
+ *   2. Community funnel — applications -> consults -> invites -> joined
+ *   3. Quick links to the three surfaces admins actually work from
+ *   4. Most-recent applications
+ *
+ * Full metrics dashboard (charts, MRR, team workload, tickets,
+ * subscriptions) lives at /admin/dashboard/full for when there's data
+ * to visualise.
+ */
+export default async function AdminDashboardPage() {
+  const [funnel, recentSubmissions] = await Promise.all([
     db.deal.groupBy({
       by: ["stage"],
       _count: { id: true },
-      where: {
-        stage: { in: FUNNEL_ORDER.map((f) => f.key as DealStage) },
-      },
     }),
-    // 5. Revenue by service arm + service names
-    Promise.all([
-      db.subscription.groupBy({
-        by: ["serviceArmId"],
-        _sum: { monthlyAmount: true },
-        where: { status: "ACTIVE" },
-      }),
-      db.serviceArm.findMany({
-        select: { id: true, name: true },
-      }),
-    ]),
-    // 6. Overdue fulfillment tasks
-    db.fulfillmentTask.findMany({
-      where: {
-        dueDate: { lt: now },
-        status: { not: "done" },
-      },
-      orderBy: { dueDate: "asc" },
-      take: 10,
-      select: {
-        id: true,
-        title: true,
-        assignedTo: true,
-        dueDate: true,
-        subscription: {
-          select: {
-            user: {
-              select: { name: true, company: true, email: true },
-            },
-          },
-        },
-      },
-    }),
-    // 7. Recent deal activity
-    db.dealActivity.findMany({
+    db.leadMagnetSubmission.findMany({
+      where: { type: "COLLECTIVE_APPLICATION" },
       orderBy: { createdAt: "desc" },
-      take: 10,
+      take: 6,
       select: {
         id: true,
-        type: true,
-        detail: true,
+        email: true,
+        name: true,
+        score: true,
         createdAt: true,
-        deal: { select: { contactName: true, company: true } },
-      },
-    }),
-    // 8. Team workload
-    db.fulfillmentTask.findMany({
-      where: {
-        status: { not: "done" },
-        assignedTo: { not: null },
-      },
-      select: { assignedTo: true, dueDate: true },
-    }),
-    // 9. This Week: new deals
-    db.deal.count({ where: { createdAt: { gte: weekStart } } }),
-    // 10. This Week: tickets resolved
-    db.supportTicket.count({ where: { resolvedAt: { gte: weekStart } } }),
-    // 11. This Week: revenue (subscriptions created this week)
-    db.subscription.findMany({
-      where: { createdAt: { gte: weekStart }, status: "ACTIVE" },
-      select: { monthlyAmount: true },
-    }),
-    // 12. This Week: chat sessions
-    db.chatSession.count({ where: { createdAt: { gte: weekStart } } }),
-    // 13. Open ticket count for quick actions badge
-    db.supportTicket.count({ where: { status: "open" } }),
-    // 14. Recent support tickets for activity feed
-    db.supportTicket.findMany({
-      orderBy: { createdAt: "desc" },
-      take: 5,
-      select: {
-        id: true,
-        subject: true,
-        status: true,
-        createdAt: true,
-        user: { select: { name: true, email: true } },
-      },
-    }),
-    // 15. Recent subscriptions for activity feed
-    db.subscription.findMany({
-      orderBy: { createdAt: "desc" },
-      take: 5,
-      select: {
-        id: true,
-        tier: true,
-        monthlyAmount: true,
-        createdAt: true,
-        serviceArm: { select: { name: true } },
-        user: { select: { name: true, email: true } },
+        dealId: true,
       },
     }),
   ])
 
-  // Process subscriptions -> MRR metrics
-  let mrr = 0
-  let mrrDeltaCurrentPeriod = 0
-  let mrrDeltaPrevPeriod = 0
-  let activeClients = 0
-  let newClientsCurrentPeriod = 0
-  let newClientsPrevPeriod = 0
-
-  if (subsResult.status === "fulfilled") {
-    const activeSubs = subsResult.value
-    mrr = activeSubs.reduce((s, sub) => s + sub.monthlyAmount, 0)
-    activeClients = new Set(activeSubs.map((s) => s.userId)).size
-
-    const currentPeriodSubs = activeSubs.filter((s) => s.createdAt > thirtyDaysAgo)
-    mrrDeltaCurrentPeriod = currentPeriodSubs.reduce((s, sub) => s + sub.monthlyAmount, 0)
-    newClientsCurrentPeriod = new Set(currentPeriodSubs.map((s) => s.userId)).size
-
-    const prevPeriodSubs = activeSubs.filter(
-      (s) => s.createdAt > sixtyDaysAgo && s.createdAt <= thirtyDaysAgo
-    )
-    mrrDeltaPrevPeriod = prevPeriodSubs.reduce((s, sub) => s + sub.monthlyAmount, 0)
-    newClientsPrevPeriod = new Set(prevPeriodSubs.map((s) => s.userId)).size
-  }
-
-  // Process pipeline deals
-  let pipelineValue = 0
-  let pipelineValueCurrentPeriod = 0
-  let pipelineValuePrevPeriod = 0
-
-  if (pipelineResult.status === "fulfilled") {
-    const pipelineDeals = pipelineResult.value
-    pipelineValue = pipelineDeals.reduce((s, d) => s + d.value, 0)
-    const currentPeriodDeals = pipelineDeals.filter((d) => d.createdAt > thirtyDaysAgo)
-    pipelineValueCurrentPeriod = currentPeriodDeals.reduce((s, d) => s + d.value, 0)
-    const prevPeriodDeals = pipelineDeals.filter(
-      (d) => d.createdAt > sixtyDaysAgo && d.createdAt <= thirtyDaysAgo
-    )
-    pipelineValuePrevPeriod = prevPeriodDeals.reduce((s, d) => s + d.value, 0)
-  }
-
-  // Hot leads
-  const hotLeads = hotLeadsResult.status === "fulfilled" ? hotLeadsResult.value : []
-
-  // Pipeline funnel
-  const funnelData: PipelineFunnelEntry[] = []
-  if (funnelResult.status === "fulfilled") {
-    const countMap = Object.fromEntries(
-      funnelResult.value.map((r) => [r.stage, r._count?.id ?? 0])
-    )
-    for (const { key, label } of FUNNEL_ORDER) {
-      funnelData.push({ stage: label, count: countMap[key] ?? 0 })
-    }
-  } else {
-    for (const { label } of FUNNEL_ORDER) {
-      funnelData.push({ stage: label, count: 0 })
-    }
-  }
-
-  // Revenue by service
-  let revenueByService: RevenueByServiceEntry[] = []
-  if (revenueResult.status === "fulfilled") {
-    const [serviceRevenue, serviceArms] = revenueResult.value
-    const nameMap = Object.fromEntries(serviceArms.map((s) => [s.id, s.name]))
-    revenueByService = serviceRevenue
-      .map((r) => ({
-        name: nameMap[r.serviceArmId] ?? r.serviceArmId,
-        mrr: r._sum.monthlyAmount ?? 0,
-      }))
-      .sort((a, b) => b.mrr - a.mrr)
-      .slice(0, 8)
-  }
-
-  // Overdue tasks
-  const overdueTasks = overdueResult.status === "fulfilled" ? overdueResult.value : []
-
-  // Recent activity — merge deal activities, support tickets, and subscriptions
-  const dealActivities = activityResult.status === "fulfilled" ? activityResult.value : []
-  const recentTickets = recentTicketsResult.status === "fulfilled" ? recentTicketsResult.value : []
-  const recentSubs = recentSubscriptionsResult.status === "fulfilled" ? recentSubscriptionsResult.value : []
-
-  type UnifiedActivity = {
-    id: string
-    type: string
-    detail: string | null
-    createdAt: Date
-    deal: { contactName: string; company: string | null } | null
-  }
-
-  const unifiedActivity: UnifiedActivity[] = [
-    ...dealActivities,
-    ...recentTickets.map((t) => ({
-      id: `ticket-${t.id}`,
-      type: "TICKET_OPENED",
-      detail: `Support ticket: ${t.subject}`,
-      createdAt: t.createdAt,
-      deal: { contactName: t.user?.name ?? t.user?.email ?? "Unknown", company: null },
-    })),
-    ...recentSubs.map((s) => ({
-      id: `sub-${s.id}`,
-      type: "SUBSCRIPTION_CREATED",
-      detail: `Subscribed to ${s.serviceArm.name}${s.tier ? ` (${s.tier})` : ""} at $${s.monthlyAmount}/mo`,
-      createdAt: s.createdAt,
-      deal: { contactName: s.user?.name ?? s.user?.email ?? "Unknown", company: null },
-    })),
-  ]
-    .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-    .slice(0, 10)
-
-  const recentActivity = unifiedActivity
-
-  // This Week Summary
-  const weekNewDeals = weekDealsResult.status === "fulfilled" ? weekDealsResult.value : 0
-  const weekTicketsResolved = weekTicketsResolvedResult.status === "fulfilled" ? weekTicketsResolvedResult.value : 0
-  const weekRevenue = weekRevenueResult.status === "fulfilled"
-    ? weekRevenueResult.value.reduce((sum, s) => sum + s.monthlyAmount, 0)
-    : 0
-  const weekChats = weekChatsResult.status === "fulfilled" ? weekChatsResult.value : 0
-
-  // Open tickets count for quick actions badge
-  const openTickets = openTicketsResult.status === "fulfilled" ? openTicketsResult.value : 0
-
-  // Team workload
-  let teamWorkload: Array<{ assignedTo: string; total: number; overdue: number }> = []
-  if (workloadResult.status === "fulfilled") {
-    const workloadMap = new Map<string, { total: number; overdue: number }>()
-    for (const task of workloadResult.value) {
-      if (!task.assignedTo) continue
-      const entry = workloadMap.get(task.assignedTo) ?? { total: 0, overdue: 0 }
-      entry.total++
-      if (task.dueDate && task.dueDate < now) entry.overdue++
-      workloadMap.set(task.assignedTo, entry)
-    }
-    teamWorkload = Array.from(workloadMap.entries())
-      .map(([assignedTo, stats]) => ({ assignedTo, ...stats }))
-      .sort((a, b) => b.total - a.total)
-  }
-
-  // MRR trend delta
-  const mrrDelta = mrrDeltaCurrentPeriod - mrrDeltaPrevPeriod
-  const clientDelta = newClientsCurrentPeriod - newClientsPrevPeriod
-  const pipelineDelta = pipelineValueCurrentPeriod - pipelineValuePrevPeriod
-  const mrrPct = Math.round((mrr / MRR_TARGET) * 100)
-
-  // Generate 7-day sparkline data from items with createdAt dates
-  function buildSparkline<T extends { createdAt: Date }>(items: T[], extractValue: (item: T) => number = () => 1): number[] {
-    const points: number[] = []
-    for (let i = 6; i >= 0; i--) {
-      const dayStart = new Date(now.getTime() - i * 86_400_000)
-      dayStart.setHours(0, 0, 0, 0)
-      const dayEnd = new Date(dayStart.getTime() + 86_400_000)
-      const dayItems = items.filter((item) => item.createdAt >= dayStart && item.createdAt < dayEnd)
-      points.push(dayItems.reduce((sum, item) => sum + extractValue(item), 0))
-    }
-    return points
-  }
-
-  const mrrSparkline = subsResult.status === "fulfilled"
-    ? buildSparkline(subsResult.value, (s) => s.monthlyAmount)
+  // LeadMagnetSubmission has no Prisma relation to Deal (they're linked
+  // by dealId only), so hydrate the deal tier/stage in one extra query
+  // instead of a join.
+  const dealIds = recentSubmissions
+    .map((s) => s.dealId)
+    .filter((d): d is string => !!d)
+  const relatedDeals = dealIds.length
+    ? await db.deal.findMany({
+        where: { id: { in: dealIds } },
+        select: { id: true, leadScoreTier: true, stage: true },
+      })
     : []
-  const clientSparkline = subsResult.status === "fulfilled"
-    ? buildSparkline(subsResult.value)
-    : []
-  const pipelineSparkline = pipelineResult.status === "fulfilled"
-    ? buildSparkline(pipelineResult.value, (d) => d.value)
-    : []
+  const dealById = new Map(relatedDeals.map((d) => [d.id, d]))
+  const recentApplications = recentSubmissions.map((s) => ({
+    ...s,
+    deal: s.dealId ? dealById.get(s.dealId) ?? null : null,
+  }))
 
-  return {
-    mrr,
-    mrrDelta,
-    mrrPct,
-    activeClients,
-    clientDelta,
-    pipelineValue,
-    pipelineDelta,
-    hotLeads,
-    funnelData,
-    revenueByService,
-    overdueTasks,
-    recentActivity,
-    teamWorkload,
-    mrrSparkline,
-    clientSparkline,
-    pipelineSparkline,
-    weekSummary: {
-      newDeals: weekNewDeals,
-      ticketsResolved: weekTicketsResolved,
-      revenue: weekRevenue,
-      chats: weekChats,
-    },
-    openTickets,
-    now,
+  const stageCounts: Record<string, number> = {}
+  for (const row of funnel) {
+    stageCounts[row.stage] = row._count?.id ?? 0
   }
-}
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
-
-export default async function AdminDashboard() {
-  const data = await getDashboardData()
-
-  // Serialize dates for client component
-  const serializedData = {
-    ...data,
-    now: data.now.toISOString(),
-    hotLeads: data.hotLeads,
-    overdueTasks: data.overdueTasks.map((t) => ({
-      ...t,
-      dueDate: t.dueDate?.toISOString() ?? null,
-    })),
-    recentActivity: data.recentActivity.map((a) => ({
-      ...a,
-      createdAt: a.createdAt.toISOString(),
-    })),
-    weekSummary: data.weekSummary,
-    openTickets: data.openTickets,
-  }
+  const totalApplicants =
+    (stageCounts.APPLICATION_SUBMITTED ?? 0) +
+    (stageCounts.CONSULT_BOOKED ?? 0) +
+    (stageCounts.CONSULT_COMPLETED ?? 0) +
+    (stageCounts.MIGHTY_INVITED ?? 0) +
+    (stageCounts.MEMBER_JOINED ?? 0)
 
   return (
-    <div className="space-y-6">
-      {/* Action Inbox streams independently — dashboard shell renders even
-          if ActionInbox's queries are slow. */}
+    <div className="space-y-6 max-w-7xl">
+      {/* Greeting row */}
+      <header className="flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Welcome back</h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            {totalApplicants === 0
+              ? "No applicants yet — share the apply link to start filling the pipeline."
+              : `${totalApplicants} applicant${totalApplicants === 1 ? "" : "s"} in the funnel across all stages.`}
+          </p>
+        </div>
+        <Link
+          href="/admin/dashboard/full"
+          className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground"
+        >
+          Full metrics
+          <ArrowRight className="h-3 w-3" />
+        </Link>
+      </header>
+
+      {/* Action Inbox — what needs you right now */}
       <Suspense
         fallback={
           <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
@@ -415,7 +119,169 @@ export default async function AdminDashboard() {
       >
         <ActionInbox />
       </Suspense>
-      <AdminDashboardClient data={serializedData} />
+
+      {/* Community funnel bar */}
+      <section className="rounded-2xl border border-border bg-card p-5">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h2 className="text-sm font-semibold text-foreground">Community funnel</h2>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Live state of every applicant by stage.
+            </p>
+          </div>
+          <Link
+            href="/admin/crm"
+            className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+          >
+            Open pipeline <ArrowRight className="h-3 w-3" />
+          </Link>
+        </div>
+        <CommunityFunnelChart counts={stageCounts} />
+      </section>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Recent applications (2/3) */}
+        <section className="rounded-2xl border border-border bg-card p-5 lg:col-span-2">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-sm font-semibold text-foreground">
+              Recent applications
+            </h2>
+            <Link
+              href="/admin/applications"
+              className="text-xs text-primary hover:underline"
+            >
+              View all →
+            </Link>
+          </div>
+          {recentApplications.length === 0 ? (
+            <div className="text-center py-8 text-sm text-muted-foreground">
+              <p>No applications yet.</p>
+              <p className="text-xs mt-1">
+                Share{" "}
+                <code className="text-primary bg-primary/10 px-1 py-0.5 rounded text-[11px]">
+                  aioperatorcollective.com/apply
+                </code>{" "}
+                to start filling the pipeline.
+              </p>
+            </div>
+          ) : (
+            <ul className="divide-y divide-border">
+              {recentApplications.map((a) => {
+                const tier = a.deal?.leadScoreTier ?? null
+                const tierClass =
+                  tier === "hot"
+                    ? "text-primary bg-primary/10 border-primary/30"
+                    : tier === "warm"
+                    ? "text-primary/70 bg-primary/5 border-primary/20"
+                    : "text-muted-foreground bg-muted/40 border-border"
+                return (
+                  <li key={a.id}>
+                    <Link
+                      href={a.deal ? `/admin/crm/${a.deal.id}` : "/admin/applications"}
+                      className="flex items-center gap-3 py-3 hover:bg-muted/30 -mx-2 px-2 rounded transition-colors"
+                    >
+                      <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-xs font-semibold text-muted-foreground flex-shrink-0">
+                        {(a.name ?? a.email).slice(0, 1).toUpperCase()}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm text-foreground font-medium truncate">
+                          {a.name ?? a.email}
+                        </p>
+                        <p className="text-xs text-muted-foreground font-mono truncate">
+                          {a.email}
+                        </p>
+                      </div>
+                      {tier && (
+                        <span
+                          className={`text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded border flex-shrink-0 capitalize ${tierClass}`}
+                        >
+                          {tier}
+                        </span>
+                      )}
+                      <span className="text-xs text-muted-foreground font-mono flex-shrink-0 w-16 text-right">
+                        {timeAgo(a.createdAt)}
+                      </span>
+                    </Link>
+                  </li>
+                )
+              })}
+            </ul>
+          )}
+        </section>
+
+        {/* Quick links (1/3) */}
+        <section className="rounded-2xl border border-border bg-card p-5">
+          <h2 className="text-sm font-semibold text-foreground mb-4">Jump to</h2>
+          <div className="space-y-2">
+            <QuickLink
+              href="/admin/crm"
+              icon={<ClipboardCheck className="h-4 w-4" />}
+              label="CRM Pipeline"
+            />
+            <QuickLink
+              href="/admin/mighty-invites"
+              icon={<UserPlus className="h-4 w-4" />}
+              label="Mighty Invite Audit"
+            />
+            <QuickLink
+              href="/admin/close"
+              icon={<TrendingUp className="h-4 w-4" />}
+              label="Close CRM (revenue)"
+            />
+            <QuickLink
+              href="/admin/applications"
+              icon={<Mail className="h-4 w-4" />}
+              label="All applications"
+            />
+            <QuickLink
+              href="/admin/follow-ups"
+              icon={<Calendar className="h-4 w-4" />}
+              label="Follow-up queue"
+            />
+            <QuickLink
+              href="/admin/simulate"
+              icon={<FlaskConical className="h-4 w-4" />}
+              label="Simulate a lead (testing)"
+            />
+          </div>
+        </section>
+      </div>
     </div>
   )
+}
+
+function QuickLink({
+  href,
+  icon,
+  label,
+}: {
+  href: string
+  icon: React.ReactNode
+  label: string
+}) {
+  return (
+    <Link
+      href={href}
+      className="flex items-center gap-3 p-2.5 rounded-lg border border-border hover:border-primary/40 hover:bg-primary/5 text-sm font-medium text-foreground transition-colors group"
+    >
+      <span className="text-muted-foreground group-hover:text-primary transition-colors">
+        {icon}
+      </span>
+      <span className="flex-1">{label}</span>
+      <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/40 group-hover:text-primary transition-colors" />
+    </Link>
+  )
+}
+
+function timeAgo(date: Date): string {
+  const seconds = Math.floor((Date.now() - new Date(date).getTime()) / 1000)
+  if (seconds < 60) return "just now"
+  const minutes = Math.floor(seconds / 60)
+  if (minutes < 60) return `${minutes}m`
+  const hours = Math.floor(minutes / 60)
+  if (hours < 24) return `${hours}h`
+  const days = Math.floor(hours / 24)
+  if (days < 30) return `${days}d`
+  const months = Math.floor(days / 30)
+  return `${months}mo`
 }
