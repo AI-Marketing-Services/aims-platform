@@ -594,7 +594,7 @@ export function ApplyForm() {
                 </div>
 
                 <div className="space-y-4 w-full max-w-md text-left">
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                       <label
                         htmlFor="apply-first"
@@ -826,7 +826,7 @@ export function ApplyForm() {
                     />
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                       <label
                         htmlFor="apply-zip"

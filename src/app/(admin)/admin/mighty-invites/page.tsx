@@ -93,7 +93,7 @@ export default async function MightyInviteAuditPage() {
         <AddDealDialog buttonLabel="Add member manually" />
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-6 gap-3 mb-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
         <Stat label="Total" value={counts.total} tone="muted" />
         <Stat label="Sent" value={counts.sent} tone="muted" />
         <Stat label="Pending" value={counts.pending} tone="muted" />

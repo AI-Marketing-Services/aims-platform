@@ -84,8 +84,8 @@ export function UsersTable({ currentUserId }: { currentUserId: string }) {
   }
 
   return (
-    <div className="rounded-xl border border-border bg-card overflow-hidden">
-      <table className="w-full text-sm">
+    <div className="rounded-xl border border-border bg-card overflow-x-auto">
+      <table className="w-full text-sm min-w-[640px]">
         <thead className="bg-muted/40 border-b border-border">
           <tr className="text-left text-xs uppercase tracking-wider text-muted-foreground">
             <th className="px-4 py-3 font-medium">User</th>

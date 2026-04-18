@@ -110,7 +110,7 @@ export function AddDealDialog({
             if (e.target === e.currentTarget) setOpen(false)
           }}
         >
-          <div className="w-full max-w-md rounded-2xl border border-border bg-card shadow-2xl">
+          <div className="w-full max-w-md max-h-[90vh] overflow-y-auto rounded-2xl border border-border bg-card shadow-2xl">
             <div className="flex items-center justify-between px-6 py-5 border-b border-border">
               <div>
                 <h2 className="text-base font-semibold text-foreground">
@@ -131,7 +131,7 @@ export function AddDealDialog({
             </div>
 
             <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-medium text-muted-foreground mb-1.5">
                     First name <span className="text-primary">*</span>
@@ -183,7 +183,7 @@ export function AddDealDialog({
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-medium text-muted-foreground mb-1.5">
                     Phone

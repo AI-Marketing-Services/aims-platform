@@ -282,14 +282,14 @@ export function FunnelDashboardClient() {
             const Icon = step.icon
             return (
               <div key={step.label} className="flex items-center gap-3">
-                <div className="flex items-center gap-2 w-32 flex-shrink-0">
+                <div className="flex items-center gap-1.5 sm:gap-2 w-24 sm:w-32 flex-shrink-0">
                   <Icon
                     className={cn(
-                      "h-3.5 w-3.5",
+                      "h-3.5 w-3.5 flex-shrink-0",
                       isWin ? "text-emerald-600" : "text-primary"
                     )}
                   />
-                  <span className="text-xs font-medium text-foreground">
+                  <span className="text-[11px] sm:text-xs font-medium text-foreground truncate">
                     {step.label}
                   </span>
                 </div>
@@ -304,15 +304,15 @@ export function FunnelDashboardClient() {
                       opacity: isWin ? 1 : 0.5 + i * 0.12,
                     }}
                   />
-                  <div className="absolute inset-0 flex items-center justify-between px-3">
-                    <span className="text-[11px] text-muted-foreground font-mono">
+                  <div className="absolute inset-0 flex items-center justify-between px-2 sm:px-3">
+                    <span className="hidden sm:inline text-[11px] text-muted-foreground font-mono">
                       {rateFromPrev !== null
                         ? `${rateFromPrev.toFixed(0)}% from prev`
                         : "entry point"}
                     </span>
                     <span
                       className={cn(
-                        "text-sm font-bold font-mono",
+                        "text-sm font-bold font-mono ml-auto",
                         isWin ? "text-emerald-700" : "text-foreground"
                       )}
                     >
