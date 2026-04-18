@@ -13,6 +13,7 @@ import {
   Users,
   Send,
 } from "lucide-react"
+import { Breadcrumbs } from "@/components/shared/Breadcrumbs"
 
 export const metadata = { title: "Community Sequence" }
 
@@ -109,7 +110,13 @@ export default async function AdminCommunitySequencePage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-ink">Community Sequence</h1>
+        <Breadcrumbs
+          items={[
+            { label: "Admin", href: "/admin/dashboard" },
+            { label: "Community Sequence" },
+          ]}
+        />
+        <h1 className="text-2xl font-bold text-foreground">Community Sequence</h1>
         <p className="mt-1 text-sm text-ink/60">
           The AI Operator Collective post-signup drip. Chapter 1 + community invite fires inline
           on form submission. Chapters 2–5 + the closing email are scheduled here and dispatched

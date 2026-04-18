@@ -75,34 +75,34 @@ async function collectActionItems(): Promise<ActionItem[]> {
 
   return [
     {
-      label: "New applications today",
+      label: "New Today",
       count: getCount(newAppsToday),
       href: "/admin/applications",
-      description: "Review overnight Collective applications",
+      description: "Overnight applications",
       icon: <Sparkles className="h-4 w-4" />,
       tone: "neutral",
     },
     {
-      label: "Consults done, awaiting invite",
+      label: "Awaiting Invite",
       count: getCount(consultsAwaitingInvite),
       href: "/admin/crm",
-      description: "Applicants you've spoken to who aren't in Mighty yet",
+      description: "Consults done, no Mighty invite",
       icon: <UserPlus className="h-4 w-4" />,
       tone: getCount(consultsAwaitingInvite) > 0 ? "accent" : "neutral",
     },
     {
-      label: "Failed Mighty invites",
+      label: "Failed Invites",
       count: getCount(failedInvites),
       href: "/admin/mighty-invites?status=failed",
-      description: "Provisioning or welcome email blew up — retry needed",
+      description: "Provisioning errors — retry",
       icon: <AlertCircle className="h-4 w-4" />,
       tone: getCount(failedInvites) > 0 ? "urgent" : "neutral",
     },
     {
-      label: "Abandoned applications (7d)",
+      label: "Abandoned (7d)",
       count: getCount(abandonedApplications),
       href: "/admin/follow-ups",
-      description: "Step-1 dropoffs waiting on human outreach",
+      description: "Step-1 dropoffs",
       icon: <Clock className="h-4 w-4" />,
       tone: "neutral",
     },
@@ -143,22 +143,24 @@ export async function ActionInbox() {
               key={item.label}
               href={item.href}
               className={cn(
-                "group flex flex-col gap-2 rounded-xl border p-4 transition-colors",
+                "group flex flex-col gap-3 rounded-xl border p-4 transition-colors",
                 toneClass
               )}
             >
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-wider opacity-80">
-                  {item.icon}
-                  {item.label}
-                </div>
-                <ArrowRight className="h-3.5 w-3.5 opacity-40 group-hover:opacity-100 transition-opacity" />
+                <span className="opacity-70">{item.icon}</span>
+                <ArrowRight className="h-3.5 w-3.5 opacity-30 group-hover:opacity-100 transition-opacity" />
               </div>
-              <div className="text-2xl font-bold font-mono leading-none">
+              <div className="text-3xl font-bold font-mono leading-none tabular-nums">
                 {item.count}
               </div>
-              <div className="text-xs leading-snug opacity-80">
-                {item.description}
+              <div>
+                <div className="text-sm font-semibold leading-tight">
+                  {item.label}
+                </div>
+                <div className="text-[11px] opacity-60 leading-tight mt-0.5 truncate">
+                  {item.description}
+                </div>
               </div>
             </Link>
           )

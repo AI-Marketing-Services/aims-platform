@@ -10,6 +10,8 @@ import {
   Cell,
 } from "recharts"
 import { AlertTriangle, CheckCircle, DollarSign, TrendingDown, TrendingUp } from "lucide-react"
+import { Breadcrumbs } from "@/components/shared/Breadcrumbs"
+import { cn } from "@/lib/utils"
 
 interface ProviderData {
   provider: string
@@ -57,7 +59,9 @@ function EmptyChart({ message }: { message: string }) {
   )
 }
 
-const RED = "#981B1B"
+// AIMS primary crimson — kept hex-coded for recharts (which doesn't
+// resolve CSS variables). Mirrors `--primary` in globals.css.
+const PRIMARY = "#981B1B"
 
 export default function ApiCostsClient({
   costs30,
@@ -85,42 +89,57 @@ export default function ApiCostsClient({
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">API Cost Dashboard</h1>
-        <p className="text-sm text-muted-foreground mt-1">AI provider spend tracking - last 30 days</p>
+        <Breadcrumbs
+          items={[
+            { label: "Admin", href: "/admin/dashboard" },
+            { label: "Tool & API Spend" },
+          ]}
+        />
+        <h1 className="text-2xl font-bold text-foreground">Tool &amp; API Spend</h1>
+        <p className="text-sm text-muted-foreground mt-1">
+          AI provider spend tracking — last 30 days.
+        </p>
       </div>
 
       {/* Total spend hero card */}
-      <div className="rounded-xl border border-border bg-card p-7">
-        <p className="text-xs text-muted-foreground mb-2">Total Spend This Month</p>
+      <section className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+        <p className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">
+          Total spend this month
+        </p>
         {hasAnyData ? (
-          <div className="flex items-end gap-4 flex-wrap">
-            <span className="text-4xl font-mono font-bold text-foreground">
+          <div className="mt-2 flex items-end gap-4 flex-wrap">
+            <span className="text-3xl font-mono font-bold text-foreground leading-none tabular-nums">
               ${costs30.total.toFixed(2)}
             </span>
             {trendPct !== null && (
-              <div className={`flex items-center gap-1.5 mb-1 ${trendPct > 0 ? "text-primary" : "text-emerald-700"}`}>
-                {trendPct > 0 ? (
-                  <TrendingUp className="w-4 h-4" />
-                ) : (
-                  <TrendingDown className="w-4 h-4" />
+              <div
+                className={cn(
+                  "flex items-center gap-1.5",
+                  trendPct > 0 ? "text-primary" : "text-emerald-700"
                 )}
-                <span className="text-sm font-medium">
-                  {trendPct > 0 ? "up" : "down"} {Math.abs(trendPct)}% from last month
+              >
+                {trendPct > 0 ? (
+                  <TrendingUp className="w-3.5 h-3.5" />
+                ) : (
+                  <TrendingDown className="w-3.5 h-3.5" />
+                )}
+                <span className="text-xs font-medium">
+                  {trendPct > 0 ? "up" : "down"} {Math.abs(trendPct)}% vs last month
                 </span>
               </div>
             )}
           </div>
         ) : (
-          <div className="flex items-center gap-3 py-3">
-            <DollarSign className="w-8 h-8 text-muted-foreground/40" />
-            <p className="text-lg text-muted-foreground">No cost data yet</p>
+          <div className="mt-2 flex items-center gap-2">
+            <DollarSign className="w-5 h-5 text-muted-foreground/40" />
+            <p className="text-sm text-muted-foreground">No cost data yet.</p>
           </div>
         )}
-      </div>
+      </section>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Cost by provider */}
-        <div className="rounded-xl border border-border bg-card p-6">
+        <div className="rounded-2xl border border-border bg-card p-6">
           <h2 className="text-sm font-semibold text-foreground mb-5">Cost by Provider (30d)</h2>
           {providerChartData.length === 0 ? (
             <EmptyChart message="No cost data yet. API costs will appear as services process requests." />
@@ -138,9 +157,9 @@ export default function ApiCostsClient({
                   contentStyle={{ background: "#FFFFFF", border: "1px solid hsl(220 13% 20%)", borderRadius: 8, fontSize: 12, color: "#1A1A1A" }}
                   labelStyle={{ color: "#1A1A1A" }}
                 />
-                <Bar dataKey="cost" radius={[0, 4, 4, 0]} fill={RED}>
+                <Bar dataKey="cost" radius={[0, 4, 4, 0]} fill={PRIMARY}>
                   {providerChartData.map((_, i) => (
-                    <Cell key={i} fill={RED} />
+                    <Cell key={i} fill={PRIMARY} />
                   ))}
                 </Bar>
               </BarChart>
@@ -149,7 +168,7 @@ export default function ApiCostsClient({
         </div>
 
         {/* Cost by service arm */}
-        <div className="rounded-xl border border-border bg-card p-6">
+        <div className="rounded-2xl border border-border bg-card p-6">
           <h2 className="text-sm font-semibold text-foreground mb-5">Cost by Service Arm (30d)</h2>
           {serviceArmChartData.length === 0 ? (
             <EmptyChart message="No cost data yet. API costs will appear as services process requests." />
@@ -167,9 +186,9 @@ export default function ApiCostsClient({
                   contentStyle={{ background: "#FFFFFF", border: "1px solid hsl(220 13% 20%)", borderRadius: 8, fontSize: 12, color: "#1A1A1A" }}
                   labelStyle={{ color: "#1A1A1A" }}
                 />
-                <Bar dataKey="cost" radius={[0, 4, 4, 0]} fill={RED}>
+                <Bar dataKey="cost" radius={[0, 4, 4, 0]} fill={PRIMARY}>
                   {serviceArmChartData.map((_, i) => (
-                    <Cell key={i} fill={RED} />
+                    <Cell key={i} fill={PRIMARY} />
                   ))}
                 </Bar>
               </BarChart>
@@ -179,7 +198,7 @@ export default function ApiCostsClient({
       </div>
 
       {/* Cost per client table */}
-      <div className="rounded-xl border border-border bg-card p-6">
+      <div className="rounded-2xl border border-border bg-card p-6">
         <h2 className="text-sm font-semibold text-foreground mb-5">Cost per Client (30d)</h2>
         {clientRows.length === 0 ? (
           <p className="text-sm text-muted-foreground text-center py-6">No per-client cost data yet.</p>
@@ -224,7 +243,7 @@ export default function ApiCostsClient({
       </div>
 
       {/* Alerts */}
-      <div className="rounded-xl border border-border bg-card p-6">
+      <div className="rounded-2xl border border-border bg-card p-6">
         <h2 className="text-sm font-semibold text-foreground mb-4">Cost Anomaly Alerts</h2>
         {costs30.byProvider.length === 0 ? (
           <p className="text-sm text-muted-foreground">Cost monitoring will activate once API calls are logged.</p>
@@ -233,7 +252,7 @@ export default function ApiCostsClient({
             {anomalies.map((a) => (
               <div
                 key={a.provider}
-                className="flex items-center gap-3 rounded-lg border border-primary/30 bg-primary/100/10 px-4 py-3"
+                className="flex items-center gap-3 rounded-lg border border-primary/30 bg-primary/10 px-4 py-3"
               >
                 <AlertTriangle className="w-4 h-4 text-primary flex-shrink-0" />
                 <p className="text-sm text-primary">

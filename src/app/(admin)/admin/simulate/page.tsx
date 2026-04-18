@@ -18,6 +18,7 @@ import {
   Layers,
   Wrench,
 } from "lucide-react"
+import { Breadcrumbs } from "@/components/shared/Breadcrumbs"
 
 // ============ TYPES ============
 
@@ -431,6 +432,12 @@ export default function SimulatePage() {
   return (
     <div className="space-y-6">
       <div>
+        <Breadcrumbs
+          items={[
+            { label: "Admin", href: "/admin/dashboard" },
+            { label: "Simulate" },
+          ]}
+        />
         <h1 className="text-2xl font-bold text-foreground">Simulate</h1>
         <p className="text-sm text-muted-foreground mt-1">
           E2E testing tools for purchases and lead submissions. Use for demos, QA, and training.

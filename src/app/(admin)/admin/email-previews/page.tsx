@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useCallback } from "react"
 import { Copy, Check, Mail, ChevronDown } from "lucide-react"
+import { Breadcrumbs } from "@/components/shared/Breadcrumbs"
 
 // ─── Email layout helpers (client-side copies, no server imports) ────────────
 
@@ -430,9 +431,15 @@ export default function EmailPreviewsPage() {
   return (
     <div>
       <div className="mb-6">
+        <Breadcrumbs
+          items={[
+            { label: "Admin", href: "/admin/dashboard" },
+            { label: "Email Previews" },
+          ]}
+        />
         <h1 className="text-2xl font-bold text-foreground">Email Previews</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Preview and test all transactional email templates
+          Preview and test all transactional email templates.
         </p>
       </div>
 

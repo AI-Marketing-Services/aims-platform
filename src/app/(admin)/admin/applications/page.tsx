@@ -3,6 +3,7 @@ import Link from "next/link"
 import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
 import { QUESTIONS } from "@/lib/collective-application"
+import { Breadcrumbs } from "@/components/shared/Breadcrumbs"
 import { InviteButton } from "./InviteButton"
 
 const TIER_COLORS: Record<string, string> = {
@@ -59,8 +60,14 @@ export default async function ApplicationsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-ink">Collective Applications</h1>
-        <p className="text-sm text-ink/60 mt-1">
+        <Breadcrumbs
+          items={[
+            { label: "Admin", href: "/admin/dashboard" },
+            { label: "Applications" },
+          ]}
+        />
+        <h1 className="text-2xl font-bold text-foreground">Collective Applications</h1>
+        <p className="text-sm text-muted-foreground mt-1">
           AI Operator Collective application submissions with lead scoring.
         </p>
       </div>

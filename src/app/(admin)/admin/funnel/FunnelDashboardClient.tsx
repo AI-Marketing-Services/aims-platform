@@ -230,7 +230,7 @@ export function FunnelDashboardClient() {
             </span>
           }
           icon={<Flame className="w-3.5 h-3.5" />}
-          valueClass="text-crimson"
+          valueClass="text-primary"
         />
         <Kpi
           label="Calls Booked (all-time)"
@@ -256,72 +256,98 @@ export function FunnelDashboardClient() {
       </div>
 
       {/* ── FUNNEL BAR ── */}
-      <div className="rounded-md border border-line bg-surface p-5">
-        <h2 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
-          <TrendingUp className="w-4 h-4 text-muted-foreground" />
-          Conversion Funnel
-        </h2>
+      <section className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+        <div className="mb-4">
+          <h2 className="text-sm font-semibold text-foreground">
+            Conversion Funnel
+          </h2>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Stage-to-stage drop-off across the application flow.
+          </p>
+        </div>
 
-        <div className="grid grid-cols-5 gap-2">
+        <div className="space-y-2">
           {funnelSteps.map((step, i) => {
             const prev = i > 0 ? funnelSteps[i - 1].count : null
-            const rateFromPrev =
+            // Cap conversion at 100% — leads imported directly into
+            // later stages (e.g. via Close) can otherwise produce
+            // nonsense like "1000% conv".
+            const rawRate =
               prev && prev > 0 ? (step.count / prev) * 100 : null
-            const rateFromStart =
-              funnelSteps[0].count > 0
-                ? (step.count / funnelSteps[0].count) * 100
-                : 0
+            const rateFromPrev =
+              rawRate !== null ? Math.min(100, rawRate) : null
+            const max = Math.max(1, ...funnelSteps.map((s) => s.count))
+            const widthPct = (step.count / max) * 100
+            const isWin = step.label === "Joined"
+            const Icon = step.icon
             return (
-              <div key={step.label} className="flex flex-col">
-                <div className="flex items-center gap-1.5 mb-2 text-xs text-muted-foreground">
-                  <step.icon className="w-3.5 h-3.5" />
-                  <span className="uppercase font-mono tracking-wider">
+              <div key={step.label} className="flex items-center gap-3">
+                <div className="flex items-center gap-2 w-32 flex-shrink-0">
+                  <Icon
+                    className={cn(
+                      "h-3.5 w-3.5",
+                      isWin ? "text-emerald-600" : "text-primary"
+                    )}
+                  />
+                  <span className="text-xs font-medium text-foreground">
                     {step.label}
                   </span>
                 </div>
-                <div className="relative h-24 bg-deep rounded flex items-end overflow-hidden border border-line">
+                <div className="flex-1 relative h-8 bg-muted/30 rounded overflow-hidden">
                   <div
-                    className="w-full bg-crimson/80"
-                    style={{ height: `${Math.min(100, rateFromStart)}%` }}
+                    className={cn(
+                      "h-full transition-all duration-500",
+                      isWin ? "bg-emerald-100" : "bg-primary/10"
+                    )}
+                    style={{
+                      width: `${Math.max(widthPct, step.count > 0 ? 4 : 0)}%`,
+                      opacity: isWin ? 1 : 0.5 + i * 0.12,
+                    }}
                   />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-2xl font-bold font-mono text-foreground">
+                  <div className="absolute inset-0 flex items-center justify-between px-3">
+                    <span className="text-[11px] text-muted-foreground font-mono">
+                      {rateFromPrev !== null
+                        ? `${rateFromPrev.toFixed(0)}% from prev`
+                        : "entry point"}
+                    </span>
+                    <span
+                      className={cn(
+                        "text-sm font-bold font-mono",
+                        isWin ? "text-emerald-700" : "text-foreground"
+                      )}
+                    >
                       {step.count}
                     </span>
                   </div>
-                </div>
-                <div className="mt-2 text-[10px] font-mono uppercase tracking-wider text-muted-foreground">
-                  {rateFromPrev !== null ? (
-                    <>{rateFromPrev.toFixed(0)}% conv</>
-                  ) : (
-                    "100%"
-                  )}
                 </div>
               </div>
             )
           })}
         </div>
 
-        <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-line text-xs">
+        <div className="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-border text-xs">
           <Metric
             label="Form completion"
-            value={`${funnel.completionRate.toFixed(0)}%`}
+            value={`${Math.min(100, funnel.completionRate).toFixed(0)}%`}
           />
-          <Metric label="Book rate" value={`${funnel.bookingRate.toFixed(0)}%`} />
+          <Metric
+            label="Book rate"
+            value={`${Math.min(100, funnel.bookingRate).toFixed(0)}%`}
+          />
           <Metric
             label="Invite accept rate"
-            value={`${funnel.mightyAcceptRate.toFixed(0)}%`}
+            value={`${Math.min(100, funnel.mightyAcceptRate).toFixed(0)}%`}
           />
           <Metric
             label="App → Member"
-            value={`${funnel.applicationToCollectiveRate.toFixed(0)}%`}
+            value={`${Math.min(100, funnel.applicationToCollectiveRate).toFixed(0)}%`}
             highlight
           />
         </div>
-      </div>
+      </section>
 
       {/* ── STAGE BREAKDOWN ── */}
-      <div className="rounded-md border border-line bg-surface p-5">
+      <div className="rounded-2xl border border-border bg-card p-5">
         <h2 className="text-sm font-semibold text-foreground mb-4">
           Pipeline by Stage
         </h2>
@@ -329,7 +355,7 @@ export function FunnelDashboardClient() {
           {STAGES_ORDER.map((s) => (
             <div
               key={s}
-              className="rounded-md border border-line bg-deep p-3 flex flex-col"
+              className="rounded-md border border-border bg-muted/30 p-3 flex flex-col"
             >
               <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">
                 {STAGE_LABELS[s]}
@@ -364,7 +390,7 @@ export function FunnelDashboardClient() {
       {/* ── RECENT ACTIVITY + APPLICATIONS ── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Recent applications */}
-        <div className="rounded-md border border-line bg-surface p-5">
+        <div className="rounded-2xl border border-border bg-card p-5">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-sm font-semibold text-foreground">
               Latest Applications
@@ -386,7 +412,7 @@ export function FunnelDashboardClient() {
                 <Link
                   key={a.id}
                   href={`/admin/crm/${a.id}`}
-                  className="block rounded-md border border-line bg-deep p-3 hover:border-crimson/40 transition-colors"
+                  className="block rounded-md border border-border bg-muted/30 p-3 hover:border-primary/40 transition-colors"
                 >
                   <div className="flex items-center justify-between gap-2">
                     <div className="min-w-0">
@@ -437,7 +463,7 @@ export function FunnelDashboardClient() {
         </div>
 
         {/* Recent activity */}
-        <div className="rounded-md border border-line bg-surface p-5">
+        <div className="rounded-2xl border border-border bg-card p-5">
           <h2 className="text-sm font-semibold text-foreground mb-4">
             Live Activity
           </h2>
@@ -451,7 +477,7 @@ export function FunnelDashboardClient() {
                 <Link
                   key={act.id}
                   href={`/admin/crm/${act.dealId}`}
-                  className="flex items-start gap-3 rounded-md border border-line bg-deep p-3 hover:border-crimson/40 transition-colors"
+                  className="flex items-start gap-3 rounded-md border border-border bg-muted/30 p-3 hover:border-primary/40 transition-colors"
                 >
                   <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md bg-surface text-muted-foreground mt-0.5">
                     {ACTIVITY_ICONS[act.type] ?? (
@@ -497,7 +523,7 @@ function Kpi({
   valueClass?: string
 }) {
   return (
-    <div className="rounded-md border border-line bg-surface p-4">
+    <div className="rounded-2xl border border-border bg-card p-4">
       <div className="flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider text-muted-foreground">
         {icon}
         <span>{label}</span>
@@ -527,7 +553,7 @@ function Metric({
       <p
         className={cn(
           "text-lg font-bold font-mono mt-0.5",
-          highlight ? "text-crimson" : "text-foreground"
+          highlight ? "text-primary" : "text-foreground"
         )}
       >
         {value}
@@ -547,7 +573,7 @@ function WindowCard({
 }) {
   const completionRate = starts > 0 ? (completed / starts) * 100 : 0
   return (
-    <div className="rounded-md border border-line bg-surface p-5">
+    <div className="rounded-2xl border border-border bg-card p-5">
       <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-3">
         {title}
       </p>
@@ -578,9 +604,9 @@ function WindowCard({
             {completionRate.toFixed(0)}%
           </span>
         </div>
-        <div className="h-1.5 rounded-full bg-deep overflow-hidden">
+        <div className="h-1.5 rounded-full bg-muted/30 overflow-hidden">
           <div
-            className="h-full bg-crimson transition-all"
+            className="h-full bg-primary transition-all"
             style={{ width: `${Math.min(100, completionRate)}%` }}
           />
         </div>

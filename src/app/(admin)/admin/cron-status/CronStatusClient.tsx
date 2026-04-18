@@ -12,6 +12,7 @@ import {
   Zap,
 } from "lucide-react"
 import { cn, timeAgo } from "@/lib/utils"
+import { Breadcrumbs } from "@/components/shared/Breadcrumbs"
 
 interface CronExecution {
   id: string
@@ -98,11 +99,19 @@ export function CronStatusClient() {
   return (
     <div className="w-full space-y-6">
       {/* Header */}
+      <div>
+        <Breadcrumbs
+          items={[
+            { label: "Admin", href: "/admin/dashboard" },
+            { label: "Job Health" },
+          ]}
+        />
+      </div>
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Cron Status</h1>
+          <h1 className="text-2xl font-bold text-foreground">Job Health</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Monitor the health and execution history of scheduled jobs
+            Monitor scheduled job execution and recent run history.
           </p>
         </div>
         <button

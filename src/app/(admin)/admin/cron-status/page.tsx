@@ -2,7 +2,7 @@ import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import { CronStatusClient } from "./CronStatusClient"
 
-export const metadata = { title: "Cron Status | AIMS Admin" }
+export const metadata = { title: "Job Health | AIMS Admin" }
 
 export default async function CronStatusPage() {
   const { userId, sessionClaims } = await auth()

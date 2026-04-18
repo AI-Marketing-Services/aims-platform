@@ -7,17 +7,12 @@ import { UserButton } from "@clerk/nextjs"
 import {
   LayoutDashboard,
   Kanban,
-  Users,
-  DollarSign,
   Cpu,
-  GraduationCap,
-  PiggyBank,
   FileBarChart,
   ChevronLeft,
   ChevronRight,
   ExternalLink,
   FlaskConical,
-  Settings,
   Mail,
   MailOpen,
   Inbox,
@@ -25,7 +20,6 @@ import {
   Timer,
   MessageSquare,
   LifeBuoy,
-  Gauge,
   UserPlus,
   ShieldCheck,
   Plug,
@@ -85,10 +79,11 @@ function useNavCounts(): NavCounts {
   return counts
 }
 
-// Sidebar trimmed to the community-funnel surfaces + the integrations
-// that drive it. Paying-client / reseller / intern surfaces stay routable
-// but out of the primary nav — they were noise for a community-first
-// launch. Reachable via the "More" group for when they're needed.
+// Sidebar focused on the high-ticket consulting/coaching pipeline:
+// Close → Application → Mighty Networks. Future product surfaces
+// (Clients SaaS, Reseller program, Intern Ops, CFO Engagements,
+// Fulfillment, Lead Magnets, Vendor Savings, etc.) stay routable but
+// out of the menu so the daily driver feels lean.
 const ADMIN_NAV = [
   {
     section: "Community",
@@ -118,22 +113,12 @@ const ADMIN_NAV = [
     ],
   },
   {
-    section: "More",
+    section: "Operations",
     items: [
-      { label: "Clients", href: "/admin/clients", icon: Users },
-      { label: "Services", href: "/admin/services", icon: Settings },
-      { label: "Revenue", href: "/admin/revenue", icon: DollarSign },
-      { label: "Fulfillment", href: "/admin/fulfillment", icon: ClipboardCheck },
-      { label: "Partners", href: "/admin/partners", icon: Users },
-      { label: "Commissions", href: "/admin/commissions", icon: DollarSign },
-      { label: "Lead Magnets", href: "/admin/lead-magnets", icon: FileBarChart },
-      { label: "Intern Ops", href: "/admin/intern-ops", icon: GraduationCap },
-      { label: "Ops Excellence", href: "/admin/ops-excellence", icon: Gauge },
-      { label: "Vendor Savings", href: "/admin/vendor-savings", icon: PiggyBank },
-      { label: "API Costs", href: "/admin/api-costs", icon: Cpu },
-      { label: "Cron Status", href: "/admin/cron-status", icon: Timer },
-      { label: "Simulate", href: "/admin/simulate", icon: FlaskConical },
+      { label: "Tool & API Spend", href: "/admin/api-costs", icon: Cpu },
+      { label: "Job Health", href: "/admin/cron-status", icon: Timer },
       { label: "Email Previews", href: "/admin/email-previews", icon: MailOpen },
+      { label: "Simulate", href: "/admin/simulate", icon: FlaskConical },
     ],
   },
 ] as const

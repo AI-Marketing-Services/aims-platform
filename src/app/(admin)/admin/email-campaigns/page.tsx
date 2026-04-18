@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
+import { Breadcrumbs } from "@/components/shared/Breadcrumbs"
 import { EmailCampaignsClient } from "./EmailCampaignsClient"
 import { AdminCampaignDashboard } from "./AdminCampaignDashboard"
 
@@ -26,7 +27,13 @@ export default async function AdminEmailCampaignsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Email Campaigns</h1>
+        <Breadcrumbs
+          items={[
+            { label: "Admin", href: "/admin/dashboard" },
+            { label: "Email Campaigns" },
+          ]}
+        />
+        <h1 className="text-2xl font-bold text-foreground">Email Campaigns</h1>
         <p className="mt-1 text-muted-foreground text-sm">
           Connect clients to their Email Bison workspaces. Stats appear on their portal dashboard.
         </p>

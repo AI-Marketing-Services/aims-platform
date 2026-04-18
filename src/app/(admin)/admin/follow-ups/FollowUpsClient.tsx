@@ -14,6 +14,7 @@ import {
   Flame,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { Breadcrumbs } from "@/components/shared/Breadcrumbs"
 
 export interface PartialRow {
   id: string
@@ -155,6 +156,12 @@ export function FollowUpsClient({
   return (
     <div className="space-y-6">
       <div>
+        <Breadcrumbs
+          items={[
+            { label: "Admin", href: "/admin/dashboard" },
+            { label: "Follow-ups" },
+          ]}
+        />
         <h1 className="text-2xl font-bold text-foreground">Application Follow-ups</h1>
         <p className="text-sm text-muted-foreground mt-1">
           People who started the AI Operator Collective application, received
