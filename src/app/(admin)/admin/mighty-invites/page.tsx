@@ -3,6 +3,7 @@ import { redirect } from "next/navigation"
 import Link from "next/link"
 import { db } from "@/lib/db"
 import { Breadcrumbs } from "@/components/shared/Breadcrumbs"
+import { AddDealDialog } from "@/components/admin/AddDealDialog"
 import { MightyInviteAuditTable, type AuditRow } from "./MightyInviteAuditTable"
 
 export const dynamic = "force-dynamic"
@@ -81,11 +82,15 @@ export default async function MightyInviteAuditPage() {
           { label: "Mighty Invites" },
         ]}
       />
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-foreground mb-1">Mighty Invite Audit</h1>
-        <p className="text-muted-foreground">
-          Every invite sent to the AI Operator Collective, with status and failure reason. Failed invites need re-sending from the deal drawer.
-        </p>
+      <div className="mb-6 flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground mb-1">Mighty Invite Audit</h1>
+          <p className="text-muted-foreground text-sm">
+            Every invite sent to the AI Operator Collective, with status and
+            failure reason. Failed invites need re-sending from the deal drawer.
+          </p>
+        </div>
+        <AddDealDialog buttonLabel="Add member manually" />
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-6 gap-3 mb-6">

@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import { Breadcrumbs } from "@/components/shared/Breadcrumbs"
+import { InviteTeammateDialog } from "@/components/admin/InviteTeammateDialog"
 import { UsersTable } from "./UsersTable"
 
 export const dynamic = "force-dynamic"
@@ -19,13 +20,15 @@ export default async function AdminUsersPage() {
           { label: "Team Access" },
         ]}
       />
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-foreground mb-1">Team Access</h1>
-        <p className="text-muted-foreground">
-          Promote teammates to ADMIN so they can reach the CRM. Self-signup is
-          disabled — create the account in the Clerk dashboard first, then
-          flip them to ADMIN here.
-        </p>
+      <div className="mb-6 flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground mb-1">Team Access</h1>
+          <p className="text-muted-foreground text-sm">
+            Invite teammates to the AIMS admin platform and manage their roles.
+            Invitees get a branded email to set up their account.
+          </p>
+        </div>
+        <InviteTeammateDialog />
       </div>
       <UsersTable currentUserId={userId} />
     </div>
