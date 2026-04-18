@@ -19,7 +19,7 @@ export default function PrivacyPage() {
           <p>
             AIMS (&ldquo;AI Managing Services&rdquo;), a division of Modern Amenities Group LLC (&ldquo;we&rdquo;, &ldquo;us&rdquo;, &ldquo;our&rdquo;),
             is committed to protecting your privacy. This policy explains how we collect, use, and safeguard your information
-            when you visit aimseos.com or use our services.
+            when you visit aioperatorcollective.com or use our services.
           </p>
 
           <h2>Information We Collect</h2>

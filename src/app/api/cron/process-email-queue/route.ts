@@ -238,7 +238,7 @@ function buildEmailContent(
 </td></tr>
 <tr><td style="padding:32px;">${content}</td></tr>
 <tr><td style="padding:20px 32px;background:#F9FAFB;border-top:1px solid #F0F0F0;">
-  <p style="margin:0;font-size:12px;color:#9CA3AF;">AIMS · <a href="https://www.aioperatorcollective.com" style="color:#9CA3AF;">aimseos.com</a></p>
+  <p style="margin:0;font-size:12px;color:#9CA3AF;">AI Operator Collective · <a href="https://www.aioperatorcollective.com" style="color:#9CA3AF;">aioperatorcollective.com</a></p>
 </td></tr>
 </table></body></html>`
 

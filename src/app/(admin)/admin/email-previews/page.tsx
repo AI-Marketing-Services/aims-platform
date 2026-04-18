@@ -57,7 +57,7 @@ function emailLayout(content: string, preheader = "") {
               </p>
               <p style="margin:0 0 8px;font-size:11px;color:#9CA3AF;">
                 AIMS - AI-Powered Business Infrastructure -
-                <a href="https://www.aioperatorcollective.com" style="color:#9CA3AF;text-decoration:none;">aimseos.com</a>
+                <a href="https://www.aioperatorcollective.com" style="color:#9CA3AF;text-decoration:none;">aioperatorcollective.com</a>
               </p>
               <p style="margin:0 0 4px;font-size:11px;color:#9CA3AF;">
                 Modern Amenities Group - 8 The Green, Suite A - Dover, DE 19901

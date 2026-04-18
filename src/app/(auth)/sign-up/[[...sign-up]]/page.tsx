@@ -31,11 +31,18 @@ export default async function SignUpPage({
   const params = await searchParams
 
   // Clerk-invited admin. Render the real SignUp UI so they can finish
-  // account creation with the ticket. Clerk handles the rest.
+  // account creation with the ticket. Clerk handles the rest. Explicit
+  // `path` + redirect props mirror the sign-in page so Clerk routes
+  // its internal sub-pages (OTP, factor) under /sign-up/* without
+  // blanking.
   if (typeof params.__clerk_ticket === "string" && params.__clerk_ticket.length > 0) {
     return (
       <Suspense fallback={null}>
-        <SignUp />
+        <SignUp
+          path="/sign-up"
+          signInUrl="/sign-in"
+          fallbackRedirectUrl="/admin/dashboard"
+        />
       </Suspense>
     )
   }

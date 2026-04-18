@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import Link from "next/link"
+import { AlertCircle, CheckCircle2 } from "lucide-react"
 import { db } from "@/lib/db"
 import { Breadcrumbs } from "@/components/shared/Breadcrumbs"
 import { CloseSyncButton } from "./CloseSyncButton"
@@ -190,6 +191,7 @@ function ConfigTile({
   value: string
   ok: boolean
 }) {
+  const Icon = ok ? CheckCircle2 : AlertCircle
   return (
     <div
       className={`rounded-lg border p-4 ${
@@ -198,9 +200,12 @@ function ConfigTile({
           : "border-primary/30 bg-primary/5 text-primary"
       }`}
     >
-      <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
-        {label}
-      </p>
+      <div className="flex items-center justify-between">
+        <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+          {label}
+        </p>
+        <Icon className="h-3.5 w-3.5" />
+      </div>
       <p className="text-sm font-semibold mt-1">{value}</p>
     </div>
   )
