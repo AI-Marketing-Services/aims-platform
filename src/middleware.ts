@@ -76,17 +76,25 @@ const isPortalApiRoute = createRouteMatcher(["/api/portal(.*)"])
 async function resolveRole(
   sessionClaims: { metadata?: { role?: string }; publicMetadata?: { role?: string } } | null,
   userId: string
-): Promise<string> {
+): Promise<string | null> {
   const claimRole =
     sessionClaims?.metadata?.role ?? sessionClaims?.publicMetadata?.role
   if (claimRole) return claimRole
   try {
     const user = await (await clerkClient()).users.getUser(userId)
-    return (user.publicMetadata as { role?: string })?.role ?? "CLIENT"
+    return (user.publicMetadata as { role?: string })?.role ?? null
   } catch {
-    return "CLIENT"
+    return null
   }
 }
+
+const VALID_PORTAL_ROLES = new Set([
+  "CLIENT",
+  "RESELLER",
+  "INTERN",
+  "ADMIN",
+  "SUPER_ADMIN",
+])
 
 export default clerkMiddleware(async (auth, req) => {
   // Apex -> www canonical-host redirect.
@@ -117,15 +125,17 @@ export default clerkMiddleware(async (auth, req) => {
     return NextResponse.redirect(signInUrl)
   }
 
-  // Short-circuit: the portal API is the hot path for logged-in clients.
-  // No role check needed beyond "is signed in".
-  if (isPortalApiRoute(req)) return NextResponse.next()
-
-  // Only pay the role-resolution cost on role-gated surfaces.
+  // Every authenticated surface (portal/admin/intern/reseller + their
+  // API equivalents) is invitation-only: the user must have an explicit
+  // role baked into publicMetadata by either the Clerk invite flow
+  // (see /api/admin/users/invite) or a manual admin action. Self-signups
+  // that somehow land a Clerk account with no role are denied here.
   const needsRoleCheck =
+    isPortalRoute(req) ||
     isAdminRoute(req) ||
     isInternRoute(req) ||
     isResellerRoute(req) ||
+    isPortalApiRoute(req) ||
     isAdminApiRoute(req) ||
     isInternApiRoute(req) ||
     isResellerApiRoute(req)
@@ -136,6 +146,15 @@ export default clerkMiddleware(async (auth, req) => {
     sessionClaims as { metadata?: { role?: string }; publicMetadata?: { role?: string } } | null,
     userId
   )
+
+  const isUiRoute =
+    isPortalRoute(req) || isAdminRoute(req) || isInternRoute(req) || isResellerRoute(req)
+  const denyUi = () => NextResponse.redirect(new URL("/apply?no_access=1", req.url))
+  const denyApi = () => NextResponse.json({ error: "Forbidden" }, { status: 403 })
+
+  if (!role || !VALID_PORTAL_ROLES.has(role)) {
+    return isUiRoute ? denyUi() : denyApi()
+  }
 
   if (isAdminRoute(req) && !["ADMIN", "SUPER_ADMIN"].includes(role)) {
     return NextResponse.redirect(new URL("/portal/dashboard", req.url))
@@ -148,13 +167,13 @@ export default clerkMiddleware(async (auth, req) => {
   }
 
   if (isAdminApiRoute(req) && !["ADMIN", "SUPER_ADMIN"].includes(role)) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    return denyApi()
   }
   if (isInternApiRoute(req) && !["INTERN", "ADMIN", "SUPER_ADMIN"].includes(role)) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    return denyApi()
   }
   if (isResellerApiRoute(req) && !["RESELLER", "ADMIN", "SUPER_ADMIN"].includes(role)) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    return denyApi()
   }
 
   return NextResponse.next()
