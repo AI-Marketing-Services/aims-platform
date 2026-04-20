@@ -43,6 +43,43 @@ export async function POST(req: Request) {
   try {
     const clerk = await clerkClient()
 
+    // Case A: a Clerk user already exists for this email. Clerk's
+    // createInvitation will 422 in that case, and the user never sees
+    // why. Handle it directly: just set/update their role. Saves the
+    // admin an extra support ticket.
+    const existing = await clerk.users.getUserList({
+      emailAddress: [trimmedEmail],
+    })
+    if (existing.data.length > 0) {
+      const user = existing.data[0]
+      const prevMetadata = (user.publicMetadata ?? {}) as Record<string, unknown>
+      await clerk.users.updateUserMetadata(user.id, {
+        publicMetadata: { ...prevMetadata, role },
+      })
+      logger.info(
+        `Existing Clerk user role updated: ${trimmedEmail} -> ${role} by ${userId}`,
+        { action: "admin_invite_existing_user_role_updated" }
+      )
+      return NextResponse.json({
+        ok: true,
+        updated: true,
+        message: `${trimmedEmail} already has an account — role set to ${role}. They already have access.`,
+        user: { id: user.id, email: trimmedEmail, role },
+      })
+    }
+
+    // Case B: a prior invitation is still pending. Revoke it so we can
+    // reissue (e.g., if the role was wrong, or the invite was never
+    // opened). Clerk rejects duplicates otherwise.
+    const pending = await clerk.invitations.getInvitationList({
+      status: "pending",
+    })
+    for (const inv of pending.data) {
+      if (inv.emailAddress.toLowerCase() === trimmedEmail) {
+        await clerk.invitations.revokeInvitation(inv.id)
+      }
+    }
+
     // Build a sign-up redirect that lands the invitee inside the right
     // surface for their role. Admins land on the dashboard; everyone
     // else gets the portal default.
@@ -78,10 +115,13 @@ export async function POST(req: Request) {
     })
   } catch (err) {
     logger.error(`Team invite failed for ${trimmedEmail}`, err)
-    const message = err instanceof Error ? err.message : "Failed to send invitation"
-    // Clerk returns a 422 with a specific clerkError code when the
-    // address is already in use — surface that cleanly so the UI can
-    // show "they already have an account".
+    const raw = err instanceof Error ? err.message : "Failed to send invitation"
+    // Clerk error messages can be terse ("Unprocessable Entity") — make
+    // them friendlier for the admin UI.
+    const message =
+      /unprocessable/i.test(raw)
+        ? `Clerk rejected the invite for ${trimmedEmail}. They may already have an account, or the email is on Clerk's restricted list.`
+        : raw
     return NextResponse.json({ error: message }, { status: 400 })
   }
 }
