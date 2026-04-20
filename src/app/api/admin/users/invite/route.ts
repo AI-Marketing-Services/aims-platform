@@ -80,15 +80,20 @@ export async function POST(req: Request) {
       }
     }
 
-    // Build a sign-up redirect that lands the invitee inside the right
-    // surface for their role. Admins land on the dashboard; everyone
-    // else gets the portal default.
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? ""
+    // Build an ABSOLUTE sign-up redirect URL. Clerk rejects relative
+    // paths with "redirect_url must be a valid url". We derive the
+    // origin from the incoming request so this works regardless of
+    // whether NEXT_PUBLIC_APP_URL is configured in the runtime env.
     const redirectPath =
       role === "ADMIN" || role === "SUPER_ADMIN"
         ? "/admin/dashboard"
         : "/portal/dashboard"
-    const redirectUrl = baseUrl ? `${baseUrl}${redirectPath}` : redirectPath
+    const envBase = process.env.NEXT_PUBLIC_APP_URL?.trim()
+    const origin =
+      envBase && /^https?:\/\//i.test(envBase)
+        ? envBase.replace(/\/$/, "")
+        : new URL(req.url).origin
+    const redirectUrl = `${origin}${redirectPath}`
 
     const invitation = await clerk.invitations.createInvitation({
       emailAddress: trimmedEmail,
