@@ -115,13 +115,28 @@ export async function POST(req: Request) {
     })
   } catch (err) {
     logger.error(`Team invite failed for ${trimmedEmail}`, err)
+
+    // Clerk errors throw with an `errors` array of { code, message,
+    // longMessage }. Unwrap that so the admin sees the real reason
+    // (e.g. "duplicate_record", "form_identifier_not_allowed_access"),
+    // not the useless "Unprocessable Entity" HTTP label.
+    let clerkCode: string | null = null
+    let clerkMessage: string | null = null
+    if (err && typeof err === "object" && "errors" in err) {
+      const errors = (err as {
+        errors?: Array<{ code?: string; message?: string; longMessage?: string }>
+      }).errors
+      if (Array.isArray(errors) && errors.length > 0) {
+        clerkCode = errors[0].code ?? null
+        clerkMessage = errors[0].longMessage ?? errors[0].message ?? null
+      }
+    }
+
     const raw = err instanceof Error ? err.message : "Failed to send invitation"
-    // Clerk error messages can be terse ("Unprocessable Entity") — make
-    // them friendlier for the admin UI.
-    const message =
-      /unprocessable/i.test(raw)
-        ? `Clerk rejected the invite for ${trimmedEmail}. They may already have an account, or the email is on Clerk's restricted list.`
-        : raw
-    return NextResponse.json({ error: message }, { status: 400 })
+    const message = clerkMessage ?? raw
+    return NextResponse.json(
+      { error: message, code: clerkCode, email: trimmedEmail },
+      { status: 400 }
+    )
   }
 }
