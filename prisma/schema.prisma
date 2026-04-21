@@ -34,6 +34,8 @@ model User {
   notifications         Notification[]
   emailBisonConnection  EmailBisonConnection?
   opsExcellenceEngagements OpsExcellenceEngagement[]
+  signalTopics             SignalTopic[]
+  signalDigestRuns         SignalDigestRun[]
 
   stripeCustomerId String?   @unique
   lastLoginAt      DateTime?
@@ -46,6 +48,9 @@ model User {
   notifSupportReply      Boolean @default(true)
   notifBillingAlert      Boolean @default(true)
   notifMarketingDigest   Boolean @default(false)
+  notifSignalDigest      Boolean @default(false)
+  signalSmsOptIn         Boolean @default(false)
+  signalPhoneE164        String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1148,4 +1153,34 @@ model EngagementActivity {
 
   @@index([engagementId])
   @@index([createdAt])
+}
+
+// ============ DAILY SIGNAL (news digest) ============
+
+model SignalTopic {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  label     String
+  query     String
+  enabled   Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@index([userId, enabled])
+}
+
+model SignalDigestRun {
+  id       String    @id @default(cuid())
+  userId   String
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  runDate  DateTime  @db.Date
+  items    Json
+  costUsd  Decimal   @default(0) @db.Decimal(10, 4)
+  status   String    @default("PENDING")
+  sentAt   DateTime?
+  error    String?
+  createdAt DateTime @default(now())
+
+  @@unique([userId, runDate])
+  @@index([status])
 }
