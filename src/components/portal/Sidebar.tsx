@@ -16,6 +16,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Gauge,
+  Newspaper,
 } from "lucide-react"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
@@ -27,6 +28,7 @@ const PORTAL_NAV = [
   { label: "My Services", href: "/portal/services", icon: Layers },
   { label: "Marketplace", href: "/portal/marketplace", icon: ShoppingBag },
   { label: "Campaigns", href: "/portal/campaigns", icon: BarChart3 },
+  { label: "Signal", href: "/portal/signal", icon: Newspaper },
   { label: "Billing", href: "/portal/billing", icon: CreditCard },
   { label: "Referrals", href: "/portal/referrals", icon: Users },
   { label: "Support", href: "/portal/support", icon: LifeBuoy },
