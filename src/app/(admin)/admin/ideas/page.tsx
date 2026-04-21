@@ -7,15 +7,17 @@ export const metadata = { title: "Ideas · Vault", robots: { index: false } }
 export const dynamic = "force-dynamic"
 
 export default async function AdminIdeasPage() {
-  const { userId, sessionClaims } = await auth()
+  const { userId } = await auth()
   if (!userId) redirect("/sign-in")
-  const role = (sessionClaims?.metadata as { role?: string })?.role
-  if (!role || !["ADMIN", "SUPER_ADMIN"].includes(role)) redirect("/admin/dashboard")
 
-  // Ideas are owner-scoped — every admin sees only their own vault.
-  // The DB role is the stable source of truth; fall back to Clerk-side role
-  // if the row isn't wired yet.
-  const user = await db.user.findUnique({ where: { clerkId: userId }, select: { id: true, role: true } })
+  // DB role is the source of truth — Clerk session tokens don't always
+  // include publicMetadata (session template not customized), and the
+  // outer admin layout already gated us down to an authenticated user
+  // who passed the middleware role check.
+  const user = await db.user.findUnique({
+    where: { clerkId: userId },
+    select: { id: true, role: true },
+  })
   if (!user) redirect("/admin/dashboard")
   if (!["ADMIN", "SUPER_ADMIN"].includes(user.role)) redirect("/admin/dashboard")
 

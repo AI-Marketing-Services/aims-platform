@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
+import { db } from "@/lib/db"
 import { AdminSidebar } from "@/components/admin/AdminSidebar"
 import { MobileAdminNav } from "@/components/admin/MobileAdminNav"
 import { PageTransition } from "@/components/shared/PageTransition"
@@ -18,7 +19,19 @@ export default async function AdminLayout({
   const { userId, sessionClaims } = await auth()
   if (!userId) redirect("/sign-in")
 
-  const role = (sessionClaims?.metadata as { role?: string })?.role
+  // Clerk session tokens often don't carry publicMetadata (requires
+  // session-template customization in the Clerk dashboard). Fall back
+  // to the DB User.role so admins aren't bounced when the claim isn't
+  // populated in their JWT yet.
+  const claimRole = (sessionClaims?.metadata as { role?: string })?.role
+  let role = claimRole
+  if (!role || !["ADMIN", "SUPER_ADMIN"].includes(role)) {
+    const user = await db.user.findUnique({
+      where: { clerkId: userId },
+      select: { role: true },
+    })
+    role = user?.role
+  }
   if (!role || !["ADMIN", "SUPER_ADMIN"].includes(role)) {
     redirect("/portal/dashboard")
   }

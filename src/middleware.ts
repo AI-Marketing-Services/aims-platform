@@ -96,6 +96,22 @@ const VALID_PORTAL_ROLES = new Set([
   "SUPER_ADMIN",
 ])
 
+/**
+ * FULL LOCKDOWN MODE
+ * When LOCKDOWN_ALLOWLIST is set (comma-separated Clerk user IDs), ONLY those
+ * users can authenticate into ANY protected surface (portal/admin/intern/
+ * reseller + API equivalents). Everyone else — including other admins —
+ * gets bounced to the public site. Public routes remain accessible.
+ *
+ * Set via env: LOCKDOWN_ALLOWLIST=user_XXXX,user_YYYY
+ * Unset or empty → lockdown is off, normal role-based rules apply.
+ */
+function lockdownAllowlist(): Set<string> {
+  const raw = process.env.LOCKDOWN_ALLOWLIST
+  if (!raw) return new Set()
+  return new Set(raw.split(",").map((s) => s.trim()).filter(Boolean))
+}
+
 export default clerkMiddleware(async (auth, req) => {
   // Apex -> www canonical-host redirect.
   //
@@ -115,6 +131,13 @@ export default clerkMiddleware(async (auth, req) => {
     return NextResponse.redirect(url, 308)
   }
 
+  // Under lockdown, /sign-up is closed — bounce to /sign-in.
+  // Public pages stay open so the marketing site + lead-magnet tools
+  // continue collecting emails into Close + the LeadMagnetSubmission table.
+  if (lockdownAllowlist().size > 0 && req.nextUrl.pathname.startsWith("/sign-up")) {
+    return NextResponse.redirect(new URL("/?signups_closed=1", req.url))
+  }
+
   if (isPublicRoute(req)) return NextResponse.next()
 
   const { userId, sessionClaims } = await auth()
@@ -123,6 +146,19 @@ export default clerkMiddleware(async (auth, req) => {
     const signInUrl = new URL("/sign-in", req.url)
     signInUrl.searchParams.set("redirect_url", req.url)
     return NextResponse.redirect(signInUrl)
+  }
+
+  // LOCKDOWN: if an allowlist is configured, only those Clerk users can
+  // reach any protected surface. Everyone else gets bounced to the public
+  // site (UI) or 403 (API).
+  const allowlist = lockdownAllowlist()
+  if (allowlist.size > 0 && !allowlist.has(userId)) {
+    const isUi =
+      isPortalRoute(req) || isAdminRoute(req) || isInternRoute(req) || isResellerRoute(req)
+    if (isUi) return NextResponse.redirect(new URL("/?locked=1", req.url))
+    if (isPortalApiRoute(req) || isAdminApiRoute(req) || isInternApiRoute(req) || isResellerApiRoute(req)) {
+      return NextResponse.json({ error: "Service locked" }, { status: 403 })
+    }
   }
 
   // Every authenticated surface (portal/admin/intern/reseller + their

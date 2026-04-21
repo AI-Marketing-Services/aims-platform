@@ -13,11 +13,12 @@ const patchSchema = z.object({
 })
 
 async function requireAdminUser() {
-  const { userId, sessionClaims } = await auth()
+  const { userId } = await auth()
   if (!userId) return null
-  const role = (sessionClaims?.metadata as { role?: string })?.role
-  if (!role || !["ADMIN", "SUPER_ADMIN"].includes(role)) return null
-  const user = await db.user.findUnique({ where: { clerkId: userId }, select: { id: true, role: true } })
+  const user = await db.user.findUnique({
+    where: { clerkId: userId },
+    select: { id: true, role: true },
+  })
   if (!user || !["ADMIN", "SUPER_ADMIN"].includes(user.role)) return null
   return user
 }
