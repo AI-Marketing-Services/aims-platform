@@ -23,6 +23,7 @@ import {
   UserPlus,
   ShieldCheck,
   Plug,
+  Lightbulb,
 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
@@ -119,6 +120,12 @@ const ADMIN_NAV = [
       { label: "Job Health", href: "/admin/cron-status", icon: Timer },
       { label: "Email Previews", href: "/admin/email-previews", icon: MailOpen },
       { label: "Simulate", href: "/admin/simulate", icon: FlaskConical },
+    ],
+  },
+  {
+    section: "Strategy",
+    items: [
+      { label: "Lead Magnets", href: "/admin/ideas", icon: Lightbulb },
     ],
   },
 ] as const

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
+import { cookies } from "next/headers"
 import { z } from "zod"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
@@ -12,23 +13,38 @@ const patchSchema = z.object({
   rank: z.number().int().optional(),
 })
 
-async function requireAdminUser() {
+const VAULT_COOKIE = "lead_magnets_unlock"
+const DEFAULT_OWNER_EMAIL = "adamwolfe102@gmail.com"
+
+async function requireUnlockedAdmin() {
   const { userId } = await auth()
   if (!userId) return null
+
   const user = await db.user.findUnique({
     where: { clerkId: userId },
     select: { id: true, role: true },
   })
   if (!user || !["ADMIN", "SUPER_ADMIN"].includes(user.role)) return null
-  return user
+
+  const store = await cookies()
+  if (store.get(VAULT_COOKIE)?.value !== "yes") return null
+
+  const ownerEmail = process.env.LEAD_MAGNETS_OWNER_EMAIL ?? DEFAULT_OWNER_EMAIL
+  const owner = await db.user.findUnique({
+    where: { email: ownerEmail },
+    select: { id: true },
+  })
+  if (!owner) return null
+
+  return { ownerId: owner.id }
 }
 
 export async function PATCH(
   req: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const user = await requireAdminUser()
-  if (!user) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+  const ctx = await requireUnlockedAdmin()
+  if (!ctx) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
 
   try {
     const { id } = await params
@@ -37,14 +53,11 @@ export async function PATCH(
     if (!parsed.success) return NextResponse.json({ error: "Invalid data" }, { status: 400 })
 
     const existing = await db.idea.findUnique({ where: { id }, select: { ownerId: true } })
-    if (!existing || existing.ownerId !== user.id) {
+    if (!existing || existing.ownerId !== ctx.ownerId) {
       return NextResponse.json({ error: "Not found" }, { status: 404 })
     }
 
-    const idea = await db.idea.update({
-      where: { id },
-      data: parsed.data,
-    })
+    const idea = await db.idea.update({ where: { id }, data: parsed.data })
     return NextResponse.json({ idea })
   } catch (err) {
     logger.error("Idea patch failed", err)
@@ -56,13 +69,13 @@ export async function DELETE(
   _req: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const user = await requireAdminUser()
-  if (!user) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+  const ctx = await requireUnlockedAdmin()
+  if (!ctx) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
 
   try {
     const { id } = await params
     const existing = await db.idea.findUnique({ where: { id }, select: { ownerId: true } })
-    if (!existing || existing.ownerId !== user.id) {
+    if (!existing || existing.ownerId !== ctx.ownerId) {
       return NextResponse.json({ error: "Not found" }, { status: 404 })
     }
     await db.idea.delete({ where: { id } })
