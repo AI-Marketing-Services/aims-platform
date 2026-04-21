@@ -10,6 +10,24 @@ import { queueEmailSequence } from "@/lib/email/queue"
 const CALENDLY_WEBHOOK_SECRET = process.env.CALENDLY_WEBHOOK_SECRET
 
 /**
+ * Allowlist of Calendly event type URIs that should fire the AOC
+ * post-booking flow. Calendly team/workspace webhooks deliver every
+ * invitee.created event in the workspace — not just the AOC consult —
+ * so without this filter the AOC welcome email goes out for every
+ * sales demo, intern interview, and 1:1 booked by anyone on the team.
+ *
+ * Format: comma-separated event type URIs, e.g.
+ *   CALENDLY_AOC_EVENT_TYPE_URIS=https://api.calendly.com/event_types/ABCD1234,https://api.calendly.com/event_types/EFGH5678
+ *
+ * If unset, we skip ALL bookings (fail-safe) and log loudly so ops
+ * knows the filter is missing.
+ */
+const AOC_EVENT_TYPE_URIS = (process.env.CALENDLY_AOC_EVENT_TYPE_URIS ?? "")
+  .split(",")
+  .map((s) => s.trim())
+  .filter(Boolean)
+
+/**
  * Verify the Calendly webhook signature.
  * Header format: `t=<timestamp>,v1=<signature>`
  * Signature = HMAC-SHA256( "<timestamp>.<rawBody>", signingKey )
@@ -108,6 +126,8 @@ export async function POST(req: Request) {
       cancel_url?: string
       scheduled_event?: {
         uri?: string
+        event_type?: string
+        name?: string
         start_time?: string
         location?: { join_url?: string }
       }
@@ -130,6 +150,27 @@ export async function POST(req: Request) {
   const email = invitee?.email?.toLowerCase()
   const name = invitee?.name ?? ""
   const scheduledEvent = invitee?.scheduled_event
+  const eventTypeUri = scheduledEvent?.event_type ?? null
+  const eventTypeName = scheduledEvent?.name ?? null
+
+  // ── Event-type allowlist ────────────────────────────────────────────────
+  // Done BEFORE idempotency write so we don't burn idempotency rows for
+  // every unrelated workspace booking.
+  if (AOC_EVENT_TYPE_URIS.length === 0) {
+    logger.error(
+      "Calendly webhook: CALENDLY_AOC_EVENT_TYPE_URIS not configured — skipping booking to prevent workspace-wide fanout",
+      null,
+      { action: "calendly_webhook_no_filter", eventTypeUri, eventTypeName }
+    )
+    return NextResponse.json({ ok: true, skipped: "no_event_type_filter" })
+  }
+  if (!eventTypeUri || !AOC_EVENT_TYPE_URIS.includes(eventTypeUri)) {
+    logger.info(
+      `Calendly webhook: skipping non-AOC event type ${eventTypeUri ?? "unknown"}`,
+      { action: "calendly_webhook_skipped_event_type", eventTypeUri, eventTypeName }
+    )
+    return NextResponse.json({ ok: true, skipped: "non_aoc_event_type" })
+  }
   const eventStartTime = scheduledEvent?.start_time ?? null
   const meetingUrl = scheduledEvent?.location?.join_url ?? null
   const rescheduleUrl = invitee?.reschedule_url ?? null
