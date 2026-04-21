@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { ArrowRight, BarChart2, Globe, Zap, Layers, Search, BookOpen, Sparkles, Briefcase, TrendingUp } from "lucide-react"
+import { ArrowRight, BarChart2, Globe, Zap, Layers, Search, BookOpen, Sparkles, Briefcase, TrendingUp, Newspaper } from "lucide-react"
 
 export const metadata: Metadata = {
   title: "Free AI Tools | AI Operator Collective",
@@ -27,6 +27,16 @@ const FEATURED_TOOLS = [
       "Twelve specific AI plays for corporate professionals. Turn your W-2 expertise into an AI services business or become the AI champion at your day job.",
     cta: "Read the Playbook",
     badge: "For operators",
+    highlight: true,
+  },
+  {
+    href: "/tools/daily-signal",
+    icon: Newspaper,
+    title: "Daily Signal",
+    description:
+      "A Notion-style AI news digest, built by a council of models. One card per topic, one link, one sentence. Free, daily, 6am ET.",
+    cta: "Get the Digest",
+    badge: "Daily email",
     highlight: true,
   },
 ]

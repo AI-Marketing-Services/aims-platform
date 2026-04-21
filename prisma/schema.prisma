@@ -36,6 +36,7 @@ model User {
   opsExcellenceEngagements OpsExcellenceEngagement[]
   signalTopics             SignalTopic[]
   signalDigestRuns         SignalDigestRun[]
+  ideas                    Idea[]                    @relation("IdeaOwner")
 
   stripeCustomerId String?   @unique
   lastLoginAt      DateTime?
@@ -448,6 +449,7 @@ enum LeadMagnetType {
   BUSINESS_AI_AUDIT
   COLLECTIVE_APPLICATION
   AI_PLAYBOOK
+  DAILY_SIGNAL
 }
 
 // Captures step-1 (name + email) submissions on the apply form so we can
@@ -1183,4 +1185,40 @@ model SignalDigestRun {
 
   @@unique([userId, runDate])
   @@index([status])
+}
+
+// Public lead-magnet subscribers (no Clerk account required).
+// Cron iterates these in addition to Users with notifSignalDigest=true.
+model SignalSubscriber {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  name         String?
+  topics       Json      // [{label: string, query: string}]
+  timezone     String    @default("America/New_York")
+  status       String    @default("ACTIVE")   // ACTIVE | PAUSED | UNSUBSCRIBED
+  unsubToken   String    @unique @default(cuid())
+  lastSentDate DateTime? @db.Date
+  source       String?
+  utmCampaign  String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([status, lastSentDate])
+}
+
+// Private ideation vault — gated to SUPER_ADMIN.
+// Used by Adam to capture product/content/lead-magnet ideas in-app.
+model Idea {
+  id        String   @id @default(cuid())
+  ownerId   String
+  owner     User     @relation("IdeaOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  title     String
+  body      String   @db.Text
+  tags      String[]
+  status    String   @default("INBOX") // INBOX | ACTIVE | SHIPPED | PARKED
+  rank      Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([ownerId, status])
 }

@@ -7,8 +7,11 @@ export async function sendSignalEmail(params: {
   name?: string | null
   items: DigestItem[]
   runDate: Date
+  /** When present, the footer renders a tokenized Manage / Unsubscribe pair for public subscribers. */
+  unsubToken?: string
 }) {
-  const { to, items, runDate } = params
+  const { to, items, runDate, unsubToken } = params
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.aioperatorcollective.com"
   const dateLabel = runDate.toLocaleDateString("en-US", {
     timeZone: "UTC",
     weekday: "long",
@@ -63,8 +66,12 @@ export async function sendSignalEmail(params: {
         </td></tr>
         <tr><td style="padding:24px;border-top:1px solid rgba(240,235,224,0.08);">
           <div style="font-family:'DM Mono',ui-monospace,monospace;font-size:10px;color:#F0EBE0;opacity:0.35;text-align:center;">
-            Signal &middot; AIMS &middot;
-            <a href="https://www.aioperatorcollective.com/portal/signal/settings" style="color:#C4972A;text-decoration:none;">settings</a>
+            Signal &middot; AI Operator Collective &middot;
+            ${
+              unsubToken
+                ? `<a href="${appUrl}/signal/manage/${escapeHtml(unsubToken)}" style="color:#C4972A;text-decoration:none;">manage topics</a> &middot; <a href="${appUrl}/signal/unsubscribe?token=${escapeHtml(unsubToken)}" style="color:#C4972A;text-decoration:none;">unsubscribe</a>`
+                : `<a href="${appUrl}/portal/signal/settings" style="color:#C4972A;text-decoration:none;">settings</a>`
+            }
           </div>
         </td></tr>
       </table>

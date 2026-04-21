@@ -14,7 +14,7 @@ const MEMBERS = [
   { id: "B", model: "claude-haiku-4-5-20251001" as const },
   { id: "C", model: "claude-haiku-4-5-20251001" as const },
 ]
-const CHAIRMAN = "claude-sonnet-4-20250514" as const
+const CHAIRMAN = "claude-opus-4-20250514" as const
 
 export async function councilPick(
   topic: { label: string },

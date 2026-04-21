@@ -17,6 +17,9 @@ export type DigestItem = {
   publishedAt?: string
 }
 
+type TargetTopic = { id: string; label: string; query: string }
+type RunStatus = "SENT" | "EMPTY" | "SKIPPED" | "FAILED"
+
 let cachedProgram: string | null = null
 async function loadProgram(): Promise<string> {
   if (cachedProgram) return cachedProgram
@@ -25,7 +28,31 @@ async function loadProgram(): Promise<string> {
   return cachedProgram
 }
 
-export async function runDigestForUser(userId: string): Promise<{ status: "SENT" | "EMPTY" | "SKIPPED"; itemCount: number }> {
+/** Shared per-target work: autoresearch + council over each topic, assemble digest items. */
+async function pickForTopics(topics: TargetTopic[]): Promise<DigestItem[]> {
+  const program = await loadProgram()
+  const picks = await Promise.all(
+    topics.slice(0, 5).map(async (topic): Promise<DigestItem | null> => {
+      const sources = await gatherSources({ label: topic.label, query: topic.query }, program)
+      const pick: CouncilPick = await councilPick({ label: topic.label }, sources, program)
+      if (!pick) return null
+      return {
+        topicId: topic.id,
+        topicLabel: topic.label,
+        headline: pick.headline,
+        summary: pick.summary,
+        url: pick.url,
+        source: pick.source,
+        publishedAt: pick.publishedAt,
+      }
+    }),
+  )
+  return picks.filter((p): p is DigestItem => p !== null)
+}
+
+export async function runDigestForUser(
+  userId: string,
+): Promise<{ status: RunStatus; itemCount: number }> {
   const user = await db.user.findUnique({
     where: { id: userId },
     select: {
@@ -52,25 +79,7 @@ export async function runDigestForUser(userId: string): Promise<{ status: "SENT"
   })
 
   try {
-    const program = await loadProgram()
-    const picks = await Promise.all(
-      user.signalTopics.slice(0, 5).map(async (topic): Promise<DigestItem | null> => {
-        const sources = await gatherSources({ label: topic.label, query: topic.query }, program)
-        const pick: CouncilPick = await councilPick({ label: topic.label }, sources, program)
-        if (!pick) return null
-        return {
-          topicId: topic.id,
-          topicLabel: topic.label,
-          headline: pick.headline,
-          summary: pick.summary,
-          url: pick.url,
-          source: pick.source,
-          publishedAt: pick.publishedAt,
-        }
-      }),
-    )
-
-    const items = picks.filter((p): p is DigestItem => p !== null)
+    const items = await pickForTopics(user.signalTopics)
 
     if (items.length === 0) {
       await db.signalDigestRun.update({
@@ -93,11 +102,63 @@ export async function runDigestForUser(userId: string): Promise<{ status: "SENT"
     return { status: "SENT", itemCount: items.length }
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err)
-    logger.error("signal digest failed", { userId, msg })
+    logger.error("signal digest failed (user)", { userId, msg })
     await db.signalDigestRun.update({
       where: { id: run.id },
       data: { status: "FAILED", error: msg.slice(0, 500) },
     })
+    throw err
+  }
+}
+
+/**
+ * Public SignalSubscriber path (no Clerk account).
+ * Topics are stored as JSON on the subscriber row.
+ * Idempotency: lastSentDate >= today → skip.
+ */
+export async function runDigestForSubscriber(
+  subscriberId: string,
+): Promise<{ status: RunStatus; itemCount: number }> {
+  const sub = await db.signalSubscriber.findUnique({ where: { id: subscriberId } })
+  if (!sub || sub.status !== "ACTIVE") return { status: "SKIPPED", itemCount: 0 }
+
+  const today = startOfUtcDay()
+  if (sub.lastSentDate && sub.lastSentDate.getTime() >= today.getTime()) {
+    return { status: "SKIPPED", itemCount: 0 }
+  }
+
+  const rawTopics = Array.isArray(sub.topics)
+    ? (sub.topics as unknown as Array<{ label?: string; query?: string }>)
+    : []
+  const topics: TargetTopic[] = rawTopics
+    .filter((t): t is { label: string; query: string } =>
+      !!t && typeof t.label === "string" && typeof t.query === "string",
+    )
+    .map((t, i) => ({ id: `sub_${sub.id}_${i}`, label: t.label, query: t.query }))
+
+  if (topics.length === 0) return { status: "SKIPPED", itemCount: 0 }
+
+  try {
+    const items = await pickForTopics(topics)
+
+    if (items.length === 0) {
+      await db.signalSubscriber.update({ where: { id: sub.id }, data: { lastSentDate: today } })
+      return { status: "EMPTY", itemCount: 0 }
+    }
+
+    await sendSignalEmail({
+      to: sub.email,
+      name: sub.name,
+      items,
+      runDate: today,
+      unsubToken: sub.unsubToken,
+    })
+
+    await db.signalSubscriber.update({ where: { id: sub.id }, data: { lastSentDate: today } })
+    return { status: "SENT", itemCount: items.length }
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err)
+    logger.error("signal digest failed (subscriber)", { subscriberId, msg })
     throw err
   }
 }
