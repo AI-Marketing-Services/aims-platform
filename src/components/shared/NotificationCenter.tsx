@@ -1,7 +1,7 @@
 "use client"
 
 import { memo } from "react"
-import { Bell, Users, DollarSign, BarChart2, LifeBuoy, Zap, Activity, X, CheckCheck } from "lucide-react"
+import { Bell, Users, DollarSign, BarChart2, LifeBuoy, Zap, Activity, X, CheckCheck, ClipboardList } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { cn, timeAgo } from "@/lib/utils"
 
@@ -34,6 +34,8 @@ const TYPE_ICON: Record<string, React.ElementType> = {
   missed_eod: Activity,
   onboarding_unlock_unlock_50: Zap,
   onboarding_unlock_unlock_100: Zap,
+  followup_triggered: Bell,
+  onboarding_checklist_ready: ClipboardList,
 }
 
 const TYPE_COLOR: Record<string, string> = {
@@ -55,6 +57,8 @@ const TYPE_COLOR: Record<string, string> = {
   missed_eod: "bg-primary/15 text-primary",
   onboarding_unlock_unlock_50: "bg-emerald-500/10 text-emerald-400",
   onboarding_unlock_unlock_100: "bg-emerald-500/10 text-emerald-400",
+  followup_triggered: "bg-amber-500/10 text-amber-400",
+  onboarding_checklist_ready: "bg-emerald-500/10 text-emerald-400",
 }
 
 

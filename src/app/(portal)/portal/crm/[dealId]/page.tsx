@@ -7,6 +7,7 @@ import { StageSelector } from "@/components/portal/crm/StageSelector"
 import { ChevronLeft, Building2, User, Mail, Phone, Globe, DollarSign } from "lucide-react"
 import { EditDealInlineForm } from "@/components/portal/crm/EditDealInlineForm"
 import { ProposalGenerator } from "@/components/portal/crm/ProposalGenerator"
+import { DealChecklist } from "@/components/portal/crm/DealChecklist"
 
 async function getDeal(dealId: string, clerkId: string) {
   const dbUser = await db.user.findUnique({ where: { clerkId }, select: { id: true } })
@@ -145,6 +146,9 @@ export default async function DealDetailPage({
             />
           </div>
         </div>
+
+        {/* Onboarding Checklist (only for ACTIVE_RETAINER / COMPLETED) */}
+        <DealChecklist dealId={deal.id} stage={deal.stage} />
 
         {/* Proposals */}
         <div className="bg-card border border-border rounded-xl p-4">

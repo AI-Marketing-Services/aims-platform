@@ -102,6 +102,23 @@ export async function PATCH(
       },
     })
 
+    // Fire onboarding checklist notification when deal first moves to ACTIVE_RETAINER
+    if (
+      parsed.data.stage === "ACTIVE_RETAINER" &&
+      existing.stage !== "ACTIVE_RETAINER"
+    ) {
+      await db.notification.create({
+        data: {
+          userId: dbUserId,
+          channel: "IN_APP",
+          type: "onboarding_checklist_ready",
+          title: "Client onboarding started",
+          message: `${existing.companyName} is now active. Complete the onboarding checklist to start strong.`,
+          metadata: { link: `/portal/crm/deals/${id}` },
+        },
+      }).catch((err) => logger.error("Failed to create onboarding checklist notification", err, { dealId: id }))
+    }
+
     return NextResponse.json({ deal })
   } catch (err) {
     logger.error("Failed to update client deal", err, { userId, dealId: id })

@@ -26,6 +26,8 @@ import {
   Calculator,
   FileCode2,
   FileText,
+  Bell,
+  PenLine,
 } from "lucide-react"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
@@ -36,9 +38,12 @@ const PORTAL_NAV = [
   { label: "Dashboard", href: "/portal/dashboard", icon: LayoutDashboard },
   { label: "Getting Started", href: "/portal/onboard", icon: Rocket },
   { label: "Client CRM", href: "/portal/crm", icon: Briefcase },
+  { label: "Follow-up Rules", href: "/portal/follow-up-rules", icon: Bell },
   { label: "Invoices", href: "/portal/invoices", icon: FileText },
+  { label: "Revenue", href: "/portal/revenue", icon: TrendingUp },
   { label: "Lead Scout", href: "/portal/crm/scout", icon: MapPin },
   { label: "AI Scripts", href: "/portal/scripts", icon: FileCode2 },
+  { label: "Content Engine", href: "/portal/content", icon: PenLine },
   { label: "Toolkit", href: "/portal/tools", icon: Wrench },
   { label: "My Metrics", href: "/portal/metrics", icon: TrendingUp },
   { label: "Playbooks", href: "/portal/playbooks", icon: BookOpen },
