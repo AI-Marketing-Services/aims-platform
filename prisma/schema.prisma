@@ -39,6 +39,7 @@ model User {
   ideas                    Idea[]                    @relation("IdeaOwner")
   memberProfile            MemberProfile?
   memberOnboardingSteps    MemberOnboardingStep[]
+  clientDeals              ClientDeal[]
 
   stripeCustomerId String?   @unique
   lastLoginAt      DateTime?
@@ -1209,6 +1210,93 @@ model SignalSubscriber {
   updatedAt    DateTime  @updatedAt
 
   @@index([status, lastSentDate])
+}
+
+// ============ MEMBER CRM ============
+
+enum ClientDealStage {
+  PROSPECT
+  DISCOVERY_CALL
+  PROPOSAL_SENT
+  ACTIVE_RETAINER
+  COMPLETED
+  LOST
+}
+
+enum ClientActivityType {
+  NOTE
+  CALL
+  EMAIL
+  MEETING
+  PROPOSAL_SENT
+  STAGE_CHANGE
+  CONTACT_ADDED
+}
+
+model ClientDeal {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  companyName  String
+  contactName  String?
+  contactEmail String?
+  contactPhone String?
+  website      String?
+  industry     String?
+
+  stage    ClientDealStage @default(PROSPECT)
+  value    Float           @default(0)
+  currency String          @default("USD")
+  notes    String?         @db.Text
+  tags     String[]
+
+  contacts   ClientContact[]
+  activities ClientDealActivity[]
+
+  wonAt  DateTime?
+  lostAt DateTime?
+  lostReason String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([userId, stage])
+  @@index([createdAt])
+}
+
+model ClientContact {
+  id           String     @id @default(cuid())
+  clientDealId String
+  clientDeal   ClientDeal @relation(fields: [clientDealId], references: [id], onDelete: Cascade)
+
+  firstName String
+  lastName  String?
+  title     String?
+  email     String?
+  phone     String?
+  isPrimary Boolean @default(false)
+  notes     String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([clientDealId])
+}
+
+model ClientDealActivity {
+  id           String             @id @default(cuid())
+  clientDealId String
+  clientDeal   ClientDeal         @relation(fields: [clientDealId], references: [id], onDelete: Cascade)
+  type         ClientActivityType
+  description  String?            @db.Text
+  metadata     Json?
+
+  createdAt DateTime @default(now())
+
+  @@index([clientDealId])
+  @@index([createdAt])
 }
 
 // ============ MEMBER ONBOARDING OS ============

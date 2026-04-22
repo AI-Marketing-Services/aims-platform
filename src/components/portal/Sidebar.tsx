@@ -18,6 +18,7 @@ import {
   Gauge,
   Newspaper,
   Rocket,
+  Briefcase,
 } from "lucide-react"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
@@ -27,6 +28,7 @@ import { OnboardingProgressWidget } from "@/components/portal/OnboardingProgress
 const PORTAL_NAV = [
   { label: "Dashboard", href: "/portal/dashboard", icon: LayoutDashboard },
   { label: "Getting Started", href: "/portal/onboard", icon: Rocket },
+  { label: "Client CRM", href: "/portal/crm", icon: Briefcase },
   { label: "Ops Excellence", href: "/portal/ops-excellence", icon: Gauge },
   { label: "My Services", href: "/portal/services", icon: Layers },
   { label: "Marketplace", href: "/portal/marketplace", icon: ShoppingBag },
