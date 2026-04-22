@@ -2,7 +2,7 @@ import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
 import { KanbanPipeline } from "@/components/portal/crm/KanbanPipeline"
-import { Briefcase } from "lucide-react"
+import { Briefcase, Download } from "lucide-react"
 
 async function getDeals(userId: string) {
   const dbUser = await db.user.findUnique({ where: { clerkId: userId }, select: { id: true } })
@@ -60,6 +60,16 @@ export default async function CrmPage() {
             <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Total</p>
             <p className="text-sm font-bold text-foreground">{deals.length}</p>
           </div>
+          {deals.length > 0 && (
+            <a
+              href="/api/portal/crm/export"
+              download
+              className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground border border-border/50 hover:border-border hover:bg-surface transition-all"
+            >
+              <Download className="h-3.5 w-3.5" />
+              Export CSV
+            </a>
+          )}
         </div>
       </div>
 
