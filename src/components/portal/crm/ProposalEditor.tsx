@@ -11,6 +11,7 @@ import {
   Send,
   Printer,
   Mail,
+  FileDown,
   X,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -183,6 +184,14 @@ export function ProposalEditor({
             <Mail className="h-3.5 w-3.5" />
             Email client
           </button>
+          <a
+            href={`/api/portal/crm/proposals/${proposalId}/pdf`}
+            download
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-surface border border-border transition-all"
+          >
+            <FileDown className="h-3.5 w-3.5" />
+            Download PDF
+          </a>
           <button
             onClick={handlePrint}
             className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-surface border border-border transition-all"
