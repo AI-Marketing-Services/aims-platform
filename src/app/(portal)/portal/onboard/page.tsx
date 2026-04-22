@@ -6,7 +6,9 @@ import { getProgressForUser } from "@/lib/onboarding/progress"
 import { Breadcrumbs } from "@/components/shared/Breadcrumbs"
 import { OnboardingChecklist } from "@/components/portal/OnboardingChecklist"
 import { BusinessProfileForm } from "./BusinessProfileForm"
-import { Rocket, UserCircle } from "lucide-react"
+import { OnboardTabs } from "./OnboardTabs"
+import { Rocket } from "lucide-react"
+import { TOTAL_STEPS } from "@/lib/onboarding/steps"
 
 export const metadata: Metadata = { title: "Getting Started" }
 
@@ -41,7 +43,7 @@ export default async function OnboardPage() {
   const completedKeys = [...progress.completedKeys]
 
   return (
-    <div className="max-w-3xl space-y-6">
+    <div className="w-full max-w-4xl space-y-6">
       <Breadcrumbs
         items={[
           { label: "Dashboard", href: "/portal/dashboard" },
@@ -67,24 +69,25 @@ export default async function OnboardPage() {
         </p>
       </div>
 
-      {/* Business Profile */}
-      <div className="rounded-2xl border border-border bg-card p-6">
-        <div className="flex items-center gap-2 mb-5">
-          <UserCircle className="h-4 w-4 text-primary" />
-          <h2 className="text-sm font-semibold text-foreground">Your Business Profile</h2>
-          <span className="ml-auto text-xs text-muted-foreground">Visible to your cohort</span>
-        </div>
-        <BusinessProfileForm initialProfile={dbUser.memberProfile ?? null} />
-      </div>
-
-      {/* 30-day checklist */}
-      <div className="rounded-2xl border border-border bg-card p-6">
-        <div className="flex items-center gap-2 mb-5">
-          <Rocket className="h-4 w-4 text-primary" />
-          <h2 className="text-sm font-semibold text-foreground">30-Day Roadmap</h2>
-        </div>
-        <OnboardingChecklist initialCompletedKeys={completedKeys} variant="full" />
-      </div>
+      {/* Tabbed content */}
+      <OnboardTabs
+        completedCount={progress.completedCount}
+        totalSteps={TOTAL_STEPS}
+        percent={progress.percent}
+        roadmapSection={
+          <div className="rounded-2xl border border-border bg-card p-6">
+            <OnboardingChecklist initialCompletedKeys={completedKeys} variant="full" />
+          </div>
+        }
+        profileSection={
+          <div className="rounded-2xl border border-border bg-card p-6">
+            <p className="text-xs text-muted-foreground mb-5">
+              Visible to your cohort in the community directory.
+            </p>
+            <BusinessProfileForm initialProfile={dbUser.memberProfile ?? null} />
+          </div>
+        }
+      />
     </div>
   )
 }

@@ -1,10 +1,9 @@
 "use client"
 
-import { useOptimistic, useTransition } from "react"
+import { useState } from "react"
 import { ONBOARDING_STEPS, groupStepsByWeek, TOTAL_STEPS, type OnboardingStep } from "@/lib/onboarding/steps"
 import { CheckCircle2, Circle, ExternalLink, ChevronDown, ChevronUp } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { useState } from "react"
 
 interface Props {
   initialCompletedKeys: string[]
@@ -89,16 +88,9 @@ function StepRow({
 }
 
 export function OnboardingChecklist({ initialCompletedKeys, variant = "full", className }: Props) {
-  const [isPending, startTransition] = useTransition()
-  const [optimisticKeys, updateOptimistic] = useOptimistic(
-    new Set(initialCompletedKeys),
-    (state, { key, completed }: { key: string; completed: boolean }) => {
-      const next = new Set(state)
-      if (completed) next.add(key)
-      else next.delete(key)
-      return next
-    }
-  )
+  // Use plain useState — useOptimistic is for Server Actions and resets after transition
+  const [completedKeys, setCompletedKeys] = useState<Set<string>>(new Set(initialCompletedKeys))
+  const [pendingKey, setPendingKey] = useState<string | null>(null)
 
   const [expandedWeeks, setExpandedWeeks] = useState<Record<string, boolean>>({
     week1: true,
@@ -106,25 +98,40 @@ export function OnboardingChecklist({ initialCompletedKeys, variant = "full", cl
     week34: true,
   })
 
-  const weeks = groupStepsByWeek(optimisticKeys)
-  const completedCount = optimisticKeys.size
+  const weeks = groupStepsByWeek(completedKeys)
+  const completedCount = completedKeys.size
   const percent = Math.round((completedCount / TOTAL_STEPS) * 100)
 
-  function handleToggle(step: StepWithCompleted) {
+  async function handleToggle(step: StepWithCompleted) {
+    if (pendingKey === step.key) return
     const nowCompleted = !step.completed
-    startTransition(async () => {
-      updateOptimistic({ key: step.key, completed: nowCompleted })
-      try {
-        await toggleStep(step.key, step.completed)
-      } catch {
-        // revert — optimistic update will reset on next render
-      }
+
+    // Optimistic update — update state immediately
+    setCompletedKeys((prev) => {
+      const next = new Set(prev)
+      if (nowCompleted) next.add(step.key)
+      else next.delete(step.key)
+      return next
     })
+    setPendingKey(step.key)
+
+    try {
+      await toggleStep(step.key, step.completed)
+    } catch {
+      // Revert on error
+      setCompletedKeys((prev) => {
+        const next = new Set(prev)
+        if (nowCompleted) next.delete(step.key)
+        else next.add(step.key)
+        return next
+      })
+    } finally {
+      setPendingKey(null)
+    }
   }
 
   if (variant === "compact") {
-    // Show only next 3 incomplete steps
-    const nextSteps = ONBOARDING_STEPS.filter((s) => !optimisticKeys.has(s.key)).slice(0, 3)
+    const nextSteps = ONBOARDING_STEPS.filter((s) => !completedKeys.has(s.key)).slice(0, 3)
     return (
       <div className={cn("space-y-2", className)}>
         {nextSteps.map((step) => (
@@ -132,7 +139,7 @@ export function OnboardingChecklist({ initialCompletedKeys, variant = "full", cl
             key={step.key}
             step={{ ...step, completed: false }}
             onToggle={() => handleToggle({ ...step, completed: false })}
-            isPending={isPending}
+            isPending={pendingKey === step.key}
           />
         ))}
       </div>
@@ -194,7 +201,7 @@ export function OnboardingChecklist({ initialCompletedKeys, variant = "full", cl
                       key={step.key}
                       step={step}
                       onToggle={() => handleToggle(step)}
-                      isPending={isPending}
+                      isPending={pendingKey === step.key}
                     />
                   ))}
                 </div>
