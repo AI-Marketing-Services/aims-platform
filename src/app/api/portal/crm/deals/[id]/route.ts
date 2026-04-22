@@ -58,6 +58,7 @@ export async function PATCH(
     }
 
     const { contactEmail, website, tags, value, ...rest } = parsed.data
+    const lostReason = (body as { lostReason?: string }).lostReason
 
     const updates: Record<string, unknown> = { ...rest }
     if (contactEmail !== undefined) updates.contactEmail = contactEmail || null
@@ -65,13 +66,25 @@ export async function PATCH(
     if (tags !== undefined) updates.tags = tags
     if (value !== undefined) updates.value = value
 
+    // Set won/lost timestamps and reason
+    if (parsed.data.stage && parsed.data.stage !== existing.stage) {
+      if (parsed.data.stage === "COMPLETED") updates.wonAt = new Date()
+      if (parsed.data.stage === "LOST") {
+        updates.lostAt = new Date()
+        if (lostReason) updates.lostReason = lostReason
+      }
+      // Clear timestamps if moving back out of terminal states
+      if (parsed.data.stage !== "COMPLETED" && existing.stage === "COMPLETED") updates.wonAt = null
+      if (parsed.data.stage !== "LOST" && existing.stage === "LOST") { updates.lostAt = null; updates.lostReason = null }
+    }
+
     // Log stage change as activity
     const activities = []
     if (parsed.data.stage && parsed.data.stage !== existing.stage) {
       activities.push({
         type: "STAGE_CHANGE" as const,
-        description: `Stage changed from ${existing.stage} to ${parsed.data.stage}`,
-        metadata: { from: existing.stage, to: parsed.data.stage },
+        description: `Stage changed from ${existing.stage} to ${parsed.data.stage}${lostReason ? ` — ${lostReason}` : ""}`,
+        metadata: { from: existing.stage, to: parsed.data.stage, ...(lostReason ? { lostReason } : {}) },
       })
     }
 
