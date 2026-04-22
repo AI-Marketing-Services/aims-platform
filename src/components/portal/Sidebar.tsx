@@ -104,6 +104,11 @@ export function PortalSidebar({
               {!collapsed && item.label === "Dashboard" && hasUnread && (
                 <span className="ml-auto h-2 w-2 rounded-full bg-primary" />
               )}
+              {!collapsed && item.label === "Getting Started" && onboardingPercent < 100 && onboardingPercent > 0 && (
+                <span className="ml-auto text-[10px] font-bold text-primary/80 bg-primary/10 px-1.5 py-0.5 rounded-full">
+                  {onboardingPercent}%
+                </span>
+              )}
             </Link>
           )
         })}

@@ -2,6 +2,23 @@ import { db } from "@/lib/db"
 import { ONBOARDING_STEPS, TOTAL_STEPS } from "./steps"
 import { fireMilestoneEmailIfNeeded } from "@/lib/email/onboarding-milestones"
 
+const UNLOCK_MILESTONES = [
+  {
+    threshold: 50,
+    key: "unlock_50",
+    title: "Halfway there! New tools unlocked.",
+    message: "You've completed 50% of Getting Started. Your Toolkit just gained 4 new AI tools — check them out.",
+    link: "/portal/tools",
+  },
+  {
+    threshold: 100,
+    key: "unlock_100",
+    title: "Onboarding complete! Full access unlocked.",
+    message: "You've finished all onboarding steps. Every tool in your Toolkit is now available.",
+    link: "/portal/tools",
+  },
+]
+
 export interface OnboardingProgress {
   completedKeys: Set<string>
   completedCount: number
@@ -90,9 +107,26 @@ export async function markStepComplete({
     }
   })
 
-  // Fire milestone email if a threshold was just crossed (non-blocking)
+  // Fire milestone email and in-app unlock notifications (non-blocking)
   const newCount = await db.memberOnboardingStep.count({ where: { userId } })
   fireMilestoneEmailIfNeeded({ userId, newCount, previousCount }).catch(() => {})
+
+  const previousPct = Math.round((previousCount / TOTAL_STEPS) * 100)
+  const newPct = Math.round((newCount / TOTAL_STEPS) * 100)
+  for (const milestone of UNLOCK_MILESTONES) {
+    if (previousPct < milestone.threshold && newPct >= milestone.threshold) {
+      db.notification.create({
+        data: {
+          userId,
+          channel: "IN_APP",
+          type: `onboarding_unlock_${milestone.key}`,
+          title: milestone.title,
+          message: milestone.message,
+          metadata: { link: milestone.link, percent: newPct },
+        },
+      }).catch(() => {})
+    }
+  }
 }
 
 export async function resetStep({
