@@ -41,6 +41,11 @@ model User {
   memberOnboardingSteps    MemberOnboardingStep[]
   clientDeals              ClientDeal[]
   usageEvents              UsageEvent[]
+  invoices                 ClientInvoice[]           @relation("UserInvoices")
+  aiScripts                AiScript[]                @relation("UserAiScripts")
+  portalGuests             ClientPortalAccess[]      @relation("OperatorPortalGuests")
+  contentPieces            ContentPiece[]            @relation("UserContent")
+  followUpRules            FollowUpRule[]            @relation("UserFollowUpRules")
 
   stripeCustomerId String?   @unique
   lastLoginAt      DateTime?
@@ -1232,6 +1237,12 @@ enum ClientActivityType {
   PROPOSAL_SENT
   STAGE_CHANGE
   CONTACT_ADDED
+  INVOICE_SENT
+  INVOICE_PAID
+  PORTAL_INVITED
+  PORTAL_REVOKED
+  CONTENT_GENERATED
+  FOLLOWUP_TRIGGERED
 }
 
 model ClientDeal {
@@ -1255,6 +1266,11 @@ model ClientDeal {
   contacts   ClientContact[]
   activities ClientDealActivity[]
   proposals  ClientProposal[]
+  invoices   ClientInvoice[]
+  aiScripts  AiScript[]
+  portalAccess ClientPortalAccess[]
+  contentPieces ContentPiece[]
+  followUpRules FollowUpRule[]
 
   wonAt  DateTime?
   lostAt DateTime?
@@ -1397,4 +1413,186 @@ model Idea {
   updatedAt DateTime @updatedAt
 
   @@index([ownerId, status])
+}
+
+// ============ TIER 1 — INVOICE GENERATOR ============
+
+enum ClientInvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+model ClientInvoice {
+  id           String     @id @default(cuid())
+  userId       String
+  user         User       @relation("UserInvoices", fields: [userId], references: [id], onDelete: Cascade)
+  clientDealId String?
+  clientDeal   ClientDeal? @relation(fields: [clientDealId], references: [id], onDelete: SetNull)
+
+  invoiceNumber  String   @unique // e.g. INV-2026-001
+  title          String
+  recipientName  String?
+  recipientEmail String?
+  recipientCompany String?
+
+  status       ClientInvoiceStatus @default(DRAFT)
+  currency     String              @default("USD")
+  subtotal     Float               @default(0)
+  taxRate      Float               @default(0)
+  taxAmount    Float               @default(0)
+  total        Float               @default(0)
+  notes        String?             @db.Text
+  paymentTerms String?             // e.g. "Net 30"
+
+  shareToken        String?   @unique
+  stripePaymentLink String?
+  stripeSessionId   String?
+
+  dueAt    DateTime?
+  sentAt   DateTime?
+  paidAt   DateTime?
+
+  lineItems ClientInvoiceLineItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([userId, status])
+  @@index([shareToken])
+  @@index([invoiceNumber])
+}
+
+model ClientInvoiceLineItem {
+  id        String        @id @default(cuid())
+  invoiceId String
+  invoice   ClientInvoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  description String
+  quantity    Float  @default(1)
+  unitPrice   Float  @default(0)
+  amount      Float  @default(0)
+  sortOrder   Int    @default(0)
+
+  createdAt DateTime @default(now())
+
+  @@index([invoiceId])
+}
+
+// ============ TIER 1 — AI SCRIPT BUILDER ============
+
+enum AiScriptType {
+  COLD_EMAIL
+  DISCOVERY_CALL
+  FOLLOW_UP
+  LINKEDIN_DM
+  PROPOSAL_FOLLOW_UP
+}
+
+model AiScript {
+  id           String     @id @default(cuid())
+  userId       String
+  user         User       @relation("UserAiScripts", fields: [userId], references: [id], onDelete: Cascade)
+  clientDealId String?
+  clientDeal   ClientDeal? @relation(fields: [clientDealId], references: [id], onDelete: SetNull)
+
+  type    AiScriptType
+  title   String
+  content String       @db.Text
+  prompt  String?      @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([userId, type])
+  @@index([clientDealId])
+}
+
+// ============ TIER 1 — CLIENT-FACING WHITELABEL PORTAL ============
+
+model ClientPortalAccess {
+  id           String     @id @default(cuid())
+  userId       String
+  user         User       @relation("OperatorPortalGuests", fields: [userId], references: [id], onDelete: Cascade)
+  clientDealId String
+  clientDeal   ClientDeal @relation(fields: [clientDealId], references: [id], onDelete: Cascade)
+
+  guestEmail   String
+  guestName    String?
+  tokenHash    String    @unique // sha256 of magic-link token
+  expiresAt    DateTime
+  lastAccessAt DateTime?
+  revokedAt    DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([clientDealId])
+  @@index([tokenHash])
+  @@index([guestEmail])
+}
+
+// ============ TIER 2 — CONTENT ENGINE ============
+
+enum ContentPieceType {
+  LINKEDIN_POST
+  CASE_STUDY
+  EMAIL_SEQUENCE
+  TESTIMONIAL
+  TWEET_THREAD
+}
+
+enum ContentPieceStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model ContentPiece {
+  id           String     @id @default(cuid())
+  userId       String
+  user         User       @relation("UserContent", fields: [userId], references: [id], onDelete: Cascade)
+  clientDealId String?
+  clientDeal   ClientDeal? @relation(fields: [clientDealId], references: [id], onDelete: SetNull)
+
+  type    ContentPieceType
+  status  ContentPieceStatus @default(DRAFT)
+  title   String
+  content String             @db.Text
+  prompt  String?            @db.Text
+
+  publishedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@index([userId, type])
+  @@index([userId, status])
+}
+
+// ============ TIER 2 — FOLLOW-UP NUDGES ============
+
+model FollowUpRule {
+  id           String     @id @default(cuid())
+  userId       String
+  user         User       @relation("UserFollowUpRules", fields: [userId], references: [id], onDelete: Cascade)
+  clientDealId String?
+  clientDeal   ClientDeal? @relation(fields: [clientDealId], references: [id], onDelete: SetNull)
+
+  stageTrigger  ClientDealStage // fire when deal is in this stage
+  daysStale     Int             // after N days of inactivity
+  message       String?         @db.Text
+  isActive      Boolean         @default(true)
+  lastTriggered DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([userId, isActive])
 }

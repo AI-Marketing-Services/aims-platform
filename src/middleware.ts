@@ -46,6 +46,9 @@ const isPublicRoute = createRouteMatcher([
   "/api/community/lead(.*)",
   "/api/community/apply(.*)",
   "/api/unsubscribe(.*)",
+  // Client-facing whitelabel portal — token-authenticated, no Clerk required.
+  "/client-portal(.*)",
+  "/api/client-portal(.*)",
 ])
 
 const isAdminRoute = createRouteMatcher(["/admin(.*)"])
