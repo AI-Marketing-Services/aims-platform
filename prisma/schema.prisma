@@ -1253,6 +1253,7 @@ model ClientDeal {
 
   contacts   ClientContact[]
   activities ClientDealActivity[]
+  proposals  ClientProposal[]
 
   wonAt  DateTime?
   lostAt DateTime?
@@ -1297,6 +1298,28 @@ model ClientDealActivity {
 
   @@index([clientDealId])
   @@index([createdAt])
+}
+
+model ClientProposal {
+  id           String     @id @default(cuid())
+  clientDealId String
+  clientDeal   ClientDeal @relation(fields: [clientDealId], references: [id], onDelete: Cascade)
+
+  title       String
+  content     String   @db.Text
+  status      String   @default("DRAFT") // DRAFT | SENT | ACCEPTED | REJECTED
+  shareToken  String?  @unique
+  totalValue  Float    @default(0)
+  currency    String   @default("USD")
+
+  generatedAt DateTime @default(now())
+  sentAt      DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([clientDealId])
+  @@index([shareToken])
 }
 
 // ============ MEMBER ONBOARDING OS ============

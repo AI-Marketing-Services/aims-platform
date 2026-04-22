@@ -6,6 +6,7 @@ import { ActivityTimeline } from "@/components/portal/crm/ActivityTimeline"
 import { StageSelector } from "@/components/portal/crm/StageSelector"
 import { ChevronLeft, Building2, User, Mail, Phone, Globe, DollarSign } from "lucide-react"
 import { EditDealInlineForm } from "@/components/portal/crm/EditDealInlineForm"
+import { ProposalGenerator } from "@/components/portal/crm/ProposalGenerator"
 
 async function getDeal(dealId: string, clerkId: string) {
   const dbUser = await db.user.findUnique({ where: { clerkId }, select: { id: true } })
@@ -16,6 +17,7 @@ async function getDeal(dealId: string, clerkId: string) {
     include: {
       contacts: { orderBy: [{ isPrimary: "desc" }, { createdAt: "asc" }] },
       activities: { orderBy: { createdAt: "desc" } },
+      proposals: { orderBy: { createdAt: "desc" } },
     },
   })
 }
@@ -142,6 +144,27 @@ export default async function DealDetailPage({
               }}
             />
           </div>
+        </div>
+
+        {/* Proposals */}
+        <div className="bg-card border border-border rounded-xl p-4">
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+            Proposals
+          </p>
+          <ProposalGenerator
+            dealId={deal.id}
+            companyName={deal.companyName}
+            dealValue={deal.value}
+            proposals={deal.proposals.map((p) => ({
+              id: p.id,
+              title: p.title,
+              status: p.status,
+              totalValue: p.totalValue,
+              currency: p.currency,
+              createdAt: p.createdAt.toISOString(),
+              shareToken: p.shareToken,
+            }))}
+          />
         </div>
 
         {/* Right: activity timeline */}
