@@ -24,6 +24,7 @@ import {
   ShieldCheck,
   Plug,
   Lightbulb,
+  Users,
 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
@@ -94,6 +95,7 @@ const ADMIN_NAV = [
       { label: "Applications", href: "/admin/applications", icon: ClipboardCheck },
       { label: "Follow-ups", href: "/admin/follow-ups", icon: Inbox },
       { label: "Mighty Invites", href: "/admin/mighty-invites", icon: UserPlus },
+      { label: "Portal Members", href: "/admin/members", icon: Users },
     ],
   },
   {
