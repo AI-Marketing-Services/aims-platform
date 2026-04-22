@@ -24,6 +24,8 @@ import {
   MapPin,
   BookOpen,
   Calculator,
+  FileCode2,
+  FileText,
 } from "lucide-react"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
@@ -34,7 +36,9 @@ const PORTAL_NAV = [
   { label: "Dashboard", href: "/portal/dashboard", icon: LayoutDashboard },
   { label: "Getting Started", href: "/portal/onboard", icon: Rocket },
   { label: "Client CRM", href: "/portal/crm", icon: Briefcase },
+  { label: "Invoices", href: "/portal/invoices", icon: FileText },
   { label: "Lead Scout", href: "/portal/crm/scout", icon: MapPin },
+  { label: "AI Scripts", href: "/portal/scripts", icon: FileCode2 },
   { label: "Toolkit", href: "/portal/tools", icon: Wrench },
   { label: "My Metrics", href: "/portal/metrics", icon: TrendingUp },
   { label: "Playbooks", href: "/portal/playbooks", icon: BookOpen },
