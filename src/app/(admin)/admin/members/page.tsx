@@ -251,6 +251,12 @@ export default async function AdminMembersPage() {
                           </Link>
                         )}
                         <Link
+                          href={`/admin/members/${member.id}`}
+                          className="px-2.5 py-1 rounded-lg text-xs text-primary hover:bg-primary/10 border border-primary/20 hover:border-primary/40 transition-all font-medium"
+                        >
+                          Detail
+                        </Link>
+                        <Link
                           href={`/admin/clients/${member.id}`}
                           className="px-2.5 py-1 rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-surface border border-border/40 hover:border-border transition-all"
                         >
