@@ -20,6 +20,7 @@ import {
   Rocket,
   Briefcase,
   Wrench,
+  TrendingUp,
 } from "lucide-react"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
@@ -31,6 +32,7 @@ const PORTAL_NAV = [
   { label: "Getting Started", href: "/portal/onboard", icon: Rocket },
   { label: "Client CRM", href: "/portal/crm", icon: Briefcase },
   { label: "Toolkit", href: "/portal/tools", icon: Wrench },
+  { label: "My Metrics", href: "/portal/metrics", icon: TrendingUp },
   { label: "Ops Excellence", href: "/portal/ops-excellence", icon: Gauge },
   { label: "My Services", href: "/portal/services", icon: Layers },
   { label: "Marketplace", href: "/portal/marketplace", icon: ShoppingBag },
