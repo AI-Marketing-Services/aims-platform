@@ -100,6 +100,43 @@ export default async function PortalDashboard({
       ])
     : [0, 0]
 
+  // CRM quick stats
+  let crmStats: {
+    totalDeals: number
+    activeDeals: number
+    pipelineValue: number
+    recentActivities: Array<{ id: string; type: string; description: string | null; clientDeal: { companyName: string }; createdAt: Date }>
+  } | null = null
+
+  if (dbUser) {
+    try {
+      const [crmDeals, recentCrmActivities] = await Promise.all([
+        db.clientDeal.findMany({
+          where: { userId: dbUser.id },
+          select: { stage: true, value: true },
+        }),
+        db.clientDealActivity.findMany({
+          where: { clientDeal: { userId: dbUser.id } },
+          include: { clientDeal: { select: { companyName: true } } },
+          orderBy: { createdAt: "desc" },
+          take: 4,
+        }),
+      ])
+      if (crmDeals.length > 0) {
+        crmStats = {
+          totalDeals: crmDeals.length,
+          activeDeals: crmDeals.filter((d) => d.stage === "ACTIVE_RETAINER").length,
+          pipelineValue: crmDeals
+            .filter((d) => !["COMPLETED", "LOST"].includes(d.stage))
+            .reduce((s, d) => s + d.value, 0),
+          recentActivities: recentCrmActivities,
+        }
+      }
+    } catch {
+      // graceful degradation
+    }
+  }
+
   // Onboarding progress + recent activity
   let recentActivity: Array<{
     id: string
@@ -183,6 +220,38 @@ export default async function PortalDashboard({
             : "Here\u2019s an overview of your active AIMS services."}
         </p>
       </div>
+
+      {/* ── CRM QUICK STATS (if they have deals) ── */}
+      {crmStats && (
+        <div className="grid grid-cols-3 gap-3">
+          <Link
+            href="/portal/crm"
+            className="rounded-xl border border-border bg-card p-4 hover:border-primary/30 transition-colors"
+          >
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Pipeline</p>
+            <p className="text-xl font-bold text-foreground">
+              {crmStats.pipelineValue > 0 ? `$${crmStats.pipelineValue.toLocaleString()}` : "—"}
+            </p>
+            <p className="text-xs text-muted-foreground mt-0.5">{crmStats.totalDeals} deals</p>
+          </Link>
+          <Link
+            href="/portal/crm"
+            className="rounded-xl border border-border bg-card p-4 hover:border-primary/30 transition-colors"
+          >
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Active Clients</p>
+            <p className="text-xl font-bold text-emerald-400">{crmStats.activeDeals}</p>
+            <p className="text-xs text-muted-foreground mt-0.5">on retainer</p>
+          </Link>
+          <Link
+            href="/portal/crm/scout"
+            className="rounded-xl border border-border bg-card p-4 hover:border-primary/30 transition-colors"
+          >
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Find Leads</p>
+            <p className="text-xl font-bold text-primary">Scout</p>
+            <p className="text-xs text-muted-foreground mt-0.5">AI-powered search</p>
+          </Link>
+        </div>
+      )}
 
       {/* ── ONBOARDING STATE (no subscriptions) ── */}
       {subs.length === 0 ? (
