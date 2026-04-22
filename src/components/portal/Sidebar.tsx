@@ -17,13 +17,16 @@ import {
   ChevronRight,
   Gauge,
   Newspaper,
+  Rocket,
 } from "lucide-react"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
 import { NotificationBell } from "@/components/shared/NotificationBell"
+import { OnboardingProgressWidget } from "@/components/portal/OnboardingProgressWidget"
 
 const PORTAL_NAV = [
   { label: "Dashboard", href: "/portal/dashboard", icon: LayoutDashboard },
+  { label: "Getting Started", href: "/portal/onboard", icon: Rocket },
   { label: "Ops Excellence", href: "/portal/ops-excellence", icon: Gauge },
   { label: "My Services", href: "/portal/services", icon: Layers },
   { label: "Marketplace", href: "/portal/marketplace", icon: ShoppingBag },
@@ -38,9 +41,18 @@ const PORTAL_NAV = [
 interface PortalSidebarProps {
   totalMrr?: number
   hasUnread?: boolean
+  onboardingCompletedCount?: number
+  onboardingPercent?: number
+  onboardingCompletedAt?: string | null
 }
 
-export function PortalSidebar({ totalMrr = 0, hasUnread = false }: PortalSidebarProps) {
+export function PortalSidebar({
+  totalMrr = 0,
+  hasUnread = false,
+  onboardingCompletedCount = 0,
+  onboardingPercent = 0,
+  onboardingCompletedAt = null,
+}: PortalSidebarProps) {
   const pathname = usePathname()
   const [collapsed, setCollapsed] = useState(false)
 
@@ -96,6 +108,14 @@ export function PortalSidebar({ totalMrr = 0, hasUnread = false }: PortalSidebar
           <ChevronLeft className="h-3 w-3" />
         )}
       </button>
+
+      {/* Onboarding progress widget */}
+      <OnboardingProgressWidget
+        completedCount={onboardingCompletedCount}
+        percent={onboardingPercent}
+        onboardingCompletedAt={onboardingCompletedAt}
+        collapsed={collapsed}
+      />
 
       {/* Monthly Investment */}
       {!collapsed && totalMrr > 0 && (

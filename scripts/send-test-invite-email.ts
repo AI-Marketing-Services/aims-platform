@@ -1,52 +1,34 @@
-import {
-  sendTrackedEmail,
-  escapeHtml,
-  emailLayout,
-  h1,
-  p,
-  btn,
-  divider,
-} from "./index"
-import { AOC_FROM_EMAIL as FROM_EMAIL, AOC_REPLY_TO as REPLY_TO } from "./senders"
-import { mightyLoginUrl, MIGHTY_NETWORK_URL } from "@/lib/mighty"
-
 /**
- * Sent the moment an admin provisions a Collective member.
- *
- * Delivers a single branded welcome + 30-day roadmap email from
- * noreply@aioperatorcollective.com. Member is pre-provisioned in Mighty
- * so the magic-link drops them straight into the community — no approval
- * screen, no password setup.
+ * One-off script to send a preview of the collective-invite email.
+ * Run: RESEND_API_KEY=re_xxx npx tsx scripts/send-test-invite-email.ts
  */
-export async function sendCollectiveInviteEmail(params: {
-  to: string
-  firstName?: string | null
-  tier?: "community" | "accelerator" | "innerCircle"
-  customMessage?: string | null
-}): Promise<{ ok: boolean; error?: string }> {
-  const firstNameRaw = params.firstName?.trim() || ""
-  const firstName = escapeHtml(firstNameRaw).split(" ")[0] || "there"
-  const tierLabel =
-    params.tier === "accelerator"
-      ? "the Accelerator"
-      : params.tier === "innerCircle"
-      ? "the Inner Circle"
-      : "the AI Operator Collective"
+import { Resend } from "resend"
+import { emailLayout, escapeHtml, h1, p, btn, divider } from "../src/lib/email/index"
+import { AOC_FROM_EMAIL as FROM_EMAIL } from "../src/lib/email/senders"
 
-  const loginUrl = mightyLoginUrl(params.to)
+const TO = "adamwolfe102@gmail.com"
+const FIRST_NAME = "Adam"
+const TIER: "community" | "accelerator" | "innerCircle" = "community"
+const MIGHTY_NETWORK_URL = "https://aioperatorcollective.mn.co"
+
+function mightyLoginUrl(email: string) {
+  return `${MIGHTY_NETWORK_URL}/log-in?email=${encodeURIComponent(email)}`
+}
+
+function buildEmail() {
+  const firstName = escapeHtml(FIRST_NAME)
+  const tierLabel = TIER === "accelerator"
+    ? "the Accelerator"
+    : TIER === "innerCircle"
+    ? "the Inner Circle"
+    : "the AI Operator Collective"
+
+  const loginUrl = mightyLoginUrl(TO)
   const communityUrl = MIGHTY_NETWORK_URL
   const curriculumUrl = `${communityUrl}/spaces/23411754`
   const welcomeSpaceUrl = `${communityUrl}/spaces/23459013`
   const callsUrl = `${communityUrl}/spaces/23411755`
   const chatUrl = `${communityUrl}/spaces/23411753`
-
-  const customBlock = params.customMessage?.trim()
-    ? `
-      <div style="border-left:3px solid #981B1B;padding:14px 18px;margin:0 0 24px;background:#FEF2F2;border-radius:0 6px 6px 0;">
-        <p style="margin:0;font-size:14px;color:#374151;line-height:1.7;white-space:pre-wrap;">${escapeHtml(params.customMessage.trim())}</p>
-      </div>
-    `
-    : ""
 
   const roadmapWeek = (
     label: string,
@@ -81,9 +63,7 @@ export async function sendCollectiveInviteEmail(params: {
 
   const body = `
     ${h1(`${firstName}, you're in.`)}
-    ${p(`Welcome to ${tierLabel}. Your account is live and waiting — tap the button below and Mighty will send a one-click login link to <strong style="color:#111827;">${escapeHtml(params.to)}</strong>. No password, no approval queue.`)}
-
-    ${customBlock}
+    ${p(`Welcome to ${tierLabel}. Your account is live and waiting — tap the button below and Mighty will send a one-click login link to <strong style="color:#111827;">${escapeHtml(TO)}</strong>. No password, no approval queue.`)}
 
     <div style="text-align:center;margin:0 0 32px;">
       ${btn("Open the Collective", loginUrl)}
@@ -177,21 +157,36 @@ export async function sendCollectiveInviteEmail(params: {
     </p>
   `
 
-  try {
-    const res = await sendTrackedEmail({
-      from: FROM_EMAIL,
-      to: params.to,
-      replyTo: REPLY_TO,
-      subject: `${firstName}, welcome to the AI Operator Collective — your 30-day roadmap`,
-      html: emailLayout(
-        body,
-        "You're in. Here's your login link and 30-day roadmap for getting the most out of the Collective."
-      ),
-      serviceArm: "ai-operator-collective",
-    })
-    return { ok: !!res }
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "Unknown send error"
-    return { ok: false, error: message }
+  return {
+    subject: `${firstName}, welcome to the AI Operator Collective — your 30-day roadmap`,
+    html: emailLayout(body, "You're in. Here's your login link and 30-day roadmap for getting the most out of the Collective."),
   }
 }
+
+async function main() {
+  const key = process.env.RESEND_API_KEY
+  if (!key || key === "re_placeholder") {
+    console.error("RESEND_API_KEY not set. Run: RESEND_API_KEY=re_xxx npx tsx scripts/send-test-invite-email.ts")
+    process.exit(1)
+  }
+
+  const resend = new Resend(key)
+  const { subject, html } = buildEmail()
+
+  console.log(`Sending to ${TO}...`)
+  const result = await resend.emails.send({
+    from: FROM_EMAIL,
+    to: TO,
+    subject,
+    html,
+  })
+
+  if (result.error) {
+    console.error("Send failed:", result.error)
+    process.exit(1)
+  }
+
+  console.log("Sent! ID:", result.data?.id)
+}
+
+main()

@@ -6,6 +6,7 @@ import Image from "next/image"
 import { UserButton } from "@clerk/nextjs"
 import { PortalSidebar } from "@/components/portal/Sidebar"
 import { MobilePortalNav } from "@/components/portal/MobilePortalNav"
+import { getProgressForUser } from "@/lib/onboarding/progress"
 import { PortalChatWidget } from "@/components/portal/PortalChatWidget"
 import { ReferralClaimHandler } from "@/components/portal/ReferralClaimHandler"
 import { PageTransition } from "@/components/shared/PageTransition"
@@ -39,11 +40,14 @@ export default async function PortalLayout({
   const totalMrr = dbUser?.subscriptions.reduce((sum, s) => sum + s.monthlyAmount, 0) ?? 0
   const serviceCount = dbUser?.subscriptions.length ?? 0
 
-  const unreadCount = dbUser
-    ? await db.notification.count({
-        where: { userId: dbUser.id, read: false },
-      })
-    : 0
+  const [unreadCount, onboardingProgress] = await Promise.all([
+    dbUser
+      ? db.notification.count({ where: { userId: dbUser.id, read: false } })
+      : Promise.resolve(0),
+    dbUser
+      ? getProgressForUser(dbUser.id)
+      : Promise.resolve(null),
+  ])
 
   const firstName = dbUser?.name?.split(" ")[0] ?? "there"
 
@@ -61,7 +65,13 @@ export default async function PortalLayout({
       </div>
 
       <div className="flex h-[calc(100dvh-3.5rem)] lg:h-screen overflow-hidden">
-        <PortalSidebar totalMrr={totalMrr} hasUnread={unreadCount > 0} />
+        <PortalSidebar
+          totalMrr={totalMrr}
+          hasUnread={unreadCount > 0}
+          onboardingCompletedCount={onboardingProgress?.completedCount ?? 0}
+          onboardingPercent={onboardingProgress?.percent ?? 0}
+          onboardingCompletedAt={onboardingProgress?.onboardingCompletedAt?.toISOString() ?? null}
+        />
         <main id="main-content" className="flex-1 overflow-y-auto custom-scrollbar">
           <PageTransition>
             <div className="p-4 pb-20 lg:p-6 lg:pb-8 xl:p-8">{children}</div>

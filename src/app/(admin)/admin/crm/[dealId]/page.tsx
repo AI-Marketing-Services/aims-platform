@@ -4,6 +4,7 @@ import { getDealById } from "@/lib/db/queries"
 import { db } from "@/lib/db"
 import { DealDetailClient } from "./DealDetailClient"
 import { Breadcrumbs } from "@/components/shared/Breadcrumbs"
+import { getProgressSummaryForAdmin } from "@/lib/onboarding/progress"
 
 // Lead magnet types that have a public results page at /tools/{slug}/results/{id}
 const TYPES_WITH_RESULTS_PAGE = new Set([
@@ -54,6 +55,12 @@ export default async function AdminDealDetailPage({ params }: { params: Promise<
   const mightyInvites = await db.mightyInvite
     .findMany({ where: { dealId }, orderBy: { sentAt: "desc" } })
     .catch(() => [])
+
+  const onboardingSummary = await getProgressSummaryForAdmin(dealId).catch(() => ({
+    userId: null,
+    progress: null,
+    profile: null,
+  }))
 
   const submissionResultsUrl = linkedSubmission && TYPES_WITH_RESULTS_PAGE.has(linkedSubmission.type)
     ? `/tools/${linkedSubmission.type.toLowerCase().replace(/_/g, "-")}/results/${linkedSubmission.id}`
@@ -145,6 +152,12 @@ export default async function AdminDealDetailPage({ params }: { params: Promise<
         }))}
         mightyInviteStatus={(deal as { mightyInviteStatus?: string | null }).mightyInviteStatus ?? null}
         mightyMemberId={(deal as { mightyMemberId?: number | null }).mightyMemberId ?? null}
+        memberUserId={onboardingSummary.userId}
+        onboardingCompletedKeys={onboardingSummary.progress ? [...onboardingSummary.progress.completedKeys] : []}
+        onboardingCompletedCount={onboardingSummary.progress?.completedCount ?? 0}
+        onboardingPercent={onboardingSummary.progress?.percent ?? 0}
+        onboardingLastCompletedAt={onboardingSummary.progress?.lastCompletedAt?.toISOString() ?? null}
+        onboardingProfile={onboardingSummary.profile}
       />
     </div>
   )

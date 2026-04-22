@@ -33,9 +33,13 @@ import {
   RefreshCw,
   AlertCircle,
   ShoppingBag,
+  CheckCircle2,
+  RotateCcw,
+  UserCog,
 } from "lucide-react"
 import { cn, timeAgo } from "@/lib/utils"
 import { MightyInvitePanel, type MightyInviteRecord } from "./MightyInvitePanel"
+import { MemberOnboardingPanel } from "@/components/admin/MemberOnboardingPanel"
 
 type ActivityType =
   | "EMAIL_SENT"
@@ -55,6 +59,9 @@ type ActivityType =
   | "MIGHTY_MEMBER_LEFT"
   | "MIGHTY_COURSE_COMPLETED"
   | "MIGHTY_PLAN_PURCHASED"
+  | "ONBOARDING_STEP_COMPLETED"
+  | "ONBOARDING_STEP_RESET"
+  | "MEMBER_PROFILE_UPDATED"
 
 interface Activity {
   id: string
@@ -115,6 +122,19 @@ interface Props {
   mightyInvites?: MightyInviteRecord[]
   mightyInviteStatus?: string | null
   mightyMemberId?: number | null
+  memberUserId?: string | null
+  onboardingCompletedKeys?: string[]
+  onboardingCompletedCount?: number
+  onboardingPercent?: number
+  onboardingLastCompletedAt?: string | null
+  onboardingProfile?: {
+    businessName: string | null
+    logoUrl: string | null
+    oneLiner: string | null
+    niche: string | null
+    idealClient: string | null
+    businessUrl: string | null
+  } | null
 }
 
 const ACTIVITY_ICONS: Record<ActivityType, React.ReactNode> = {
@@ -135,6 +155,9 @@ const ACTIVITY_ICONS: Record<ActivityType, React.ReactNode> = {
   MIGHTY_MEMBER_LEFT: <UserMinus className="w-3.5 h-3.5" />,
   MIGHTY_COURSE_COMPLETED: <GraduationCap className="w-3.5 h-3.5" />,
   MIGHTY_PLAN_PURCHASED: <ShoppingBag className="w-3.5 h-3.5" />,
+  ONBOARDING_STEP_COMPLETED: <CheckCircle2 className="w-3.5 h-3.5" />,
+  ONBOARDING_STEP_RESET: <RotateCcw className="w-3.5 h-3.5" />,
+  MEMBER_PROFILE_UPDATED: <UserCog className="w-3.5 h-3.5" />,
 }
 
 const ACTIVITY_TYPE_OPTIONS: { value: ActivityType; label: string }[] = [
@@ -271,6 +294,12 @@ export function DealDetailClient({
   mightyInvites = [],
   mightyInviteStatus = null,
   mightyMemberId = null,
+  memberUserId = null,
+  onboardingCompletedKeys = [],
+  onboardingCompletedCount = 0,
+  onboardingPercent = 0,
+  onboardingLastCompletedAt = null,
+  onboardingProfile = null,
 }: Props) {
   const router = useRouter()
   const [stage, setStage] = useState(currentStage)
@@ -824,6 +853,17 @@ export function DealDetailClient({
             initialInvites={mightyInvites}
             initialStatus={mightyInviteStatus}
             initialMightyMemberId={mightyMemberId}
+          />
+
+          {/* Member Onboarding */}
+          <MemberOnboardingPanel
+            dealId={dealId}
+            userId={memberUserId ?? null}
+            completedKeys={onboardingCompletedKeys ?? []}
+            completedCount={onboardingCompletedCount ?? 0}
+            percent={onboardingPercent ?? 0}
+            lastCompletedAt={onboardingLastCompletedAt ?? null}
+            profile={onboardingProfile ?? null}
           />
 
           {/* Score & Priority Card */}

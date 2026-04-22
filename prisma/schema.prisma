@@ -24,19 +24,21 @@ model User {
   locationCount Int      @default(1)
   heardAbout    String?
 
-  deals                 Deal[]
-  subscriptions         Subscription[]
-  referralsGiven        Referral[]             @relation("referrer")
-  referralReceived      Referral?              @relation("referred")
-  leadMagnetSubmissions LeadMagnetSubmission[]
-  supportTickets        SupportTicket[]
-  internProfile         InternProfile?
-  notifications         Notification[]
-  emailBisonConnection  EmailBisonConnection?
+  deals                    Deal[]
+  subscriptions            Subscription[]
+  referralsGiven           Referral[]                @relation("referrer")
+  referralReceived         Referral?                 @relation("referred")
+  leadMagnetSubmissions    LeadMagnetSubmission[]
+  supportTickets           SupportTicket[]
+  internProfile            InternProfile?
+  notifications            Notification[]
+  emailBisonConnection     EmailBisonConnection?
   opsExcellenceEngagements OpsExcellenceEngagement[]
   signalTopics             SignalTopic[]
   signalDigestRuns         SignalDigestRun[]
   ideas                    Idea[]                    @relation("IdeaOwner")
+  memberProfile            MemberProfile?
+  memberOnboardingSteps    MemberOnboardingStep[]
 
   stripeCustomerId String?   @unique
   lastLoginAt      DateTime?
@@ -110,8 +112,8 @@ model Deal {
   closeLeadId String? @unique
 
   mightyInvites      MightyInvite[]
-  mightyInviteStatus String?       // 'pending' | 'accepted' | 'failed' | null
-  mightyMemberId     Int?          // populated when member joins
+  mightyInviteStatus String? // 'pending' | 'accepted' | 'failed' | null
+  mightyMemberId     Int? // populated when member joins
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -201,24 +203,27 @@ enum ActivityType {
   MIGHTY_MEMBER_LEFT
   MIGHTY_COURSE_COMPLETED
   MIGHTY_PLAN_PURCHASED
+  ONBOARDING_STEP_COMPLETED
+  ONBOARDING_STEP_RESET
+  MEMBER_PROFILE_UPDATED
 }
 
 model MightyInvite {
-  id              String    @id @default(cuid())
-  dealId          String
-  deal            Deal      @relation(fields: [dealId], references: [id], onDelete: Cascade)
-  email           String
-  planId          Int
-  planName        String?
-  mightyInviteId  Int?
-  mightyMemberId  Int?
-  status          String    @default("pending") // pending | sent | accepted | failed | expired
-  errorMessage    String?   @db.Text
-  sentAt          DateTime  @default(now())
-  acceptedAt      DateTime?
-  resentAt        DateTime?
+  id               String    @id @default(cuid())
+  dealId           String
+  deal             Deal      @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  email            String
+  planId           Int
+  planName         String?
+  mightyInviteId   Int?
+  mightyMemberId   Int?
+  status           String    @default("pending") // pending | sent | accepted | failed | expired
+  errorMessage     String?   @db.Text
+  sentAt           DateTime  @default(now())
+  acceptedAt       DateTime?
+  resentAt         DateTime?
   invitedByClerkId String?
-  metadata        Json?
+  metadata         Json?
 
   @@index([dealId])
   @@index([email])
@@ -510,9 +515,9 @@ model Referral {
   landingPageSlug String?
 
   // Dub.co integration
-  dubPartnerId  String?
-  dubProgramId  String?
-  dubLinkId     String? // Dub.co short link ID for this partner
+  dubPartnerId String?
+  dubProgramId String?
+  dubLinkId    String? // Dub.co short link ID for this partner
 
   commissions Commission[]
 
@@ -724,7 +729,7 @@ model Commission {
   status          CommissionStatus @default(PENDING)
   source          String           @default("internal") // "internal" | "dub"
   stripePaymentId String?
-  dubSaleId       String?          // Dub.co sale event ID for correlation
+  dubSaleId       String? // Dub.co sale event ID for correlation
   paidAt          DateTime?
   approvedAt      DateTime?
   approvedBy      String?
@@ -812,7 +817,7 @@ model ApiCostLog {
 // or activity-log entries.
 model WebhookEvent {
   id         String   @id @default(cuid())
-  source     String   // "calendly" | "mighty" | "stripe" | "clerk" | "close" | "dub"
+  source     String // "calendly" | "mighty" | "stripe" | "clerk" | "close" | "dub"
   eventUri   String   @unique
   receivedAt DateTime @default(now())
 
@@ -878,38 +883,38 @@ model EmailBisonConnection {
 // ============ OPERATIONAL EXCELLENCE ============
 
 model OpsExcellenceEngagement {
-  id             String @id @default(cuid())
+  id             String        @id @default(cuid())
   userId         String
-  user           User   @relation(fields: [userId], references: [id])
-  subscriptionId String? @unique
+  user           User          @relation(fields: [userId], references: [id])
+  subscriptionId String?       @unique
   subscription   Subscription? @relation(fields: [subscriptionId], references: [id])
 
-  companyName    String
-  companyLogo    String?
-  industry       String?
-  annualRevenue  String?
-  employeeCount  Int?
-  website        String?
+  companyName   String
+  companyLogo   String?
+  industry      String?
+  annualRevenue String?
+  employeeCount Int?
+  website       String?
 
-  stage          EngagementStage @default(INTAKE)
-  tier           EngagementTier  @default(DIAGNOSE)
+  stage EngagementStage @default(INTAKE)
+  tier  EngagementTier  @default(DIAGNOSE)
 
-  intakeData        Json?
-  callRecordingUrl  String?
-  callNotes         Json?
+  intakeData       Json?
+  callRecordingUrl String?
+  callNotes        Json?
 
-  startDate         DateTime  @default(now())
-  targetV1Date      DateTime?
-  targetV2Date      DateTime?
-  integratorId      String?
+  startDate    DateTime  @default(now())
+  targetV1Date DateTime?
+  targetV2Date DateTime?
+  integratorId String?
 
-  scores            CreditScore[]
-  cfoTest           CFOTestResult?
-  discoveryCards    ProcessDiscoveryCard[]
-  spendDecisions    SpendDecision[]
-  automationCards   AutomationCaseCard[]
-  capacityPulses    CapacityPulseSurvey[]
-  activities        EngagementActivity[]
+  scores          CreditScore[]
+  cfoTest         CFOTestResult?
+  discoveryCards  ProcessDiscoveryCard[]
+  spendDecisions  SpendDecision[]
+  automationCards AutomationCaseCard[]
+  capacityPulses  CapacityPulseSurvey[]
+  activities      EngagementActivity[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -937,19 +942,19 @@ enum EngagementTier {
 }
 
 model CreditScore {
-  id                String @id @default(cuid())
-  engagementId      String
-  engagement        OpsExcellenceEngagement @relation(fields: [engagementId], references: [id], onDelete: Cascade)
+  id           String                  @id @default(cuid())
+  engagementId String
+  engagement   OpsExcellenceEngagement @relation(fields: [engagementId], references: [id], onDelete: Cascade)
 
   version           Int
   compositeScore    Float
   confidenceTier    ConfidenceTier
   confidencePercent Float
 
-  financialClarity  Float
-  aiReadiness       Float
-  capacityRoi       Float
-  spendEfficiency   Float
+  financialClarity Float
+  aiReadiness      Float
+  capacityRoi      Float
+  spendEfficiency  Float
 
   financialDetail   Json?
   aiReadinessDetail Json?
@@ -965,8 +970,8 @@ model CreditScore {
   calculatedBy String?
   notes        String?
 
-  @@index([engagementId])
   @@unique([engagementId, version])
+  @@index([engagementId])
 }
 
 enum ConfidenceTier {
@@ -976,14 +981,14 @@ enum ConfidenceTier {
 }
 
 model CFOTestResult {
-  id             String @id @default(cuid())
-  engagementId   String @unique
-  engagement     OpsExcellenceEngagement @relation(fields: [engagementId], references: [id], onDelete: Cascade)
+  id           String                  @id @default(cuid())
+  engagementId String                  @unique
+  engagement   OpsExcellenceEngagement @relation(fields: [engagementId], references: [id], onDelete: Cascade)
 
-  responses      Json
-  greenCount     Int
-  yellowCount    Int
-  redCount       Int
+  responses   Json
+  greenCount  Int
+  yellowCount Int
+  redCount    Int
 
   administeredAt DateTime @default(now())
   administeredBy String?
@@ -991,9 +996,9 @@ model CFOTestResult {
 }
 
 model ProcessDiscoveryCard {
-  id             String @id @default(cuid())
-  engagementId   String
-  engagement     OpsExcellenceEngagement @relation(fields: [engagementId], references: [id], onDelete: Cascade)
+  id           String                  @id @default(cuid())
+  engagementId String
+  engagement   OpsExcellenceEngagement @relation(fields: [engagementId], references: [id], onDelete: Cascade)
 
   department        String
   processName       String
@@ -1001,8 +1006,8 @@ model ProcessDiscoveryCard {
   frequency         ProcessFrequency
   timePerInstance   Float
   toolsUsed         String[]
-  painPoints        String?   @db.Text
-  exceptionHandling String?   @db.Text
+  painPoints        String?          @db.Text
+  exceptionHandling String?          @db.Text
 
   automationCandidate AutomationCandidacy @default(MAYBE)
   complexityScore     Int
@@ -1013,8 +1018,8 @@ model ProcessDiscoveryCard {
   isExpandedCapture Boolean @default(false)
   expandedContext   Json?
 
-  discoveryRound Int      @default(1)
-  validated      Boolean  @default(false)
+  discoveryRound Int       @default(1)
+  validated      Boolean   @default(false)
   validatedAt    DateTime?
 
   createdAt DateTime @default(now())
@@ -1039,19 +1044,19 @@ enum AutomationCandidacy {
 }
 
 model SpendDecision {
-  id             String @id @default(cuid())
-  engagementId   String
-  engagement     OpsExcellenceEngagement @relation(fields: [engagementId], references: [id], onDelete: Cascade)
+  id           String                  @id @default(cuid())
+  engagementId String
+  engagement   OpsExcellenceEngagement @relation(fields: [engagementId], references: [id], onDelete: Cascade)
 
-  vendorName       String
-  toolName         String?
+  vendorName        String
+  toolName          String?
   currentAnnualCost Float
-  decision         SpendDecisionType
-  newAnnualCost    Float?
-  dollarDelta      Float?
+  decision          SpendDecisionType
+  newAnnualCost     Float?
+  dollarDelta       Float?
 
   decisionOwner String
-  rationale     String?  @db.Text
+  rationale     String?     @db.Text
   renewalDate   DateTime?
   usageLevel    UsageLevel?
 
@@ -1086,14 +1091,14 @@ enum UsageLevel {
 }
 
 model AutomationCaseCard {
-  id             String @id @default(cuid())
-  engagementId   String
-  engagement     OpsExcellenceEngagement @relation(fields: [engagementId], references: [id], onDelete: Cascade)
+  id           String                  @id @default(cuid())
+  engagementId String
+  engagement   OpsExcellenceEngagement @relation(fields: [engagementId], references: [id], onDelete: Cascade)
 
-  processName            String
-  department             String
-  roleAffected           String
-  fullyLoadedHourlyCost  Float
+  processName           String
+  department            String
+  roleAffected          String
+  fullyLoadedHourlyCost Float
 
   baselineTimePerInstance Float
   baselineFrequency       String
@@ -1120,7 +1125,7 @@ model AutomationCaseCard {
 }
 
 model CapacityPulseSurvey {
-  id               String @id @default(cuid())
+  id               String                  @id @default(cuid())
   engagementId     String
   engagement       OpsExcellenceEngagement @relation(fields: [engagementId], references: [id], onDelete: Cascade)
   automationCardId String?
@@ -1128,7 +1133,7 @@ model CapacityPulseSurvey {
   respondentRole     String
   timeSavedPerWeek   Float?
   capacityConversion CapacityConversion
-  feedback           String? @db.Text
+  feedback           String?            @db.Text
 
   submittedAt DateTime @default(now())
 
@@ -1142,9 +1147,9 @@ enum CapacityConversion {
 }
 
 model EngagementActivity {
-  id             String @id @default(cuid())
-  engagementId   String
-  engagement     OpsExcellenceEngagement @relation(fields: [engagementId], references: [id], onDelete: Cascade)
+  id           String                  @id @default(cuid())
+  engagementId String
+  engagement   OpsExcellenceEngagement @relation(fields: [engagementId], references: [id], onDelete: Cascade)
 
   type     String
   title    String
@@ -1172,16 +1177,16 @@ model SignalTopic {
 }
 
 model SignalDigestRun {
-  id       String    @id @default(cuid())
-  userId   String
-  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  runDate  DateTime  @db.Date
-  items    Json
-  costUsd  Decimal   @default(0) @db.Decimal(10, 4)
-  status   String    @default("PENDING")
-  sentAt   DateTime?
-  error    String?
-  createdAt DateTime @default(now())
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  runDate   DateTime  @db.Date
+  items     Json
+  costUsd   Decimal   @default(0) @db.Decimal(10, 4)
+  status    String    @default("PENDING")
+  sentAt    DateTime?
+  error     String?
+  createdAt DateTime  @default(now())
 
   @@unique([userId, runDate])
   @@index([status])
@@ -1193,9 +1198,9 @@ model SignalSubscriber {
   id           String    @id @default(cuid())
   email        String    @unique
   name         String?
-  topics       Json      // [{label: string, query: string}]
+  topics       Json // [{label: string, query: string}]
   timezone     String    @default("America/New_York")
-  status       String    @default("ACTIVE")   // ACTIVE | PAUSED | UNSUBSCRIBED
+  status       String    @default("ACTIVE") // ACTIVE | PAUSED | UNSUBSCRIBED
   unsubToken   String    @unique @default(cuid())
   lastSentDate DateTime? @db.Date
   source       String?
@@ -1204,6 +1209,47 @@ model SignalSubscriber {
   updatedAt    DateTime  @updatedAt
 
   @@index([status, lastSentDate])
+}
+
+// ============ MEMBER ONBOARDING OS ============
+
+model MemberProfile {
+  id           String  @id @default(cuid())
+  userId       String  @unique
+  user         User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  businessName String?
+  logoUrl      String?
+  oneLiner     String? @db.Text
+  niche        String?
+  idealClient  String? @db.Text
+  businessUrl  String?
+
+  onboardingStartedAt   DateTime  @default(now())
+  onboardingCompletedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model MemberOnboardingStep {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stepKey     String
+  completedAt DateTime @default(now())
+  method      String   @default("self") // "self" | "admin"
+  completedBy String? // Clerk userId of admin if method=admin
+  metadata    Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, stepKey])
+  @@index([userId])
+  @@index([stepKey])
+  @@index([completedAt])
 }
 
 // Private ideation vault — gated to SUPER_ADMIN.

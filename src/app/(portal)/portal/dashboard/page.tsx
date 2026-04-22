@@ -21,6 +21,9 @@ import {
 import { db } from "@/lib/db"
 import { getWorkspaceDashboard } from "@/lib/emailbison"
 import { timeAgo } from "@/lib/utils"
+import { getProgressForUser } from "@/lib/onboarding/progress"
+import { ONBOARDING_STEPS, TOTAL_STEPS } from "@/lib/onboarding/steps"
+import { OnboardingChecklist } from "@/components/portal/OnboardingChecklist"
 
 export const metadata: Metadata = { title: "Dashboard" }
 
@@ -97,9 +100,7 @@ export default async function PortalDashboard({
       ])
     : [0, 0]
 
-  // Onboarding checklist data
-  let quizTaken = false
-  let dealExists = false
+  // Onboarding progress + recent activity
   let recentActivity: Array<{
     id: string
     type: string
@@ -108,55 +109,34 @@ export default async function PortalDashboard({
     sentAt: Date
   }> = []
 
-  if (userEmail) {
+  let onboardingCompletedKeys: string[] = []
+  let onboardingCompletedCount = 0
+  let onboardingPercent = 0
+
+  if (dbUser) {
     try {
-      const [quizSub, deal, notifications] = await Promise.all([
-        db.leadMagnetSubmission.findFirst({
-          where: { email: userEmail, type: "AI_READINESS_QUIZ" },
+      const [progress, notifications] = await Promise.all([
+        getProgressForUser(dbUser.id),
+        db.notification.findMany({
+          where: { userId: dbUser.id },
+          orderBy: { sentAt: "desc" },
+          take: 10,
         }),
-        db.deal.findFirst({ where: { contactEmail: userEmail } }),
-        clerkId
-          ? db.notification.findMany({
-              where: { userId: dbUser?.id },
-              orderBy: { sentAt: "desc" },
-              take: 10,
-            })
-          : Promise.resolve([]),
       ])
-      quizTaken = !!quizSub
-      dealExists = !!deal
+      onboardingCompletedKeys = [...progress.completedKeys]
+      onboardingCompletedCount = progress.completedCount
+      onboardingPercent = progress.percent
       recentActivity = notifications
     } catch {
-      // graceful degradation - leave defaults
+      // graceful degradation
     }
+  } else if (userEmail) {
+    recentActivity = []
   }
 
-  // Checklist progress
-  const checklist = [
-    { label: "Create your account", checked: true, href: null },
-    {
-      label: "Take the AI Readiness Quiz",
-      checked: quizTaken,
-      href: "/tools/ai-readiness-quiz",
-    },
-    {
-      label: "Browse the marketplace",
-      checked: false,
-      href: "/portal/marketplace",
-    },
-    {
-      label: "Add your first service",
-      checked: subs.length > 0,
-      href: "/portal/marketplace",
-    },
-    {
-      label: "Book a strategy call",
-      checked: dealExists,
-      href: "/get-started",
-    },
-  ]
-  const completedCount = checklist.filter((c) => c.checked).length
-  const progressPct = Math.round((completedCount / checklist.length) * 100)
+  const nextIncompleteSteps = ONBOARDING_STEPS.filter(
+    (s) => !onboardingCompletedKeys.includes(s.key)
+  ).slice(0, 3)
 
   // Smart upsell banner logic
   const activeSlugs = new Set(subs.map((s) => s.serviceArm.slug))
@@ -258,67 +238,59 @@ export default async function PortalDashboard({
 
           {/* Getting Started Checklist */}
           <div className="rounded-2xl border border-border bg-card p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <Check className="h-4 w-4 text-[#981B1B]" />
-              <h2 className="text-sm font-semibold text-foreground">Getting Started</h2>
-            </div>
-
-            {/* Progress header */}
-            <div className="mb-5">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-foreground">
-                  {completedCount} of {checklist.length} complete
+            <div className="flex items-center justify-between gap-2 mb-4">
+              <div className="flex items-center gap-2">
+                <Check className="h-4 w-4 text-[#981B1B]" />
+                <h2 className="text-sm font-semibold text-foreground">Getting Started</h2>
+                <span className="text-xs text-muted-foreground">
+                  {onboardingCompletedCount}/{TOTAL_STEPS} complete
                 </span>
-                <span className="text-xs text-muted-foreground">{progressPct}%</span>
               </div>
-              <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
-                <div
-                  className="h-full rounded-full bg-[#981B1B] transition-all"
-                  style={{ width: `${progressPct}%` }}
-                />
-              </div>
+              <Link
+                href="/portal/onboard"
+                className="text-xs font-medium text-[#981B1B] hover:text-[#791515] flex items-center gap-1 transition-colors"
+              >
+                View all <ArrowRight className="h-3 w-3" />
+              </Link>
             </div>
 
-            {/* Checklist items */}
-            <ul className="space-y-3">
-              {checklist.map((item) => (
-                <li
-                  key={item.label}
-                  className="flex items-center justify-between gap-4 rounded-xl border border-border bg-background px-4 py-3"
-                >
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${
-                        item.checked
-                          ? "border-emerald-500 bg-emerald-50"
-                          : "border-border bg-muted"
-                      }`}
-                    >
-                      {item.checked && (
-                        <Check className="h-3 w-3 text-emerald-700" />
-                      )}
-                    </div>
-                    <span
-                      className={`text-sm font-medium ${
-                        item.checked
-                          ? "text-muted-foreground line-through"
-                          : "text-foreground"
-                      }`}
-                    >
-                      {item.label}
-                    </span>
+            {onboardingPercent === 100 ? (
+              <div className="flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-4">
+                <Check className="h-5 w-5 text-emerald-600 shrink-0" />
+                <div>
+                  <p className="text-sm font-medium text-emerald-800">Onboarding complete!</p>
+                  <p className="text-xs text-emerald-600 mt-0.5">
+                    You&apos;ve finished all 12 steps. Check the community for what&apos;s next.
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="mb-4">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-xs text-muted-foreground">{onboardingPercent}%</span>
                   </div>
-                  {!item.checked && item.href && (
-                    <Link
-                      href={item.href}
-                      className="shrink-0 flex items-center gap-1 text-sm font-medium text-[#981B1B] hover:text-[#791515] transition-colors"
-                    >
-                      Go <ArrowRight className="h-3.5 w-3.5" />
-                    </Link>
-                  )}
-                </li>
-              ))}
-            </ul>
+                  <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
+                    <div
+                      className="h-full rounded-full bg-[#981B1B] transition-all"
+                      style={{ width: `${onboardingPercent}%` }}
+                    />
+                  </div>
+                </div>
+                <OnboardingChecklist
+                  initialCompletedKeys={onboardingCompletedKeys}
+                  variant="compact"
+                />
+                {nextIncompleteSteps.length > 0 && (
+                  <Link
+                    href="/portal/onboard"
+                    className="mt-3 flex items-center gap-1 text-xs font-medium text-[#981B1B] hover:text-[#791515] transition-colors"
+                  >
+                    View full roadmap <ArrowRight className="h-3 w-3" />
+                  </Link>
+                )}
+              </>
+            )}
           </div>
         </>
       ) : (
