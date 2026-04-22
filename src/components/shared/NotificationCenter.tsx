@@ -2,6 +2,7 @@
 
 import { memo } from "react"
 import { Bell, Users, DollarSign, BarChart2, LifeBuoy, Zap, Activity, X, CheckCheck } from "lucide-react"
+import { useRouter } from "next/navigation"
 import { cn, timeAgo } from "@/lib/utils"
 
 export interface NotificationItem {
@@ -31,6 +32,8 @@ const TYPE_ICON: Record<string, React.ElementType> = {
   daily_digest: BarChart2,
   api_cost_spike: Activity,
   missed_eod: Activity,
+  onboarding_unlock_unlock_50: Zap,
+  onboarding_unlock_unlock_100: Zap,
 }
 
 const TYPE_COLOR: Record<string, string> = {
@@ -50,6 +53,8 @@ const TYPE_COLOR: Record<string, string> = {
   daily_digest: "bg-deep text-muted-foreground",
   api_cost_spike: "bg-primary/15 text-primary",
   missed_eod: "bg-primary/15 text-primary",
+  onboarding_unlock_unlock_50: "bg-emerald-500/10 text-emerald-400",
+  onboarding_unlock_unlock_100: "bg-emerald-500/10 text-emerald-400",
 }
 
 
@@ -65,12 +70,16 @@ const NotificationRow = memo(function NotificationRow({
   item: NotificationItem
   onMarkRead: (id: string) => void
 }) {
+  const router = useRouter()
   const Icon = TYPE_ICON[n.type] ?? Bell
   const colorClass = TYPE_COLOR[n.type] ?? "bg-deep text-muted-foreground"
+  const link = typeof n.metadata?.link === "string" ? n.metadata.link : null
+
   return (
     <button
       onClick={() => {
         if (!n.read) onMarkRead(n.id)
+        if (link) router.push(link)
       }}
       className={cn(
         "flex items-start gap-3 px-4 py-3 w-full text-left transition-colors border-b border-border last:border-0",
