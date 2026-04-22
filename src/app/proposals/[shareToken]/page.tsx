@@ -10,7 +10,7 @@ async function getProposal(shareToken: string) {
       clientDeal: {
         include: {
           user: {
-            include: { memberProfile: { select: { businessName: true, logoUrl: true, oneLiner: true } } },
+            include: { memberProfile: { select: { businessName: true, logoUrl: true, oneLiner: true, brandColor: true, tagline: true } } },
           },
         },
       },
@@ -30,29 +30,32 @@ export default async function PublicProposalPage({
   const operator = proposal.clientDeal.user
   const profile = operator.memberProfile
   const operatorName = profile?.businessName ?? operator.name ?? "AI Operator"
+  const brandColor = profile?.brandColor ?? "#C4972A"
 
   return (
     <div className="min-h-screen bg-[#08090D] text-[#F0EBE0]">
       {/* Header */}
-      <header className="border-b border-white/10 px-6 py-4">
+      <header className="border-b px-6 py-4" style={{ borderColor: `${brandColor}30` }}>
         <div className="max-w-3xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
             {profile?.logoUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={profile.logoUrl} alt={operatorName} className="h-8 w-8 rounded object-contain" />
             ) : (
-              <div className="h-8 w-8 rounded bg-primary/20 flex items-center justify-center">
-                <FileText className="h-4 w-4 text-primary" />
+              <div className="h-8 w-8 rounded flex items-center justify-center" style={{ backgroundColor: `${brandColor}20` }}>
+                <FileText className="h-4 w-4" style={{ color: brandColor }} />
               </div>
             )}
             <div>
               <p className="text-sm font-semibold text-foreground">{operatorName}</p>
-              {profile?.oneLiner && (
-                <p className="text-[11px] text-muted-foreground">{profile.oneLiner}</p>
+              {(profile?.tagline ?? profile?.oneLiner) && (
+                <p className="text-[11px] text-muted-foreground">{profile?.tagline ?? profile?.oneLiner}</p>
               )}
             </div>
           </div>
-          <span className="text-xs text-muted-foreground">Proposal</span>
+          <span className="text-xs px-2 py-0.5 rounded-full border font-medium" style={{ color: brandColor, borderColor: `${brandColor}40`, backgroundColor: `${brandColor}10` }}>
+            Proposal
+          </span>
         </div>
       </header>
 
@@ -70,7 +73,7 @@ export default async function PublicProposalPage({
           </p>
         </div>
 
-        <div className="bg-[#141923] border border-white/10 rounded-xl p-8">
+        <div className="bg-[#141923] rounded-xl p-8 border" style={{ borderColor: `${brandColor}20` }}>
           <div className="prose prose-invert max-w-none">
             <ReactMarkdown>{proposal.content}</ReactMarkdown>
           </div>

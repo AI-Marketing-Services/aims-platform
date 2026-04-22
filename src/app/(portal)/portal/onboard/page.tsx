@@ -27,6 +27,8 @@ export default async function OnboardPage() {
           niche: true,
           idealClient: true,
           businessUrl: true,
+          brandColor: true,
+          tagline: true,
           onboardingCompletedAt: true,
         },
       },

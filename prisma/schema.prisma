@@ -40,6 +40,7 @@ model User {
   memberProfile            MemberProfile?
   memberOnboardingSteps    MemberOnboardingStep[]
   clientDeals              ClientDeal[]
+  usageEvents              UsageEvent[]
 
   stripeCustomerId String?   @unique
   lastLoginAt      DateTime?
@@ -1334,6 +1335,8 @@ model MemberProfile {
   niche        String?
   idealClient  String? @db.Text
   businessUrl  String?
+  brandColor   String? // hex e.g. "#C4972A"
+  tagline      String? // Short tagline for public pages
 
   onboardingStartedAt   DateTime  @default(now())
   onboardingCompletedAt DateTime?
@@ -1361,6 +1364,22 @@ model MemberOnboardingStep {
   @@index([userId])
   @@index([stepKey])
   @@index([completedAt])
+}
+
+// ============ USAGE LEDGER ============
+
+model UsageEvent {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String   // "lead_scout" | "proposal_generate" | "signal_digest" | "ai_chat"
+  credits   Int      @default(1)
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([userId, createdAt])
+  @@index([type])
 }
 
 // Private ideation vault — gated to SUPER_ADMIN.

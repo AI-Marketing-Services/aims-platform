@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server"
-import { auth } from "@clerk/nextjs/server"
 import { cookies } from "next/headers"
 import { z } from "zod"
 import { db } from "@/lib/db"
+import { requireAdmin } from "@/lib/auth"
 import { logger } from "@/lib/logger"
 
 const patchSchema = z.object({
@@ -17,14 +17,8 @@ const VAULT_COOKIE = "lead_magnets_unlock"
 const DEFAULT_OWNER_EMAIL = "adamwolfe102@gmail.com"
 
 async function requireUnlockedAdmin() {
-  const { userId } = await auth()
-  if (!userId) return null
-
-  const user = await db.user.findUnique({
-    where: { clerkId: userId },
-    select: { id: true, role: true },
-  })
-  if (!user || !["ADMIN", "SUPER_ADMIN"].includes(user.role)) return null
+  const adminUserId = await requireAdmin()
+  if (!adminUserId) return null
 
   const store = await cookies()
   if (store.get(VAULT_COOKIE)?.value !== "yes") return null

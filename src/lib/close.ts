@@ -33,6 +33,18 @@ export const CLOSE_AOC_VALUE = "AI Operator Collective (AOC)"
 // Custom field payloads in Close are keyed as `custom.${fieldId}`.
 export const CLOSE_AOC_CUSTOM_FIELD = `custom.${CLOSE_BTC_BUSINESS_LINE_FIELD}`
 
+// AOC launch date — any Close lead created before this is treated as a
+// legacy Vendingpreneurs lead, even if it carries the AOC tag. Stephen's
+// retroactive automation has mis-tagged historical vending leads as AOC,
+// so the tag alone is not sufficient; we combine it with a creation-date
+// floor. Override via CLOSE_AOC_LAUNCH_DATE env (ISO string) if needed.
+export const CLOSE_AOC_LAUNCH_DATE_DEFAULT = "2026-04-01T00:00:00Z"
+export function aocLaunchDate(): Date {
+  const raw = process.env.CLOSE_AOC_LAUNCH_DATE ?? CLOSE_AOC_LAUNCH_DATE_DEFAULT
+  const d = new Date(raw)
+  return isNaN(d.getTime()) ? new Date(CLOSE_AOC_LAUNCH_DATE_DEFAULT) : d
+}
+
 /**
  * Shape-only type for Close leads that we actually use. The real API
  * response has ~40 fields; we only care about these.
@@ -220,11 +232,22 @@ async function closeFetch(
 export function isAOCLead(lead: Partial<CloseLead> | null | undefined): boolean {
   if (!lead) return false
   const raw = (lead as Record<string, unknown>)[CLOSE_AOC_CUSTOM_FIELD]
-  if (typeof raw === "string") return raw === CLOSE_AOC_VALUE
-  // Close returns dropdowns as arrays when multi-select; single-select
-  // can come back as string. Belt-and-suspenders.
-  if (Array.isArray(raw)) return raw.includes(CLOSE_AOC_VALUE)
-  return false
+  const tagMatch =
+    typeof raw === "string"
+      ? raw === CLOSE_AOC_VALUE
+      : Array.isArray(raw)
+      ? raw.includes(CLOSE_AOC_VALUE)
+      : false
+  if (!tagMatch) return false
+
+  // Creation-date floor: reject legacy vending leads that got
+  // retroactively tagged as AOC. If date_created is missing, allow it
+  // through — that shape only shows up in older test fixtures.
+  if (lead.date_created) {
+    const created = new Date(lead.date_created)
+    if (!isNaN(created.getTime()) && created < aocLaunchDate()) return false
+  }
+  return true
 }
 
 /**
@@ -433,8 +456,12 @@ export async function listAOCLeads(options?: {
   const headers = closeHeaders()
   if (!headers) return []
 
+  const launch = aocLaunchDate()
   const queryParts = [
     `${CLOSE_AOC_CUSTOM_FIELD}:"${CLOSE_AOC_VALUE}"`,
+    // Creation-date floor — block legacy Vendingpreneurs leads that got
+    // retroactively mis-tagged as AOC.
+    `date_created >= "${launch.toISOString()}"`,
   ]
   if (options?.dateUpdatedAfter) {
     // Close supports `date_updated >= "ISO"` style filters.

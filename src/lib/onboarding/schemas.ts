@@ -17,6 +17,8 @@ export const profileSchema = z.object({
   niche: z.string().max(80).optional().nullable(),
   idealClient: z.string().max(500).optional().nullable(),
   businessUrl: z.string().url("Must be a valid URL").optional().nullable().or(z.literal("")),
+  brandColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Must be a valid hex color (#RRGGBB)").optional().nullable(),
+  tagline: z.string().max(120).optional().nullable(),
 })
 
 export type MarkStepInput = z.infer<typeof markStepSchema>

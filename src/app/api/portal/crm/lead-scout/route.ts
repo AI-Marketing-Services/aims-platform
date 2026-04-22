@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
 import { scoutLeads } from "@/lib/crm/lead-scout"
+import { trackUsage } from "@/lib/usage"
 import { z } from "zod"
 
 const scoutSchema = z.object({
@@ -36,6 +37,8 @@ export async function POST(req: Request) {
       count: parsed.data.count ?? 8,
       userId: dbUserId,
     })
+
+    trackUsage(dbUserId, "lead_scout", { businessType: parsed.data.businessType, location: parsed.data.location }).catch(() => {})
 
     return NextResponse.json({ leads, count: leads.length })
   } catch (err) {

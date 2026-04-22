@@ -3,6 +3,7 @@ import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
 import { getProgressForUser } from "@/lib/onboarding/progress"
 import { BarChart3, TrendingUp, DollarSign, Users, Target, Zap } from "lucide-react"
+import { UsageWidget } from "@/components/portal/UsageWidget"
 
 async function getMetrics(clerkId: string) {
   const dbUser = await db.user.findUnique({ where: { clerkId }, select: { id: true } })
@@ -210,6 +211,9 @@ export default async function MetricsPage() {
           </div>
         </div>
       )}
+
+      {/* AI Credit Usage */}
+      <UsageWidget />
 
       {/* Empty state */}
       {metrics.totalDeals === 0 && (

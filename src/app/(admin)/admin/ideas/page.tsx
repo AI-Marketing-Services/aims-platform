@@ -1,7 +1,7 @@
-import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import { cookies } from "next/headers"
 import { db } from "@/lib/db"
+import { requireAdmin } from "@/lib/auth"
 import IdeasBoard, { type IdeaRecord } from "./IdeasBoard"
 import UnlockForm from "./UnlockForm"
 
@@ -14,14 +14,12 @@ const VAULT_COOKIE = "lead_magnets_unlock"
 const DEFAULT_OWNER_EMAIL = "adamwolfe102@gmail.com"
 
 export default async function AdminLeadMagnetsPage() {
-  const { userId } = await auth()
-  if (!userId) redirect("/sign-in")
-
-  const user = await db.user.findUnique({
-    where: { clerkId: userId },
-    select: { id: true, role: true },
-  })
-  if (!user || !["ADMIN", "SUPER_ADMIN"].includes(user.role)) redirect("/admin/dashboard")
+  // Middleware already gates /admin/* on Clerk publicMetadata role; this
+  // helper mirrors that check (claim first, Clerk backend fallback) so
+  // we don't depend on the DB's clerkId being in sync with the current
+  // Clerk session.
+  const adminUserId = await requireAdmin()
+  if (!adminUserId) redirect("/admin/dashboard")
 
   const store = await cookies()
   const unlocked = store.get(VAULT_COOKIE)?.value === "yes"

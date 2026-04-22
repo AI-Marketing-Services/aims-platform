@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
 import { analyzeWithClaude } from "@/lib/ai"
+import { trackUsage } from "@/lib/usage"
 import { randomBytes } from "crypto"
 
 async function getDbUserId(clerkId: string) {
@@ -131,6 +132,8 @@ Proposal title: ${title ?? `AI Automation Services for ${deal.companyName}`}`
         description: `Proposal generated: "${proposal.title}"`,
       },
     })
+
+    trackUsage(dbUserId, "proposal_generate", { dealId, proposalId: proposal.id }).catch(() => {})
 
     return NextResponse.json({ proposal }, { status: 201 })
   } catch (err) {

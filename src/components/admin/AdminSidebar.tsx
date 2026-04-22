@@ -25,6 +25,7 @@ import {
   Plug,
   Lightbulb,
   Users,
+  Zap,
 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
@@ -119,6 +120,7 @@ const ADMIN_NAV = [
     section: "Operations",
     items: [
       { label: "Tool & API Spend", href: "/admin/api-costs", icon: Cpu },
+      { label: "AI Usage", href: "/admin/usage", icon: Zap },
       { label: "Job Health", href: "/admin/cron-status", icon: Timer },
       { label: "Email Previews", href: "/admin/email-previews", icon: MailOpen },
       { label: "Simulate", href: "/admin/simulate", icon: FlaskConical },

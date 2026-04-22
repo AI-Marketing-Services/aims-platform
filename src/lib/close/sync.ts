@@ -19,6 +19,7 @@ import {
   primaryEmail,
   primaryName,
   closeStatusToAimsStage,
+  isAOCLead,
   type CloseLead,
   type CloseOpportunity,
 } from "@/lib/close"
@@ -53,6 +54,13 @@ export async function runCloseSync(options?: {
   result.total = leads.length
 
   for (const lead of leads) {
+    // Belt-and-suspenders. listAOCLeads already filters on creation-date
+    // floor, but run it again here so any future code path that hands us
+    // a lead directly can't smuggle in a legacy Vendingpreneurs record.
+    if (!isAOCLead(lead)) {
+      result.skipped++
+      continue
+    }
     try {
       const action = await upsertDealFromCloseLead(lead, {
         includeOpportunities: options?.includeOpportunities ?? true,
