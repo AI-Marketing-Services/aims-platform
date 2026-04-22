@@ -1,5 +1,7 @@
 import type { Metadata } from "next"
 import { ApplyForm } from "@/components/community/ApplyForm"
+import { NoAccessBanner } from "@/components/community/NoAccessBanner"
+import { Suspense } from "react"
 
 export const metadata: Metadata = {
   title: "Apply | AI Operator Collective",
@@ -8,5 +10,12 @@ export const metadata: Metadata = {
 }
 
 export default function ApplyPage() {
-  return <ApplyForm />
+  return (
+    <>
+      <Suspense>
+        <NoAccessBanner />
+      </Suspense>
+      <ApplyForm />
+    </>
+  )
 }
