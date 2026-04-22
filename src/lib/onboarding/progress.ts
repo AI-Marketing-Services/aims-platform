@@ -1,5 +1,6 @@
 import { db } from "@/lib/db"
 import { ONBOARDING_STEPS, TOTAL_STEPS } from "./steps"
+import { fireMilestoneEmailIfNeeded } from "@/lib/email/onboarding-milestones"
 
 export interface OnboardingProgress {
   completedKeys: Set<string>
@@ -50,6 +51,9 @@ export async function markStepComplete({
   const step = ONBOARDING_STEPS.find((s) => s.key === stepKey)
   if (!step) return
 
+  // Capture count before so we can detect milestone crossings
+  const previousCount = await db.memberOnboardingStep.count({ where: { userId } })
+
   await db.$transaction(async (tx) => {
     // Upsert step (idempotent — re-marking is a no-op on data)
     await tx.memberOnboardingStep.upsert({
@@ -85,6 +89,10 @@ export async function markStepComplete({
       })
     }
   })
+
+  // Fire milestone email if a threshold was just crossed (non-blocking)
+  const newCount = await db.memberOnboardingStep.count({ where: { userId } })
+  fireMilestoneEmailIfNeeded({ userId, newCount, previousCount }).catch(() => {})
 }
 
 export async function resetStep({
