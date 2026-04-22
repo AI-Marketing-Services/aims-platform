@@ -22,6 +22,7 @@ import {
   Wrench,
   TrendingUp,
   MapPin,
+  BookOpen,
 } from "lucide-react"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
@@ -35,6 +36,7 @@ const PORTAL_NAV = [
   { label: "Lead Scout", href: "/portal/crm/scout", icon: MapPin },
   { label: "Toolkit", href: "/portal/tools", icon: Wrench },
   { label: "My Metrics", href: "/portal/metrics", icon: TrendingUp },
+  { label: "Playbooks", href: "/portal/playbooks", icon: BookOpen },
   { label: "Ops Excellence", href: "/portal/ops-excellence", icon: Gauge },
   { label: "My Services", href: "/portal/services", icon: Layers },
   { label: "Marketplace", href: "/portal/marketplace", icon: ShoppingBag },
