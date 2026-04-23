@@ -3,41 +3,20 @@ import { auth, currentUser } from "@clerk/nextjs/server"
 import Link from "next/link"
 import {
   ArrowRight,
-  BarChart2,
-  Zap,
-  Globe,
-  DollarSign,
-  Check,
   Bell,
-  ShoppingCart,
-  LifeBuoy,
-  CreditCard,
-  Mail,
-  Users,
-  MessageSquare,
-  AlertTriangle,
-  Gauge,
+  Check,
   MapPin,
   BookOpen,
   Calculator,
   Briefcase,
 } from "lucide-react"
 import { db } from "@/lib/db"
-import { getWorkspaceDashboard } from "@/lib/emailbison"
 import { timeAgo } from "@/lib/utils"
 import { getProgressForUser } from "@/lib/onboarding/progress"
-import { ONBOARDING_STEPS, TOTAL_STEPS } from "@/lib/onboarding/steps"
+import { TOTAL_STEPS } from "@/lib/onboarding/steps"
 import { OnboardingChecklist } from "@/components/portal/OnboardingChecklist"
 
 export const metadata: Metadata = { title: "Dashboard" }
-
-const statusColors: Record<string, string> = {
-  ACTIVE: "bg-emerald-50 text-emerald-700 border border-emerald-200",
-  TRIALING: "bg-primary/5 text-primary border border-primary/30",
-  PAST_DUE: "bg-primary/10 text-primary border border-primary/30",
-  PAUSED: "bg-muted/40 text-muted-foreground border border-border",
-  CANCELLED: "bg-primary/15 text-primary border border-primary/40",
-}
 
 export default async function PortalDashboard({
   searchParams,
@@ -49,9 +28,6 @@ export default async function PortalDashboard({
   const user = await currentUser()
 
   const userEmail = user?.emailAddresses?.[0]?.emailAddress ?? ""
-  // Clerk's firstName is null for accounts created via SSO/email-only signup.
-  // Fall back to the first word of fullName, then the email local-part,
-  // then a neutral greeting. Capitalise the email-derived fallback.
   const emailLocalPart = userEmail.split("@")[0] ?? ""
   const capitalisedEmailName = emailLocalPart
     .replace(/[._-]/g, " ")
@@ -64,52 +40,37 @@ export default async function PortalDashboard({
     "there"
 
   const dbUser = clerkId
-    ? await db.user.findUnique({
-        where: { clerkId },
-        include: {
-          subscriptions: {
-            where: { status: { in: ["ACTIVE", "TRIALING", "PAST_DUE"] } },
-            include: { serviceArm: true },
-            orderBy: { createdAt: "desc" },
-          },
-        },
-      })
+    ? await db.user.findUnique({ where: { clerkId } })
     : null
 
-  const subs = dbUser?.subscriptions ?? []
-  const totalMrr = subs.reduce((sum, s) => sum + s.monthlyAmount, 0)
+  // Onboarding progress
+  let onboardingCompletedKeys: string[] = []
+  let onboardingCompletedCount = 0
+  let onboardingPercent = 0
 
-  // Email Bison campaign data (if connected)
-  let emailCampaignData: Awaited<ReturnType<typeof getWorkspaceDashboard>> | null = null
-  let emailWorkspaceName: string | null = null
   if (dbUser) {
-    const ebConn = await db.emailBisonConnection.findUnique({ where: { userId: dbUser.id } })
-    if (ebConn) {
-      emailWorkspaceName = ebConn.workspaceName
-      try {
-        emailCampaignData = await getWorkspaceDashboard(ebConn.workspaceId)
-      } catch {
-        // graceful degradation
-      }
+    try {
+      const progress = await getProgressForUser(dbUser.id)
+      onboardingCompletedKeys = [...progress.completedKeys]
+      onboardingCompletedCount = progress.completedCount
+      onboardingPercent = progress.percent
+    } catch {
+      // graceful degradation
     }
   }
 
-  // Real metrics
-  const [leadCount, meetingCount] = dbUser
-    ? await Promise.all([
-        db.deal.count({ where: { userId: dbUser.id } }),
-        db.dealActivity.count({
-          where: { deal: { userId: dbUser.id }, type: "DEMO_COMPLETED" },
-        }),
-      ])
-    : [0, 0]
-
-  // CRM quick stats
+  // CRM quick stats — only shown if they have deals
   let crmStats: {
     totalDeals: number
     activeDeals: number
     pipelineValue: number
-    recentActivities: Array<{ id: string; type: string; description: string | null; clientDeal: { companyName: string }; createdAt: Date }>
+    recentActivities: Array<{
+      id: string
+      type: string
+      description: string | null
+      clientDeal: { companyName: string }
+      createdAt: Date
+    }>
   } | null = null
 
   if (dbUser) {
@@ -123,7 +84,7 @@ export default async function PortalDashboard({
           where: { clientDeal: { userId: dbUser.id } },
           include: { clientDeal: { select: { companyName: true } } },
           orderBy: { createdAt: "desc" },
-          take: 4,
+          take: 5,
         }),
       ])
       if (crmDeals.length > 0) {
@@ -141,560 +102,207 @@ export default async function PortalDashboard({
     }
   }
 
-  // Onboarding progress + recent activity
-  let recentActivity: Array<{
+  // Recent notifications
+  let recentNotifications: Array<{
     id: string
-    type: string
     title: string
     message: string
     sentAt: Date
   }> = []
-
-  let onboardingCompletedKeys: string[] = []
-  let onboardingCompletedCount = 0
-  let onboardingPercent = 0
-
   if (dbUser) {
     try {
-      const [progress, notifications] = await Promise.all([
-        getProgressForUser(dbUser.id),
-        db.notification.findMany({
-          where: { userId: dbUser.id },
-          orderBy: { sentAt: "desc" },
-          take: 10,
-        }),
-      ])
-      onboardingCompletedKeys = [...progress.completedKeys]
-      onboardingCompletedCount = progress.completedCount
-      onboardingPercent = progress.percent
-      recentActivity = notifications
+      recentNotifications = await db.notification.findMany({
+        where: { userId: dbUser.id },
+        orderBy: { sentAt: "desc" },
+        take: 5,
+      })
     } catch {
       // graceful degradation
     }
-  } else if (userEmail) {
-    recentActivity = []
   }
-
-  const nextIncompleteSteps = ONBOARDING_STEPS.filter(
-    (s) => !onboardingCompletedKeys.includes(s.key)
-  ).slice(0, 3)
-
-  // Smart upsell banner logic
-  const activeSlugs = new Set(subs.map((s) => s.serviceArm.slug))
-  let upsellValueProp = "Most clients start here."
-  let upsellService = "Website + CRM + Chatbot"
-  let upsellPrice = "from $97/mo"
-
-  if (activeSlugs.has("website-crm-chatbot") && !activeSlugs.has("cold-outbound")) {
-    upsellValueProp = "Your website is live. Now fill it with leads."
-    upsellService = "Cold Outbound Engine"
-    upsellPrice = "Custom"
-  } else if (activeSlugs.has("cold-outbound") && !activeSlugs.has("voice-agents")) {
-    upsellValueProp = "Email gets them interested. Voice closes the deal."
-    upsellService = "AI Voice Agents"
-    upsellPrice = "Custom"
-  } else if (activeSlugs.has("voice-agents") && !activeSlugs.has("audience-targeting")) {
-    upsellValueProp = "Know exactly who to call before they raise their hand."
-    upsellService = "Audience Targeting"
-    upsellPrice = "Custom"
-  }
-
-  const hour = new Date().getHours()
-  const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening"
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Checkout success banner */}
       {checkout === "success" && (
         <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-700 font-medium">
-          Your subscription is active. Our team will begin setup within 24 hours - check your email for next steps.
+          You&apos;re in. Our team will be in touch within 24 hours — check your email for next steps.
         </div>
       )}
 
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold">
-          {subs.length === 0
-            ? `Welcome to AIMS, ${firstName}`
-            : `${greeting}, ${firstName}`}
-        </h1>
-        <p className="mt-1 text-muted-foreground">
-          {subs.length === 0
-            ? "Complete these steps to start generating leads."
-            : "Here\u2019s an overview of your active AIMS services."}
+        <h1 className="text-2xl font-bold">Welcome, {firstName}</h1>
+        <p className="mt-1 text-muted-foreground text-sm">
+          Here&apos;s your setup roadmap. Complete these steps to get your AI operator business running.
         </p>
       </div>
 
-      {/* ── CRM QUICK STATS (if they have deals) ── */}
-      {crmStats && (
-        <div className="grid grid-cols-3 gap-3">
+      {/* ── ONBOARDING CHECKLIST — always primary ── */}
+      <div className="rounded-2xl border border-border bg-card p-6">
+        <div className="flex items-center justify-between gap-2 mb-5">
+          <div className="flex items-center gap-2">
+            <Check className="h-4 w-4 text-primary" />
+            <h2 className="text-sm font-semibold text-foreground">Getting Started</h2>
+            <span className="text-xs text-muted-foreground">
+              {onboardingCompletedCount}/{TOTAL_STEPS} complete
+            </span>
+          </div>
           <Link
-            href="/portal/crm"
-            className="rounded-xl border border-border bg-card p-4 hover:border-primary/30 transition-colors"
+            href="/portal/onboard"
+            className="text-xs font-medium text-primary hover:text-primary/80 flex items-center gap-1 transition-colors"
           >
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Pipeline</p>
-            <p className="text-xl font-bold text-foreground">
-              {crmStats.pipelineValue > 0 ? `$${crmStats.pipelineValue.toLocaleString()}` : "—"}
-            </p>
-            <p className="text-xs text-muted-foreground mt-0.5">{crmStats.totalDeals} deals</p>
-          </Link>
-          <Link
-            href="/portal/crm"
-            className="rounded-xl border border-border bg-card p-4 hover:border-primary/30 transition-colors"
-          >
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Active Clients</p>
-            <p className="text-xl font-bold text-emerald-700">{crmStats.activeDeals}</p>
-            <p className="text-xs text-muted-foreground mt-0.5">on retainer</p>
-          </Link>
-          <Link
-            href="/portal/crm/scout"
-            className="rounded-xl border border-border bg-card p-4 hover:border-primary/30 transition-colors"
-          >
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Find Leads</p>
-            <p className="text-xl font-bold text-primary">Scout</p>
-            <p className="text-xs text-muted-foreground mt-0.5">AI-powered search</p>
+            View full roadmap <ArrowRight className="h-3 w-3" />
           </Link>
         </div>
-      )}
 
-      {/* ── ONBOARDING STATE (no subscriptions) ── */}
-      {subs.length === 0 ? (
-        <>
-          {/* Welcome Action Cards */}
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 stagger-in">
-            {[
-              {
-                icon: ShoppingCart,
-                title: "Browse Services",
-                description: "Explore our AI-powered service marketplace and find the right tools for your business.",
-                href: "/portal/marketplace",
-                color: "text-[#981B1B]",
-                bg: "bg-primary/10",
-              },
-              {
-                icon: LifeBuoy,
-                title: "Get Support",
-                description: "Our team is here to help. Open a ticket or chat with us about your needs.",
-                href: "/portal/support",
-                color: "text-primary",
-                bg: "bg-primary/10",
-              },
-              {
-                icon: BarChart2,
-                title: "Learn More",
-                description: "Take the AI Readiness Quiz to see which services will have the biggest impact.",
-                href: "/tools/ai-readiness-quiz",
-                color: "text-emerald-700",
-                bg: "bg-emerald-50",
-              },
-            ].map(({ icon: Icon, title, description, href, color, bg }) => (
-              <Link
-                key={title}
-                href={href}
-                className="group rounded-2xl border border-border bg-card p-5 transition-all duration-200 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5"
-              >
-                <div className={`mb-3 flex h-10 w-10 items-center justify-center rounded-xl ${bg}`}>
-                  <Icon className={`h-5 w-5 ${color}`} />
-                </div>
-                <h3 className="text-sm font-semibold text-foreground group-hover:text-[#981B1B] transition-colors">
-                  {title}
-                </h3>
-                <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
-                  {description}
-                </p>
-                <span className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-[#981B1B]">
-                  Get started <ArrowRight className="h-3 w-3" />
-                </span>
-              </Link>
-            ))}
-          </div>
-
-          {/* Getting Started Checklist */}
-          <div className="rounded-2xl border border-border bg-card p-6">
-            <div className="flex items-center justify-between gap-2 mb-4">
-              <div className="flex items-center gap-2">
-                <Check className="h-4 w-4 text-[#981B1B]" />
-                <h2 className="text-sm font-semibold text-foreground">Getting Started</h2>
-                <span className="text-xs text-muted-foreground">
-                  {onboardingCompletedCount}/{TOTAL_STEPS} complete
-                </span>
-              </div>
-              <Link
-                href="/portal/onboard"
-                className="text-xs font-medium text-[#981B1B] hover:text-[#791515] flex items-center gap-1 transition-colors"
-              >
-                View all <ArrowRight className="h-3 w-3" />
-              </Link>
-            </div>
-
-            {onboardingPercent === 100 ? (
-              <div className="flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-4">
-                <Check className="h-5 w-5 text-emerald-600 shrink-0" />
-                <div>
-                  <p className="text-sm font-medium text-emerald-800">Onboarding complete!</p>
-                  <p className="text-xs text-emerald-600 mt-0.5">
-                    You&apos;ve finished all 12 steps. Check the community for what&apos;s next.
-                  </p>
-                </div>
-              </div>
-            ) : (
-              <>
-                <div className="mb-4">
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-xs text-muted-foreground">{onboardingPercent}%</span>
-                  </div>
-                  <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
-                    <div
-                      className="h-full rounded-full bg-[#981B1B] transition-all"
-                      style={{ width: `${onboardingPercent}%` }}
-                    />
-                  </div>
-                </div>
-                <OnboardingChecklist
-                  initialCompletedKeys={onboardingCompletedKeys}
-                  variant="compact"
-                />
-                {nextIncompleteSteps.length > 0 && (
-                  <Link
-                    href="/portal/onboard"
-                    className="mt-3 flex items-center gap-1 text-xs font-medium text-[#981B1B] hover:text-[#791515] transition-colors"
-                  >
-                    View full roadmap <ArrowRight className="h-3 w-3" />
-                  </Link>
-                )}
-              </>
-            )}
-          </div>
-        </>
-      ) : (
-        /* ── ACTIVE STATE: metric cards ── */
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 stagger-in">
-          {[
-            {
-              label: "Active Services",
-              value: String(subs.length),
-              icon: Zap,
-              active: subs.length > 0,
-            },
-            {
-              label: "Monthly Spend",
-              value: `$${totalMrr.toLocaleString()}`,
-              icon: DollarSign,
-              active: totalMrr > 0,
-            },
-            {
-              label: "Leads Generated",
-              value: leadCount > 0 ? String(leadCount) : "0",
-              icon: BarChart2,
-              active: leadCount > 0,
-            },
-            {
-              label: "Meetings Booked",
-              value: meetingCount > 0 ? String(meetingCount) : "0",
-              icon: Globe,
-              active: meetingCount > 0,
-            },
-          ].map(({ label, value, icon: Icon, active }) => (
-            <div key={label} className="rounded-2xl border border-border bg-card p-5 micro-card">
-              <div className="flex items-center justify-between mb-3">
-                <p className="text-sm text-muted-foreground">{label}</p>
-                <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
-                  <Icon className="h-4 w-4 text-[#981B1B]" />
-                </div>
-              </div>
-              <p className="text-3xl font-bold font-mono text-foreground">{value}</p>
-              <p className={`mt-1 text-xs font-medium ${active ? "text-emerald-700" : "text-muted-foreground"}`}>
-                {active ? "↑ Active" : "-"}
+        {onboardingPercent === 100 ? (
+          <div className="flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-4">
+            <Check className="h-5 w-5 text-emerald-600 shrink-0" />
+            <div>
+              <p className="text-sm font-medium text-emerald-800">Setup complete!</p>
+              <p className="text-xs text-emerald-600 mt-0.5">
+                All {TOTAL_STEPS} steps done. You&apos;re ready to start landing clients.
               </p>
             </div>
-          ))}
-        </div>
-      )}
+          </div>
+        ) : (
+          <>
+            <div className="mb-5">
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-xs text-muted-foreground">{onboardingPercent}% complete</span>
+                <span className="text-xs text-muted-foreground">
+                  {TOTAL_STEPS - onboardingCompletedCount} remaining
+                </span>
+              </div>
+              <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-primary transition-all duration-500"
+                  style={{ width: `${onboardingPercent}%` }}
+                />
+              </div>
+            </div>
+            <OnboardingChecklist
+              initialCompletedKeys={onboardingCompletedKeys}
+              variant="compact"
+            />
+          </>
+        )}
+      </div>
 
       {/* ── QUICK ACTIONS ── */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {[
-          { icon: MapPin, label: "Find Leads", href: "/portal/crm/scout", desc: "AI lead scout" },
-          { icon: Briefcase, label: "CRM", href: "/portal/crm", desc: "Manage pipeline" },
-          { icon: BookOpen, label: "Playbooks", href: "/portal/playbooks", desc: "Industry scripts" },
-          { icon: Calculator, label: "Price Builder", href: "/portal/calculator", desc: "Build proposals" },
-        ].map(({ icon: Icon, label, href, desc }) => (
+          {
+            icon: MapPin,
+            label: "Find Leads",
+            description: "Use AI to scout prospects by industry, location, and company size. Build your target list in minutes.",
+            href: "/portal/crm/scout",
+          },
+          {
+            icon: BookOpen,
+            label: "Playbooks",
+            description: "Industry-specific scripts, discovery frameworks, and pitch structures for your niche.",
+            href: "/portal/playbooks",
+          },
+          {
+            icon: Calculator,
+            label: "Price Builder",
+            description: "Build accurate proposals and scope engagements with the interactive pricing calculator.",
+            href: "/portal/calculator",
+          },
+        ].map(({ icon: Icon, label, description, href }) => (
           <Link
             key={label}
             href={href}
-            className="group flex flex-col gap-2 rounded-xl border border-border bg-card p-4 hover:border-primary/30 hover:bg-primary/5 transition-all"
+            className="group rounded-2xl border border-border bg-card p-5 hover:border-primary/30 hover:shadow-md hover:shadow-primary/5 transition-all duration-200"
           >
-            <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-              <Icon className="h-4 w-4 text-primary" />
+            <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 group-hover:bg-primary/20 transition-colors">
+              <Icon className="h-5 w-5 text-primary" />
             </div>
-            <div>
-              <p className="text-sm font-semibold text-foreground">{label}</p>
-              <p className="text-xs text-muted-foreground">{desc}</p>
-            </div>
+            <h3 className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors mb-1">
+              {label}
+            </h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">{description}</p>
+            <span className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-primary">
+              Open <ArrowRight className="h-3 w-3" />
+            </span>
           </Link>
         ))}
       </div>
 
-      {/* ── OPS EXCELLENCE BANNER ── */}
-      <Link
-        href="/portal/ops-excellence"
-        className="group block rounded-2xl border border-border bg-card p-5 transition-all duration-200 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5"
-      >
-        <div className="flex items-center gap-4">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 border border-primary/20">
-            <Gauge className="h-6 w-6 text-[#981B1B]" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <h3 className="text-sm font-semibold text-foreground group-hover:text-[#981B1B] transition-colors">
-              Operational Excellence Dashboard
-            </h3>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              View your operational credit score, capacity ROI, and spend efficiency metrics.
-            </p>
-          </div>
-          <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground group-hover:text-[#981B1B] group-hover:translate-x-1 transition-all" />
-        </div>
-      </Link>
-
-      {/* ── ACTIVE SERVICES ── */}
-      <div>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold">Active Services</h2>
-          <Link href="/portal/services" className="text-sm text-primary hover:underline">
-            View all
-          </Link>
-        </div>
-
-        {subs.length === 0 ? (
-          <div className="rounded-2xl border border-border bg-card p-10 text-center">
-            <p className="text-muted-foreground mb-4">
-              You don&apos;t have any active services yet.
-            </p>
-            <Link
-              href="/portal/marketplace"
-              className="inline-flex items-center gap-2 rounded-lg bg-[#981B1B] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#791515] transition"
-            >
-              Browse Services <ArrowRight className="h-4 w-4" />
+      {/* ── CRM PIPELINE — only if they have deals ── */}
+      {crmStats && (
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-sm font-semibold text-foreground">Your Pipeline</h2>
+            <Link href="/portal/crm" className="text-xs text-primary hover:text-primary/80 flex items-center gap-1">
+              Open CRM <ArrowRight className="h-3 w-3" />
             </Link>
           </div>
-        ) : (
-          <div className="space-y-3 stagger-in">
-            {subs.map((sub) => {
-              const statusClass = statusColors[sub.status] ?? "bg-deep text-muted-foreground"
-              const renewsAt = sub.currentPeriodEnd
-                ? new Date(sub.currentPeriodEnd).toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "numeric",
-                    year: "numeric",
-                  })
-                : null
-              return (
-                <div
-                  key={sub.id}
-                  className="flex items-center justify-between rounded-2xl border border-border bg-card p-5"
-                >
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium">{sub.serviceArm.name}</span>
-                      <span
-                        className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${statusClass}`}
-                      >
-                        {sub.status}
-                      </span>
-                    </div>
-                    <div className="mt-1 text-sm text-muted-foreground">
-                      {sub.tier ? `${sub.tier} · ` : ""}${sub.monthlyAmount.toLocaleString()}/mo
-                      {renewsAt ? ` · Renews ${renewsAt}` : ""}
-                    </div>
-                  </div>
-                  <Link
-                    href={`/portal/services/${sub.serviceArmId}`}
-                    className="text-sm text-primary hover:underline flex items-center gap-1"
-                  >
-                    View <ArrowRight className="h-3 w-3" />
-                  </Link>
-                </div>
-              )
-            })}
+          <div className="grid grid-cols-3 gap-3">
+            <Link
+              href="/portal/crm"
+              className="rounded-xl border border-border bg-card p-4 hover:border-primary/30 transition-colors"
+            >
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Pipeline Value</p>
+              <p className="text-xl font-bold text-foreground">
+                {crmStats.pipelineValue > 0 ? `$${crmStats.pipelineValue.toLocaleString()}` : "—"}
+              </p>
+              <p className="text-xs text-muted-foreground mt-0.5">{crmStats.totalDeals} deals tracked</p>
+            </Link>
+            <Link
+              href="/portal/crm"
+              className="rounded-xl border border-border bg-card p-4 hover:border-primary/30 transition-colors"
+            >
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Active Clients</p>
+              <p className="text-xl font-bold text-emerald-600">{crmStats.activeDeals}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">on retainer</p>
+            </Link>
+            <Link
+              href="/portal/crm/scout"
+              className="rounded-xl border border-border bg-card p-4 hover:border-primary/30 transition-colors"
+            >
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Find More Leads</p>
+              <p className="text-xl font-bold text-primary">Scout</p>
+              <p className="text-xs text-muted-foreground mt-0.5">AI-powered search</p>
+            </Link>
           </div>
-        )}
-      </div>
-
-      {/* ── EMAIL CAMPAIGNS (if connected) ── */}
-      {emailCampaignData && (
-        <div className="rounded-2xl border border-border bg-card overflow-hidden">
-          <div className="px-5 py-4 border-b border-border flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Mail className="h-4 w-4 text-[#981B1B]" />
-              <h2 className="text-lg font-semibold">Email Campaigns</h2>
-              {emailWorkspaceName && (
-                <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
-                  {emailWorkspaceName}
-                </span>
-              )}
-            </div>
-          </div>
-
-          {/* Aggregate stat tiles */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-y sm:divide-y-0 divide-border">
-            {[
-              {
-                label: "Emails Sent",
-                value: emailCampaignData.totals.emailsSent.toLocaleString(),
-                icon: Mail,
-                color: "text-primary/70",
-                bg: "bg-primary/5",
-              },
-              {
-                label: "People Contacted",
-                value: emailCampaignData.totals.peopleContacted.toLocaleString(),
-                icon: Users,
-                color: "text-primary",
-                bg: "bg-primary/10",
-              },
-              {
-                label: "Replies",
-                value: `${emailCampaignData.totals.replies.toLocaleString()}`,
-                sub: `${emailCampaignData.replyRate}% rate`,
-                icon: MessageSquare,
-                color: "text-emerald-700",
-                bg: "bg-emerald-50",
-              },
-              {
-                label: "Bounced",
-                value: `${emailCampaignData.totals.bounced.toLocaleString()}`,
-                sub: `${emailCampaignData.bounceRate}% rate`,
-                icon: AlertTriangle,
-                color: "text-primary",
-                bg: "bg-primary/10",
-              },
-            ].map(({ label, value, sub, icon: Icon, color, bg }) => (
-              <div key={label} className="px-5 py-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className={`w-7 h-7 rounded-lg ${bg} flex items-center justify-center`}>
-                    <Icon className={`h-3.5 w-3.5 ${color}`} />
-                  </div>
-                  <p className="text-xs text-muted-foreground">{label}</p>
-                </div>
-                <p className="text-2xl font-bold font-mono text-foreground">{value}</p>
-                {sub && <p className="text-xs text-muted-foreground mt-0.5">{sub}</p>}
-              </div>
-            ))}
-          </div>
-
-          {/* Campaign list */}
-          {emailCampaignData.campaigns.length > 0 && (
-            <div className="border-t border-border">
-              <div className="px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                Active Campaigns
-              </div>
-              <div className="divide-y divide-border">
-                {emailCampaignData.campaigns.map((c) => (
-                  <div key={c.id} className="px-5 py-3 flex items-center justify-between gap-4">
-                    <div className="min-w-0 flex-1">
-                      <p className="font-medium text-sm text-foreground truncate">{c.name}</p>
-                      <p className="text-xs text-muted-foreground mt-0.5">
-                        {c.total_leads_contacted.toLocaleString()} contacted · {c.emails_sent.toLocaleString()} sent
-                      </p>
-                    </div>
-                    <div className="shrink-0 flex items-center gap-3">
-                      {/* Progress bar */}
-                      <div className="hidden sm:block">
-                        <div className="flex items-center gap-2">
-                          <div className="w-24 h-1.5 rounded-full bg-muted overflow-hidden">
-                            <div
-                              className="h-full rounded-full bg-[#981B1B] transition-all"
-                              style={{ width: `${Math.min(c.completion_percentage, 100)}%` }}
-                            />
-                          </div>
-                          <span className="text-xs text-muted-foreground w-10 text-right">
-                            {c.completion_percentage.toFixed(0)}%
-                          </span>
-                        </div>
-                        <p className="text-[10px] text-muted-foreground text-right mt-0.5">complete</p>
-                      </div>
-                      <span
-                        className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                          c.status === "active"
-                            ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                            : "bg-muted text-muted-foreground border border-border"
-                        }`}
-                      >
-                        {c.status}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       )}
 
-      {/* ── SMART UPSELL BANNER ── */}
-      <div className="border border-border rounded-2xl bg-card p-5 border-l-4 border-l-[#981B1B]">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-[#981B1B] mb-1">
-              Recommended for you
-            </p>
-            <p className="font-semibold text-foreground">{upsellService}</p>
-            <p className="mt-1 text-sm text-muted-foreground">{upsellValueProp}</p>
-            <p className="mt-1 text-xs text-muted-foreground font-medium">{upsellPrice}</p>
-          </div>
-          <Link
-            href="/portal/marketplace"
-            className="shrink-0 inline-flex items-center gap-1.5 rounded-lg bg-[#981B1B] px-4 py-2 text-sm font-semibold text-white hover:bg-[#791515] transition whitespace-nowrap"
-          >
-            Add to Plan <ArrowRight className="h-3.5 w-3.5" />
-          </Link>
-        </div>
-      </div>
-
       {/* ── RECENT ACTIVITY ── */}
-      <div className="rounded-2xl border border-border bg-card">
-        <div className="px-5 py-4 border-b border-border flex items-center justify-between">
-          <h2 className="text-lg font-semibold">Recent Activity</h2>
-          {crmStats && (
-            <Link href="/portal/crm" className="text-xs text-primary hover:underline flex items-center gap-1">
-              Open CRM <ArrowRight className="h-3 w-3" />
-            </Link>
-          )}
-        </div>
+      {(() => {
+        type FeedItem = { id: string; icon: "crm" | "bell"; title: string; sub: string; time: Date }
+        const feed: FeedItem[] = []
 
-        {/* Merge CRM activities + notifications */}
-        {(() => {
-          type FeedItem = { id: string; icon: "crm" | "bell"; title: string; sub: string; time: Date }
-          const feed: FeedItem[] = []
+        if (crmStats?.recentActivities) {
+          for (const a of crmStats.recentActivities) {
+            feed.push({
+              id: `crm-${a.id}`,
+              icon: "crm",
+              title: a.description ?? a.type.replace(/_/g, " ").toLowerCase(),
+              sub: a.clientDeal.companyName,
+              time: new Date(a.createdAt),
+            })
+          }
+        }
+        for (const n of recentNotifications) {
+          feed.push({ id: n.id, icon: "bell", title: n.title, sub: n.message, time: new Date(n.sentAt) })
+        }
+        feed.sort((a, b) => b.time.getTime() - a.time.getTime())
+        const top = feed.slice(0, 6)
 
-          if (crmStats?.recentActivities) {
-            for (const a of crmStats.recentActivities) {
-              feed.push({
-                id: `crm-${a.id}`,
-                icon: "crm",
-                title: a.description ?? a.type.replace(/_/g, " ").toLowerCase(),
-                sub: a.clientDeal.companyName,
-                time: new Date(a.createdAt),
-              })
-            }
-          }
-          for (const n of recentActivity.slice(0, 4)) {
-            feed.push({ id: n.id, icon: "bell", title: n.title, sub: n.message, time: new Date(n.sentAt) })
-          }
-          feed.sort((a, b) => b.time.getTime() - a.time.getTime())
-          const top = feed.slice(0, 8)
+        if (top.length === 0) return null
 
-          if (top.length === 0) {
-            return (
-              <div className="px-5 py-10 text-center text-sm text-muted-foreground">
-                No recent activity yet. Updates from your services will appear here.
-              </div>
-            )
-          }
-          return (
+        return (
+          <div className="rounded-2xl border border-border bg-card">
+            <div className="px-5 py-4 border-b border-border">
+              <h2 className="text-sm font-semibold text-foreground">Recent Activity</h2>
+            </div>
             <ul className="divide-y divide-border">
               {top.map((item) => (
-                <li key={item.id} className="flex items-start gap-3 px-5 py-4">
+                <li key={item.id} className="flex items-start gap-3 px-5 py-3.5">
                   <div className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${item.icon === "crm" ? "bg-primary/10" : "bg-muted"}`}>
                     {item.icon === "crm" ? (
                       <Briefcase className="h-3.5 w-3.5 text-primary" />
@@ -706,15 +314,13 @@ export default async function PortalDashboard({
                     <p className="text-sm font-medium text-foreground capitalize">{item.title}</p>
                     <p className="mt-0.5 text-xs text-muted-foreground truncate">{item.sub}</p>
                   </div>
-                  <span className="shrink-0 text-xs text-muted-foreground">
-                    {timeAgo(item.time)}
-                  </span>
+                  <span className="shrink-0 text-xs text-muted-foreground">{timeAgo(item.time)}</span>
                 </li>
               ))}
             </ul>
-          )
-        })()}
-      </div>
+          </div>
+        )
+      })()}
     </div>
   )
 }
