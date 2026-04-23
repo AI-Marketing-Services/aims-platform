@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
-import { Loader2, ShieldCheck, UserMinus, UserPlus } from "lucide-react"
+import { Loader2, ShieldCheck, Trash2, UserMinus, UserPlus } from "lucide-react"
 
 type ClerkUserRow = {
   id: string
@@ -43,6 +43,25 @@ export function UsersTable({ currentUserId }: { currentUserId: string }) {
       cancelled = true
     }
   }, [])
+
+  async function deleteUser(userId: string, email: string) {
+    if (!confirm(`Permanently delete ${email} from Clerk? This cannot be undone.`)) return
+    setBusy(userId)
+    try {
+      const res = await fetch(`/api/admin/users/${userId}`, { method: "DELETE" })
+      const body = await res.json()
+      if (!res.ok) {
+        toast.error(body.error ?? "Delete failed")
+        return
+      }
+      toast.success(`${email} removed`)
+      setUsers((prev) => prev.filter((u) => u.id !== userId))
+    } catch {
+      toast.error("Network error")
+    } finally {
+      setBusy(null)
+    }
+  }
 
   async function changeRole(userId: string, role: string) {
     setBusy(userId)
@@ -184,6 +203,17 @@ export function UsersTable({ currentUserId }: { currentUserId: string }) {
                       >
                         <UserMinus className="h-3 w-3" />
                         Remove
+                      </button>
+                    )}
+                    {!isSelf && (
+                      <button
+                        onClick={() => deleteUser(u.id, u.email)}
+                        disabled={busy === u.id}
+                        title="Delete from Clerk"
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-lg border border-destructive/30 text-destructive hover:bg-destructive/10 disabled:opacity-50"
+                      >
+                        <Trash2 className="h-3 w-3" />
+                        Delete
                       </button>
                     )}
                     {busy === u.id && (
