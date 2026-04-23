@@ -98,14 +98,14 @@ export function PortalSidebar({
       )}
     >
       {/* Logo */}
-      <div className="flex h-16 items-center px-4 border-b border-border">
+      <div className="flex h-12 items-center px-4 border-b border-border">
         <Link href="/" className="flex items-center gap-2.5" aria-label="Home">
-          <Image src="/logo.png" alt="" width={36} height={36} className="shrink-0 object-contain h-8 w-8" />
+          <Image src="/logo.png" alt="" width={28} height={28} className="shrink-0 object-contain h-7 w-7" />
         </Link>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 py-4 px-2 space-y-1 overflow-y-auto custom-scrollbar">
+      <nav className="flex-1 py-2 px-2 space-y-0.5 overflow-y-auto custom-scrollbar">
         {visibleNav.map((item) => {
           const isActive = pathname.startsWith(item.href)
           return (
@@ -113,13 +113,13 @@ export function PortalSidebar({
               key={item.href}
               href={item.href}
               className={cn(
-                "flex items-center gap-3 rounded-lg py-2.5 text-sm font-medium transition-all duration-150",
+                "flex items-center gap-2.5 rounded-lg py-1.5 text-xs font-medium transition-all duration-150",
                 isActive
                   ? "bg-primary/10 text-primary border-l-2 border-primary pl-[10px]"
                   : "text-muted-foreground hover:text-foreground hover:bg-surface/80 pl-3"
               )}
             >
-              <item.icon className={cn("h-4.5 w-4.5 shrink-0", isActive && "text-primary")} />
+              <item.icon className={cn("h-4 w-4 shrink-0", isActive && "text-primary")} />
               {!collapsed && (
                 <span className="flex-1">{item.label}</span>
               )}
@@ -139,7 +139,7 @@ export function PortalSidebar({
       {/* Collapse toggle */}
       <button
         onClick={() => setCollapsed(!collapsed)}
-        className="absolute -right-3 top-20 flex h-6 w-6 items-center justify-center rounded-full border border-border bg-card shadow-sm hover:bg-surface transition-colors"
+        className="absolute -right-3 top-16 flex h-6 w-6 items-center justify-center rounded-full border border-border bg-card shadow-sm hover:bg-surface transition-colors"
       >
         {collapsed ? (
           <ChevronRight className="h-3 w-3" />
@@ -165,7 +165,7 @@ export function PortalSidebar({
       )}
 
       {/* User */}
-      <div className="border-t border-border p-4">
+      <div className="border-t border-border p-3">
         <div className="flex items-center gap-2">
           <UserButton />
           {!collapsed && (
