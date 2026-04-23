@@ -24,10 +24,10 @@ export async function sendOperatorVaultEmail(params: { to: string; name: string 
       "You just requested the AI Operator Playbook Vault. It's below — no gate, no upsell. Whether you end up applying to the cohort or not, these are the exact plays we use inside the AIMS portfolio to find, close, and deliver AI services work. Save this email. You'll come back to it."
     )}
 
-    <div style="background:#0b0d12;border:1px solid #981B1B;border-radius:10px;padding:22px 24px;margin:24px 0;">
+    <div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:10px;padding:22px 24px;margin:24px 0;">
       <p style="margin:0 0 6px;font-size:11px;font-weight:700;color:#981B1B;text-transform:uppercase;letter-spacing:0.12em;">The Vault · Chapter 1</p>
-      <p style="margin:0;font-size:22px;font-weight:800;color:#F0EBE0;line-height:1.25;">Your First 5 Operator Moves</p>
-      <p style="margin:6px 0 0;font-size:13px;color:#9CA3AF;">Do these in order. Every one of them is a week's work or less.</p>
+      <p style="margin:0;font-size:22px;font-weight:800;color:#111827;line-height:1.25;">Your First 5 Operator Moves</p>
+      <p style="margin:6px 0 0;font-size:13px;color:#4B5563;">Do these in order. Every one of them is a week's work or less.</p>
     </div>
 
     ${playCard(
@@ -62,14 +62,14 @@ export async function sendOperatorVaultEmail(params: { to: string; name: string 
 
     ${divider()}
 
-    <div style="background:#0b0d12;border:1px solid #981B1B;border-radius:10px;padding:24px 26px;margin:0 0 24px;">
+    <div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:10px;padding:24px 26px;margin:0 0 24px;">
       <p style="margin:0 0 6px;font-size:11px;font-weight:800;color:#981B1B;text-transform:uppercase;letter-spacing:0.12em;">Your community invite</p>
-      <p style="margin:0 0 12px;font-size:19px;font-weight:800;color:#F0EBE0;line-height:1.3;">Jump into the operator community.</p>
-      <p style="margin:0 0 18px;font-size:14px;color:#9CA3AF;line-height:1.65;">
+      <p style="margin:0 0 12px;font-size:19px;font-weight:800;color:#111827;line-height:1.3;">Jump into the operator community.</p>
+      <p style="margin:0 0 18px;font-size:14px;color:#4B5563;line-height:1.65;">
         This is where the active cohort members, the consortium operators, and the admin team live day-to-day.
         Bring a question, a half-built offer, or just lurk until you're ready to post. You're in.
       </p>
-      <a href="${inviteUrl}" style="display:inline-block;background:#981B1B;color:#0b0d12;padding:13px 28px;border-radius:6px;text-decoration:none;font-weight:800;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;">Accept my invite</a>
+      <a href="${inviteUrl}" style="display:inline-block;background:#981B1B;color:#ffffff;padding:13px 28px;border-radius:6px;text-decoration:none;font-weight:800;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;">Accept my invite</a>
       <p style="margin:12px 0 0;font-size:11px;color:#6B7280;font-style:italic;">Save this email — the invite link works any time.</p>
     </div>
 

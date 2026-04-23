@@ -36,13 +36,12 @@ export async function sendAIPlaybookEmail(params: {
 
     ${divider()}
 
-    <div style="background:#08090D;border-radius:8px;padding:24px;text-align:center;margin:0 0 20px;">
-      <p style="margin:0 0 8px;font-size:18px;font-weight:700;color:#F0EBE0;">Want us to deploy this for you?</p>
-      <p style="margin:0 0 16px;font-size:13px;color:#9CA3AF;line-height:1.6;">
-        AIMS builds AI infrastructure for businesses so you get the results without the learning curve.
-        Book a free strategy call and we will map AIMS services to your biggest gaps.
+    <div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:24px;text-align:center;margin:0 0 20px;">
+      <p style="margin:0 0 8px;font-size:18px;font-weight:700;color:#111827;">Want to implement this with other operators?</p>
+      <p style="margin:0 0 16px;font-size:13px;color:#4B5563;line-height:1.6;">
+        The AI Operator Collective is where operators workshop these plays together — playbooks, tools, and a community reviewed by real operators within 24 hours.
       </p>
-      ${btn("Book a Strategy Call", strategyUrl)}
+      ${btn("Apply to the AI Operator Collective", "https://www.aioperatorcollective.com/apply")}
     </div>
 
     ${p(`<em style="color:#6B7280;">P.S. The playbook includes 30+ ready-to-use prompts for Marketing, Sales, Customer Success, Product, Engineering, and Operations. Pick one department and ship one asset today.</em>`)}

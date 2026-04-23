@@ -66,12 +66,12 @@ export function emailLayout(content: string, preheader = "", recipientEmail?: st
               <table width="100%" cellpadding="0" cellspacing="0">
                 <tr>
                   <td>
-                    <img src="https://www.aioperatorcollective.com/logo.png" alt="AIMS" width="36" height="36"
+                    <img src="https://www.aioperatorcollective.com/logo.png" alt="AI Operator Collective" width="36" height="36"
                       style="display:inline-block;vertical-align:middle;margin-right:10px;" />
-                    <span style="font-size:18px;font-weight:800;color:#111827;vertical-align:middle;letter-spacing:-0.5px;">AIMS</span>
+                    <span style="font-size:18px;font-weight:800;color:#111827;vertical-align:middle;letter-spacing:-0.5px;">AI Operator Collective</span>
                   </td>
                   <td align="right">
-                    <span style="font-size:11px;color:#9CA3AF;letter-spacing:0.05em;text-transform:uppercase;">AI Managing Services</span>
+                    <span style="font-size:11px;color:#9CA3AF;letter-spacing:0.05em;text-transform:uppercase;">AI Operator Collective</span>
                   </td>
                 </tr>
               </table>

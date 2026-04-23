@@ -305,9 +305,9 @@ function section(args: SectionArgs): string {
   return `
     <p style="margin:0 0 14px;font-size:14px;color:#4B5563;">Hey ${args.greeting}</p>
 
-    <div style="background:#0b0d12;border:1px solid #981B1B;border-radius:10px;padding:22px 24px;margin:0 0 24px;">
+    <div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:10px;padding:22px 24px;margin:0 0 24px;">
       <p style="margin:0 0 6px;font-size:11px;font-weight:700;color:#981B1B;text-transform:uppercase;letter-spacing:0.12em;">${args.kicker}</p>
-      <p style="margin:0;font-size:22px;font-weight:800;color:#F0EBE0;line-height:1.25;">${args.headline}</p>
+      <p style="margin:0;font-size:22px;font-weight:800;color:#111827;line-height:1.25;">${args.headline}</p>
     </div>
 
     <p style="margin:0 0 20px;font-size:15px;color:#4B5563;line-height:1.7;">${args.intro}</p>

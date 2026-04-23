@@ -31,6 +31,8 @@ const isPublicRoute = createRouteMatcher([
   // the route's own secret check, making it impossible to promote the
   // first admin on a fresh instance.
   "/api/admin/bootstrap(.*)",
+  // Test-email blast — protected by CRON_SECRET, not Clerk
+  "/api/admin/test-emails(.*)",
   "/api/lead-magnets/submit(.*)",
   "/api/lead-magnets/ai-playbook(.*)",
   "/api/referrals/track(.*)",

@@ -1,6 +1,5 @@
 import { db } from "@/lib/db"
 import { ONBOARDING_STEPS, TOTAL_STEPS } from "./steps"
-import { fireMilestoneEmailIfNeeded } from "@/lib/email/onboarding-milestones"
 
 const UNLOCK_MILESTONES = [
   {
@@ -107,9 +106,8 @@ export async function markStepComplete({
     }
   })
 
-  // Fire milestone email and in-app unlock notifications (non-blocking)
+  // Fire in-app unlock notifications (non-blocking)
   const newCount = await db.memberOnboardingStep.count({ where: { userId } })
-  fireMilestoneEmailIfNeeded({ userId, newCount, previousCount }).catch(() => {})
 
   const previousPct = Math.round((previousCount / TOTAL_STEPS) * 100)
   const newPct = Math.round((newCount / TOTAL_STEPS) * 100)

@@ -11,7 +11,7 @@ export const AOC_FROM_EMAIL =
   "AI Operator Collective <noreply@aioperatorcollective.com>"
 
 export const AIMS_FROM_EMAIL =
-  "AIMS <noreply@aioperatorcollective.com>"
+  "AI Operator Collective <noreply@aioperatorcollective.com>"
 
 // Reply-to address. Intentionally the same as from by default — override
 // per-email (e.g. to a monitored inbox) where replies matter.
