@@ -78,16 +78,16 @@ interface AnalyticsData {
 // ── Channel presets ────────────────────────────────────────────────────────
 
 const CHANNELS = [
-  { id: "linkedin",   label: "LinkedIn",    source: "linkedin",    medium: "social", color: "bg-blue-700 text-white" },
-  { id: "twitter",    label: "Twitter / X", source: "twitter",     medium: "social", color: "bg-sky-500 text-white" },
-  { id: "instagram",  label: "Instagram",   source: "instagram",   medium: "social", color: "bg-pink-600 text-white" },
-  { id: "email",      label: "Cold Email",  source: "email",       medium: "email",  color: "bg-emerald-700 text-white" },
-  { id: "youtube",    label: "YouTube",     source: "youtube",     medium: "video",  color: "bg-red-600 text-white" },
-  { id: "tiktok",     label: "TikTok",      source: "tiktok",      medium: "social", color: "bg-fuchsia-700 text-white" },
-  { id: "podcast",    label: "Podcast",     source: "podcast",     medium: "audio",  color: "bg-orange-600 text-white" },
-  { id: "newsletter", label: "Newsletter",  source: "newsletter",  medium: "email",  color: "bg-indigo-600 text-white" },
-  { id: "sms",        label: "SMS",         source: "sms",         medium: "sms",    color: "bg-teal-600 text-white" },
-  { id: "other",      label: "Custom",      source: "",            medium: "",       color: "bg-zinc-600 text-white" },
+  { id: "linkedin",   label: "LinkedIn",    source: "linkedin",    medium: "social", color: "bg-primary text-background" },
+  { id: "twitter",    label: "Twitter / X", source: "twitter",     medium: "social", color: "bg-primary text-background" },
+  { id: "instagram",  label: "Instagram",   source: "instagram",   medium: "social", color: "bg-primary text-background" },
+  { id: "email",      label: "Cold Email",  source: "email",       medium: "email",  color: "bg-primary text-background" },
+  { id: "youtube",    label: "YouTube",     source: "youtube",     medium: "video",  color: "bg-primary text-background" },
+  { id: "tiktok",     label: "TikTok",      source: "tiktok",      medium: "social", color: "bg-primary text-background" },
+  { id: "podcast",    label: "Podcast",     source: "podcast",     medium: "audio",  color: "bg-primary text-background" },
+  { id: "newsletter", label: "Newsletter",  source: "newsletter",  medium: "email",  color: "bg-primary text-background" },
+  { id: "sms",        label: "SMS",         source: "sms",         medium: "sms",    color: "bg-primary text-background" },
+  { id: "other",      label: "Custom",      source: "",            medium: "",       color: "bg-primary text-background" },
 ] as const
 
 type ChannelId = (typeof CHANNELS)[number]["id"]
