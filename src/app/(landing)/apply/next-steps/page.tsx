@@ -115,22 +115,21 @@ const USE_CASES: UseCase[] = [
 const OPERATOR_TOOLS: {
   name: string
   category: string
-  score: string
   domain: string
   url: string
 }[] = [
-  { name: "Claude",     category: "Reasoning",       score: "10.0", domain: "anthropic.com",  url: "https://claude.ai" },
-  { name: "Perplexity", category: "Research",        score: "9.7",  domain: "perplexity.ai",  url: "https://www.perplexity.ai" },
-  { name: "Raycast",    category: "Launcher",        score: "9.8",  domain: "raycast.com",    url: "https://raycast.com" },
-  { name: "Cursor",     category: "AI Code Editor",  score: "9.6",  domain: "cursor.com",     url: "https://cursor.com" },
-  { name: "Wispr Flow", category: "Speech-to-Text",  score: "9.5",  domain: "wisprflow.ai",   url: "https://wisprflow.ai" },
-  { name: "Instantly",  category: "Cold Email",      score: "9.3",  domain: "instantly.ai",   url: "https://instantly.ai" },
-  { name: "Firecrawl",  category: "Web-to-LLM",      score: "9.2",  domain: "firecrawl.dev",  url: "https://www.firecrawl.dev" },
-  { name: "Dex",        category: "Browser Agent",   score: "9.2",  domain: "getdex.com",     url: "https://getdex.com" },
-  { name: "Notion",     category: "Knowledge",       score: "9.1",  domain: "notion.so",      url: "https://www.notion.so" },
-  { name: "v0",         category: "App Builder",     score: "9.0",  domain: "v0.app",         url: "https://v0.app" },
-  { name: "Fathom",      category: "Meeting AI",      score: "9.0",  domain: "fathom.video",   url: "https://fathom.video" },
-  { name: "ElevenLabs", category: "Voice Gen",       score: "8.9",  domain: "elevenlabs.io",  url: "https://elevenlabs.io" },
+  { name: "Claude",     category: "Reasoning",       domain: "anthropic.com",  url: "https://claude.ai" },
+  { name: "Perplexity", category: "Research",        domain: "perplexity.ai",  url: "https://www.perplexity.ai" },
+  { name: "Raycast",    category: "Launcher",        domain: "raycast.com",    url: "https://raycast.com" },
+  { name: "Cursor",     category: "AI Code Editor",  domain: "cursor.com",     url: "https://cursor.com" },
+  { name: "Wispr Flow", category: "Speech-to-Text",  domain: "wisprflow.ai",   url: "https://wisprflow.ai" },
+  { name: "Instantly",  category: "Cold Email",      domain: "instantly.ai",   url: "https://instantly.ai" },
+  { name: "Firecrawl",  category: "Web-to-LLM",      domain: "firecrawl.dev",  url: "https://www.firecrawl.dev" },
+  { name: "Dex",        category: "Browser Agent",   domain: "getdex.com",     url: "https://getdex.com" },
+  { name: "Notion",     category: "Knowledge",       domain: "notion.so",      url: "https://www.notion.so" },
+  { name: "v0",         category: "App Builder",     domain: "v0.app",         url: "https://v0.app" },
+  { name: "Fathom",     category: "Meeting AI",      domain: "fathom.video",   url: "https://fathom.video" },
+  { name: "ElevenLabs", category: "Voice Gen",       domain: "elevenlabs.io",  url: "https://elevenlabs.io" },
 ]
 
 /* -------------------------------------------------------------------------- */
@@ -322,9 +321,9 @@ export default function PostBookingNextStepsPage() {
               12 tools Collective operators actually pay for.
             </h2>
             <p className="text-[#4B5563] max-w-2xl">
-              Scored by the operators using them in production — not by a
-              &quot;top 10&quot; post. The full 195-tool scorecard library is
-              inside the Collective.
+              Picked by the operators using them in production — not by a
+              &quot;top 10&quot; post. The full 195-tool library is inside
+              the Collective.
             </p>
           </div>
 
@@ -346,9 +345,6 @@ export default function PostBookingNextStepsPage() {
                     {tool.name}
                   </p>
                 </div>
-                <span className="font-mono font-bold text-crimson text-lg shrink-0">
-                  {tool.score}
-                </span>
               </a>
             ))}
           </div>
