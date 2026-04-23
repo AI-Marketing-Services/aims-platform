@@ -19,6 +19,10 @@ import {
   Globe,
   Calendar,
   ArrowLeft,
+  FileText,
+  PenLine,
+  FileCode2,
+  DollarSign,
 } from "lucide-react"
 
 export const dynamic = "force-dynamic"
@@ -50,6 +54,29 @@ async function getMember(memberId: string) {
         orderBy: { sentAt: "desc" },
         take: 10,
       },
+      invoices: {
+        select: {
+          id: true,
+          invoiceNumber: true,
+          title: true,
+          status: true,
+          total: true,
+          currency: true,
+          createdAt: true,
+          paidAt: true,
+        },
+        orderBy: { createdAt: "desc" },
+      },
+      aiScripts: {
+        select: { id: true, type: true, title: true, createdAt: true },
+        orderBy: { createdAt: "desc" },
+        take: 10,
+      },
+      contentPieces: {
+        select: { id: true, type: true, title: true, status: true, createdAt: true },
+        orderBy: { createdAt: "desc" },
+        take: 10,
+      },
     },
   })
 }
@@ -64,12 +91,12 @@ const STAGE_LABELS: Record<string, string> = {
 }
 
 const STAGE_COLORS: Record<string, string> = {
-  PROSPECT: "text-blue-400 bg-blue-400/10",
-  DISCOVERY_CALL: "text-violet-400 bg-violet-400/10",
-  PROPOSAL_SENT: "text-amber-400 bg-amber-400/10",
-  ACTIVE_RETAINER: "text-emerald-400 bg-emerald-400/10",
+  PROSPECT: "text-blue-700 bg-blue-50",
+  DISCOVERY_CALL: "text-violet-700 bg-violet-50",
+  PROPOSAL_SENT: "text-amber-700 bg-amber-50",
+  ACTIVE_RETAINER: "text-emerald-700 bg-emerald-50",
   COMPLETED: "text-primary bg-primary/10",
-  LOST: "text-red-400 bg-red-400/10",
+  LOST: "text-red-600 bg-red-50",
 }
 
 const TYPE_LABELS: Record<string, string> = {
@@ -105,6 +132,12 @@ export default async function AdminMemberDetailPage({
   const pipeline = member.clientDeals
     .filter((d) => !["COMPLETED", "LOST"].includes(d.stage))
     .reduce((s, d) => s + d.value, 0)
+
+  const invoicesPaid = member.invoices.filter((i) => i.status === "PAID").reduce((s, i) => s + i.total, 0)
+  const invoicesOutstanding = member.invoices
+    .filter((i) => i.status === "SENT" || i.status === "OVERDUE")
+    .reduce((s, i) => s + i.total, 0)
+  const invoicesOverdue = member.invoices.filter((i) => i.status === "OVERDUE").length
 
   return (
     <div className="px-6 py-6 space-y-6 max-w-5xl mx-auto">
@@ -158,9 +191,9 @@ export default async function AdminMemberDetailPage({
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {[
           { label: "Onboarding", value: `${progress.percent}%`, sub: `${progress.completedCount}/${TOTAL_STEPS} steps`, color: "text-primary" },
-          { label: "Active MRR", value: activeMrr > 0 ? `$${activeMrr.toLocaleString()}` : "—", sub: "from retainers", color: "text-emerald-400" },
-          { label: "Pipeline", value: pipeline > 0 ? `$${pipeline.toLocaleString()}` : "—", sub: `${member.clientDeals.length} deals`, color: "text-blue-400" },
-          { label: "AI Credits Used", value: String(member.usageEvents.length), sub: "events this month", color: "text-amber-400" },
+          { label: "Active MRR", value: activeMrr > 0 ? `$${activeMrr.toLocaleString()}` : "—", sub: "from retainers", color: "text-emerald-700" },
+          { label: "Pipeline", value: pipeline > 0 ? `$${pipeline.toLocaleString()}` : "—", sub: `${member.clientDeals.length} deals`, color: "text-blue-700" },
+          { label: "AI Credits Used", value: String(member.usageEvents.length), sub: "events this month", color: "text-amber-600" },
         ].map(({ label, value, sub, color }) => (
           <div key={label} className="bg-card border border-border rounded-xl p-4">
             <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">{label}</p>
@@ -168,6 +201,53 @@ export default async function AdminMemberDetailPage({
             <p className="text-[10px] text-muted-foreground mt-0.5">{sub}</p>
           </div>
         ))}
+      </div>
+
+      {/* Invoice / output summary row */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="bg-card border border-border rounded-xl p-4">
+          <div className="flex items-center gap-2 mb-1">
+            <DollarSign className="h-3.5 w-3.5 text-emerald-600" />
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Invoices Collected</p>
+          </div>
+          <p className="text-xl font-bold text-emerald-600">
+            {invoicesPaid > 0 ? `$${invoicesPaid.toLocaleString()}` : "—"}
+          </p>
+          <p className="text-[10px] text-muted-foreground mt-0.5">
+            {member.invoices.filter((i) => i.status === "PAID").length} paid
+            {invoicesOutstanding > 0 && ` · $${invoicesOutstanding.toLocaleString()} outstanding`}
+            {invoicesOverdue > 0 && <span className="text-red-600 font-semibold"> · {invoicesOverdue} overdue</span>}
+          </p>
+        </div>
+        <div className="bg-card border border-border rounded-xl p-4">
+          <div className="flex items-center gap-2 mb-1">
+            <FileCode2 className="h-3.5 w-3.5 text-primary" />
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Scripts Generated</p>
+          </div>
+          <p className="text-xl font-bold text-foreground">{member.aiScripts.length > 10 ? "10+" : member.aiScripts.length}</p>
+          <p className="text-[10px] text-muted-foreground mt-0.5">AI sales scripts</p>
+        </div>
+        <div className="bg-card border border-border rounded-xl p-4">
+          <div className="flex items-center gap-2 mb-1">
+            <PenLine className="h-3.5 w-3.5 text-primary" />
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Content Pieces</p>
+          </div>
+          <p className="text-xl font-bold text-foreground">{member.contentPieces.length > 10 ? "10+" : member.contentPieces.length}</p>
+          <p className="text-[10px] text-muted-foreground mt-0.5">
+            {member.contentPieces.filter((c) => c.status === "PUBLISHED").length} published
+          </p>
+        </div>
+        <div className="bg-card border border-border rounded-xl p-4">
+          <div className="flex items-center gap-2 mb-1">
+            <FileText className="h-3.5 w-3.5 text-primary" />
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Total Invoices</p>
+          </div>
+          <p className="text-xl font-bold text-foreground">{member.invoices.length}</p>
+          <p className="text-[10px] text-muted-foreground mt-0.5">
+            {member.invoices.filter((i) => i.status === "DRAFT").length} draft
+            {" · "}{member.invoices.filter((i) => i.status === "SENT").length} sent
+          </p>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-5">
@@ -228,9 +308,9 @@ export default async function AdminMemberDetailPage({
                         <span className="text-foreground">{TYPE_LABELS[type] ?? type}</span>
                         <span className="text-muted-foreground font-mono">{used}/{allowance}</span>
                       </div>
-                      <div className="h-1.5 rounded-full bg-surface overflow-hidden">
+                      <div className="h-1.5 rounded-full bg-muted overflow-hidden">
                         <div
-                          className={`h-full rounded-full ${pct >= 80 ? "bg-amber-400" : "bg-primary"}`}
+                          className={`h-full rounded-full ${pct >= 80 ? "bg-amber-500" : "bg-primary"}`}
                           style={{ width: `${pct}%` }}
                         />
                       </div>
@@ -253,7 +333,7 @@ export default async function AdminMemberDetailPage({
               </div>
               <span className="text-xs font-bold text-primary">{progress.percent}%</span>
             </div>
-            <div className="h-2 rounded-full bg-surface overflow-hidden mb-4">
+            <div className="h-2 rounded-full bg-muted overflow-hidden mb-4">
               <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${progress.percent}%` }} />
             </div>
             <div className="space-y-1.5">
@@ -262,7 +342,7 @@ export default async function AdminMemberDetailPage({
                 return (
                   <div key={step.key} className="flex items-center gap-2">
                     {done ? (
-                      <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-emerald-400" />
+                      <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-emerald-600" />
                     ) : (
                       <Circle className="h-3.5 w-3.5 shrink-0 text-muted-foreground/40" />
                     )}
@@ -302,6 +382,128 @@ export default async function AdminMemberDetailPage({
           )}
         </div>
       </div>
+
+      {/* Invoices */}
+      {member.invoices.length > 0 && (
+        <div className="bg-card border border-border rounded-xl overflow-hidden">
+          <div className="px-5 py-4 border-b border-border flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <FileText className="h-4 w-4 text-muted-foreground" />
+              <p className="text-sm font-semibold text-foreground">Invoices</p>
+            </div>
+            <span className="text-xs text-muted-foreground">{member.invoices.length} total</span>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-border bg-muted/30">
+                  <th className="text-left px-4 py-2.5 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Invoice</th>
+                  <th className="text-right px-4 py-2.5 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Amount</th>
+                  <th className="text-left px-4 py-2.5 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Status</th>
+                  <th className="text-left px-4 py-2.5 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider hidden sm:table-cell">Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {member.invoices.map((inv) => (
+                  <tr key={inv.id} className="border-b border-border/50 last:border-0 hover:bg-muted/20 transition-colors">
+                    <td className="px-4 py-3">
+                      <p className="text-xs font-mono text-foreground font-medium">{inv.invoiceNumber}</p>
+                      <p className="text-xs text-muted-foreground truncate max-w-[180px]">{inv.title}</p>
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <p className="text-sm font-semibold text-foreground">
+                        {new Intl.NumberFormat("en-US", { style: "currency", currency: inv.currency, maximumFractionDigits: 0 }).format(inv.total)}
+                      </p>
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide ${
+                        inv.status === "PAID" ? "bg-green-50 text-green-700" :
+                        inv.status === "SENT" ? "bg-blue-50 text-blue-700" :
+                        inv.status === "OVERDUE" ? "bg-red-50 text-red-600" :
+                        "bg-gray-100 text-gray-500"
+                      }`}>
+                        {inv.status}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 hidden sm:table-cell">
+                      <p className="text-xs text-muted-foreground">
+                        {formatDistanceToNow(new Date(inv.createdAt), { addSuffix: true })}
+                      </p>
+                      {inv.paidAt && (
+                        <p className="text-[10px] text-emerald-600">
+                          Paid {formatDistanceToNow(new Date(inv.paidAt), { addSuffix: true })}
+                        </p>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* AI Scripts + Content */}
+      {(member.aiScripts.length > 0 || member.contentPieces.length > 0) && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          {member.aiScripts.length > 0 && (
+            <div className="bg-card border border-border rounded-xl overflow-hidden">
+              <div className="px-5 py-4 border-b border-border flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <FileCode2 className="h-4 w-4 text-muted-foreground" />
+                  <p className="text-sm font-semibold text-foreground">AI Scripts</p>
+                </div>
+                <span className="text-xs text-muted-foreground">{member.aiScripts.length} recent</span>
+              </div>
+              <div className="divide-y divide-border">
+                {member.aiScripts.map((s) => (
+                  <div key={s.id} className="px-5 py-2.5 flex items-center justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="text-xs font-medium text-foreground truncate">{s.title ?? "Untitled Script"}</p>
+                      <p className="text-[10px] text-muted-foreground uppercase tracking-wide">{s.type}</p>
+                    </div>
+                    <p className="text-[10px] text-muted-foreground shrink-0">
+                      {formatDistanceToNow(new Date(s.createdAt), { addSuffix: true })}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {member.contentPieces.length > 0 && (
+            <div className="bg-card border border-border rounded-xl overflow-hidden">
+              <div className="px-5 py-4 border-b border-border flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <PenLine className="h-4 w-4 text-muted-foreground" />
+                  <p className="text-sm font-semibold text-foreground">Content Pieces</p>
+                </div>
+                <span className="text-xs text-muted-foreground">{member.contentPieces.length} recent</span>
+              </div>
+              <div className="divide-y divide-border">
+                {member.contentPieces.map((c) => (
+                  <div key={c.id} className="px-5 py-2.5 flex items-center justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="text-xs font-medium text-foreground truncate">{c.title ?? "Untitled"}</p>
+                      <p className="text-[10px] text-muted-foreground uppercase tracking-wide">{c.type}</p>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full ${
+                        c.status === "PUBLISHED" ? "bg-green-50 text-green-700" :
+                        c.status === "DRAFT" ? "bg-gray-100 text-gray-500" :
+                        "bg-blue-50 text-blue-700"
+                      }`}>{c.status}</span>
+                      <p className="text-[10px] text-muted-foreground">
+                        {formatDistanceToNow(new Date(c.createdAt), { addSuffix: true })}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }
