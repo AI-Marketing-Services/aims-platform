@@ -82,24 +82,24 @@ interface ServiceOption {
 
 const FAQ_ITEMS = [
   {
-    q: "How long until my service is live?",
-    a: "Most services activate within 48-72 business hours of your onboarding call. Complex setups (RevOps, Multi-location Voice) may take 5-7 days.",
+    q: "How do I access the community?",
+    a: "Your Getting Started checklist has a direct link to the AI Operator Collective community. Complete the first few steps to get oriented and introduce yourself.",
   },
   {
-    q: "How do I set up my DNS?",
-    a: "Your AIMS team will send you a step-by-step DNS guide after setup begins. For urgent help, open a support ticket or message us on Slack.",
+    q: "When are the live calls?",
+    a: "Call schedules are posted in the community under Events. Check the Getting Started checklist to RSVP for the next available session.",
   },
   {
-    q: "How do I upgrade my plan?",
-    a: "Visit Billing > Open Stripe Portal to upgrade, downgrade, or modify your subscription at any time.",
+    q: "How do I use the playbooks and scripts?",
+    a: "Navigate to Playbooks or AI Scripts in the sidebar. Playbooks are industry-specific pitch guides; scripts are AI-generated outreach templates you can copy and customize.",
   },
   {
-    q: "What's included in my setup?",
-    a: "Every service includes a dedicated setup call, configuration by our team, testing, and a 30-day post-launch support window.",
+    q: "How do I add a client to my pipeline?",
+    a: "Go to Client CRM, then click the + button in any pipeline stage. You can also scout prospects with Lead Scout and auto-import them.",
   },
   {
-    q: "How do I cancel?",
-    a: "You can cancel anytime through Billing > Stripe Portal. There are no long-term contracts or cancellation fees.",
+    q: "How do I get 1-on-1 coaching?",
+    a: "Complete the 'Schedule your 1-on-1' step in the Getting Started checklist to book time directly with a coach.",
   },
 ]
 
@@ -300,7 +300,7 @@ export default function SupportPage() {
         <div>
           <h1 className="text-2xl font-bold text-foreground">Support</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Get help from the AIMS team
+            Get help from the AI Operator Collective team
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -315,7 +315,7 @@ export default function SupportPage() {
           </button>
           <button
             onClick={() => setShowNew(!showNew)}
-            className="flex items-center gap-2 px-4 py-2 bg-[#981B1B] text-white text-sm font-medium rounded-lg hover:bg-[#791515] transition-colors btn-lift"
+            className="flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors btn-lift"
           >
             <Plus className="w-4 h-4" />
             New Ticket
@@ -338,7 +338,7 @@ export default function SupportPage() {
               <select
                 value={serviceContext}
                 onChange={(e) => setServiceContext(e.target.value)}
-                className="w-full px-4 py-3 bg-background border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#981B1B]/20 focus:border-[#981B1B]"
+                className="w-full px-4 py-3 bg-background border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
               >
                 <option value="">General / Other</option>
                 {services.map((s) => (
@@ -360,7 +360,7 @@ export default function SupportPage() {
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
                 placeholder="Brief description of your issue"
-                className="w-full px-4 py-3 bg-background border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#981B1B]/20 focus:border-[#981B1B]"
+                className="w-full px-4 py-3 bg-background border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
               />
             </div>
 
@@ -375,7 +375,7 @@ export default function SupportPage() {
                 value={message}
                 onChange={(e) => setMessage(e.target.value.slice(0, 2000))}
                 placeholder="Describe the issue in detail. Include any relevant context..."
-                className="w-full px-4 py-3 bg-background border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#981B1B]/20 focus:border-[#981B1B] resize-none"
+                className="w-full px-4 py-3 bg-background border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none"
               />
               <p className="text-xs text-muted-foreground text-right mt-1">{message.length}/2000</p>
             </div>
@@ -383,7 +383,7 @@ export default function SupportPage() {
             <div className="flex gap-3">
               <button
                 type="submit"
-                className="flex items-center gap-2 px-5 py-2.5 bg-[#981B1B] text-white text-sm font-medium rounded-lg hover:bg-[#791515] transition-colors"
+                className="flex items-center gap-2 px-5 py-2.5 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors"
               >
                 <Send className="w-4 h-4" />
                 Submit Ticket
@@ -486,7 +486,7 @@ export default function SupportPage() {
                         <span>
                           Assigned to:{" "}
                           <span className="text-foreground">
-                            {ticket.assignedTo ?? "AIMS Team"}
+                            {ticket.assignedTo ?? "AOC Team"}
                           </span>
                         </span>
                       </div>
@@ -537,7 +537,7 @@ export default function SupportPage() {
                               reply.isAdmin ? "text-primary" : "text-foreground"
                             }`}
                           >
-                            {reply.isAdmin ? `${reply.authorName ?? "AIMS Support"} (AIMS Team)` : "You"}
+                            {reply.isAdmin ? `${reply.authorName ?? "AOC Support"} (AOC Team)` : "You"}
                           </span>
                           <span className="text-xs text-muted-foreground">
                             {formatDateTime(reply.createdAt)}
@@ -557,12 +557,12 @@ export default function SupportPage() {
                           value={replyTexts[ticket.id] ?? ""}
                           onChange={(e) => setReplyTexts((prev) => ({ ...prev, [ticket.id]: e.target.value }))}
                           placeholder="Type your reply..."
-                          className="w-full px-4 py-3 bg-background border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#981B1B]/20 focus:border-[#981B1B] resize-none"
+                          className="w-full px-4 py-3 bg-background border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none"
                         />
                         <button
                           onClick={() => handleReply(ticket.id)}
                           disabled={!(replyTexts[ticket.id] ?? "").trim() || sending}
-                          className="mt-2 flex items-center gap-2 px-4 py-2 bg-[#981B1B] text-white text-xs font-medium rounded-lg hover:bg-[#791515] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="mt-2 flex items-center gap-2 px-4 py-2 bg-primary text-white text-xs font-medium rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           <Send className="w-3.5 h-3.5" />
                           {sending ? "Sending..." : "Send Reply"}
@@ -591,8 +591,7 @@ export default function SupportPage() {
           Need more help?
         </h4>
         <p className="text-sm text-muted-foreground">
-          Use the chatbot above to get instant answers. If you need additional support,
-          the chatbot can escalate your request to our team.
+          Use the chat button in the bottom-right corner for instant answers. If your question needs human review, open a ticket above and our team will respond within 24 hours.
         </p>
       </div>
     </div>

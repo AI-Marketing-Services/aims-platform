@@ -156,7 +156,7 @@ export function PortalChatWidget({ firstName = "there", serviceCount = 0 }: Port
                   <div
                     className={`max-w-[82%] rounded-xl px-3 py-2 text-sm leading-relaxed whitespace-pre-wrap ${
                       m.role === "user"
-                        ? "bg-[#981B1B] text-[#F5F5F5] font-medium rounded-br-sm"
+                        ? "bg-primary text-white font-medium rounded-br-sm"
                         : "bg-card border border-border text-foreground rounded-bl-sm"
                     }`}
                   >
@@ -191,14 +191,14 @@ export function PortalChatWidget({ firstName = "there", serviceCount = 0 }: Port
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Ask about your services..."
-                className="flex-1 rounded-lg border border-border bg-[#FFFFFF] px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-[#981B1B]/50"
+                className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary/50"
                 disabled={isStreaming}
                 maxLength={1500}
               />
               <button
                 type="submit"
                 disabled={!input.trim() || isStreaming}
-                className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#981B1B] text-[#F5F5F5] hover:bg-[#791515] disabled:opacity-40 transition flex-shrink-0"
+                className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-white hover:bg-primary/90 disabled:opacity-40 transition flex-shrink-0"
               >
                 {isStreaming ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
               </button>

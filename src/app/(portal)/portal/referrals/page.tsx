@@ -244,7 +244,7 @@ export default async function ReferralsPage() {
       )}
 
       {/* Reseller partner upgrade pitch */}
-      <div className="border-l-4 border-l-[#981B1B] border border-border rounded-2xl bg-card p-6">
+      <div className="border-l-4 border-l-primary border border-border rounded-2xl bg-card p-6">
         <div className="flex items-start gap-3">
           <ExternalLink className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
           <div className="flex-1">
@@ -254,7 +254,7 @@ export default async function ReferralsPage() {
             </p>
             <a
               href="/get-started?type=reseller"
-              className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#981B1B] text-white text-sm font-semibold rounded-lg hover:bg-[#791515] transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary text-white text-sm font-semibold rounded-lg hover:bg-primary/90 transition-colors"
             >
               Apply for Reseller Partner
               <ExternalLink className="h-3.5 w-3.5" />

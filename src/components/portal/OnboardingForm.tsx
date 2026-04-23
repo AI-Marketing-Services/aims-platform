@@ -121,7 +121,7 @@ export default function OnboardingForm({
               >
                 {field.label}
                 {field.required && (
-                  <span className="text-[#981B1B] ml-0.5">*</span>
+                  <span className="text-primary ml-0.5">*</span>
                 )}
               </label>
 
@@ -132,14 +132,14 @@ export default function OnboardingForm({
                   onChange={(e) => handleChange(field.name, e.target.value)}
                   placeholder={field.placeholder}
                   rows={4}
-                  className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#981B1B]/20 focus:border-[#981B1B]"
+                  className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                 />
               ) : field.type === "select" ? (
                 <select
                   id={field.name}
                   value={formData[field.name] ?? ""}
                   onChange={(e) => handleChange(field.name, e.target.value)}
-                  className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#981B1B]/20 focus:border-[#981B1B]"
+                  className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                 >
                   <option value="">Select an option</option>
                   {field.options?.map((opt) => (
@@ -157,7 +157,7 @@ export default function OnboardingForm({
                     onChange={(e) =>
                       handleChange(field.name, e.target.checked ? "true" : "false")
                     }
-                    className="h-4 w-4 rounded border-border text-[#981B1B] focus:ring-[#981B1B]"
+                    className="h-4 w-4 rounded border-border text-primary focus:ring-primary"
                   />
                   <span className="text-sm text-muted-foreground">
                     {field.placeholder || "Yes"}
@@ -170,7 +170,7 @@ export default function OnboardingForm({
                   value={formData[field.name] ?? ""}
                   onChange={(e) => handleChange(field.name, e.target.value)}
                   placeholder={field.placeholder}
-                  className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#981B1B]/20 focus:border-[#981B1B]"
+                  className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                 />
               )}
 
@@ -179,7 +179,7 @@ export default function OnboardingForm({
               )}
 
               {errors[field.name] && (
-                <p className="mt-1 text-xs text-[#981B1B]">
+                <p className="mt-1 text-xs text-destructive">
                   {errors[field.name]}
                 </p>
               )}
@@ -191,7 +191,7 @@ export default function OnboardingForm({
       <button
         type="submit"
         disabled={submitting}
-        className="w-full flex items-center justify-center gap-2 rounded-lg bg-[#981B1B] px-5 py-3 text-sm font-medium text-white hover:bg-[#791515] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-3 text-sm font-medium text-white hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {submitting ? (
           <>
