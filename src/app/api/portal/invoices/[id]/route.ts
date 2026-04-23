@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server"
 import { z } from "zod"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
+import { notify } from "@/lib/notifications"
 
 async function getDbUser(clerkId: string) {
   return db.user.findUnique({ where: { clerkId }, select: { id: true } })
@@ -127,6 +128,22 @@ export async function PATCH(
       },
       include: { lineItems: { orderBy: { sortOrder: "asc" } } },
     })
+
+    // Notify when marked as paid
+    if (parsed.data.status === "PAID" && existing.status !== "PAID") {
+      const totalStr = new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: existing.currency,
+      }).format(existing.total)
+      notify({
+        userId: dbUser.id,
+        channel: "IN_APP",
+        type: "invoice_paid",
+        title: "Invoice paid",
+        message: `Invoice ${existing.invoiceNumber} (${totalStr}) marked as paid.`,
+        metadata: { link: `/portal/invoices/${id}` },
+      }).catch((err) => logger.error("Failed to create invoice_paid notification", err, { invoiceId: id }))
+    }
 
     return NextResponse.json({ invoice })
   } catch (err) {
