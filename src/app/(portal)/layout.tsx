@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { auth, currentUser } from "@clerk/nextjs/server"
+import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
@@ -10,7 +11,9 @@ import { getProgressForUser } from "@/lib/onboarding/progress"
 import { PortalChatWidget } from "@/components/portal/PortalChatWidget"
 import { ReferralClaimHandler } from "@/components/portal/ReferralClaimHandler"
 import { PageTransition } from "@/components/shared/PageTransition"
+import { AdminPreviewBanner } from "@/components/shared/AdminPreviewBanner"
 import { db } from "@/lib/db"
+import { COOKIE_NAME } from "@/app/api/admin/view-as/route"
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
@@ -27,6 +30,10 @@ export default async function PortalLayout({
   const clerkUser = await currentUser()
   const userEmail = clerkUser?.emailAddresses?.[0]?.emailAddress ?? ""
   const isAdminEmail = userEmail === "adamwolfe100@gmail.com"
+
+  const cookieStore = await cookies()
+  const viewAs = cookieStore.get(COOKIE_NAME)?.value ?? null
+  const isAdminPreview = isAdminEmail && viewAs !== null
 
   // Single DB query for sidebar data + chat widget context
   const dbUser = await db.user.findUnique({
@@ -75,9 +82,10 @@ export default async function PortalLayout({
           onboardingCompletedCount={onboardingProgress?.completedCount ?? 0}
           onboardingPercent={onboardingProgress?.percent ?? 0}
           onboardingCompletedAt={onboardingProgress?.onboardingCompletedAt?.toISOString() ?? null}
-          isAdminEmail={isAdminEmail}
+          isAdminEmail={isAdminEmail && !isAdminPreview}
         />
         <main id="main-content" className="flex-1 overflow-y-auto custom-scrollbar">
+          {isAdminPreview && viewAs && <AdminPreviewBanner viewingAs={viewAs} />}
           <PageTransition>
             <div className="p-4 pb-20 lg:p-6 lg:pb-8 xl:p-8">{children}</div>
           </PageTransition>
@@ -85,7 +93,7 @@ export default async function PortalLayout({
       </div>
 
       {/* Mobile bottom nav */}
-      <MobilePortalNav hasUnread={unreadCount > 0} isAdminEmail={isAdminEmail} />
+      <MobilePortalNav hasUnread={unreadCount > 0} isAdminEmail={isAdminEmail && !isAdminPreview} />
 
       <PortalChatWidget firstName={firstName} serviceCount={serviceCount} />
       <ReferralClaimHandler />

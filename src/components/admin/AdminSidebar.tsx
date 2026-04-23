@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { UserButton } from "@clerk/nextjs"
 import {
   LayoutDashboard,
@@ -28,6 +28,7 @@ import {
   Zap,
   FileText,
   BarChart3,
+  Eye,
 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
@@ -137,6 +138,64 @@ const ADMIN_NAV = [
     ],
   },
 ] as const
+
+type ViewAsRole = "CLIENT" | "RESELLER" | "INTERN"
+
+function ViewAsToggle({ collapsed }: { collapsed: boolean }) {
+  const router = useRouter()
+  const [loading, setLoading] = useState<ViewAsRole | null>(null)
+
+  async function viewAs(role: ViewAsRole) {
+    setLoading(role)
+    try {
+      const res = await fetch("/api/admin/view-as", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ role }),
+      })
+      if (res.ok) {
+        router.push("/portal/dashboard")
+        router.refresh()
+      }
+    } finally {
+      setLoading(null)
+    }
+  }
+
+  if (collapsed) {
+    return (
+      <div className="px-2 pb-2">
+        <button
+          onClick={() => viewAs("CLIENT")}
+          title="Preview as Client"
+          className="w-full flex items-center justify-center p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+        >
+          <Eye className="h-4 w-4" />
+        </button>
+      </div>
+    )
+  }
+
+  return (
+    <div className="px-4 pb-3">
+      <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-1.5">
+        Preview As
+      </p>
+      <div className="flex gap-1.5">
+        {(["CLIENT", "RESELLER", "INTERN"] as const).map((role) => (
+          <button
+            key={role}
+            onClick={() => viewAs(role)}
+            disabled={loading !== null}
+            className="flex-1 py-1 px-1 rounded text-[10px] font-medium bg-surface hover:bg-primary/10 hover:text-primary text-muted-foreground transition-colors disabled:opacity-50"
+          >
+            {loading === role ? "…" : role === "CLIENT" ? "Client" : role === "RESELLER" ? "Reseller" : "Intern"}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
 
 export function AdminSidebar() {
   const pathname = usePathname()
@@ -278,6 +337,9 @@ export function AdminSidebar() {
           <ChevronLeft className="h-3 w-3" />
         )}
       </button>
+
+      {/* Preview As toggle */}
+      <ViewAsToggle collapsed={collapsed} />
 
       {/* User */}
       <div className="border-t border-border p-4">
