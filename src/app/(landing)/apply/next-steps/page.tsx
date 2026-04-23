@@ -129,7 +129,7 @@ const OPERATOR_TOOLS: {
   { name: "Dex",        category: "Browser Agent",   score: "9.2",  domain: "getdex.com",     url: "https://getdex.com" },
   { name: "Notion",     category: "Knowledge",       score: "9.1",  domain: "notion.so",      url: "https://www.notion.so" },
   { name: "v0",         category: "App Builder",     score: "9.0",  domain: "v0.app",         url: "https://v0.app" },
-  { name: "Little Bird",category: "Meeting AI",      score: "9.0",  domain: "littlebird.com", url: "https://www.littlebird.com" },
+  { name: "Fathom",      category: "Meeting AI",      score: "9.0",  domain: "fathom.video",   url: "https://fathom.video" },
   { name: "ElevenLabs", category: "Voice Gen",       score: "8.9",  domain: "elevenlabs.io",  url: "https://elevenlabs.io" },
 ]
 
@@ -397,7 +397,7 @@ export default function PostBookingNextStepsPage() {
                 icon: Users,
                 title: "Weekly operator calls",
                 body:
-                  "Wins, losses, and live teardowns. See what&apos;s working this week — not what worked in 2023.",
+                  "Wins, losses, and live teardowns. See what’s working this week — not what worked in 2023.",
               },
               {
                 icon: Zap,
