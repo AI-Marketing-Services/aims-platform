@@ -12,14 +12,16 @@ import { sendPostBookingConfirmationEmail } from "@/lib/email/post-booking-educa
  * webhook failed silently.
  *
  * POST /api/admin/debug/resend-post-booking
- * Body: { email: string }
+ * Body: { email: string, sendTo?: string, name?: string }
  *
- * Looks up the most recent LeadMagnetSubmission / Deal for the email
- * to hydrate the applicant's name, then re-sends. Everything else
- * (attached Playbook PDF, magic-link URL, CTA copy) is rebuilt live.
+ * `email` is used to look up the applicant's name from the DB.
+ * `sendTo` overrides the delivery address (useful for Asana/review inboxes).
+ * `name` overrides the name lookup entirely.
  */
 const schema = z.object({
   email: z.string().email(),
+  sendTo: z.string().email().optional(),
+  name: z.string().optional(),
   eventStartTime: z.string().optional(),
   meetingUrl: z.string().url().optional(),
 })
@@ -44,18 +46,22 @@ export async function POST(req: Request) {
   }
 
   const email = parsed.data.email.toLowerCase()
+  const deliverTo = parsed.data.sendTo ?? email
 
-  // Hydrate name from the most recent application/deal for this email.
-  const deal = await db.deal.findFirst({
-    where: { contactEmail: { equals: email, mode: "insensitive" } },
-    orderBy: { createdAt: "desc" },
-    select: { contactName: true },
-  })
-  const name = deal?.contactName ?? email.split("@")[0]
+  // Hydrate name from override, DB deal, or email prefix.
+  let name = parsed.data.name ?? null
+  if (!name) {
+    const deal = await db.deal.findFirst({
+      where: { contactEmail: { equals: email, mode: "insensitive" } },
+      orderBy: { createdAt: "desc" },
+      select: { contactName: true },
+    })
+    name = deal?.contactName ?? email.split("@")[0]
+  }
 
   try {
     await sendPostBookingConfirmationEmail({
-      to: email,
+      to: deliverTo,
       name,
       eventStartTime: parsed.data.eventStartTime ?? null,
       meetingUrl: parsed.data.meetingUrl ?? null,
@@ -64,13 +70,13 @@ export async function POST(req: Request) {
     })
 
     logger.info(
-      `[debug] Re-sent post-booking email to ${email} (triggered by ${userId})`,
+      `[debug] Re-sent post-booking email to ${deliverTo} (looked up as ${email}, triggered by ${userId})`,
       { action: "debug_resend_post_booking" }
     )
 
-    return NextResponse.json({ ok: true, to: email, name })
+    return NextResponse.json({ ok: true, to: deliverTo, name })
   } catch (err) {
-    logger.error(`[debug] resend-post-booking failed for ${email}`, err, {
+    logger.error(`[debug] resend-post-booking failed for ${deliverTo}`, err, {
       action: "debug_resend_post_booking_error",
     })
     const message = err instanceof Error ? err.message : "Unknown error"
