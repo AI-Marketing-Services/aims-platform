@@ -2,7 +2,8 @@ import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
 import { KanbanPipeline } from "@/components/portal/crm/KanbanPipeline"
-import { Briefcase, Download } from "lucide-react"
+import { Briefcase, Download, MapPin } from "lucide-react"
+import Link from "next/link"
 
 async function getDeals(userId: string) {
   const dbUser = await db.user.findUnique({ where: { clerkId: userId }, select: { id: true } })
@@ -76,12 +77,21 @@ export default async function CrmPage() {
       {/* Board */}
       <div className="flex-1 overflow-x-auto px-6 py-5">
         {deals.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-64 text-center">
-            <Briefcase className="h-10 w-10 text-muted-foreground/30 mb-3" />
-            <p className="text-muted-foreground font-medium">No deals yet</p>
-            <p className="text-sm text-muted-foreground/60 mt-1">
-              Add your first prospect to start tracking your pipeline.
+          <div className="flex flex-col items-center justify-center h-64 text-center mb-6">
+            <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
+              <Briefcase className="h-7 w-7 text-primary/60" />
+            </div>
+            <p className="text-base font-semibold text-foreground mb-1">No deals yet</p>
+            <p className="text-sm text-muted-foreground mb-5">
+              Add your first prospect below, or scout leads to auto-import.
             </p>
+            <Link
+              href="/portal/crm/scout"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-colors"
+            >
+              <MapPin className="h-4 w-4" />
+              Find leads with Lead Scout
+            </Link>
           </div>
         ) : null}
         <KanbanPipeline

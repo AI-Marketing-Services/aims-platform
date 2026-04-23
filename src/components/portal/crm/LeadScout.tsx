@@ -38,7 +38,7 @@ export function LeadScout() {
   const [businessType, setBusinessType] = useState("")
   const [location, setLocation] = useState("")
   const [mapSrc, setMapSrc] = useState(
-    "https://www.google.com/maps?q=United+States&output=embed"
+    "https://www.google.com/maps?q=Austin,+TX&z=11&output=embed"
   )
   const [leads, setLeads] = useState<ScoutedLead[]>([])
   const [isSearching, startSearch] = useTransition()
