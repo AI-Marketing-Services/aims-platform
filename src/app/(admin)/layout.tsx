@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { auth } from "@clerk/nextjs/server"
+import { auth, clerkClient } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
 import { AdminSidebar } from "@/components/admin/AdminSidebar"
@@ -19,19 +19,32 @@ export default async function AdminLayout({
   const { userId, sessionClaims } = await auth()
   if (!userId) redirect("/sign-in")
 
-  // Clerk session tokens often don't carry publicMetadata (requires
-  // session-template customization in the Clerk dashboard). Fall back
-  // to the DB User.role so admins aren't bounced when the claim isn't
-  // populated in their JWT yet.
+  // Resolve role with a three-layer fallback so brand-new admins who
+  // just accepted an invite aren't bounced before their local DB record exists:
+  // 1. JWT session claim (populated if Clerk session template is configured)
+  // 2. Local DB User.role (populated after the Clerk webhook fires)
+  // 3. Clerk API publicMetadata (always authoritative, costs one extra round-trip)
   const claimRole = (sessionClaims?.metadata as { role?: string })?.role
   let role = claimRole
+
   if (!role || !["ADMIN", "SUPER_ADMIN"].includes(role)) {
     const user = await db.user.findUnique({
       where: { clerkId: userId },
       select: { role: true },
     })
-    role = user?.role
+    role = user?.role ?? undefined
   }
+
+  if (!role || !["ADMIN", "SUPER_ADMIN"].includes(role)) {
+    try {
+      const clerk = await clerkClient()
+      const clerkUser = await clerk.users.getUser(userId)
+      role = (clerkUser.publicMetadata as { role?: string })?.role ?? undefined
+    } catch {
+      // Clerk API unavailable — fall through to redirect below
+    }
+  }
+
   if (!role || !["ADMIN", "SUPER_ADMIN"].includes(role)) {
     redirect("/portal/dashboard")
   }

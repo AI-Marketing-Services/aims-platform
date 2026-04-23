@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 }
 
 export default function TermsPage() {
-  const lastUpdated = "April 20, 2026"
+  const lastUpdated = "April 15, 2026"
 
   return (
     <section className="py-24">
@@ -174,47 +174,10 @@ export default function TermsPage() {
 
           <h2>8. Fees, Subscriptions &amp; Auto-Renewal</h2>
           <p>
-            All fees are stated at the time of purchase and are payable in U.S. dollars unless otherwise specified.
-            Current subscription tiers are as follows:
-          </p>
-
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm border border-border rounded-md">
-              <thead>
-                <tr className="border-b border-border bg-card">
-                  <th className="text-left px-4 py-3 text-foreground font-semibold">Tier</th>
-                  <th className="text-left px-4 py-3 text-foreground font-semibold">Annual (upfront)</th>
-                  <th className="text-left px-4 py-3 text-foreground font-semibold">Annual Renewal</th>
-                  <th className="text-left px-4 py-3 text-foreground font-semibold">Month-to-Month</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="border-b border-border">
-                  <td className="px-4 py-3 text-foreground font-medium">Community</td>
-                  <td className="px-4 py-3">$12,000</td>
-                  <td className="px-4 py-3">$12,000/yr</td>
-                  <td className="px-4 py-3">$1,500/mo</td>
-                </tr>
-                <tr className="border-b border-border">
-                  <td className="px-4 py-3 text-foreground font-medium">Accelerator</td>
-                  <td className="px-4 py-3">$18,000</td>
-                  <td className="px-4 py-3">$18,000/yr</td>
-                  <td className="px-4 py-3">$1,750/mo</td>
-                </tr>
-                <tr>
-                  <td className="px-4 py-3 text-foreground font-medium">Inner Circle</td>
-                  <td className="px-4 py-3">$24,000</td>
-                  <td className="px-4 py-3">$24,000/yr</td>
-                  <td className="px-4 py-3">$2,000/mo</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <p>
-            Fees and tier features are subject to change. Current offer details are posted at
-            aioperatorcollective.com. Changes to pricing will not affect active annual memberships during the
-            current term.
+            All fees for subscriptions, memberships, and digital products are stated at the time of purchase and
+            are payable in U.S. dollars unless otherwise specified. Fees and tier features are subject to change.
+            Current offer details are posted at aioperatorcollective.com. Changes to pricing will not affect active
+            annual memberships during the current term.
           </p>
 
           <h3>a. Auto-Renewal Authorization</h3>
@@ -447,8 +410,8 @@ export default function TermsPage() {
           </ul>
           <p>
             To exercise any of these rights, contact{" "}
-            <a href="mailto:support@aioperatorcollective.com" className="text-primary hover:underline">
-              support@aioperatorcollective.com
+            <a href="mailto:privacy@modern-amenities.com" className="text-primary hover:underline">
+              privacy@modern-amenities.com
             </a>
             . We will respond within 30 days (or as required by applicable law). See the{" "}
             <Link href="/privacy" className="text-primary hover:underline">
@@ -907,14 +870,9 @@ export default function TermsPage() {
           </p>
           <p>
             <strong>Modern-Amenities, LLC (Privacy, Legal &amp; Data Requests)</strong><br />
-            Privacy:{" "}
-            <a href="mailto:support@aioperatorcollective.com" className="text-primary hover:underline">
-              support@aioperatorcollective.com
-            </a>
-            <br />
-            Legal:{" "}
-            <a href="mailto:support@aioperatorcollective.com" className="text-primary hover:underline">
-              support@aioperatorcollective.com
+            Email:{" "}
+            <a href="mailto:privacy@modern-amenities.com" className="text-primary hover:underline">
+              privacy@modern-amenities.com
             </a>
             <br />
             Address: 8 The Green, Suite A, Dover, DE 19901

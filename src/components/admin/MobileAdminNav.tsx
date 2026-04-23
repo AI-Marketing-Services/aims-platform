@@ -3,17 +3,17 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
-  LayoutDashboard, Kanban, Users, DollarSign, Gauge, FlaskConical
+  LayoutDashboard, Kanban, Users, DollarSign, FileBarChart, BarChart3
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const MOBILE_ADMIN_NAV = [
   { label: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
   { label: "CRM", href: "/admin/crm", icon: Kanban },
-  { label: "Clients", href: "/admin/clients", icon: Users },
-  { label: "Ops Score", href: "/admin/ops-excellence", icon: Gauge },
+  { label: "Funnel", href: "/admin/funnel", icon: FileBarChart },
+  { label: "Analytics", href: "/admin/analytics", icon: BarChart3 },
   { label: "Revenue", href: "/admin/revenue", icon: DollarSign },
-  { label: "Simulate", href: "/admin/simulate", icon: FlaskConical },
+  { label: "Members", href: "/admin/members", icon: Users },
 ]
 
 export function MobileAdminNav() {
