@@ -84,10 +84,12 @@ export async function POST(req: Request) {
     // paths with "redirect_url must be a valid url". We derive the
     // origin from the incoming request so this works regardless of
     // whether NEXT_PUBLIC_APP_URL is configured in the runtime env.
-    const redirectPath =
-      role === "ADMIN" || role === "SUPER_ADMIN"
-        ? "/admin/dashboard"
-        : "/portal/dashboard"
+    // Always redirect to /sign-up so Clerk appends __clerk_ticket to that
+    // URL. Our sign-up page detects the ticket and renders the SignUp
+    // component. Sending to /admin/dashboard (or /portal/dashboard) fails
+    // because middleware bounces the unauthenticated user to /sign-in and
+    // the ticket is lost in the redirect chain.
+    const redirectPath = "/sign-up"
     const envBase = process.env.NEXT_PUBLIC_APP_URL?.trim()
     const origin =
       envBase && /^https?:\/\//i.test(envBase)
