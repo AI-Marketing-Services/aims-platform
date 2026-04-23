@@ -56,13 +56,13 @@ export function UsageWidget() {
             <div key={row.type}>
               <div className="flex justify-between text-xs mb-1">
                 <span className="text-foreground">{TYPE_LABELS[row.type] ?? row.type}</span>
-                <span className={cn("font-mono", warn ? "text-amber-400" : "text-muted-foreground")}>
+                <span className={cn("font-mono", warn ? "text-amber-600" : "text-muted-foreground")}>
                   {row.used}/{row.allowance}
                 </span>
               </div>
-              <div className="h-1.5 rounded-full bg-surface overflow-hidden">
+              <div className="h-1.5 rounded-full bg-muted overflow-hidden">
                 <div
-                  className={cn("h-full rounded-full transition-all", warn ? "bg-amber-400" : "bg-primary")}
+                  className={cn("h-full rounded-full transition-all", warn ? "bg-amber-500" : "bg-primary")}
                   style={{ width: `${pct}%` }}
                 />
               </div>
