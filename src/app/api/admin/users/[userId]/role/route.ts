@@ -3,6 +3,7 @@ import { auth, clerkClient } from "@clerk/nextjs/server"
 import { z } from "zod"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
+import { queueEmailSequence } from "@/lib/email/queue"
 
 const schema = z.object({
   role: z.enum(["ADMIN", "SUPER_ADMIN", "INTERN", "RESELLER", "CLIENT"]),
@@ -83,6 +84,15 @@ export async function PATCH(
     logger.info(`Role updated: ${targetClerkId} -> ${parsed.data.role} by ${actingUserId}`, {
       action: "admin_role_update",
     })
+
+    // Enroll new CLIENT members in the onboarding email sequence
+    if (parsed.data.role === "CLIENT" && email) {
+      const firstName = target.firstName ?? undefined
+      queueEmailSequence(email, "post-purchase", {
+        firstName,
+        source: "admin_role_assignment",
+      }).catch((err) => logger.error("Failed to queue post-purchase sequence", err, { email }))
+    }
 
     return NextResponse.json({ ok: true, userId: targetClerkId, role: parsed.data.role })
   } catch (err) {
