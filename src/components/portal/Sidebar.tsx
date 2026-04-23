@@ -59,12 +59,20 @@ const PORTAL_NAV = [
   { label: "Settings", href: "/portal/settings", icon: Settings },
 ] as const
 
+const ADMIN_ONLY_ROUTES = [
+  "/portal/ops-excellence",
+  "/portal/services",
+  "/portal/marketplace",
+  "/portal/campaigns",
+]
+
 interface PortalSidebarProps {
   totalMrr?: number
   hasUnread?: boolean
   onboardingCompletedCount?: number
   onboardingPercent?: number
   onboardingCompletedAt?: string | null
+  isAdminEmail?: boolean
 }
 
 export function PortalSidebar({
@@ -73,9 +81,14 @@ export function PortalSidebar({
   onboardingCompletedCount = 0,
   onboardingPercent = 0,
   onboardingCompletedAt = null,
+  isAdminEmail = false,
 }: PortalSidebarProps) {
   const pathname = usePathname()
   const [collapsed, setCollapsed] = useState(false)
+
+  const visibleNav = PORTAL_NAV.filter(
+    (item) => !ADMIN_ONLY_ROUTES.includes(item.href) || isAdminEmail
+  )
 
   return (
     <aside
@@ -93,7 +106,7 @@ export function PortalSidebar({
 
       {/* Navigation */}
       <nav className="flex-1 py-4 px-2 space-y-1 overflow-y-auto custom-scrollbar">
-        {PORTAL_NAV.map((item) => {
+        {visibleNav.map((item) => {
           const isActive = pathname.startsWith(item.href)
           return (
             <Link

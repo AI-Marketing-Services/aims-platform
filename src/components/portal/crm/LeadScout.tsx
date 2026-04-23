@@ -37,6 +37,9 @@ export function LeadScout() {
   const router = useRouter()
   const [businessType, setBusinessType] = useState("")
   const [location, setLocation] = useState("")
+  const [mapSrc, setMapSrc] = useState(
+    "https://www.google.com/maps?q=United+States&output=embed"
+  )
   const [leads, setLeads] = useState<ScoutedLead[]>([])
   const [isSearching, startSearch] = useTransition()
   const [error, setError] = useState<string | null>(null)
@@ -48,12 +51,18 @@ export function LeadScout() {
     setError(null)
     setLeads([])
     setImportStates({})
+    setMapSrc(
+      `https://www.google.com/maps?q=${encodeURIComponent(location.trim())}&output=embed`
+    )
 
     startSearch(async () => {
       const res = await fetch("/api/portal/crm/lead-scout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ businessType: businessType.trim(), location: location.trim() }),
+        body: JSON.stringify({
+          businessType: businessType.trim(),
+          location: location.trim(),
+        }),
       })
 
       if (!res.ok) {
@@ -95,169 +104,204 @@ export function LeadScout() {
     }
 
     const { deal } = await res.json()
-    setImportStates((prev) => ({ ...prev, [index]: { status: "done", dealId: deal.id } }))
+    setImportStates((prev) => ({
+      ...prev,
+      [index]: { status: "done", dealId: deal.id },
+    }))
     router.refresh()
   }
 
-  const inputClass =
-    "h-10 px-3 rounded-lg bg-surface border border-border text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
-
   return (
-    <div className="space-y-5">
-      {/* Search form */}
-      <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-2">
-        <div className="relative flex-1">
-          <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-          <input
-            value={businessType}
-            onChange={(e) => setBusinessType(e.target.value)}
-            placeholder="Business type (e.g. HVAC, dental, roofing)"
-            required
-            className={cn(inputClass, "w-full pl-9")}
-          />
-        </div>
-        <div className="relative flex-1">
-          <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-          <input
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            placeholder="City, state (e.g. Austin, TX)"
-            required
-            className={cn(inputClass, "w-full pl-9")}
-          />
-        </div>
-        <button
-          type="submit"
-          disabled={isSearching || !businessType || !location}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 transition-colors shrink-0"
-        >
-          {isSearching ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <Search className="h-4 w-4" />
-          )}
-          {isSearching ? "Scouting…" : "Scout"}
-        </button>
-      </form>
+    <div className="flex h-full overflow-hidden">
+      {/* Map — takes most of the width */}
+      <div className="flex-1 relative bg-muted/20">
+        <iframe
+          key={mapSrc}
+          src={mapSrc}
+          className="w-full h-full border-0"
+          allowFullScreen
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+          title="Location Map"
+        />
+      </div>
 
-      {error && (
-        <div className="flex items-center gap-2 text-sm text-red-400 bg-red-400/10 border border-red-400/20 rounded-lg px-3 py-2">
-          <X className="h-4 w-4 shrink-0" />
-          {error}
-        </div>
-      )}
-
-      {isSearching && (
-        <div className="flex items-center gap-3 text-sm text-muted-foreground py-6 justify-center">
-          <Loader2 className="h-5 w-5 animate-spin text-primary" />
-          Searching for {businessType} businesses in {location}…
-        </div>
-      )}
-
-      {/* Results */}
-      {leads.length > 0 && (
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <p className="text-sm font-semibold text-foreground">
-              {leads.length} leads found
-            </p>
-            <p className="text-xs text-muted-foreground">Click import to add to your CRM pipeline</p>
+      {/* Right panel */}
+      <div className="w-80 flex-shrink-0 border-l border-border bg-card flex flex-col overflow-hidden">
+        {/* Header */}
+        <div className="px-4 pt-4 pb-3 border-b border-border">
+          <div className="flex items-center gap-2 mb-3">
+            <MapPin className="h-4 w-4 text-primary" />
+            <h2 className="text-sm font-semibold text-foreground">Lead Scout</h2>
           </div>
 
-          {leads.map((lead, idx) => {
-            const state = importStates[idx] ?? { status: "idle" }
-            const isImported = state.status === "done"
-            const isImporting = state.status === "importing"
+          <form onSubmit={handleSearch} className="space-y-2">
+            <div>
+              <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1 block">
+                Search Location
+              </label>
+              <div className="relative">
+                <MapPin className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+                <input
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  placeholder="Austin, TX"
+                  required
+                  className="w-full h-8 pl-8 pr-3 rounded-lg border border-border bg-background text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1 block">
+                Business Type
+              </label>
+              <div className="relative">
+                <Building2 className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+                <input
+                  value={businessType}
+                  onChange={(e) => setBusinessType(e.target.value)}
+                  placeholder="HVAC, dental, roofing..."
+                  required
+                  className="w-full h-8 pl-8 pr-3 rounded-lg border border-border bg-background text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
+                />
+              </div>
+            </div>
+            <button
+              type="submit"
+              disabled={isSearching || !businessType || !location}
+              className="w-full flex items-center justify-center gap-2 h-9 rounded-lg text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 transition-colors"
+            >
+              {isSearching ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Search className="h-4 w-4" />
+              )}
+              {isSearching ? "Searching…" : "Search for Leads"}
+            </button>
+          </form>
+        </div>
 
-            return (
-              <div
-                key={idx}
-                className={cn(
-                  "flex items-start gap-3 p-4 rounded-xl border transition-all",
-                  isImported
-                    ? "bg-emerald-500/5 border-emerald-500/20"
-                    : "bg-card border-border"
-                )}
-              >
-                <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
-                  <Building2 className="h-4 w-4 text-primary" />
-                </div>
+        {/* Results */}
+        <div className="flex-1 overflow-y-auto p-3 space-y-2">
+          {error && (
+            <div className="flex items-center gap-2 text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+              <X className="h-3.5 w-3.5 shrink-0" />
+              {error}
+            </div>
+          )}
 
-                <div className="flex-1 min-w-0 space-y-1.5">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <p className="text-sm font-semibold text-foreground">{lead.companyName}</p>
-                      <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
-                        <MapPin className="h-3 w-3 shrink-0" />
-                        {lead.location || location}
+          {isSearching && (
+            <div className="flex flex-col items-center justify-center py-8 text-center">
+              <Loader2 className="h-5 w-5 animate-spin text-primary mb-2" />
+              <p className="text-xs text-muted-foreground">
+                Searching for {businessType} in {location}…
+              </p>
+            </div>
+          )}
+
+          {leads.length > 0 && (
+            <>
+              <p className="text-xs font-semibold text-foreground px-1">
+                {leads.length} businesses found
+              </p>
+              {leads.map((lead, idx) => {
+                const state = importStates[idx] ?? { status: "idle" }
+                const isImported = state.status === "done"
+                const isImporting = state.status === "importing"
+                return (
+                  <div
+                    key={idx}
+                    className={cn(
+                      "rounded-lg border p-3 transition-all",
+                      isImported
+                        ? "bg-green-50 border-green-200"
+                        : "bg-background border-border"
+                    )}
+                  >
+                    <div className="flex items-start justify-between gap-2 mb-1.5">
+                      <p className="text-xs font-semibold text-foreground leading-tight">
+                        {lead.companyName}
                       </p>
-                    </div>
-
-                    <div className="shrink-0">
                       {isImported ? (
                         <a
                           href={`/portal/crm/${state.dealId}`}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20 transition-colors"
+                          className="shrink-0 flex items-center gap-1 px-2 py-1 rounded text-[10px] font-semibold bg-green-100 text-green-700 hover:bg-green-200 transition-colors"
                         >
-                          <Check className="h-3.5 w-3.5" />
-                          View in CRM
+                          <Check className="h-3 w-3" />
+                          In CRM
                         </a>
                       ) : (
                         <button
                           onClick={() => importLead(lead, idx)}
                           disabled={isImporting}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 disabled:opacity-50 transition-colors"
+                          className="shrink-0 flex items-center gap-1 px-2 py-1 rounded text-[10px] font-semibold bg-primary/10 text-primary hover:bg-primary/20 disabled:opacity-50 transition-colors"
                         >
                           {isImporting ? (
-                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                            <Loader2 className="h-3 w-3 animate-spin" />
                           ) : (
-                            <Plus className="h-3.5 w-3.5" />
+                            <Plus className="h-3 w-3" />
                           )}
-                          {isImporting ? "Importing…" : "Import"}
+                          {isImporting ? "…" : "Import"}
                         </button>
                       )}
                     </div>
+                    <p className="text-[10px] text-muted-foreground flex items-center gap-1">
+                      <MapPin className="h-2.5 w-2.5 shrink-0" />
+                      {lead.location || location}
+                    </p>
+                    {lead.snippet && (
+                      <p className="text-[10px] text-muted-foreground mt-1 line-clamp-2 leading-relaxed">
+                        {lead.snippet}
+                      </p>
+                    )}
+                    <div className="flex flex-wrap gap-2 mt-1.5">
+                      {lead.contactPhone && (
+                        <a
+                          href={`tel:${lead.contactPhone}`}
+                          className="flex items-center gap-0.5 text-[10px] text-muted-foreground hover:text-foreground"
+                        >
+                          <Phone className="h-2.5 w-2.5" />
+                          {lead.contactPhone}
+                        </a>
+                      )}
+                      {lead.contactEmail && (
+                        <a
+                          href={`mailto:${lead.contactEmail}`}
+                          className="flex items-center gap-0.5 text-[10px] text-primary hover:underline"
+                        >
+                          <Mail className="h-2.5 w-2.5" />
+                          {lead.contactEmail}
+                        </a>
+                      )}
+                      {lead.website && (
+                        <a
+                          href={lead.website}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-0.5 text-[10px] text-primary hover:underline truncate max-w-[120px]"
+                        >
+                          <Globe className="h-2.5 w-2.5 shrink-0" />
+                          {lead.website.replace(/^https?:\/\//, "")}
+                        </a>
+                      )}
+                    </div>
                   </div>
+                )
+              })}
+            </>
+          )}
 
-                  <p className="text-xs text-muted-foreground leading-relaxed">{lead.snippet}</p>
-
-                  <div className="flex flex-wrap items-center gap-3 pt-0.5">
-                    {lead.contactPhone && (
-                      <a
-                        href={`tel:${lead.contactPhone}`}
-                        className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
-                      >
-                        <Phone className="h-3 w-3" />
-                        {lead.contactPhone}
-                      </a>
-                    )}
-                    {lead.contactEmail && (
-                      <a
-                        href={`mailto:${lead.contactEmail}`}
-                        className="flex items-center gap-1 text-xs text-primary hover:underline"
-                      >
-                        <Mail className="h-3 w-3" />
-                        {lead.contactEmail}
-                      </a>
-                    )}
-                    {lead.website && (
-                      <a
-                        href={lead.website}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-1 text-xs text-primary hover:underline truncate max-w-[200px]"
-                      >
-                        <Globe className="h-3 w-3 shrink-0" />
-                        {lead.website.replace(/^https?:\/\//, "")}
-                      </a>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )
-          })}
+          {!isSearching && leads.length === 0 && !error && (
+            <div className="flex flex-col items-center justify-center py-10 text-center">
+              <MapPin className="h-8 w-8 text-muted-foreground/20 mb-2" />
+              <p className="text-xs text-muted-foreground">Search for businesses nearby</p>
+              <p className="text-[10px] text-muted-foreground/60 mt-1">
+                Enter a location and business type above
+              </p>
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   )
 }

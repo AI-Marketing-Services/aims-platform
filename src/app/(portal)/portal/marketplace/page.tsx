@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs/server"
+import { auth, currentUser } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
 import { ShoppingBag } from "lucide-react"
@@ -9,6 +9,12 @@ export const metadata = { title: "Marketplace" }
 export default async function PortalMarketplacePage() {
   const { userId } = await auth()
   if (!userId) redirect("/sign-in")
+
+  const clerkUser = await currentUser()
+  const userEmail = clerkUser?.emailAddresses?.[0]?.emailAddress ?? ""
+  if (userEmail !== "adamwolfe100@gmail.com") {
+    redirect("/portal/dashboard")
+  }
 
   const dbUser = await db.user.findUnique({ where: { clerkId: userId } })
   if (!dbUser) redirect("/sign-in")

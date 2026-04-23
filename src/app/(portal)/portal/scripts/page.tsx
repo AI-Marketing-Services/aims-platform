@@ -36,11 +36,11 @@ const TYPE_LABELS: Record<AiScriptType, string> = {
 }
 
 const TYPE_COLORS: Record<AiScriptType, string> = {
-  COLD_EMAIL: "bg-blue-500/10 text-blue-400 border-blue-500/20",
-  DISCOVERY_CALL: "bg-purple-500/10 text-purple-400 border-purple-500/20",
-  FOLLOW_UP: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
-  LINKEDIN_DM: "bg-sky-500/10 text-sky-400 border-sky-500/20",
-  PROPOSAL_FOLLOW_UP: "bg-amber-500/10 text-amber-400 border-amber-500/20",
+  COLD_EMAIL: "bg-blue-50 text-blue-700 border-blue-200",
+  DISCOVERY_CALL: "bg-violet-50 text-violet-700 border-violet-200",
+  FOLLOW_UP: "bg-green-50 text-green-700 border-green-200",
+  LINKEDIN_DM: "bg-sky-50 text-sky-700 border-sky-200",
+  PROPOSAL_FOLLOW_UP: "bg-amber-50 text-amber-700 border-amber-200",
 }
 
 const TYPE_ICONS: Record<AiScriptType, React.ElementType> = {
@@ -97,18 +97,18 @@ function ScriptCard({
   }
 
   return (
-    <div className="rounded-xl border border-border bg-[#141923] p-5 hover:border-[#C4972A]/30 hover:shadow-lg hover:shadow-[#C4972A]/5 transition-all duration-200 group">
+    <div className="rounded-xl bg-card border border-border p-5 hover:border-primary/30 hover:shadow-sm transition-all duration-200 group">
       <div className="flex items-start justify-between gap-3 mb-3">
         <div className="flex items-center gap-2.5 min-w-0">
-          <div className="h-8 w-8 rounded-lg bg-[#C4972A]/10 flex items-center justify-center shrink-0">
-            <Icon className="h-4 w-4 text-[#C4972A]" />
+          <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+            <Icon className="h-4 w-4 text-primary" />
           </div>
           <div className="min-w-0">
-            <h3 className="text-sm font-semibold text-[#F0EBE0] truncate group-hover:text-[#C4972A] transition-colors">
+            <h3 className="text-sm font-semibold text-foreground truncate group-hover:text-primary transition-colors">
               {script.title}
             </h3>
             {script.clientDeal && (
-              <p className="text-xs text-[#F0EBE0]/40 mt-0.5">{script.clientDeal.companyName}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">{script.clientDeal.companyName}</p>
             )}
           </div>
         </div>
@@ -119,17 +119,17 @@ function ScriptCard({
         </span>
       </div>
 
-      <p className="text-xs text-[#F0EBE0]/60 leading-relaxed line-clamp-3 mb-4">
+      <p className="text-xs text-muted-foreground leading-relaxed line-clamp-3 mb-4">
         {script.content.slice(0, 150)}
         {script.content.length > 150 ? "…" : ""}
       </p>
 
       <div className="flex items-center justify-between">
-        <span className="text-[10px] text-[#F0EBE0]/30">{formatDate(script.createdAt)}</span>
+        <span className="text-[10px] text-muted-foreground">{formatDate(script.createdAt)}</span>
         <div className="flex items-center gap-1">
           <button
             onClick={handleCopy}
-            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-[#F0EBE0]/60 hover:text-[#F0EBE0] hover:bg-white/5 transition-all"
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all"
             title="Copy to clipboard"
           >
             {copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
@@ -138,7 +138,7 @@ function ScriptCard({
           <button
             onClick={handleDelete}
             disabled={deleting}
-            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-[#F0EBE0]/40 hover:text-red-400 hover:bg-red-500/5 transition-all disabled:opacity-50"
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-red-500 hover:bg-red-50 transition-all disabled:opacity-50"
             title="Delete script"
           >
             <Trash2 className="h-3.5 w-3.5" />
@@ -187,17 +187,17 @@ export default function ScriptsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="h-9 w-9 rounded-lg bg-[#C4972A]/10 flex items-center justify-center">
-            <FileCode2 className="h-4.5 w-4.5 text-[#C4972A]" />
+          <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center">
+            <FileCode2 className="h-4.5 w-4.5 text-primary" />
           </div>
           <div>
-            <h1 className="text-lg font-bold text-[#F0EBE0]">AI Script Builder</h1>
-            <p className="text-xs text-[#F0EBE0]/50">Generate and manage your sales scripts</p>
+            <h1 className="text-lg font-bold text-foreground">AI Script Builder</h1>
+            <p className="text-xs text-muted-foreground">Generate and manage your sales scripts</p>
           </div>
         </div>
         <Link
           href="/portal/scripts/new"
-          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#C4972A] text-[#08090D] text-sm font-semibold hover:bg-[#C4972A]/90 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors"
         >
           <Plus className="h-4 w-4" />
           New Script
@@ -212,8 +212,8 @@ export default function ScriptsPage() {
             onClick={() => handleFilterChange(tab.value)}
             className={`shrink-0 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
               activeFilter === tab.value
-                ? "bg-[#C4972A]/15 text-[#C4972A] border border-[#C4972A]/30"
-                : "text-[#F0EBE0]/50 hover:text-[#F0EBE0] hover:bg-white/5 border border-transparent"
+                ? "bg-primary/10 text-primary border border-primary/20"
+                : "text-muted-foreground hover:text-foreground hover:bg-muted/40 border border-transparent"
             }`}
           >
             {tab.label}
@@ -227,24 +227,24 @@ export default function ScriptsPage() {
           {Array.from({ length: 6 }).map((_, i) => (
             <div
               key={i}
-              className="rounded-xl border border-border bg-[#141923] p-5 h-44 animate-pulse"
+              className="rounded-xl bg-card border border-border p-5 h-44 animate-pulse"
             />
           ))}
         </div>
       ) : scripts.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-center">
-          <div className="h-14 w-14 rounded-2xl bg-[#C4972A]/10 flex items-center justify-center mb-4">
-            <FileCode2 className="h-7 w-7 text-[#C4972A]/50" />
+          <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
+            <FileCode2 className="h-7 w-7 text-primary/50" />
           </div>
-          <p className="text-[#F0EBE0]/60 font-medium mb-1">No scripts yet</p>
-          <p className="text-sm text-[#F0EBE0]/30 mb-4">
+          <p className="text-muted-foreground font-medium mb-1">No scripts yet</p>
+          <p className="text-sm text-muted-foreground mb-4">
             {activeFilter === "ALL"
               ? "Generate your first AI-powered sales script to get started."
               : `No ${TYPE_LABELS[activeFilter as AiScriptType]} scripts yet.`}
           </p>
           <Link
             href="/portal/scripts/new"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#C4972A] text-[#08090D] text-sm font-semibold hover:bg-[#C4972A]/90 transition-colors"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors"
           >
             <Plus className="h-4 w-4" />
             Generate Script

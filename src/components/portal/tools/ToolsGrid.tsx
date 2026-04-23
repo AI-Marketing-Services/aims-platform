@@ -12,16 +12,25 @@ interface ToolsGridProps {
 }
 
 const BADGE_COLORS: Record<string, string> = {
-  New: "bg-blue-500/10 text-blue-400 border-blue-500/20",
-  Popular: "bg-amber-500/10 text-amber-400 border-amber-500/20",
-  Beta: "bg-violet-500/10 text-violet-400 border-violet-500/20",
+  New: "bg-blue-50 text-blue-700 border border-blue-200",
+  Popular: "bg-amber-50 text-amber-700 border border-amber-100",
+  Beta: "bg-violet-50 text-violet-700 border border-violet-200",
+}
+
+const CATEGORY_AVATAR: Record<string, string> = {
+  automation: "bg-orange-100 text-orange-700",
+  outreach: "bg-blue-100 text-blue-700",
+  content: "bg-violet-100 text-violet-700",
+  research: "bg-green-100 text-green-700",
+  finance: "bg-emerald-100 text-emerald-700",
+  ops: "bg-gray-100 text-gray-600",
 }
 
 const GATE_LABELS: Record<UnlockGate, string> = {
   free: "Free access",
-  "onboarding:50": "Complete 50% of onboarding",
-  "onboarding:100": "Complete all onboarding steps",
-  "crm:active_deal": "Land your first active client",
+  "onboarding:50": "Complete 50% of onboarding to unlock",
+  "onboarding:100": "Complete all onboarding steps to unlock",
+  "crm:active_deal": "Land your first active client to unlock",
 }
 
 const ALL_CATEGORY = "__all__"
@@ -50,8 +59,8 @@ export function ToolsGrid({ tools, categories, unlockedGates }: ToolsGridProps) 
             className={cn(
               "px-3 py-1.5 rounded-full text-xs font-medium transition-all border",
               activeCategory === ALL_CATEGORY
-                ? "bg-primary/15 text-primary border-primary/30"
-                : "bg-surface/40 text-muted-foreground border-border/40 hover:text-foreground hover:border-border"
+                ? "bg-primary/10 text-primary border-primary/20"
+                : "bg-muted/40 text-muted-foreground border-border/40 hover:text-foreground hover:border-border"
             )}
           >
             All tools
@@ -63,8 +72,8 @@ export function ToolsGrid({ tools, categories, unlockedGates }: ToolsGridProps) 
               className={cn(
                 "px-3 py-1.5 rounded-full text-xs font-medium transition-all border",
                 activeCategory === cat
-                  ? "bg-primary/15 text-primary border-primary/30"
-                  : "bg-surface/40 text-muted-foreground border-border/40 hover:text-foreground hover:border-border"
+                  ? "bg-primary/10 text-primary border-primary/20"
+                  : "bg-muted/40 text-muted-foreground border-border/40 hover:text-foreground hover:border-border"
               )}
             >
               {categories[cat].label}
@@ -114,19 +123,22 @@ function ToolCard({
   isUnlocked: boolean
   gateLabel: string
 }) {
+  const avatarClass = CATEGORY_AVATAR[tool.category] ?? "bg-gray-100 text-gray-600"
+  const initials = tool.name.slice(0, 2).toUpperCase()
+
   return (
     <div
       className={cn(
         "relative flex flex-col rounded-xl border p-4 transition-all duration-150",
         isUnlocked
-          ? "bg-card border-border hover:border-primary/40 hover:shadow-[0_0_0_1px_rgba(196,151,42,0.1)]"
-          : "bg-surface/30 border-border/40 opacity-70"
+          ? "bg-card border-border hover:border-primary/30 hover:shadow-sm"
+          : "bg-muted/20 border-border/40 opacity-60"
       )}
     >
-      {/* Lock overlay indicator */}
+      {/* Lock indicator */}
       {!isUnlocked && (
         <div className="absolute top-3 right-3">
-          <div className="h-6 w-6 rounded-full bg-surface border border-border/60 flex items-center justify-center">
+          <div className="h-6 w-6 rounded-full bg-background border border-border/60 flex items-center justify-center">
             <Lock className="h-3 w-3 text-muted-foreground/60" />
           </div>
         </div>
@@ -134,12 +146,19 @@ function ToolCard({
 
       {/* Header */}
       <div className="flex items-start gap-3 mb-3">
-        <div className="text-2xl shrink-0 leading-none mt-0.5">{tool.logoEmoji}</div>
+        <div
+          className={cn(
+            "h-9 w-9 rounded-lg flex items-center justify-center text-xs font-bold shrink-0",
+            avatarClass
+          )}
+        >
+          {initials}
+        </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex items-center gap-1.5 flex-wrap">
             <h3
               className={cn(
-                "text-sm font-bold",
+                "text-sm font-semibold",
                 isUnlocked ? "text-foreground" : "text-muted-foreground"
               )}
             >
@@ -148,7 +167,7 @@ function ToolCard({
             {tool.badge && (
               <span
                 className={cn(
-                  "text-[10px] font-semibold px-1.5 py-0.5 rounded-full border",
+                  "text-[10px] font-semibold px-1.5 py-0.5 rounded-full",
                   BADGE_COLORS[tool.badge]
                 )}
               >
@@ -156,17 +175,17 @@ function ToolCard({
               </span>
             )}
             {tool.isPaid && (
-              <span className="text-[10px] text-muted-foreground/60">Paid</span>
+              <span className="text-[10px] text-muted-foreground">Paid</span>
             )}
           </div>
-          <p className="text-[11px] text-muted-foreground mt-0.5">{tool.tagline}</p>
+          <p className="text-[11px] text-muted-foreground mt-0.5 leading-snug">{tool.tagline}</p>
         </div>
       </div>
 
       {/* Description */}
       <p
         className={cn(
-          "text-xs leading-relaxed flex-1",
+          "text-xs leading-relaxed flex-1 mb-4",
           isUnlocked ? "text-muted-foreground" : "text-muted-foreground/60"
         )}
       >
@@ -174,13 +193,13 @@ function ToolCard({
       </p>
 
       {/* Footer */}
-      <div className="mt-4 pt-3 border-t border-border/50 flex items-center justify-between">
+      <div className="pt-3 border-t border-border/50">
         {isUnlocked ? (
           <a
             href={tool.affiliateUrl ?? tool.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-primary/10 text-primary hover:bg-primary/20 transition-colors border border-primary/20"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
           >
             <ExternalLink className="h-3.5 w-3.5" />
             Open tool

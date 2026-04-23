@@ -26,12 +26,12 @@ interface FollowUpRule {
 }
 
 const STAGE_COLORS: Record<Stage, string> = {
-  PROSPECT: "bg-blue-500/10 text-blue-400 border-blue-500/20",
-  DISCOVERY_CALL: "bg-purple-500/10 text-purple-400 border-purple-500/20",
-  PROPOSAL_SENT: "bg-amber-500/10 text-amber-400 border-amber-500/20",
-  ACTIVE_RETAINER: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
-  COMPLETED: "bg-gray-500/10 text-gray-400 border-gray-500/20",
-  LOST: "bg-red-500/10 text-red-400 border-red-500/20",
+  PROSPECT: "bg-gray-100 text-gray-600 border-gray-200",
+  DISCOVERY_CALL: "bg-gray-100 text-gray-600 border-gray-200",
+  PROPOSAL_SENT: "bg-amber-50 text-amber-700 border-amber-200",
+  ACTIVE_RETAINER: "bg-primary/10 text-primary border-primary/20",
+  COMPLETED: "bg-green-50 text-green-700 border-green-200",
+  LOST: "bg-red-50 text-red-600 border-red-200",
 }
 
 const DEFAULT_FORM = {
@@ -161,7 +161,7 @@ export default function FollowUpRulesPage() {
 
       {/* Add Rule Form */}
       {showForm && (
-        <div className="mb-6 rounded-xl border border-border bg-[#141923] p-5 space-y-4">
+        <div className="mb-6 rounded-xl border border-border bg-card p-5 space-y-4">
           <p className="text-sm font-semibold text-foreground">New Follow-up Rule</p>
 
           <div className="grid gap-4 sm:grid-cols-2">
@@ -172,7 +172,7 @@ export default function FollowUpRulesPage() {
               <select
                 value={form.stageTrigger}
                 onChange={(e) => setForm((f) => ({ ...f, stageTrigger: e.target.value as Stage }))}
-                className="rounded-lg border border-border bg-[#08090D] px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                className="rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
               >
                 {STAGES.map((s) => (
                   <option key={s.value} value={s.value}>
@@ -194,7 +194,7 @@ export default function FollowUpRulesPage() {
                 onChange={(e) =>
                   setForm((f) => ({ ...f, daysStale: Math.max(1, Math.min(90, Number(e.target.value))) }))
                 }
-                className="rounded-lg border border-border bg-[#08090D] px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                className="rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
               />
             </div>
           </div>
@@ -208,7 +208,7 @@ export default function FollowUpRulesPage() {
               value={form.message}
               onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
               placeholder="Leave blank to use default message"
-              className="rounded-lg border border-border bg-[#08090D] px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-primary resize-none"
+              className="rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-primary resize-none"
             />
           </div>
 
@@ -238,11 +238,11 @@ export default function FollowUpRulesPage() {
       {loading ? (
         <div className="space-y-3">
           {[1, 2].map((i) => (
-            <div key={i} className="h-20 rounded-xl border border-border bg-[#141923] animate-pulse" />
+            <div key={i} className="h-20 rounded-xl border border-border bg-card animate-pulse" />
           ))}
         </div>
       ) : rules.length === 0 ? (
-        <div className="rounded-xl border border-border bg-[#141923] px-6 py-12 text-center">
+        <div className="rounded-xl border border-border bg-card px-6 py-12 text-center">
           <Bell className="h-10 w-10 mx-auto mb-4 text-muted-foreground opacity-40" />
           <p className="text-sm font-semibold text-foreground mb-1">No follow-up rules yet</p>
           <p className="text-xs text-muted-foreground max-w-xs mx-auto">
@@ -256,10 +256,9 @@ export default function FollowUpRulesPage() {
             <div
               key={rule.id}
               className={cn(
-                "rounded-xl border bg-[#141923] px-5 py-4 flex items-start gap-4 transition-opacity",
+                "rounded-xl border border-border bg-card px-5 py-4 flex items-start gap-4 transition-opacity",
                 !rule.isActive && "opacity-60"
               )}
-              style={{ borderColor: "rgba(255,255,255,0.08)" }}
             >
               <div className="flex-1 min-w-0 space-y-2">
                 <div className="flex items-center gap-2 flex-wrap">

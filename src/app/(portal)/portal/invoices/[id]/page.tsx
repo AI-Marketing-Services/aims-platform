@@ -68,11 +68,11 @@ const STATUS_CONFIG: Record<
   ClientInvoiceStatus,
   { label: string; className: string }
 > = {
-  DRAFT: { label: "Draft", className: "bg-[#1f2330] text-[#9CA3AF] border border-[#2a3040]" },
-  SENT: { label: "Sent", className: "bg-blue-500/10 text-blue-400 border border-blue-500/20" },
-  PAID: { label: "Paid", className: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" },
-  OVERDUE: { label: "Overdue", className: "bg-red-500/10 text-red-400 border border-red-500/20" },
-  CANCELLED: { label: "Cancelled", className: "bg-[#1f2330] text-[#6B7280] border border-[#2a3040]" },
+  DRAFT: { label: "Draft", className: "bg-muted text-muted-foreground border border-border" },
+  SENT: { label: "Sent", className: "bg-blue-50 text-blue-700 border border-blue-200" },
+  PAID: { label: "Paid", className: "bg-green-50 text-green-700 border border-green-200" },
+  OVERDUE: { label: "Overdue", className: "bg-red-50 text-red-600 border border-red-200" },
+  CANCELLED: { label: "Cancelled", className: "bg-muted text-muted-foreground border border-border" },
 }
 
 const BASE_URL =
@@ -190,7 +190,7 @@ export default function InvoiceDetailPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[300px]">
-        <Loader2 className="h-6 w-6 animate-spin text-[#C4972A]" />
+        <Loader2 className="h-6 w-6 animate-spin text-primary" />
       </div>
     )
   }
@@ -198,8 +198,8 @@ export default function InvoiceDetailPage() {
   if (error || !invoice) {
     return (
       <div className="max-w-4xl mx-auto px-6 py-12 text-center">
-        <p className="text-[#9CA3AF]">{error ?? "Invoice not found"}</p>
-        <Link href="/portal/invoices" className="mt-4 inline-block text-sm text-[#C4972A] hover:underline">
+        <p className="text-muted-foreground">{error ?? "Invoice not found"}</p>
+        <Link href="/portal/invoices" className="mt-4 inline-block text-sm text-primary hover:underline">
           Back to invoices
         </Link>
       </div>
@@ -217,7 +217,7 @@ export default function InvoiceDetailPage() {
       {/* Back */}
       <Link
         href="/portal/invoices"
-        className="inline-flex items-center gap-1.5 text-xs text-[#9CA3AF] hover:text-[#F0EBE0] transition-colors"
+        className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
       >
         <ChevronLeft className="h-3.5 w-3.5" />
         Back to invoices
@@ -226,19 +226,19 @@ export default function InvoiceDetailPage() {
       {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-lg bg-[#C4972A]/10 flex items-center justify-center shrink-0">
-            <FileText className="h-5 w-5 text-[#C4972A]" />
+          <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+            <FileText className="h-5 w-5 text-primary" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-xl font-bold text-[#F0EBE0]">{invoice.title}</h1>
+              <h1 className="text-xl font-bold text-foreground">{invoice.title}</h1>
               <span
                 className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold ${statusCfg.className}`}
               >
                 {statusCfg.label}
               </span>
             </div>
-            <p className="text-xs font-mono text-[#C4972A] mt-0.5">{invoice.invoiceNumber}</p>
+            <p className="text-xs font-mono text-primary mt-0.5">{invoice.invoiceNumber}</p>
           </div>
         </div>
 
@@ -257,7 +257,7 @@ export default function InvoiceDetailPage() {
 
           <Link
             href={`/portal/invoices/${id}/edit`}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#141923] border border-[#1f2d3d] text-[#9CA3AF] text-xs font-semibold hover:text-[#F0EBE0] hover:border-[#C4972A]/40 transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-card border border-border text-muted-foreground text-xs font-semibold hover:text-foreground hover:border-primary/40 transition-colors"
           >
             Edit
           </Link>
@@ -265,7 +265,7 @@ export default function InvoiceDetailPage() {
           <button
             onClick={handleDownloadPdf}
             disabled={pdfLoading}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#141923] border border-[#1f2d3d] text-[#9CA3AF] text-xs font-semibold hover:text-[#F0EBE0] hover:border-[#C4972A]/40 transition-colors disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-card border border-border text-muted-foreground text-xs font-semibold hover:text-foreground hover:border-primary/40 transition-colors disabled:opacity-50"
           >
             {pdfLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Download className="h-3.5 w-3.5" />}
             PDF
@@ -289,7 +289,7 @@ export default function InvoiceDetailPage() {
           {canSend && (
             <button
               onClick={() => setSendConfirm(true)}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#C4972A] text-[#08090D] text-xs font-bold hover:bg-[#d4a730] transition-colors"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/90 transition-colors"
             >
               <Send className="h-3.5 w-3.5" />
               Send Invoice
@@ -311,7 +311,7 @@ export default function InvoiceDetailPage() {
         <div className="bg-blue-500/5 border border-blue-500/20 rounded-xl p-4 flex items-center justify-between gap-4">
           <div>
             <p className="text-xs font-semibold text-blue-400 mb-1">Public Invoice Link</p>
-            <p className="text-xs text-[#9CA3AF] font-mono truncate max-w-[400px]">{shareUrl}</p>
+            <p className="text-xs text-muted-foreground font-mono truncate max-w-[400px]">{shareUrl}</p>
           </div>
           <button
             onClick={handleCopyLink}
@@ -327,32 +327,32 @@ export default function InvoiceDetailPage() {
         {/* Left: line items */}
         <div className="space-y-4">
           {/* Line items */}
-          <div className="bg-[#141923] border border-[#1f2d3d] rounded-xl overflow-hidden">
-            <div className="px-4 py-3 border-b border-[#1f2d3d]">
-              <h2 className="text-sm font-semibold text-[#F0EBE0]">Line Items</h2>
+          <div className="bg-card border border-border rounded-xl overflow-hidden">
+            <div className="px-4 py-3 border-b border-border">
+              <h2 className="text-sm font-semibold text-foreground">Line Items</h2>
             </div>
             <table className="w-full">
               <thead>
-                <tr className="bg-[#0f1620]">
+                <tr className="bg-background">
                   {["Description", "Qty", "Unit Price", "Amount"].map((h) => (
                     <th
                       key={h}
-                      className="px-4 py-2.5 text-left text-[10px] font-semibold text-[#9CA3AF] uppercase tracking-wider"
+                      className="px-4 py-2.5 text-left text-[10px] font-semibold text-muted-foreground uppercase tracking-wider"
                     >
                       {h}
                     </th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#1f2d3d]">
+              <tbody className="divide-y divide-border">
                 {invoice.lineItems.map((item) => (
                   <tr key={item.id}>
-                    <td className="px-4 py-3 text-sm text-[#F0EBE0]">{item.description}</td>
-                    <td className="px-4 py-3 text-sm text-[#9CA3AF] text-center">{item.quantity}</td>
-                    <td className="px-4 py-3 text-sm text-[#9CA3AF] text-right">
+                    <td className="px-4 py-3 text-sm text-foreground">{item.description}</td>
+                    <td className="px-4 py-3 text-sm text-muted-foreground text-center">{item.quantity}</td>
+                    <td className="px-4 py-3 text-sm text-muted-foreground text-right">
                       {formatCurrency(item.unitPrice, invoice.currency)}
                     </td>
-                    <td className="px-4 py-3 text-sm font-semibold text-[#F0EBE0] text-right">
+                    <td className="px-4 py-3 text-sm font-semibold text-foreground text-right">
                       {formatCurrency(item.amount, invoice.currency)}
                     </td>
                   </tr>
@@ -361,29 +361,29 @@ export default function InvoiceDetailPage() {
             </table>
 
             {/* Totals */}
-            <div className="border-t border-[#1f2d3d] p-4 space-y-2">
+            <div className="border-t border-border p-4 space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-[#9CA3AF]">Subtotal</span>
-                <span className="text-[#F0EBE0]">{formatCurrency(invoice.subtotal, invoice.currency)}</span>
+                <span className="text-muted-foreground">Subtotal</span>
+                <span className="text-foreground">{formatCurrency(invoice.subtotal, invoice.currency)}</span>
               </div>
               {invoice.taxRate > 0 && (
                 <div className="flex justify-between text-sm">
-                  <span className="text-[#9CA3AF]">Tax ({invoice.taxRate}%)</span>
-                  <span className="text-[#F0EBE0]">{formatCurrency(invoice.taxAmount, invoice.currency)}</span>
+                  <span className="text-muted-foreground">Tax ({invoice.taxRate}%)</span>
+                  <span className="text-foreground">{formatCurrency(invoice.taxAmount, invoice.currency)}</span>
                 </div>
               )}
-              <div className="flex justify-between text-base font-bold pt-2 border-t border-[#1f2d3d]">
-                <span className="text-[#F0EBE0]">Total</span>
-                <span className="text-[#C4972A]">{formatCurrency(invoice.total, invoice.currency)}</span>
+              <div className="flex justify-between text-base font-bold pt-2 border-t border-border">
+                <span className="text-foreground">Total</span>
+                <span className="text-primary">{formatCurrency(invoice.total, invoice.currency)}</span>
               </div>
             </div>
           </div>
 
           {/* Notes */}
           {invoice.notes && (
-            <div className="bg-[#141923] border border-[#1f2d3d] rounded-xl p-4">
-              <p className="text-xs font-semibold text-[#9CA3AF] uppercase tracking-wider mb-2">Notes</p>
-              <p className="text-sm text-[#F0EBE0] whitespace-pre-wrap">{invoice.notes}</p>
+            <div className="bg-card border border-border rounded-xl p-4">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Notes</p>
+              <p className="text-sm text-foreground whitespace-pre-wrap">{invoice.notes}</p>
             </div>
           )}
         </div>
@@ -391,8 +391,8 @@ export default function InvoiceDetailPage() {
         {/* Right: details */}
         <div className="space-y-4">
           {/* Invoice details */}
-          <div className="bg-[#141923] border border-[#1f2d3d] rounded-xl p-4">
-            <p className="text-xs font-semibold text-[#9CA3AF] uppercase tracking-wider mb-3">
+          <div className="bg-card border border-border rounded-xl p-4">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
               Invoice Details
             </p>
             <dl className="space-y-2.5">
@@ -407,8 +407,8 @@ export default function InvoiceDetailPage() {
                 ...(invoice.paidAt ? [["Paid", formatDate(invoice.paidAt)]] : []),
               ].map(([label, value]) => (
                 <div key={String(label)} className="flex justify-between gap-2">
-                  <dt className="text-xs text-[#9CA3AF]">{label}</dt>
-                  <dd className="text-xs text-[#F0EBE0] font-medium text-right">{value}</dd>
+                  <dt className="text-xs text-muted-foreground">{label}</dt>
+                  <dd className="text-xs text-foreground font-medium text-right">{value}</dd>
                 </div>
               ))}
             </dl>
@@ -416,41 +416,41 @@ export default function InvoiceDetailPage() {
 
           {/* Bill to */}
           {(invoice.recipientName || invoice.recipientEmail || invoice.recipientCompany || invoice.clientDeal) && (
-            <div className="bg-[#141923] border border-[#1f2d3d] rounded-xl p-4">
-              <p className="text-xs font-semibold text-[#9CA3AF] uppercase tracking-wider mb-3">
+            <div className="bg-card border border-border rounded-xl p-4">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
                 Bill To
               </p>
               {invoice.clientDeal && (
                 <Link
                   href={`/portal/crm/${invoice.clientDeal.id}`}
-                  className="text-xs text-[#C4972A] hover:underline mb-2 block"
+                  className="text-xs text-primary hover:underline mb-2 block"
                 >
                   {invoice.clientDeal.companyName} →
                 </Link>
               )}
               {invoice.recipientCompany && (
-                <p className="text-sm font-semibold text-[#F0EBE0]">{invoice.recipientCompany}</p>
+                <p className="text-sm font-semibold text-foreground">{invoice.recipientCompany}</p>
               )}
               {invoice.recipientName && (
-                <p className="text-sm text-[#F0EBE0]">{invoice.recipientName}</p>
+                <p className="text-sm text-foreground">{invoice.recipientName}</p>
               )}
               {invoice.recipientEmail && (
-                <p className="text-xs text-[#9CA3AF] mt-1">{invoice.recipientEmail}</p>
+                <p className="text-xs text-muted-foreground mt-1">{invoice.recipientEmail}</p>
               )}
             </div>
           )}
 
           {/* Stripe link */}
           {invoice.stripePaymentLink && (
-            <div className="bg-[#141923] border border-[#1f2d3d] rounded-xl p-4">
-              <p className="text-xs font-semibold text-[#9CA3AF] uppercase tracking-wider mb-2">
+            <div className="bg-card border border-border rounded-xl p-4">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
                 Payment Link
               </p>
               <a
                 href={invoice.stripePaymentLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs text-[#C4972A] hover:underline break-all"
+                className="text-xs text-primary hover:underline break-all"
               >
                 {invoice.stripePaymentLink}
               </a>
@@ -462,12 +462,12 @@ export default function InvoiceDetailPage() {
       {/* Send confirmation modal */}
       {sendConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-          <div className="bg-[#141923] border border-[#1f2d3d] rounded-2xl p-6 w-full max-w-md shadow-2xl">
-            <h3 className="text-lg font-bold text-[#F0EBE0] mb-2">Send Invoice?</h3>
-            <p className="text-sm text-[#9CA3AF] mb-1">
-              This will email invoice <span className="text-[#C4972A] font-mono">{invoice.invoiceNumber}</span> to:
+          <div className="bg-card border border-border rounded-2xl p-6 w-full max-w-md shadow-2xl">
+            <h3 className="text-lg font-bold text-foreground mb-2">Send Invoice?</h3>
+            <p className="text-sm text-muted-foreground mb-1">
+              This will email invoice <span className="text-primary font-mono">{invoice.invoiceNumber}</span> to:
             </p>
-            <p className="text-sm font-semibold text-[#F0EBE0] mb-6">
+            <p className="text-sm font-semibold text-foreground mb-6">
               {invoice.recipientEmail ?? "No email set — add one first"}
             </p>
             {!invoice.recipientEmail && (
@@ -482,14 +482,14 @@ export default function InvoiceDetailPage() {
             <div className="flex justify-end gap-3">
               <button
                 onClick={() => { setSendConfirm(false); setActionError(null) }}
-                className="px-4 py-2 rounded-lg text-sm text-[#9CA3AF] hover:text-[#F0EBE0] transition-colors"
+                className="px-4 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSend}
                 disabled={sending || !invoice.recipientEmail}
-                className="inline-flex items-center gap-2 px-5 py-2 rounded-lg bg-[#C4972A] text-[#08090D] text-sm font-bold hover:bg-[#d4a730] transition-colors disabled:opacity-50"
+                className="inline-flex items-center gap-2 px-5 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-bold hover:bg-primary/90 transition-colors disabled:opacity-50"
               >
                 {sending ? (
                   <>

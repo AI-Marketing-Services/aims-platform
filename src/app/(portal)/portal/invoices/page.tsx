@@ -28,27 +28,27 @@ function StatusBadge({ status }: { status: ClientInvoiceStatus }) {
   > = {
     DRAFT: {
       label: "Draft",
-      className: "bg-[#1f2330] text-[#9CA3AF] border border-[#2a3040]",
+      className: "bg-muted text-muted-foreground border border-border",
       icon: <FileText className="h-3 w-3" />,
     },
     SENT: {
       label: "Sent",
-      className: "bg-blue-500/10 text-blue-400 border border-blue-500/20",
+      className: "bg-blue-50 text-blue-700 border border-blue-200",
       icon: <Send className="h-3 w-3" />,
     },
     PAID: {
       label: "Paid",
-      className: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20",
+      className: "bg-green-50 text-green-700 border border-green-200",
       icon: <CheckCircle2 className="h-3 w-3" />,
     },
     OVERDUE: {
       label: "Overdue",
-      className: "bg-red-500/10 text-red-400 border border-red-500/20",
+      className: "bg-red-50 text-red-600 border border-red-200",
       icon: <AlertCircle className="h-3 w-3" />,
     },
     CANCELLED: {
       label: "Cancelled",
-      className: "bg-[#1f2330] text-[#6B7280] border border-[#2a3040]",
+      className: "bg-muted text-muted-foreground border border-border",
       icon: <XCircle className="h-3 w-3" />,
     },
   }
@@ -84,17 +84,17 @@ export default async function InvoicesPage() {
       {/* Header */}
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-lg bg-[#C4972A]/10 flex items-center justify-center shrink-0">
-            <FileText className="h-5 w-5 text-[#C4972A]" />
+          <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+            <FileText className="h-5 w-5 text-primary" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-[#F0EBE0]">Invoices</h1>
-            <p className="text-xs text-[#9CA3AF]">Create and send professional invoices to your clients</p>
+            <h1 className="text-xl font-bold text-foreground">Invoices</h1>
+            <p className="text-xs text-muted-foreground">Create and send professional invoices to your clients</p>
           </div>
         </div>
         <Link
           href="/portal/invoices/new"
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#C4972A] text-[#08090D] text-sm font-bold hover:bg-[#d4a730] transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-bold hover:bg-primary/90 transition-colors"
         >
           <Plus className="h-4 w-4" />
           New Invoice
@@ -123,27 +123,27 @@ export default async function InvoicesPage() {
         ].map((stat) => (
           <div
             key={stat.label}
-            className="bg-[#141923] border border-[#1f2d3d] rounded-xl p-4"
+            className="bg-card border border-border rounded-xl p-4"
           >
-            <p className="text-[10px] text-[#9CA3AF] uppercase tracking-wider mb-1">{stat.label}</p>
-            <p className="text-xl font-bold text-[#F0EBE0]">{stat.value}</p>
-            <p className="text-[11px] text-[#6B7280] mt-0.5">{stat.sub}</p>
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">{stat.label}</p>
+            <p className="text-xl font-bold text-foreground">{stat.value}</p>
+            <p className="text-[11px] text-muted-foreground mt-0.5">{stat.sub}</p>
           </div>
         ))}
       </div>
 
       {/* Table */}
-      <div className="bg-[#141923] border border-[#1f2d3d] rounded-xl overflow-hidden">
+      <div className="bg-card border border-border rounded-xl overflow-hidden">
         {invoices.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
-            <div className="h-12 w-12 rounded-full bg-[#C4972A]/10 flex items-center justify-center mb-4">
-              <FileText className="h-6 w-6 text-[#C4972A]" />
+            <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+              <FileText className="h-6 w-6 text-primary" />
             </div>
-            <p className="text-sm font-semibold text-[#F0EBE0] mb-1">No invoices yet</p>
-            <p className="text-xs text-[#9CA3AF] mb-4">Create your first invoice to get paid</p>
+            <p className="text-sm font-semibold text-foreground mb-1">No invoices yet</p>
+            <p className="text-xs text-muted-foreground mb-4">Create your first invoice to get paid</p>
             <Link
               href="/portal/invoices/new"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#C4972A] text-[#08090D] text-sm font-bold hover:bg-[#d4a730] transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-bold hover:bg-primary/90 transition-colors"
             >
               <Plus className="h-4 w-4" />
               New Invoice
@@ -153,62 +153,62 @@ export default async function InvoicesPage() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-[#1f2d3d]">
+                <tr className="border-b border-border">
                   {["Invoice #", "Client", "Status", "Total", "Due Date", ""].map((h) => (
                     <th
                       key={h}
-                      className="px-4 py-3 text-left text-[10px] font-semibold text-[#9CA3AF] uppercase tracking-wider"
+                      className="px-4 py-3 text-left text-[10px] font-semibold text-muted-foreground uppercase tracking-wider"
                     >
                       {h}
                     </th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#1f2d3d]">
+              <tbody className="divide-y divide-border">
                 {invoices.map((invoice) => (
-                  <tr key={invoice.id} className="hover:bg-[#0f1620] transition-colors group">
+                  <tr key={invoice.id} className="hover:bg-muted/30 transition-colors group">
                     <td className="px-4 py-3">
-                      <p className="text-sm font-mono font-semibold text-[#C4972A]">
+                      <p className="text-sm font-mono font-semibold text-primary">
                         {invoice.invoiceNumber}
                       </p>
-                      <p className="text-xs text-[#9CA3AF] mt-0.5 max-w-[180px] truncate">
+                      <p className="text-xs text-muted-foreground mt-0.5 max-w-[180px] truncate">
                         {invoice.title}
                       </p>
                     </td>
                     <td className="px-4 py-3">
                       {invoice.clientDeal ? (
                         <div>
-                          <p className="text-sm text-[#F0EBE0]">{invoice.clientDeal.companyName}</p>
+                          <p className="text-sm text-foreground">{invoice.clientDeal.companyName}</p>
                           {invoice.clientDeal.contactName && (
-                            <p className="text-xs text-[#9CA3AF]">{invoice.clientDeal.contactName}</p>
+                            <p className="text-xs text-muted-foreground">{invoice.clientDeal.contactName}</p>
                           )}
                         </div>
                       ) : invoice.recipientName || invoice.recipientCompany ? (
                         <div>
-                          <p className="text-sm text-[#F0EBE0]">
+                          <p className="text-sm text-foreground">
                             {invoice.recipientCompany ?? invoice.recipientName}
                           </p>
                           {invoice.recipientEmail && (
-                            <p className="text-xs text-[#9CA3AF]">{invoice.recipientEmail}</p>
+                            <p className="text-xs text-muted-foreground">{invoice.recipientEmail}</p>
                           )}
                         </div>
                       ) : (
-                        <span className="text-xs text-[#6B7280]">No client</span>
+                        <span className="text-xs text-muted-foreground">No client</span>
                       )}
                     </td>
                     <td className="px-4 py-3">
                       <StatusBadge status={invoice.status} />
                     </td>
                     <td className="px-4 py-3">
-                      <p className="text-sm font-bold text-[#F0EBE0]">
+                      <p className="text-sm font-bold text-foreground">
                         {formatCurrency(invoice.total, invoice.currency)}
                       </p>
                     </td>
                     <td className="px-4 py-3">
                       {invoice.dueAt ? (
                         <div className="flex items-center gap-1.5">
-                          <Clock className="h-3 w-3 text-[#9CA3AF]" />
-                          <span className="text-sm text-[#F0EBE0]">
+                          <Clock className="h-3 w-3 text-muted-foreground" />
+                          <span className="text-sm text-foreground">
                             {new Date(invoice.dueAt).toLocaleDateString("en-US", {
                               month: "short",
                               day: "numeric",
@@ -217,13 +217,13 @@ export default async function InvoicesPage() {
                           </span>
                         </div>
                       ) : (
-                        <span className="text-xs text-[#6B7280]">—</span>
+                        <span className="text-xs text-muted-foreground">—</span>
                       )}
                     </td>
                     <td className="px-4 py-3 text-right">
                       <Link
                         href={`/portal/invoices/${invoice.id}`}
-                        className="text-xs font-semibold text-[#C4972A] hover:text-[#d4a730] transition-colors opacity-0 group-hover:opacity-100"
+                        className="text-xs font-semibold text-primary hover:text-primary/80 transition-colors opacity-0 group-hover:opacity-100"
                       >
                         View →
                       </Link>

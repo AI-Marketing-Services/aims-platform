@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { auth } from "@clerk/nextjs/server"
+import { auth, currentUser } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
@@ -23,6 +23,10 @@ export default async function PortalLayout({
 }) {
   const { userId } = await auth()
   if (!userId) redirect("/sign-in")
+
+  const clerkUser = await currentUser()
+  const userEmail = clerkUser?.emailAddresses?.[0]?.emailAddress ?? ""
+  const isAdminEmail = userEmail === "adamwolfe100@gmail.com"
 
   // Single DB query for sidebar data + chat widget context
   const dbUser = await db.user.findUnique({
@@ -71,6 +75,7 @@ export default async function PortalLayout({
           onboardingCompletedCount={onboardingProgress?.completedCount ?? 0}
           onboardingPercent={onboardingProgress?.percent ?? 0}
           onboardingCompletedAt={onboardingProgress?.onboardingCompletedAt?.toISOString() ?? null}
+          isAdminEmail={isAdminEmail}
         />
         <main id="main-content" className="flex-1 overflow-y-auto custom-scrollbar">
           <PageTransition>

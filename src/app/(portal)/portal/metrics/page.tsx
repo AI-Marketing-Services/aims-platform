@@ -109,10 +109,10 @@ const STAGE_LABELS: Record<string, string> = {
 }
 
 const STAGE_COLORS: Record<string, string> = {
-  PROSPECT: "bg-blue-400",
-  DISCOVERY_CALL: "bg-violet-400",
-  PROPOSAL_SENT: "bg-amber-400",
-  ACTIVE_RETAINER: "bg-emerald-400",
+  PROSPECT: "bg-muted-foreground/20",
+  DISCOVERY_CALL: "bg-muted-foreground/35",
+  PROPOSAL_SENT: "bg-primary/40",
+  ACTIVE_RETAINER: "bg-primary/70",
   COMPLETED: "bg-primary",
   LOST: "bg-red-400",
 }
@@ -148,34 +148,35 @@ export default async function MetricsPage() {
           label="Active MRR"
           value={metrics.totalMrr > 0 ? `$${metrics.totalMrr.toLocaleString()}` : "—"}
           sub="From active retainers"
-          color="text-emerald-400"
+          color="text-primary"
         />
         <StatCard
           icon={TrendingUp}
           label="Pipeline Value"
           value={metrics.pipelineValue > 0 ? `$${metrics.pipelineValue.toLocaleString()}` : "—"}
           sub="Deals in progress"
-          color="text-blue-400"
+          color="text-primary"
         />
         <StatCard
           icon={Target}
           label="Win Rate"
           value={metrics.winRate !== null ? `${metrics.winRate}%` : "—"}
           sub={`${metrics.stageBreakdown.COMPLETED} won · ${metrics.stageBreakdown.LOST} lost`}
-          color="text-amber-400"
+          color="text-primary"
         />
         <StatCard
           icon={Users}
           label="Total Deals"
           value={metrics.totalDeals}
           sub={`${metrics.newDeals30d} added in last 30 days`}
+          color="text-foreground"
         />
         <StatCard
           icon={Zap}
           label="Activities Logged"
           value={metrics.totalActivities}
           sub="Calls, emails, notes, meetings"
-          color="text-violet-400"
+          color="text-primary"
         />
         <StatCard
           icon={BarChart3}
