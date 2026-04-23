@@ -798,6 +798,26 @@ model PageView {
   @@index([userId])
 }
 
+// ============ UTM LINK TRACKING ============
+
+model UtmLink {
+  id          String   @id @default(cuid())
+  name        String   // human-readable label e.g. "LinkedIn Bio — April Launch"
+  baseUrl     String   @default("https://aioperatorcollective.com/apply")
+  channel     String   // linkedin | twitter | instagram | email | youtube | tiktok | podcast | newsletter | sms | other
+  utmSource   String
+  utmMedium   String
+  utmCampaign String
+  utmContent  String?
+  utmTerm     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([utmSource])
+  @@index([utmCampaign])
+  @@index([createdAt])
+}
+
 model ApiCostLog {
   id         String   @id @default(cuid())
   provider   String

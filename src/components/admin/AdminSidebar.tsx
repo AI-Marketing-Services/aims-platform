@@ -27,6 +27,7 @@ import {
   Users,
   Zap,
   FileText,
+  BarChart3,
 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
@@ -129,8 +130,9 @@ const ADMIN_NAV = [
     ],
   },
   {
-    section: "Strategy",
+    section: "Growth",
     items: [
+      { label: "UTM & Analytics", href: "/admin/analytics", icon: BarChart3 },
       { label: "Lead Magnets", href: "/admin/ideas", icon: Lightbulb },
     ],
   },
