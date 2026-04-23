@@ -567,7 +567,7 @@ export async function addMemberToSpace(
     `/spaces/${spaceId}/members`,
     {
       method: "POST",
-      body: JSON.stringify({ member_id: memberId }),
+      body: JSON.stringify({ user_id: memberId }),
       context: "addMemberToSpace",
     }
   )
@@ -765,7 +765,7 @@ export async function addMemberToPlan(
     `/plans/${planId}/members`,
     {
       method: "POST",
-      body: JSON.stringify({ member_id: memberId }),
+      body: JSON.stringify({ user_id: memberId }),
       context: "addMemberToPlan",
       errorBag,
     }
