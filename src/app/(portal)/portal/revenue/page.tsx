@@ -300,7 +300,7 @@ export default function RevenueDashboardPage() {
               label="Won This Month"
               value={fmt(data.wonThisMonth)}
               sub={`${data.wonCountThisMonth} deal${data.wonCountThisMonth !== 1 ? "s" : ""} closed`}
-              icon={<CheckCircle2 className="h-4 w-4 text-emerald-400" />}
+              icon={<CheckCircle2 className="h-4 w-4 text-emerald-700" />}
             />
             <StatCard
               label="Lost This Month"

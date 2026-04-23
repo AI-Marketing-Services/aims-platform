@@ -44,9 +44,9 @@ const TYPE_LABELS: Record<ContentPieceType, string> = {
 }
 
 const TYPE_COLORS: Record<ContentPieceType, string> = {
-  LINKEDIN_POST: "bg-blue-500/10 text-blue-400 border-blue-500/20",
-  CASE_STUDY: "bg-purple-500/10 text-purple-400 border-purple-500/20",
-  EMAIL_SEQUENCE: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+  LINKEDIN_POST: "bg-blue-500/10 text-blue-600 border-blue-500/20",
+  CASE_STUDY: "bg-purple-500/10 text-purple-600 border-purple-500/20",
+  EMAIL_SEQUENCE: "bg-emerald-500/10 text-emerald-700 border-emerald-500/20",
   TESTIMONIAL: "bg-amber-500/10 text-amber-400 border-amber-500/20",
   TWEET_THREAD: "bg-sky-500/10 text-sky-400 border-sky-500/20",
 }
@@ -61,7 +61,7 @@ const TYPE_ICONS: Record<ContentPieceType, React.ElementType> = {
 
 const STATUS_COLORS: Record<ContentPieceStatus, string> = {
   DRAFT: "bg-muted/5 text-muted-foreground/50 border-border/10",
-  PUBLISHED: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+  PUBLISHED: "bg-emerald-500/10 text-emerald-700 border-emerald-500/20",
   ARCHIVED: "bg-zinc-500/10 text-zinc-500 border-zinc-500/20",
 }
 
@@ -185,7 +185,7 @@ function ContentCard({
             className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all"
             title="Copy to clipboard"
           >
-            {copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
+            {copied ? <Check className="h-3.5 w-3.5 text-emerald-700" /> : <Copy className="h-3.5 w-3.5" />}
             {copied ? "Copied" : "Copy"}
           </button>
 

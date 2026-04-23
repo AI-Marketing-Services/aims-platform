@@ -243,7 +243,7 @@ export default async function PortalDashboard({
             className="rounded-xl border border-border bg-card p-4 hover:border-primary/30 transition-colors"
           >
             <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Active Clients</p>
-            <p className="text-xl font-bold text-emerald-400">{crmStats.activeDeals}</p>
+            <p className="text-xl font-bold text-emerald-700">{crmStats.activeDeals}</p>
             <p className="text-xs text-muted-foreground mt-0.5">on retainer</p>
           </Link>
           <Link
