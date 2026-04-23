@@ -62,9 +62,9 @@ export default async function DealDetailPage({
           </div>
         </div>
         {deal.value > 0 && (
-          <div className="flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-lg px-3 py-1.5">
-            <DollarSign className="h-3.5 w-3.5 text-emerald-400" />
-            <span className="text-sm font-bold text-emerald-400">
+          <div className="flex items-center gap-1.5 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-1.5">
+            <DollarSign className="h-3.5 w-3.5 text-emerald-700" />
+            <span className="text-sm font-bold text-emerald-700">
               {deal.value.toLocaleString()} {deal.currency}
             </span>
           </div>
