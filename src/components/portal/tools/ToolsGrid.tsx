@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Image from "next/image"
 import { ExternalLink, Lock, Sparkles } from "lucide-react"
 import { cn } from "@/lib/utils"
 import type { Tool, ToolCategory, UnlockGate } from "@/lib/tools/manifest"
@@ -114,6 +115,34 @@ export function ToolsGrid({ tools, categories, unlockedGates }: ToolsGridProps) 
   )
 }
 
+function ToolLogo({ tool, isUnlocked }: { tool: Tool; isUnlocked: boolean }) {
+  const [failed, setFailed] = useState(false)
+  const avatarClass = CATEGORY_AVATAR[tool.category] ?? "bg-gray-100 text-gray-600"
+  const initials = tool.name.slice(0, 2).toUpperCase()
+
+  if (!failed) {
+    return (
+      <div className={cn("h-9 w-9 rounded-lg overflow-hidden shrink-0 flex items-center justify-center bg-white border border-border/30", !isUnlocked && "grayscale")}>
+        <Image
+          src={`https://logo.clearbit.com/${tool.logoDomain}`}
+          alt={tool.name}
+          width={36}
+          height={36}
+          className="object-contain w-full h-full"
+          onError={() => setFailed(true)}
+          unoptimized
+        />
+      </div>
+    )
+  }
+
+  return (
+    <div className={cn("h-9 w-9 rounded-lg flex items-center justify-center text-xs font-bold shrink-0", avatarClass)}>
+      {initials}
+    </div>
+  )
+}
+
 function ToolCard({
   tool,
   isUnlocked,
@@ -123,9 +152,6 @@ function ToolCard({
   isUnlocked: boolean
   gateLabel: string
 }) {
-  const avatarClass = CATEGORY_AVATAR[tool.category] ?? "bg-gray-100 text-gray-600"
-  const initials = tool.name.slice(0, 2).toUpperCase()
-
   return (
     <div
       className={cn(
@@ -146,14 +172,7 @@ function ToolCard({
 
       {/* Header */}
       <div className="flex items-start gap-3 mb-3">
-        <div
-          className={cn(
-            "h-9 w-9 rounded-lg flex items-center justify-center text-xs font-bold shrink-0",
-            avatarClass
-          )}
-        >
-          {initials}
-        </div>
+        <ToolLogo tool={tool} isUnlocked={isUnlocked} />
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5 flex-wrap">
             <h3

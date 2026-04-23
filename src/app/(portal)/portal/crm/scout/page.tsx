@@ -9,7 +9,7 @@ export default async function LeadScoutPage() {
   if (!userId) redirect("/sign-in")
 
   return (
-    <div className="flex flex-col h-full -m-4 lg:-m-6 xl:-m-8">
+    <div className="h-[calc(100dvh-3.5rem)] lg:h-dvh overflow-hidden -m-4 lg:-m-6 xl:-m-8">
       <LeadScout />
     </div>
   )

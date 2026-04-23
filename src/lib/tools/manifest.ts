@@ -18,6 +18,7 @@ export interface Tool {
   tagline: string
   description: string
   url: string
+  logoDomain: string
   logoEmoji: string
   category: ToolCategory
   gate: UnlockGate
@@ -35,6 +36,7 @@ export const TOOL_MANIFEST: Tool[] = [
     description:
       "The starting point for most AI operators. Use GPT-4 for client strategy, email drafts, research, and rapid prototyping.",
     url: "https://chatgpt.com",
+    logoDomain: "openai.com",
     logoEmoji: "🤖",
     category: "automation",
     gate: "free",
@@ -47,6 +49,7 @@ export const TOOL_MANIFEST: Tool[] = [
     description:
       "200K context window makes Claude the go-to for analyzing lengthy contracts, RFPs, and documents. Better at nuanced writing than GPT.",
     url: "https://claude.ai",
+    logoDomain: "anthropic.com",
     logoEmoji: "🧠",
     category: "content",
     gate: "free",
@@ -59,6 +62,7 @@ export const TOOL_MANIFEST: Tool[] = [
     description:
       "Replace manual research. Use Perplexity to quickly qualify prospects, research industries, and surface competitive intel with source links.",
     url: "https://perplexity.ai",
+    logoDomain: "perplexity.ai",
     logoEmoji: "🔍",
     category: "research",
     gate: "free",
@@ -70,6 +74,7 @@ export const TOOL_MANIFEST: Tool[] = [
     description:
       "Build your client delivery SOPs, project trackers, and knowledge bases with AI-assisted writing and summarization built in.",
     url: "https://notion.so",
+    logoDomain: "notion.so",
     logoEmoji: "📝",
     category: "ops",
     gate: "free",
@@ -81,6 +86,7 @@ export const TOOL_MANIFEST: Tool[] = [
     description:
       "The bread-and-butter automation tool. Connect 7,000+ apps for client workflows — lead routing, CRM updates, notification pipelines.",
     url: "https://zapier.com",
+    logoDomain: "zapier.com",
     logoEmoji: "⚡",
     category: "automation",
     gate: "free",
@@ -90,11 +96,12 @@ export const TOOL_MANIFEST: Tool[] = [
   // ── ONBOARDING 50% ──────────────────────────────────────────
   {
     id: "make",
-    name: "Make (Integromat)",
+    name: "Make",
     tagline: "Visual workflow automation",
     description:
       "More powerful than Zapier for complex multi-step flows. Visual canvas makes it easier to show clients what you built. Better pricing at scale.",
     url: "https://make.com",
+    logoDomain: "make.com",
     logoEmoji: "🔧",
     category: "automation",
     gate: "onboarding:50",
@@ -107,6 +114,7 @@ export const TOOL_MANIFEST: Tool[] = [
     description:
       "Open-source automation with 400+ integrations. Self-host for clients who need data sovereignty, or use n8n cloud for quick deploys.",
     url: "https://n8n.io",
+    logoDomain: "n8n.io",
     logoEmoji: "🔗",
     category: "automation",
     gate: "onboarding:50",
@@ -118,6 +126,7 @@ export const TOOL_MANIFEST: Tool[] = [
     description:
       "Unlimited sending accounts, AI personalization, and deliverability tools. Use for your own outreach or as a billable service for clients.",
     url: "https://instantly.ai",
+    logoDomain: "instantly.ai",
     logoEmoji: "📧",
     category: "outreach",
     gate: "onboarding:50",
@@ -130,6 +139,7 @@ export const TOOL_MANIFEST: Tool[] = [
     description:
       "Scrape Google Maps, LinkedIn, directories, and competitors at scale. Build lead lists and feed them into your CRM or outreach tools automatically.",
     url: "https://apify.com",
+    logoDomain: "apify.com",
     logoEmoji: "🕷️",
     category: "research",
     gate: "onboarding:50",
@@ -141,6 +151,7 @@ export const TOOL_MANIFEST: Tool[] = [
     description:
       "Edit video like a Word doc. Remove filler words automatically, generate transcripts, and produce client-facing demos and walkthroughs fast.",
     url: "https://descript.com",
+    logoDomain: "descript.com",
     logoEmoji: "🎬",
     category: "content",
     gate: "onboarding:50",
@@ -153,6 +164,7 @@ export const TOOL_MANIFEST: Tool[] = [
     description:
       "Record walkthroughs, onboarding videos, and delivery updates. Clients love seeing your face — it builds trust and reduces back-and-forth.",
     url: "https://loom.com",
+    logoDomain: "loom.com",
     logoEmoji: "🎥",
     category: "ops",
     gate: "onboarding:50",
@@ -166,6 +178,7 @@ export const TOOL_MANIFEST: Tool[] = [
     description:
       "Build inbound/outbound AI voice agents in minutes. Charge $500–$2,000/mo for AI receptionist and follow-up call services at local businesses.",
     url: "https://vapi.ai",
+    logoDomain: "vapi.ai",
     logoEmoji: "📞",
     category: "automation",
     gate: "onboarding:100",
@@ -179,6 +192,7 @@ export const TOOL_MANIFEST: Tool[] = [
     description:
       "No-code AI agent builder. Create autonomous agents that research leads, draft content, and handle workflows. Package them as retainer services.",
     url: "https://relevanceai.com",
+    logoDomain: "relevanceai.com",
     logoEmoji: "🤖",
     category: "automation",
     gate: "onboarding:100",
@@ -192,6 +206,7 @@ export const TOOL_MANIFEST: Tool[] = [
     description:
       "The operator's CRM of choice. Built-in calling, SMS, email sequences, and a power dialer. Resell setup and management as a monthly service.",
     url: "https://close.com",
+    logoDomain: "close.com",
     logoEmoji: "💼",
     category: "outreach",
     gate: "onboarding:100",
@@ -204,6 +219,7 @@ export const TOOL_MANIFEST: Tool[] = [
     description:
       "Produce SEO blog posts, ad copy, product descriptions, and landing pages for clients. White-label the output — they don't need to know.",
     url: "https://writesonic.com",
+    logoDomain: "writesonic.com",
     logoEmoji: "✍️",
     category: "content",
     gate: "onboarding:100",
@@ -216,6 +232,7 @@ export const TOOL_MANIFEST: Tool[] = [
     description:
       "Send professional proposals that clients can sign in one click. Integrates with your CRM. Track open rates and follow up at the right moment.",
     url: "https://pandadoc.com",
+    logoDomain: "pandadoc.com",
     logoEmoji: "📄",
     category: "ops",
     gate: "onboarding:100",
@@ -228,6 +245,7 @@ export const TOOL_MANIFEST: Tool[] = [
     description:
       "Set up recurring retainer billing for clients. Use Stripe's invoicing to look polished from day one. Add payment links to your proposals.",
     url: "https://stripe.com",
+    logoDomain: "stripe.com",
     logoEmoji: "💳",
     category: "finance",
     gate: "onboarding:100",
@@ -239,6 +257,7 @@ export const TOOL_MANIFEST: Tool[] = [
     description:
       "Track income, expenses, and invoices. Connect with Stripe for automatic reconciliation. Essential once you hit $5k/mo in client revenue.",
     url: "https://quickbooks.intuit.com",
+    logoDomain: "intuit.com",
     logoEmoji: "📊",
     category: "finance",
     gate: "onboarding:100",
