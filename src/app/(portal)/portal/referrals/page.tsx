@@ -88,11 +88,11 @@ export default async function ReferralsPage() {
       {/* Referral link */}
       <div className="bg-card border border-border rounded-xl p-6 mb-6">
         <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
-          <Share2 className="w-4 h-4 text-[#981B1B]" />
+          <Share2 className="w-4 h-4 text-primary" />
           Your Referral Link
         </h3>
         <div className="flex items-center gap-3">
-          <div className="flex-1 px-4 py-3 bg-deep border border-border rounded-lg text-foreground text-sm font-mono truncate">
+          <div className="flex-1 px-4 py-3 bg-muted border border-border rounded-lg text-foreground text-sm font-mono truncate">
             {refLink}
           </div>
           <CopyButton text={refLink} />
@@ -144,7 +144,7 @@ export default async function ReferralsPage() {
       {referral.commissions.length > 0 && (
         <div className="bg-card border border-border rounded-xl p-6 mb-6">
           <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
-            <DollarSign className="w-4 h-4 text-[#981B1B]" />
+            <DollarSign className="w-4 h-4 text-primary" />
             Commission History
           </h3>
           <div className="space-y-3">
@@ -186,7 +186,7 @@ export default async function ReferralsPage() {
             { step: "3", title: "You earn 20%", desc: "Receive 20% of their monthly subscription for their first 3 months" },
           ].map((item) => (
             <div key={item.step} className="flex items-start gap-4">
-              <div className="w-7 h-7 rounded-full bg-primary/10 text-[#981B1B] text-sm font-bold flex items-center justify-center flex-shrink-0 border border-primary/20">
+              <div className="w-7 h-7 rounded-full bg-primary/10 text-primary text-sm font-bold flex items-center justify-center flex-shrink-0 border border-primary/20">
                 {item.step}
               </div>
               <div>
@@ -246,7 +246,7 @@ export default async function ReferralsPage() {
       {/* Reseller partner upgrade pitch */}
       <div className="border-l-4 border-l-[#981B1B] border border-border rounded-2xl bg-card p-6">
         <div className="flex items-start gap-3">
-          <ExternalLink className="w-5 h-5 text-[#981B1B] flex-shrink-0 mt-0.5" />
+          <ExternalLink className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
           <div className="flex-1">
             <h3 className="font-semibold text-foreground mb-1">Want ongoing commissions instead of just 3 months?</h3>
             <p className="text-sm text-muted-foreground mb-4">

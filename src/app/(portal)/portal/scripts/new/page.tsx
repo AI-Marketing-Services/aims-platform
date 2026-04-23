@@ -210,20 +210,20 @@ export default function NewScriptPage() {
       <div className="flex items-center gap-3">
         <button
           onClick={() => router.push("/portal/scripts")}
-          className="h-8 w-8 rounded-lg flex items-center justify-center text-[#F0EBE0]/40 hover:text-[#F0EBE0] hover:bg-white/5 transition-all"
+          className="h-8 w-8 rounded-lg flex items-center justify-center text-muted-foreground/40 hover:text-foreground hover:bg-muted/40 transition-all"
         >
           <ArrowLeft className="h-4 w-4" />
         </button>
         <div>
-          <h1 className="text-lg font-bold text-[#F0EBE0]">Generate Script</h1>
-          <p className="text-xs text-[#F0EBE0]/50">AI-powered sales script generator</p>
+          <h1 className="text-lg font-bold text-foreground">Generate Script</h1>
+          <p className="text-xs text-muted-foreground">AI-powered sales script generator</p>
         </div>
         {remainingCredits !== null && (
           <div className="ml-auto text-right">
-            <p className="text-[10px] text-[#F0EBE0]/30 uppercase tracking-wider">AI Credits</p>
+            <p className="text-[10px] text-muted-foreground/50 uppercase tracking-wider">AI Credits</p>
             <p
               className={`text-sm font-bold ${
-                remainingCredits === 0 ? "text-red-400" : "text-[#C4972A]"
+                remainingCredits === 0 ? "text-red-500" : "text-primary"
               }`}
             >
               {remainingCredits} remaining
@@ -233,8 +233,8 @@ export default function NewScriptPage() {
       </div>
 
       {/* Script Type Selector */}
-      <div className="rounded-xl border border-border bg-[#141923] p-5 space-y-3">
-        <p className="text-xs font-semibold text-[#F0EBE0]/50 uppercase tracking-wider">
+      <div className="rounded-xl border border-border bg-card p-5 space-y-3">
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
           Script Type
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
@@ -247,28 +247,28 @@ export default function NewScriptPage() {
                 onClick={() => setSelectedType(option.value)}
                 className={`flex items-start gap-3 p-3 rounded-lg border text-left transition-all ${
                   isSelected
-                    ? "border-[#C4972A]/50 bg-[#C4972A]/10"
-                    : "border-border hover:border-[#C4972A]/20 hover:bg-white/3"
+                    ? "border-primary/50 bg-primary/10"
+                    : "border-border hover:border-primary/20 hover:bg-muted/20"
                 }`}
               >
                 <div
                   className={`h-8 w-8 rounded-lg flex items-center justify-center shrink-0 ${
-                    isSelected ? "bg-[#C4972A]/20" : "bg-white/5"
+                    isSelected ? "bg-primary/20" : "bg-muted/30"
                   }`}
                 >
                   <Icon
-                    className={`h-4 w-4 ${isSelected ? "text-[#C4972A]" : "text-[#F0EBE0]/40"}`}
+                    className={`h-4 w-4 ${isSelected ? "text-primary" : "text-muted-foreground/40"}`}
                   />
                 </div>
                 <div className="min-w-0">
                   <p
                     className={`text-sm font-semibold ${
-                      isSelected ? "text-[#C4972A]" : "text-[#F0EBE0]"
+                      isSelected ? "text-primary" : "text-foreground"
                     }`}
                   >
                     {option.label}
                   </p>
-                  <p className="text-xs text-[#F0EBE0]/40 mt-0.5 leading-tight">
+                  <p className="text-xs text-muted-foreground/60 mt-0.5 leading-tight">
                     {option.description}
                   </p>
                 </div>
@@ -279,14 +279,14 @@ export default function NewScriptPage() {
       </div>
 
       {/* Deal Selector + Context */}
-      <div className="rounded-xl border border-border bg-[#141923] p-5 space-y-4">
-        <p className="text-xs font-semibold text-[#F0EBE0]/50 uppercase tracking-wider">
+      <div className="rounded-xl border border-border bg-card p-5 space-y-4">
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
           Personalization (optional)
         </p>
 
         {/* Deal dropdown */}
         <div className="space-y-1.5">
-          <label className="text-sm font-medium text-[#F0EBE0]/70">
+          <label className="text-sm font-medium text-muted-foreground">
             Link to a Deal
           </label>
           <div className="relative">
@@ -294,7 +294,7 @@ export default function NewScriptPage() {
               value={selectedDealId}
               onChange={(e) => setSelectedDealId(e.target.value)}
               disabled={dealsLoading}
-              className="w-full appearance-none rounded-lg border border-border bg-[#08090D] px-3 py-2.5 pr-9 text-sm text-[#F0EBE0] focus:outline-none focus:border-[#C4972A]/50 disabled:opacity-50 transition-colors"
+              className="w-full appearance-none rounded-lg border border-border bg-background px-3 py-2.5 pr-9 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary disabled:opacity-50 transition-colors"
             >
               <option value="">No deal — use general context</option>
               {deals.map((deal) => (
@@ -304,13 +304,13 @@ export default function NewScriptPage() {
                 </option>
               ))}
             </select>
-            <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#F0EBE0]/30" />
+            <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40" />
           </div>
         </div>
 
         {/* Context textarea */}
         <div className="space-y-1.5">
-          <label className="text-sm font-medium text-[#F0EBE0]/70">
+          <label className="text-sm font-medium text-muted-foreground">
             Additional Context
           </label>
           <textarea
@@ -318,7 +318,7 @@ export default function NewScriptPage() {
             onChange={(e) => setContext(e.target.value)}
             placeholder="E.g. They run a 3-location dental practice, recently mentioned struggling with no-shows, met at the local Chamber of Commerce event..."
             rows={3}
-            className="w-full rounded-lg border border-border bg-[#08090D] px-3 py-2.5 text-sm text-[#F0EBE0] placeholder-[#F0EBE0]/20 focus:outline-none focus:border-[#C4972A]/50 resize-none transition-colors"
+            className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-1 focus:ring-primary resize-none transition-colors"
           />
         </div>
       </div>
@@ -334,44 +334,44 @@ export default function NewScriptPage() {
       <button
         onClick={handleGenerate}
         disabled={generating || remainingCredits === 0}
-        className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[#C4972A] text-[#08090D] text-sm font-bold hover:bg-[#C4972A]/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-primary text-primary-foreground text-sm font-bold hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <Zap className={`h-4 w-4 ${generating ? "animate-pulse" : ""}`} />
         {generating ? "Generating…" : "Generate Script"}
       </button>
 
       {remainingCredits === 0 && (
-        <p className="text-xs text-center text-[#F0EBE0]/30">
+        <p className="text-xs text-center text-muted-foreground/50">
           You have used all AI credits for this month.
         </p>
       )}
 
       {/* Generated Output */}
       {hasGenerated && (
-        <div className="rounded-xl border border-[#C4972A]/20 bg-[#141923] p-5 space-y-4">
-          <p className="text-xs font-semibold text-[#C4972A]/70 uppercase tracking-wider">
+        <div className="rounded-xl border border-primary/20 bg-card p-5 space-y-4">
+          <p className="text-xs font-semibold text-primary/70 uppercase tracking-wider">
             Generated Script
           </p>
 
           {/* Title field */}
           <div className="space-y-1.5">
-            <label className="text-sm font-medium text-[#F0EBE0]/70">Title</label>
+            <label className="text-sm font-medium text-muted-foreground">Title</label>
             <input
               type="text"
               value={editableTitle}
               onChange={(e) => setEditableTitle(e.target.value)}
-              className="w-full rounded-lg border border-border bg-[#08090D] px-3 py-2.5 text-sm text-[#F0EBE0] focus:outline-none focus:border-[#C4972A]/50 transition-colors"
+              className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary transition-colors"
             />
           </div>
 
           {/* Content textarea */}
           <div className="space-y-1.5">
-            <label className="text-sm font-medium text-[#F0EBE0]/70">Script Content</label>
+            <label className="text-sm font-medium text-muted-foreground">Script Content</label>
             <textarea
               value={editableContent}
               onChange={(e) => setEditableContent(e.target.value)}
               rows={16}
-              className="w-full rounded-lg border border-border bg-[#08090D] px-3 py-2.5 text-sm text-[#F0EBE0] font-mono leading-relaxed focus:outline-none focus:border-[#C4972A]/50 resize-y transition-colors"
+              className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground font-mono leading-relaxed focus:outline-none focus:ring-1 focus:ring-primary resize-y transition-colors"
             />
           </div>
 
@@ -385,7 +385,7 @@ export default function NewScriptPage() {
           <button
             onClick={handleSave}
             disabled={saving || saved || !editableTitle.trim() || !editableContent.trim()}
-            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-[#C4972A]/40 bg-[#C4972A]/10 text-[#C4972A] text-sm font-semibold hover:bg-[#C4972A]/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-primary/40 bg-primary/10 text-primary text-sm font-semibold hover:bg-primary/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Save className="h-4 w-4" />
             {saved ? "Saved! Redirecting…" : saving ? "Saving…" : "Save Script"}

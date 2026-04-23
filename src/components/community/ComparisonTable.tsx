@@ -12,20 +12,20 @@ const ROWS: { feature: string; yt: string | boolean; us: string | boolean; highl
 
 function Cell({ value }: { value: boolean | string }) {
   if (value === true) return <Check className="w-5 h-5 text-crimson mx-auto" />
-  if (value === false) return <X className="w-5 h-5 text-[#737373]/60 mx-auto" />
-  return <span className="text-xs font-mono uppercase tracking-wider text-[#737373]">{value}</span>
+  if (value === false) return <X className="w-5 h-5 text-neutral-400 mx-auto" />
+  return <span className="text-xs font-mono uppercase tracking-wider text-neutral-500">{value}</span>
 }
 
 export function ComparisonTable() {
   return (
-    <section className="relative py-20 sm:py-24 border-t border-[#E3E3E3] texture-light dot-grid-light">
+    <section className="relative py-20 sm:py-24 border-t border-neutral-200 texture-light dot-grid-light">
       <div className="relative z-10 mx-auto max-w-[1280px] px-6">
         <div className="text-center max-w-3xl mx-auto">
-          <h2 className="font-playfair text-3xl sm:text-4xl text-[#1A1A1A] leading-[1.25] pb-2">
+          <h2 className="font-playfair text-3xl sm:text-4xl text-neutral-900 leading-[1.25] pb-2">
             The difference is sequencing
             <span className="block text-crimson italic">and skin in the game.</span>
           </h2>
-          <p className="mt-6 text-base sm:text-lg text-[#737373] leading-relaxed max-w-2xl mx-auto">
+          <p className="mt-6 text-base sm:text-lg text-neutral-500 leading-relaxed max-w-2xl mx-auto">
             Every other community gives you n8n workflows and prompt packs. That&apos;s a
             folder of automations, not a business. We sequence it correctly: business
             fundamentals first (weeks 1-4), AI tooling second (week 5+). Because tools

@@ -12,12 +12,12 @@ export function CommunityHero() {
           For Burnt-Out W-2 Professionals &amp; Corporate Operators
         </p>
 
-        <h1 className="font-playfair text-5xl sm:text-6xl md:text-7xl lg:text-[88px] leading-[1.1] pb-2 tracking-tight text-[#1A1A1A]">
+        <h1 className="font-playfair text-5xl sm:text-6xl md:text-7xl lg:text-[88px] leading-[1.1] pb-2 tracking-tight text-neutral-900">
           Real Business Problems
           <span className="block text-crimson italic">Solved by Real AI Operators</span>
         </h1>
 
-        <p className="mt-8 text-lg sm:text-xl text-[#737373] max-w-3xl mx-auto leading-relaxed">
+        <p className="mt-8 text-lg sm:text-xl text-neutral-500 max-w-3xl mx-auto leading-relaxed">
           Every business hits the same walls: pipeline dries up, systems break, growth
           stalls. We&apos;ve solved these problems across 100+ collective years of building
           companies. Now we&apos;re packaging that tribal knowledge into a step-by-step
@@ -36,7 +36,7 @@ export function CommunityHero() {
           </a>
         </div>
 
-        <p className="mt-5 text-xs sm:text-sm text-[#737373] font-mono uppercase tracking-wider">
+        <p className="mt-5 text-xs sm:text-sm text-neutral-500 font-mono uppercase tracking-wider">
           No payment to apply · Application-only · 10 seats per cohort
         </p>
       </div>

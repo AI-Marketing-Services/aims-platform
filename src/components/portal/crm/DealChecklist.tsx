@@ -76,11 +76,11 @@ export function DealChecklist({ dealId, stage }: DealChecklistProps) {
 
   if (loading) {
     return (
-      <div className="rounded-xl border border-border bg-[#141923] p-5">
-        <div className="h-4 w-40 rounded bg-surface animate-pulse mb-4" />
+      <div className="rounded-xl border border-border bg-card p-5">
+        <div className="h-4 w-40 rounded bg-muted animate-pulse mb-4" />
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-8 rounded bg-surface animate-pulse" />
+            <div key={i} className="h-8 rounded bg-muted animate-pulse" />
           ))}
         </div>
       </div>
@@ -92,7 +92,7 @@ export function DealChecklist({ dealId, stage }: DealChecklistProps) {
   const { steps, completedCount, totalCount, percent } = checklist
 
   return (
-    <div className="rounded-xl border border-border bg-[#141923] p-5 space-y-4">
+    <div className="rounded-xl border border-border bg-card p-5 space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -105,7 +105,7 @@ export function DealChecklist({ dealId, stage }: DealChecklistProps) {
       </div>
 
       {/* Progress bar */}
-      <div className="h-1.5 w-full rounded-full bg-surface overflow-hidden">
+      <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
         <div
           className="h-full rounded-full bg-primary transition-all duration-300"
           style={{ width: `${percent}%` }}
@@ -128,7 +128,7 @@ export function DealChecklist({ dealId, stage }: DealChecklistProps) {
                   "flex items-center gap-3 w-full text-left rounded-lg px-3 py-2.5 transition-colors",
                   isReadOnly
                     ? "cursor-default"
-                    : "hover:bg-surface/60 cursor-pointer",
+                    : "hover:bg-muted/60 cursor-pointer",
                   isToggling && "opacity-60"
                 )}
               >
@@ -160,7 +160,7 @@ export function DealChecklist({ dealId, stage }: DealChecklistProps) {
       </ul>
 
       {percent === 100 && (
-        <p className="text-xs font-semibold text-emerald-400 text-center pt-1">
+        <p className="text-xs font-semibold text-primary text-center pt-1">
           Onboarding complete
         </p>
       )}

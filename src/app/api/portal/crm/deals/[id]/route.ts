@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
+import { notify } from "@/lib/notifications"
 import { updateDealSchema } from "@/lib/crm/schemas"
 
 async function getDbUserId(clerkId: string) {

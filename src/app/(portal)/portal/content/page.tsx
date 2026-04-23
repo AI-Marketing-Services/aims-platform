@@ -60,7 +60,7 @@ const TYPE_ICONS: Record<ContentPieceType, React.ElementType> = {
 }
 
 const STATUS_COLORS: Record<ContentPieceStatus, string> = {
-  DRAFT: "bg-[#F0EBE0]/5 text-[#F0EBE0]/50 border-[#F0EBE0]/10",
+  DRAFT: "bg-muted/5 text-muted-foreground/50 border-border/10",
   PUBLISHED: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
   ARCHIVED: "bg-zinc-500/10 text-zinc-500 border-zinc-500/20",
 }
@@ -142,19 +142,19 @@ function ContentCard({
   const preview = piece.content.slice(0, 150) + (piece.content.length > 150 ? "…" : "")
 
   return (
-    <div className="rounded-xl border border-border bg-[#141923] p-5 hover:border-[#C4972A]/30 hover:shadow-lg hover:shadow-[#C4972A]/5 transition-all duration-200 group flex flex-col">
+    <div className="rounded-xl border border-border bg-card p-5 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-200 group flex flex-col">
       {/* Header */}
       <div className="flex items-start justify-between gap-3 mb-3">
         <div className="flex items-center gap-2.5 min-w-0">
-          <div className="h-8 w-8 rounded-lg bg-[#C4972A]/10 flex items-center justify-center shrink-0">
-            <Icon className="h-4 w-4 text-[#C4972A]" />
+          <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+            <Icon className="h-4 w-4 text-primary" />
           </div>
           <div className="min-w-0">
-            <h3 className="text-sm font-semibold text-[#F0EBE0] truncate group-hover:text-[#C4972A] transition-colors">
+            <h3 className="text-sm font-semibold text-foreground truncate group-hover:text-primary transition-colors">
               {piece.title}
             </h3>
             {piece.clientDeal && (
-              <p className="text-xs text-[#F0EBE0]/40 mt-0.5">{piece.clientDeal.companyName}</p>
+              <p className="text-xs text-muted-foreground/40 mt-0.5">{piece.clientDeal.companyName}</p>
             )}
           </div>
         </div>
@@ -166,7 +166,7 @@ function ContentCard({
       </div>
 
       {/* Preview */}
-      <p className="text-xs text-[#F0EBE0]/60 leading-relaxed flex-1 mb-4">{preview}</p>
+      <p className="text-xs text-muted-foreground/60 leading-relaxed flex-1 mb-4">{preview}</p>
 
       {/* Footer */}
       <div className="flex items-center justify-between">
@@ -176,13 +176,13 @@ function ContentCard({
           >
             {piece.status.charAt(0) + piece.status.slice(1).toLowerCase()}
           </span>
-          <span className="text-[10px] text-[#F0EBE0]/30">{formatDate(piece.createdAt)}</span>
+          <span className="text-[10px] text-muted-foreground/30">{formatDate(piece.createdAt)}</span>
         </div>
 
         <div className="flex items-center gap-1">
           <button
             onClick={handleCopy}
-            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-[#F0EBE0]/60 hover:text-[#F0EBE0] hover:bg-white/5 transition-all"
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all"
             title="Copy to clipboard"
           >
             {copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
@@ -193,7 +193,7 @@ function ContentCard({
             <button
               onClick={handleArchive}
               disabled={archiving}
-              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-[#F0EBE0]/40 hover:text-[#F0EBE0]/80 hover:bg-white/5 transition-all disabled:opacity-50"
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-muted-foreground/40 hover:text-muted-foreground/80 hover:bg-muted/40 transition-all disabled:opacity-50"
               title="Archive"
             >
               <Archive className="h-3.5 w-3.5" />
@@ -204,7 +204,7 @@ function ContentCard({
           <button
             onClick={handleDelete}
             disabled={deleting}
-            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-[#F0EBE0]/40 hover:text-red-400 hover:bg-red-500/5 transition-all disabled:opacity-50"
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-muted-foreground/40 hover:text-red-400 hover:bg-red-500/5 transition-all disabled:opacity-50"
             title="Delete"
           >
             <Trash2 className="h-3.5 w-3.5" />
@@ -265,17 +265,17 @@ export default function ContentLibraryPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="h-9 w-9 rounded-lg bg-[#C4972A]/10 flex items-center justify-center">
-            <Newspaper className="h-4.5 w-4.5 text-[#C4972A]" />
+          <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center">
+            <Newspaper className="h-4.5 w-4.5 text-primary" />
           </div>
           <div>
-            <h1 className="text-lg font-bold text-[#F0EBE0]">Content Engine</h1>
-            <p className="text-xs text-[#F0EBE0]/50">Turn your wins into content that attracts clients</p>
+            <h1 className="text-lg font-bold text-foreground">Content Engine</h1>
+            <p className="text-xs text-muted-foreground">Turn your wins into content that attracts clients</p>
           </div>
         </div>
         <Link
           href="/portal/content/new"
-          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#C4972A] text-[#08090D] text-sm font-semibold hover:bg-[#C4972A]/90 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors"
         >
           <Plus className="h-4 w-4" />
           Create Content
@@ -290,8 +290,8 @@ export default function ContentLibraryPage() {
             onClick={() => setTypeFilter(tab.value)}
             className={`shrink-0 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
               typeFilter === tab.value
-                ? "bg-[#C4972A]/15 text-[#C4972A] border border-[#C4972A]/30"
-                : "text-[#F0EBE0]/50 hover:text-[#F0EBE0] hover:bg-white/5 border border-transparent"
+                ? "bg-primary/15 text-primary border border-primary/30"
+                : "text-muted-foreground hover:text-foreground hover:bg-muted/40 border border-transparent"
             }`}
           >
             {tab.label}
@@ -307,8 +307,8 @@ export default function ContentLibraryPage() {
             onClick={() => setStatusFilter(tab.value)}
             className={`shrink-0 px-2.5 py-1 rounded-md text-[11px] font-medium transition-all ${
               statusFilter === tab.value
-                ? "bg-white/10 text-[#F0EBE0]"
-                : "text-[#F0EBE0]/30 hover:text-[#F0EBE0]/60"
+                ? "bg-muted/30 text-foreground"
+                : "text-muted-foreground/30 hover:text-muted-foreground/60"
             }`}
           >
             {tab.label}
@@ -322,22 +322,22 @@ export default function ContentLibraryPage() {
           {Array.from({ length: 6 }).map((_, i) => (
             <div
               key={i}
-              className="rounded-xl border border-border bg-[#141923] p-5 h-48 animate-pulse"
+              className="rounded-xl border border-border bg-card p-5 h-48 animate-pulse"
             />
           ))}
         </div>
       ) : pieces.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-center">
-          <div className="h-14 w-14 rounded-2xl bg-[#C4972A]/10 flex items-center justify-center mb-4">
-            <Globe className="h-7 w-7 text-[#C4972A]/50" />
+          <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
+            <Globe className="h-7 w-7 text-primary/50" />
           </div>
-          <p className="text-[#F0EBE0]/60 font-medium mb-1">No content yet</p>
-          <p className="text-sm text-[#F0EBE0]/30 mb-4 max-w-xs">
+          <p className="text-muted-foreground font-medium mb-1">No content yet</p>
+          <p className="text-sm text-muted-foreground/50 mb-4 max-w-xs">
             Turn your wins into content. Connect a won deal to generate case studies, LinkedIn posts, and more.
           </p>
           <Link
             href="/portal/content/new"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#C4972A] text-[#08090D] text-sm font-semibold hover:bg-[#C4972A]/90 transition-colors"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors"
           >
             <Plus className="h-4 w-4" />
             Create Content

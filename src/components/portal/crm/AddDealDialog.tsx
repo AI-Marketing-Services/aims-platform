@@ -54,7 +54,7 @@ export function AddDealDialog({ defaultStage = "PROSPECT", onCreated }: AddDealD
     <>
       <button
         onClick={() => setOpen(true)}
-        className="w-full flex items-center justify-center gap-1.5 py-2 text-xs text-muted-foreground hover:text-foreground hover:bg-surface/60 rounded-lg border border-dashed border-border/60 hover:border-border transition-all duration-150"
+        className="w-full flex items-center justify-center gap-1.5 py-2 text-xs text-muted-foreground hover:text-foreground hover:bg-muted/60 rounded-lg border border-dashed border-border/60 hover:border-border transition-all duration-150"
       >
         <Plus className="h-3.5 w-3.5" />
         Add deal
@@ -71,7 +71,7 @@ export function AddDealDialog({ defaultStage = "PROSPECT", onCreated }: AddDealD
               <h2 className="text-base font-bold text-foreground">New Deal</h2>
               <button
                 onClick={() => setOpen(false)}
-                className="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-surface transition-colors"
+                className="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -84,7 +84,7 @@ export function AddDealDialog({ defaultStage = "PROSPECT", onCreated }: AddDealD
                   name="companyName"
                   required
                   placeholder="Acme Corp"
-                  className="w-full h-9 px-3 rounded-lg bg-surface border border-border text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
+                  className="w-full h-9 px-3 rounded-lg bg-muted border border-border text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
                 />
               </div>
 
@@ -94,7 +94,7 @@ export function AddDealDialog({ defaultStage = "PROSPECT", onCreated }: AddDealD
                   <input
                     name="contactName"
                     placeholder="Jane Smith"
-                    className="w-full h-9 px-3 rounded-lg bg-surface border border-border text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
+                    className="w-full h-9 px-3 rounded-lg bg-muted border border-border text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
                   />
                 </div>
                 <div>
@@ -105,7 +105,7 @@ export function AddDealDialog({ defaultStage = "PROSPECT", onCreated }: AddDealD
                     min="0"
                     step="100"
                     placeholder="2500"
-                    className="w-full h-9 px-3 rounded-lg bg-surface border border-border text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
+                    className="w-full h-9 px-3 rounded-lg bg-muted border border-border text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
                   />
                 </div>
                 <div>
@@ -114,7 +114,7 @@ export function AddDealDialog({ defaultStage = "PROSPECT", onCreated }: AddDealD
                     name="contactEmail"
                     type="email"
                     placeholder="jane@acme.com"
-                    className="w-full h-9 px-3 rounded-lg bg-surface border border-border text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
+                    className="w-full h-9 px-3 rounded-lg bg-muted border border-border text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
                   />
                 </div>
                 <div>
@@ -122,7 +122,7 @@ export function AddDealDialog({ defaultStage = "PROSPECT", onCreated }: AddDealD
                   <input
                     name="contactPhone"
                     placeholder="+1 555-0100"
-                    className="w-full h-9 px-3 rounded-lg bg-surface border border-border text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
+                    className="w-full h-9 px-3 rounded-lg bg-muted border border-border text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
                   />
                 </div>
               </div>
@@ -132,7 +132,7 @@ export function AddDealDialog({ defaultStage = "PROSPECT", onCreated }: AddDealD
                 <input
                   name="industry"
                   placeholder="e.g. HVAC, Dental, E-commerce"
-                  className="w-full h-9 px-3 rounded-lg bg-surface border border-border text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
+                  className="w-full h-9 px-3 rounded-lg bg-muted border border-border text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
                 />
               </div>
 
@@ -142,7 +142,7 @@ export function AddDealDialog({ defaultStage = "PROSPECT", onCreated }: AddDealD
                   name="notes"
                   placeholder="Initial context, source, pain points…"
                   rows={3}
-                  className="w-full px-3 py-2 rounded-lg bg-surface border border-border text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50 resize-none"
+                  className="w-full px-3 py-2 rounded-lg bg-muted border border-border text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50 resize-none"
                 />
               </div>
 
@@ -153,7 +153,7 @@ export function AddDealDialog({ defaultStage = "PROSPECT", onCreated }: AddDealD
                   type="button"
                   onClick={() => setOpen(false)}
                   disabled={isPending}
-                  className="px-3 py-1.5 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-surface transition-colors"
+                  className="px-3 py-1.5 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                 >
                   Cancel
                 </button>

@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Clock, Zap, ChevronDown, ChevronUp, Plus, DollarSign, Wrench, MessageSquare } from "lucide-react"
+import { Clock, BookOpen, ChevronDown, ChevronUp, Plus, DollarSign, Wrench, MessageSquare } from "lucide-react"
 import { cn } from "@/lib/utils"
 import type { IndustryPlaybook, PlaybookUseCase } from "@/lib/playbooks/manifest"
 
@@ -11,9 +11,9 @@ interface PlaybooksViewProps {
 }
 
 const DIFFICULTY_COLORS: Record<string, string> = {
-  Easy: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
-  Medium: "bg-amber-500/10 text-amber-400 border-amber-500/20",
-  Advanced: "bg-red-500/10 text-red-400 border-red-500/20",
+  Easy: "bg-green-50 text-green-700 border-green-200",
+  Medium: "bg-amber-50 text-amber-700 border-amber-200",
+  Advanced: "bg-red-50 text-red-600 border-red-200",
 }
 
 export function PlaybooksView({ playbooks }: PlaybooksViewProps) {
@@ -38,10 +38,10 @@ export function PlaybooksView({ playbooks }: PlaybooksViewProps) {
               "w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-left transition-all",
               activeIndustry === pb.id
                 ? "bg-primary/10 text-primary border border-primary/20"
-                : "text-muted-foreground hover:text-foreground hover:bg-surface/60"
+                : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
             )}
           >
-            <span className="text-base leading-none">{pb.emoji}</span>
+            <BookOpen className="h-3.5 w-3.5 shrink-0" />
             <span className="font-medium truncate">{pb.industry}</span>
           </button>
         ))}
@@ -54,19 +54,16 @@ export function PlaybooksView({ playbooks }: PlaybooksViewProps) {
           <div className="bg-card border border-border rounded-xl p-4">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-xl">{current.emoji}</span>
-                  <h2 className="text-base font-bold text-foreground">{current.industry}</h2>
-                </div>
+                <h2 className="text-base font-bold text-foreground mb-1">{current.industry}</h2>
                 <p className="text-sm text-muted-foreground">{current.description}</p>
               </div>
               <div className="shrink-0 text-right">
                 <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Avg deal</p>
-                <p className="text-sm font-bold text-emerald-400">{current.avgDealSize}</p>
+                <p className="text-sm font-bold text-primary">{current.avgDealSize}</p>
               </div>
             </div>
-            <div className="mt-3 flex items-start gap-2 bg-amber-500/5 border border-amber-500/15 rounded-lg px-3 py-2">
-              <MessageSquare className="h-3.5 w-3.5 text-amber-400 mt-0.5 shrink-0" />
+            <div className="mt-3 flex items-start gap-2 bg-muted/60 border border-border rounded-lg px-3 py-2">
+              <MessageSquare className="h-3.5 w-3.5 text-muted-foreground mt-0.5 shrink-0" />
               <p className="text-xs text-muted-foreground">
                 <span className="font-semibold text-foreground">Top pain: </span>
                 {current.topPain}
@@ -135,8 +132,8 @@ function UseCaseCard({
 
         <div className="flex items-center gap-3 shrink-0">
           <div className="hidden sm:flex items-center gap-1">
-            <DollarSign className="h-3.5 w-3.5 text-emerald-400" />
-            <span className="text-xs font-semibold text-emerald-400">{useCase.monthlyValue}</span>
+            <DollarSign className="h-3.5 w-3.5 text-primary" />
+            <span className="text-xs font-semibold text-primary">{useCase.monthlyValue}</span>
           </div>
           <div className="flex items-center gap-1 text-xs text-muted-foreground">
             <Clock className="h-3.5 w-3.5" />
@@ -183,7 +180,7 @@ function UseCaseCard({
               {useCase.tools.map((tool) => (
                 <span
                   key={tool}
-                  className="text-[11px] px-2 py-0.5 rounded-full bg-surface border border-border text-muted-foreground"
+                  className="text-[11px] px-2 py-0.5 rounded-full bg-muted border border-border text-muted-foreground"
                 >
                   {tool}
                 </span>

@@ -85,7 +85,7 @@ export default async function PortalLayout({
       </div>
 
       {/* Mobile bottom nav */}
-      <MobilePortalNav hasUnread={unreadCount > 0} />
+      <MobilePortalNav hasUnread={unreadCount > 0} isAdminEmail={isAdminEmail} />
 
       <PortalChatWidget firstName={firstName} serviceCount={serviceCount} />
       <ReferralClaimHandler />
