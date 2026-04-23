@@ -4,6 +4,7 @@ import { randomBytes } from "crypto"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
 import { sendTrackedEmail } from "@/lib/email"
+import { notify } from "@/lib/notifications"
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.aioperatorcollective.com"
 const FROM_EMAIL = "hello@aioperatorcollective.com"
@@ -215,6 +216,16 @@ export async function POST(
         logger.warn("Failed to log invoice activity", { invoiceId: id, err: String(err) })
       })
     }
+
+    // In-app notification: invoice sent
+    notify({
+      userId: dbUser.id,
+      channel: "IN_APP",
+      type: "invoice_sent",
+      title: "Invoice sent",
+      message: `Invoice ${invoice.invoiceNumber} was sent to ${invoice.recipientEmail}.`,
+      metadata: { link: `/portal/invoices/${id}` },
+    }).catch((err) => logger.error("Failed to create invoice_sent notification", err, { invoiceId: id }))
 
     return NextResponse.json({ invoice: updated })
   } catch (err) {

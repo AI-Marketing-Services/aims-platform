@@ -103,21 +103,40 @@ export async function PATCH(
       },
     })
 
-    // Fire onboarding checklist notification when deal first moves to ACTIVE_RETAINER
-    if (
-      parsed.data.stage === "ACTIVE_RETAINER" &&
-      existing.stage !== "ACTIVE_RETAINER"
-    ) {
-      await db.notification.create({
-        data: {
-          userId: dbUserId,
-          channel: "IN_APP",
+    // Fire notifications on key stage transitions
+    if (parsed.data.stage && parsed.data.stage !== existing.stage) {
+      const stageNotifications: Array<{ condition: boolean; type: string; title: string; message: string }> = [
+        {
+          condition: parsed.data.stage === "ACTIVE_RETAINER",
           type: "onboarding_checklist_ready",
           title: "Client onboarding started",
           message: `${existing.companyName} is now active. Complete the onboarding checklist to start strong.`,
-          metadata: { link: `/portal/crm/deals/${id}` },
         },
-      }).catch((err) => logger.error("Failed to create onboarding checklist notification", err, { dealId: id }))
+        {
+          condition: parsed.data.stage === "COMPLETED",
+          type: "deal_won",
+          title: "Deal won",
+          message: `${existing.companyName} moved to Completed.${existing.value ? ` Worth $${Number(existing.value).toLocaleString()}.` : ""}`,
+        },
+        {
+          condition: parsed.data.stage === "LOST",
+          type: "deal_lost",
+          title: "Deal lost",
+          message: `${existing.companyName} marked as lost.${lostReason ? ` Reason: ${lostReason}` : ""}`,
+        },
+      ]
+
+      for (const n of stageNotifications) {
+        if (!n.condition) continue
+        notify({
+          userId: dbUserId,
+          channel: "IN_APP",
+          type: n.type,
+          title: n.title,
+          message: n.message,
+          metadata: { link: `/portal/crm/${id}` },
+        }).catch((err) => logger.error(`Failed to create ${n.type} notification`, err, { dealId: id }))
+      }
     }
 
     return NextResponse.json({ deal })
