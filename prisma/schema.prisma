@@ -1654,3 +1654,63 @@ model FollowUpRule {
   @@index([userId])
   @@index([userId, isActive])
 }
+
+// ============ KNOWLEDGE BASE (MIGHTY INGESTION) ============
+// The portal chatbot uses these tables to answer member questions
+// with citations back to specific Mighty Networks content. Populated
+// by scripts/ingest-mighty.ts and the /api/cron/ingest-mighty endpoint.
+
+model KnowledgeEntry {
+  id        String @id @default(cuid())
+  // "mighty:post", "mighty:coursework", "mighty:event" — whatever shape
+  // future sources take (docs, public FAQ, etc.) they get their own
+  // source prefix so the unique constraint below is stable.
+  source   String
+  sourceId String
+
+  title    String
+  // Plain-text body used for search ranking + chat-visible snippets.
+  body     String @db.Text
+  // Original HTML body if the upstream source had one, so an admin UI
+  // can render the real formatting without another round-trip.
+  bodyHtml String? @db.Text
+
+  // Permalink back to the Mighty page so the chatbot can cite it.
+  url       String?
+  spaceId   String?
+  spaceName String?
+
+  // Lightweight tags (post_type, content_type, etc.) for filtering.
+  tags String[]
+
+  publishedAt DateTime?
+  indexedAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([source, sourceId])
+  @@index([source])
+  @@index([spaceId])
+  @@index([publishedAt])
+}
+
+model KnowledgeIngestRun {
+  id         String    @id @default(cuid())
+  // "running" | "success" | "error" | "partial"
+  status     String    @default("running")
+  startedAt  DateTime  @default(now())
+  finishedAt DateTime?
+
+  itemsSeen     Int @default(0)
+  itemsUpserted Int @default(0)
+  itemsFailed   Int @default(0)
+
+  // Optional error text for the run overall (not per-item — those are logged).
+  errorMessage String? @db.Text
+  // Per-source breakdown: { "mighty:post": { seen, upserted, failed }, ... }
+  sources      Json?
+  // How the run was kicked off: "cron" | "admin" | "cli"
+  trigger      String  @default("cron")
+
+  @@index([startedAt])
+  @@index([status])
+}

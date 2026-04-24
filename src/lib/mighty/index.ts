@@ -45,9 +45,26 @@ const MIGHTY_API_BASE = "https://api.mn.co/admin/v1"
 const MIGHTY_TIMEOUT_MS = 15_000
 const MIGHTY_MAX_RETRIES = 2
 
+/**
+ * Aggressively clean env-var values. Handles three real-world failure
+ * modes we hit in production:
+ *   1. Trailing whitespace (most .env editors)
+ *   2. Literal backslash-n / backslash-r sequences stored as 2-char
+ *      strings (happens when the original secret had a real newline
+ *      and someone JSON-stringified it into the .env file)
+ *   3. Surrounding quotes that a careless shell export can leave behind
+ */
+function sanitizeEnvValue(raw: string | undefined): string | undefined {
+  if (!raw) return raw
+  return raw
+    .replace(/\\[nrt]/g, "") // strip literal \n, \r, \t sequences
+    .replace(/^["']|["']$/g, "") // strip leading/trailing quote
+    .trim()
+}
+
 function getConfig(): { token: string; networkId: string } | null {
-  const token = process.env.MIGHTY_API_TOKEN
-  const networkId = process.env.MIGHTY_NETWORK_ID
+  const token = sanitizeEnvValue(process.env.MIGHTY_API_TOKEN)
+  const networkId = sanitizeEnvValue(process.env.MIGHTY_NETWORK_ID)
   if (!token || !networkId) {
     logger.warn("[Mighty] Missing MIGHTY_API_TOKEN or MIGHTY_NETWORK_ID", {
       action: "config_check",

@@ -30,6 +30,7 @@ import {
   BarChart3,
   Eye,
   Globe2,
+  BookOpenText,
 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
@@ -137,6 +138,7 @@ const ADMIN_NAV = [
       { label: "UTM & Analytics", href: "/admin/analytics", icon: BarChart3 },
       { label: "Lead Magnets", href: "/admin/ideas", icon: Lightbulb },
       { label: "Whitelabel Sites", href: "/admin/whitelabel", icon: Globe2 },
+      { label: "Knowledge Base", href: "/admin/knowledge", icon: BookOpenText },
     ],
   },
 ] as const
