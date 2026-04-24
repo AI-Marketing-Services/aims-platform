@@ -1,5 +1,6 @@
 import { clerkClient, clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
+import { RESERVED_SUBDOMAINS } from "@/lib/tenant/reserved-subdomains"
 
 // ---------------------------------------------------------------------------
 // Hostname-based tenant routing
@@ -15,11 +16,6 @@ const PLATFORM_HOSTS = new Set([
 // Also allow vercel preview deployments: *.vercel.app
 const isPlatformHost = (host: string) =>
   PLATFORM_HOSTS.has(host) || host.endsWith('.vercel.app')
-
-const RESERVED_SUBDOMAINS = new Set([
-  'www', 'app', 'api', 'admin', 'auth', 'mail', 'docs', 'blog', 'help', 'status',
-  'portal', 'reseller', 'intern', 'cdn', 'static',
-])
 
 const BASE_HOST = 'aioperatorcollective.com' // subdomain base
 
@@ -78,6 +74,8 @@ const isPublicRoute = createRouteMatcher([
   "/api/admin/test-emails(.*)",
   "/api/lead-magnets/submit(.*)",
   "/api/lead-magnets/ai-playbook(.*)",
+  // Whitelabel tenant-page lead capture — public by design.
+  "/api/tenant/lead(.*)",
   "/api/referrals/track(.*)",
   "/api/services(.*)",
   "/api/ai/chat(.*)",

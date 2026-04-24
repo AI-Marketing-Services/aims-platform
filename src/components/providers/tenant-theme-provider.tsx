@@ -14,6 +14,12 @@ export type TenantContext = {
     seoDescription: string | null
     homepageContent: unknown
   }
+  // The reseller who owns this site — needed to attribute leads back
+  // to them when a visitor submits a form on the tenant page.
+  reseller: {
+    id: string
+    email: string | null
+  }
   brand: {
     businessName: string
     logoUrl: string | null
@@ -55,9 +61,8 @@ export function TenantThemeProvider({
       return
     }
 
-    // SECURITY TODO: v1 injects raw CSS from DB. Before launch, sanitize with
-    // a CSS allowlist parser or scope all rules under `.tenant-scope {}` to
-    // prevent potential CSS injection attacks (e.g. url(), @import tricks).
+    // CSS is sanitized server-side in resolve-tenant.ts via sanitizeCustomCss
+    // (@import/@charset stripped, url() restricted to relative + https:).
     if (!styleRef.current) {
       styleRef.current = document.createElement('style')
       styleRef.current.setAttribute('data-tenant-custom-css', '')

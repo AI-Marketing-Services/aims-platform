@@ -1,33 +1,12 @@
 import type { TenantContext } from '@/components/providers/tenant-theme-provider'
+import { LandingCtaForm } from './landing-cta-form'
 
 type Props = {
   tenant: TenantContext
 }
 
-function resolveCtaHref(brand: TenantContext['brand']): string {
-  if (brand.businessUrl?.includes('calendly.com')) {
-    return brand.businessUrl
-  }
-  if (brand.userEmail) {
-    return `mailto:${brand.userEmail}`
-  }
-  if (brand.businessUrl) {
-    return brand.businessUrl
-  }
-  return '#contact'
-}
-
-function resolveCtaLabel(brand: TenantContext['brand']): string {
-  if (brand.businessUrl?.includes('calendly.com')) {
-    return 'Book a call'
-  }
-  return 'Get in touch'
-}
-
 export function LandingCta({ tenant }: Props) {
   const { brand } = tenant
-  const href = resolveCtaHref(brand)
-  const ctaLabel = resolveCtaLabel(brand)
 
   return (
     <section
@@ -44,17 +23,10 @@ export function LandingCta({ tenant }: Props) {
           Ready to work with {brand.businessName}?
         </h2>
         <p className="mx-auto mt-4 max-w-lg text-[#08090D]/70">
-          {brand.tagline ?? 'Let&apos;s talk about what AI can do for your business.'}
+          {brand.tagline ?? "Let's talk about what AI can do for your business."}
         </p>
         <div className="mt-8">
-          <a
-            href={href}
-            target={href.startsWith('mailto:') ? undefined : '_blank'}
-            rel={href.startsWith('mailto:') ? undefined : 'noopener noreferrer'}
-            className="inline-flex items-center gap-2 rounded-md bg-[#08090D] px-7 py-3.5 text-sm font-semibold text-[#F0EBE0] transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#08090D]"
-          >
-            {ctaLabel}
-          </a>
+          <LandingCtaForm tenant={tenant} />
         </div>
       </div>
     </section>

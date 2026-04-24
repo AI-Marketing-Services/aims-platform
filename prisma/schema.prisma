@@ -25,6 +25,7 @@ model User {
   heardAbout    String?
 
   deals                    Deal[]
+  referredDeals            Deal[]                    @relation("ReferringReseller")
   subscriptions            Subscription[]
   referralsGiven           Referral[]                @relation("referrer")
   referralReceived         Referral?                 @relation("referred")
@@ -110,6 +111,12 @@ model Deal {
   userId String?
   user   User?   @relation(fields: [userId], references: [id])
 
+  // Whitelabel attribution: the reseller whose tenant page drove this lead.
+  // Populated by /api/tenant/lead when someone submits a form on a
+  // reseller's subdomain or custom domain.
+  referringResellerId String?
+  referringReseller   User?   @relation("ReferringReseller", fields: [referringResellerId], references: [id])
+
   contactName  String
   contactEmail String
   company      String?
@@ -157,6 +164,7 @@ model Deal {
   @@index([createdAt])
   @@index([mightyInviteStatus])
   @@index([mightyMemberId])
+  @@index([referringResellerId])
 }
 
 enum DealStage {

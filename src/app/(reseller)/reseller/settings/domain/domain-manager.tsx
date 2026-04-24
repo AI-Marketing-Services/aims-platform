@@ -4,13 +4,10 @@ import { useState, useEffect, useCallback, useRef, useTransition } from "react"
 import { toast } from "sonner"
 import { Loader2, Globe, CheckCircle2, Trash2, ToggleLeft, ToggleRight } from "lucide-react"
 import { DnsInstructions } from "@/components/reseller/domain/dns-instructions"
+import { isReservedSubdomain } from "@/lib/tenant/reserved-subdomains"
 
 const PLATFORM_HOST = "aioperatorcollective.com"
 const SUBDOMAIN_REGEX = /^[a-z0-9-]{3,30}$/
-const RESERVED = new Set([
-  "www", "app", "api", "admin", "auth", "mail", "docs", "blog", "help",
-  "status", "portal", "reseller", "intern", "cdn", "static",
-])
 
 const POLL_INTERVAL_MS = 10_000
 const POLL_CAP_MS = 30 * 60 * 1000
@@ -43,7 +40,7 @@ function validateSubdomain(value: string): string | null {
   if (!SUBDOMAIN_REGEX.test(value)) {
     return "Only lowercase letters, numbers, and hyphens. 3–30 characters."
   }
-  if (RESERVED.has(value)) {
+  if (isReservedSubdomain(value)) {
     return `"${value}" is a reserved subdomain.`
   }
   return null

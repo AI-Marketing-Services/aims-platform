@@ -3,6 +3,7 @@ import 'server-only'
 import { unstable_cache, revalidateTag } from 'next/cache'
 import { db } from '@/lib/db'
 import type { TenantContext } from '@/components/providers/tenant-theme-provider'
+import { sanitizeCustomCss } from '@/lib/tenant/sanitize-css'
 import { notFound } from 'next/navigation'
 
 const DEFAULT_BRAND_COLOR = '#C4972A'
@@ -19,6 +20,7 @@ function mapRowToTenant(site: {
   seoTitle: string | null
   seoDescription: string | null
   user: {
+    id: string
     memberProfile: {
       businessName: string | null
       logoUrl: string | null
@@ -44,10 +46,14 @@ function mapRowToTenant(site: {
       customDomain: site.customDomain ?? null,
       themeId: site.themeId ?? 'default',
       homepageContent: site.homepageContent ?? {},
-      customCss: site.customCss ?? null,
+      customCss: sanitizeCustomCss(site.customCss),
       analyticsId: site.analyticsId ?? null,
       seoTitle: site.seoTitle ?? null,
       seoDescription: site.seoDescription ?? null,
+    },
+    reseller: {
+      id: site.user?.id ?? '',
+      email: site.user?.email ?? null,
     },
     brand: {
       businessName: profile?.businessName ?? site.subdomain,
@@ -73,6 +79,7 @@ async function fetchBySubdomain(slug: string): Promise<TenantContext | null> {
       include: {
         user: {
           select: {
+            id: true,
             email: true,
             memberProfile: true,
           },
@@ -98,6 +105,7 @@ async function fetchByCustomDomain(hostname: string): Promise<TenantContext | nu
       include: {
         user: {
           select: {
+            id: true,
             email: true,
             memberProfile: true,
           },

@@ -4,18 +4,14 @@ import { z } from "zod"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
 import { invalidateTenantCache } from "@/lib/tenant/resolve-tenant"
-
-const RESERVED_SUBDOMAINS = new Set([
-  "www", "app", "api", "admin", "auth", "mail", "docs", "blog", "help",
-  "status", "portal", "reseller", "intern", "cdn", "static",
-])
+import { isReservedSubdomain } from "@/lib/tenant/reserved-subdomains"
 
 const subdomainSchema = z
   .string()
   .min(3, "Minimum 3 characters")
   .max(30, "Maximum 30 characters")
   .regex(/^[a-z0-9-]+$/, "Only lowercase letters, numbers, and hyphens")
-  .refine((v) => !RESERVED_SUBDOMAINS.has(v), {
+  .refine((v) => !isReservedSubdomain(v), {
     message: "This subdomain is reserved",
   })
 
