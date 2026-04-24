@@ -48,6 +48,12 @@ model User {
   contentPieces            ContentPiece[]            @relation("UserContent")
   followUpRules            FollowUpRule[]            @relation("UserFollowUpRules")
   operatorSite             OperatorSite?
+  // Commerce — what this user has bought, what they're entitled to,
+  // and (for resellers) the commission ledger they've earned.
+  purchases                Purchase[]
+  attributedPurchases      Purchase[]                @relation("PurchaseAttribution")
+  userEntitlements         Entitlement[]
+  commissionsEarned        CommissionEvent[]         @relation("ResellerCommissions")
 
   stripeCustomerId String?   @unique
   lastLoginAt      DateTime?
@@ -1713,4 +1719,178 @@ model KnowledgeIngestRun {
 
   @@index([startedAt])
   @@index([status])
+}
+
+// ============ COMMERCE: PRODUCTS, PURCHASES, ENTITLEMENTS, COMMISSIONS ============
+// Built for a single-merchant marketplace: AIMS is the merchant of record
+// for every transaction. Resellers are advanced affiliates — they earn a
+// commission on purchases they drove (via attribution cookie or whitelabel
+// page submit), but never hold the customer payment relationship.
+//
+// Lifecycle:
+//   1. Product is defined in DB (Stripe price IDs attached)
+//   2. User buys via Stripe Checkout → Purchase row created on webhook
+//   3. Purchase grants Entitlement rows (synced from Product.entitlements)
+//   4. If Purchase has referringResellerId → CommissionEvent (pending) fires
+//   5. CommissionEvent flips to "payable" after a clawback window passes
+//   6. Admin runs payout batch → Stripe Connect Transfer → "paid"
+//   7. Refunds within window → CommissionEvent clawback row appended
+
+model Product {
+  id          String  @id @default(cuid())
+  slug        String  @unique
+  name        String
+  description String? @db.Text
+  // "tier"    — Member / Operator / Reseller progression packages
+  // "tool"    — a la carte feature (chatbot-premium, voice-agent)
+  // "addon"   — supplementary upsell tied to a tier
+  type        String
+  isActive    Boolean @default(true)
+  sortOrder   Int     @default(0)
+
+  // Stripe price IDs — any subset may be set. The checkout flow picks the
+  // one that matches the user's chosen interval.
+  stripePriceMonthly String?
+  stripePriceAnnual  String?
+  stripePriceOneTime String?
+
+  // Entitlement keys this product grants when the purchase is active.
+  // Examples: ["chatbot-premium", "voice-agent", "playbook-vault",
+  //            "whitelabel-tools", "commission-tracking"]
+  entitlements String[]
+
+  // Default commission rate in basis points (10000 = 100%). Applied when
+  // a reseller drove the purchase. 2000 = 20%, 0 = no commission tier.
+  commissionBps Int @default(0)
+
+  // If this product unlocks a role upgrade (e.g. CLIENT → RESELLER), set
+  // the target role here. Webhook flips User.role on first purchase.
+  grantsRole String?
+
+  metadata Json?
+
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  purchases Purchase[]
+
+  @@index([type, isActive])
+  @@index([sortOrder])
+}
+
+model Purchase {
+  id String @id @default(cuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  // Attribution — set ONCE on initial purchase from the cookie or form.
+  // Renewals on the same subscription preserve this id forever (the
+  // reseller earns lifetime commission on the customer they drove).
+  referringResellerId String?
+  referringReseller   User?   @relation("PurchaseAttribution", fields: [referringResellerId], references: [id])
+
+  // Stripe object linkage — exactly one of these is the canonical id.
+  stripeSubscriptionId    String? @unique
+  stripeChargeId          String? @unique
+  stripeCheckoutSessionId String? @unique
+  stripeCustomerId        String?
+
+  // "active" | "trialing" | "past_due" | "canceled" | "refunded" | "incomplete"
+  status      String
+  // Gross paid in cents (most recent transaction for subs).
+  amountCents Int
+  currency    String @default("usd")
+
+  // "monthly" | "annual" | "one_time"
+  intervalType String?
+
+  startedAt DateTime  @default(now())
+  endedAt   DateTime?
+  cancelAt  DateTime?
+
+  metadata Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  commissions  CommissionEvent[]
+  entitlements Entitlement[]
+
+  @@index([userId])
+  @@index([referringResellerId])
+  @@index([status])
+  @@index([productId])
+}
+
+model Entitlement {
+  id String @id @default(cuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Feature key, e.g. "chatbot-premium", "voice-agent". Strings are easier
+  // to evolve than enums when product/tools change frequently.
+  key String
+
+  // Most recent purchase that re-granted this entitlement. Null if granted
+  // by an admin override (free tier / comp / etc.).
+  grantedByPurchaseId String?
+  grantedBy           Purchase? @relation(fields: [grantedByPurchaseId], references: [id], onDelete: SetNull)
+
+  grantedAt DateTime  @default(now())
+  // null = lifetime (single-purchase products). For subs we set this to
+  // the next billing-period end and refresh on each invoice.paid webhook.
+  expiresAt DateTime?
+  // Soft-delete on cancel/refund. Re-grant rather than create new row.
+  revokedAt DateTime?
+
+  // One row per (user, key). On overlapping grants from multiple products,
+  // we keep this row and just point grantedByPurchaseId at the strongest.
+  @@unique([userId, key])
+  @@index([key])
+  @@index([expiresAt])
+}
+
+model CommissionEvent {
+  id String @id @default(cuid())
+
+  resellerId String
+  reseller   User   @relation("ResellerCommissions", fields: [resellerId], references: [id])
+
+  purchaseId String
+  purchase   Purchase @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+
+  // "initial_purchase" | "renewal" | "upgrade" | "clawback"
+  type String
+
+  // Amount the rate was applied against (gross transaction in cents).
+  baseAmountCents Int
+  // Rate at time of event in basis points (snapshotted from Product so a
+  // future product-rate change doesn't retroactively adjust history).
+  commissionBps Int
+  // Signed; negative for clawback. Always derivable from base * bps but
+  // stored explicitly for fast aggregation queries.
+  amountCents Int
+  currency    String @default("usd")
+
+  // "pending" — within the clawback window (default 30 days)
+  // "payable" — clawback window passed, ready to pay
+  // "paid"    — Stripe Connect Transfer executed
+  // "clawed_back" — refund landed before payable; this event nullifies an earlier one
+  // "voided"  — admin manually nullified (chargeback, fraud)
+  status     String
+  payableAt  DateTime?
+  paidAt     DateTime?
+  stripeTransferId String?
+
+  notes String? @db.Text
+
+  createdAt DateTime @default(now())
+
+  @@index([resellerId, status])
+  @@index([status, payableAt])
+  @@index([purchaseId])
 }

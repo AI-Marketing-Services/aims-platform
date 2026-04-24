@@ -8,6 +8,7 @@ import { logApiCost, estimateAnthropicCost } from "@/lib/ai"
 import { PORTAL_CHAT_SYSTEM_PROMPT } from "@/lib/ai/portal-chat-prompt"
 import { searchKnowledge } from "@/lib/knowledge"
 import { upsertChatSession } from "@/lib/db/chat-sessions"
+import { hasEntitlement, ENTITLEMENT_KEYS } from "@/lib/entitlements"
 import { logger } from "@/lib/logger"
 
 export const maxDuration = 30
@@ -105,11 +106,23 @@ Use the member's name naturally. Do not share or reference any other member's da
     logger.error("Failed to fetch portal chat member context:", err)
   }
 
+  // Premium-tier members get Sonnet for sharper answers; default tier
+  // gets Haiku (cheap + fast, still good enough for community-facing
+  // questions backed by the knowledge base).
+  const dbUserForGate = await db.user.findUnique({
+    where: { clerkId: userId },
+    select: { id: true },
+  })
+  const isPremium = dbUserForGate
+    ? await hasEntitlement(dbUserForGate.id, ENTITLEMENT_KEYS.CHATBOT_PREMIUM)
+    : false
+  const modelId = isPremium ? "claude-sonnet-4-6" : "claude-haiku-4-5-20251001"
+
   const result = streamText({
-    model: anthropic("claude-haiku-4-5-20251001"),
+    model: anthropic(modelId),
     system: PORTAL_CHAT_SYSTEM_PROMPT + clientContext,
     messages,
-    maxOutputTokens: 512,
+    maxOutputTokens: isPremium ? 1024 : 512,
     tools: {
       create_ticket: tool({
         description: "Create a support ticket for issues the AI cannot resolve. Always use this instead of asking the member to visit a URL when they need human help.",
@@ -174,18 +187,17 @@ Use the member's name naturally. Do not share or reference any other member's da
       }),
     },
     onFinish: async ({ usage }) => {
-      const model = "claude-haiku-4-5-20251001"
       const inputTokens = usage?.inputTokens ?? 0
       const outputTokens = usage?.outputTokens ?? 0
       await logApiCost({
         provider: "anthropic",
-        model,
+        model: modelId,
         endpoint: "portal-chat",
         tokens: inputTokens + outputTokens,
-        cost: estimateAnthropicCost(model, inputTokens, outputTokens),
+        cost: estimateAnthropicCost(modelId, inputTokens, outputTokens),
         serviceArm: "portal-support",
         clientId: userId,
-        metadata: { inputTokens, outputTokens },
+        metadata: { inputTokens, outputTokens, tier: isPremium ? "premium" : "default" },
       })
     },
   })

@@ -31,6 +31,7 @@ import {
   Eye,
   Globe2,
   BookOpenText,
+  Package,
 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
@@ -139,6 +140,12 @@ const ADMIN_NAV = [
       { label: "Lead Magnets", href: "/admin/ideas", icon: Lightbulb },
       { label: "Whitelabel Sites", href: "/admin/whitelabel", icon: Globe2 },
       { label: "Knowledge Base", href: "/admin/knowledge", icon: BookOpenText },
+    ],
+  },
+  {
+    section: "Commerce",
+    items: [
+      { label: "Products & Tiers", href: "/admin/products", icon: Package },
     ],
   },
 ] as const
