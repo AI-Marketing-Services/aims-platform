@@ -1,6 +1,49 @@
 import { clerkClient, clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 
+// ---------------------------------------------------------------------------
+// Hostname-based tenant routing
+// ---------------------------------------------------------------------------
+
+// Platform hosts that serve the main AOC app (never rewrite these)
+const PLATFORM_HOSTS = new Set([
+  'aioperatorcollective.com',
+  'www.aioperatorcollective.com',
+  'localhost',
+  'localhost:3000',
+])
+// Also allow vercel preview deployments: *.vercel.app
+const isPlatformHost = (host: string) =>
+  PLATFORM_HOSTS.has(host) || host.endsWith('.vercel.app')
+
+const RESERVED_SUBDOMAINS = new Set([
+  'www', 'app', 'api', 'admin', 'auth', 'mail', 'docs', 'blog', 'help', 'status',
+  'portal', 'reseller', 'intern', 'cdn', 'static',
+])
+
+const BASE_HOST = 'aioperatorcollective.com' // subdomain base
+
+function getTenantRouting(
+  hostname: string
+): { type: 'platform' } | { type: 'subdomain'; slug: string } | { type: 'custom'; hostname: string } {
+  // Strip port for localhost dev
+  const cleanHost = hostname.split(':')[0]
+
+  if (isPlatformHost(hostname) || isPlatformHost(cleanHost)) return { type: 'platform' }
+
+  // Subdomain of BASE_HOST? e.g. acme.aioperatorcollective.com
+  if (cleanHost.endsWith(`.${BASE_HOST}`)) {
+    const slug = cleanHost.slice(0, -(BASE_HOST.length + 1))
+    if (RESERVED_SUBDOMAINS.has(slug)) return { type: 'platform' }
+    // reject deeper subdomains (foo.bar.aioperatorcollective.com) — platform only
+    if (slug.includes('.')) return { type: 'platform' }
+    return { type: 'subdomain', slug }
+  }
+
+  // Foreign hostname → custom domain
+  return { type: 'custom', hostname: cleanHost }
+}
+
 const isPublicRoute = createRouteMatcher([
   "/",
   "/marketplace(.*)",
@@ -135,6 +178,29 @@ export default clerkMiddleware(async (auth, req) => {
     url.port = ""
     return NextResponse.redirect(url, 308)
   }
+
+  // Hostname-based tenant routing — runs BEFORE Clerk auth so whitelabel
+  // sites are publicly accessible even for unauthenticated visitors.
+  // API routes always stay on the platform (resellers' sites call our APIs).
+  const routing = getTenantRouting(forwardedHost ?? '')
+
+  if (routing.type === 'subdomain') {
+    if (!req.nextUrl.pathname.startsWith('/api/')) {
+      const url = req.nextUrl.clone()
+      url.pathname = `/sites/${routing.slug}${req.nextUrl.pathname}`
+      return NextResponse.rewrite(url)
+    }
+  }
+
+  if (routing.type === 'custom') {
+    if (!req.nextUrl.pathname.startsWith('/api/')) {
+      const url = req.nextUrl.clone()
+      url.pathname = `/sites/domain/${routing.hostname}${req.nextUrl.pathname}`
+      return NextResponse.rewrite(url)
+    }
+  }
+
+  // type === 'platform' → continue to existing logic
 
   // Under lockdown, /sign-up is closed — bounce to /sign-in.
   // Public pages stay open so the marketing site + lead-magnet tools
