@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
-import { Users, DollarSign, TrendingUp, Gift } from "lucide-react"
+import { Users, DollarSign, TrendingUp, Gift, Globe2, ExternalLink } from "lucide-react"
 import Link from "next/link"
 import { getDubClient } from "@/lib/dub"
 
@@ -11,12 +11,45 @@ export default async function ResellerDashboardPage() {
   const { userId } = await auth()
   if (!userId) redirect("/sign-in")
 
-  const dbUser = await db.user.findUnique({ where: { clerkId: userId } })
+  const dbUser = await db.user.findUnique({
+    where: { clerkId: userId },
+    include: { operatorSite: { select: { subdomain: true, isPublished: true, customDomain: true } } },
+  })
   if (!dbUser) redirect("/sign-in")
 
   const referral = await db.referral.findFirst({
     where: { referrerId: dbUser.id },
   })
+
+  // Whitelabel attribution — every Deal whose referringResellerId points
+  // to this user (cookie-attributed or form-attributed).
+  const attributedDeals = await db.deal.findMany({
+    where: { referringResellerId: dbUser.id },
+    orderBy: { createdAt: "desc" },
+    take: 10,
+    select: {
+      id: true,
+      contactName: true,
+      contactEmail: true,
+      company: true,
+      stage: true,
+      leadScoreTier: true,
+      value: true,
+      source: true,
+      createdAt: true,
+    },
+  })
+
+  const attributionStats = await db.deal.groupBy({
+    by: ["stage"],
+    where: { referringResellerId: dbUser.id },
+    _count: { _all: true },
+    _sum: { value: true },
+  })
+  const totalAttributed = attributionStats.reduce((s, g) => s + g._count._all, 0)
+  const attributedByStage = Object.fromEntries(attributionStats.map((g) => [g.stage, g._count._all]))
+  const wonCount =
+    (attributedByStage.MEMBER_JOINED ?? 0) + (attributedByStage.CONSULT_COMPLETED ?? 0)
 
   const conversionRate = referral && referral.clicks > 0
     ? Math.round((referral.conversions / referral.clicks) * 100)
@@ -113,6 +146,133 @@ export default async function ResellerDashboardPage() {
           <p className="text-xs text-muted-foreground mt-1">Contact your account manager to activate your partner account.</p>
         </div>
       )}
+
+      {/* Whitelabel attribution */}
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <Globe2 className="h-4 w-4 text-primary" />
+            <h2 className="text-base font-semibold text-foreground">Whitelabel Leads</h2>
+          </div>
+          {dbUser.operatorSite?.isPublished && (
+            <a
+              href={dbUser.operatorSite.customDomain
+                ? `https://${dbUser.operatorSite.customDomain}`
+                : `https://${dbUser.operatorSite.subdomain}.aioperatorcollective.com`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+            >
+              View my site <ExternalLink className="h-3 w-3" />
+            </a>
+          )}
+        </div>
+
+        {!dbUser.operatorSite && (
+          <div className="rounded-xl border border-border bg-card p-8 text-center">
+            <Globe2 className="h-8 w-8 text-muted-foreground mx-auto mb-3" />
+            <p className="text-sm font-medium text-foreground">No whitelabel site yet</p>
+            <p className="text-xs text-muted-foreground mt-1 mb-4">
+              Set up your branded tenant page to start capturing attributed leads.
+            </p>
+            <Link
+              href="/reseller/settings/domain"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors"
+            >
+              Configure site
+            </Link>
+          </div>
+        )}
+
+        {dbUser.operatorSite && dbUser.operatorSite.isPublished === false && (
+          <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-5">
+            <p className="text-sm font-semibold text-foreground">Your site is in draft</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Publish it from the Domain settings page to start capturing leads.
+            </p>
+            <Link
+              href="/reseller/settings/domain"
+              className="inline-block mt-3 px-3 py-1.5 bg-primary text-white text-xs font-medium rounded hover:bg-primary/90 transition-colors"
+            >
+              Go to Domain settings
+            </Link>
+          </div>
+        )}
+
+        {dbUser.operatorSite?.isPublished && (
+          <>
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 mb-4">
+              <StatBlock label="Total attributed" value={totalAttributed} />
+              <StatBlock label="Applications" value={attributedByStage.APPLICATION_SUBMITTED ?? 0} />
+              <StatBlock label="Consults booked" value={attributedByStage.CONSULT_BOOKED ?? 0} />
+              <StatBlock label="Closed won" value={wonCount} tone={wonCount > 0 ? "good" : "neutral"} />
+            </div>
+
+            {attributedDeals.length === 0 ? (
+              <div className="rounded-xl border border-border bg-card p-6 text-center">
+                <p className="text-sm text-muted-foreground">
+                  No attributed leads yet. Share your site — every visitor gets a 30-day attribution cookie.
+                </p>
+              </div>
+            ) : (
+              <div className="rounded-xl border border-border bg-card overflow-hidden">
+                <div className="px-5 py-3 border-b border-border bg-muted/20">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Recent Attributed Leads</p>
+                </div>
+                <table className="w-full text-sm">
+                  <thead className="text-left text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
+                    <tr>
+                      <th className="px-5 py-2">Contact</th>
+                      <th className="px-5 py-2">Source</th>
+                      <th className="px-5 py-2">Stage</th>
+                      <th className="px-5 py-2 text-right">When</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {attributedDeals.map((d) => (
+                      <tr key={d.id}>
+                        <td className="px-5 py-3">
+                          <div className="font-medium text-foreground">{d.contactName}</div>
+                          <div className="text-xs text-muted-foreground">
+                            {d.company ? `${d.company} · ` : ""}{d.contactEmail}
+                          </div>
+                        </td>
+                        <td className="px-5 py-3 text-xs text-muted-foreground">{d.source ?? "—"}</td>
+                        <td className="px-5 py-3">
+                          <span className="inline-block px-2 py-0.5 rounded text-[10px] font-medium bg-muted text-foreground">
+                            {d.stage.replace(/_/g, " ")}
+                          </span>
+                        </td>
+                        <td className="px-5 py-3 text-right text-xs text-muted-foreground">
+                          {new Date(d.createdAt).toLocaleDateString()}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function StatBlock({
+  label,
+  value,
+  tone = "neutral",
+}: {
+  label: string
+  value: number
+  tone?: "good" | "neutral"
+}) {
+  const toneCls = tone === "good" ? "text-emerald-700" : "text-foreground"
+  return (
+    <div className="rounded-xl border border-border bg-card p-5">
+      <p className="text-xs text-muted-foreground">{label}</p>
+      <p className={`text-xl font-bold ${toneCls} font-mono mt-1`}>{value}</p>
     </div>
   )
 }
