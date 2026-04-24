@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from "next/server"
-import { requireAdmin } from "@/lib/auth"
+import { requireAdmin, VIEW_AS_COOKIE } from "@/lib/auth"
 
 const VALID_ROLES = ["CLIENT", "RESELLER", "INTERN"] as const
 type ViewAsRole = (typeof VALID_ROLES)[number]
 
-export const COOKIE_NAME = "__aims_view_as"
+// Re-exported so older imports keep working during the rollout. The
+// canonical constant lives in @/lib/auth as VIEW_AS_COOKIE.
+export const COOKIE_NAME = VIEW_AS_COOKIE
 
 export async function POST(req: NextRequest) {
   const adminId = await requireAdmin()
@@ -18,7 +20,7 @@ export async function POST(req: NextRequest) {
   }
 
   const res = NextResponse.json({ ok: true })
-  res.cookies.set(COOKIE_NAME, role, {
+  res.cookies.set(VIEW_AS_COOKIE, role, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
@@ -33,6 +35,6 @@ export async function DELETE() {
   if (!adminId) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
 
   const res = NextResponse.json({ ok: true })
-  res.cookies.delete(COOKIE_NAME)
+  res.cookies.delete(VIEW_AS_COOKIE)
   return res
 }

@@ -1,11 +1,10 @@
 import type { Metadata } from "next"
-import { auth, clerkClient } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
-import { db } from "@/lib/db"
 import { AdminSidebar } from "@/components/admin/AdminSidebar"
 import { MobileAdminNav } from "@/components/admin/MobileAdminNav"
 import { PageTransition } from "@/components/shared/PageTransition"
 import { KeyboardShortcuts } from "@/components/shared/KeyboardShortcuts"
+import { getEffectiveRole, dashboardForRole } from "@/lib/auth"
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
@@ -16,37 +15,15 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode
 }) {
-  const { userId, sessionClaims } = await auth()
-  if (!userId) redirect("/sign-in")
+  // Gate on the REAL role, not the effective role — an admin who has
+  // a preview cookie set should still be able to access /admin/* by
+  // typing the URL (equivalent to an "exit preview" action).
+  const effective = await getEffectiveRole()
+  if (!effective) redirect("/sign-in")
 
-  // Resolve role with a three-layer fallback so brand-new admins who
-  // just accepted an invite aren't bounced before their local DB record exists:
-  // 1. JWT session claim (populated if Clerk session template is configured)
-  // 2. Local DB User.role (populated after the Clerk webhook fires)
-  // 3. Clerk API publicMetadata (always authoritative, costs one extra round-trip)
-  const claimRole = (sessionClaims?.metadata as { role?: string })?.role
-  let role = claimRole
-
-  if (!role || !["ADMIN", "SUPER_ADMIN"].includes(role)) {
-    const user = await db.user.findUnique({
-      where: { clerkId: userId },
-      select: { role: true },
-    })
-    role = user?.role ?? undefined
-  }
-
-  if (!role || !["ADMIN", "SUPER_ADMIN"].includes(role)) {
-    try {
-      const clerk = await clerkClient()
-      const clerkUser = await clerk.users.getUser(userId)
-      role = (clerkUser.publicMetadata as { role?: string })?.role ?? undefined
-    } catch {
-      // Clerk API unavailable — fall through to redirect below
-    }
-  }
-
-  if (!role || !["ADMIN", "SUPER_ADMIN"].includes(role)) {
-    redirect("/portal/dashboard")
+  const isAdminish = effective.realRole === "ADMIN" || effective.realRole === "SUPER_ADMIN"
+  if (!isAdminish) {
+    redirect(dashboardForRole(effective.realRole))
   }
 
   return (

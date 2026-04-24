@@ -154,7 +154,11 @@ function ViewAsToggle({ collapsed }: { collapsed: boolean }) {
         body: JSON.stringify({ role }),
       })
       if (res.ok) {
-        router.push("/portal/dashboard")
+        const destination =
+          role === "RESELLER" ? "/reseller/dashboard" :
+          role === "INTERN" ? "/intern/dashboard" :
+          "/portal/dashboard"
+        router.push(destination)
         router.refresh()
       }
     } finally {

@@ -1,6 +1,4 @@
 import type { Metadata } from "next"
-import { auth, currentUser } from "@clerk/nextjs/server"
-import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
@@ -13,7 +11,7 @@ import { ReferralClaimHandler } from "@/components/portal/ReferralClaimHandler"
 import { PageTransition } from "@/components/shared/PageTransition"
 import { AdminPreviewBanner } from "@/components/shared/AdminPreviewBanner"
 import { db } from "@/lib/db"
-import { COOKIE_NAME } from "@/app/api/admin/view-as/route"
+import { getEffectiveRole, dashboardForRole } from "@/lib/auth"
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
@@ -24,16 +22,21 @@ export default async function PortalLayout({
 }: {
   children: React.ReactNode
 }) {
-  const { userId } = await auth()
-  if (!userId) redirect("/sign-in")
+  const effective = await getEffectiveRole()
+  if (!effective) redirect("/sign-in")
 
-  const clerkUser = await currentUser()
-  const userEmail = clerkUser?.emailAddresses?.[0]?.emailAddress ?? ""
-  const isAdminEmail = userEmail === "adamwolfe100@gmail.com"
+  // An admin who hasn't activated preview mode shouldn't get silently
+  // dropped into the client portal — bounce to their own dashboard.
+  const { userId, realRole, effectiveRole, isPreviewing } = effective
+  const isAdminish = realRole === "ADMIN" || realRole === "SUPER_ADMIN"
+  if (isAdminish && !isPreviewing) {
+    redirect("/admin/dashboard")
+  }
 
-  const cookieStore = await cookies()
-  const viewAs = cookieStore.get(COOKIE_NAME)?.value ?? null
-  const isAdminPreview = isAdminEmail && viewAs !== null
+  // Clients (the normal case) + admins previewing-as-client both land here.
+  if (effectiveRole !== "CLIENT") {
+    redirect(dashboardForRole(effectiveRole))
+  }
 
   // Single DB query for sidebar data + chat widget context
   const dbUser = await db.user.findUnique({
@@ -82,10 +85,10 @@ export default async function PortalLayout({
           onboardingCompletedCount={onboardingProgress?.completedCount ?? 0}
           onboardingPercent={onboardingProgress?.percent ?? 0}
           onboardingCompletedAt={onboardingProgress?.onboardingCompletedAt?.toISOString() ?? null}
-          isAdminEmail={isAdminEmail && !isAdminPreview}
+          isAdminEmail={isAdminish && !isPreviewing}
         />
         <main id="main-content" className="flex-1 overflow-y-auto custom-scrollbar">
-          {isAdminPreview && viewAs && <AdminPreviewBanner viewingAs={viewAs} />}
+          {isPreviewing && <AdminPreviewBanner viewingAs={effectiveRole} />}
           <PageTransition>
             <div className="p-4 pb-20 lg:p-6 lg:pb-8 xl:p-8">{children}</div>
           </PageTransition>
@@ -93,7 +96,7 @@ export default async function PortalLayout({
       </div>
 
       {/* Mobile bottom nav */}
-      <MobilePortalNav hasUnread={unreadCount > 0} isAdminEmail={isAdminEmail && !isAdminPreview} />
+      <MobilePortalNav hasUnread={unreadCount > 0} isAdminEmail={isAdminish && !isPreviewing} />
 
       <PortalChatWidget firstName={firstName} serviceCount={serviceCount} />
       <ReferralClaimHandler />

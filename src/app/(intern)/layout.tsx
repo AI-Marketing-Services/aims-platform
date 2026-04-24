@@ -1,5 +1,4 @@
 import type { Metadata } from "next"
-import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
@@ -12,6 +11,8 @@ import {
   Briefcase,
 } from "lucide-react"
 import { PageTransition } from "@/components/shared/PageTransition"
+import { AdminPreviewBanner } from "@/components/shared/AdminPreviewBanner"
+import { getEffectiveRole, dashboardForRole } from "@/lib/auth"
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
@@ -30,8 +31,17 @@ export default async function InternLayout({
 }: {
   children: React.ReactNode
 }) {
-  const { userId } = await auth()
-  if (!userId) redirect("/sign-in")
+  const effective = await getEffectiveRole()
+  if (!effective) redirect("/sign-in")
+
+  const { realRole, effectiveRole, isPreviewing } = effective
+  const isAdminish = realRole === "ADMIN" || realRole === "SUPER_ADMIN"
+  if (isAdminish && !isPreviewing) {
+    redirect("/admin/dashboard")
+  }
+  if (effectiveRole !== "INTERN") {
+    redirect(dashboardForRole(effectiveRole))
+  }
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -69,6 +79,7 @@ export default async function InternLayout({
           </div>
         </aside>
         <main id="main-content" className="flex-1 overflow-y-auto custom-scrollbar">
+          {isPreviewing && <AdminPreviewBanner viewingAs={effectiveRole} />}
           <PageTransition>
             <div className="p-4 pb-20 lg:p-6 lg:pb-8 xl:p-8">{children}</div>
           </PageTransition>
