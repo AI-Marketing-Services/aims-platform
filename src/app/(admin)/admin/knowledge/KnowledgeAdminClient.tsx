@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { RefreshCw, ExternalLink, CheckCircle2, AlertCircle, Clock } from "lucide-react"
@@ -177,19 +178,25 @@ export function KnowledgeAdminClient({ stats, runs, entries, canRun }: Props) {
               {entries.map((e) => (
                 <tr key={e.id}>
                   <td className="px-4 py-3">
-                    {e.url ? (
-                      <a
-                        href={e.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-primary hover:underline inline-flex items-center gap-1"
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <Link
+                        href={`/admin/knowledge/${e.id}`}
+                        className="text-primary hover:underline font-medium"
                       >
                         {e.title}
-                        <ExternalLink className="h-3 w-3" />
-                      </a>
-                    ) : (
-                      <span>{e.title}</span>
-                    )}
+                      </Link>
+                      {e.url && (
+                        <a
+                          href={e.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          title="Open in Mighty"
+                          className="text-muted-foreground hover:text-primary"
+                        >
+                          <ExternalLink className="h-3 w-3" />
+                        </a>
+                      )}
+                    </div>
                   </td>
                   <td className="px-4 py-3 font-mono text-[11px] text-muted-foreground">{e.source}</td>
                   <td className="px-4 py-3 text-muted-foreground">{e.spaceName ?? "—"}</td>

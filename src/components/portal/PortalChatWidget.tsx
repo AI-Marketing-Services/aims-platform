@@ -8,6 +8,46 @@ import Link from "next/link"
 import Image from "next/image"
 import { getMessageText } from "@/lib/utils"
 
+/**
+ * Minimal markdown-link renderer: turns `[text](url)` into a real <a>,
+ * leaves everything else as-is. The chatbot's escalation prompt uses
+ * this for ticket links like `[#ABC123](/portal/support)`.
+ *
+ * Security: only allows same-origin relative paths or https: URLs.
+ * Everything else renders as plaintext (so a malicious LLM reply
+ * can't inject javascript: or data: URIs).
+ */
+function renderWithLinks(text: string): React.ReactNode[] {
+  const nodes: React.ReactNode[] = []
+  const re = /\[([^\]]+)\]\(([^)]+)\)/g
+  let last = 0
+  let match: RegExpExecArray | null
+  let key = 0
+  while ((match = re.exec(text))) {
+    if (match.index > last) nodes.push(text.slice(last, match.index))
+    const [, label, url] = match
+    const safe = url.startsWith("/") || url.startsWith("https://")
+    if (safe) {
+      nodes.push(
+        <Link
+          key={`lnk-${key++}`}
+          href={url}
+          className="underline font-medium text-primary hover:opacity-80"
+          target={url.startsWith("http") ? "_blank" : undefined}
+          rel={url.startsWith("http") ? "noopener noreferrer" : undefined}
+        >
+          {label}
+        </Link>,
+      )
+    } else {
+      nodes.push(match[0])
+    }
+    last = re.lastIndex
+  }
+  if (last < text.length) nodes.push(text.slice(last))
+  return nodes
+}
+
 // Services/Marketplace intentionally omitted — those surfaces aren't open
 // to collective members yet. Keep the widget pointed at the things that
 // actually work for the current audience: the onboarding checklist, the
@@ -162,7 +202,7 @@ export function PortalChatWidget({ firstName = "there", serviceCount = 0 }: Port
                         : "bg-card border border-border text-foreground rounded-bl-sm"
                     }`}
                   >
-                    {text}
+                    {m.role === "assistant" ? renderWithLinks(text) : text}
                   </div>
                 </div>
               )

@@ -121,20 +121,30 @@ Use the member's name naturally. Do not share or reference any other member's da
         execute: async (input) => {
           try {
             const user = await db.user.findUnique({ where: { clerkId: userId } })
-            if (user) {
-              await db.supportTicket.create({
-                data: {
-                  userId: user.id,
-                  subject: input.subject,
-                  message: input.message,
-                  priority: input.priority,
-                },
-              })
+            if (!user) {
+              return { success: false, message: "Ticket creation failed — please try /portal/support directly." }
             }
-            return { success: true, message: "Support ticket created. Our team will follow up within 24 hours." }
+            const ticket = await db.supportTicket.create({
+              data: {
+                userId: user.id,
+                subject: input.subject,
+                message: input.message,
+                priority: input.priority,
+              },
+              select: { id: true },
+            })
+            // Ticket ids are cuids — show the last 6 chars so it's
+            // human-friendly and still unique enough to reference.
+            const shortId = ticket.id.slice(-6).toUpperCase()
+            return {
+              success: true,
+              ticketId: ticket.id,
+              shortId,
+              message: `Support ticket opened: [#${shortId}](/portal/support). Our team will follow up within 24 hours.`,
+            }
           } catch (err) {
             logger.error("Portal chat create_ticket tool failed:", err)
-            return { success: false, message: "Ticket creation failed. Please try /portal/support directly." }
+            return { success: false, message: "Ticket creation failed — please try /portal/support directly." }
           }
         },
       }),
