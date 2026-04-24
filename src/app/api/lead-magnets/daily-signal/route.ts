@@ -5,6 +5,7 @@ import { formRatelimit, getIp } from "@/lib/ratelimit"
 import { createLeadMagnetSubmission } from "@/lib/db/queries"
 import { createCloseLead } from "@/lib/close"
 import { notifyNewLead } from "@/lib/notifications"
+import { getValidatedAttributionResellerId } from "@/lib/tenant/attribution"
 import { logger } from "@/lib/logger"
 import { runDigestForSubscriber } from "@/lib/signal/digest"
 
@@ -86,14 +87,17 @@ export async function POST(req: Request) {
     const tier = "warm" as const
     const reason = `Daily Signal subscribed with ${topics.length} topic${topics.length === 1 ? "" : "s"} — content-stage lead, strong AI interest signal`
 
+    const referringResellerId = await getValidatedAttributionResellerId(db)
+
     const deal = await db.deal
       .create({
         data: {
           contactName: name?.trim() || normalizedEmail.split("@")[0],
           contactEmail: normalizedEmail,
+          referringResellerId,
           source: "daily-signal",
-          sourceDetail: `Score: ${leadScore}/100 (${tier}). ${reason}`,
-          channelTag: utmSource ?? "organic",
+          sourceDetail: `Score: ${leadScore}/100 (${tier}). ${reason}${referringResellerId ? " [attributed via cookie]" : ""}`,
+          channelTag: referringResellerId ? "reseller" : (utmSource ?? "organic"),
           utmSource,
           utmMedium,
           utmCampaign,

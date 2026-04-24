@@ -5,6 +5,7 @@ import { formRatelimit, getIp } from "@/lib/ratelimit"
 import { logger } from "@/lib/logger"
 import { notify, notifyHotLead } from "@/lib/notifications"
 import { createCloseLead } from "@/lib/close"
+import { getValidatedAttributionResellerId } from "@/lib/tenant/attribution"
 // No drip is queued at apply-submit time — the post-booking drip fires
 // from the Calendly webhook instead, once the applicant has booked.
 import { QUESTIONS, calculateScore, getCalendarUrl } from "@/lib/collective-application"
@@ -194,15 +195,22 @@ export async function POST(req: Request) {
         deal = null
       }
     } else {
+      // Attribution cookie: was this applicant driven here by a reseller's
+      // whitelabel page? Only credit on FIRST deal creation, never on
+      // existing-deal update (that path keeps whatever attribution already
+      // exists — a first-touch wins rule).
+      const referringResellerId = await getValidatedAttributionResellerId(db)
+
       deal = await db.deal
         .create({
           data: {
             contactName: name,
             contactEmail: email,
             phone,
+            referringResellerId,
             source: "ai-operator-collective-application",
-            sourceDetail: `Collective application. Score: ${normalizedScore}. Tier: ${tier}. Country: ${country}.`,
-            channelTag: utmSource ?? source ?? "organic",
+            sourceDetail: `Collective application. Score: ${normalizedScore}. Tier: ${tier}. Country: ${country}.${referringResellerId ? " [attributed via cookie]" : ""}`,
+            channelTag: referringResellerId ? "reseller" : (utmSource ?? source ?? "organic"),
             utmSource,
             utmMedium,
             utmCampaign,

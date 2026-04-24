@@ -4,6 +4,7 @@ import { db } from "@/lib/db"
 import { formRatelimit, getIp } from "@/lib/ratelimit"
 import { notifyNewLead } from "@/lib/notifications"
 import { createCloseLead } from "@/lib/close"
+import { getValidatedAttributionResellerId } from "@/lib/tenant/attribution"
 import { logger } from "@/lib/logger"
 
 const schema = z.object({
@@ -54,7 +55,8 @@ export async function POST(req: Request) {
   const input = parsed.data
 
   // Validate the reseller claim. Requires: user exists, role is reseller-ish,
-  // owns a published OperatorSite. Anything else → untagged lead.
+  // owns a published OperatorSite. Anything else → fall back to the
+  // attribution cookie; if that's also bad, fall back to untagged.
   let validReferringResellerId: string | null = null
   try {
     const reseller = await db.user.findUnique({
@@ -73,9 +75,13 @@ export async function POST(req: Request) {
       validReferringResellerId = reseller.id
     }
   } catch (err) {
-    logger.error("Reseller validation failed; continuing as untagged lead", err, {
+    logger.error("Reseller validation failed; continuing with cookie fallback", err, {
       endpoint: "POST /api/tenant/lead",
     })
+  }
+
+  if (!validReferringResellerId) {
+    validReferringResellerId = await getValidatedAttributionResellerId(db)
   }
 
   const company = input.company || undefined

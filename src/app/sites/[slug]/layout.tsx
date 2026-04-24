@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Script from 'next/script'
 import { requireTenantBySubdomain } from '@/lib/tenant/resolve-tenant'
 import { TenantThemeProvider } from '@/components/providers/tenant-theme-provider'
+import { setAttributionCookie } from '@/lib/tenant/attribution'
 
 type Props = {
   children: React.ReactNode
@@ -28,6 +29,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function SlugSiteLayout({ children, params }: Props) {
   const { slug } = await params
   const tenant = await requireTenantBySubdomain(slug)
+
+  // First-touch attribution: drop a 30-day cookie tying this visitor
+  // to the reseller whose site they landed on. Lead-capture endpoints
+  // across the platform check this cookie as a fallback when a body
+  // doesn't already carry a resellerId.
+  await setAttributionCookie(tenant.reseller.id)
 
   return (
     <TenantThemeProvider tenant={tenant}>

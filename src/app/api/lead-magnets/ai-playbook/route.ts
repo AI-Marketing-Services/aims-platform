@@ -5,9 +5,10 @@ import { sendAIPlaybookEmail } from "@/lib/email/ai-playbook"
 import { createLeadMagnetSubmission } from "@/lib/db/queries"
 import { formRatelimit, getIp } from "@/lib/ratelimit"
 import { db } from "@/lib/db"
-import { notifyNewLead, notify } from "@/lib/notifications"
+import { notifyNewLead } from "@/lib/notifications"
 import { createCloseLead } from "@/lib/close"
 import { queueEmailSequence } from "@/lib/email/queue"
+import { getValidatedAttributionResellerId } from "@/lib/tenant/attribution"
 import { logger } from "@/lib/logger"
 
 const submitSchema = z.object({
@@ -64,6 +65,10 @@ export async function POST(req: Request) {
     const priority = "MEDIUM" as const
     const reason = "AI Operating System Playbook downloaded - content-stage lead, strong AI interest signal"
 
+    // Check attribution cookie — if this visitor arrived via a reseller's
+    // whitelabel page within the last 30 days, credit them for the lead.
+    const referringResellerId = await getValidatedAttributionResellerId(db)
+
     // Create deal
     const deal = await db.deal.create({
       data: {
@@ -71,9 +76,10 @@ export async function POST(req: Request) {
         contactEmail: email,
         company,
         phone,
+        referringResellerId,
         source: "ai-playbook",
-        sourceDetail: `Score: ${leadScore}/100 (${tier}). ${reason}`,
-        channelTag: utmSource ?? "organic",
+        sourceDetail: `Score: ${leadScore}/100 (${tier}). ${reason}${referringResellerId ? " [attributed via cookie]" : ""}`,
+        channelTag: referringResellerId ? "reseller" : (utmSource ?? "organic"),
         utmSource,
         utmMedium,
         utmCampaign,

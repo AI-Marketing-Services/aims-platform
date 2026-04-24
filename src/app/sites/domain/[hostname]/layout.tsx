@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Script from 'next/script'
 import { requireTenantByCustomDomain } from '@/lib/tenant/resolve-tenant'
 import { TenantThemeProvider } from '@/components/providers/tenant-theme-provider'
+import { setAttributionCookie } from '@/lib/tenant/attribution'
 
 type Props = {
   children: React.ReactNode
@@ -28,6 +29,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function DomainSiteLayout({ children, params }: Props) {
   const { hostname } = await params
   const tenant = await requireTenantByCustomDomain(hostname)
+
+  // Drop first-touch attribution cookie. On custom domains this cookie
+  // only travels with further pageviews on the same domain — cross-domain
+  // attribution back to the platform is handled at form-submit time by
+  // the tenant CTA form passing resellerId directly.
+  await setAttributionCookie(tenant.reseller.id)
 
   return (
     <TenantThemeProvider tenant={tenant}>

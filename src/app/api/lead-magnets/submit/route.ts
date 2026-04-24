@@ -7,6 +7,7 @@ import { queueEmailSequence } from "@/lib/email/queue"
 import { sendQuizResultsEmail, sendCalculatorResultsEmail, sendAuditResultsEmail, sendCreditScoreEmail, sendOpsAuditEmail, sendW2PlaybookEmail, sendBusinessAIAuditEmail } from "@/lib/email/lead-magnet-results"
 import { db } from "@/lib/db"
 import { notifyNewLead, notify } from "@/lib/notifications"
+import { getValidatedAttributionResellerId } from "@/lib/tenant/attribution"
 import { createCloseLead } from "@/lib/close"
 import { logger } from "@/lib/logger"
 
@@ -120,6 +121,9 @@ export async function POST(req: Request) {
     // Score the lead
     const { score, tier, priority, reason } = scoreToTier(parsed.data.score, parsed.data.type)
 
+    // Attribution fallback: was this visitor driven here by a reseller?
+    const referringResellerId = await getValidatedAttributionResellerId(db)
+
     // Auto-create Deal with scoring
     const deal = await db.deal.create({
       data: {
@@ -127,9 +131,10 @@ export async function POST(req: Request) {
         contactEmail: parsed.data.email,
         company: parsed.data.company,
         phone: parsed.data.phone,
+        referringResellerId,
         source: typeSlug,
-        sourceDetail: `Score: ${score}/100 (${tier}). ${reason}`,
-        channelTag: parsed.data.utmSource ?? "organic",
+        sourceDetail: `Score: ${score}/100 (${tier}). ${reason}${referringResellerId ? " [attributed via cookie]" : ""}`,
+        channelTag: referringResellerId ? "reseller" : (parsed.data.utmSource ?? "organic"),
         utmSource: parsed.data.utmSource,
         utmMedium: parsed.data.utmMedium,
         utmCampaign: parsed.data.utmCampaign,
