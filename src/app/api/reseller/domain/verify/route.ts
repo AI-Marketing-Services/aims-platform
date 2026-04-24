@@ -8,6 +8,7 @@ import {
   VercelDomainsNotConfiguredError,
   type VerificationRecord,
 } from "@/lib/vercel-domains"
+import { invalidateTenantCache } from "@/lib/tenant/resolve-tenant"
 
 type DnsRecordShape = {
   type: "A" | "CNAME" | "TXT"
@@ -46,10 +47,17 @@ export async function POST() {
 
     const result = await verifyDomain(site.customDomain)
 
-    if (result.verified) {
+    if (result.verified && !site.customDomainVerified) {
+      // First-time verification — flip the gate and bust cache so the
+      // custom-domain URL starts serving the tenant page immediately
+      // instead of after the 60s revalidate window.
       await db.operatorSite.update({
         where: { userId: dbUser.id },
         data: { customDomainVerified: true },
+      })
+      invalidateTenantCache({
+        subdomains: [site.subdomain],
+        customDomains: [site.customDomain],
       })
     }
 

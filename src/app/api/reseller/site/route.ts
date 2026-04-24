@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server"
 import { z } from "zod"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
+import { invalidateTenantCache } from "@/lib/tenant/resolve-tenant"
 
 const RESERVED_SUBDOMAINS = new Set([
   "www", "app", "api", "admin", "auth", "mail", "docs", "blog", "help",
@@ -64,6 +65,12 @@ export async function PATCH(req: Request) {
         where: { userId: dbUser.id },
         data: { ...data },
       })
+      // Bust cache for BOTH the old and new subdomain in case it was renamed,
+      // and the custom domain if one is attached.
+      invalidateTenantCache({
+        subdomains: [existing.subdomain, site.subdomain],
+        customDomains: [existing.customDomain, site.customDomain],
+      })
     } else {
       if (!data.subdomain) {
         return NextResponse.json(
@@ -80,6 +87,7 @@ export async function PATCH(req: Request) {
           ...(data.seoDescription !== undefined && { seoDescription: data.seoDescription }),
         },
       })
+      invalidateTenantCache({ subdomains: [site.subdomain] })
     }
 
     return NextResponse.json({ ok: true, site })

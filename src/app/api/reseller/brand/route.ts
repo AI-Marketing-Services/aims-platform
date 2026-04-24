@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server"
 import { z } from "zod"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
+import { invalidateTenantCache } from "@/lib/tenant/resolve-tenant"
 
 const patchSchema = z.object({
   businessName: z.string().max(200).optional(),
@@ -49,7 +50,10 @@ export async function PATCH(req: Request) {
   const data = parsed.data
 
   try {
-    const dbUser = await db.user.findUnique({ where: { clerkId } })
+    const dbUser = await db.user.findUnique({
+      where: { clerkId },
+      include: { operatorSite: { select: { subdomain: true, customDomain: true } } },
+    })
     if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 })
 
     const profile = await db.memberProfile.upsert({
@@ -57,6 +61,13 @@ export async function PATCH(req: Request) {
       create: { userId: dbUser.id, ...data },
       update: { ...data },
     })
+
+    if (dbUser.operatorSite) {
+      invalidateTenantCache({
+        subdomains: [dbUser.operatorSite.subdomain],
+        customDomains: [dbUser.operatorSite.customDomain],
+      })
+    }
 
     return NextResponse.json({ ok: true, profile })
   } catch (err) {

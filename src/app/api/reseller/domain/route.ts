@@ -11,6 +11,7 @@ import {
   VercelDomainsNotConfiguredError,
   type VerificationRecord,
 } from "@/lib/vercel-domains"
+import { invalidateTenantCache } from "@/lib/tenant/resolve-tenant"
 import { Prisma } from "@prisma/client"
 
 // ---------------------------------------------------------------------------
@@ -116,6 +117,11 @@ export async function POST(req: Request) {
           vercelDomainData,
         },
       })
+      // Bust the old domain tag (if different) and the new one, plus subdomain.
+      invalidateTenantCache({
+        subdomains: [existing.subdomain],
+        customDomains: [existing.customDomain, domain],
+      })
     } else {
       // Need a unique subdomain — use userId prefix
       const fallbackSubdomain = `user-${dbUser.id.slice(-8)}`
@@ -127,6 +133,10 @@ export async function POST(req: Request) {
           customDomainVerified: result.verified,
           vercelDomainData,
         },
+      })
+      invalidateTenantCache({
+        subdomains: [fallbackSubdomain],
+        customDomains: [domain],
       })
     }
 
@@ -227,7 +237,8 @@ export async function DELETE() {
       return NextResponse.json({ error: "No custom domain configured" }, { status: 404 })
     }
 
-    await removeDomain(site.customDomain)
+    const removedDomain = site.customDomain
+    await removeDomain(removedDomain)
 
     await db.operatorSite.update({
       where: { userId: dbUser.id },
@@ -236,6 +247,11 @@ export async function DELETE() {
         customDomainVerified: false,
         vercelDomainData: Prisma.DbNull,
       },
+    })
+
+    invalidateTenantCache({
+      subdomains: [site.subdomain],
+      customDomains: [removedDomain],
     })
 
     return NextResponse.json({ ok: true })

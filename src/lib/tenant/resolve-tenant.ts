@@ -1,6 +1,6 @@
 import 'server-only'
 
-import { unstable_cache } from 'next/cache'
+import { unstable_cache, revalidateTag } from 'next/cache'
 import { db } from '@/lib/db'
 import type { TenantContext } from '@/components/providers/tenant-theme-provider'
 import { notFound } from 'next/navigation'
@@ -150,4 +150,23 @@ export async function requireTenantByCustomDomain(hostname: string): Promise<Ten
   const tenant = await resolveTenantByCustomDomain(hostname)
   if (!tenant) notFound()
   return tenant
+}
+
+/**
+ * Invalidate tenant cache entries after a write. Pass both the new values
+ * AND any old values the caller replaced — e.g. when a reseller renames
+ * their subdomain we need to bust both the old and new tag so neither
+ * serves stale data.
+ */
+export function invalidateTenantCache(params: {
+  subdomains?: (string | null | undefined)[]
+  customDomains?: (string | null | undefined)[]
+}): void {
+  const subs = (params.subdomains ?? []).filter((s): s is string => !!s)
+  const domains = (params.customDomains ?? []).filter((d): d is string => !!d)
+  // Next.js 16: revalidateTag takes a cache profile. { expire: 0 } forces
+  // immediate invalidation (equivalent to the legacy single-arg behavior).
+  const expireNow = { expire: 0 }
+  for (const s of subs) revalidateTag(`tenantSubdomain:${s}`, expireNow)
+  for (const d of domains) revalidateTag(`tenantDomain:${d}`, expireNow)
 }
