@@ -1,26 +1,25 @@
 "use client"
 
 import { useState, useRef, useEffect, useMemo } from "react"
-import { X, Send, Loader2, Layers, CreditCard, MessageSquarePlus, ShoppingBag, AlertCircle } from "lucide-react"
+import { X, Send, Loader2, Rocket, CreditCard, MessageSquarePlus, AlertCircle } from "lucide-react"
 import { useChat } from "@ai-sdk/react"
 import { TextStreamChatTransport, type UIMessage } from "ai"
 import Link from "next/link"
 import Image from "next/image"
 import { getMessageText } from "@/lib/utils"
 
+// Services/Marketplace intentionally omitted — those surfaces aren't open
+// to collective members yet. Keep the widget pointed at the things that
+// actually work for the current audience: the onboarding checklist, the
+// community (Getting Started), billing, and the human-escalation path.
 const QUICK_LINKS = [
-  { label: "My Services", href: "/portal/services", icon: Layers },
+  { label: "Getting Started", href: "/portal/onboard", icon: Rocket },
   { label: "Billing", href: "/portal/billing", icon: CreditCard },
   { label: "Submit Ticket", href: "/portal/support", icon: MessageSquarePlus },
-  { label: "Marketplace", href: "/portal/marketplace", icon: ShoppingBag },
 ]
 
-function buildWelcomeMessage(firstName: string, serviceCount: number): string {
-  if (serviceCount === 0) {
-    return `Hi ${firstName}! I can help you find the right AIMS service, answer pricing questions, or connect you with our team. What would you like to know?`
-  }
-  const s = serviceCount === 1 ? "" : "s"
-  return `Hi ${firstName}! You have ${serviceCount} active service${s}. Need help with your setup, billing, or anything else?`
+function buildWelcomeMessage(firstName: string): string {
+  return `Hi ${firstName}! I can help you find your way around the AI Operator Collective — the community, your onboarding checklist, billing, or escalating to a human. What would you like to know?`
 }
 
 interface PortalChatWidgetProps {
@@ -40,7 +39,10 @@ export function PortalChatWidget({ firstName = "there", serviceCount = 0 }: Port
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const sessionIdRef = useRef(generatePortalSessionId())
 
-  const welcomeText = buildWelcomeMessage(firstName, serviceCount)
+  // serviceCount used to vary the welcome line; now the audience isn't on
+  // services yet, so one unified welcome is fine. Param kept for API compat.
+  void serviceCount
+  const welcomeText = buildWelcomeMessage(firstName)
 
   const transport = useMemo(
     () =>
@@ -96,7 +98,7 @@ export function PortalChatWidget({ firstName = "there", serviceCount = 0 }: Port
                 <X className="h-3 w-3" />
               </button>
               <p className="text-sm text-foreground font-medium">Need help?</p>
-              <p className="text-xs text-muted-foreground mt-1">I can answer questions about your services, billing, or setup.</p>
+              <p className="text-xs text-muted-foreground mt-1">I can answer questions about getting started, the community, or your account.</p>
             </div>
           )}
           <button
@@ -117,7 +119,7 @@ export function PortalChatWidget({ firstName = "there", serviceCount = 0 }: Port
               <Image src="/logo.png" alt="" width={20} height={20} className="object-contain" />
               <div>
                 <p className="text-sm font-semibold text-foreground">Support</p>
-                <p className="text-[10px] text-muted-foreground">Ask about your services</p>
+                <p className="text-[10px] text-muted-foreground">Ask about the community</p>
               </div>
             </div>
             <button onClick={() => setOpen(false)} className="p-1 rounded hover:bg-white/5 transition-colors">
@@ -127,7 +129,7 @@ export function PortalChatWidget({ firstName = "there", serviceCount = 0 }: Port
 
           {/* Quick links */}
           {messages.length <= 1 && (
-            <div className="flex-shrink-0 grid grid-cols-4 gap-1.5 px-3 py-2.5 border-b border-border">
+            <div className="flex-shrink-0 grid grid-cols-3 gap-1.5 px-3 py-2.5 border-b border-border">
               {QUICK_LINKS.map((link) => (
                 <Link
                   key={link.label}
@@ -190,7 +192,7 @@ export function PortalChatWidget({ firstName = "there", serviceCount = 0 }: Port
               <input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask about your services..."
+                placeholder="Ask about the community, onboarding, or your account..."
                 className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary/50"
                 disabled={isStreaming}
                 maxLength={1500}
