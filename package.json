@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build",
+    "build": "prisma generate && tsx scripts/check-cross-env-links.ts && next build",
     "start": "next start",
     "lint": "eslint src",
+    "check:cross-env-links": "tsx scripts/check-cross-env-links.ts",
     "typecheck": "tsc --noEmit",
     "db:push": "prisma db push",
     "db:generate": "prisma generate",
