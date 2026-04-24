@@ -9,6 +9,7 @@ import {
   Users,
   DollarSign,
   FolderOpen,
+  Settings,
 } from "lucide-react"
 import { PageTransition } from "@/components/shared/PageTransition"
 
@@ -21,6 +22,8 @@ const RESELLER_NAV = [
   { label: "Clients", href: "/reseller/clients", icon: Users },
   { label: "Commissions", href: "/reseller/commissions", icon: DollarSign },
   { label: "Resources", href: "/reseller/resources", icon: FolderOpen },
+  { label: "Branding", href: "/reseller/settings/branding", icon: Settings },
+  { label: "Domain", href: "/reseller/settings/domain", icon: Settings },
 ]
 
 export default async function ResellerLayout({
