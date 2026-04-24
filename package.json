@@ -61,6 +61,7 @@
     "seed": "npx tsx prisma/seed.ts"
   },
   "devDependencies": {
+    "@clerk/testing": "^2.0.19",
     "@next/bundle-analyzer": "^16.2.0",
     "@playwright/test": "^1.59.1",
     "@types/node": "^20",
