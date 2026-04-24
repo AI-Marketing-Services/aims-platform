@@ -193,9 +193,11 @@ describe("POST /api/ai/portal-chat — route structure", () => {
     expect(content).toContain("portal-chat")
   })
 
-  it("fetches client context from database", () => {
+  it("fetches member context from database", () => {
+    // Portal chat was re-scoped from "service buyer" to "collective member";
+    // we now fetch member identity + open support tickets, not subscriptions.
     expect(content).toContain("clientContext")
-    expect(content).toContain("subscriptions")
+    expect(content).toContain("supportTickets")
   })
 
   it("has create_ticket tool", () => {
@@ -203,9 +205,20 @@ describe("POST /api/ai/portal-chat — route structure", () => {
     expect(content).toContain("supportTicket.create")
   })
 
-  it("has suggest_service tool", () => {
-    expect(content).toContain("suggest_service")
-    expect(content).toContain("marketplace")
+  it("has search_knowledge tool (Mighty knowledge base)", () => {
+    // Replaced suggest_service — that pitched /portal/marketplace which
+    // isn't open to members yet. New tool queries the Mighty-backed
+    // knowledge index (scaffolded, returns empty until ingestion lands).
+    expect(content).toContain("search_knowledge")
+    expect(content).toContain("searchKnowledge")
+  })
+
+  it("does not pitch services or the marketplace", () => {
+    // Hard guard: the portal chat route must not reference services or
+    // the marketplace. Those surfaces aren't accessible to members yet.
+    expect(content).not.toContain("suggest_service")
+    expect(content).not.toContain("/portal/marketplace")
+    expect(content).not.toContain("AIMS_KNOWLEDGE_BASE")
   })
 
   it("drops leading assistant messages", () => {

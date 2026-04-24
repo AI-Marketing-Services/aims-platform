@@ -41,15 +41,22 @@ describe("Admin API auth guards", () => {
     expect(adminRoutes.length).toBeGreaterThan(0)
   })
 
-  // Bootstrap route uses a shared secret instead of Clerk auth
-  const SHARED_SECRET_ROUTES = ["bootstrap/route.ts"]
+  // Routes that authenticate with a shared secret (typically CRON_SECRET
+  // or BOOTSTRAP_SECRET) instead of Clerk auth. These still need an auth
+  // check, just against a header-supplied secret.
+  const SHARED_SECRET_ROUTES = [
+    "bootstrap/route.ts",
+    "test-emails/route.ts",
+  ]
 
   for (const route of adminRoutes) {
     const isSharedSecret = SHARED_SECRET_ROUTES.some((r) => route.path.includes(r))
 
     it(`${route.path} — has auth check`, () => {
       const hasAuth = isSharedSecret
-        ? route.content.includes("BOOTSTRAP_SECRET") || route.content.includes("secret")
+        ? route.content.includes("BOOTSTRAP_SECRET") ||
+          route.content.includes("CRON_SECRET") ||
+          /\bsecret\b/i.test(route.content)
         : route.content.includes("await auth()") || route.content.includes("requireAdmin()")
       expect(hasAuth, `${route.path} is missing auth check`).toBe(true)
     })
@@ -59,7 +66,8 @@ describe("Admin API auth guards", () => {
         route.content.includes("ADMIN") ||
         route.content.includes("requireAdmin") ||
         route.content.includes("SUPER_ADMIN") ||
-        route.content.includes("BOOTSTRAP_SECRET")
+        route.content.includes("BOOTSTRAP_SECRET") ||
+        route.content.includes("CRON_SECRET")
       expect(hasRoleCheck, `${route.path} is missing admin role check`).toBe(true)
     })
 

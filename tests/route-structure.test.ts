@@ -43,11 +43,15 @@ describe("Admin pages exist", () => {
 describe("Admin auth guards", () => {
   it("admin layout has auth guard protecting all admin pages", () => {
     const content = readFileSync(join(SRC, "app/(admin)/layout.tsx"), "utf-8")
-    expect(content).toContain("auth()")
+    // Admin layout now delegates to the shared effective-role helper.
+    // The helper internally calls auth() + Clerk backend + DB fallback.
+    expect(content).toContain("getEffectiveRole")
     expect(content).toContain("ADMIN")
     expect(content).toContain("SUPER_ADMIN")
     expect(content).toContain('redirect("/sign-in")')
-    expect(content).toContain('redirect("/portal/dashboard")')
+    // Non-admins bounce via dashboardForRole() so admins don't need to
+    // hardcode /portal/dashboard.
+    expect(content).toContain("dashboardForRole")
   })
 
   // Some admin pages add an extra page-level check
