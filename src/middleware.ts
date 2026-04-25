@@ -76,6 +76,11 @@ const isPublicRoute = createRouteMatcher([
   "/api/lead-magnets/ai-playbook(.*)",
   // Whitelabel tenant-page lead capture — public by design.
   "/api/tenant/lead(.*)",
+  // Public checkout — self-handles auth (returns 401 with sign-in URL
+  // for anonymous visitors). Listing here so middleware doesn't block
+  // before our route logic runs.
+  "/api/checkout(.*)",
+  "/marketplace(.*)",
   "/api/referrals/track(.*)",
   "/api/services(.*)",
   "/api/ai/chat(.*)",
