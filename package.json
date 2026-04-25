@@ -20,6 +20,8 @@
     "test:e2e:ui": "playwright test --ui",
     "ingest:mighty": "tsx scripts/ingest-mighty.ts",
     "seed:products": "tsx scripts/seed-products.ts",
+    "stripe:setup-products": "tsx scripts/setup-stripe-products.ts",
+    "grant:all-entitlements": "tsx scripts/grant-all-entitlements.ts",
     "stripe:setup": "tsx scripts/setup-stripe.ts"
   },
   "dependencies": {

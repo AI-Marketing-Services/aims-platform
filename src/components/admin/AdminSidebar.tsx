@@ -32,6 +32,7 @@ import {
   Globe2,
   BookOpenText,
   Package,
+  DollarSign,
 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
@@ -146,6 +147,7 @@ const ADMIN_NAV = [
     section: "Commerce",
     items: [
       { label: "Products & Tiers", href: "/admin/products", icon: Package },
+      { label: "Commission Ledger", href: "/admin/commission-ledger", icon: DollarSign },
     ],
   },
 ] as const
