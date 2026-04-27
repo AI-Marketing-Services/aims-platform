@@ -801,7 +801,16 @@ export function ApplyForm() {
                       rel="noopener noreferrer"
                       className="underline hover:text-crimson transition-colors"
                     >
-                      View Terms of Service and Privacy Policy
+                      Terms of Service
+                    </a>
+                    {" • "}
+                    <a
+                      href="/privacy"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline hover:text-crimson transition-colors"
+                    >
+                      Privacy Policy
                     </a>
                   </p>
                 </div>
@@ -893,7 +902,17 @@ export function ApplyForm() {
                           className="underline"
                           onClick={(e) => e.stopPropagation()}
                         >
-                          View Terms of Service and Privacy Policy
+                          Terms of Service
+                        </a>
+                        {" • "}
+                        <a
+                          href="/privacy"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="underline"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          Privacy Policy
                         </a>
                         *
                       </span>
@@ -920,7 +939,17 @@ export function ApplyForm() {
                           className="underline"
                           onClick={(e) => e.stopPropagation()}
                         >
-                          View Terms of Service and Privacy Policy
+                          Terms of Service
+                        </a>
+                        {" • "}
+                        <a
+                          href="/privacy"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="underline"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          Privacy Policy
                         </a>
                         *
                       </span>
