@@ -65,7 +65,16 @@ const nextConfig: NextConfig = {
     ],
     formats: ["image/avif", "image/webp"],
   },
-  serverExternalPackages: ["pdfkit"],
+  // Prisma's client + Neon adapter must NOT be bundled by Turbopack — when
+  // they are, regenerating the client (e.g. after a schema change) can leave
+  // a stale cached bundle in place and every prisma call surfaces an opaque
+  // PrismaClientKnownRequestError at runtime. Externalising them makes Next
+  // load the freshly generated copy from node_modules at runtime.
+  serverExternalPackages: [
+    "pdfkit",
+    "@prisma/client",
+    "@prisma/adapter-neon",
+  ],
   experimental: {
     optimizeCss: true,
     optimizePackageImports: [
