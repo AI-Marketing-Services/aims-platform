@@ -28,6 +28,7 @@ import {
   FileText,
   Bell,
   PenLine,
+  ClipboardCheck,
 } from "lucide-react"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
@@ -42,6 +43,7 @@ const PORTAL_NAV = [
   { label: "Invoices", href: "/portal/invoices", icon: FileText },
   { label: "Revenue", href: "/portal/revenue", icon: TrendingUp },
   { label: "Lead Scout", href: "/portal/crm/scout", icon: MapPin },
+  { label: "AI Audit", href: "/portal/audits", icon: ClipboardCheck },
   { label: "AI Scripts", href: "/portal/scripts", icon: FileCode2 },
   { label: "Content Engine", href: "/portal/content", icon: PenLine },
   { label: "Toolkit", href: "/portal/tools", icon: Wrench },

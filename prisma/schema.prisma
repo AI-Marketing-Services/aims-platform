@@ -55,6 +55,7 @@ model User {
   userEntitlements         Entitlement[]
   commissionsEarned        CommissionEvent[]         @relation("ResellerCommissions")
   portalFeedback           PortalFeedback[]          @relation("PortalFeedbackReporter")
+  auditQuizzes             AuditQuiz[]               @relation("AuditQuizOwner")
 
   stripeCustomerId String?   @unique
   lastLoginAt      DateTime?
@@ -1926,4 +1927,87 @@ model PortalFeedback {
 
   @@index([status, createdAt])
   @@index([reporterId])
+}
+
+// ============ AUDIT QUIZ FUNNEL ============
+//
+// Per-operator brandable intake quizzes. Operators build a quiz from a
+// pre-seeded AI Audit template, customize branding/questions inline,
+// share a public link, and collect lead responses with AI-generated
+// summaries. Admins see aggregate analytics across all workspaces.
+
+model AuditQuiz {
+  id      String @id @default(cuid())
+  ownerId String
+  owner   User   @relation("AuditQuizOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+
+  slug         String  @unique
+  title        String
+  subtitle     String?
+  ctaLabel     String  @default("Take the Audit")
+
+  // Branding overrides — falls back to operator's MemberProfile when null.
+  logoUrl      String?
+  brandColor   String?
+  accentColor  String?
+  customDomain String? // optional whitelabel host the operator wants the link to render under
+
+  // Questions stored as JSON: Array<{ id, label, helper?, type, required?, options?[] }>
+  // Keeping inline edits cheap — schema doesn't migrate every time we add a field type.
+  questions Json
+
+  successHeadline String?
+  successMessage  String? @db.Text
+  successCta      String?
+  successCtaUrl   String?
+
+  collectEmail  Boolean @default(true)
+  emailRequired Boolean @default(true)
+
+  isPublished Boolean   @default(true)
+  archivedAt  DateTime?
+
+  responses AuditResponse[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([ownerId])
+  @@index([slug])
+  @@index([createdAt])
+}
+
+model AuditResponse {
+  id     String    @id @default(cuid())
+  quizId String
+  quiz   AuditQuiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  leadEmail   String?
+  leadName    String?
+  leadCompany String?
+  leadPhone   String?
+  leadRole    String?
+
+  // Answers shape: { [questionId]: value }
+  answers Json
+
+  aiSummary     String?   @db.Text
+  aiScore       Int?
+  aiTags        String[]
+  aiArms        Json?
+  aiGeneratedAt DateTime?
+
+  utmSource   String?
+  utmMedium   String?
+  utmCampaign String?
+  referer     String?
+  userAgent   String?
+  ip          String?
+
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@index([quizId])
+  @@index([leadEmail])
+  @@index([createdAt])
 }

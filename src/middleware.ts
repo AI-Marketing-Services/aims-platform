@@ -97,6 +97,9 @@ const isPublicRoute = createRouteMatcher([
   // Client-facing whitelabel portal — token-authenticated, no Clerk required.
   "/client-portal(.*)",
   "/api/client-portal(.*)",
+  // Operator-built public audit funnels — anyone with the link can fill them out.
+  "/q(.*)",
+  "/api/audits/submit(.*)",
 ])
 
 const isAdminRoute = createRouteMatcher(["/admin(.*)"])

@@ -144,6 +144,7 @@ const ADMIN_NAV = [
     items: [
       { label: "UTM & Analytics", href: "/admin/analytics", icon: BarChart3 },
       { label: "Lead Magnets", href: "/admin/ideas", icon: Lightbulb },
+      { label: "AI Audits", href: "/admin/audits", icon: ClipboardCheck },
       { label: "Whitelabel Sites", href: "/admin/whitelabel", icon: Globe2 },
       { label: "Knowledge Base", href: "/admin/knowledge", icon: BookOpenText },
     ],
