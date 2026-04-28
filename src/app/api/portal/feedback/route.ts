@@ -4,6 +4,7 @@ import { z } from "zod"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
 import { getOrCreateDbUserByClerkId } from "@/lib/auth/ensure-user"
+import { notifyPortalFeedback } from "@/lib/notifications"
 
 const feedbackSchema = z.object({
   category: z.enum(["BUG", "IDEA", "QUESTION", "OTHER"]).default("BUG"),
@@ -57,6 +58,23 @@ export async function POST(req: Request) {
       },
       select: { id: true },
     })
+
+    // Fire-and-forget Slack/email/in-app fanout. Failures here must never
+    // block the user-facing 200 — the row is already saved.
+    notifyPortalFeedback({
+      feedbackId: record.id,
+      category: parsed.data.category,
+      title: parsed.data.title,
+      reporterName,
+      reporterEmail,
+      pageUrl: parsed.data.pageUrl ?? null,
+    }).catch((err) =>
+      logger.error("Failed to fan out portal feedback notification", err, {
+        endpoint: "POST /api/portal/feedback",
+        action: record.id,
+      }),
+    )
+
     return NextResponse.json({ ok: true, id: record.id })
   } catch (err) {
     logger.error("Failed to save portal feedback", err, {

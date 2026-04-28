@@ -158,6 +158,29 @@ export async function notifyFulfillmentOverdue(params: {
   })
 }
 
+export async function notifyPortalFeedback(params: {
+  feedbackId: string
+  category: string
+  title: string
+  reporterName: string | null
+  reporterEmail: string
+  pageUrl?: string | null
+}) {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.aioperatorcollective.com"
+  const adminUrl = `${appUrl}/admin/feedback`
+  const reporter = params.reporterName ?? params.reporterEmail
+  const where = params.pageUrl ? ` · ${new URL(params.pageUrl).pathname}` : ""
+
+  await notify({
+    type: `portal_feedback_${params.category.toLowerCase()}`,
+    title: `Portal ${params.category.toLowerCase()}: ${params.title}`,
+    message: `From ${reporter}${where}\n${adminUrl}`,
+    urgency: params.category === "BUG" ? "high" : "normal",
+    channel: "ALL",
+    metadata: { feedbackId: params.feedbackId, category: params.category },
+  })
+}
+
 export async function notifyMissedEOD(internName: string) {
   await notify({
     type: "missed_eod",
