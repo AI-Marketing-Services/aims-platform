@@ -3,14 +3,15 @@ import { auth } from "@clerk/nextjs/server"
 import { z } from "zod"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
+import { getOrCreateDbUserByClerkId } from "@/lib/auth/ensure-user"
 
 const revokeSchema = z.object({
   accessId: z.string().min(1),
 })
 
-async function getDbUserId(clerkId: string) {
-  const u = await db.user.findUnique({ where: { clerkId }, select: { id: true } })
-  return u?.id ?? null
+async function getDbUserId(clerkId: string): Promise<string | null> {
+  const user = await getOrCreateDbUserByClerkId(clerkId)
+  return user.id
 }
 
 export async function POST(

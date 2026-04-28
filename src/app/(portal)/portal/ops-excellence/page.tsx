@@ -1,9 +1,9 @@
 import type { Metadata } from "next"
-import { auth, currentUser } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
 import { getDashboardData } from "@/lib/ops-excellence/queries"
 import ExecutiveDashboard from "@/components/ops-excellence/dashboard/ExecutiveDashboard"
+import { ensureDbUser } from "@/lib/auth/ensure-user"
 
 export const metadata: Metadata = {
   title: "Operational Excellence | AIMS Platform",
@@ -12,26 +12,7 @@ export const metadata: Metadata = {
 }
 
 export default async function OpsExcellencePage() {
-  const { userId: clerkId } = await auth()
-
-  if (!clerkId) {
-    redirect("/sign-in")
-  }
-
-  const clerkUser = await currentUser()
-  const userEmail = clerkUser?.emailAddresses?.[0]?.emailAddress ?? ""
-  if (userEmail !== "adamwolfe100@gmail.com") {
-    redirect("/portal/dashboard")
-  }
-
-  const dbUser = await db.user.findUnique({
-    where: { clerkId },
-    select: { id: true },
-  })
-
-  if (!dbUser) {
-    redirect("/sign-in")
-  }
+  const dbUser = await ensureDbUser()
 
   const engagement = await db.opsExcellenceEngagement.findFirst({
     where: { userId: dbUser.id },

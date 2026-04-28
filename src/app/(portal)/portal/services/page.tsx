@@ -1,5 +1,3 @@
-import { auth, currentUser } from "@clerk/nextjs/server"
-import { redirect } from "next/navigation"
 import {
   CheckCircle,
   Clock,
@@ -16,6 +14,7 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { db } from "@/lib/db"
+import { ensureDbUser } from "@/lib/auth/ensure-user"
 
 const PILLAR_COLORS: Record<string, string> = {
   MARKETING: "bg-primary/5 text-primary/80",
@@ -89,38 +88,24 @@ const STARTER_SERVICES = [
 ]
 
 export default async function PortalServicesPage() {
-  const { userId: clerkId } = await auth()
-  if (!clerkId) redirect("/sign-in")
+  const baseUser = await ensureDbUser()
 
-  const clerkUser = await currentUser()
-  const userEmail = clerkUser?.emailAddresses?.[0]?.emailAddress ?? ""
-  if (userEmail !== "adamwolfe100@gmail.com") {
-    redirect("/portal/dashboard")
-  }
-
-  let dbUser = null
-  try {
-    dbUser = await db.user.findUnique({
-      where: { clerkId },
-      include: {
-        subscriptions: {
-          include: {
-            serviceArm: true,
-            fulfillmentTasks: {
-              orderBy: { createdAt: "asc" },
-            },
+  const userWithSubs = await db.user.findUnique({
+    where: { id: baseUser.id },
+    include: {
+      subscriptions: {
+        include: {
+          serviceArm: true,
+          fulfillmentTasks: {
+            orderBy: { createdAt: "asc" },
           },
-          orderBy: { createdAt: "desc" },
         },
+        orderBy: { createdAt: "desc" },
       },
-    })
-  } catch {
-    // DB failure - still render page with empty state
-  }
+    },
+  })
 
-  if (!dbUser) redirect("/sign-in")
-
-  const subs = dbUser.subscriptions
+  const subs = userWithSubs?.subscriptions ?? []
   const totalMRR = subs
     .filter((s) => s.status === "ACTIVE" || s.status === "TRIALING")
     .reduce((sum, s) => sum + s.monthlyAmount, 0)

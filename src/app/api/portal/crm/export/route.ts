@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { db } from "@/lib/db"
+import { getOrCreateDbUserByClerkId } from "@/lib/auth/ensure-user"
 
-async function getDbUserId(clerkId: string) {
-  const u = await db.user.findUnique({ where: { clerkId }, select: { id: true } })
-  return u?.id ?? null
+async function getDbUserId(clerkId: string): Promise<string | null> {
+  const user = await getOrCreateDbUserByClerkId(clerkId)
+  return user.id
 }
 
 function escapeCell(val: string | number | null | undefined): string {

@@ -1,18 +1,14 @@
-import { auth } from "@clerk/nextjs/server"
-import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
 import { TOOL_MANIFEST, CATEGORIES, getUnlockedTools } from "@/lib/tools/manifest"
 import { getProgressForUser } from "@/lib/onboarding/progress"
 import { ToolsGrid } from "@/components/portal/tools/ToolsGrid"
 import { Wrench, Lock } from "lucide-react"
+import { ensureDbUser } from "@/lib/auth/ensure-user"
 
-async function getPageData(clerkId: string) {
-  const dbUser = await db.user.findUnique({ where: { clerkId }, select: { id: true } })
-  if (!dbUser) return null
-
+async function getPageData(userId: string) {
   const [progress, activeDeals] = await Promise.all([
-    getProgressForUser(dbUser.id),
-    db.clientDeal.count({ where: { userId: dbUser.id, stage: "ACTIVE_RETAINER" } }),
+    getProgressForUser(userId),
+    db.clientDeal.count({ where: { userId, stage: "ACTIVE_RETAINER" } }),
   ])
 
   return {
@@ -24,11 +20,8 @@ async function getPageData(clerkId: string) {
 export const dynamic = "force-dynamic"
 
 export default async function ToolsPage() {
-  const { userId } = await auth()
-  if (!userId) redirect("/sign-in")
-
-  const data = await getPageData(userId)
-  if (!data) redirect("/sign-in")
+  const dbUser = await ensureDbUser()
+  const data = await getPageData(dbUser.id)
 
   const unlockedGates = getUnlockedTools(data.onboardingPercent, data.hasActiveDeal)
   const totalTools = TOOL_MANIFEST.length

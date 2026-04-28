@@ -6,6 +6,7 @@ import { logger } from "@/lib/logger"
 import { analyzeWithClaude } from "@/lib/ai"
 import { trackUsage } from "@/lib/usage"
 import { ContentPieceType } from "@prisma/client"
+import { getOrCreateDbUserByClerkId } from "@/lib/auth/ensure-user"
 
 const generateSchema = z.object({
   type: z.nativeEnum(ContentPieceType),
@@ -13,9 +14,9 @@ const generateSchema = z.object({
   context: z.string().max(2000).optional(),
 })
 
-async function getDbUserId(clerkId: string) {
-  const u = await db.user.findUnique({ where: { clerkId }, select: { id: true } })
-  return u?.id ?? null
+async function getDbUserId(clerkId: string): Promise<string | null> {
+  const user = await getOrCreateDbUserByClerkId(clerkId)
+  return user.id
 }
 
 interface DealInfo {

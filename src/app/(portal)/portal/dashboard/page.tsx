@@ -27,21 +27,15 @@ export default async function PortalDashboard({
   const { userId: clerkId } = await auth()
   const user = await currentUser()
 
-  const userEmail = user?.emailAddresses?.[0]?.emailAddress ?? ""
-  const emailLocalPart = userEmail.split("@")[0] ?? ""
-  const capitalisedEmailName = emailLocalPart
-    .replace(/[._-]/g, " ")
-    .split(" ")[0]
-    ?.replace(/^\w/, (c) => c.toUpperCase())
-  const firstName =
-    user?.firstName ||
-    user?.fullName?.split(" ")[0] ||
-    capitalisedEmailName ||
-    "there"
-
   const dbUser = clerkId
     ? await db.user.findUnique({ where: { clerkId } })
     : null
+
+  const firstName =
+    user?.firstName ||
+    user?.fullName?.split(" ")[0] ||
+    dbUser?.name?.split(" ")[0] ||
+    "there"
 
   // Onboarding progress
   let onboardingCompletedKeys: string[] = []

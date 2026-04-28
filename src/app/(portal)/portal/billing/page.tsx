@@ -1,43 +1,34 @@
-import { auth } from "@clerk/nextjs/server"
-import { redirect } from "next/navigation"
 import { CreditCard, CheckCircle, Clock, AlertTriangle, ArrowRight, Download } from "lucide-react"
 import Link from "next/link"
 import { BillingPortalButton } from "./BillingPortalButton"
 import { CancelSubscriptionButton } from "./CancelSubscriptionButton"
 import { db } from "@/lib/db"
 import { stripe } from "@/lib/stripe"
+import { ensureDbUser } from "@/lib/auth/ensure-user"
 
 export const metadata = { title: "Billing" }
 
 export default async function BillingPage() {
-  const { userId: clerkId } = await auth()
-  if (!clerkId) redirect("/sign-in")
+  const baseUser = await ensureDbUser()
 
-  let dbUser = null
-  try {
-    dbUser = await db.user.findUnique({
-      where: { clerkId },
-      include: {
-        subscriptions: {
-          include: { serviceArm: true },
-          orderBy: { createdAt: "desc" },
-        },
+  const dbUser = await db.user.findUnique({
+    where: { id: baseUser.id },
+    include: {
+      subscriptions: {
+        include: { serviceArm: true },
+        orderBy: { createdAt: "desc" },
       },
-    })
-  } catch {
-    // DB failure - render gracefully
-  }
+    },
+  })
 
-  if (!dbUser) redirect("/sign-in")
-
-  const allSubs = dbUser.subscriptions
+  const allSubs = dbUser?.subscriptions ?? []
   const activeSubs = allSubs.filter(
     (s) => s.status === "ACTIVE" || s.status === "TRIALING"
   )
   const pastDueSubs = allSubs.filter((s) => s.status === "PAST_DUE")
   const totalMrr = activeSubs.reduce((sum, s) => sum + s.monthlyAmount, 0)
   const annualEquiv = totalMrr * 12
-  const hasStripeCustomer = !!dbUser.stripeCustomerId
+  const hasStripeCustomer = !!dbUser?.stripeCustomerId
 
   // Fetch recent invoices from Stripe
   let invoices: Array<{
@@ -48,10 +39,10 @@ export default async function BillingPage() {
     pdfUrl: string | null
   }> = []
 
-  if (dbUser.stripeCustomerId) {
+  if (dbUser?.stripeCustomerId) {
     try {
       const stripeInvoices = await stripe.invoices.list({
-        customer: dbUser.stripeCustomerId,
+        customer: dbUser?.stripeCustomerId,
         limit: 10,
       })
       invoices = stripeInvoices.data.map((inv) => ({

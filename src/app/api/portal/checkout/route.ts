@@ -4,6 +4,7 @@ import { z } from "zod"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
 import { createCheckoutSession } from "@/lib/stripe"
+import { getOrCreateDbUserByClerkId } from "@/lib/auth/ensure-user"
 
 const checkoutSchema = z.object({
   serviceArmId: z.string().min(1),
@@ -14,7 +15,7 @@ export async function POST(req: Request) {
   const { userId: clerkId } = await auth()
   if (!clerkId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
-  const dbUser = await db.user.findUnique({ where: { clerkId } })
+  const dbUser = await getOrCreateDbUserByClerkId(clerkId)
   if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 })
 
   const body = await req.json()

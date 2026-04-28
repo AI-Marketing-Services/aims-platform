@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server"
 import { put } from "@vercel/blob"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
+import { getOrCreateDbUserByClerkId } from "@/lib/auth/ensure-user"
 
 const ALLOWED_TYPES = new Set([
   "image/jpeg",
@@ -13,10 +14,8 @@ const ALLOWED_TYPES = new Set([
 const MAX_BYTES = 5 * 1024 * 1024 // 5 MB
 
 async function resolveDbUser(clerkId: string) {
-  return db.user.findUnique({
-    where: { clerkId },
-    select: { id: true },
-  })
+  const user = await getOrCreateDbUserByClerkId(clerkId)
+  return { id: user.id }
 }
 
 export async function POST(req: Request) {

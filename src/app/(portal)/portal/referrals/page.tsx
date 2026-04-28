@@ -1,18 +1,12 @@
-import { auth, currentUser } from "@clerk/nextjs/server"
-import { redirect } from "next/navigation"
 import { Share2, DollarSign, Users, CheckCircle, Mail, Linkedin, TrendingUp, ExternalLink, Clock } from "lucide-react"
 import { CopyButton } from "@/components/portal/CopyButton"
 import { db } from "@/lib/db"
 import { getDubClient } from "@/lib/dub"
 import { formatCommissionRate, getCommissionRate } from "@/lib/referrals/commission-config"
+import { ensureDbUser } from "@/lib/auth/ensure-user"
 
 export default async function ReferralsPage() {
-  const { userId: clerkId } = await auth()
-  const user = await currentUser()
-  if (!clerkId || !user) redirect("/sign-in")
-
-  const dbUser = await db.user.findUnique({ where: { clerkId } })
-  if (!dbUser) redirect("/sign-in")
+  const dbUser = await ensureDbUser()
 
   // Fetch or create referral record for this user
   let referral = await db.referral.findFirst({

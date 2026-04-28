@@ -1,9 +1,8 @@
 import Link from "next/link"
-import { redirect } from "next/navigation"
-import { auth } from "@clerk/nextjs/server"
 import { db } from "@/lib/db"
 import { startOfUtcDay } from "@/lib/signal/digest"
 import { Settings, Rss, ExternalLink } from "lucide-react"
+import { ensureDbUser } from "@/lib/auth/ensure-user"
 
 export const dynamic = "force-dynamic"
 export const metadata = { title: "Signal · AIMS", robots: { index: false } }
@@ -19,18 +18,17 @@ type Item = {
 }
 
 export default async function SignalPage() {
-  const { userId } = await auth()
-  if (!userId) redirect("/sign-in")
+  const baseUser = await ensureDbUser()
 
   const user = await db.user.findUnique({
-    where: { clerkId: userId },
+    where: { id: baseUser.id },
     select: {
       id: true,
       notifSignalDigest: true,
       signalTopics: { where: { enabled: true }, select: { id: true, label: true } },
     },
   })
-  if (!user) redirect("/sign-in")
+  if (!user) return null
 
   const today = startOfUtcDay()
   const run = await db.signalDigestRun.findUnique({

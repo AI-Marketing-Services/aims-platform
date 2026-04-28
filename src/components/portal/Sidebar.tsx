@@ -59,12 +59,10 @@ const PORTAL_NAV = [
   { label: "Settings", href: "/portal/settings", icon: Settings },
 ] as const
 
-const ADMIN_ONLY_ROUTES = [
-  "/portal/ops-excellence",
-  "/portal/services",
-  "/portal/marketplace",
-  "/portal/campaigns",
-]
+// Admin-only items in the client sidebar. (Currently empty — services /
+// marketplace / campaigns / ops-excellence are now visible to all clients
+// so Katie + future testers can fully exercise the portal.)
+const ADMIN_ONLY_ROUTES: string[] = []
 
 interface PortalSidebarProps {
   totalMrr?: number

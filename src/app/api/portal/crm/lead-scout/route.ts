@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server"
-import { auth } from "@clerk/nextjs/server"
-import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
 import { scoutLeads } from "@/lib/crm/lead-scout"
 import { trackUsage } from "@/lib/usage"
+import { ensureDbUserIdForApi } from "@/lib/auth/ensure-user"
 import { z } from "zod"
 
 const scoutSchema = z.object({
@@ -12,17 +11,9 @@ const scoutSchema = z.object({
   count: z.number().int().min(1).max(20).optional(),
 })
 
-async function getDbUserId(clerkId: string) {
-  const u = await db.user.findUnique({ where: { clerkId }, select: { id: true } })
-  return u?.id ?? null
-}
-
 export async function POST(req: Request) {
-  const { userId } = await auth()
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-
-  const dbUserId = await getDbUserId(userId)
-  if (!dbUserId) return NextResponse.json({ error: "User not found" }, { status: 404 })
+  const dbUserId = await ensureDbUserIdForApi()
+  if (!dbUserId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
   try {
     const body = await req.json()
@@ -42,7 +33,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ leads, count: leads.length })
   } catch (err) {
-    logger.error("Lead scout API failed", err, { userId })
+    logger.error("Lead scout API failed", err, { userId: dbUserId })
     return NextResponse.json({ error: "Failed to search for leads" }, { status: 500 })
   }
 }

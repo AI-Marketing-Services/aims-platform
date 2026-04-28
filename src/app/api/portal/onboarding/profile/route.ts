@@ -3,12 +3,11 @@ import { auth } from "@clerk/nextjs/server"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
 import { profileSchema } from "@/lib/onboarding/schemas"
+import { getOrCreateDbUserByClerkId } from "@/lib/auth/ensure-user"
 
 async function resolveDbUser(clerkId: string) {
-  return db.user.findUnique({
-    where: { clerkId },
-    select: { id: true },
-  })
+  const user = await getOrCreateDbUserByClerkId(clerkId)
+  return { id: user.id }
 }
 
 export async function GET() {

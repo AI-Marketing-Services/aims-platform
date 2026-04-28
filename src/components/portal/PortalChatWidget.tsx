@@ -7,6 +7,7 @@ import { TextStreamChatTransport, type UIMessage } from "ai"
 import Link from "next/link"
 import Image from "next/image"
 import { getMessageText } from "@/lib/utils"
+import { BugReportWidget } from "@/components/portal/BugReportWidget"
 
 /**
  * Minimal markdown-link renderer: turns `[text](url)` into a real <a>,
@@ -169,7 +170,7 @@ export function PortalChatWidget({ firstName = "there", serviceCount = 0 }: Port
 
           {/* Quick links */}
           {messages.length <= 1 && (
-            <div className="flex-shrink-0 grid grid-cols-3 gap-1.5 px-3 py-2.5 border-b border-border">
+            <div className="flex-shrink-0 grid grid-cols-2 gap-1.5 px-3 py-2.5 border-b border-border">
               {QUICK_LINKS.map((link) => (
                 <Link
                   key={link.label}
@@ -180,6 +181,7 @@ export function PortalChatWidget({ firstName = "there", serviceCount = 0 }: Port
                   <span className="text-[10px] text-muted-foreground text-center leading-tight">{link.label}</span>
                 </Link>
               ))}
+              <BugReportWidget variant="chat-tile" />
             </div>
           )}
 

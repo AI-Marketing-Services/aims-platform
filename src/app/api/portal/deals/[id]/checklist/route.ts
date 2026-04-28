@@ -5,14 +5,15 @@ import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
 import { getDealChecklistProgress, DEAL_CHECKLIST_STEPS } from "@/lib/onboarding/deal-checklist"
 import type { ClientActivityType } from "@prisma/client"
+import { getOrCreateDbUserByClerkId } from "@/lib/auth/ensure-user"
 
 // ONBOARDING_STEP_COMPLETED is in schema but requires `prisma generate` to appear
 // in the generated enum type. Cast to satisfy the type system until then.
 const ONBOARDING_STEP_COMPLETED = "ONBOARDING_STEP_COMPLETED" as ClientActivityType
 
 async function getDbUserId(clerkId: string): Promise<string | null> {
-  const u = await db.user.findUnique({ where: { clerkId }, select: { id: true } })
-  return u?.id ?? null
+  const user = await getOrCreateDbUserByClerkId(clerkId)
+  return user.id
 }
 
 const VALID_STEP_KEYS = DEAL_CHECKLIST_STEPS.map((s) => s.key) as [string, ...string[]]

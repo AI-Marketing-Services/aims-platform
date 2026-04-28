@@ -9,12 +9,11 @@ import {
   markStepComplete,
   resetStep,
 } from "@/lib/onboarding/progress"
+import { getOrCreateDbUserByClerkId } from "@/lib/auth/ensure-user"
 
 async function resolveDbUser(clerkId: string) {
-  return db.user.findUnique({
-    where: { clerkId },
-    select: { id: true },
-  })
+  const user = await getOrCreateDbUserByClerkId(clerkId)
+  return { id: user.id }
 }
 
 export async function GET() {

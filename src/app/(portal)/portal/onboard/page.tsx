@@ -1,8 +1,7 @@
 import type { Metadata } from "next"
-import { auth } from "@clerk/nextjs/server"
-import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
 import { getProgressForUser } from "@/lib/onboarding/progress"
+import { ensureDbUser } from "@/lib/auth/ensure-user"
 import { Breadcrumbs } from "@/components/shared/Breadcrumbs"
 import { OnboardingChecklist } from "@/components/portal/OnboardingChecklist"
 import { BusinessProfileForm } from "./BusinessProfileForm"
@@ -13,11 +12,10 @@ import { TOTAL_STEPS } from "@/lib/onboarding/steps"
 export const metadata: Metadata = { title: "Getting Started" }
 
 export default async function OnboardPage() {
-  const { userId: clerkId } = await auth()
-  if (!clerkId) redirect("/sign-in")
+  const baseUser = await ensureDbUser()
 
   const dbUser = await db.user.findUnique({
-    where: { clerkId },
+    where: { id: baseUser.id },
     select: {
       id: true,
       name: true,
@@ -37,7 +35,11 @@ export default async function OnboardPage() {
     },
   })
 
-  if (!dbUser) redirect("/sign-in")
+  if (!dbUser) {
+    // Should be unreachable after ensureDbUser, but render a safe fallback
+    // instead of redirecting so we never bounce a real client.
+    return null
+  }
 
   const progress = await getProgressForUser(dbUser.id)
   const completedKeys = [...progress.completedKeys]

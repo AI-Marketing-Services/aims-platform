@@ -1,15 +1,11 @@
-import { auth } from "@clerk/nextjs/server"
-import { redirect } from "next/navigation"
+import Link from "next/link"
 import { db } from "@/lib/db"
 import { getProgressForUser } from "@/lib/onboarding/progress"
 import { BarChart3, TrendingUp, DollarSign, Users, Target, Zap } from "lucide-react"
 import { UsageWidget } from "@/components/portal/UsageWidget"
+import { ensureDbUser } from "@/lib/auth/ensure-user"
 
-async function getMetrics(clerkId: string) {
-  const dbUser = await db.user.findUnique({ where: { clerkId }, select: { id: true } })
-  if (!dbUser) return null
-
-  const userId = dbUser.id
+async function getMetrics(userId: string) {
 
   const [deals, progress, totalActivities] = await Promise.all([
     db.clientDeal.findMany({
@@ -120,11 +116,8 @@ const STAGE_COLORS: Record<string, string> = {
 export const dynamic = "force-dynamic"
 
 export default async function MetricsPage() {
-  const { userId } = await auth()
-  if (!userId) redirect("/sign-in")
-
-  const metrics = await getMetrics(userId)
-  if (!metrics) redirect("/sign-in")
+  const dbUser = await ensureDbUser()
+  const metrics = await getMetrics(dbUser.id)
 
   const totalDealsForBar = Math.max(metrics.totalDeals, 1)
 
@@ -224,12 +217,12 @@ export default async function MetricsPage() {
           <p className="text-sm text-muted-foreground/60 mt-1 mb-4">
             Add your first deal in Client CRM to start seeing metrics.
           </p>
-          <a
+          <Link
             href="/portal/crm"
             className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
           >
             Open Client CRM →
-          </a>
+          </Link>
         </div>
       )}
     </div>

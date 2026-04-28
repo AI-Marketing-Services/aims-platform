@@ -5,10 +5,11 @@ import { logger } from "@/lib/logger"
 import { analyzeWithClaude } from "@/lib/ai"
 import { trackUsage } from "@/lib/usage"
 import { randomBytes } from "crypto"
+import { getOrCreateDbUserByClerkId } from "@/lib/auth/ensure-user"
 
-async function getDbUserId(clerkId: string) {
-  const u = await db.user.findUnique({ where: { clerkId }, select: { id: true } })
-  return u?.id ?? null
+async function getDbUserId(clerkId: string): Promise<string | null> {
+  const user = await getOrCreateDbUserByClerkId(clerkId)
+  return user.id
 }
 
 async function getDealForUser(dealId: string, userId: string) {

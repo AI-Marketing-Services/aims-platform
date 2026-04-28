@@ -3,10 +3,11 @@ import { auth } from "@clerk/nextjs/server"
 import { z } from "zod"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
+import { getOrCreateDbUserByClerkId } from "@/lib/auth/ensure-user"
 
 async function getDbUserId(clerkId: string): Promise<string | null> {
-  const u = await db.user.findUnique({ where: { clerkId }, select: { id: true } })
-  return u?.id ?? null
+  const user = await getOrCreateDbUserByClerkId(clerkId)
+  return user.id
 }
 
 const createRuleSchema = z.object({

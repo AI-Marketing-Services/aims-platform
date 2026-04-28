@@ -5,12 +5,13 @@ import path from "path"
 import fs from "fs"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
+import { getOrCreateDbUserByClerkId } from "@/lib/auth/ensure-user"
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 async function getDbUserId(clerkId: string): Promise<string | null> {
-  const u = await db.user.findUnique({ where: { clerkId }, select: { id: true } })
-  return u?.id ?? null
+  const user = await getOrCreateDbUserByClerkId(clerkId)
+  return user.id
 }
 
 /** Strip markdown syntax to produce clean plain text paragraphs. */

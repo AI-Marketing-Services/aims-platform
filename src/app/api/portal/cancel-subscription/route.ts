@@ -4,6 +4,7 @@ import { z } from "zod"
 import { db } from "@/lib/db"
 import { cancelSubscription } from "@/lib/stripe"
 import { logger } from "@/lib/logger"
+import { getOrCreateDbUserByClerkId } from "@/lib/auth/ensure-user"
 
 const cancelSchema = z.object({
   subscriptionId: z.string().min(1),
@@ -25,7 +26,7 @@ export async function POST(req: Request) {
 
   const { subscriptionId } = parsed.data
 
-  const dbUser = await db.user.findUnique({ where: { clerkId } })
+  const dbUser = await getOrCreateDbUserByClerkId(clerkId)
   if (!dbUser) {
     return NextResponse.json({ error: "User not found" }, { status: 404 })
   }
