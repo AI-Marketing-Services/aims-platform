@@ -36,6 +36,7 @@ export async function GET() {
     failedInvites,
     abandonedApplications,
     openTickets,
+    newFeedback,
   ] = await Promise.allSettled([
     db.leadMagnetSubmission.count({
       where: {
@@ -66,6 +67,7 @@ export async function GET() {
       },
     }),
     db.supportTicket.count({ where: { status: "open" } }),
+    db.portalFeedback.count({ where: { status: "NEW" } }),
   ])
 
   const get = (r: PromiseSettledResult<number>) =>
@@ -77,6 +79,7 @@ export async function GET() {
     mightyInvites: get(failedInvites),
     followUps: get(abandonedApplications),
     support: get(openTickets),
+    feedback: get(newFeedback),
   }
 
   return NextResponse.json({ counts, fetchedAt: new Date().toISOString() })

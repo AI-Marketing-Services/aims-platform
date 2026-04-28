@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server"
 import { auth, currentUser } from "@clerk/nextjs/server"
 import { z } from "zod"
-import { sendTrackedEmail } from "@/lib/email"
-import { AIMS_FROM_EMAIL, AIMS_REPLY_TO } from "@/lib/email/senders"
+import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
+import { getOrCreateDbUserByClerkId } from "@/lib/auth/ensure-user"
 
 const feedbackSchema = z.object({
   category: z.enum(["BUG", "IDEA", "QUESTION", "OTHER"]).default("BUG"),
@@ -13,22 +13,18 @@ const feedbackSchema = z.object({
   userAgent: z.string().trim().max(500).optional(),
 })
 
-const RECIPIENT = "adamwolfe100@gmail.com"
-
 export async function POST(req: Request) {
-  const { userId } = await auth()
-  if (!userId) {
+  const { userId: clerkId } = await auth()
+  if (!clerkId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
   let parsed
   try {
-    const body = await req.json()
-    parsed = feedbackSchema.safeParse(body)
+    parsed = feedbackSchema.safeParse(await req.json())
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 })
   }
-
   if (!parsed.success) {
     return NextResponse.json(
       { error: "Invalid data", issues: parsed.error.issues },
@@ -36,43 +32,40 @@ export async function POST(req: Request) {
     )
   }
 
+  const dbUser = await getOrCreateDbUserByClerkId(clerkId)
   const cu = await currentUser()
-  const reporterEmail = cu?.emailAddresses?.[0]?.emailAddress ?? "unknown"
+  const reporterEmail =
+    cu?.emailAddresses?.[0]?.emailAddress ?? dbUser.email ?? "unknown"
   const reporterName =
-    [cu?.firstName, cu?.lastName].filter(Boolean).join(" ") || cu?.fullName || "(no name)"
-
-  const { category, title, details, pageUrl, userAgent } = parsed.data
-
-  const subject = `[Portal Feedback · ${category}] ${title}`
-  const text = [
-    `Reporter: ${reporterName} <${reporterEmail}>`,
-    `Category: ${category}`,
-    pageUrl ? `Page: ${pageUrl}` : null,
-    userAgent ? `User-Agent: ${userAgent}` : null,
-    "",
-    title,
-    "",
-    details,
-  ]
-    .filter((l) => l !== null)
-    .join("\n")
+    [cu?.firstName, cu?.lastName].filter(Boolean).join(" ") ||
+    cu?.fullName ||
+    dbUser.name ||
+    null
 
   try {
-    await sendTrackedEmail({
-      from: AIMS_FROM_EMAIL,
-      replyTo: reporterEmail !== "unknown" ? reporterEmail : AIMS_REPLY_TO,
-      to: RECIPIENT,
-      subject,
-      text,
-      serviceArm: "portal-feedback",
+    const record = await db.portalFeedback.create({
+      data: {
+        reporterId: dbUser.id,
+        reporterEmail,
+        reporterName,
+        category: parsed.data.category,
+        title: parsed.data.title,
+        details: parsed.data.details,
+        pageUrl: parsed.data.pageUrl ?? null,
+        userAgent: parsed.data.userAgent ?? null,
+        status: "NEW",
+      },
+      select: { id: true },
     })
+    return NextResponse.json({ ok: true, id: record.id })
   } catch (err) {
-    logger.error("Failed to email portal feedback", err, { userId })
+    logger.error("Failed to save portal feedback", err, {
+      endpoint: "POST /api/portal/feedback",
+      userId: dbUser.id,
+    })
     return NextResponse.json(
-      { error: "Could not deliver feedback right now — try again in a minute." },
+      { error: "Could not save feedback right now — try again in a minute." },
       { status: 500 },
     )
   }
-
-  return NextResponse.json({ ok: true })
 }

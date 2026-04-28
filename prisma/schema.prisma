@@ -54,6 +54,7 @@ model User {
   attributedPurchases      Purchase[]                @relation("PurchaseAttribution")
   userEntitlements         Entitlement[]
   commissionsEarned        CommissionEvent[]         @relation("ResellerCommissions")
+  portalFeedback           PortalFeedback[]          @relation("PortalFeedbackReporter")
 
   stripeCustomerId String?   @unique
   lastLoginAt      DateTime?
@@ -1893,4 +1894,36 @@ model CommissionEvent {
   @@index([resellerId, status])
   @@index([status, payableAt])
   @@index([purchaseId])
+}
+
+// ============ PORTAL FEEDBACK / BUG REPORTS ============
+// Centralized inbox for portal users (e.g. Katie) reporting bugs, ideas,
+// or questions. Replaces the previous email-based flow so admins triage
+// from /admin/feedback instead of an inbox.
+model PortalFeedback {
+  id        String  @id @default(cuid())
+  reporterId String?
+  reporter  User?   @relation("PortalFeedbackReporter", fields: [reporterId], references: [id], onDelete: SetNull)
+
+  // Snapshot of reporter identity at submission time so the row stays
+  // useful even if the User row is later deleted.
+  reporterEmail String
+  reporterName  String?
+
+  category String  // BUG | IDEA | QUESTION | OTHER
+  title    String
+  details  String  @db.Text
+
+  pageUrl   String?
+  userAgent String?
+
+  // NEW | TRIAGED | IN_PROGRESS | RESOLVED | WONT_FIX
+  status    String   @default("NEW")
+  adminNote String?  @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, createdAt])
+  @@index([reporterId])
 }

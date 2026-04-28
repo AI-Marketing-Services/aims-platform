@@ -145,7 +145,7 @@ export function BugReportWidget({ variant = "pill" }: BugReportWidgetProps) {
                   Thanks — we got it
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  Adam will review and follow up if needed.
+                  Our team will review it and follow up if needed.
                 </p>
                 <button
                   onClick={close}

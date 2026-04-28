@@ -33,6 +33,7 @@ import {
   BookOpenText,
   Package,
   DollarSign,
+  Bug,
 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
@@ -47,6 +48,7 @@ type NavCounts = {
   mightyInvites: number
   followUps: number
   support: number
+  feedback: number
 }
 
 const HREF_TO_BADGE_KEY: Partial<Record<string, keyof NavCounts>> = {
@@ -55,6 +57,7 @@ const HREF_TO_BADGE_KEY: Partial<Record<string, keyof NavCounts>> = {
   "/admin/mighty-invites": "mightyInvites",
   "/admin/follow-ups": "followUps",
   "/admin/support": "support",
+  "/admin/feedback": "feedback",
 }
 
 function useNavCounts(): NavCounts {
@@ -64,6 +67,7 @@ function useNavCounts(): NavCounts {
     mightyInvites: 0,
     followUps: 0,
     support: 0,
+    feedback: 0,
   })
 
   useEffect(() => {
@@ -121,6 +125,7 @@ const ADMIN_NAV = [
     items: [
       { label: "Team Access", href: "/admin/users", icon: ShieldCheck },
       { label: "Support Tickets", href: "/admin/support", icon: LifeBuoy },
+      { label: "Portal Feedback", href: "/admin/feedback", icon: Bug },
       { label: "Chat Sessions", href: "/admin/chat-sessions", icon: MessageSquare },
     ],
   },
