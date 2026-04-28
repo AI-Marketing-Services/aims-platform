@@ -25,8 +25,21 @@ function formatMessage(level: string, message: string, context?: LogContext): st
 
 export const logger = {
   error(message: string, error?: unknown, context?: LogContext): void {
+    // Prisma errors carry their useful diagnostics on `code` + `meta`, NOT on
+    // `message`. Without these, every prod failure shows up as the same opaque
+    // "PrismaClientKnownRequestError" with no clue which constraint or table
+    // tripped it. Pull them onto the structured payload so log scrapers can
+    // see the actual failure mode (e.g. P2021 missing table, P2002 unique
+    // violation).
+    const errAsRecord = (error ?? {}) as Record<string, unknown>
     const errorDetail = error instanceof Error
-      ? { message: error.message, stack: IS_PRODUCTION ? undefined : error.stack }
+      ? {
+          message: error.message,
+          name: error.name,
+          code: typeof errAsRecord.code === "string" ? errAsRecord.code : undefined,
+          meta: errAsRecord.meta,
+          stack: IS_PRODUCTION ? undefined : error.stack,
+        }
       : error !== undefined
         ? { value: String(error) }
         : undefined

@@ -1,6 +1,7 @@
 import { ClipboardCheck, FileText } from "lucide-react"
 import { ensureDbUser } from "@/lib/auth/ensure-user"
 import { db } from "@/lib/db"
+import { logger } from "@/lib/logger"
 import { AuditsListClient } from "./AuditsListClient"
 import { NewAuditButton } from "./NewAuditButton"
 
@@ -21,27 +22,36 @@ interface AuditQuizListItem {
 }
 
 async function loadQuizzes(ownerId: string): Promise<AuditQuizListItem[]> {
-  const rows = await db.auditQuiz.findMany({
-    where: { ownerId, archivedAt: null },
-    select: {
-      id: true,
-      slug: true,
-      title: true,
-      subtitle: true,
-      isPublished: true,
-      brandColor: true,
-      customDomain: true,
-      createdAt: true,
-      updatedAt: true,
-      _count: { select: { responses: true } },
-      responses: {
-        select: { createdAt: true },
-        orderBy: { createdAt: "desc" },
-        take: 1,
+  let rows
+  try {
+    rows = await db.auditQuiz.findMany({
+      where: { ownerId, archivedAt: null },
+      select: {
+        id: true,
+        slug: true,
+        title: true,
+        subtitle: true,
+        isPublished: true,
+        brandColor: true,
+        customDomain: true,
+        createdAt: true,
+        updatedAt: true,
+        _count: { select: { responses: true } },
+        responses: {
+          select: { createdAt: true },
+          orderBy: { createdAt: "desc" },
+          take: 1,
+        },
       },
-    },
-    orderBy: { updatedAt: "desc" },
-  })
+      orderBy: { updatedAt: "desc" },
+    })
+  } catch (err) {
+    logger.error("loadQuizzes failed", err, {
+      endpoint: "/portal/audits",
+      ownerId,
+    })
+    throw err
+  }
 
   return rows.map((q) => ({
     id: q.id,
