@@ -4,6 +4,7 @@ import { db } from "@/lib/db"
 import { requireAdmin } from "@/lib/auth"
 import { Breadcrumbs } from "@/components/shared/Breadcrumbs"
 import { FeedbackInbox } from "./FeedbackInbox"
+import { SlackTestButton } from "./SlackTestButton"
 
 export const metadata = { title: "Portal Feedback", robots: { index: false } }
 export const dynamic = "force-dynamic"
@@ -74,6 +75,7 @@ export default async function AdminFeedbackPage() {
             </p>
           </div>
         </div>
+        <SlackTestButton />
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
