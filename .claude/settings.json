@@ -14,5 +14,19 @@
       "Bash($*)"
     ],
     "deny": []
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "RTK_DIR=\"/Users/adamwolfe/aims-platform/rtk\"; if [ ! -d \"$RTK_DIR/.git\" ]; then git clone https://github.com/rtk-ai/rtk.git \"$RTK_DIR\" >/dev/null 2>&1 && printf '{\"systemMessage\":\"rtk-ai cloned to %s\"}\\n' \"$RTK_DIR\"; else git -C \"$RTK_DIR\" pull --ff-only >/dev/null 2>&1; SHA=$(git -C \"$RTK_DIR\" rev-parse --short HEAD); printf '{\"systemMessage\":\"rtk-ai updated (%s)\"}\\n' \"$SHA\"; fi",
+            "timeout": 60,
+            "statusMessage": "Syncing rtk-ai..."
+          }
+        ]
+      }
+    ]
   }
 }

@@ -101,7 +101,7 @@ const isPublicRoute = createRouteMatcher([
   "/q(.*)",
   "/api/audits/submit(.*)",
   // TEMP diagnostic — returns Prisma error codes for the prod outage debug.
-  "/api/_debug(.*)",
+  "/api/diag(.*)",
 ])
 
 const isAdminRoute = createRouteMatcher(["/admin(.*)"])
