@@ -201,7 +201,7 @@ export async function notifyHotLead(params: {
   reason?: string | null
   calLink?: string | null
 }) {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://aims-platform.vercel.app"
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.aioperatorcollective.com"
   const crmUrl = `${appUrl}/admin/crm/${params.dealId}`
 
   // In-app + email via standard notify (preserves existing behavior)
