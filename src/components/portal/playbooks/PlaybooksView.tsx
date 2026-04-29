@@ -153,7 +153,7 @@ function UseCaseCard({
           {/* Pitch line */}
           <div className="bg-primary/5 border border-primary/15 rounded-lg px-3 py-2.5">
             <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Pitch line</p>
-            <p className="text-sm font-medium text-foreground italic">"{useCase.pitchLine}"</p>
+            <p className="text-sm font-medium text-foreground italic">&ldquo;{useCase.pitchLine}&rdquo;</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">

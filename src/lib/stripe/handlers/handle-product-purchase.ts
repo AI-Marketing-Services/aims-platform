@@ -116,15 +116,42 @@ export async function handleProductCheckoutCompleted(
   await reconcileEntitlementsForUser(userId)
 
   // First-time commission event.
+  // Re-validate the reseller is still eligible at webhook time. Without this,
+  // a downgraded user (RESELLER → CLIENT) or a user whose site was unpublished
+  // between checkout creation and payment completion would still earn
+  // commission — silently corrupting payouts.
   if (referringResellerId && product.commissionBps > 0) {
-    await createPendingCommission({
-      purchaseId: purchase.id,
-      type: "initial_purchase",
-      baseAmountCents: amountCents,
-      notes: `Initial purchase: ${product.name}`,
-    }).catch((err) =>
-      logCommissionFailure("createPendingCommission", err, { purchaseId: purchase.id }),
-    )
+    const reseller = await db.user.findUnique({
+      where: { id: referringResellerId },
+      select: {
+        role: true,
+        operatorSite: { select: { isPublished: true } },
+      },
+    })
+    const isEligibleReseller =
+      reseller &&
+      (reseller.role === "RESELLER" ||
+        reseller.role === "ADMIN" ||
+        reseller.role === "SUPER_ADMIN")
+    if (isEligibleReseller) {
+      await createPendingCommission({
+        purchaseId: purchase.id,
+        type: "initial_purchase",
+        baseAmountCents: amountCents,
+        notes: `Initial purchase: ${product.name}`,
+      }).catch((err) =>
+        logCommissionFailure("createPendingCommission", err, { purchaseId: purchase.id }),
+      )
+    } else {
+      logger.warn(
+        "Skipping commission — referring reseller no longer eligible",
+        {
+          purchaseId: purchase.id,
+          referringResellerId,
+          role: reseller?.role ?? "deleted",
+        },
+      )
+    }
   }
 
   // Notify team — non-blocking.
@@ -172,17 +199,39 @@ export async function handleProductInvoicePaid(invoice: Stripe.Invoice): Promise
   // Refresh entitlements (push expiresAt forward for subs).
   await reconcileEntitlementsForUser(purchase.userId)
 
+  // Re-validate reseller eligibility on every renewal — see initial-purchase
+  // path for rationale (downgraded resellers shouldn't keep earning).
   if (purchase.referringResellerId && purchase.product.commissionBps > 0) {
-    await createPendingCommission({
-      purchaseId: purchase.id,
-      type: "renewal",
-      baseAmountCents,
-      notes: `Renewal: ${purchase.product.name}`,
-    }).catch((err) =>
-      logCommissionFailure("createPendingCommission(renewal)", err, {
+    const reseller = await db.user.findUnique({
+      where: { id: purchase.referringResellerId },
+      select: { role: true },
+    })
+    const isEligibleReseller =
+      reseller &&
+      (reseller.role === "RESELLER" ||
+        reseller.role === "ADMIN" ||
+        reseller.role === "SUPER_ADMIN")
+    if (isEligibleReseller) {
+      await createPendingCommission({
         purchaseId: purchase.id,
-      }),
-    )
+        type: "renewal",
+        baseAmountCents,
+        notes: `Renewal: ${purchase.product.name}`,
+      }).catch((err) =>
+        logCommissionFailure("createPendingCommission(renewal)", err, {
+          purchaseId: purchase.id,
+        }),
+      )
+    } else {
+      logger.warn(
+        "Skipping renewal commission — referring reseller no longer eligible",
+        {
+          purchaseId: purchase.id,
+          referringResellerId: purchase.referringResellerId,
+          role: reseller?.role ?? "deleted",
+        },
+      )
+    }
   }
 }
 
