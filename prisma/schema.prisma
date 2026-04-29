@@ -62,6 +62,14 @@ model User {
   emailNotifs      Boolean   @default(true)
   slackNotifs      Boolean   @default(false)
 
+  // Enrichment credits — denormalized current balance + plan tier; the
+  // canonical history lives in the CreditTransaction ledger so we can
+  // always reconstruct/audit a balance.
+  creditBalance      Int       @default(50)
+  creditPlanTier     String    @default("trial") // trial | operator | pro | agency
+  creditGrantedAt    DateTime?
+  creditTransactions CreditTransaction[]
+
   // Granular notification preferences
   notifNewPurchase       Boolean @default(true)
   notifFulfillmentUpdate Boolean @default(true)
@@ -1320,6 +1328,11 @@ model ClientDeal {
   website      String?
   industry     String?
 
+  // Discovery + enrichment metadata (populated by Scout import + Enrich button)
+  googlePlaceId   String?  @unique // dedup imports from Google Places
+  lastEnrichedAt  DateTime?
+  source          String?  // "scout" | "manual" | "import" | "audit-converted"
+
   stage    ClientDealStage @default(PROSPECT)
   value    Float           @default(0)
   currency String          @default("USD")
@@ -1334,6 +1347,7 @@ model ClientDeal {
   portalAccess ClientPortalAccess[]
   contentPieces ContentPiece[]
   followUpRules FollowUpRule[]
+  enrichment    ClientDealEnrichment?
 
   wonAt  DateTime?
   lostAt DateTime?
@@ -1345,6 +1359,45 @@ model ClientDeal {
   @@index([userId])
   @@index([userId, stage])
   @@index([createdAt])
+  @@index([lastEnrichedAt])
+}
+
+// Stores the structured output of the enrichment pipeline (Website scrape →
+// Perplexity → Hunter → Prospeo). One row per ClientDeal — re-enriching
+// updates in place, keeps the running history in `sources` JSON.
+model ClientDealEnrichment {
+  id           String     @id @default(cuid())
+  clientDealId String     @unique
+  clientDeal   ClientDeal @relation(fields: [clientDealId], references: [id], onDelete: Cascade)
+
+  // Company-level data (Prospeo + Perplexity)
+  domain          String?
+  description     String?  @db.Text
+  industry        String?
+  employeeCount   Int?
+  employeeRange   String?
+  revenueRange   String?
+  foundedYear     Int?
+  city            String?
+  state           String?
+  country         String?
+  linkedinUrl     String?
+  twitterUrl      String?
+  facebookUrl     String?
+  instagramUrl    String?
+  logoUrl         String?
+  managementCompany String?
+  prospeoCompanyId  String? // re-enrich without re-billing
+
+  // Provenance: { website: {found, paths}, perplexity: {...}, hunter: {domainContacts, emailFinder}, prospeo: {company, persons} }
+  sources         Json
+  totalCreditsCost Int     @default(0)
+  startedAt        DateTime
+  completedAt      DateTime?
+  errorMessage     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model ClientContact {
@@ -2010,4 +2063,29 @@ model AuditResponse {
   @@index([quizId])
   @@index([leadEmail])
   @@index([createdAt])
+}
+
+// ============ ENRICHMENT CREDIT LEDGER ============
+
+// Append-only ledger of every credit movement. Sources of credits:
+//   - Initial trial grant on signup (+50)
+//   - Monthly plan grants (+500 / +2000 / +10000 depending on tier)
+//   - Stripe top-up purchases (+500 per $20)
+//   - Refunds (e.g. when an enrichment errors mid-run, unused credits return)
+// Sinks: enrichment operations (Places search, Hunter, Prospeo, etc.).
+//
+// `balanceAfter` is denormalized for fast audit/debug — given any tx row
+// you can verify the running balance without summing the whole ledger.
+model CreditTransaction {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount       Int      // negative = debit (spend), positive = grant/refund
+  reason       String   // "enrichment-debit" | "places-search" | "monthly-grant" | "topup-purchase" | "refund-error" | "trial-grant"
+  metadata     Json?    // { dealId, source, operation, ... }
+  balanceAfter Int      // running balance after this tx applied
+  createdAt    DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([reason])
 }

@@ -8,6 +8,8 @@ import { ChevronLeft, Building2, User, Mail, Phone, Globe, DollarSign } from "lu
 import { EditDealInlineForm } from "@/components/portal/crm/EditDealInlineForm"
 import { ProposalGenerator } from "@/components/portal/crm/ProposalGenerator"
 import { DealChecklist } from "@/components/portal/crm/DealChecklist"
+import { EnrichmentCard } from "@/components/portal/crm/EnrichmentCard"
+import { MAX_ENRICHMENT_COST } from "@/lib/enrichment/credits/pricing"
 
 async function getDeal(dealId: string, clerkId: string) {
   const dbUser = await db.user.findUnique({ where: { clerkId }, select: { id: true } })
@@ -19,8 +21,17 @@ async function getDeal(dealId: string, clerkId: string) {
       contacts: { orderBy: [{ isPrimary: "desc" }, { createdAt: "asc" }] },
       activities: { orderBy: { createdAt: "desc" } },
       proposals: { orderBy: { createdAt: "desc" } },
+      enrichment: true,
     },
   })
+}
+
+async function getCreditBalance(clerkId: string): Promise<number> {
+  const u = await db.user.findUnique({
+    where: { clerkId },
+    select: { creditBalance: true },
+  })
+  return u?.creditBalance ?? 0
 }
 
 export const dynamic = "force-dynamic"
@@ -34,7 +45,10 @@ export default async function DealDetailPage({
   if (!userId) redirect("/sign-in")
 
   const { dealId } = await params
-  const deal = await getDeal(dealId, userId)
+  const [deal, creditBalance] = await Promise.all([
+    getDeal(dealId, userId),
+    getCreditBalance(userId),
+  ])
   if (!deal) notFound()
 
   return (
@@ -124,6 +138,40 @@ export default async function DealDetailPage({
               )}
             </div>
           </div>
+
+          {/* Company research / enrichment */}
+          <EnrichmentCard
+            dealId={deal.id}
+            initialEnrichment={
+              deal.enrichment
+                ? {
+                    id: deal.enrichment.id,
+                    domain: deal.enrichment.domain,
+                    description: deal.enrichment.description,
+                    industry: deal.enrichment.industry,
+                    employeeCount: deal.enrichment.employeeCount,
+                    employeeRange: deal.enrichment.employeeRange,
+                    revenueRange: deal.enrichment.revenueRange,
+                    foundedYear: deal.enrichment.foundedYear,
+                    city: deal.enrichment.city,
+                    state: deal.enrichment.state,
+                    country: deal.enrichment.country,
+                    linkedinUrl: deal.enrichment.linkedinUrl,
+                    twitterUrl: deal.enrichment.twitterUrl,
+                    facebookUrl: deal.enrichment.facebookUrl,
+                    instagramUrl: deal.enrichment.instagramUrl,
+                    logoUrl: deal.enrichment.logoUrl,
+                    managementCompany: deal.enrichment.managementCompany,
+                    totalCreditsCost: deal.enrichment.totalCreditsCost,
+                    startedAt: deal.enrichment.startedAt.toISOString(),
+                    completedAt: deal.enrichment.completedAt?.toISOString() ?? null,
+                  }
+                : null
+            }
+            lastEnrichedAt={deal.lastEnrichedAt}
+            estimatedMaxCost={MAX_ENRICHMENT_COST}
+            creditBalance={creditBalance}
+          />
 
           {/* Edit form */}
           <div className="bg-card border border-border rounded-xl p-4">
