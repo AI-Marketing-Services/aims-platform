@@ -13,6 +13,7 @@ import { AdminPreviewBanner } from "@/components/shared/AdminPreviewBanner"
 import { db } from "@/lib/db"
 import { getEffectiveRole, dashboardForRole } from "@/lib/auth"
 import { ensureDbUser } from "@/lib/auth/ensure-user"
+import { logger } from "@/lib/logger"
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
@@ -39,28 +40,54 @@ export default async function PortalLayout({
     redirect(dashboardForRole(effectiveRole))
   }
 
-  // Single DB query for sidebar data + chat widget context
-  const dbUser = await db.user.findUnique({
-    where: { clerkId: userId },
-    select: {
-      id: true,
-      name: true,
-      subscriptions: {
-        where: { status: "ACTIVE" },
-        select: { monthlyAmount: true },
+  // Single DB query for sidebar data + chat widget context. Each query is
+  // wrapped so a transient prod failure surfaces the full Prisma error code +
+  // meta in logs (the unwrapped throw appears as truncated
+  // "PrismaClientKnownReq..." in the Vercel log viewer).
+  let dbUser
+  try {
+    dbUser = await db.user.findUnique({
+      where: { clerkId: userId },
+      select: {
+        id: true,
+        name: true,
+        subscriptions: {
+          where: { status: "ACTIVE" },
+          select: { monthlyAmount: true },
+        },
       },
-    },
-  })
+    })
+  } catch (err) {
+    logger.error("portal layout: db.user.findUnique failed", err, {
+      endpoint: "(portal)/layout",
+      userId,
+    })
+    throw err
+  }
 
   const totalMrr = dbUser?.subscriptions.reduce((sum, s) => sum + s.monthlyAmount, 0) ?? 0
   const serviceCount = dbUser?.subscriptions.length ?? 0
 
   const [unreadCount, onboardingProgress] = await Promise.all([
     dbUser
-      ? db.notification.count({ where: { userId: dbUser.id, read: false } })
+      ? db.notification
+          .count({ where: { userId: dbUser.id, read: false } })
+          .catch((err) => {
+            logger.error("portal layout: notification.count failed", err, {
+              endpoint: "(portal)/layout",
+              userId: dbUser.id,
+            })
+            return 0
+          })
       : Promise.resolve(0),
     dbUser
-      ? getProgressForUser(dbUser.id)
+      ? getProgressForUser(dbUser.id).catch((err) => {
+          logger.error("portal layout: getProgressForUser failed", err, {
+            endpoint: "(portal)/layout",
+            userId: dbUser.id,
+          })
+          return null
+        })
       : Promise.resolve(null),
   ])
 
