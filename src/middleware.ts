@@ -100,6 +100,8 @@ const isPublicRoute = createRouteMatcher([
   // Operator-built public audit funnels — anyone with the link can fill them out.
   "/q(.*)",
   "/api/audits/submit(.*)",
+  // TEMP — diag endpoint for the prod-portal-crash incident.
+  "/api/diag(.*)",
 ])
 
 const isAdminRoute = createRouteMatcher(["/admin(.*)"])
