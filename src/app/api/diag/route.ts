@@ -89,6 +89,90 @@ export async function GET() {
           orderBy: { createdAt: "desc" },
         }),
     ],
+    // Use a REAL admin row so the queries exercise the exact same path the
+    // signed-in portal pages take. If these fail but the empty-result probes
+    // above succeed, the bug is data-shape dependent (bad enum, missing FK,
+    // unmigrated relation, etc).
+    [
+      "realUserLayoutShape",
+      async () => {
+        const admin = await db.user.findFirst({
+          where: { role: "ADMIN" },
+          select: { id: true, clerkId: true },
+        })
+        if (!admin) return { skipped: "no admin user" }
+        return db.user.findUnique({
+          where: { clerkId: admin.clerkId },
+          select: {
+            id: true,
+            name: true,
+            subscriptions: {
+              where: { status: "ACTIVE" },
+              select: { monthlyAmount: true },
+            },
+          },
+        })
+      },
+    ],
+    [
+      "realUserAuditQuizFindMany",
+      async () => {
+        const admin = await db.user.findFirst({
+          where: { role: "ADMIN" },
+          select: { id: true },
+        })
+        if (!admin) return { skipped: "no admin user" }
+        return db.auditQuiz.findMany({
+          where: { ownerId: admin.id, archivedAt: null },
+          select: {
+            id: true,
+            slug: true,
+            title: true,
+            subtitle: true,
+            isPublished: true,
+            brandColor: true,
+            customDomain: true,
+            createdAt: true,
+            updatedAt: true,
+            _count: { select: { responses: true } },
+            responses: {
+              select: { createdAt: true },
+              orderBy: { createdAt: "desc" },
+              take: 1,
+            },
+          },
+          orderBy: { updatedAt: "desc" },
+        })
+      },
+    ],
+    [
+      "realUserNotificationsCount",
+      async () => {
+        const admin = await db.user.findFirst({
+          where: { role: "ADMIN" },
+          select: { id: true },
+        })
+        if (!admin) return { skipped: "no admin user" }
+        return db.notification.count({
+          where: { userId: admin.id, read: false },
+        })
+      },
+    ],
+    [
+      "realUserOnboardingProgress",
+      async () => {
+        const admin = await db.user.findFirst({
+          where: { role: "ADMIN" },
+          select: { id: true },
+        })
+        if (!admin) return { skipped: "no admin user" }
+        // Same shape as getProgressForUser uses — onboarding steps + completedAt.
+        return db.memberOnboardingStep.findMany({
+          where: { userId: admin.id },
+          select: { id: true, key: true, completedAt: true },
+        })
+      },
+    ],
   ] as const) {
     try {
       result[label] = { ok: true, value: await run() }
