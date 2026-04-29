@@ -116,10 +116,31 @@ export async function PATCH(
 
     const existing = await db.auditQuiz.findFirst({
       where: { id, ownerId: dbUserId },
-      select: { id: true },
+      select: { id: true, questions: true, isPublished: true },
     })
     if (!existing) {
       return NextResponse.json({ error: "Not found" }, { status: 404 })
+    }
+
+    // Server-side publish gate: never allow flipping isPublished=true on a
+    // quiz with zero questions. Without this, an operator could publish a
+    // blank quiz, share the URL, and visitors would see an empty form.
+    if (parsed.data.isPublished === true) {
+      const incomingQuestions = parsed.data.questions
+      const existingQuestions = (existing.questions as unknown as unknown[]) ?? []
+      const finalQuestionCount = incomingQuestions
+        ? incomingQuestions.length
+        : existingQuestions.length
+      if (finalQuestionCount < 1) {
+        return NextResponse.json(
+          {
+            error:
+              "Add at least one question before publishing this audit.",
+            issues: { field: "questions" },
+          },
+          { status: 400 }
+        )
+      }
     }
 
     // Build update payload — Prisma treats `undefined` as "leave alone" but

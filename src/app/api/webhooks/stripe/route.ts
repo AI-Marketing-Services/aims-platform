@@ -49,6 +49,26 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 })
   }
 
+  // Livemode guard: in production, refuse test-mode events. Without this,
+  // a misconfigured STRIPE_WEBHOOK_SECRET pointing at a test endpoint would
+  // create real DB rows (Subscriptions, Purchases, Commissions) for fake
+  // payments — silently corrupting prod data.
+  if (process.env.NODE_ENV === "production" && !event.livemode) {
+    logger.error(
+      "Stripe webhook received non-livemode event in production — refusing",
+      null,
+      {
+        endpoint: "POST /api/webhooks/stripe",
+        action: event.type,
+        livemode: event.livemode,
+      }
+    )
+    return NextResponse.json(
+      { error: "Test-mode event refused in production" },
+      { status: 400 }
+    )
+  }
+
   try {
     switch (event.type) {
       case "checkout.session.completed": {

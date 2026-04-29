@@ -28,18 +28,35 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Webhook not configured" }, { status: 500 })
   }
 
-  // Verify signature
-  if (signature) {
-    const expected = crypto
-      .createHmac("sha256", webhookSecret)
-      .update(body)
-      .digest("hex")
-    if (signature !== expected) {
-      logger.error("Dub webhook signature mismatch", undefined, {
-        endpoint: "POST /api/webhooks/dub",
-      })
-      return NextResponse.json({ error: "Invalid signature" }, { status: 400 })
-    }
+  // Verify signature — require header in production so an attacker can't
+  // bypass verification by simply omitting the dub-signature header.
+  if (!signature) {
+    logger.error("Dub webhook missing signature header", undefined, {
+      endpoint: "POST /api/webhooks/dub",
+    })
+    return NextResponse.json(
+      { error: "Missing signature" },
+      { status: 401 }
+    )
+  }
+  const expected = crypto
+    .createHmac("sha256", webhookSecret)
+    .update(body)
+    .digest("hex")
+  let signatureValid = false
+  try {
+    signatureValid = crypto.timingSafeEqual(
+      Buffer.from(signature),
+      Buffer.from(expected)
+    )
+  } catch {
+    signatureValid = false
+  }
+  if (!signatureValid) {
+    logger.error("Dub webhook signature mismatch", undefined, {
+      endpoint: "POST /api/webhooks/dub",
+    })
+    return NextResponse.json({ error: "Invalid signature" }, { status: 401 })
   }
 
   let event: DubWebhookEvent

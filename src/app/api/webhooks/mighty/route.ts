@@ -18,7 +18,19 @@ import type { MightyWebhookEvent } from "@/lib/mighty/types"
 
 function verifySignature(raw: string, signatureHeader: string | null): boolean {
   const secret = process.env.MIGHTY_WEBHOOK_SECRET
-  if (!secret) return true // verification disabled until configured in Mighty
+  if (!secret) {
+    // Fail-closed in production: refuse unsigned webhooks if no secret is set.
+    // Allow in dev so local testing without Mighty config still works.
+    if (process.env.NODE_ENV === "production") {
+      logger.error(
+        "MIGHTY_WEBHOOK_SECRET is not configured — refusing webhook in production",
+        null,
+        { action: "webhook" }
+      )
+      return false
+    }
+    return true
+  }
   if (!signatureHeader) return false
   const expected = crypto
     .createHmac("sha256", secret)
