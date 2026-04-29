@@ -5,6 +5,8 @@ import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
 import { formRatelimit, getIp } from "@/lib/ratelimit"
 import { summarizeAuditResponse } from "@/lib/audits/ai-summary"
+import { sendTrackedEmail, emailLayout, h1, p, btn, divider, escapeHtml } from "@/lib/email"
+import { AIMS_FROM_EMAIL, AIMS_REPLY_TO } from "@/lib/email/senders"
 import type {
   AnswerMap,
   AnswerValue,
@@ -88,6 +90,7 @@ export async function POST(req: Request) {
       where: { slug, isPublished: true, archivedAt: null },
       select: {
         id: true,
+        title: true,
         questions: true,
         collectEmail: true,
         emailRequired: true,
@@ -95,6 +98,9 @@ export async function POST(req: Request) {
         successMessage: true,
         successCta: true,
         successCtaUrl: true,
+        owner: {
+          select: { id: true, email: true, name: true },
+        },
       },
     })
 
@@ -177,6 +183,59 @@ export async function POST(req: Request) {
           action: "ai-summary",
         })
       })
+
+    // Fire-and-forget operator notification. Without this, operators have to
+    // poll the portal manually to discover new leads — high-value leads sit
+    // for hours/days. Failures are logged but never break the user flow.
+    if (quiz.owner?.email) {
+      const ownerEmail = quiz.owner.email
+      const ownerName = quiz.owner.name?.split(" ")[0] ?? "there"
+      const leadEmail = lead.email ?? "(no email provided)"
+      const leadName = lead.name ?? "(no name)"
+      const leadCompany = lead.company ?? "(no company)"
+      const inboxUrl = `https://www.aioperatorcollective.com/portal/audits/${quiz.id}/responses`
+      void sendTrackedEmail({
+        from: AIMS_FROM_EMAIL,
+        to: ownerEmail,
+        replyTo: AIMS_REPLY_TO,
+        subject: `New audit lead: ${escapeHtml(leadName)} (${escapeHtml(quiz.title)})`,
+        html: emailLayout(
+          `
+            ${h1(`New audit lead, ${escapeHtml(ownerName)}`)}
+            ${p(`Someone just completed your <strong>${escapeHtml(quiz.title)}</strong> audit.`)}
+            <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #E5E7EB;border-radius:8px;overflow:hidden;margin:0 0 24px;">
+              ${[
+                ["Name", leadName],
+                ["Email", leadEmail],
+                ["Company", leadCompany],
+                ...(lead.phone ? [["Phone", lead.phone]] : []),
+                ...(lead.role ? [["Role", lead.role]] : []),
+              ]
+                .map(
+                  ([label, value], i) => `
+                  <tr style="background:${i % 2 === 0 ? "#F9FAFB" : "#ffffff"};">
+                    <td style="padding:12px 16px;font-size:13px;color:#6B7280;width:120px;">${escapeHtml(String(label))}</td>
+                    <td style="padding:12px 16px;font-size:13px;font-weight:600;color:#111827;">${escapeHtml(String(value))}</td>
+                  </tr>`,
+                )
+                .join("")}
+            </table>
+            ${btn("View full response →", inboxUrl)}
+            ${divider()}
+            ${p("Reach out within the hour for the best conversion rate.")}
+          `,
+          `New audit lead: ${leadName}`,
+          ownerEmail,
+        ),
+        serviceArm: "audit-notification",
+      }).catch((err) => {
+        logger.error("Audit owner notification email failed", err, {
+          endpoint: "POST /api/audits/submit",
+          action: "owner-notification",
+          quizId: quiz.id,
+        })
+      })
+    }
 
     return NextResponse.json({
       ok: true,
