@@ -159,17 +159,31 @@ export async function GET() {
       },
     ],
     [
-      "realUserOnboardingProgress",
+      "realUserOnboardingSteps",
       async () => {
         const admin = await db.user.findFirst({
           where: { role: "ADMIN" },
           select: { id: true },
         })
         if (!admin) return { skipped: "no admin user" }
-        // Same shape as getProgressForUser uses — onboarding steps + completedAt.
         return db.memberOnboardingStep.findMany({
           where: { userId: admin.id },
-          select: { id: true, key: true, completedAt: true },
+          select: { stepKey: true, completedAt: true },
+          orderBy: { completedAt: "desc" },
+        })
+      },
+    ],
+    [
+      "realUserMemberProfile",
+      async () => {
+        const admin = await db.user.findFirst({
+          where: { role: "ADMIN" },
+          select: { id: true },
+        })
+        if (!admin) return { skipped: "no admin user" }
+        return db.memberProfile.findUnique({
+          where: { userId: admin.id },
+          select: { onboardingCompletedAt: true },
         })
       },
     ],
