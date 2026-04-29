@@ -100,8 +100,6 @@ const isPublicRoute = createRouteMatcher([
   // Operator-built public audit funnels — anyone with the link can fill them out.
   "/q(.*)",
   "/api/audits/submit(.*)",
-  // TEMP diagnostic — returns Prisma error codes for the prod outage debug.
-  "/api/diag(.*)",
 ])
 
 const isAdminRoute = createRouteMatcher(["/admin(.*)"])
