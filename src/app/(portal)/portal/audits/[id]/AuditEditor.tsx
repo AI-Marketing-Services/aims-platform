@@ -17,6 +17,8 @@ import {
   ExternalLink,
   Palette,
   AlertCircle,
+  Upload,
+  Image as ImageIcon,
 } from "lucide-react"
 import type { QuizOption, QuizQuestion, QuestionType } from "@/lib/audits/types"
 
@@ -500,7 +502,10 @@ export function AuditEditor({ quiz }: AuditEditorProps) {
   const [origin, setOrigin] = useState("")
   const [copied, setCopied] = useState(false)
   const [archiving, setArchiving] = useState(false)
+  const [uploadingLogo, setUploadingLogo] = useState(false)
+  const [logoUploadError, setLogoUploadError] = useState<string | null>(null)
   const liveRegionRef = useRef<HTMLSpanElement | null>(null)
+  const logoFileInputRef = useRef<HTMLInputElement | null>(null)
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -628,6 +633,49 @@ export function AuditEditor({ quiz }: AuditEditorProps) {
     }
   }
 
+  const handleLogoFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0]
+    // Reset the input so picking the same file twice still triggers change.
+    if (logoFileInputRef.current) {
+      logoFileInputRef.current.value = ""
+    }
+    if (!file) return
+
+    setLogoUploadError(null)
+    setUploadingLogo(true)
+    try {
+      const formData = new FormData()
+      formData.append("file", file)
+      const res = await fetch(`/api/portal/audits/${quiz.id}/logo`, {
+        method: "POST",
+        body: formData,
+      })
+      const body = (await res.json().catch(() => ({}))) as {
+        url?: string
+        error?: string
+      }
+      if (!res.ok || !body.url) {
+        throw new Error(body.error ?? "Upload failed")
+      }
+      // Mirror the uploaded URL into both the editor's working state and the
+      // baseline so the change doesn't show up as "unsaved" — the server has
+      // already persisted it.
+      setState((prev) => ({ ...prev, logoUrl: body.url ?? "" }))
+      setOriginal((prev) => ({ ...prev, logoUrl: body.url ?? "" }))
+      if (liveRegionRef.current) {
+        liveRegionRef.current.textContent = "Logo uploaded."
+      }
+    } catch (err) {
+      setLogoUploadError(
+        err instanceof Error ? err.message : "Upload failed"
+      )
+    } finally {
+      setUploadingLogo(false)
+    }
+  }
+
   const previewBrand = state.brandColor && isValidHex(state.brandColor)
     ? state.brandColor
     : "#C4972A"
@@ -716,14 +764,77 @@ export function AuditEditor({ quiz }: AuditEditorProps) {
             placeholder="One-liner that frames the quiz"
           />
         </Field>
-        <Field label="Logo URL">
-          <input
-            type="url"
-            value={state.logoUrl}
-            onChange={(e) => updateField("logoUrl", e.target.value)}
-            className={inputClass}
-            placeholder="https://example.com/logo.png"
-          />
+        <Field
+          label="Logo"
+          hint="Upload an image (PNG, JPEG, WebP, or SVG, up to 2 MB) or paste a hosted asset URL."
+        >
+          <div className="space-y-3">
+            <div className="flex items-center gap-3">
+              <div
+                className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border bg-background"
+                aria-hidden="true"
+              >
+                {state.logoUrl ? (
+                  // Use a plain <img> here so any external host works without
+                  // configuring next/image remotePatterns at build time.
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={state.logoUrl}
+                    alt=""
+                    className="h-full w-full object-contain"
+                  />
+                ) : (
+                  <ImageIcon className="h-5 w-5 text-muted-foreground" />
+                )}
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                <input
+                  ref={logoFileInputRef}
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp,image/svg+xml"
+                  onChange={handleLogoFileChange}
+                  className="sr-only"
+                  aria-label="Upload logo"
+                />
+                <button
+                  type="button"
+                  onClick={() => logoFileInputRef.current?.click()}
+                  disabled={uploadingLogo}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-background px-3 py-1.5 text-xs font-medium text-foreground hover:border-primary/40 hover:text-primary transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {uploadingLogo ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  ) : (
+                    <Upload className="h-3.5 w-3.5" />
+                  )}
+                  {uploadingLogo ? "Uploading…" : "Upload logo"}
+                </button>
+                {state.logoUrl && !uploadingLogo && (
+                  <button
+                    type="button"
+                    onClick={() => updateField("logoUrl", "")}
+                    className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] font-medium text-muted-foreground hover:text-red-500 hover:bg-red-500/10 transition-all"
+                  >
+                    <Trash2 className="h-3 w-3" />
+                    Remove
+                  </button>
+                )}
+              </div>
+            </div>
+            {logoUploadError && (
+              <span className="inline-flex items-center gap-1.5 text-[11px] text-red-500">
+                <AlertCircle className="h-3 w-3 shrink-0" />
+                {logoUploadError}
+              </span>
+            )}
+            <input
+              type="url"
+              value={state.logoUrl}
+              onChange={(e) => updateField("logoUrl", e.target.value)}
+              className={inputClass}
+              placeholder="Or paste a logo URL — https://example.com/logo.png"
+            />
+          </div>
         </Field>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

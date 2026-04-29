@@ -56,7 +56,7 @@ export default async function AuditEditPage({
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 space-y-6 pb-32">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-6 pb-20 space-y-6">
       <div className="flex items-center justify-between gap-3">
         <Link
           href="/portal/audits"

@@ -62,7 +62,7 @@ function CopyShareLink({ slug }: { slug: string }) {
     <button
       type="button"
       onClick={handleCopy}
-      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all"
+      className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all whitespace-nowrap"
       title={`Copy ${link}`}
     >
       {copied ? (
@@ -70,7 +70,8 @@ function CopyShareLink({ slug }: { slug: string }) {
       ) : (
         <Copy className="h-3.5 w-3.5" />
       )}
-      {copied ? "Copied" : "Copy link"}
+      <span className="hidden sm:inline">{copied ? "Copied" : "Copy link"}</span>
+      <span className="sm:hidden">{copied ? "Copied" : "Copy"}</span>
     </button>
   )
 }
@@ -128,30 +129,32 @@ function AuditCard({ quiz }: { quiz: AuditQuizListItem }) {
         <span>Last: {formatDate(quiz.lastResponseAt)}</span>
       </div>
 
-      <div className="flex items-center justify-between border-t border-border pt-3 -mx-1 px-1">
-        <div className="flex items-center gap-1">
+      <div className="flex items-center justify-between gap-1 border-t border-border pt-3 -mx-1 px-1">
+        <div className="flex items-center gap-0.5 min-w-0">
           <Link
             href={`/portal/audits/${quiz.id}`}
-            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all"
+            className="inline-flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all whitespace-nowrap"
+            title="Edit"
           >
             <Pencil className="h-3.5 w-3.5" />
-            Edit
+            <span className="hidden sm:inline">Edit</span>
           </Link>
           <Link
             href={`/portal/audits/${quiz.id}/responses`}
-            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all"
+            className="inline-flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all whitespace-nowrap"
+            title="Responses"
           >
             <Inbox className="h-3.5 w-3.5" />
-            Responses
+            <span className="hidden sm:inline">Responses</span>
           </Link>
         </div>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-0.5 shrink-0">
           <CopyShareLink slug={quiz.slug} />
           <a
             href={`/q/${quiz.slug}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all"
+            className="inline-flex items-center justify-center p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all"
             title="Open public link"
           >
             <ExternalLink className="h-3.5 w-3.5" />

@@ -166,8 +166,15 @@ export default function QuizClient(props: QuizClientProps) {
     dispatch({ type: "answer", questionId: question.id, value })
   }
 
-  function advanceFromQuestion(question: QuizQuestion) {
-    const value = state.answers[question.id]
+  function advanceFromQuestion(
+    question: QuizQuestion,
+    overrideValue?: AnswerValue,
+  ) {
+    // Read the just-selected value when provided — closure-captured
+    // state.answers can lag a click→advance dispatch by a render, which
+    // makes auto-advance silently no-op the first tap on single_select.
+    const value =
+      overrideValue !== undefined ? overrideValue : state.answers[question.id]
     if (question.required && !isAnswered(question, value ?? null)) return
     if (state.questionIndex < totalQuestions - 1) {
       dispatch({ type: "next" })
@@ -334,7 +341,9 @@ export default function QuizClient(props: QuizClientProps) {
                   question={currentQuestion}
                   value={state.answers[currentQuestion.id] ?? null}
                   onChange={(v) => handleAnswer(currentQuestion, v)}
-                  onAdvance={() => advanceFromQuestion(currentQuestion)}
+                  onAdvance={(overrideValue) =>
+                    advanceFromQuestion(currentQuestion, overrideValue)
+                  }
                   brandColor={brandColor}
                   isLast={
                     state.questionIndex === totalQuestions - 1 &&
@@ -517,7 +526,7 @@ function QuestionStage({
   question: QuizQuestion
   value: AnswerValue
   onChange: (v: AnswerValue) => void
-  onAdvance: () => void
+  onAdvance: (overrideValue?: AnswerValue) => void
   brandColor: string
   isLast: boolean
 }) {
@@ -553,8 +562,10 @@ function QuestionStage({
           brandColor={brandColor}
           onSelect={(optionId) => {
             onChange(optionId)
-            // Auto-advance after a short beat for tactile feel.
-            window.setTimeout(onAdvance, 180)
+            // Auto-advance after a short beat for tactile feel — pass the
+            // optionId through so the parent doesn't depend on still-stale
+            // state.answers when the timer fires.
+            window.setTimeout(() => onAdvance(optionId), 180)
           }}
         />
       )}
@@ -624,7 +635,7 @@ function QuestionStage({
         <div className="mt-8">
           <button
             type="button"
-            onClick={onAdvance}
+            onClick={() => onAdvance()}
             disabled={!canAdvance}
             className="inline-flex items-center gap-2 px-6 py-3 rounded-md font-medium text-white shadow-sm hover:opacity-90 transition-opacity disabled:opacity-40"
             style={{ background: brandColor }}
