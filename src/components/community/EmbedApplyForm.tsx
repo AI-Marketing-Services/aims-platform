@@ -56,6 +56,26 @@ export function EmbedApplyForm() {
 
   const containerRef = useRef<HTMLDivElement>(null)
 
+  /* Preload Calendly widget.js on mount — see ApplyForm.tsx for rationale. */
+  useEffect(() => {
+    if (typeof window === "undefined") return
+    if (
+      document.querySelector(
+        'script[src="https://assets.calendly.com/assets/external/widget.js"]'
+      )
+    ) {
+      return
+    }
+    const script = document.createElement("script")
+    script.src = "https://assets.calendly.com/assets/external/widget.js"
+    script.async = true
+    document.head.appendChild(script)
+    const link = document.createElement("link")
+    link.rel = "stylesheet"
+    link.href = "https://assets.calendly.com/assets/external/widget.css"
+    document.head.appendChild(link)
+  }, [])
+
   const progress =
     phase === "calendar" || phase === "done"
       ? 100
@@ -280,10 +300,12 @@ export function EmbedApplyForm() {
       document.head.appendChild(link)
     }
 
+    // 10s failsafe — incognito + cold cache can take 6-8s for widget.js
+    // to inject the iframe. 10s avoids false-positive fallback firing.
     const timeoutId = window.setTimeout(() => {
       const renderedIframe = container.querySelector("iframe")
       if (!renderedIframe) setCalendarFallback(true)
-    }, 4000)
+    }, 10000)
 
     return () => {
       window.removeEventListener("message", onMessage)
@@ -482,21 +504,26 @@ export function EmbedApplyForm() {
           ) : (
             <div
               id="cal-inline-embed-aoc"
-              className="calendly-inline-widget w-full max-w-xl rounded-lg overflow-hidden bg-white"
+              className="calendly-inline-widget w-full max-w-xl rounded-lg overflow-hidden bg-white border border-[#E3E3E3]"
               style={{ minWidth: "320px", height: "min(1000px, calc(100vh - 80px))", minHeight: "820px" }}
             >
-              <p className="p-6 text-center text-sm text-[#4B5563]">
-                Loading calendar…{" "}
+              <div className="flex flex-col items-center justify-center h-full p-6">
+                <Loader2 className="w-8 h-8 text-[#981B1B] animate-spin mb-4" />
+                <p className="text-sm font-medium text-[#1A1A1A] mb-1">
+                  Loading available times…
+                </p>
+                <p className="text-xs text-[#737373] mb-4">
+                  This usually takes a few seconds.
+                </p>
                 <a
-                  className="text-crimson font-semibold underline"
+                  className="text-xs text-[#981B1B] font-semibold underline"
                   href={getCalendarUrl(scoreResult.tier)}
                   target="_blank"
                   rel="noreferrer"
                 >
-                  Open it in a new tab
-                </a>{" "}
-                if it doesn&apos;t appear.
-              </p>
+                  Or open the calendar in a new tab →
+                </a>
+              </div>
             </div>
           )}
           <p className="mt-3 text-center text-xs text-[#737373]">

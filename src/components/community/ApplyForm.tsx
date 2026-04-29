@@ -79,6 +79,32 @@ export function ApplyForm() {
 
   const containerRef = useRef<HTMLDivElement>(null)
 
+  /* ---- Preload Calendly widget.js on mount ----
+     The biggest source of "blank calendar" complaints is the latency of
+     loading widget.js the moment a visitor reaches the calendar step.
+     In incognito (no cache), this can take 6-8 seconds — past our
+     failsafe timeout. Loading the script while the visitor is still
+     filling out the questionnaire means by the time they submit, the
+     widget is already cached and renders instantly. */
+  useEffect(() => {
+    if (typeof window === "undefined") return
+    if (
+      document.querySelector(
+        'script[src="https://assets.calendly.com/assets/external/widget.js"]'
+      )
+    ) {
+      return
+    }
+    const script = document.createElement("script")
+    script.src = "https://assets.calendly.com/assets/external/widget.js"
+    script.async = true
+    document.head.appendChild(script)
+    const link = document.createElement("link")
+    link.rel = "stylesheet"
+    link.href = "https://assets.calendly.com/assets/external/widget.css"
+    document.head.appendChild(link)
+  }, [])
+
   /* ---- Progress bar ---- */
   const progress =
     phase === "calendar" || phase === "done"
@@ -416,14 +442,16 @@ export function ApplyForm() {
       document.head.appendChild(link)
     }
 
-    // Failsafe timeout: if no iframe rendered after 4s, surface the
-    // clickthrough fallback. Catches ad-blocker AND XFO failure modes.
+    // Failsafe timeout: if no iframe rendered after 10s, surface the
+    // clickthrough fallback. 10s is conservative — incognito + cold cache
+    // + slow networks can take 6-8s. Catches ad-blocker / XFO / config
+    // failure modes without false-positive-firing on a slow first paint.
     const timeoutId = window.setTimeout(() => {
       const renderedIframe = container.querySelector("iframe")
       if (!renderedIframe) {
         setCalendarFallback(true)
       }
-    }, 4000)
+    }, 10000)
 
     return () => {
       window.removeEventListener("message", onMessage)
@@ -627,25 +655,33 @@ export function ApplyForm() {
             ) : (
               <div
                 id="cal-inline-aoc"
-                className="calendly-inline-widget w-full rounded-lg overflow-hidden bg-white"
+                className="calendly-inline-widget w-full rounded-lg overflow-hidden bg-white border border-[#E3E3E3]"
                 style={{
                   minWidth: "320px",
                   height: "min(1100px, calc(100vh - 160px))",
                   minHeight: "900px",
                 }}
               >
-                <p className="p-6 text-center text-sm text-[#4B5563]">
-                  Loading calendar…{" "}
+                {/* Calendar-skeleton loading state — looks like a real
+                    calendar materialising rather than an error. The widget
+                    replaces this innerHTML once it injects its iframe. */}
+                <div className="flex flex-col items-center justify-center h-full p-6">
+                  <Loader2 className="w-8 h-8 text-crimson animate-spin mb-4" />
+                  <p className="text-sm font-medium text-[#1A1A1A] mb-1">
+                    Loading available times…
+                  </p>
+                  <p className="text-xs text-[#737373] mb-4">
+                    This usually takes a few seconds.
+                  </p>
                   <a
-                    className="text-crimson font-semibold underline"
+                    className="text-xs text-crimson font-semibold underline"
                     href={getCalendarUrl(scoreResult.tier)}
                     target="_blank"
                     rel="noreferrer"
                   >
-                    Open it in a new tab
-                  </a>{" "}
-                  if it doesn&apos;t appear in a few seconds.
-                </p>
+                    Or open the calendar in a new tab →
+                  </a>
+                </div>
               </div>
             )}
             <p className="mt-3 text-center text-xs text-[#737373]">
