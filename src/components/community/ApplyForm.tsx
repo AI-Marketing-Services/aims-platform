@@ -207,9 +207,11 @@ export function ApplyForm() {
      synchronous double-click in the same microtask can still fire this twice
      before React commits. The ref short-circuits the second call. */
   const submittingRef = useRef(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
   const submitApplication = async () => {
     if (submittingRef.current) return
     submittingRef.current = true
+    setSubmitError(null)
     setPhase("submitting")
     try {
       const res = await fetch("/api/community/apply", {
@@ -231,13 +233,36 @@ export function ApplyForm() {
         }),
       })
 
-      if (!res.ok) throw new Error("Submission failed")
+      if (!res.ok) {
+        // Pull the real error message from the server so the user (and we
+        // in DevTools / Vercel logs) know what actually failed instead of
+        // staring at "Something went wrong".
+        let serverMessage = `HTTP ${res.status}`
+        try {
+          const errBody = await res.json()
+          if (typeof errBody?.error === "string") serverMessage = errBody.error
+        } catch {
+          // response wasn't JSON — fall through with the HTTP status
+        }
+        if (res.status === 429) {
+          serverMessage =
+            "Too many submissions from this network — wait 60 seconds and try again."
+        }
+        throw new Error(serverMessage)
+      }
+
       const data = await res.json()
       setScoreResult({ normalizedScore: data.score, tier: data.tier })
       setPhase("calendar")
-    } catch {
+    } catch (err) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : "Network error — check your connection and try again."
+      // eslint-disable-next-line no-console
+      console.error("Apply submission failed:", message, err)
+      setSubmitError(message)
       setPhase("error")
-      // Allow retry from the error screen.
       submittingRef.current = false
     }
   }
@@ -408,17 +433,31 @@ export function ApplyForm() {
   if (phase === "error") {
     return (
       <div className="min-h-[60vh] sm:min-h-[70vh] flex flex-col items-center justify-center px-5 sm:px-6 text-center">
-        <p className="text-sm text-red-600 mb-4">
-          Something went wrong. Please try again.
+        <p className="text-base font-semibold text-[#1A1A1A] mb-2">
+          Something went wrong with your submission.
+        </p>
+        <p className="text-sm text-red-600 mb-1 max-w-md">
+          {submitError ?? "Please try again or refresh the page."}
+        </p>
+        <p className="text-xs text-[#737373] mb-6 max-w-md">
+          If this keeps happening, email{" "}
+          <a
+            className="underline"
+            href="mailto:noreply@aioperatorcollective.com?subject=Apply%20form%20error"
+          >
+            noreply@aioperatorcollective.com
+          </a>{" "}
+          and we&apos;ll book you a call directly.
         </p>
         <button
           onClick={() => {
+            setSubmitError(null)
             setPhase("form")
             setStep(7) // go back to contact details
           }}
           className="inline-flex items-center gap-2 rounded-md bg-crimson text-white px-6 py-3.5 text-sm font-bold uppercase tracking-wider hover:bg-crimson-dark active:bg-crimson-dark transition-all min-h-[48px]"
         >
-          Go Back
+          Go Back &amp; Retry
         </button>
       </div>
     )
