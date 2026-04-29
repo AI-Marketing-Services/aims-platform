@@ -21,12 +21,74 @@ export async function GET() {
     },
   }
 
+  // Probe the actual queries each portal page makes during render so we can
+  // see which one is throwing. The simple counts already passed, so the
+  // failure is in a complex query path. This mirrors the real page queries.
   for (const [label, run] of [
     ["userCount", () => db.user.count()],
     ["auditQuizCount", () => db.auditQuiz.count()],
-    ["portalFeedbackCount", () => db.portalFeedback.count()],
-    ["aiScriptCount", () => db.aiScript.count()],
-    ["followUpRuleCount", () => db.followUpRule.count()],
+    [
+      "userByClerkId_layoutShape",
+      () =>
+        db.user.findUnique({
+          where: { clerkId: "user_diag_probe_does_not_exist" },
+          select: {
+            id: true,
+            name: true,
+            subscriptions: {
+              where: { status: "ACTIVE" },
+              select: { monthlyAmount: true },
+            },
+          },
+        }),
+    ],
+    [
+      "auditQuizFindManyShape",
+      () =>
+        db.auditQuiz.findMany({
+          where: { ownerId: "user_does_not_exist", archivedAt: null },
+          select: {
+            id: true,
+            slug: true,
+            title: true,
+            subtitle: true,
+            isPublished: true,
+            brandColor: true,
+            customDomain: true,
+            createdAt: true,
+            updatedAt: true,
+            _count: { select: { responses: true } },
+            responses: {
+              select: { createdAt: true },
+              orderBy: { createdAt: "desc" },
+              take: 1,
+            },
+          },
+          orderBy: { updatedAt: "desc" },
+        }),
+    ],
+    [
+      "notificationCount",
+      () => db.notification.count({ where: { userId: "x", read: false } }),
+    ],
+    [
+      "aiScriptFindMany",
+      () =>
+        db.aiScript.findMany({
+          where: { userId: "x" },
+          select: {
+            id: true,
+            type: true,
+            title: true,
+            content: true,
+            clientDealId: true,
+            clientDeal: { select: { companyName: true } },
+            createdAt: true,
+            updatedAt: true,
+          },
+          orderBy: { createdAt: "desc" },
+        }),
+    ],
   ] as const) {
     try {
       result[label] = { ok: true, value: await run() }
