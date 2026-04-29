@@ -216,6 +216,52 @@ function validateState(state: EditorState): string | null {
   return null
 }
 
+interface LiveUrlRowProps {
+  label: string
+  host: string
+  url: string
+}
+
+function LiveUrlRow({ label, host, url }: LiveUrlRowProps) {
+  const [copied, setCopied] = useState(false)
+  const fullUrl = `https://${host}${url}`
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(fullUrl)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch {
+      // ignore — keyboard copy still works
+    }
+  }
+
+  return (
+    <div className="flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2">
+      <span className="text-[10px] uppercase tracking-wider text-muted-foreground shrink-0 w-28">
+        {label}
+      </span>
+      <Globe className="h-3.5 w-3.5 text-primary shrink-0" />
+      <span className="font-mono text-xs text-foreground truncate flex-1">
+        {host}
+        {url}
+      </span>
+      <button
+        type="button"
+        onClick={handleCopy}
+        className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[11px] font-medium text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all shrink-0"
+      >
+        {copied ? (
+          <Check className="h-3 w-3 text-emerald-500" />
+        ) : (
+          <Copy className="h-3 w-3" />
+        )}
+        {copied ? "Copied" : "Copy"}
+      </button>
+    </div>
+  )
+}
+
 interface FieldProps {
   label: string
   hint?: string
@@ -488,11 +534,19 @@ function QuestionCard({
   )
 }
 
-interface AuditEditorProps {
-  quiz: AuditQuizDto
+export interface AuditEditorSite {
+  /** Operator's AOC subdomain — e.g. "acme" → acme.aioperatorcollective.com */
+  subdomain: string
+  /** Verified + published custom domain, or null if not yet live */
+  customDomain: string | null
 }
 
-export function AuditEditor({ quiz }: AuditEditorProps) {
+interface AuditEditorProps {
+  quiz: AuditQuizDto
+  site?: AuditEditorSite | null
+}
+
+export function AuditEditor({ quiz, site }: AuditEditorProps) {
   const router = useRouter()
   const [original, setOriginal] = useState<EditorState>(() => toEditorState(quiz))
   const [state, setState] = useState<EditorState>(() => toEditorState(quiz))
@@ -851,16 +905,34 @@ export function AuditEditor({ quiz }: AuditEditorProps) {
         </div>
 
         <Field
-          label="Custom domain (optional)"
-          hint="Whitelabel host you want the public link to render under. DNS still needs to point here."
+          label="Where this audit is live"
+          hint={
+            site?.customDomain
+              ? "Your verified custom domain auto-hosts this audit. No extra setup."
+              : "Verify your operator site domain in Settings → Domain to also host this audit on your custom URL."
+          }
         >
-          <input
-            type="text"
-            value={state.customDomain}
-            onChange={(e) => updateField("customDomain", e.target.value)}
-            className={inputClass}
-            placeholder="audit.youroperator.com"
-          />
+          <div className="space-y-2">
+            <LiveUrlRow
+              label="Platform link"
+              url={`/q/${quiz.slug}`}
+              host="aioperatorcollective.com"
+            />
+            {site?.subdomain && (
+              <LiveUrlRow
+                label="Your subdomain"
+                url={`/q/${quiz.slug}`}
+                host={`${site.subdomain}.aioperatorcollective.com`}
+              />
+            )}
+            {site?.customDomain && (
+              <LiveUrlRow
+                label="Your custom domain"
+                url={`/q/${quiz.slug}`}
+                host={site.customDomain}
+              />
+            )}
+          </div>
         </Field>
 
         {/* Live preview of brand color application */}

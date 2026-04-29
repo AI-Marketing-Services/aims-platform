@@ -15,6 +15,18 @@ async function loadQuiz(quizId: string, ownerId: string) {
   })
 }
 
+async function loadOperatorSite(userId: string) {
+  return db.operatorSite.findUnique({
+    where: { userId },
+    select: {
+      subdomain: true,
+      customDomain: true,
+      customDomainVerified: true,
+      isPublished: true,
+    },
+  })
+}
+
 export default async function AuditEditPage({
   params,
 }: {
@@ -23,7 +35,10 @@ export default async function AuditEditPage({
   const user = await ensureDbUser()
   const { id } = await params
 
-  const quiz = await loadQuiz(id, user.id)
+  const [quiz, operatorSite] = await Promise.all([
+    loadQuiz(id, user.id),
+    loadOperatorSite(user.id),
+  ])
   if (!quiz) notFound()
 
   // questions is a `Prisma.JsonValue` — cast to our typed shape. The PATCH
@@ -74,7 +89,21 @@ export default async function AuditEditPage({
         </Link>
       </div>
 
-      <AuditEditor quiz={dto} />
+      <AuditEditor
+        quiz={dto}
+        site={
+          operatorSite
+            ? {
+                subdomain: operatorSite.subdomain,
+                customDomain:
+                  operatorSite.customDomainVerified &&
+                  operatorSite.isPublished
+                    ? operatorSite.customDomain
+                    : null,
+              }
+            : null
+        }
+      />
     </div>
   )
 }
