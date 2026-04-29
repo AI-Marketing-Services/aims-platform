@@ -202,69 +202,121 @@ export function ApplyForm() {
   }, [answers, step, computePreScore])
 
   /* ---- Form submission (after contact details) ----
-     submittingRef is a re-entry guard against fast double-clicks. React's
-     re-render unmounts the button once we flip phase to "submitting", but a
-     synchronous double-click in the same microtask can still fire this twice
-     before React commits. The ref short-circuits the second call. */
+     CRITICAL: the calendar must ALWAYS render. Booking is the
+     conversion — the questionnaire is secondary qualifying data. If the
+     save fails for any reason (rate limit, validation, transient DB
+     hiccup, network), we still advance to the calendar phase so the
+     visitor can book. The Calendly webhook will create the Deal from
+     the booking itself; backfilling questionnaire data happens via a
+     silent retry below.
+
+     submittingRef guards re-entry against fast double-clicks (React's
+     re-render unmounts the button on phase change, but a synchronous
+     double-click can still fire this twice in the same microtask). */
   const submittingRef = useRef(false)
-  const [submitError, setSubmitError] = useState<string | null>(null)
+  const [saveWarning, setSaveWarning] = useState<string | null>(null)
+
+  const buildPayload = () => ({
+    firstName: firstName.trim(),
+    lastName: lastName.trim(),
+    email: email.trim().toLowerCase(),
+    phone: phone.trim(),
+    zipCode: zipCode.trim(),
+    country,
+    smsConsentFollowup: smsFollowup,
+    smsConsentPromo: smsPromo,
+    answers,
+    backgroundOther:
+      answers.background === "other" ? otherText.trim() : undefined,
+    source: "apply-form",
+  })
+
+  // Background retry: if the initial save failed, we keep trying for a
+  // couple of minutes so the questionnaire data eventually lands without
+  // ever blocking the visitor's booking flow.
+  const retrySaveInBackground = async (payload: ReturnType<typeof buildPayload>) => {
+    const delays = [4000, 12000, 30000, 60000]
+    for (const ms of delays) {
+      await new Promise((r) => setTimeout(r, ms))
+      try {
+        const res = await fetch("/api/community/apply", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        })
+        if (res.ok) {
+          // eslint-disable-next-line no-console
+          console.info("Apply save retry succeeded")
+          return
+        }
+      } catch {
+        // keep trying
+      }
+    }
+  }
+
   const submitApplication = async () => {
     if (submittingRef.current) return
     submittingRef.current = true
-    setSubmitError(null)
+    setSaveWarning(null)
     setPhase("submitting")
+
+    const payload = buildPayload()
+    // Default score (cold) so the calendar renders even if save fails.
+    // All tiers route to the same AOC Calendly link, so this never sends
+    // the visitor to the wrong calendar.
+    let resolvedScore: { normalizedScore: number; tier: "hot" | "warm" | "cold" } = {
+      normalizedScore: 0,
+      tier: "cold",
+    }
+    let saveFailed = false
+    let serverMessage: string | null = null
+
     try {
       const res = await fetch("/api/community/apply", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          firstName: firstName.trim(),
-          lastName: lastName.trim(),
-          email: email.trim().toLowerCase(),
-          phone: phone.trim(),
-          zipCode: zipCode.trim(),
-          country,
-          smsConsentFollowup: smsFollowup,
-          smsConsentPromo: smsPromo,
-          answers,
-          backgroundOther:
-            answers.background === "other" ? otherText.trim() : undefined,
-          source: "apply-form",
-        }),
+        body: JSON.stringify(payload),
       })
 
-      if (!res.ok) {
-        // Pull the real error message from the server so the user (and we
-        // in DevTools / Vercel logs) know what actually failed instead of
-        // staring at "Something went wrong".
-        let serverMessage = `HTTP ${res.status}`
+      if (res.ok) {
+        const data = await res.json()
+        resolvedScore = { normalizedScore: data.score, tier: data.tier }
+      } else {
+        saveFailed = true
         try {
           const errBody = await res.json()
           if (typeof errBody?.error === "string") serverMessage = errBody.error
         } catch {
-          // response wasn't JSON — fall through with the HTTP status
+          // not JSON
         }
         if (res.status === 429) {
           serverMessage =
-            "Too many submissions from this network — wait 60 seconds and try again."
+            "We couldn't save your details right now (too many requests), but your call is booked from the calendar below."
         }
-        throw new Error(serverMessage)
+        // eslint-disable-next-line no-console
+        console.error("Apply save failed:", res.status, serverMessage)
       }
-
-      const data = await res.json()
-      setScoreResult({ normalizedScore: data.score, tier: data.tier })
-      setPhase("calendar")
     } catch (err) {
-      const message =
-        err instanceof Error
-          ? err.message
-          : "Network error — check your connection and try again."
+      saveFailed = true
       // eslint-disable-next-line no-console
-      console.error("Apply submission failed:", message, err)
-      setSubmitError(message)
-      setPhase("error")
-      submittingRef.current = false
+      console.error("Apply save failed (network):", err)
+      serverMessage =
+        "We couldn't save your details right now, but you can still book your call below."
     }
+
+    if (saveFailed) {
+      setSaveWarning(
+        serverMessage ??
+          "We couldn't save your details right now, but you can still book your call below."
+      )
+      // Fire-and-forget retry so the data eventually lands.
+      void retrySaveInBackground(payload)
+    }
+
+    setScoreResult(resolvedScore)
+    setPhase("calendar")
+    submittingRef.current = false
   }
 
   /* ---- Calendly inline embed ----
@@ -430,35 +482,25 @@ export function ApplyForm() {
   /*  RENDER — Error phase                                                     */
   /* ======================================================================== */
 
+  // The "error" phase is no longer reachable from submitApplication (every
+  // submit advances to the calendar so visitors can always book). Keeping
+  // a minimal fallback here for any edge case we missed — it deep-links
+  // straight to Calendly so even this path doesn't lose the lead.
   if (phase === "error") {
     return (
       <div className="min-h-[60vh] sm:min-h-[70vh] flex flex-col items-center justify-center px-5 sm:px-6 text-center">
-        <p className="text-base font-semibold text-[#1A1A1A] mb-2">
-          Something went wrong with your submission.
+        <p className="text-base font-semibold text-[#1A1A1A] mb-3">
+          Something hiccupped — but you can still book.
         </p>
-        <p className="text-sm text-red-600 mb-1 max-w-md">
-          {submitError ?? "Please try again or refresh the page."}
-        </p>
-        <p className="text-xs text-[#737373] mb-6 max-w-md">
-          If this keeps happening, email{" "}
-          <a
-            className="underline"
-            href="mailto:noreply@aioperatorcollective.com?subject=Apply%20form%20error"
-          >
-            noreply@aioperatorcollective.com
-          </a>{" "}
-          and we&apos;ll book you a call directly.
-        </p>
-        <button
-          onClick={() => {
-            setSubmitError(null)
-            setPhase("form")
-            setStep(7) // go back to contact details
-          }}
-          className="inline-flex items-center gap-2 rounded-md bg-crimson text-white px-6 py-3.5 text-sm font-bold uppercase tracking-wider hover:bg-crimson-dark active:bg-crimson-dark transition-all min-h-[48px]"
+        <a
+          href={getCalendarUrl(scoreResult?.tier ?? "cold")}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-2 rounded-md bg-crimson text-white px-6 py-3.5 text-sm font-bold uppercase tracking-wider hover:bg-crimson-dark transition-all min-h-[48px]"
         >
-          Go Back &amp; Retry
-        </button>
+          Open the calendar
+          <ArrowRight className="w-4 h-4" />
+        </a>
       </div>
     )
   }
@@ -491,6 +533,30 @@ export function ApplyForm() {
             <p className="text-[#737373] text-sm sm:text-base max-w-lg mx-auto">
               {intro.subheading}
             </p>
+          </div>
+
+          {/* Soft warning if the questionnaire save failed. Visitor still
+              proceeds to the calendar — booking takes priority. */}
+          {saveWarning && (
+            <div className="w-full max-w-2xl mb-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+              <strong className="font-semibold">Heads up:</strong> {saveWarning}
+            </div>
+          )}
+
+          {/* Always-visible top-of-page "Open in new tab" CTA. Iframe
+              loading is the primary path; this guarantees the booking is
+              one click away even if the embed below fails or hasn't
+              rendered yet. */}
+          <div className="w-full max-w-2xl mb-4 flex justify-center">
+            <a
+              href={getCalendarUrl(scoreResult.tier)}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 rounded-md border border-[#E3E3E3] bg-white px-4 py-2 text-xs font-semibold uppercase tracking-wider text-[#1A1A1A] hover:border-crimson hover:text-crimson transition-colors"
+            >
+              <Calendar className="w-3.5 h-3.5" />
+              Open calendar in a new tab
+            </a>
           </div>
 
           {/* What this call covers — branded pre-booking card. Mirrors the

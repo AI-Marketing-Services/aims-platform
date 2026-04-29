@@ -116,38 +116,96 @@ export function EmbedApplyForm() {
   }, [answers, step, computePreScore])
 
   const submittingRef = useRef(false)
+  const [saveWarning, setSaveWarning] = useState<string | null>(null)
+
+  const buildPayload = () => ({
+    firstName: firstName.trim(),
+    lastName: lastName.trim(),
+    email: email.trim().toLowerCase(),
+    phone: phone.trim(),
+    zipCode: zipCode.trim(),
+    country,
+    smsConsentFollowup: smsFollowup,
+    smsConsentPromo: smsPromo,
+    answers,
+    backgroundOther:
+      answers.background === "other" ? otherText.trim() : undefined,
+    source: "embed-apply-form",
+  })
+
+  const retrySaveInBackground = async (payload: ReturnType<typeof buildPayload>) => {
+    const delays = [4000, 12000, 30000, 60000]
+    for (const ms of delays) {
+      await new Promise((r) => setTimeout(r, ms))
+      try {
+        const res = await fetch("/api/community/apply", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        })
+        if (res.ok) return
+      } catch {
+        // keep trying
+      }
+    }
+  }
+
   const submitApplication = async () => {
     if (submittingRef.current) return
     submittingRef.current = true
+    setSaveWarning(null)
     setPhase("submitting")
+
+    const payload = buildPayload()
+    let resolvedScore: { normalizedScore: number; tier: "hot" | "warm" | "cold" } = {
+      normalizedScore: 0,
+      tier: "cold",
+    }
+    let saveFailed = false
+    let serverMessage: string | null = null
+
     try {
       const res = await fetch("/api/community/apply", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          firstName: firstName.trim(),
-          lastName: lastName.trim(),
-          email: email.trim().toLowerCase(),
-          phone: phone.trim(),
-          zipCode: zipCode.trim(),
-          country,
-          smsConsentFollowup: smsFollowup,
-          smsConsentPromo: smsPromo,
-          answers,
-          backgroundOther:
-            answers.background === "other" ? otherText.trim() : undefined,
-          source: "embed-apply-form",
-        }),
+        body: JSON.stringify(payload),
       })
-
-      if (!res.ok) throw new Error("Submission failed")
-      const data = await res.json()
-      setScoreResult({ normalizedScore: data.score, tier: data.tier })
-      setPhase("calendar")
-    } catch {
-      setPhase("error")
-      submittingRef.current = false
+      if (res.ok) {
+        const data = await res.json()
+        resolvedScore = { normalizedScore: data.score, tier: data.tier }
+      } else {
+        saveFailed = true
+        try {
+          const errBody = await res.json()
+          if (typeof errBody?.error === "string") serverMessage = errBody.error
+        } catch {
+          // not JSON
+        }
+        if (res.status === 429) {
+          serverMessage =
+            "We couldn't save your details right now (too many requests), but you can still book your call below."
+        }
+        // eslint-disable-next-line no-console
+        console.error("Embed apply save failed:", res.status, serverMessage)
+      }
+    } catch (err) {
+      saveFailed = true
+      // eslint-disable-next-line no-console
+      console.error("Embed apply save failed (network):", err)
+      serverMessage =
+        "We couldn't save your details right now, but you can still book your call below."
     }
+
+    if (saveFailed) {
+      setSaveWarning(
+        serverMessage ??
+          "We couldn't save your details right now, but you can still book your call below."
+      )
+      void retrySaveInBackground(payload)
+    }
+    setScoreResult(resolvedScore)
+    setPhase("calendar")
+    submittingRef.current = false
   }
 
   /* Calendly inline embed via widget.js with a 4s render-failsafe — see
@@ -303,22 +361,24 @@ export function EmbedApplyForm() {
     )
   }
 
-  /* ---- Error ---- */
+  /* ---- Error fallback (no longer reachable from submitApplication, but
+     kept as a defensive last resort that still gives the visitor a path
+     to book — never a dead end). ---- */
   if (phase === "error") {
     return (
       <div className="min-h-[500px] flex flex-col items-center justify-center px-5 text-center">
-        <p className="text-sm text-red-600 mb-4">
-          Something went wrong. Please try again.
+        <p className="text-sm font-semibold text-[#1A1A1A] mb-3">
+          Something hiccupped — but you can still book.
         </p>
-        <button
-          onClick={() => {
-            setPhase("form")
-            setStep(7)
-          }}
+        <a
+          href={getCalendarUrl(scoreResult?.tier ?? "cold")}
+          target="_blank"
+          rel="noreferrer"
           className="inline-flex items-center gap-2 rounded-md bg-[#981B1B] text-white px-6 py-3 text-sm font-bold uppercase tracking-wider hover:bg-[#7a1616] transition-all"
         >
-          Go Back
-        </button>
+          Open the calendar
+          <ArrowRight className="w-4 h-4" />
+        </a>
       </div>
     )
   }
@@ -347,6 +407,24 @@ export function EmbedApplyForm() {
             <p className="text-[#737373] text-sm max-w-md mx-auto">
               {intro.subheading}
             </p>
+          </div>
+
+          {saveWarning && (
+            <div className="w-full max-w-xl mb-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900">
+              <strong className="font-semibold">Heads up:</strong> {saveWarning}
+            </div>
+          )}
+
+          <div className="w-full max-w-xl mb-3 flex justify-center">
+            <a
+              href={getCalendarUrl(scoreResult.tier)}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 rounded-md border border-[#E3E3E3] bg-white px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-[#1A1A1A] hover:border-[#981B1B] hover:text-[#981B1B] transition-colors"
+            >
+              <Calendar className="w-3.5 h-3.5" />
+              Open calendar in a new tab
+            </a>
           </div>
 
           <div className="w-full max-w-xl mb-5 rounded-xl border border-[#E3E3E3] bg-white p-4 sm:p-5 text-left">
