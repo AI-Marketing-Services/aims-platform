@@ -28,6 +28,25 @@ export async function getOrCreateDbUserByClerkId(clerkId: string): Promise<User>
     cu?.fullName ||
     null
 
+  // If a User row already exists for this email but under a stale clerkId
+  // (Clerk re-creation, second sign-up with the same address, manual seed,
+  // etc.) we must rebind it instead of inserting a new row — both clerkId
+  // and email are @unique, so a naïve upsert with create:{...} would throw
+  // P2002 and 500 every page that calls ensureDbUser.
+  if (email) {
+    const byEmail = await db.user.findUnique({ where: { email } })
+    if (byEmail) {
+      return db.user.update({
+        where: { id: byEmail.id },
+        data: {
+          clerkId,
+          ...(name && { name }),
+          ...(cu?.imageUrl && { avatarUrl: cu.imageUrl }),
+        },
+      })
+    }
+  }
+
   return db.user.upsert({
     where: { clerkId },
     update: {
