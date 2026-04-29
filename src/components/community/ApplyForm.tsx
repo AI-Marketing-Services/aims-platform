@@ -242,17 +242,61 @@ export function ApplyForm() {
     }
   }
 
-  /* ---- Calendly booking-complete listener ----
-     We render the Calendly iframe DIRECTLY (no widget.js dependency) so the
-     calendar shows instantly even when ad-blockers, privacy extensions, or
-     Brave Shields block assets.calendly.com — which would otherwise leave
-     visitors staring at an empty box and we'd lose the lead.
+  /* ---- Calendly inline embed ----
+     Calendly d-links (team round-robin URLs like /d/xxx-yyy-zzz) serve with
+     X-Frame-Options: DENY for direct iframe embedding — only their widget.js
+     can render them inline (it bypasses XFO via a JSON API).
 
-     The only thing we still need at runtime is the `event_scheduled`
-     postMessage so we can redirect to /apply/next-steps after they book. */
+     Strategy: load widget.js, give it 4 seconds to render an iframe inside
+     our container. If the script never loads (ad-blocker), or loads but
+     fails to inject an iframe (XFO / network / config error), swap the
+     container with a giant "Open calendar in new tab" button so the visitor
+     ALWAYS has a path to book — we never lose a lead to a blank box. */
+  const [calendarFallback, setCalendarFallback] = useState(false)
+
   useEffect(() => {
     if (phase !== "calendar" || typeof window === "undefined") return
 
+    setCalendarFallback(false)
+    const container = document.getElementById("cal-inline-aoc")
+    if (!container) return
+
+    const tier = scoreResult?.tier ?? "cold"
+    const bookingUrl = getCalendarUrl(tier)
+
+    const initCalendly = () => {
+      const Calendly = (
+        window as unknown as {
+          Calendly?: { initInlineWidget: (opts: Record<string, unknown>) => void }
+        }
+      ).Calendly
+      if (!Calendly) return false
+      // Clear the loading text only once the widget is actually ready to
+      // inject — avoids the previous bug where we wiped the container on
+      // mount and showed nothing if init failed.
+      container.innerHTML = ""
+      const params = new URLSearchParams({
+        hide_event_type_details: "1",
+        hide_gdpr_banner: "1",
+        background_color: "ffffff",
+        text_color: "1A1A1A",
+        primary_color: "981B1B",
+      }).toString()
+      const url = `${bookingUrl}${bookingUrl.includes("?") ? "&" : "?"}${params}`
+      Calendly.initInlineWidget({
+        url,
+        parentElement: container,
+        prefill: {
+          name: `${firstName.trim()} ${lastName.trim()}`.trim(),
+          firstName: firstName.trim(),
+          lastName: lastName.trim(),
+          email: email.trim().toLowerCase(),
+        },
+      })
+      return true
+    }
+
+    // Booking-complete listener — redirect to next-steps page.
     const onMessage = (e: MessageEvent) => {
       const data = e.data as { event?: string }
       if (
@@ -270,29 +314,45 @@ export function ApplyForm() {
       }
     }
     window.addEventListener("message", onMessage)
-    return () => window.removeEventListener("message", onMessage)
-  }, [phase, firstName, lastName, email])
 
-  /* Build the Calendly inline-embed URL for the iframe. Direct iframe load
-     means ZERO script dependency — the calendar paints with the page. */
-  const calendarIframeUrl = (() => {
-    const tier = scoreResult?.tier ?? "cold"
-    const bookingUrl = getCalendarUrl(tier)
-    const origin =
-      typeof window !== "undefined" ? window.location.host : "aioperatorcollective.com"
-    const params = new URLSearchParams({
-      embed_domain: origin,
-      embed_type: "Inline",
-      hide_event_type_details: "1",
-      hide_gdpr_banner: "1",
-      background_color: "ffffff",
-      text_color: "1A1A1A",
-      primary_color: "981B1B",
-      name: `${firstName.trim()} ${lastName.trim()}`.trim(),
-      email: email.trim().toLowerCase(),
-    }).toString()
-    return `${bookingUrl}${bookingUrl.includes("?") ? "&" : "?"}${params}`
-  })()
+    // Load widget.js if not yet present.
+    const existing = document.querySelector<HTMLScriptElement>(
+      'script[src="https://assets.calendly.com/assets/external/widget.js"]'
+    )
+    if (existing) {
+      if ((window as unknown as { Calendly?: unknown }).Calendly) {
+        initCalendly()
+      } else {
+        existing.addEventListener("load", initCalendly, { once: true })
+      }
+    } else {
+      const script = document.createElement("script")
+      script.src = "https://assets.calendly.com/assets/external/widget.js"
+      script.async = true
+      script.onload = initCalendly
+      script.onerror = () => setCalendarFallback(true)
+      document.head.appendChild(script)
+
+      const link = document.createElement("link")
+      link.rel = "stylesheet"
+      link.href = "https://assets.calendly.com/assets/external/widget.css"
+      document.head.appendChild(link)
+    }
+
+    // Failsafe timeout: if no iframe rendered after 4s, surface the
+    // clickthrough fallback. Catches ad-blocker AND XFO failure modes.
+    const timeoutId = window.setTimeout(() => {
+      const renderedIframe = container.querySelector("iframe")
+      if (!renderedIframe) {
+        setCalendarFallback(true)
+      }
+    }, 4000)
+
+    return () => {
+      window.removeEventListener("message", onMessage)
+      window.clearTimeout(timeoutId)
+    }
+  }, [phase, firstName, lastName, email, scoreResult])
 
   /* ---- Current question (steps 2-6) ---- */
   const questionIndex = step - 2
@@ -432,31 +492,66 @@ export function ApplyForm() {
             </ul>
           </div>
 
-          {/* Direct iframe embed — paints with the page, survives
-              script-blocking extensions. Always-visible fallback link below
-              guarantees users with strict iframe-blockers can still book. */}
+          {/* Widget.js container with timeout-based fallback. We NEVER want
+              a blank screen — if the widget doesn't render in 4 seconds,
+              swap to a giant clickthrough that guarantees the visitor can
+              still book. */}
           <div className="w-full max-w-2xl">
-            <iframe
-              src={calendarIframeUrl}
-              title="Book your AI Operator Collective consult call"
-              className="w-full rounded-lg bg-white border-0"
-              style={{
-                minWidth: "320px",
-                height: "min(1100px, calc(100vh - 160px))",
-                minHeight: "900px",
-              }}
-              loading="eager"
-              allow="camera; microphone; fullscreen"
-            />
+            {calendarFallback ? (
+              <div className="w-full rounded-lg border border-[#E3E3E3] bg-white p-8 text-center">
+                <Calendar className="w-10 h-10 text-crimson mx-auto mb-4" />
+                <h3 className="font-playfair text-xl text-[#1A1A1A] mb-2">
+                  Your calendar is one click away
+                </h3>
+                <p className="text-sm text-[#4B5563] mb-6 max-w-sm mx-auto">
+                  Pick a time that works for you — opens Calendly in a new tab.
+                </p>
+                <a
+                  href={getCalendarUrl(scoreResult.tier)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center justify-center gap-2 rounded-md bg-crimson px-6 py-3.5 text-sm font-bold uppercase tracking-wider text-white shadow-[0_8px_24px_-4px_rgba(153,27,27,0.35)] hover:bg-crimson-dark transition-colors"
+                >
+                  Open the calendar
+                  <ArrowRight className="w-4 h-4" />
+                </a>
+                <p className="mt-4 text-xs text-[#9CA3AF]">
+                  Already booked? <a href="/apply/next-steps" className="underline">Continue here</a>
+                </p>
+              </div>
+            ) : (
+              <div
+                id="cal-inline-aoc"
+                className="calendly-inline-widget w-full rounded-lg overflow-hidden bg-white"
+                style={{
+                  minWidth: "320px",
+                  height: "min(1100px, calc(100vh - 160px))",
+                  minHeight: "900px",
+                }}
+              >
+                <p className="p-6 text-center text-sm text-[#4B5563]">
+                  Loading calendar…{" "}
+                  <a
+                    className="text-crimson font-semibold underline"
+                    href={getCalendarUrl(scoreResult.tier)}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Open it in a new tab
+                  </a>{" "}
+                  if it doesn&apos;t appear in a few seconds.
+                </p>
+              </div>
+            )}
             <p className="mt-3 text-center text-xs text-[#737373]">
-              Calendar not loading?{" "}
+              Trouble booking?{" "}
               <a
                 className="text-crimson font-semibold underline"
                 href={getCalendarUrl(scoreResult.tier)}
                 target="_blank"
                 rel="noreferrer"
               >
-                Open it in a new tab
+                Open the calendar in a new tab
               </a>
               .
             </p>
