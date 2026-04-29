@@ -51,6 +51,22 @@ export async function POST(req: Request) {
       )
     }
 
+    if (!process.env.BLOB_READ_WRITE_TOKEN) {
+      logger.error(
+        "Blob upload attempted without BLOB_READ_WRITE_TOKEN configured",
+        null,
+        { endpoint: "POST /api/portal/onboarding/upload", userId }
+      )
+      return NextResponse.json(
+        {
+          ok: false,
+          error:
+            "Logo uploads aren't enabled yet. Paste a hosted image URL below as a workaround.",
+        },
+        { status: 503 }
+      )
+    }
+
     const blob = await put(
       `logos/${dbUser.id}/${file.name}`,
       file,
@@ -72,6 +88,12 @@ export async function POST(req: Request) {
       endpoint: "POST /api/portal/onboarding/upload",
       userId,
     })
-    return NextResponse.json({ ok: false, error: "Upload failed" }, { status: 500 })
+    return NextResponse.json(
+      {
+        ok: false,
+        error: "Upload failed. Paste a hosted image URL below as a workaround.",
+      },
+      { status: 500 }
+    )
   }
 }

@@ -40,11 +40,17 @@ export default async function PortalLayout({
     redirect(dashboardForRole(effectiveRole))
   }
 
-  // Single DB query for sidebar data + chat widget context. Each query is
-  // wrapped so a transient prod failure surfaces the full Prisma error code +
-  // meta in logs (the unwrapped throw appears as truncated
-  // "PrismaClientKnownReq..." in the Vercel log viewer).
-  let dbUser
+  // Single DB query for sidebar data + chat widget context. We log Prisma
+  // errors with full code + meta, then degrade gracefully — a transient Neon
+  // hiccup should NOT crash the entire portal for every signed-in user.
+  // dbUser=null is already handled downstream (every read uses `?.`), so
+  // the failure mode just shows the shell with empty defaults until the
+  // user refreshes.
+  let dbUser: {
+    id: string
+    name: string | null
+    subscriptions: { monthlyAmount: number }[]
+  } | null = null
   try {
     dbUser = await db.user.findUnique({
       where: { clerkId: userId },
@@ -62,7 +68,7 @@ export default async function PortalLayout({
       endpoint: "(portal)/layout",
       userId,
     })
-    throw err
+    // Fall through with dbUser=null so the layout still renders.
   }
 
   const totalMrr = dbUser?.subscriptions.reduce((sum, s) => sum + s.monthlyAmount, 0) ?? 0

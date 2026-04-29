@@ -201,8 +201,15 @@ export function ApplyForm() {
     }
   }, [answers, step, computePreScore])
 
-  /* ---- Form submission (after contact details) ---- */
+  /* ---- Form submission (after contact details) ----
+     submittingRef is a re-entry guard against fast double-clicks. React's
+     re-render unmounts the button once we flip phase to "submitting", but a
+     synchronous double-click in the same microtask can still fire this twice
+     before React commits. The ref short-circuits the second call. */
+  const submittingRef = useRef(false)
   const submitApplication = async () => {
+    if (submittingRef.current) return
+    submittingRef.current = true
     setPhase("submitting")
     try {
       const res = await fetch("/api/community/apply", {
@@ -230,6 +237,8 @@ export function ApplyForm() {
       setPhase("calendar")
     } catch {
       setPhase("error")
+      // Allow retry from the error screen.
+      submittingRef.current = false
     }
   }
 

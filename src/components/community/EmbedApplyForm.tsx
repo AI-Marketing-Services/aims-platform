@@ -115,7 +115,10 @@ export function EmbedApplyForm() {
     setStep((s) => s + 1)
   }, [answers, step, computePreScore])
 
+  const submittingRef = useRef(false)
   const submitApplication = async () => {
+    if (submittingRef.current) return
+    submittingRef.current = true
     setPhase("submitting")
     try {
       const res = await fetch("/api/community/apply", {
@@ -143,6 +146,7 @@ export function EmbedApplyForm() {
       setPhase("calendar")
     } catch {
       setPhase("error")
+      submittingRef.current = false
     }
   }
 

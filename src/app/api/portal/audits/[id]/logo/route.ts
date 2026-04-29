@@ -61,6 +61,21 @@ export async function POST(
       )
     }
 
+    if (!process.env.BLOB_READ_WRITE_TOKEN) {
+      logger.error(
+        "Blob upload attempted without BLOB_READ_WRITE_TOKEN configured",
+        null,
+        { endpoint: "POST /api/portal/audits/[id]/logo", userId: dbUserId }
+      )
+      return NextResponse.json(
+        {
+          error:
+            "Logo uploads aren't enabled yet. Paste a hosted image URL below as a workaround.",
+        },
+        { status: 503 }
+      )
+    }
+
     const blob = await put(
       `audits/${id}/logo-${Date.now()}.${ext}`,
       file,
@@ -82,6 +97,12 @@ export async function POST(
       userId: dbUserId,
       quizId: id,
     })
-    return NextResponse.json({ error: "Upload failed" }, { status: 500 })
+    return NextResponse.json(
+      {
+        error:
+          "Upload failed. You can paste a hosted image URL below as a workaround.",
+      },
+      { status: 500 }
+    )
   }
 }
