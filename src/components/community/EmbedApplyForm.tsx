@@ -146,43 +146,10 @@ export function EmbedApplyForm() {
     }
   }
 
+  /* Direct iframe embed — see ApplyForm.tsx for rationale. We only need the
+     postMessage listener for the booking-complete handoff. */
   useEffect(() => {
     if (phase !== "calendar" || typeof window === "undefined") return
-
-    const container = document.getElementById("cal-inline-embed-aoc")
-    if (!container) return
-
-    const tier = scoreResult?.tier ?? "cold"
-    const bookingUrl = getCalendarUrl(tier)
-
-    container.innerHTML = ""
-    container.setAttribute("data-url", bookingUrl)
-
-    const initCalendly = () => {
-      const Calendly = (window as unknown as { Calendly?: { initInlineWidget: (opts: Record<string, unknown>) => void } }).Calendly
-      if (!Calendly) return
-      const params = new URLSearchParams({
-        // "1" = skip Calendly's own event-details card since we render our
-        // own branded version above the iframe.
-        hide_event_type_details: "1",
-        hide_gdpr_banner: "1",
-        background_color: "ffffff",
-        text_color: "1A1A1A",
-        primary_color: "981B1B",
-      }).toString()
-      const url = `${bookingUrl}${bookingUrl.includes("?") ? "&" : "?"}${params}`
-      Calendly.initInlineWidget({
-        url,
-        parentElement: container,
-        prefill: {
-          name: `${firstName.trim()} ${lastName.trim()}`,
-          firstName: firstName.trim(),
-          lastName: lastName.trim(),
-          email: email.trim().toLowerCase(),
-        },
-      })
-    }
-
     const onMessage = (e: MessageEvent) => {
       const data = e.data as { event?: string }
       if (typeof data === "object" && data?.event === "calendly.event_scheduled") {
@@ -190,28 +157,27 @@ export function EmbedApplyForm() {
       }
     }
     window.addEventListener("message", onMessage)
-
-    const existing = document.querySelector<HTMLScriptElement>(
-      'script[src="https://assets.calendly.com/assets/external/widget.js"]'
-    )
-    if (existing) {
-      if ((window as unknown as { Calendly?: unknown }).Calendly) initCalendly()
-      else existing.addEventListener("load", initCalendly, { once: true })
-    } else {
-      const script = document.createElement("script")
-      script.src = "https://assets.calendly.com/assets/external/widget.js"
-      script.async = true
-      script.onload = initCalendly
-      document.head.appendChild(script)
-
-      const link = document.createElement("link")
-      link.rel = "stylesheet"
-      link.href = "https://assets.calendly.com/assets/external/widget.css"
-      document.head.appendChild(link)
-    }
-
     return () => window.removeEventListener("message", onMessage)
-  }, [phase, firstName, lastName, email, scoreResult])
+  }, [phase])
+
+  const calendarIframeUrl = (() => {
+    const tier = scoreResult?.tier ?? "cold"
+    const bookingUrl = getCalendarUrl(tier)
+    const origin =
+      typeof window !== "undefined" ? window.location.host : "aioperatorcollective.com"
+    const params = new URLSearchParams({
+      embed_domain: origin,
+      embed_type: "Inline",
+      hide_event_type_details: "1",
+      hide_gdpr_banner: "1",
+      background_color: "ffffff",
+      text_color: "1A1A1A",
+      primary_color: "981B1B",
+      name: `${firstName.trim()} ${lastName.trim()}`.trim(),
+      email: email.trim().toLowerCase(),
+    }).toString()
+    return `${bookingUrl}${bookingUrl.includes("?") ? "&" : "?"}${params}`
+  })()
 
   const goBack = () => {
     if (step > 0) {
@@ -362,39 +328,26 @@ export function EmbedApplyForm() {
             </ul>
           </div>
 
-          <div
-            id="cal-inline-embed-aoc"
-            className="calendly-inline-widget w-full max-w-xl rounded-lg overflow-hidden bg-white"
+          <iframe
+            src={calendarIframeUrl}
+            title="Book your AI Operator Collective consult call"
+            className="w-full max-w-xl rounded-lg bg-white border-0"
             style={{ minWidth: "320px", height: "min(1000px, calc(100vh - 80px))", minHeight: "820px" }}
-          >
-            <noscript>
-              <p className="p-6 text-center text-sm text-[#4B5563]">
-                JavaScript is required to load the calendar. You can book
-                directly at{" "}
-                <a
-                  className="text-crimson font-semibold underline"
-                  href={getCalendarUrl(scoreResult.tier)}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {getCalendarUrl(scoreResult.tier)}
-                </a>
-                .
-              </p>
-            </noscript>
-            <p className="p-6 text-center text-sm text-[#4B5563]">
-              Loading calendar…{" "}
-              <a
-                className="text-crimson font-semibold underline"
-                href={getCalendarUrl(scoreResult.tier)}
-                target="_blank"
-                rel="noreferrer"
-              >
-                Open in a new tab
-              </a>{" "}
-              if it does not appear.
-            </p>
-          </div>
+            loading="eager"
+            allow="camera; microphone; fullscreen"
+          />
+          <p className="mt-3 text-center text-xs text-[#737373]">
+            Calendar not loading?{" "}
+            <a
+              className="text-crimson font-semibold underline"
+              href={getCalendarUrl(scoreResult.tier)}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Open it in a new tab
+            </a>
+            .
+          </p>
         </div>
       </div>
     )

@@ -233,48 +233,17 @@ export function ApplyForm() {
     }
   }
 
-  /* ---- Calendly embed loader ---- */
+  /* ---- Calendly booking-complete listener ----
+     We render the Calendly iframe DIRECTLY (no widget.js dependency) so the
+     calendar shows instantly even when ad-blockers, privacy extensions, or
+     Brave Shields block assets.calendly.com — which would otherwise leave
+     visitors staring at an empty box and we'd lose the lead.
+
+     The only thing we still need at runtime is the `event_scheduled`
+     postMessage so we can redirect to /apply/next-steps after they book. */
   useEffect(() => {
     if (phase !== "calendar" || typeof window === "undefined") return
 
-    const container = document.getElementById("cal-inline-aoc")
-    if (!container) return
-
-    // Route hot leads to Matt, warm/cold to Ryan.
-    const tier = scoreResult?.tier ?? "cold"
-    const bookingUrl = getCalendarUrl(tier)
-
-    container.innerHTML = ""
-    container.setAttribute("data-url", bookingUrl)
-
-    const initCalendly = () => {
-      const Calendly = (window as unknown as { Calendly?: { initInlineWidget: (opts: Record<string, unknown>) => void } }).Calendly
-      if (!Calendly) return
-      const params = new URLSearchParams({
-        // "1" = hide Calendly's own event-details card. We render our own
-        // branded card above the iframe so users don't see two copies.
-        hide_event_type_details: "1",
-        hide_gdpr_banner: "1",
-        background_color: "ffffff",
-        text_color: "1A1A1A",
-        primary_color: "981B1B",
-      }).toString()
-
-      const url = `${bookingUrl}${bookingUrl.includes("?") ? "&" : "?"}${params}`
-      Calendly.initInlineWidget({
-        url,
-        parentElement: container,
-        prefill: {
-          name: `${firstName.trim()} ${lastName.trim()}`,
-          firstName: firstName.trim(),
-          lastName: lastName.trim(),
-          email: email.trim().toLowerCase(),
-        },
-      })
-    }
-
-    // Listen for Calendly's event_scheduled postMessage → redirect to
-    // the educational next-steps page instead of the inline done screen.
     const onMessage = (e: MessageEvent) => {
       const data = e.data as { event?: string }
       if (
@@ -286,41 +255,35 @@ export function ApplyForm() {
           email: email.trim().toLowerCase(),
           name: `${firstName.trim()} ${lastName.trim()}`.trim(),
         }).toString()
-        // Small delay so Calendly's own UI state settles before navigating
         setTimeout(() => {
           window.location.href = `/apply/next-steps?${query}`
         }, 600)
       }
     }
     window.addEventListener("message", onMessage)
+    return () => window.removeEventListener("message", onMessage)
+  }, [phase, firstName, lastName, email])
 
-    // Load the Calendly script if not yet present
-    const existing = document.querySelector<HTMLScriptElement>(
-      'script[src="https://assets.calendly.com/assets/external/widget.js"]'
-    )
-    if (existing) {
-      if ((window as unknown as { Calendly?: unknown }).Calendly) {
-        initCalendly()
-      } else {
-        existing.addEventListener("load", initCalendly, { once: true })
-      }
-    } else {
-      const script = document.createElement("script")
-      script.src = "https://assets.calendly.com/assets/external/widget.js"
-      script.async = true
-      script.onload = initCalendly
-      document.head.appendChild(script)
-
-      const link = document.createElement("link")
-      link.rel = "stylesheet"
-      link.href = "https://assets.calendly.com/assets/external/widget.css"
-      document.head.appendChild(link)
-    }
-
-    return () => {
-      window.removeEventListener("message", onMessage)
-    }
-  }, [phase, firstName, lastName, email, scoreResult])
+  /* Build the Calendly inline-embed URL for the iframe. Direct iframe load
+     means ZERO script dependency — the calendar paints with the page. */
+  const calendarIframeUrl = (() => {
+    const tier = scoreResult?.tier ?? "cold"
+    const bookingUrl = getCalendarUrl(tier)
+    const origin =
+      typeof window !== "undefined" ? window.location.host : "aioperatorcollective.com"
+    const params = new URLSearchParams({
+      embed_domain: origin,
+      embed_type: "Inline",
+      hide_event_type_details: "1",
+      hide_gdpr_banner: "1",
+      background_color: "ffffff",
+      text_color: "1A1A1A",
+      primary_color: "981B1B",
+      name: `${firstName.trim()} ${lastName.trim()}`.trim(),
+      email: email.trim().toLowerCase(),
+    }).toString()
+    return `${bookingUrl}${bookingUrl.includes("?") ? "&" : "?"}${params}`
+  })()
 
   /* ---- Current question (steps 2-6) ---- */
   const questionIndex = step - 2
@@ -460,48 +423,34 @@ export function ApplyForm() {
             </ul>
           </div>
 
-          {/* Calendly inline widget — tall enough to show the full month +
-              time-slot panel without an inner scrollbar, with a resilient
-              fallback link for visitors whose browsers block the Calendly
-              script (ad-blockers, Brave, strict tracking protection). */}
+          {/* Direct iframe embed — paints with the page, survives
+              script-blocking extensions. Always-visible fallback link below
+              guarantees users with strict iframe-blockers can still book. */}
           <div className="w-full max-w-2xl">
-            <div
-              id="cal-inline-aoc"
-              className="calendly-inline-widget w-full rounded-lg overflow-hidden bg-white"
-              style={{ minWidth: "320px", height: "min(1100px, calc(100vh - 160px))", minHeight: "900px" }}
-            >
-              {/* Fallback rendered synchronously. Calendly.initInlineWidget
-                  replaces innerHTML of this container once the script loads,
-                  so this block only ever ends up visible when the script
-                  failed to load. */}
-              <noscript>
-                <p className="p-6 text-center text-sm text-[#4B5563]">
-                  JavaScript is required to load the calendar. You can book
-                  directly at{" "}
-                  <a
-                    className="text-crimson font-semibold underline"
-                    href={getCalendarUrl(scoreResult.tier)}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    {getCalendarUrl(scoreResult.tier)}
-                  </a>
-                  .
-                </p>
-              </noscript>
-              <p className="p-6 text-center text-sm text-[#4B5563]">
-                Loading calendar…{" "}
-                <a
-                  className="text-crimson font-semibold underline"
-                  href={getCalendarUrl(scoreResult.tier)}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Open in a new tab
-                </a>{" "}
-                if it does not appear in a few seconds.
-              </p>
-            </div>
+            <iframe
+              src={calendarIframeUrl}
+              title="Book your AI Operator Collective consult call"
+              className="w-full rounded-lg bg-white border-0"
+              style={{
+                minWidth: "320px",
+                height: "min(1100px, calc(100vh - 160px))",
+                minHeight: "900px",
+              }}
+              loading="eager"
+              allow="camera; microphone; fullscreen"
+            />
+            <p className="mt-3 text-center text-xs text-[#737373]">
+              Calendar not loading?{" "}
+              <a
+                className="text-crimson font-semibold underline"
+                href={getCalendarUrl(scoreResult.tier)}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Open it in a new tab
+              </a>
+              .
+            </p>
           </div>
         </div>
       </div>
