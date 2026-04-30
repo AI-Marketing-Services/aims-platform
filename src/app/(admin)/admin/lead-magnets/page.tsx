@@ -10,6 +10,8 @@ import {
 } from "@/components/admin/LeadMagnetCharts"
 import { LeadMagnetTable, type SubmissionRow } from "@/components/admin/LeadMagnetTable"
 
+export const dynamic = "force-dynamic"
+
 export const metadata = { title: "Lead Magnets" }
 
 const LEAD_MAGNET_TYPES = [

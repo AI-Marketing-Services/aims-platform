@@ -4,6 +4,8 @@ import { getDealsByStage } from "@/lib/db/queries"
 import { CRMKanban } from "./CRMKanban"
 import { Breadcrumbs } from "@/components/shared/Breadcrumbs"
 
+export const dynamic = "force-dynamic"
+
 
 export default async function AdminCRMPage() {
   const { userId, sessionClaims } = await auth()

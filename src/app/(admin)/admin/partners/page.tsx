@@ -5,6 +5,8 @@ import { Users, DollarSign, TrendingUp, UserPlus } from "lucide-react"
 import { PartnersTable, type PartnerRow } from "@/components/admin/PartnersTable"
 import { getTierLabel } from "@/lib/referrals/commission-config"
 
+export const dynamic = "force-dynamic"
+
 export const metadata = { title: "Partners" }
 
 export default async function AdminPartnersPage() {

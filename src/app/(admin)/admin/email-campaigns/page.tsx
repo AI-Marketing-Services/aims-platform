@@ -5,6 +5,8 @@ import { Breadcrumbs } from "@/components/shared/Breadcrumbs"
 import { EmailCampaignsClient } from "./EmailCampaignsClient"
 import { AdminCampaignDashboard } from "./AdminCampaignDashboard"
 
+export const dynamic = "force-dynamic"
+
 export const metadata = { title: "Email Campaigns" }
 
 export default async function AdminEmailCampaignsPage() {

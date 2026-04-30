@@ -2,6 +2,8 @@ import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import { CronStatusClient } from "./CronStatusClient"
 
+export const dynamic = "force-dynamic"
+
 export const metadata = { title: "Job Health | AIMS Admin" }
 
 export default async function CronStatusPage() {

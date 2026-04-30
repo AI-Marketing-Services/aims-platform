@@ -4,6 +4,8 @@ import { Breadcrumbs } from "@/components/shared/Breadcrumbs"
 import { EngagementDetail } from "@/components/ops-excellence/admin/EngagementDetail"
 import { db } from "@/lib/db"
 
+export const dynamic = "force-dynamic"
+
 export default async function AdminEngagementDetailPage({
   params,
 }: {

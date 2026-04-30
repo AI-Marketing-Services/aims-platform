@@ -6,6 +6,8 @@ import { QUESTIONS } from "@/lib/collective-application"
 import { Breadcrumbs } from "@/components/shared/Breadcrumbs"
 import { InviteButton } from "./InviteButton"
 
+export const dynamic = "force-dynamic"
+
 const TIER_COLORS: Record<string, string> = {
   hot: "bg-primary/10 text-primary border-primary/30",
   warm: "bg-primary/5 text-primary/70 border-primary/20",

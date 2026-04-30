@@ -15,6 +15,8 @@ import {
 } from "lucide-react"
 import { Breadcrumbs } from "@/components/shared/Breadcrumbs"
 
+export const dynamic = "force-dynamic"
+
 export const metadata = { title: "Community Sequence" }
 
 type SequenceStatus = "pending" | "sent" | "cancelled" | "failed"

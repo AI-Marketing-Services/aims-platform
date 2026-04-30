@@ -3,6 +3,8 @@ import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
 import { RevenueCharts } from "./RevenueChart"
 
+export const dynamic = "force-dynamic"
+
 export const metadata = { title: "Revenue" }
 
 const MRR_TARGET = 100_000

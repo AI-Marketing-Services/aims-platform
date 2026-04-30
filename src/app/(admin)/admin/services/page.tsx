@@ -1,6 +1,8 @@
 import { Suspense } from "react";
 import ServicesConfigClient from "./ServicesConfigClient";
 
+export const dynamic = "force-dynamic"
+
 export default function ServicesConfigPage() {
   return (
     <div className="p-6">

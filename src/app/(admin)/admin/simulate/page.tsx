@@ -20,6 +20,8 @@ import {
 } from "lucide-react"
 import { Breadcrumbs } from "@/components/shared/Breadcrumbs"
 
+export const dynamic = "force-dynamic"
+
 // ============ TYPES ============
 
 interface SimulateResult {

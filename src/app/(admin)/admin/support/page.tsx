@@ -5,6 +5,8 @@ import { LifeBuoy } from "lucide-react"
 import { AdminSupportClient } from "./AdminSupportClient"
 import { Breadcrumbs } from "@/components/shared/Breadcrumbs"
 
+export const dynamic = "force-dynamic"
+
 export const metadata = { title: "Support Tickets" }
 
 export default async function AdminSupportPage() {

@@ -90,13 +90,15 @@ const STAGE_LABELS: Record<string, string> = {
   LOST: "Lost",
 }
 
+// Tonal primary scale instead of rainbow stage badges. Matches the
+// crimson-only branding used across the rest of the platform.
 const STAGE_COLORS: Record<string, string> = {
-  PROSPECT: "text-blue-700 bg-blue-50",
-  DISCOVERY_CALL: "text-violet-700 bg-violet-50",
-  PROPOSAL_SENT: "text-amber-700 bg-amber-50",
-  ACTIVE_RETAINER: "text-emerald-700 bg-emerald-50",
-  COMPLETED: "text-primary bg-primary/10",
-  LOST: "text-red-600 bg-red-50",
+  PROSPECT: "text-muted-foreground bg-muted",
+  DISCOVERY_CALL: "text-foreground bg-primary/[0.08]",
+  PROPOSAL_SENT: "text-primary bg-primary/15",
+  ACTIVE_RETAINER: "text-primary bg-primary/20 font-semibold",
+  COMPLETED: "text-primary-foreground bg-primary",
+  LOST: "text-muted-foreground bg-muted line-through",
 }
 
 const TYPE_LABELS: Record<string, string> = {
@@ -191,9 +193,9 @@ export default async function AdminMemberDetailPage({
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {[
           { label: "Onboarding", value: `${progress.percent}%`, sub: `${progress.completedCount}/${TOTAL_STEPS} steps`, color: "text-primary" },
-          { label: "Active MRR", value: activeMrr > 0 ? `$${activeMrr.toLocaleString()}` : "—", sub: "from retainers", color: "text-emerald-700" },
-          { label: "Pipeline", value: pipeline > 0 ? `$${pipeline.toLocaleString()}` : "—", sub: `${member.clientDeals.length} deals`, color: "text-blue-700" },
-          { label: "AI Credits Used", value: String(member.usageEvents.length), sub: "events this month", color: "text-amber-600" },
+          { label: "Active MRR", value: activeMrr > 0 ? `$${activeMrr.toLocaleString()}` : "—", sub: "from retainers", color: "text-primary" },
+          { label: "Pipeline", value: pipeline > 0 ? `$${pipeline.toLocaleString()}` : "—", sub: `${member.clientDeals.length} deals`, color: "text-foreground" },
+          { label: "AI Credits Used", value: String(member.usageEvents.length), sub: "events this month", color: "text-foreground" },
         ].map(({ label, value, sub, color }) => (
           <div key={label} className="bg-card border border-border rounded-xl p-4">
             <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">{label}</p>
@@ -207,10 +209,10 @@ export default async function AdminMemberDetailPage({
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <div className="bg-card border border-border rounded-xl p-4">
           <div className="flex items-center gap-2 mb-1">
-            <DollarSign className="h-3.5 w-3.5 text-emerald-600" />
+            <DollarSign className="h-3.5 w-3.5 text-primary" />
             <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Invoices Collected</p>
           </div>
-          <p className="text-xl font-bold text-emerald-600">
+          <p className="text-xl font-bold text-primary">
             {invoicesPaid > 0 ? `$${invoicesPaid.toLocaleString()}` : "—"}
           </p>
           <p className="text-[10px] text-muted-foreground mt-0.5">
@@ -310,7 +312,7 @@ export default async function AdminMemberDetailPage({
                       </div>
                       <div className="h-1.5 rounded-full bg-muted overflow-hidden">
                         <div
-                          className={`h-full rounded-full ${pct >= 80 ? "bg-amber-500" : "bg-primary"}`}
+                          className={`h-full rounded-full ${pct >= 80 ? "bg-muted0" : "bg-primary"}`}
                           style={{ width: `${pct}%` }}
                         />
                       </div>
@@ -342,7 +344,7 @@ export default async function AdminMemberDetailPage({
                 return (
                   <div key={step.key} className="flex items-center gap-2">
                     {done ? (
-                      <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-emerald-600" />
+                      <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-primary" />
                     ) : (
                       <Circle className="h-3.5 w-3.5 shrink-0 text-muted-foreground/40" />
                     )}
@@ -418,7 +420,7 @@ export default async function AdminMemberDetailPage({
                     <td className="px-4 py-3">
                       <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide ${
                         inv.status === "PAID" ? "bg-green-50 text-green-700" :
-                        inv.status === "SENT" ? "bg-blue-50 text-blue-700" :
+                        inv.status === "SENT" ? "bg-muted text-foreground" :
                         inv.status === "OVERDUE" ? "bg-red-50 text-red-600" :
                         "bg-gray-100 text-gray-500"
                       }`}>
@@ -430,7 +432,7 @@ export default async function AdminMemberDetailPage({
                         {formatDistanceToNow(new Date(inv.createdAt), { addSuffix: true })}
                       </p>
                       {inv.paidAt && (
-                        <p className="text-[10px] text-emerald-600">
+                        <p className="text-[10px] text-primary">
                           Paid {formatDistanceToNow(new Date(inv.paidAt), { addSuffix: true })}
                         </p>
                       )}
@@ -491,7 +493,7 @@ export default async function AdminMemberDetailPage({
                       <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full ${
                         c.status === "PUBLISHED" ? "bg-green-50 text-green-700" :
                         c.status === "DRAFT" ? "bg-gray-100 text-gray-500" :
-                        "bg-blue-50 text-blue-700"
+                        "bg-muted text-foreground"
                       }`}>{c.status}</span>
                       <p className="text-[10px] text-muted-foreground">
                         {formatDistanceToNow(new Date(c.createdAt), { addSuffix: true })}

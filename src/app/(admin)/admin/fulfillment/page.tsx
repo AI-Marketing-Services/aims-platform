@@ -4,6 +4,8 @@ import { db } from "@/lib/db"
 import { FulfillmentPipeline } from "./FulfillmentPipeline"
 import { Breadcrumbs } from "@/components/shared/Breadcrumbs"
 
+export const dynamic = "force-dynamic"
+
 export default async function AdminFulfillmentPage() {
   const { userId, sessionClaims } = await auth()
   if (!userId) redirect("/sign-in")

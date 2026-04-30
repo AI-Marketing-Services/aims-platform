@@ -4,6 +4,8 @@ import { db } from "@/lib/db"
 import { ClientDetailClient } from "./ClientDetailClient"
 import { Breadcrumbs } from "@/components/shared/Breadcrumbs"
 
+export const dynamic = "force-dynamic"
+
 export default async function AdminClientDetailPage({ params }: { params: Promise<{ clientId: string }> }) {
   const { clientId } = await params
   const { userId, sessionClaims } = await auth()

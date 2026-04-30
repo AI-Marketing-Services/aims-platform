@@ -6,6 +6,9 @@ import { Breadcrumbs } from "@/components/shared/Breadcrumbs"
 import { TOTAL_STEPS } from "@/lib/onboarding/steps"
 import { Users, CheckCircle2, TrendingUp, Clock, Briefcase } from "lucide-react"
 import { formatDistanceToNow } from "date-fns"
+import { RefreshButton } from "@/components/admin/RefreshButton"
+
+export const dynamic = "force-dynamic"
 
 export const metadata = { title: "Portal Members" }
 
@@ -74,9 +77,12 @@ export default async function AdminMembersPage() {
 
       <div className="mb-6 flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-2xl font-bold text-foreground mb-1">Portal Members</h1>
+          <div className="flex items-center gap-3 mb-1">
+            <h1 className="text-2xl font-bold text-foreground">Portal Members</h1>
+            <RefreshButton />
+          </div>
           <p className="text-muted-foreground text-sm">
-            {members.length} CLIENT users — onboarding progress and CRM activity
+            {members.length} CLIENT users, onboarding progress and CRM activity
           </p>
         </div>
 
@@ -96,7 +102,7 @@ export default async function AdminMembersPage() {
           </div>
           <div className="text-right">
             <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Member MRR</p>
-            <p className="text-lg font-bold text-emerald-400">
+            <p className="text-lg font-bold text-primary">
               {totalMrr > 0 ? `$${totalMrr.toLocaleString()}` : "—"}
             </p>
           </div>
@@ -178,7 +184,7 @@ export default async function AdminMembersPage() {
                         <p className="text-[10px] text-muted-foreground">
                           {member.memberOnboardingSteps.length}/{TOTAL_STEPS} steps
                           {member.memberProfile?.onboardingCompletedAt && (
-                            <span className="ml-1 text-emerald-400">✓ done</span>
+                            <span className="ml-1 text-primary font-semibold">done</span>
                           )}
                         </p>
                       </div>
@@ -207,16 +213,16 @@ export default async function AdminMembersPage() {
                         <div className="space-y-0.5">
                           {pipeline > 0 && (
                             <div className="flex items-center gap-1">
-                              <TrendingUp className="h-3 w-3 text-blue-400" />
-                              <span className="text-xs text-foreground">
+                              <TrendingUp className="h-3 w-3 text-muted-foreground" />
+                              <span className="text-xs text-foreground tabular-nums">
                                 ${pipeline.toLocaleString()}
                               </span>
                             </div>
                           )}
                           {mrr > 0 && (
                             <div className="flex items-center gap-1">
-                              <CheckCircle2 className="h-3 w-3 text-emerald-400" />
-                              <span className="text-xs text-emerald-400 font-medium">
+                              <CheckCircle2 className="h-3 w-3 text-primary" />
+                              <span className="text-xs text-primary font-semibold tabular-nums">
                                 ${mrr.toLocaleString()}/mo
                               </span>
                             </div>

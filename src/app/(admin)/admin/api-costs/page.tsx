@@ -4,6 +4,8 @@ import { getApiCostSummary } from "@/lib/db/queries"
 import { db } from "@/lib/db"
 import ApiCostsClient from "./ApiCostsClient"
 
+export const dynamic = "force-dynamic"
+
 export const metadata = { title: "API Costs" }
 
 export default async function AdminApiCostsPage() {

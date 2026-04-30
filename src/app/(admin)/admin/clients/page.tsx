@@ -5,6 +5,8 @@ import { db } from "@/lib/db"
 import { ClientsTable } from "./ClientsTable"
 import { Breadcrumbs } from "@/components/shared/Breadcrumbs"
 
+export const dynamic = "force-dynamic"
+
 export const metadata = { title: "Clients" }
 
 export default async function AdminClientsPage() {

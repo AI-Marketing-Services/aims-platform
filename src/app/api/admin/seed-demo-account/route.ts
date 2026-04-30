@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+import { revalidatePath } from "next/cache"
 import type { Prisma } from "@prisma/client"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
@@ -875,6 +876,31 @@ Week 7+: Full deployment + monthly optimization`
         creditPlanTier: "agency",
       },
     })
+
+    // ── 11. INVALIDATE PAGE CACHES ────────────────────────────────
+    // Force-revalidate every page that might be showing stale data
+    // about this operator. Saves the admin from having to hard-refresh
+    // to see the seeded data on the Members + CRM screens.
+    const pathsToRevalidate = [
+      "/portal/dashboard",
+      "/portal/crm",
+      "/portal/audits",
+      "/portal/invoices",
+      "/portal/revenue",
+      "/admin/members",
+      "/admin/clients",
+      "/admin/crm",
+      "/admin/dashboard",
+      "/admin/dashboard/full",
+      "/admin/revenue",
+    ]
+    for (const path of pathsToRevalidate) {
+      try {
+        revalidatePath(path, "page")
+      } catch {
+        // revalidatePath can throw on dynamic segments; ignore and continue
+      }
+    }
 
     return NextResponse.json({
       ok: true,

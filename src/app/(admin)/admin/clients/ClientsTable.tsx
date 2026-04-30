@@ -11,7 +11,7 @@ const STAGE_CONFIG: Record<string, { label: string; class: string }> = {
   CONSULT_BOOKED:        { label: "Consult Booked",    class: "text-primary bg-primary/5 border-primary/30" },
   CONSULT_COMPLETED:     { label: "Consult Completed", class: "text-primary bg-primary/10 border-primary/40" },
   MIGHTY_INVITED:        { label: "Mighty Invited",    class: "text-primary bg-primary/15 border-primary/50" },
-  MEMBER_JOINED:         { label: "Member Joined",     class: "text-emerald-700 bg-emerald-50 border-emerald-200" },
+  MEMBER_JOINED:         { label: "Member Joined",     class: "text-primary bg-primary/5 border-primary/30" },
   LOST:                  { label: "Lost / Ghosted",    class: "text-muted-foreground bg-muted/30 border-border" },
 }
 

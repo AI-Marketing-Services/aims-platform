@@ -13,6 +13,8 @@ import { cn } from "@/lib/utils"
 import { InternRosterTable, type InternRow } from "@/components/admin/InternRosterTable"
 import { InternInviteDialog } from "@/components/admin/InternInviteDialog"
 
+export const dynamic = "force-dynamic"
+
 export const metadata = { title: "Intern Ops" }
 
 export default async function AdminInternOpsPage() {

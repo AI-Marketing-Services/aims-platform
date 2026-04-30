@@ -5,6 +5,8 @@ import type { PipelineFunnelEntry, RevenueByServiceEntry } from "@/components/ad
 import { ActionInbox } from "@/components/admin/ActionInbox"
 import { AdminDashboardClient } from "../AdminDashboardClient"
 
+export const dynamic = "force-dynamic"
+
 // ─── Constants ───────────────────────────────────────────────────────────────
 
 const FUNNEL_ORDER = [

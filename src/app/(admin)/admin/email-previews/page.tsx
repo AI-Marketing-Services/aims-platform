@@ -4,6 +4,8 @@ import { useState, useMemo, useCallback } from "react"
 import { Copy, Check, Mail, ChevronDown } from "lucide-react"
 import { Breadcrumbs } from "@/components/shared/Breadcrumbs"
 
+export const dynamic = "force-dynamic"
+
 // ─── Email layout helpers (client-side copies, no server imports) ────────────
 
 function escapeHtml(str: string): string {

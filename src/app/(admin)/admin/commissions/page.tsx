@@ -4,6 +4,8 @@ import { db } from "@/lib/db"
 import { DollarSign, Clock, CheckCircle2, Send } from "lucide-react"
 import { CommissionsTable, type CommissionRow } from "@/components/admin/CommissionsTable"
 
+export const dynamic = "force-dynamic"
+
 export const metadata = { title: "Commissions" }
 
 export default async function AdminCommissionsPage() {

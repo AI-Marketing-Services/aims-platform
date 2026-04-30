@@ -6,6 +6,8 @@ import { DealDetailClient } from "./DealDetailClient"
 import { Breadcrumbs } from "@/components/shared/Breadcrumbs"
 import { getProgressSummaryForAdmin } from "@/lib/onboarding/progress"
 
+export const dynamic = "force-dynamic"
+
 // Lead magnet types that have a public results page at /tools/{slug}/results/{id}
 const TYPES_WITH_RESULTS_PAGE = new Set([
   "AI_READINESS_QUIZ",

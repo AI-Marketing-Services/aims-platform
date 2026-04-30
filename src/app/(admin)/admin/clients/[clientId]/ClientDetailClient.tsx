@@ -117,12 +117,12 @@ const STAGE_CONFIG: Record<string, { label: string; class: string }> = {
   CONSULT_BOOKED:        { label: "Consult Booked",    class: "text-primary bg-primary/5 border-primary/30" },
   CONSULT_COMPLETED:     { label: "Consult Completed", class: "text-primary bg-primary/10 border-primary/40" },
   MIGHTY_INVITED:        { label: "Mighty Invited",    class: "text-primary bg-primary/15 border-primary/50" },
-  MEMBER_JOINED:         { label: "Member Joined",     class: "text-emerald-700 bg-emerald-50 border-emerald-200" },
+  MEMBER_JOINED:         { label: "Member Joined",     class: "text-primary bg-primary/5 border-primary/30" },
   LOST:                  { label: "Lost / Ghosted",    class: "text-muted-foreground bg-muted/30 border-border" },
 }
 
 const SUB_STATUS_CONFIG: Record<string, { label: string; class: string }> = {
-  ACTIVE: { label: "Active", class: "text-emerald-700 bg-emerald-50 border-emerald-200" },
+  ACTIVE: { label: "Active", class: "text-primary bg-primary/5 border-primary/30" },
   TRIALING: { label: "Trialing", class: "text-primary bg-primary/5 border-primary/30" },
   PAST_DUE: { label: "Past Due", class: "text-primary bg-primary/10 border-primary/30" },
   CANCELLED: { label: "Cancelled", class: "text-muted-foreground bg-muted/40 border-border" },
@@ -132,7 +132,7 @@ const SUB_STATUS_CONFIG: Record<string, { label: string; class: string }> = {
 const FULFILLMENT_STATUS_CONFIG: Record<string, { label: string; class: string }> = {
   PENDING_SETUP: { label: "Pending Setup", class: "text-muted-foreground bg-muted/50 border-border" },
   IN_PROGRESS: { label: "In Progress", class: "text-primary bg-primary/5 border-primary/30" },
-  ACTIVE_MANAGED: { label: "Active", class: "text-emerald-700 bg-emerald-50 border-emerald-200" },
+  ACTIVE_MANAGED: { label: "Active", class: "text-primary bg-primary/5 border-primary/30" },
   NEEDS_ATTENTION: { label: "Needs Attention", class: "text-primary bg-primary/10 border-primary/30" },
   COMPLETED: { label: "Completed", class: "text-muted-foreground bg-muted/40 border-border" },
   ON_HOLD: { label: "On Hold", class: "text-muted-foreground bg-muted/40 border-border" },
@@ -141,13 +141,13 @@ const FULFILLMENT_STATUS_CONFIG: Record<string, { label: string; class: string }
 const TICKET_STATUS_CONFIG: Record<string, { label: string; class: string }> = {
   open: { label: "Open", class: "text-primary bg-primary/5 border-primary/30" },
   in_progress: { label: "In Progress", class: "text-primary bg-primary/10 border-primary/40" },
-  resolved: { label: "Resolved", class: "text-emerald-700 bg-emerald-50 border-emerald-200" },
+  resolved: { label: "Resolved", class: "text-primary bg-primary/5 border-primary/30" },
   closed: { label: "Closed", class: "text-muted-foreground bg-muted/40 border-border" },
 }
 
 
 function healthColor(score: number): string {
-  if (score >= 70) return "text-emerald-700 bg-emerald-50 border-emerald-200"
+  if (score >= 70) return "text-primary bg-primary/5 border-primary/30"
   if (score >= 40) return "text-primary bg-primary/10 border-primary/30"
   return "text-primary bg-primary/15 border-primary/40"
 }
@@ -338,7 +338,7 @@ export function ClientDetailClient({
                             {sub.tier && <span className="text-xs text-muted-foreground">{sub.tier}</span>}
                             <span className={cn("text-xs px-2 py-0.5 rounded border", fs.class)}>{fs.label}</span>
                             {sub.onboardingCompletedAt ? (
-                              <span className="text-xs text-emerald-700 flex items-center gap-1">
+                              <span className="text-xs text-primary flex items-center gap-1">
                                 <CheckCircle2 className="w-3 h-3" /> Onboarded
                               </span>
                             ) : (
@@ -402,7 +402,7 @@ export function ClientDetailClient({
                         <span className={cn("text-xs px-2 py-0.5 rounded border", ss.class)}>{ss.label}</span>
                         <span className={cn("text-xs px-2 py-0.5 rounded border", fs.class)}>{fs.label}</span>
                         {sub.onboardingCompletedAt ? (
-                          <span className="text-xs text-emerald-700 flex items-center gap-1">
+                          <span className="text-xs text-primary flex items-center gap-1">
                             <CheckCircle2 className="w-3 h-3" /> Onboarded {formatDate(sub.onboardingCompletedAt)}
                           </span>
                         ) : (
@@ -427,7 +427,7 @@ export function ClientDetailClient({
                                 </span>
                                 <span className={cn(
                                   "px-1.5 py-0.5 rounded",
-                                  task.status === "done" ? "text-emerald-700 bg-emerald-50" :
+                                  task.status === "done" ? "text-primary bg-primary/5" :
                                   task.status === "in_progress" ? "text-primary bg-primary/10" :
                                   "text-muted-foreground bg-muted/40"
                                 )}>
@@ -535,7 +535,7 @@ export function ClientDetailClient({
                       "flex h-7 w-7 items-center justify-center rounded-lg flex-shrink-0 mt-0.5",
                       item.type === "deal" ? "bg-primary/10 text-primary" :
                       item.type === "ticket" ? "bg-primary/5 text-primary/70" :
-                      "bg-emerald-50 text-emerald-700"
+                      "bg-primary/5 text-primary"
                     )}>
                       {item.type === "deal" && <TrendingUp className="w-3.5 h-3.5" />}
                       {item.type === "ticket" && <Headphones className="w-3.5 h-3.5" />}

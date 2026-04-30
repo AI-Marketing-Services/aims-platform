@@ -5,6 +5,8 @@ import { MessageSquare } from "lucide-react"
 import { ChatSessionsClient, type ChatSessionRow } from "./ChatSessionsClient"
 import { Breadcrumbs } from "@/components/shared/Breadcrumbs"
 
+export const dynamic = "force-dynamic"
+
 export const metadata = { title: "Chat Sessions" }
 
 function getLastMessagePreview(messages: unknown): string {

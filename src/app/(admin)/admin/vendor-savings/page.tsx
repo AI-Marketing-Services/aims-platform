@@ -13,6 +13,8 @@ import { cn } from "@/lib/utils"
 import { VendorAddDialog } from "@/components/admin/VendorAddDialog"
 import { VendorComparisonChart } from "@/components/admin/LeadMagnetCharts"
 
+export const dynamic = "force-dynamic"
+
 export const metadata = { title: "Vendor Savings" }
 
 const STATUS_CONFIG: Record<

@@ -4,6 +4,8 @@ import { Breadcrumbs } from "@/components/shared/Breadcrumbs"
 import { EngagementPipeline } from "@/components/ops-excellence/admin/EngagementPipeline"
 import { getEngagementList } from "@/lib/ops-excellence/queries"
 
+export const dynamic = "force-dynamic"
+
 export default async function AdminOpsExcellencePage() {
   const adminId = await requireAdmin()
   if (!adminId) redirect("/sign-in")
