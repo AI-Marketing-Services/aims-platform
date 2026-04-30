@@ -13,6 +13,7 @@ import { ContactsManager } from "@/components/portal/crm/ContactsManager"
 import { DealQuickActions } from "@/components/portal/crm/DealQuickActions"
 import { MeetingNotesCard } from "@/components/portal/crm/MeetingNotesCard"
 import { EmailTemplatesPicker } from "@/components/portal/crm/EmailTemplatesPicker"
+import { DealChatPanel } from "@/components/portal/crm/DealChatPanel"
 import { matchPlaybookForIndustry } from "@/lib/playbooks/match"
 import { DealChecklist } from "@/components/portal/crm/DealChecklist"
 import { EnrichmentCard } from "@/components/portal/crm/EnrichmentCard"
@@ -263,7 +264,15 @@ export default async function DealDetailPage({
           }))}
         />
 
-        {/* Outreach — two paths: pre-written templates (free, instant)
+        {/* Per-deal AI chat. Full deal context preloaded server-side. */}
+        <div className="bg-card border border-border rounded-xl p-4">
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+            Ask AI
+          </p>
+          <DealChatPanel dealId={deal.id} companyName={deal.companyName} />
+        </div>
+
+        {/* Outreach. Two paths: pre-written templates (free, instant)
             and AI-drafted bespoke follow-up (3 credits, fully personalized). */}
         <div className="bg-card border border-border rounded-xl p-4 space-y-3">
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
