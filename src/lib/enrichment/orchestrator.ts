@@ -28,6 +28,7 @@
  */
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
+import { emitEvent, emitEvents, EVENT_TYPES } from "@/lib/events/emit"
 import {
   debitCredits,
   grantCredits,
@@ -517,6 +518,32 @@ export async function runEnrichmentPipeline(args: {
         error: err instanceof Error ? err.message : String(err),
       })
     }
+  }
+
+  // Universal event log — Today dashboard / daily digest / activity
+  // timeline all read from here.
+  void emitEvent({
+    actorId: args.userId,
+    type: EVENT_TYPES.DEAL_ENRICHED,
+    entityType: "ClientDeal",
+    entityId: dealCore.id,
+    metadata: {
+      contactsAdded,
+      creditsCost: totalCreditsCost,
+      domain: company.domain ?? websiteDomain ?? null,
+      industry: company.industry ?? dealCore.industry ?? null,
+    },
+  })
+  if (contactsAdded > 0) {
+    void emitEvents(
+      contactsToInsert.slice(0, contactsAdded).map((c) => ({
+        actorId: args.userId,
+        type: EVENT_TYPES.CONTACT_ADDED,
+        entityType: "ClientDeal",
+        entityId: dealCore.id,
+        metadata: { email: c.email, source: c.source, confidence: c.confidence },
+      })),
+    )
   }
 
   return {

@@ -4,6 +4,7 @@ import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
 import { createDealSchema } from "@/lib/crm/schemas"
 import { getOrCreateDbUserByClerkId } from "@/lib/auth/ensure-user"
+import { emitEvent, EVENT_TYPES } from "@/lib/events/emit"
 
 async function getDbUserId(clerkId: string): Promise<string | null> {
   const user = await getOrCreateDbUserByClerkId(clerkId)
@@ -69,6 +70,19 @@ export async function POST(req: Request) {
       include: {
         contacts: true,
         _count: { select: { activities: true } },
+      },
+    })
+
+    void emitEvent({
+      actorId: dbUserId,
+      type: EVENT_TYPES.DEAL_CREATED,
+      entityType: "ClientDeal",
+      entityId: deal.id,
+      metadata: {
+        companyName: deal.companyName,
+        stage: deal.stage,
+        value: deal.value,
+        source: deal.source ?? "manual",
       },
     })
 

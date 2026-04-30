@@ -7,6 +7,7 @@ import { formRatelimit, getIp } from "@/lib/ratelimit"
 import { summarizeAuditResponse } from "@/lib/audits/ai-summary"
 import { sendTrackedEmail, emailLayout, h1, p, btn, divider, escapeHtml } from "@/lib/email"
 import { AIMS_FROM_EMAIL, AIMS_REPLY_TO } from "@/lib/email/senders"
+import { emitEvent, EVENT_TYPES } from "@/lib/events/emit"
 import type {
   AnswerMap,
   AnswerValue,
@@ -154,6 +155,24 @@ export async function POST(req: Request) {
       },
       select: { id: true },
     })
+
+    // Universal event log — operator's "Today" dashboard and daily
+    // digest read from here. Fire-and-forget.
+    if (quiz.owner?.id) {
+      void emitEvent({
+        actorId: quiz.owner.id,
+        type: EVENT_TYPES.AUDIT_COMPLETED,
+        entityType: "AuditResponse",
+        entityId: response.id,
+        metadata: {
+          quizId: quiz.id,
+          quizTitle: quiz.title,
+          leadEmail: lead.email ?? null,
+          leadCompany: lead.company ?? null,
+          utmSource: utm?.source ?? null,
+        },
+      })
+    }
 
     // Fire-and-forget AI summary so the user gets the success screen instantly.
     // The summary is written back to the row when it resolves; failures are

@@ -8,6 +8,7 @@
  */
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
+import { emitEvent, EVENT_TYPES } from "@/lib/events/emit"
 import { PLAN_GRANTS } from "./pricing"
 
 export type LedgerReason =
@@ -77,6 +78,18 @@ export async function debitCredits(args: {
       },
     })
     return { balanceAfter }
+  }).then((result) => {
+    void emitEvent({
+      actorId: args.userId,
+      type: EVENT_TYPES.CREDITS_DEBITED,
+      metadata: {
+        amount: args.amount,
+        reason: args.reason,
+        balanceAfter: result.balanceAfter,
+        ...(args.metadata ?? {}),
+      },
+    })
+    return result
   })
 }
 
@@ -119,6 +132,21 @@ export async function grantCredits(args: {
       },
     })
     return { balanceAfter }
+  }).then((result) => {
+    void emitEvent({
+      actorId: args.userId,
+      type:
+        args.reason === "topup-purchase"
+          ? EVENT_TYPES.CREDITS_TOPPED_UP
+          : EVENT_TYPES.CREDITS_GRANTED,
+      metadata: {
+        amount: args.amount,
+        reason: args.reason,
+        balanceAfter: result.balanceAfter,
+        ...(args.metadata ?? {}),
+      },
+    })
+    return result
   })
 }
 

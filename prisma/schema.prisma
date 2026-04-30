@@ -69,6 +69,7 @@ model User {
   creditPlanTier     String    @default("trial") // trial | operator | pro | agency
   creditGrantedAt    DateTime?
   creditTransactions CreditTransaction[]
+  operatorEvents     OperatorEvent[]     @relation("OperatorEventActor")
 
   // Granular notification preferences
   notifNewPurchase       Boolean @default(true)
@@ -2088,4 +2089,32 @@ model CreditTransaction {
 
   @@index([userId, createdAt])
   @@index([reason])
+}
+
+// ============ UNIVERSAL EVENT LAYER ============
+
+// Append-only stream of every meaningful action across the platform.
+// Single source of truth that powers: Today dashboard, daily digest,
+// activity timelines, attribution, cohort analytics, playbook outcome
+// tracking, and the morning-open habit.
+//
+// No FK on entityId so events survive entity deletion (audit history).
+// `actorId` is the user who emitted (operator most often). `targetUserId`
+// is optional — used when the event is "about" a different user (e.g.
+// admin actions on a client).
+model OperatorEvent {
+  id           String   @id @default(cuid())
+  actorId      String
+  actor        User     @relation("OperatorEventActor", fields: [actorId], references: [id], onDelete: Cascade)
+  targetUserId String?
+  type         String   // canonical event name — see EVENT_TYPES in src/lib/events/emit.ts
+  entityType   String?  // "ClientDeal" | "AuditQuiz" | "AuditResponse" | "Playbook" | etc.
+  entityId     String?
+  metadata     Json?
+  createdAt    DateTime @default(now())
+
+  @@index([actorId, createdAt])
+  @@index([actorId, type, createdAt])
+  @@index([entityType, entityId])
+  @@index([type, createdAt])
 }

@@ -5,6 +5,7 @@ import { logger } from "@/lib/logger"
 import { notify } from "@/lib/notifications"
 import { updateDealSchema } from "@/lib/crm/schemas"
 import { getOrCreateDbUserByClerkId } from "@/lib/auth/ensure-user"
+import { emitEvent, EVENT_TYPES } from "@/lib/events/emit"
 
 async function getDbUserId(clerkId: string): Promise<string | null> {
   const user = await getOrCreateDbUserByClerkId(clerkId)
@@ -103,6 +104,36 @@ export async function PATCH(
         activities: { orderBy: { createdAt: "desc" } },
       },
     })
+
+    // Universal event log — Today dashboard / digest / activity timeline
+    if (parsed.data.stage && parsed.data.stage !== existing.stage) {
+      const eventType =
+        parsed.data.stage === "COMPLETED"
+          ? EVENT_TYPES.DEAL_WON
+          : parsed.data.stage === "LOST"
+            ? EVENT_TYPES.DEAL_LOST
+            : EVENT_TYPES.DEAL_STAGE_ADVANCED
+      void emitEvent({
+        actorId: dbUserId,
+        type: eventType,
+        entityType: "ClientDeal",
+        entityId: id,
+        metadata: {
+          from: existing.stage,
+          to: parsed.data.stage,
+          dealValue: deal.value,
+          companyName: deal.companyName,
+          ...(lostReason ? { lostReason } : {}),
+        },
+      })
+    } else {
+      void emitEvent({
+        actorId: dbUserId,
+        type: EVENT_TYPES.DEAL_UPDATED,
+        entityType: "ClientDeal",
+        entityId: id,
+      })
+    }
 
     // Fire notifications on key stage transitions
     if (parsed.data.stage && parsed.data.stage !== existing.stage) {
