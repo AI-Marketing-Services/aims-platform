@@ -76,25 +76,63 @@ interface ProposalData {
   clientDeal: {
     companyName: string
     user: {
+      name: string | null
+      email: string
       memberProfile: {
         businessName: string | null
         brandColor: string | null
+        accentColor: string | null
         tagline: string | null
+        logoUrl: string | null
       } | null
     }
   }
 }
 
-function buildProposalPDF(proposal: ProposalData): Promise<Buffer> {
+/**
+ * Fetch a remote logo URL into a Buffer so PDFKit can embed it. Cap
+ * to 2MB and 8s timeout so a slow CDN can't take down PDF generation.
+ * Returns null on any failure — PDF still renders without the logo.
+ */
+async function fetchLogoBuffer(url: string | null): Promise<Buffer | null> {
+  if (!url) return null
+  try {
+    const res = await fetch(url, { signal: AbortSignal.timeout(8000) })
+    if (!res.ok) return null
+    const ct = res.headers.get("content-type") ?? ""
+    // PDFKit only handles PNG / JPEG. Reject SVG + WebP gracefully.
+    if (!ct.includes("image/png") && !ct.includes("image/jpeg") && !ct.includes("image/jpg")) {
+      return null
+    }
+    const ab = await res.arrayBuffer()
+    if (ab.byteLength > 2 * 1024 * 1024) return null
+    return Buffer.from(ab)
+  } catch {
+    return null
+  }
+}
+
+function buildProposalPDF(
+  proposal: ProposalData,
+  logoBuffer: Buffer | null,
+): Promise<Buffer> {
   return new Promise((resolve, reject) => {
     const M = { top: 56, bottom: 56, left: 64, right: 64 }
     const PW = 612
     const CW = PW - M.left - M.right
 
     const profile = proposal.clientDeal.user.memberProfile
-    const businessName = profile?.businessName ?? "AI Operator"
+    // Fallback hierarchy for sender display name:
+    //   1. MemberProfile.businessName (if operator set up branding)
+    //   2. User.name (Clerk-synced full name)
+    //   3. literal "AI Operator" (last resort)
+    const businessName =
+      profile?.businessName?.trim() ||
+      proposal.clientDeal.user.name?.trim() ||
+      "AI Operator"
     const tagline = profile?.tagline ?? ""
     const brandColor = profile?.brandColor ?? "#C4972A"
+    const accentColor = profile?.accentColor ?? brandColor
 
     const C = {
       brand: brandColor as string,
@@ -134,18 +172,35 @@ function buildProposalPDF(proposal: ProposalData): Promise<Buffer> {
     // Top brand accent bar
     doc.rect(0, 0, PW, 4).fill(brandColor)
 
+    // Logo (if operator uploaded one) — sits to the left of the name.
+    // Constrained to 48px height; PDFKit auto-scales width proportionally.
+    const headerY = 36
+    let nameStartX = M.left
+    if (logoBuffer) {
+      try {
+        doc.image(logoBuffer, M.left, headerY, { fit: [48, 48] })
+        nameStartX = M.left + 60 // 48 logo + 12px gutter
+      } catch {
+        // Image embed failed — fall through with name at default position
+      }
+    }
+
     // Business name
     applyPlayfair(doc)
-    doc.fontSize(22).fillColor(brandColor).text(businessName, M.left, 36, { width: CW })
+    doc.fontSize(22).fillColor(brandColor).text(businessName, nameStartX, headerY + (logoBuffer ? 8 : 0), {
+      width: CW - (logoBuffer ? 60 : 0),
+    })
 
     // Tagline
     if (tagline) {
       applyInter(doc)
-      doc.fontSize(10).fillColor(C.muted).text(tagline, M.left, doc.y + 4, { width: CW })
+      doc.fontSize(10).fillColor(C.muted).text(tagline, nameStartX, doc.y + 2, {
+        width: CW - (logoBuffer ? 60 : 0),
+      })
     }
 
-    // Divider in brand color
-    const divY = (tagline ? doc.y : doc.y) + 12
+    // Divider in brand color — pinned below the logo bottom if present
+    const divY = Math.max(doc.y + 12, headerY + (logoBuffer ? 56 : 30))
     doc.moveTo(M.left, divY).lineTo(PW - M.right, divY).lineWidth(1.5).strokeColor(brandColor).stroke()
 
     // ── PROPOSAL TITLE & META ─────────────────────────────────────────────────
@@ -289,7 +344,9 @@ export async function GET(
                 select: {
                   businessName: true,
                   brandColor: true,
+                  accentColor: true,
                   tagline: true,
+                  logoUrl: true,
                 },
               },
             },
@@ -302,7 +359,12 @@ export async function GET(
   if (!proposal) return NextResponse.json({ error: "Not found" }, { status: 404 })
 
   try {
-    const pdfBuffer = await buildProposalPDF(proposal)
+    // Fetch the operator's logo (if set) before PDF generation kicks
+    // off — embedding remote URLs synchronously would block PDFKit.
+    const logoBuffer = await fetchLogoBuffer(
+      proposal.clientDeal.user.memberProfile?.logoUrl ?? null,
+    )
+    const pdfBuffer = await buildProposalPDF(proposal, logoBuffer)
 
     const safeName = proposal.title
       .toLowerCase()
