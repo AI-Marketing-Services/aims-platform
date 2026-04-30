@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation"
 import { db } from "@/lib/db"
 import ReactMarkdown from "react-markdown"
+import remarkGfm from "remark-gfm"
 import { FileText } from "lucide-react"
 import { PrintButton } from "./PrintButton"
 import { AcceptRejectActions } from "./AcceptRejectActions"
@@ -92,8 +93,8 @@ export default async function PublicProposalPage({
           </div>
 
           <div className="bg-[#141923] rounded-xl p-8 border" style={{ borderColor: `${brandColor}20` }}>
-            <div className="prose prose-invert max-w-none">
-              <ReactMarkdown>{proposal.content}</ReactMarkdown>
+            <div className="prose prose-invert max-w-none prose-table:border prose-table:border-white/10 prose-th:bg-white/5 prose-th:text-foreground prose-th:font-semibold prose-th:px-3 prose-th:py-2 prose-td:px-3 prose-td:py-2 prose-td:border-t prose-td:border-white/10">
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>{proposal.content}</ReactMarkdown>
             </div>
           </div>
 

@@ -129,13 +129,25 @@ ${additionalContext ? `Additional context: ${additionalContext}` : ""}${notesBlo
 The operator's business: ${operatorName} — ${operatorNiche}
 
 OUTPUT FORMAT — strict Markdown rendering. Use these conventions exactly:
-- Section headers as level-2 markdown headings (## Section Name).
+- Section headers as level-2 markdown headings (## Section Name) on their own line, blank line before AND after.
 - Sub-points as level-3 (### Sub-point) ONLY if needed within a section.
-- Bullet lists with - dash prefix. For "label-style" bullets, use **Label** — description (the bold renders the label, the em-dash separates description).
+- Bullet lists: EVERY bullet on its OWN LINE, prefixed by "- " (dash + space). NEVER concatenate multiple bullets onto a single line with • characters or any other separator. Each list item must end with a newline before the next "- " begins. Correct format:
+  - **Slow inbound response** — Zillow leads going cold while agents are double-booked
+  - **Manual scheduling friction** — coordination of showings across properties
+  - **Maintenance backlog** — vacancy gaps from delayed request handling
+- NEVER use the bullet character "•" anywhere. Only use "- " for lists so Markdown renders them.
 - Bold key terms with **double asterisks** (NOT html, NOT <strong>).
 - Italics with *single asterisks*.
-- Investment / pricing as a Markdown table when there's >1 line item, otherwise as bold inline.
-- No HTML. No <br>. Blank lines between paragraphs.
+- Investment / pricing MUST be a proper GitHub-Flavored Markdown table when there are 2+ line items. Use this exact shape (header row, separator row with dashes, data rows, each on own line):
+
+  | Service | Monthly Investment |
+  | --- | --- |
+  | Lead Response Chatbot | $1,200 |
+  | Scheduling Automation | $800 |
+  | **Total Monthly Investment** | **$3,500** |
+
+- One-time setup fees stated separately on their own paragraph after the table, not crammed into the table.
+- No HTML. No <br>. Blank lines between paragraphs and around headings.
 - Do NOT wrap the entire output in a code fence.
 
 REQUIRED SECTION STRUCTURE (in order):

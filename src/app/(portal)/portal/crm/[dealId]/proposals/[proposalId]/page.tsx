@@ -6,13 +6,29 @@ import { ProposalEditor } from "@/components/portal/crm/ProposalEditor"
 import { ChevronLeft } from "lucide-react"
 
 async function getProposal(proposalId: string, clerkId: string) {
-  const dbUser = await db.user.findUnique({ where: { clerkId }, select: { id: true } })
+  const dbUser = await db.user.findUnique({
+    where: { clerkId },
+    select: {
+      id: true,
+      name: true,
+      memberProfile: {
+        select: {
+          businessName: true,
+          tagline: true,
+          logoUrl: true,
+          brandColor: true,
+        },
+      },
+    },
+  })
   if (!dbUser) return null
 
-  return db.clientProposal.findFirst({
+  const proposal = await db.clientProposal.findFirst({
     where: { id: proposalId, clientDeal: { userId: dbUser.id } },
     include: { clientDeal: { select: { id: true, companyName: true } } },
   })
+  if (!proposal) return null
+  return { ...proposal, dbUser }
 }
 
 export const dynamic = "force-dynamic"
@@ -47,6 +63,13 @@ export default async function ProposalPage({
         initialStatus={proposal.status}
         shareToken={proposal.shareToken}
         companyName={proposal.clientDeal.companyName}
+        operatorBranding={{
+          businessName: proposal.dbUser.memberProfile?.businessName ?? null,
+          tagline: proposal.dbUser.memberProfile?.tagline ?? null,
+          logoUrl: proposal.dbUser.memberProfile?.logoUrl ?? null,
+          brandColor: proposal.dbUser.memberProfile?.brandColor ?? null,
+          senderName: proposal.dbUser.name ?? null,
+        }}
       />
     </div>
   )

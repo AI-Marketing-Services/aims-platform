@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
 import ReactMarkdown from "react-markdown"
+import remarkGfm from "remark-gfm"
 import {
   Edit3,
   Eye,
@@ -24,6 +25,15 @@ interface ProposalEditorProps {
   initialStatus: string
   shareToken: string | null
   companyName: string
+  // Operator branding — drives preview header + accent color so the
+  // operator sees the proposal in their own brand, not platform default.
+  operatorBranding?: {
+    businessName: string | null
+    tagline: string | null
+    logoUrl: string | null
+    brandColor: string | null
+    senderName: string | null
+  }
 }
 
 const STATUS_OPTIONS = ["DRAFT", "SENT", "ACCEPTED", "REJECTED"] as const
@@ -42,7 +52,15 @@ export function ProposalEditor({
   initialStatus,
   shareToken,
   companyName,
+  operatorBranding,
 }: ProposalEditorProps) {
+  const brandColor = operatorBranding?.brandColor ?? "#C4972A"
+  const businessName =
+    operatorBranding?.businessName?.trim() ||
+    operatorBranding?.senderName?.trim() ||
+    "AI Operator"
+  const tagline = operatorBranding?.tagline?.trim()
+  const logoUrl = operatorBranding?.logoUrl
   const router = useRouter()
   const [title, setTitle] = useState(initialTitle)
   const [content, setContent] = useState(initialContent)
@@ -219,35 +237,130 @@ export function ProposalEditor({
         </div>
       </div>
 
-      {/* Content — preview uses readable theme colors (foreground for body,
-          stronger contrast for headings/strong/links). Previously used
-          prose-invert which is for dark backgrounds and made the entire
-          proposal invisible-grey on the light card background. */}
-      <div className="bg-card border border-border rounded-xl min-h-[500px]">
+      {/* Content — preview is a fully-branded, formal document layout.
+          Operator sees the proposal as their client will receive it
+          (their name, logo, brand color throughout). Edit mode swaps
+          to a Markdown source textarea. */}
+      <div className="bg-white border border-border rounded-xl shadow-sm overflow-hidden min-h-[500px]">
         {mode === "preview" ? (
-          <div
-            className={cn(
-              "max-w-none p-6 print:text-black print:bg-white",
-              // Base prose
-              "prose prose-base",
-              // Anchor every text token to theme variables so it works in
-              // light + dark + admin-preview without invisible text.
-              "prose-headings:text-foreground prose-headings:font-bold",
-              "prose-h1:text-2xl prose-h2:text-xl prose-h3:text-lg",
-              "prose-p:text-foreground prose-p:leading-relaxed",
-              "prose-strong:text-foreground prose-strong:font-semibold",
-              "prose-em:text-foreground",
-              "prose-li:text-foreground prose-li:my-1",
-              "prose-ul:text-foreground prose-ol:text-foreground",
-              "prose-a:text-primary hover:prose-a:underline",
-              "prose-blockquote:text-muted-foreground prose-blockquote:border-l-primary/40",
-              "prose-code:text-primary prose-code:bg-primary/5 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none",
-              "prose-hr:border-border",
-              "prose-table:text-foreground prose-th:text-foreground prose-td:text-foreground",
-            )}
-          >
-            <ReactMarkdown>{content}</ReactMarkdown>
-          </div>
+          <article className="bg-white text-zinc-900">
+            {/* Top brand bar — full width accent strip */}
+            <div className="h-1.5" style={{ backgroundColor: brandColor }} />
+
+            {/* Header: logo + name + tagline */}
+            <header
+              className="px-10 pt-8 pb-6 border-b"
+              style={{ borderColor: `${brandColor}25` }}
+            >
+              <div className="flex items-start gap-4">
+                {logoUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={logoUrl}
+                    alt={businessName}
+                    className="h-12 w-12 rounded object-contain shrink-0"
+                  />
+                ) : (
+                  <div
+                    className="h-12 w-12 rounded flex items-center justify-center shrink-0 text-white font-bold"
+                    style={{ backgroundColor: brandColor }}
+                  >
+                    {businessName.charAt(0).toUpperCase()}
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <p
+                    className="text-2xl font-bold leading-tight"
+                    style={{ color: brandColor, fontFamily: "Georgia, 'Playfair Display', serif" }}
+                  >
+                    {businessName}
+                  </p>
+                  {tagline && (
+                    <p className="text-xs text-zinc-500 mt-1">{tagline}</p>
+                  )}
+                </div>
+                <div className="text-right shrink-0">
+                  <p className="text-[10px] uppercase tracking-widest text-zinc-400 font-semibold">
+                    Proposal
+                  </p>
+                  <p className="text-[11px] text-zinc-500 mt-0.5">
+                    {new Date().toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </p>
+                </div>
+              </div>
+            </header>
+
+            {/* Title block */}
+            <div className="px-10 pt-7 pb-4">
+              <h1
+                className="text-3xl font-bold leading-tight text-zinc-900"
+                style={{ fontFamily: "Georgia, 'Playfair Display', serif" }}
+              >
+                {title}
+              </h1>
+              <p className="text-sm text-zinc-500 mt-2">
+                Prepared for{" "}
+                <span className="font-semibold text-zinc-700">{companyName}</span>
+              </p>
+            </div>
+
+            {/* Body content — Markdown rendered with GFM (tables, strike, etc.) */}
+            <div
+              className={cn(
+                "px-10 pb-10 max-w-none",
+                // Formal serif body, theme-anchored colors, brand-accented
+                // headings + bullets. Different prose plugin than the
+                // dark-card variants — this looks like a real document.
+                "prose prose-zinc prose-base",
+                "prose-headings:font-bold prose-headings:text-zinc-900 prose-headings:tracking-tight",
+                "prose-h1:hidden", // we render the title above
+                "prose-h2:text-xl prose-h2:mt-8 prose-h2:mb-3 prose-h2:pb-1.5 prose-h2:border-b prose-h2:border-zinc-200",
+                "prose-h3:text-base prose-h3:mt-5 prose-h3:mb-2",
+                "prose-p:text-zinc-700 prose-p:leading-relaxed",
+                "prose-strong:text-zinc-900 prose-strong:font-semibold",
+                "prose-li:text-zinc-700 prose-li:my-0.5",
+                "prose-ul:my-3 prose-ol:my-3 prose-ul:pl-5 prose-ol:pl-5",
+                // Brand-color bullet markers
+                "marker:text-[color:var(--brand-color)]",
+                "prose-a:text-[color:var(--brand-color)] prose-a:no-underline hover:prose-a:underline",
+                "prose-blockquote:text-zinc-600 prose-blockquote:border-l-[color:var(--brand-color)] prose-blockquote:pl-4 prose-blockquote:italic",
+                "prose-code:text-zinc-900 prose-code:bg-zinc-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none prose-code:font-normal",
+                "prose-hr:border-zinc-200",
+                // Tables — formal pinstripe with branded header
+                "prose-table:border prose-table:border-zinc-200 prose-table:rounded prose-table:overflow-hidden prose-table:my-4 prose-table:text-sm",
+                "prose-thead:bg-[color:var(--brand-color-soft)] prose-thead:border-b-2 prose-thead:border-[color:var(--brand-color)]",
+                "prose-th:text-zinc-900 prose-th:font-bold prose-th:text-left prose-th:px-3 prose-th:py-2",
+                "prose-td:px-3 prose-td:py-2 prose-td:border-t prose-td:border-zinc-100 prose-td:text-zinc-700",
+                "prose-tbody:bg-white",
+              )}
+              style={
+                {
+                  ["--brand-color" as string]: brandColor,
+                  ["--brand-color-soft" as string]: `${brandColor}10`,
+                } as React.CSSProperties
+              }
+            >
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+            </div>
+
+            {/* Footer */}
+            <footer
+              className="px-10 py-4 border-t flex items-center justify-between text-[11px] text-zinc-400"
+              style={{ borderColor: `${brandColor}20` }}
+            >
+              <span>
+                Confidential ·{" "}
+                <span className="text-zinc-600 font-medium">{businessName}</span>
+              </span>
+              {operatorBranding?.senderName && (
+                <span>Prepared by {operatorBranding.senderName}</span>
+              )}
+            </footer>
+          </article>
         ) : (
           <textarea
             value={content}
