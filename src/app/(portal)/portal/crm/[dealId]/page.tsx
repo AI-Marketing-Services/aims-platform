@@ -12,16 +12,26 @@ import { RecommendedPlaysCard } from "@/components/portal/crm/RecommendedPlaysCa
 import { ContactsManager } from "@/components/portal/crm/ContactsManager"
 import { DealQuickActions } from "@/components/portal/crm/DealQuickActions"
 import { MeetingNotesCard } from "@/components/portal/crm/MeetingNotesCard"
+import { EmailTemplatesPicker } from "@/components/portal/crm/EmailTemplatesPicker"
 import { matchPlaybookForIndustry } from "@/lib/playbooks/match"
 import { DealChecklist } from "@/components/portal/crm/DealChecklist"
 import { EnrichmentCard } from "@/components/portal/crm/EnrichmentCard"
 import { MAX_ENRICHMENT_COST } from "@/lib/enrichment/credits/pricing"
 
 async function getDeal(dealId: string, clerkId: string) {
-  const dbUser = await db.user.findUnique({ where: { clerkId }, select: { id: true } })
+  const dbUser = await db.user.findUnique({
+    where: { clerkId },
+    select: {
+      id: true,
+      name: true,
+      memberProfile: {
+        select: { businessName: true, brandColor: true, logoUrl: true },
+      },
+    },
+  })
   if (!dbUser) return null
 
-  return db.clientDeal.findFirst({
+  const deal = await db.clientDeal.findFirst({
     where: { id: dealId, userId: dbUser.id },
     include: {
       contacts: { orderBy: [{ isPrimary: "desc" }, { createdAt: "asc" }] },
@@ -33,6 +43,8 @@ async function getDeal(dealId: string, clerkId: string) {
       },
     },
   })
+  if (!deal) return null
+  return { ...deal, dbUser }
 }
 
 async function getCreditBalance(clerkId: string): Promise<number> {
@@ -251,11 +263,48 @@ export default async function DealDetailPage({
           }))}
         />
 
-        {/* AI-assisted follow-up — drafts email reading enrichment + activity */}
-        <div className="bg-card border border-border rounded-xl p-4">
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+        {/* Outreach — two paths: pre-written templates (free, instant)
+            and AI-drafted bespoke follow-up (3 credits, fully personalized). */}
+        <div className="bg-card border border-border rounded-xl p-4 space-y-3">
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             Outreach
           </p>
+
+          {/* 10 personalized templates — free, instant, auto-fill from deal */}
+          <EmailTemplatesPicker
+            dealId={deal.id}
+            recipientEmail={deal.contactEmail ?? deal.contacts[0]?.email ?? null}
+            vars={{
+              firstName:
+                deal.contacts[0]?.firstName ??
+                deal.contactName?.split(" ")[0] ??
+                null,
+              fullName:
+                deal.contacts[0]
+                  ? `${deal.contacts[0].firstName}${deal.contacts[0].lastName ? ` ${deal.contacts[0].lastName}` : ""}`
+                  : deal.contactName ?? null,
+              companyName: deal.companyName,
+              industry: deal.enrichment?.industry ?? deal.industry ?? null,
+              cityState:
+                deal.enrichment?.city || deal.enrichment?.state
+                  ? [deal.enrichment.city, deal.enrichment.state]
+                      .filter(Boolean)
+                      .join(", ")
+                  : null,
+              description: deal.enrichment?.description?.slice(0, 200) ?? null,
+              employeesRange:
+                deal.enrichment?.employeeRange ??
+                (deal.enrichment?.employeeCount
+                  ? `${deal.enrichment.employeeCount} employees`
+                  : null),
+              operatorName: deal.dbUser.name?.split(" ")[0] ?? null,
+              operatorBusiness:
+                deal.dbUser.memberProfile?.businessName ?? null,
+              calendarLink: null,
+            }}
+          />
+
+          {/* AI-drafted bespoke follow-up (3 credits) */}
           <FollowUpButton
             dealId={deal.id}
             companyName={deal.companyName}

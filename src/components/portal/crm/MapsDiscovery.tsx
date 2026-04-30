@@ -14,7 +14,9 @@ import {
   Sparkles,
   AlertTriangle,
   Filter,
+  Building2,
 } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 interface PlaceResult {
   place_id: string
@@ -31,9 +33,14 @@ interface PlaceResult {
   existingDealId: string | null
 }
 
+type SearchMode = "category" | "name"
+
 export function MapsDiscovery() {
   const router = useRouter()
+  const [searchMode, setSearchMode] = useState<SearchMode>("category")
   const [query, setQuery] = useState("")
+  const [businessName, setBusinessName] = useState("")
+  const [locationHint, setLocationHint] = useState("")
   const [industry, setIndustry] = useState("")
   const [minRating, setMinRating] = useState<number | "">("")
   const [minReviews, setMinReviews] = useState<number | "">("")
@@ -54,7 +61,16 @@ export function MapsDiscovery() {
 
   async function handleSearch(e: React.FormEvent) {
     e.preventDefault()
-    if (!query.trim()) return
+    // Build the query string from the active mode. Google Places
+    // searchText handles both "HVAC in Austin TX" (category + location)
+    // AND "Acme Roofing Austin" (specific-business + optional location)
+    // — same endpoint, just different query phrasing.
+    const builtQuery =
+      searchMode === "name"
+        ? [businessName.trim(), locationHint.trim()].filter(Boolean).join(" ")
+        : query.trim()
+    if (!builtQuery) return
+
     setError(null)
     setSearching(true)
     setSelected(new Set())
@@ -65,9 +81,14 @@ export function MapsDiscovery() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          query: query.trim(),
-          min_rating: minRating === "" ? undefined : minRating,
-          min_reviews: minReviews === "" ? undefined : minReviews,
+          query: builtQuery,
+          // Filters only apply to category mode — when looking up a
+          // specific business by name, applying min-rating could hide
+          // the only result you want.
+          min_rating:
+            searchMode === "category" && minRating !== "" ? minRating : undefined,
+          min_reviews:
+            searchMode === "category" && minReviews !== "" ? minReviews : undefined,
         }),
       })
       const data = await res.json().catch(() => ({}))
@@ -92,7 +113,11 @@ export function MapsDiscovery() {
   }
 
   async function handleLoadMore() {
-    if (!nextPageToken || !query.trim()) return
+    const builtQuery =
+      searchMode === "name"
+        ? [businessName.trim(), locationHint.trim()].filter(Boolean).join(" ")
+        : query.trim()
+    if (!nextPageToken || !builtQuery) return
     setError(null)
     setLoadingMore(true)
     try {
@@ -100,9 +125,11 @@ export function MapsDiscovery() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          query: query.trim(),
-          min_rating: minRating === "" ? undefined : minRating,
-          min_reviews: minReviews === "" ? undefined : minReviews,
+          query: builtQuery,
+          min_rating:
+            searchMode === "category" && minRating !== "" ? minRating : undefined,
+          min_reviews:
+            searchMode === "category" && minReviews !== "" ? minReviews : undefined,
           page_token: nextPageToken,
         }),
       })
@@ -204,79 +231,160 @@ export function MapsDiscovery() {
         </span>
       </div>
 
+      {/* Mode toggle — discover by category vs lookup a specific business */}
+      <div className="inline-flex items-center rounded-lg border border-border bg-background p-0.5 gap-0.5 text-xs">
+        <button
+          type="button"
+          onClick={() => setSearchMode("category")}
+          className={cn(
+            "px-3 py-1.5 rounded-md font-semibold transition-colors inline-flex items-center gap-1.5",
+            searchMode === "category"
+              ? "bg-primary text-primary-foreground"
+              : "text-muted-foreground hover:text-foreground",
+          )}
+        >
+          <Search className="h-3 w-3" />
+          By type + location
+        </button>
+        <button
+          type="button"
+          onClick={() => setSearchMode("name")}
+          className={cn(
+            "px-3 py-1.5 rounded-md font-semibold transition-colors inline-flex items-center gap-1.5",
+            searchMode === "name"
+              ? "bg-primary text-primary-foreground"
+              : "text-muted-foreground hover:text-foreground",
+          )}
+        >
+          <Building2 className="h-3 w-3" />
+          Lookup specific business
+        </button>
+      </div>
+
       {/* Search form */}
       <form onSubmit={handleSearch} className="space-y-3">
-        <div className="flex gap-2">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="HVAC companies in Austin TX"
-              className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-              disabled={searching}
-            />
+        {searchMode === "category" ? (
+          <div className="flex gap-2">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <input
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="HVAC companies in Austin TX"
+                className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                disabled={searching}
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={searching || !query.trim()}
+              className="inline-flex items-center gap-1.5 rounded-lg bg-primary text-primary-foreground px-4 py-2 text-sm font-semibold hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              {searching ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Searching…
+                </>
+              ) : (
+                <>Search</>
+              )}
+            </button>
           </div>
-          <button
-            type="submit"
-            disabled={searching || !query.trim()}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-primary text-primary-foreground px-4 py-2 text-sm font-semibold hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            {searching ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Searching…
-              </>
-            ) : (
-              <>Search</>
-            )}
-          </button>
-        </div>
+        ) : (
+          <div className="space-y-2">
+            <div className="grid grid-cols-1 sm:grid-cols-[2fr_1fr_auto] gap-2">
+              <div className="relative">
+                <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <input
+                  type="text"
+                  value={businessName}
+                  onChange={(e) => setBusinessName(e.target.value)}
+                  placeholder="Acme Roofing"
+                  className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                  disabled={searching}
+                />
+              </div>
+              <div className="relative">
+                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <input
+                  type="text"
+                  value={locationHint}
+                  onChange={(e) => setLocationHint(e.target.value)}
+                  placeholder="Austin TX (optional)"
+                  className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                  disabled={searching}
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={searching || !businessName.trim()}
+                className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-primary text-primary-foreground px-4 py-2 text-sm font-semibold hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                {searching ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Searching…
+                  </>
+                ) : (
+                  <>Find</>
+                )}
+              </button>
+            </div>
+            <p className="text-[11px] text-muted-foreground">
+              Looks up a specific business by name. Add a city/state to
+              disambiguate when there are multiple matches. Skips the rating /
+              review filters since you&apos;re after one specific result.
+            </p>
+          </div>
+        )}
 
-        {/* Filter row */}
-        <div className="flex flex-wrap items-center gap-3 text-xs">
-          <div className="flex items-center gap-1.5 text-muted-foreground">
-            <Filter className="h-3.5 w-3.5" />
-            <span>Filters:</span>
+        {/* Filter row — only shown in category mode (filters don't make
+            sense when looking up a single specific business by name). */}
+        {searchMode === "category" && (
+          <div className="flex flex-wrap items-center gap-3 text-xs">
+            <div className="flex items-center gap-1.5 text-muted-foreground">
+              <Filter className="h-3.5 w-3.5" />
+              <span>Filters:</span>
+            </div>
+            <label className="flex items-center gap-1.5">
+              Min rating
+              <input
+                type="number"
+                step="0.5"
+                min={0}
+                max={5}
+                value={minRating}
+                onChange={(e) =>
+                  setMinRating(e.target.value === "" ? "" : Number(e.target.value))
+                }
+                className="w-16 px-2 py-1 text-xs rounded border border-border bg-background text-foreground"
+              />
+            </label>
+            <label className="flex items-center gap-1.5">
+              Min reviews
+              <input
+                type="number"
+                min={0}
+                value={minReviews}
+                onChange={(e) =>
+                  setMinReviews(e.target.value === "" ? "" : Number(e.target.value))
+                }
+                className="w-20 px-2 py-1 text-xs rounded border border-border bg-background text-foreground"
+              />
+            </label>
+            <label className="flex items-center gap-1.5">
+              Industry tag
+              <input
+                type="text"
+                value={industry}
+                onChange={(e) => setIndustry(e.target.value)}
+                placeholder="HVAC, dental, etc."
+                className="w-40 px-2 py-1 text-xs rounded border border-border bg-background text-foreground"
+              />
+            </label>
           </div>
-          <label className="flex items-center gap-1.5">
-            Min rating
-            <input
-              type="number"
-              step="0.5"
-              min={0}
-              max={5}
-              value={minRating}
-              onChange={(e) =>
-                setMinRating(e.target.value === "" ? "" : Number(e.target.value))
-              }
-              className="w-16 px-2 py-1 text-xs rounded border border-border bg-background text-foreground"
-            />
-          </label>
-          <label className="flex items-center gap-1.5">
-            Min reviews
-            <input
-              type="number"
-              min={0}
-              value={minReviews}
-              onChange={(e) =>
-                setMinReviews(e.target.value === "" ? "" : Number(e.target.value))
-              }
-              className="w-20 px-2 py-1 text-xs rounded border border-border bg-background text-foreground"
-            />
-          </label>
-          <label className="flex items-center gap-1.5">
-            Industry tag
-            <input
-              type="text"
-              value={industry}
-              onChange={(e) => setIndustry(e.target.value)}
-              placeholder="HVAC, dental, etc."
-              className="w-40 px-2 py-1 text-xs rounded border border-border bg-background text-foreground"
-            />
-          </label>
-        </div>
+        )}
       </form>
 
       {error && (
