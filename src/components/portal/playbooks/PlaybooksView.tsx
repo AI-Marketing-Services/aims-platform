@@ -77,6 +77,7 @@ export function PlaybooksView({ playbooks }: PlaybooksViewProps) {
               <UseCaseCard
                 key={useCase.id}
                 useCase={useCase}
+                industryId={current.id}
                 expanded={expandedCase === useCase.id}
                 onToggle={() => setExpandedCase(expandedCase === useCase.id ? null : useCase.id)}
               />
@@ -92,14 +93,42 @@ function UseCaseCard({
   useCase,
   expanded,
   onToggle,
+  industryId,
 }: {
   useCase: PlaybookUseCase
   expanded: boolean
   onToggle: () => void
+  industryId: string
 }) {
   const router = useRouter()
 
+  function trackEvent(type: string) {
+    void fetch("/api/portal/events", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        type,
+        entityType: "Playbook",
+        entityId: `${industryId}:${useCase.id}`,
+        metadata: {
+          industryId,
+          useCaseId: useCase.id,
+          title: useCase.title,
+          monthlyValue: useCase.monthlyValue,
+          difficulty: useCase.difficulty,
+        },
+      }),
+    }).catch(() => {})
+  }
+
+  function handleToggle() {
+    // Fire view event only when expanding (not when collapsing)
+    if (!expanded) trackEvent("playbook_viewed")
+    onToggle()
+  }
+
   function importToCrm() {
+    trackEvent("playbook_used")
     router.push(`/portal/crm/scout?pitch=${encodeURIComponent(useCase.pitchLine)}`)
   }
 
@@ -112,7 +141,7 @@ function UseCaseCard({
     >
       {/* Header row */}
       <button
-        onClick={onToggle}
+        onClick={handleToggle}
         className="w-full flex items-center gap-3 px-4 py-3.5 text-left"
       >
         <div className="flex-1 min-w-0">
