@@ -47,7 +47,28 @@ async function loadQuizWithResponses(quizId: string, ownerId: string) {
     },
   })
 
-  return { quiz, responses }
+  // Look up which responses have already been converted to a ClientDeal
+  // (anchor activity row written by the conversion route).
+  const responseIds = responses.map((r) => r.id)
+  const conversionRows =
+    responseIds.length > 0
+      ? await db.clientDealActivity.findMany({
+          where: {
+            type: "NOTE",
+            clientDeal: { userId: ownerId },
+          },
+          select: { clientDealId: true, metadata: true },
+        })
+      : []
+  const convertedMap = new Map<string, string>()
+  for (const row of conversionRows) {
+    const meta = row.metadata as { sourceResponseId?: string } | null
+    if (meta?.sourceResponseId && responseIds.includes(meta.sourceResponseId)) {
+      convertedMap.set(meta.sourceResponseId, row.clientDealId)
+    }
+  }
+
+  return { quiz, responses, convertedMap }
 }
 
 export default async function ResponsesPage({
@@ -82,6 +103,7 @@ export default async function ResponsesPage({
     utmCampaign: r.utmCampaign,
     completedAt: r.completedAt?.toISOString() ?? null,
     createdAt: r.createdAt.toISOString(),
+    convertedDealId: data.convertedMap.get(r.id) ?? null,
   }))
 
   return (
@@ -108,7 +130,7 @@ export default async function ResponsesPage({
           /q/{data.quiz.slug}
         </div>
         <h1 className="text-xl font-bold text-foreground">
-          {data.quiz.title} — responses
+          {data.quiz.title}: responses
         </h1>
         <p className="text-xs text-muted-foreground">
           {dtos.length} {dtos.length === 1 ? "response" : "responses"}

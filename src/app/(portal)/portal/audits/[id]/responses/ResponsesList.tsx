@@ -17,6 +17,7 @@ import type {
   QuizOption,
   QuizQuestion,
 } from "@/lib/audits/types"
+import { ConvertToDealButton } from "./ConvertToDealButton"
 
 export interface AuditResponseDto {
   id: string
@@ -35,6 +36,9 @@ export interface AuditResponseDto {
   utmCampaign: string | null
   completedAt: string | null
   createdAt: string
+  // Set when this response has already been promoted to a ClientDeal.
+  // The button switches to a "View deal" link when present.
+  convertedDealId?: string | null
 }
 
 function formatDate(iso: string | null): string {
@@ -208,6 +212,10 @@ function ResponseRow({
               {tag}
             </span>
           ))}
+          <ConvertToDealButton
+            responseId={response.id}
+            initialDealId={response.convertedDealId ?? null}
+          />
           <span
             className={`inline-flex items-center justify-center min-w-[2rem] px-2 py-0.5 rounded-full text-[11px] font-semibold border ${score.className}`}
             title={
