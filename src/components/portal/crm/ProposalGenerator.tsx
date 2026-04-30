@@ -1,8 +1,8 @@
 "use client"
 
-import { useState, useTransition } from "react"
+import { useState, useTransition, useRef } from "react"
 import { useRouter } from "next/navigation"
-import { FileText, Sparkles, ChevronDown, ChevronUp, ExternalLink, Trash2 } from "lucide-react"
+import { FileText, Sparkles, ChevronDown, ChevronUp, ExternalLink, Trash2, Wand2, Loader2, AlertTriangle } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface Proposal {
@@ -40,6 +40,79 @@ export function ProposalGenerator({
   const [showForm, setShowForm] = useState(false)
   const [isPending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
+  const [suggesting, setSuggesting] = useState(false)
+  const [suggestError, setSuggestError] = useState<string | null>(null)
+  const [aiSuggestion, setAiSuggestion] = useState<{
+    pitchAngle: string | null
+    painPoints: string[]
+    integrations: string[]
+    estimatedMonthlyValue: string | null
+    matchedPlaybook: string | null
+  } | null>(null)
+  const servicesInputRef = useRef<HTMLInputElement>(null)
+  const contextTextareaRef = useRef<HTMLTextAreaElement>(null)
+  const titleInputRef = useRef<HTMLInputElement>(null)
+
+  async function handleAiRecommend() {
+    setSuggestError(null)
+    setSuggesting(true)
+    try {
+      const res = await fetch(
+        `/api/portal/crm/deals/${dealId}/suggest-services`,
+        { method: "POST" },
+      )
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        if (res.status === 402) {
+          setSuggestError(
+            `Need ${data.required ?? 3} credits but have ${data.available ?? 0}.`,
+          )
+        } else {
+          setSuggestError(typeof data.error === "string" ? data.error : "AI failed")
+        }
+        return
+      }
+
+      // Fill the form fields directly
+      if (servicesInputRef.current) {
+        servicesInputRef.current.value = (data.services ?? []).join(", ")
+      }
+      if (contextTextareaRef.current) {
+        const lines: string[] = []
+        if (data.pitchAngle) lines.push(`Pitch angle: ${data.pitchAngle}`)
+        if (data.painPoints?.length) {
+          lines.push("")
+          lines.push("Pain points to address:")
+          for (const pp of data.painPoints) lines.push(`• ${pp}`)
+        }
+        if (data.integrations?.length) {
+          lines.push("")
+          lines.push(`Integrations: ${data.integrations.join(", ")}`)
+        }
+        if (data.estimatedMonthlyValue) {
+          lines.push("")
+          lines.push(`Target monthly value: ${data.estimatedMonthlyValue}`)
+        }
+        contextTextareaRef.current.value = lines.join("\n")
+      }
+      if (titleInputRef.current && !titleInputRef.current.value) {
+        titleInputRef.current.value = `AI Services Proposal — ${companyName}`
+      }
+
+      // Show the matched-playbook + chip summary above the form
+      setAiSuggestion({
+        pitchAngle: data.pitchAngle ?? null,
+        painPoints: data.painPoints ?? [],
+        integrations: data.integrations ?? [],
+        estimatedMonthlyValue: data.estimatedMonthlyValue ?? null,
+        matchedPlaybook: data.matchedPlaybook ?? null,
+      })
+    } catch (err) {
+      setSuggestError(err instanceof Error ? err.message : "Network error")
+    } finally {
+      setSuggesting(false)
+    }
+  }
 
   async function handleGenerate(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -145,9 +218,74 @@ export function ProposalGenerator({
 
       {showForm && (
         <form onSubmit={handleGenerate} className="space-y-3 pt-1">
+          {/* AI Recommend — auto-fill services + context based on the
+              enriched company profile + matching playbook. */}
+          <div className="rounded-lg border border-primary/30 bg-primary/5 p-3">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-foreground flex items-center gap-1.5">
+                  <Wand2 className="h-3.5 w-3.5 text-primary" />
+                  Auto-recommend with AI
+                </p>
+                <p className="text-[11px] text-muted-foreground mt-0.5">
+                  Reads {companyName}&apos;s enriched profile + matched playbook,
+                  fills services + pitch context. <strong>3 credits.</strong>
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={handleAiRecommend}
+                disabled={suggesting}
+                className="inline-flex items-center gap-1.5 rounded-md bg-primary text-primary-foreground px-3 py-1.5 text-xs font-semibold hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shrink-0"
+              >
+                {suggesting ? (
+                  <>
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    Thinking…
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="h-3.5 w-3.5" />
+                    Recommend
+                  </>
+                )}
+              </button>
+            </div>
+            {suggestError && (
+              <div className="mt-2 flex items-start gap-1.5 text-[11px] text-destructive">
+                <AlertTriangle className="h-3 w-3 mt-0.5 shrink-0" />
+                <span>{suggestError}</span>
+              </div>
+            )}
+            {aiSuggestion && (
+              <div className="mt-2 space-y-1.5 text-[11px] text-muted-foreground border-t border-primary/20 pt-2">
+                {aiSuggestion.matchedPlaybook && (
+                  <p>
+                    Matched playbook:{" "}
+                    <span className="text-foreground font-medium">
+                      {aiSuggestion.matchedPlaybook}
+                    </span>
+                  </p>
+                )}
+                {aiSuggestion.estimatedMonthlyValue && (
+                  <p>
+                    Target value:{" "}
+                    <span className="text-foreground font-medium">
+                      {aiSuggestion.estimatedMonthlyValue}
+                    </span>
+                  </p>
+                )}
+                <p className="italic">
+                  Edit the suggestions below before generating the proposal.
+                </p>
+              </div>
+            )}
+          </div>
+
           <div>
             <label className="block text-xs text-muted-foreground mb-1">Proposal title</label>
             <input
+              ref={titleInputRef}
               name="title"
               placeholder={`AI Automation Services for ${companyName}`}
               className={inputClass}
@@ -157,6 +295,7 @@ export function ProposalGenerator({
           <div>
             <label className="block text-xs text-muted-foreground mb-1">Services to include</label>
             <input
+              ref={servicesInputRef}
               name="services"
               placeholder="e.g. AI chatbot, lead follow-up automation, review management"
               className={inputClass}
@@ -166,9 +305,10 @@ export function ProposalGenerator({
           <div>
             <label className="block text-xs text-muted-foreground mb-1">Additional context</label>
             <textarea
+              ref={contextTextareaRef}
               name="additionalContext"
               placeholder="Pain points discussed, budget range, specific integrations needed…"
-              rows={3}
+              rows={6}
               className="w-full px-3 py-2 rounded-lg bg-surface border border-border text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50 resize-none"
             />
           </div>
