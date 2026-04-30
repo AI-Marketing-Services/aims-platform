@@ -571,6 +571,30 @@ export async function runEnrichmentPipeline(args: {
       scoreBreakdown: autoTags.scoreBreakdown,
     },
   })
+
+  // Per-deal activity timeline entry so the operator's Deal detail
+  // page reflects the enrichment in their visible timeline (separate
+  // from the universal OperatorEvent stream).
+  void db.clientDealActivity
+    .create({
+      data: {
+        clientDealId: dealCore.id,
+        type: "ENRICHMENT_RUN",
+        description: `Enriched · ${contactsAdded} contact${contactsAdded === 1 ? "" : "s"} added · ${totalCreditsCost} credits used · score ${autoTags.leadScore}`,
+        metadata: {
+          contactsAdded,
+          creditsCost: totalCreditsCost,
+          leadScore: autoTags.leadScore,
+          tags: autoTags.tags,
+        },
+      },
+    })
+    .catch((err) =>
+      logger.warn("Enrichment activity log write failed (non-fatal)", {
+        dealId: dealCore.id,
+        error: err instanceof Error ? err.message : String(err),
+      }),
+    )
   if (contactsAdded > 0) {
     void emitEvents(
       contactsToInsert.slice(0, contactsAdded).map((c) => ({

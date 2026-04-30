@@ -53,6 +53,15 @@ export async function POST(req: Request) {
         const lastName = (data.last_name as string) ?? ""
         const name = [firstName, lastName].filter(Boolean).join(" ") || null
 
+        // Detect first-time creation so we only fire welcome on new
+        // accounts (Clerk fires user.created on every external sync,
+        // including replays — without this guard we'd spam welcomes).
+        const existing = await db.user.findUnique({
+          where: { clerkId: data.id as string },
+          select: { id: true },
+        })
+        const isFirstCreate = !existing
+
         const newUser = await db.user.upsert({
           where: { clerkId: data.id as string },
           update: {
@@ -67,6 +76,22 @@ export async function POST(req: Request) {
             avatarUrl: (data.image_url as string) ?? null,
           },
         })
+
+        // Fire welcome email — fire-and-forget. Failures are logged
+        // but never block the user's signup flow.
+        if (isFirstCreate && email) {
+          void (async () => {
+            try {
+              const { sendOperatorSignupWelcome } = await import("@/lib/email")
+              await sendOperatorSignupWelcome({ to: email, name })
+            } catch (err) {
+              logger.warn("Welcome email failed (non-fatal)", {
+                userId: newUser.id,
+                error: err instanceof Error ? err.message : String(err),
+              })
+            }
+          })()
+        }
 
         // Link referral if a referral code was passed via Clerk unsafe_metadata
         const unsafeMetadata = data.unsafe_metadata as Record<string, unknown> | undefined

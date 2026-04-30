@@ -9,6 +9,7 @@ import { EditDealInlineForm } from "@/components/portal/crm/EditDealInlineForm"
 import { ProposalGenerator } from "@/components/portal/crm/ProposalGenerator"
 import { FollowUpButton } from "@/components/portal/crm/FollowUpButton"
 import { RecommendedPlaysCard } from "@/components/portal/crm/RecommendedPlaysCard"
+import { ContactsManager } from "@/components/portal/crm/ContactsManager"
 import { matchPlaybookForIndustry } from "@/lib/playbooks/match"
 import { DealChecklist } from "@/components/portal/crm/DealChecklist"
 import { EnrichmentCard } from "@/components/portal/crm/EnrichmentCard"
@@ -200,6 +201,23 @@ export default async function DealDetailPage({
 
         {/* Onboarding Checklist (only for ACTIVE_RETAINER / COMPLETED) */}
         <DealChecklist dealId={deal.id} stage={deal.stage} />
+
+        {/* Contacts — add / edit / delete operator-facing UI on top of
+            enrichment-derived contacts. Backend has been there; UI was
+            missing until now. */}
+        <ContactsManager
+          dealId={deal.id}
+          initialContacts={deal.contacts.map((c) => ({
+            id: c.id,
+            firstName: c.firstName,
+            lastName: c.lastName,
+            email: c.email,
+            phone: c.phone,
+            title: c.title,
+            isPrimary: c.isPrimary,
+            notes: c.notes,
+          }))}
+        />
 
         {/* AI-assisted follow-up — drafts email reading enrichment + activity */}
         <div className="bg-card border border-border rounded-xl p-4">

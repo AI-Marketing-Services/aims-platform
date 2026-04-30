@@ -129,6 +129,44 @@ export function divider() {
 
 // ─── Transactional emails ─────────────────────────────────────────────────────
 
+/**
+ * Operator signup welcome — fires on Clerk user.created webhook for
+ * brand-new accounts (NOT for users who arrive via a paid checkout —
+ * those get sendWelcomeEmail below). Orients them to the Today
+ * dashboard, the 50-credit trial grant, and the 4 starter actions.
+ */
+export async function sendOperatorSignupWelcome(params: {
+  to: string
+  name: string | null
+}) {
+  const firstName = params.name?.split(" ")[0] ?? "there"
+  const portalUrl = "https://www.aioperatorcollective.com/portal/dashboard"
+
+  const body = `
+    ${h1(`Welcome aboard, ${firstName}`)}
+    ${p(`Your AI Operator Collective workspace is ready. You start with <strong style="color:#111827;">50 enrichment credits</strong> on the house — enough to fully enrich your first ~3 leads end-to-end.`)}
+    <p style="margin:0 0 16px;font-size:15px;color:#4B5563;line-height:1.7;">Pick any of these to start your first hour:</p>
+    <ol style="margin:0 0 24px;padding-left:20px;color:#4B5563;line-height:1.9;font-size:15px;">
+      <li><strong style="color:#111827;">Discover via Google Maps</strong> — Search any business type + city, import to your CRM in one click.</li>
+      <li><strong style="color:#111827;">Enrich a lead</strong> — Click Enrich on any deal. AI fills company description, employees, revenue, contacts.</li>
+      <li><strong style="color:#111827;">Browse playbooks</strong> — 40+ proven AI service plays organized by industry.</li>
+      <li><strong style="color:#111827;">Try AI Recommend</strong> — On any enriched deal, watch a tailored proposal pitch fill in.</li>
+    </ol>
+    ${btn("Open your dashboard →", portalUrl)}
+    ${divider()}
+    ${p(`Your daily morning brief is opt-in — <a href="${portalUrl.replace("/dashboard", "/settings")}" style="color:#981B1B;font-weight:600;text-decoration:underline;">enable it in Settings</a> if you want a 7am Mon-Fri summary of hot leads, follow-ups due, and yesterday's wins. Quiet days = no email.`)}
+    ${p(`Reply with any questions — I read every one.`)}
+  `
+  return sendTrackedEmail({
+    from: FROM_EMAIL,
+    to: params.to,
+    replyTo: REPLY_TO,
+    subject: `Welcome to AI Operator Collective, ${firstName}`,
+    html: emailLayout(body, `Your workspace is ready. 50 credits to start.`, params.to),
+    serviceArm: "operator-signup",
+  })
+}
+
 export async function sendWelcomeEmail(params: {
   to: string
   name: string
