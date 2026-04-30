@@ -7,6 +7,7 @@ import { StageSelector } from "@/components/portal/crm/StageSelector"
 import { ChevronLeft, Building2, User, Mail, Phone, Globe, DollarSign } from "lucide-react"
 import { EditDealInlineForm } from "@/components/portal/crm/EditDealInlineForm"
 import { ProposalGenerator } from "@/components/portal/crm/ProposalGenerator"
+import { FollowUpButton } from "@/components/portal/crm/FollowUpButton"
 import { DealChecklist } from "@/components/portal/crm/DealChecklist"
 import { EnrichmentCard } from "@/components/portal/crm/EnrichmentCard"
 import { MAX_ENRICHMENT_COST } from "@/lib/enrichment/credits/pricing"
@@ -197,6 +198,18 @@ export default async function DealDetailPage({
 
         {/* Onboarding Checklist (only for ACTIVE_RETAINER / COMPLETED) */}
         <DealChecklist dealId={deal.id} stage={deal.stage} />
+
+        {/* AI-assisted follow-up — drafts email reading enrichment + activity */}
+        <div className="bg-card border border-border rounded-xl p-4">
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+            Outreach
+          </p>
+          <FollowUpButton
+            dealId={deal.id}
+            companyName={deal.companyName}
+            defaultRecipientEmail={deal.contactEmail ?? deal.contacts[0]?.email ?? null}
+          />
+        </div>
 
         {/* Proposals */}
         <div className="bg-card border border-border rounded-xl p-4">
