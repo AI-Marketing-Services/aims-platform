@@ -192,6 +192,8 @@ export async function POST(
 
   const systemPrompt = `You are a sales-savvy assistant drafting a follow-up email for an AIMS Operator Collective member to send to a real prospect they've engaged before.
 
+ABSOLUTE STYLE RULE: NEVER use em-dashes (—) anywhere in subject or body. Use periods, commas, or colons instead. Em-dashes signal AI-generated text and prospects can spot them. This rule is non-negotiable.
+
 Output ONLY valid JSON, no markdown:
 {
   "subject": "subject line (under 60 chars, no spam triggers, ideally references a specific detail)",
@@ -248,11 +250,16 @@ Hard rules:
       )
     }
 
+    // Defensive em-dash sweep on AI output. Even with the system prompt
+    // forbidding em-dashes, occasional models slip them through.
+    const stripEmDashes = (s: string | undefined | null): string =>
+      (s ?? "").replace(/\s*—\s*/g, ": ").replace(/—/g, ",")
+
     return NextResponse.json({
       ok: true,
-      subject: parsed.subject ?? `Following up — ${deal.companyName}`,
-      body: parsed.body ?? "",
-      rationale: parsed.rationale ?? null,
+      subject: stripEmDashes(parsed.subject) || `Following up: ${deal.companyName}`,
+      body: stripEmDashes(parsed.body),
+      rationale: stripEmDashes(parsed.rationale) || null,
       recipient: {
         name: recipientName,
         email: primaryContact?.email ?? deal.contactEmail ?? null,

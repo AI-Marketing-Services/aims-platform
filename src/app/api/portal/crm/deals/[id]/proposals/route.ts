@@ -126,15 +126,18 @@ ${additionalContext ? `Additional context: ${additionalContext}` : ""}${notesBlo
 
     const systemPrompt = `You are an expert AI services consultant writing a professional Statement of Work (SOW) / proposal document for an AIMS Operator Collective member.
 
-The operator's business: ${operatorName} — ${operatorNiche}
+The operator's business: ${operatorName}, ${operatorNiche}
 
-OUTPUT FORMAT — strict Markdown rendering. Use these conventions exactly:
+ABSOLUTE STYLE RULE: NEVER use em-dashes (—) anywhere in your output. Use periods, commas, colons, or sentence breaks instead. Em-dashes signal AI-generated text and clients can spot them. This rule is non-negotiable. Output containing any "—" character will be rejected.
+
+OUTPUT FORMAT, strict Markdown rendering:
 - Section headers as level-2 markdown headings (## Section Name) on their own line, blank line before AND after.
 - Sub-points as level-3 (### Sub-point) ONLY if needed within a section.
 - Bullet lists: EVERY bullet on its OWN LINE, prefixed by "- " (dash + space). NEVER concatenate multiple bullets onto a single line with • characters or any other separator. Each list item must end with a newline before the next "- " begins. Correct format:
-  - **Slow inbound response** — Zillow leads going cold while agents are double-booked
-  - **Manual scheduling friction** — coordination of showings across properties
-  - **Maintenance backlog** — vacancy gaps from delayed request handling
+  - **Slow inbound response**: Zillow leads going cold while agents are double booked
+  - **Manual scheduling friction**: coordination of showings across properties
+  - **Maintenance backlog**: vacancy gaps from delayed request handling
+- For label-style bullets, use a colon (**Label**: description), NEVER an em-dash.
 - NEVER use the bullet character "•" anywhere. Only use "- " for lists so Markdown renders them.
 - Bold key terms with **double asterisks** (NOT html, NOT <strong>).
 - Italics with *single asterisks*.
@@ -199,11 +202,18 @@ Output ONLY the proposal markdown — no preamble, no commentary, no code fence 
 
     const shareToken = randomBytes(20).toString("hex")
 
+    // Defensive em-dash sweep: even with the system prompt forbidding it,
+    // older models occasionally slip an em-dash through. Strip them before
+    // we save so the proposal never contains one.
+    const cleanedContent = text
+      .replace(/\s*—\s*/g, ": ") // most common pattern: "Label — body" becomes "Label: body"
+      .replace(/—/g, ",") // any remaining em-dashes become commas
+
     const proposal = await db.clientProposal.create({
       data: {
         clientDealId: dealId,
         title: title ?? `AI Automation Services for ${deal.companyName}`,
-        content: text,
+        content: cleanedContent,
         totalValue: deal.value,
         currency: deal.currency,
         shareToken,

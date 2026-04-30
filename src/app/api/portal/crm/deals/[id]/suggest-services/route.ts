@@ -150,13 +150,15 @@ ${matchedPlaybook.useCases
 
   const systemPrompt = `You are an AI services strategist helping an AIMS Operator Collective operator pitch a custom AI solution to a specific business.
 
+ABSOLUTE STYLE RULE: NEVER use em-dashes (—) anywhere in any field. Use periods, commas, or colons instead. This rule is non-negotiable.
+
 You output ONLY valid JSON, no markdown, no explanation. Schema:
 {
   "services": ["service 1", "service 2", "service 3"],
   "painPoints": ["specific pain this business likely faces", "another"],
   "integrations": ["specific tool/platform to integrate with"],
   "pitchAngle": "1-2 sentence pitch tailored to this exact business",
-  "estimatedMonthlyValue": "$X,XXX–$Y,YYY/mo (range)"
+  "estimatedMonthlyValue": "$X,XXX to $Y,YYY/mo (range, no em-dash)"
 }
 
 services: 3-5 specific AI services this operator could deliver. Use plain
@@ -166,7 +168,7 @@ Prefer services from the playbook context if one is provided.
 painPoints: 2-4 specific operational pain points THIS business likely has
 based on industry, size, location, age. Be concrete.
 
-integrations: 2-3 specific platforms/tools to integrate with — based on
+integrations: 2-3 specific platforms/tools to integrate with, based on
 what businesses in this space typically already use.
 
 pitchAngle: 1-2 sentences max. Speaks to this specific company's known
@@ -224,13 +226,22 @@ Recommend the AI services pitch for this exact business. JSON only.${
       )
     }
 
+    // Defensive em-dash sweep on every string field returned to the
+    // client. Even with the system prompt forbidding them, occasional
+    // model outputs slip through.
+    const stripDash = (s: string | undefined | null): string =>
+      (s ?? "").replace(/\s*—\s*/g, ": ").replace(/—/g, ",")
+    const stripDashArr = (arr: string[] | undefined): string[] =>
+      (arr ?? []).map(stripDash).filter(Boolean)
+
     return NextResponse.json({
       ok: true,
-      services: parsed.services ?? [],
-      painPoints: parsed.painPoints ?? [],
-      integrations: parsed.integrations ?? [],
-      pitchAngle: parsed.pitchAngle ?? null,
-      estimatedMonthlyValue: parsed.estimatedMonthlyValue ?? null,
+      services: stripDashArr(parsed.services),
+      painPoints: stripDashArr(parsed.painPoints),
+      integrations: stripDashArr(parsed.integrations),
+      pitchAngle: stripDash(parsed.pitchAngle) || null,
+      estimatedMonthlyValue:
+        stripDash(parsed.estimatedMonthlyValue) || null,
       creditsCost: SUGGEST_COST,
       matchedPlaybook: matchedPlaybook ? matchedPlaybook.industry : null,
     })
