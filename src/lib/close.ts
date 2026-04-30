@@ -380,6 +380,59 @@ export async function updateCloseLeadStatus(
 }
 
 /**
+ * Delete a Close lead permanently. Cascades on Close's side: the lead,
+ * its contacts, opportunities, activities, notes, tasks, calls, and
+ * emails all get removed.
+ *
+ * Used to keep CRM hygiene tight: when an AIMS Deal is deleted (test
+ * data, duplicate, or clean-up) we want the corresponding Close lead
+ * gone too so it doesn't haunt smart views or revenue reports.
+ *
+ * Returns true on success or 404 (already gone — treated as a no-op
+ * success since the desired state is "lead does not exist"). Returns
+ * false on auth failure or any other error.
+ */
+export async function deleteCloseLead(closeLeadId: string): Promise<boolean> {
+  const headers = closeHeaders()
+  if (!headers) return false
+
+  const res = await closeFetch(
+    `${CLOSE_API_BASE}/lead/${closeLeadId}/`,
+    {
+      method: "DELETE",
+      headers,
+    },
+    "deleteLead",
+  )
+
+  if (!res) return false
+
+  // 404 means the lead is already gone — that's the goal anyway.
+  if (res.status === 404) {
+    logger.info("Close lead already deleted, treating as success", {
+      action: `deleteLead:404:${closeLeadId}`,
+    })
+    return true
+  }
+
+  if (!res.ok) {
+    const body = await res.text().catch(() => "unknown")
+    logger.error("Close lead deletion failed", undefined, {
+      action: `deleteLead:${res.status}:${closeLeadId}`,
+    })
+    if (process.env.NODE_ENV !== "production") {
+      logger.warn(`Close deleteLead response: ${body}`)
+    }
+    return false
+  }
+
+  logger.info("Close lead deleted", {
+    action: `deleteLead:${closeLeadId}`,
+  })
+  return true
+}
+
+/**
  * Mirror an AIMS stage change back to Close and drop a note so the
  * change is visible in Close's activity stream.
  */

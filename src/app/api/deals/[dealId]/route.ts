@@ -3,7 +3,7 @@ import { auth } from "@clerk/nextjs/server"
 import { z } from "zod"
 import { getDealById, updateDealStage } from "@/lib/db/queries"
 import { db } from "@/lib/db"
-import { updateCloseLeadStatus } from "@/lib/close"
+import { updateCloseLeadStatus, deleteCloseLead } from "@/lib/close"
 import { logger } from "@/lib/logger"
 
 const updateDealSchema = z.object({
@@ -101,8 +101,21 @@ export async function PATCH(
   }
 }
 
+/**
+ * DELETE /api/deals/[dealId]
+ *
+ * Removes the Deal from AIMS and cascades the delete to Close CRM so
+ * we don't accumulate stale leads in the shared workspace. The Close
+ * delete fires BEFORE the local DB delete: if the Close call fails
+ * we abort, surface the error, and leave the local Deal intact so the
+ * operator can retry. This avoids the failure mode where AIMS forgets
+ * the closeLeadId and Close keeps a permanent orphan.
+ *
+ * Caller can pass `?skipClose=1` (typically only used by automated
+ * cleanup scripts) to delete the local Deal without touching Close.
+ */
 export async function DELETE(
-  _req: Request,
+  req: Request,
   { params }: { params: Promise<{ dealId: string }> }
 ) {
   const { userId, sessionClaims } = await auth()
@@ -114,9 +127,55 @@ export async function DELETE(
   }
 
   const { dealId } = await params
+  const url = new URL(req.url)
+  const skipClose = url.searchParams.get("skipClose") === "1"
+
   try {
+    // Look up closeLeadId BEFORE deleting so we can cascade the delete
+    // to Close even if the local Prisma delete is what runs first.
+    const deal = await db.deal.findUnique({
+      where: { id: dealId },
+      select: { closeLeadId: true, contactName: true, company: true },
+    })
+    if (!deal) {
+      return NextResponse.json({ error: "Deal not found" }, { status: 404 })
+    }
+
+    // Cascade delete to Close. If Close has the lead, we must remove
+    // it first so a Close-side failure doesn't leave us with an orphan
+    // that AIMS no longer knows about.
+    if (deal.closeLeadId && !skipClose) {
+      const ok = await deleteCloseLead(deal.closeLeadId)
+      if (!ok) {
+        logger.error("Aborted Deal delete: Close cascade failed", undefined, {
+          dealId,
+          closeLeadId: deal.closeLeadId,
+        })
+        return NextResponse.json(
+          {
+            error:
+              "Could not delete the corresponding lead in Close. Local deal kept intact. Try again or remove the Close lead manually first.",
+            closeLeadId: deal.closeLeadId,
+          },
+          { status: 502 },
+        )
+      }
+    }
+
     await db.deal.delete({ where: { id: dealId } })
-    return NextResponse.json({ deleted: true })
+
+    logger.info("Deal deleted", {
+      dealId,
+      closeLeadId: deal.closeLeadId,
+      cascadedToClose: Boolean(deal.closeLeadId && !skipClose),
+      company: deal.company,
+      deletedBy: userId,
+    })
+
+    return NextResponse.json({
+      deleted: true,
+      cascadedToClose: Boolean(deal.closeLeadId && !skipClose),
+    })
   } catch (err) {
     logger.error(`Failed to delete deal ${dealId}:`, err)
     return NextResponse.json({ error: "Failed to delete deal" }, { status: 500 })
