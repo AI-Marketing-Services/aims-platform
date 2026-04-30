@@ -21,6 +21,7 @@ import {
   handleProductChargeRefunded,
 } from "@/lib/stripe/handlers/handle-product-purchase"
 import { handleCreditTopupCompleted } from "@/lib/stripe/handlers/handle-credit-topup"
+import { handleClientInvoicePaid } from "@/lib/stripe/handlers/handle-client-invoice-paid"
 
 export async function POST(req: Request) {
   const body = await req.text()
@@ -80,6 +81,7 @@ export async function POST(req: Request) {
         await handleCheckoutCompleted(session)
         await handleProductCheckoutCompleted(session)
         await handleCreditTopupCompleted(session)
+        await handleClientInvoicePaid(session)
         break
       }
 

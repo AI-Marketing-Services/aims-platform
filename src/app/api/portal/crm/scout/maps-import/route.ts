@@ -67,6 +67,25 @@ export async function POST(req: Request) {
 
   const { places, industry, enrichOnImport } = parsed.data
 
+  // Pre-flight credit check for auto-enrich-on-import — refuses to start
+  // if the operator can't afford even the first enrichment, so we don't
+  // create deals + partially enrich + leave a confused half-state.
+  if (enrichOnImport) {
+    const { hasBalance } = await import("@/lib/enrichment/credits/ledger")
+    const { MAX_ENRICHMENT_COST } = await import("@/lib/enrichment/credits/pricing")
+    const balance = await hasBalance(dbUserId, MAX_ENRICHMENT_COST)
+    if (!balance.ok) {
+      return NextResponse.json(
+        {
+          error: `Auto-enrich needs at least ${MAX_ENRICHMENT_COST} credits per deal — you have ${balance.current}. Top up or import without auto-enrich.`,
+          required: MAX_ENRICHMENT_COST,
+          available: balance.current,
+        },
+        { status: 402 },
+      )
+    }
+  }
+
   try {
     // Dedup against existing Deals by googlePlaceId
     const incomingIds = places.map((p) => p.place_id)

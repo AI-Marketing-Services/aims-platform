@@ -3,15 +3,15 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
-  LayoutDashboard, Briefcase, FileText, Wrench, Settings
+  LayoutDashboard, Briefcase, FileText, MapPin, Settings
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const MOBILE_NAV_DEFAULT = [
   { label: "Dashboard", href: "/portal/dashboard", icon: LayoutDashboard },
   { label: "CRM", href: "/portal/crm", icon: Briefcase },
+  { label: "Scout", href: "/portal/crm/scout", icon: MapPin },
   { label: "Invoices", href: "/portal/invoices", icon: FileText },
-  { label: "Tools", href: "/portal/tools", icon: Wrench },
   { label: "Settings", href: "/portal/settings", icon: Settings },
 ]
 
