@@ -399,104 +399,131 @@ export async function runEnrichmentPipeline(args: {
   }
 
   // ──────────────────────────────────────────────────────────────────
-  //  Persist results — single transaction so partial writes don't leak
+  //  Persist results
+  //
+  //  Atomic: enrichment record + ClientDeal updates land together (small
+  //  transaction, fast, won't time out). Contacts are inserted AFTER the
+  //  transaction since each is independent and a partial insert is fine
+  //  (the upserted enrichment record is the canonical record). Putting
+  //  contact creates inside the tx caused 5s default-timeout failures
+  //  when there were 5+ contacts to write.
   // ──────────────────────────────────────────────────────────────────
-  const enrichment = await db.$transaction(async (tx) => {
-    const created = await tx.clientDealEnrichment.upsert({
-      where: { clientDealId: dealCore.id },
-      create: {
-        clientDealId: dealCore.id,
-        domain: company.domain ?? websiteDomain ?? null,
-        description: company.description ?? null,
-        industry: company.industry ?? dealCore.industry ?? null,
-        employeeCount: company.employeeCount ?? null,
-        employeeRange: company.employeeRange ?? null,
-        revenueRange: company.revenueRange ?? null,
-        foundedYear: company.foundedYear ?? null,
-        city: company.city ?? null,
-        state: company.state ?? null,
-        country: company.country ?? null,
-        linkedinUrl: company.linkedinUrl ?? null,
-        twitterUrl: company.twitterUrl ?? null,
-        facebookUrl: company.facebookUrl ?? null,
-        instagramUrl: company.instagramUrl ?? null,
-        logoUrl: company.logoUrl ?? null,
-        managementCompany: company.managementCompany ?? null,
-        prospeoCompanyId: company.prospeoCompanyId ?? null,
-        sources: sources as object,
-        totalCreditsCost,
-        startedAt,
-        completedAt: new Date(),
-        errorMessage,
-      },
-      update: {
-        domain: company.domain ?? websiteDomain ?? undefined,
-        description: company.description ?? undefined,
-        industry: company.industry ?? undefined,
-        employeeCount: company.employeeCount ?? undefined,
-        employeeRange: company.employeeRange ?? undefined,
-        revenueRange: company.revenueRange ?? undefined,
-        foundedYear: company.foundedYear ?? undefined,
-        city: company.city ?? undefined,
-        state: company.state ?? undefined,
-        country: company.country ?? undefined,
-        linkedinUrl: company.linkedinUrl ?? undefined,
-        twitterUrl: company.twitterUrl ?? undefined,
-        facebookUrl: company.facebookUrl ?? undefined,
-        instagramUrl: company.instagramUrl ?? undefined,
-        logoUrl: company.logoUrl ?? undefined,
-        managementCompany: company.managementCompany ?? undefined,
-        prospeoCompanyId: company.prospeoCompanyId ?? undefined,
-        sources: sources as object,
-        totalCreditsCost: { increment: totalCreditsCost },
-        completedAt: new Date(),
-        errorMessage,
-      },
-    })
+  const enrichment = await db.$transaction(
+    async (tx) => {
+      const created = await tx.clientDealEnrichment.upsert({
+        where: { clientDealId: dealCore.id },
+        create: {
+          clientDealId: dealCore.id,
+          domain: company.domain ?? websiteDomain ?? null,
+          description: company.description ?? null,
+          industry: company.industry ?? dealCore.industry ?? null,
+          employeeCount: company.employeeCount ?? null,
+          employeeRange: company.employeeRange ?? null,
+          revenueRange: company.revenueRange ?? null,
+          foundedYear: company.foundedYear ?? null,
+          city: company.city ?? null,
+          state: company.state ?? null,
+          country: company.country ?? null,
+          linkedinUrl: company.linkedinUrl ?? null,
+          twitterUrl: company.twitterUrl ?? null,
+          facebookUrl: company.facebookUrl ?? null,
+          instagramUrl: company.instagramUrl ?? null,
+          logoUrl: company.logoUrl ?? null,
+          managementCompany: company.managementCompany ?? null,
+          prospeoCompanyId: company.prospeoCompanyId ?? null,
+          sources: sources as object,
+          totalCreditsCost,
+          startedAt,
+          completedAt: new Date(),
+          errorMessage,
+        },
+        update: {
+          domain: company.domain ?? websiteDomain ?? undefined,
+          description: company.description ?? undefined,
+          industry: company.industry ?? undefined,
+          employeeCount: company.employeeCount ?? undefined,
+          employeeRange: company.employeeRange ?? undefined,
+          revenueRange: company.revenueRange ?? undefined,
+          foundedYear: company.foundedYear ?? undefined,
+          city: company.city ?? undefined,
+          state: company.state ?? undefined,
+          country: company.country ?? undefined,
+          linkedinUrl: company.linkedinUrl ?? undefined,
+          twitterUrl: company.twitterUrl ?? undefined,
+          facebookUrl: company.facebookUrl ?? undefined,
+          instagramUrl: company.instagramUrl ?? undefined,
+          logoUrl: company.logoUrl ?? undefined,
+          managementCompany: company.managementCompany ?? undefined,
+          prospeoCompanyId: company.prospeoCompanyId ?? undefined,
+          sources: sources as object,
+          totalCreditsCost: { increment: totalCreditsCost },
+          completedAt: new Date(),
+          errorMessage,
+        },
+      })
 
-    // Upgrade ClientDeal with industry / website if we learned them
-    await tx.clientDeal.update({
-      where: { id: dealCore.id },
-      data: {
-        industry: dealCore.industry ?? company.industry ?? undefined,
-        lastEnrichedAt: new Date(),
-      },
-    })
+      await tx.clientDeal.update({
+        where: { id: dealCore.id },
+        data: {
+          industry: dealCore.industry ?? company.industry ?? undefined,
+          lastEnrichedAt: new Date(),
+        },
+      })
 
-    // Insert all queued contacts. Set is_primary on the first one if the
-    // deal currently has no primary contact.
-    if (contactsToInsert.length > 0) {
-      const hasPrimary = await tx.clientContact.count({
+      return created
+    },
+    { timeout: 15000 },
+  )
+
+  // Insert contacts OUTSIDE the transaction. Each create is independent;
+  // partial failure on contact N+1 still leaves contacts 1..N persisted,
+  // which is exactly what we want.
+  let contactsAdded = 0
+  if (contactsToInsert.length > 0) {
+    try {
+      const hasPrimary = await db.clientContact.count({
         where: { clientDealId: dealCore.id, isPrimary: true },
       })
       let setPrimary = hasPrimary === 0
       for (const c of contactsToInsert) {
-        // Sort by confidence desc — but we already prefer Prospeo (95) >
-        // Hunter (~80) > website (50/80). First in queue isn't always best.
-        await tx.clientContact.create({
-          data: {
-            clientDealId: dealCore.id,
-            firstName: c.firstName ?? "Unknown",
-            lastName: c.lastName,
+        try {
+          await db.clientContact.create({
+            data: {
+              clientDealId: dealCore.id,
+              firstName: c.firstName ?? "Unknown",
+              lastName: c.lastName,
+              email: c.email,
+              phone: c.phone,
+              title: c.title,
+              isPrimary: setPrimary,
+              notes: c.confidence ? `Confidence ${c.confidence}% via ${c.source}` : null,
+            },
+          })
+          contactsAdded += 1
+          setPrimary = false // only first wins
+        } catch (err) {
+          // Soft-fail per contact (likely duplicate email or constraint
+          // violation) — don't take down the whole enrichment.
+          logger.warn("Contact insert failed", {
+            dealId: dealCore.id,
             email: c.email,
-            phone: c.phone,
-            title: c.title,
-            isPrimary: setPrimary,
-            notes: c.confidence ? `Confidence ${c.confidence}% via ${c.source}` : null,
-          },
-        })
-        setPrimary = false // only first wins
+            error: err instanceof Error ? err.message : String(err),
+          })
+        }
       }
+    } catch (err) {
+      logger.warn("Contact-insert prep failed", {
+        dealId: dealCore.id,
+        error: err instanceof Error ? err.message : String(err),
+      })
     }
-
-    return created
-  })
+  }
 
   return {
     ok: true,
     enrichmentId: enrichment.id,
     totalCreditsCost,
-    contactsAdded: contactsToInsert.length,
+    contactsAdded,
     errorMessage,
     sources,
   }

@@ -73,9 +73,18 @@ export async function POST(
       userId: dbUserId,
       dealId,
     })
+    // Surface the actual error message back to the caller (sanitised —
+    // first sentence, truncated). Previously returned an opaque generic
+    // string which made the inline UI error useless for diagnosis.
+    const raw = err instanceof Error ? err.message : String(err)
+    const sanitized = raw.split(/[.\n]/)[0]?.trim().slice(0, 240) || "Internal error"
     return NextResponse.json(
       {
-        error: "Enrichment failed. Your credits have been refunded for any incomplete steps.",
+        error: `Enrichment failed: ${sanitized}`,
+        detail:
+          process.env.NODE_ENV === "production"
+            ? undefined
+            : (err instanceof Error ? err.stack?.split("\n").slice(0, 4).join("\n") : undefined),
       },
       { status: 500 },
     )
