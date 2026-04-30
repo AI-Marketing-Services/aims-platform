@@ -15,6 +15,7 @@ import { timeAgo } from "@/lib/utils"
 import { getProgressForUser } from "@/lib/onboarding/progress"
 import { TOTAL_STEPS } from "@/lib/onboarding/steps"
 import { OnboardingChecklist } from "@/components/portal/OnboardingChecklist"
+import { TodayCard } from "@/components/portal/TodayCard"
 
 export const metadata: Metadata = { title: "Dashboard" }
 
@@ -128,9 +129,12 @@ export default async function PortalDashboard({
       <div>
         <h1 className="text-2xl font-bold">Welcome, {firstName}</h1>
         <p className="mt-1 text-muted-foreground text-sm">
-          Here&apos;s your setup roadmap. Complete these steps to get your AI operator business running.
+          Here&apos;s what&apos;s happening across your pipeline today.
         </p>
       </div>
+
+      {/* ── TODAY CARD — daily-open hook, surfaces hot leads + follow-ups ── */}
+      {dbUser && <TodayCard userId={dbUser.id} />}
 
       {/* ── ONBOARDING CHECKLIST — always primary ── */}
       <div className="rounded-2xl border border-border bg-card p-6">
