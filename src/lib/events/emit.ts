@@ -51,6 +51,7 @@ export const EVENT_TYPES = {
   PROPOSAL_CREATED: "proposal_created",
   PROPOSAL_SENT: "proposal_sent",
   PROPOSAL_ACCEPTED: "proposal_accepted",
+  PROPOSAL_REJECTED: "proposal_rejected",
   INVOICE_SENT: "invoice_sent",
   INVOICE_PAID: "invoice_paid",
 

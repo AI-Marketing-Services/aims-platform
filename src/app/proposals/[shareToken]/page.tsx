@@ -3,6 +3,7 @@ import { db } from "@/lib/db"
 import ReactMarkdown from "react-markdown"
 import { FileText } from "lucide-react"
 import { PrintButton } from "./PrintButton"
+import { AcceptRejectActions } from "./AcceptRejectActions"
 
 async function getProposal(shareToken: string) {
   return db.clientProposal.findUnique({
@@ -110,6 +111,18 @@ export default async function PublicProposalPage({
               </p>
             </div>
           )}
+
+          {/* Accept / decline actions — closes the deal-loop. Auto-creates
+              a draft invoice on accept, advances the deal stage, notifies
+              the operator. */}
+          <div className="mt-8 print:hidden">
+            <AcceptRejectActions
+              shareToken={shareToken}
+              proposalTitle={proposal.title}
+              initialStatus={proposal.status}
+              brandColor={brandColor}
+            />
+          </div>
 
           <div className="mt-8 text-center">
             <p className="text-xs text-muted-foreground">
