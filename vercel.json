@@ -35,6 +35,14 @@
     {
       "path": "/api/cron/ingest-mighty",
       "schedule": "0 */6 * * *"
+    },
+    {
+      "path": "/api/cron/daily-digest-operator",
+      "schedule": "0 12 * * 1-5"
+    },
+    {
+      "path": "/api/cron/grant-monthly-credits",
+      "schedule": "0 4 1 * *"
     }
   ]
 }
