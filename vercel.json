@@ -47,6 +47,10 @@
     {
       "path": "/api/cron/mark-invoices-overdue",
       "schedule": "0 9 * * *"
+    },
+    {
+      "path": "/api/cron/weekly-rollup",
+      "schedule": "0 13 * * 1"
     }
   ]
 }
