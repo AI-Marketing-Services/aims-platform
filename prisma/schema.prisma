@@ -1358,6 +1358,7 @@ model ClientDeal {
   contentPieces ContentPiece[]
   followUpRules FollowUpRule[]
   enrichment    ClientDealEnrichment?
+  meetingNotes  ClientDealNote[]
 
   wonAt  DateTime?
   lostAt DateTime?
@@ -1427,6 +1428,44 @@ model ClientContact {
   updatedAt DateTime @updatedAt
 
   @@index([clientDealId])
+}
+
+// Meeting notes / transcripts / files attached to a ClientDeal — the
+// operator's structured context dump. Powers AI follow-ups + proposals
+// + future "what was discussed" rollups. Both inline text (pasted
+// transcripts, typed notes) and uploaded files (PDFs, audio) live here;
+// the `kind` field disambiguates rendering + AI handling.
+model ClientDealNote {
+  id           String     @id @default(cuid())
+  clientDealId String
+  clientDeal   ClientDeal @relation(fields: [clientDealId], references: [id], onDelete: Cascade)
+
+  kind        ClientDealNoteKind @default(NOTE)
+  title       String?            // "Discovery call 4/29", "Proposal feedback PDF"
+  content     String?            @db.Text // pasted text / transcript / typed note
+  fileUrl     String?            // Vercel Blob URL for uploaded files
+  fileName    String?            // original filename for display
+  fileSize    Int?               // bytes
+  fileType    String?            // mime type
+
+  // When the meeting / call occurred — separate from createdAt
+  // (createdAt = when uploaded, meetingDate = when it happened).
+  meetingDate DateTime?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([clientDealId])
+  @@index([clientDealId, createdAt])
+  @@index([meetingDate])
+}
+
+enum ClientDealNoteKind {
+  NOTE          // free-form typed note
+  TRANSCRIPT    // meeting transcript (pasted)
+  RECORDING     // audio/video file
+  PDF           // uploaded PDF
+  FILE          // any other file
 }
 
 model ClientDealActivity {

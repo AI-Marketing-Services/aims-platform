@@ -11,6 +11,7 @@ import { FollowUpButton } from "@/components/portal/crm/FollowUpButton"
 import { RecommendedPlaysCard } from "@/components/portal/crm/RecommendedPlaysCard"
 import { ContactsManager } from "@/components/portal/crm/ContactsManager"
 import { DealQuickActions } from "@/components/portal/crm/DealQuickActions"
+import { MeetingNotesCard } from "@/components/portal/crm/MeetingNotesCard"
 import { matchPlaybookForIndustry } from "@/lib/playbooks/match"
 import { DealChecklist } from "@/components/portal/crm/DealChecklist"
 import { EnrichmentCard } from "@/components/portal/crm/EnrichmentCard"
@@ -27,6 +28,9 @@ async function getDeal(dealId: string, clerkId: string) {
       activities: { orderBy: { createdAt: "desc" } },
       proposals: { orderBy: { createdAt: "desc" } },
       enrichment: true,
+      meetingNotes: {
+        orderBy: [{ meetingDate: "desc" }, { createdAt: "desc" }],
+      },
     },
   })
 }
@@ -225,6 +229,25 @@ export default async function DealDetailPage({
             title: c.title,
             isPrimary: c.isPrimary,
             notes: c.notes,
+          }))}
+        />
+
+        {/* Meeting notes / transcripts / PDFs — operator's structured
+            context dump. AI follow-ups + proposals automatically read
+            the most recent notes for context. */}
+        <MeetingNotesCard
+          dealId={deal.id}
+          initialNotes={deal.meetingNotes.map((n) => ({
+            id: n.id,
+            kind: n.kind,
+            title: n.title,
+            content: n.content,
+            fileUrl: n.fileUrl,
+            fileName: n.fileName,
+            fileSize: n.fileSize,
+            fileType: n.fileType,
+            meetingDate: n.meetingDate?.toISOString() ?? null,
+            createdAt: n.createdAt.toISOString(),
           }))}
         />
 

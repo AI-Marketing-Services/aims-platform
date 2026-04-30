@@ -53,10 +53,19 @@ export async function POST(
     )
   }
 
-  // Load Deal + enrichment, scoped to ownership
+  // Load Deal + enrichment + recent meeting notes (highest-signal
+  // context for personalised service recommendations)
   const deal = await db.clientDeal.findFirst({
     where: { id: dealId, userId: dbUserId },
-    include: { enrichment: true, contacts: { take: 5 } },
+    include: {
+      enrichment: true,
+      contacts: { take: 5 },
+      meetingNotes: {
+        where: { content: { not: null } },
+        orderBy: [{ meetingDate: "desc" }, { createdAt: "desc" }],
+        take: 3,
+      },
+    },
   })
   if (!deal) {
     return NextResponse.json({ error: "Deal not found" }, { status: 404 })
@@ -101,6 +110,30 @@ export async function POST(
         .filter(Boolean)
         .join("\n")
     : `Company: ${deal.companyName}\nIndustry: ${deal.industry ?? "unknown"}\n(no enrichment data yet)`
+
+  // Meeting notes — the operator's actual conversations with this lead.
+  // Highest-signal context for "what should we propose?" — far more
+  // specific than generic enrichment data.
+  const NOTE_BUDGET = 3000 // chars per note, ~750 tokens
+  const notesContext =
+    deal.meetingNotes.length > 0
+      ? `\n\nMeeting notes / transcripts (most recent first — leverage these for ULTRA-specific recommendations):\n${deal.meetingNotes
+          .map((n) => {
+            const dateStr = n.meetingDate
+              ? new Date(n.meetingDate).toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                })
+              : "undated"
+            const trimmed =
+              (n.content ?? "").length > NOTE_BUDGET
+                ? (n.content ?? "").slice(0, NOTE_BUDGET) + "\n[…truncated]"
+                : n.content ?? ""
+            return `[${n.kind} ${dateStr}${n.title ? ` — ${n.title}` : ""}]\n${trimmed}`
+          })
+          .join("\n\n---\n\n")}`
+      : ""
 
   const playbookContext = matchedPlaybook
     ? `\nRelevant playbook (${matchedPlaybook.industry}):
@@ -152,9 +185,13 @@ size + complexity of the service stack.`
 
     const result = await analyzeWithClaude({
       systemPrompt,
-      prompt: `${enrichmentSummary}${playbookContext}
+      prompt: `${enrichmentSummary}${playbookContext}${notesContext}
 
-Recommend the AI services pitch for this exact business. JSON only.`,
+Recommend the AI services pitch for this exact business. JSON only.${
+        notesContext
+          ? "\n\nIMPORTANT: leverage the meeting notes — pain points / objections / interests the operator captured there are FAR more specific than the enrichment data. Build recommendations around what was actually discussed."
+          : ""
+      }`,
       model: "claude-haiku-4-5-20251001",
       maxTokens: 800,
       serviceArm: "deal-suggest",

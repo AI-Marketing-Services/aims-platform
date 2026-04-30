@@ -75,7 +75,8 @@ export async function POST(
     )
   }
 
-  // Load Deal + enrichment + recent activity + operator name
+  // Load Deal + enrichment + recent activity + operator name + recent
+  // meeting notes (the killer context for personalised follow-ups).
   const [deal, operator] = await Promise.all([
     db.clientDeal.findFirst({
       where: { id: dealId, userId: dbUserId },
@@ -83,6 +84,14 @@ export async function POST(
         enrichment: true,
         contacts: { take: 3, orderBy: [{ isPrimary: "desc" }, { createdAt: "asc" }] },
         activities: { take: 8, orderBy: { createdAt: "desc" } },
+        // Pull the 3 most recent text notes/transcripts (skip files —
+        // we can't read PDF/audio binaries inline). Operator's notes
+        // become the most-specific context Claude has.
+        meetingNotes: {
+          where: { content: { not: null } },
+          orderBy: [{ meetingDate: "desc" }, { createdAt: "desc" }],
+          take: 3,
+        },
       },
     }),
     db.user.findUnique({
@@ -136,6 +145,30 @@ export async function POST(
       .join("\n")
     contextLines.push(`Recent activity:\n${recentActivity}`)
   }
+  // Meeting notes / transcripts — THE highest-signal context. Trim each
+  // note to a budget so we don't blow Claude's context window with a
+  // 60-minute Zoom transcript. Most-recent first.
+  if (deal.meetingNotes.length > 0) {
+    const NOTE_CHAR_BUDGET = 4000 // ~1000 tokens per note × 3 notes max
+    const notesBlock = deal.meetingNotes
+      .map((n) => {
+        const dateStr = n.meetingDate
+          ? new Date(n.meetingDate).toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            })
+          : "undated"
+        const heading = `${n.kind === "TRANSCRIPT" ? "Transcript" : "Note"} (${dateStr})${n.title ? ` — ${n.title}` : ""}`
+        const trimmed =
+          (n.content ?? "").length > NOTE_CHAR_BUDGET
+            ? (n.content ?? "").slice(0, NOTE_CHAR_BUDGET) + "\n[…truncated]"
+            : n.content ?? ""
+        return `${heading}\n${trimmed}`
+      })
+      .join("\n\n---\n\n")
+    contextLines.push(`Meeting notes / transcripts (most recent first):\n${notesBlock}`)
+  }
   if (customNote) contextLines.push(`Custom note from operator: ${customNote}`)
 
   const senderName = operator?.name?.split(" ")[0] ?? "there"
@@ -170,7 +203,8 @@ Tone: ${toneDescriptions[tone]}.
 Intent: ${intentDescriptions[intent]}.
 
 Hard rules:
-- Reference a SPECIFIC detail from the recipient's business (their description, size, location, or industry). Generic "hope you're well" openers are forbidden.
+- If meeting notes / transcripts are provided, REFERENCE A SPECIFIC DETAIL FROM THEM. The meeting notes are real things the operator and recipient actually discussed — leveraging them ("Per our discussion last Tuesday about the Q4 hiring plan…") is the entire reason this email outperforms a cold draft. Do NOT just summarise the notes — pull one specific detail and build the email around it.
+- If no meeting notes are provided, reference a SPECIFIC detail from the recipient's business (their description, size, location, or industry). Generic "hope you're well" openers are forbidden.
 - Keep it under 120 words total.
 - Never invent facts. If the context doesn't say something, don't claim it.
 - The CTA in the third paragraph should match the intent: a check-in asks a question, a share gives them a link they can click, a meeting ask proposes 2 specific time windows, an objection-response acknowledges + addresses it.
