@@ -2,20 +2,25 @@ import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
 import { KanbanPipeline } from "@/components/portal/crm/KanbanPipeline"
+import { BulkEnrichBanner } from "@/components/portal/crm/BulkEnrichBanner"
 import { Briefcase, Download, MapPin } from "lucide-react"
 import Link from "next/link"
 
 async function getDeals(userId: string) {
-  const dbUser = await db.user.findUnique({ where: { clerkId: userId }, select: { id: true } })
-  if (!dbUser) return []
+  const dbUser = await db.user.findUnique({
+    where: { clerkId: userId },
+    select: { id: true, creditBalance: true },
+  })
+  if (!dbUser) return { deals: [], creditBalance: 0 }
 
-  return db.clientDeal.findMany({
+  const deals = await db.clientDeal.findMany({
     where: { userId: dbUser.id },
     include: {
       _count: { select: { activities: true } },
     },
     orderBy: { updatedAt: "desc" },
   })
+  return { deals, creditBalance: dbUser.creditBalance }
 }
 
 export const dynamic = "force-dynamic"
@@ -24,7 +29,7 @@ export default async function CrmPage() {
   const { userId } = await auth()
   if (!userId) redirect("/sign-in")
 
-  const deals = await getDeals(userId)
+  const { deals, creditBalance } = await getDeals(userId)
 
   const pipelineValue = deals
     .filter((d) => !["COMPLETED", "LOST"].includes(d.stage))
@@ -72,6 +77,11 @@ export default async function CrmPage() {
             </a>
           )}
         </div>
+      </div>
+
+      {/* Bulk-enrich banner — shows only when there are unenriched deals */}
+      <div className="px-6 pt-4">
+        <BulkEnrichBanner creditBalance={creditBalance} />
       </div>
 
       {/* Board */}
