@@ -31,7 +31,7 @@ const STAGES = [
   { key: "LOST", label: "Lost", color: "text-red-500", dot: "bg-red-400" },
 ] as const
 
-type StageKey = typeof STAGES[number]["key"]
+type StageKey = (typeof STAGES)[number]["key"]
 
 function totalValue(deals: ClientDeal[]) {
   return deals.reduce((sum, d) => sum + d.value, 0)
@@ -45,6 +45,8 @@ function formatTotal(v: number) {
 
 export function KanbanPipeline({ initialDeals }: KanbanPipelineProps) {
   const [deals, setDeals] = useState(initialDeals)
+  const [draggingId, setDraggingId] = useState<string | null>(null)
+  const [dragOverStage, setDragOverStage] = useState<StageKey | null>(null)
 
   function handleDelete(id: string) {
     setDeals((prev) => prev.filter((d) => d.id !== id))
@@ -54,16 +56,68 @@ export function KanbanPipeline({ initialDeals }: KanbanPipelineProps) {
     // router.refresh() is called inside AddDealDialog — just a hook
   }
 
+  async function handleDrop(targetStage: StageKey, e: React.DragEvent) {
+    e.preventDefault()
+    setDragOverStage(null)
+    const dealId = e.dataTransfer.getData("text/plain") || draggingId
+    setDraggingId(null)
+    if (!dealId) return
+
+    const deal = deals.find((d) => d.id === dealId)
+    if (!deal || deal.stage === targetStage) return
+
+    // Optimistic update — flip the card's stage in local state instantly,
+    // PATCH the server, revert on failure.
+    const previousStage = deal.stage
+    setDeals((prev) =>
+      prev.map((d) =>
+        d.id === dealId ? { ...d, stage: targetStage, updatedAt: new Date().toISOString() } : d,
+      ),
+    )
+
+    try {
+      const res = await fetch(`/api/portal/crm/deals/${dealId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ stage: targetStage }),
+      })
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    } catch {
+      // Revert on failure
+      setDeals((prev) =>
+        prev.map((d) => (d.id === dealId ? { ...d, stage: previousStage } : d)),
+      )
+    }
+  }
+
   return (
     <div className="flex gap-3 overflow-x-auto pb-4 min-h-[calc(100vh-12rem)]">
       {STAGES.map((stage) => {
         const stageDeals = deals.filter((d) => d.stage === stage.key)
         const total = formatTotal(totalValue(stageDeals))
+        const isDropTarget = dragOverStage === stage.key
 
         return (
           <div
             key={stage.key}
-            className="flex flex-col gap-2 min-w-[220px] w-[220px] shrink-0"
+            onDragOver={(e) => {
+              if (!draggingId) return
+              e.preventDefault()
+              e.dataTransfer.dropEffect = "move"
+              setDragOverStage(stage.key as StageKey)
+            }}
+            onDragLeave={(e) => {
+              // Only clear when leaving the column entirely (not when
+              // moving between children).
+              if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+                setDragOverStage(null)
+              }
+            }}
+            onDrop={(e) => handleDrop(stage.key as StageKey, e)}
+            className={cn(
+              "flex flex-col gap-2 min-w-[220px] w-[220px] shrink-0 rounded-lg transition-colors",
+              isDropTarget && "bg-primary/5 ring-1 ring-primary/30",
+            )}
           >
             {/* Column header */}
             <div className="flex items-center justify-between px-1 py-1">
@@ -86,8 +140,24 @@ export function KanbanPipeline({ initialDeals }: KanbanPipelineProps) {
             {/* Cards */}
             <div className="flex flex-col gap-2 flex-1">
               {stageDeals.map((deal) => (
-                <ClientDealCard key={deal.id} deal={deal} onDelete={handleDelete} />
+                <ClientDealCard
+                  key={deal.id}
+                  deal={deal}
+                  onDelete={handleDelete}
+                  onDragStart={(id) => setDraggingId(id)}
+                  onDragEnd={() => {
+                    setDraggingId(null)
+                    setDragOverStage(null)
+                  }}
+                  isDragging={draggingId === deal.id}
+                />
               ))}
+              {/* Empty drop hint when actively dragging into an empty column */}
+              {isDropTarget && stageDeals.length === 0 && (
+                <div className="rounded-lg border-2 border-dashed border-primary/30 p-4 text-[11px] text-primary text-center">
+                  Drop to move to {stage.label}
+                </div>
+              )}
             </div>
 
             {/* Add deal */}

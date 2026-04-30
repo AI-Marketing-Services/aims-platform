@@ -21,6 +21,9 @@ interface ClientDeal {
 interface ClientDealCardProps {
   deal: ClientDeal
   onDelete?: (id: string) => void
+  onDragStart?: (dealId: string) => void
+  onDragEnd?: () => void
+  isDragging?: boolean
 }
 
 const CURRENCY_SYMBOLS: Record<string, string> = { USD: "$", EUR: "€", GBP: "£", CAD: "C$" }
@@ -32,7 +35,13 @@ function formatValue(value: number, currency: string) {
   return `${sym}${value.toLocaleString()}`
 }
 
-export function ClientDealCard({ deal, onDelete }: ClientDealCardProps) {
+export function ClientDealCard({
+  deal,
+  onDelete,
+  onDragStart,
+  onDragEnd,
+  isDragging,
+}: ClientDealCardProps) {
   const router = useRouter()
   const [deleting, setDeleting] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
@@ -57,10 +66,19 @@ export function ClientDealCard({ deal, onDelete }: ClientDealCardProps) {
   return (
     <div
       onClick={() => router.push(`/portal/crm/${deal.id}`)}
+      draggable={!!onDragStart}
+      onDragStart={(e) => {
+        if (!onDragStart) return
+        e.dataTransfer.setData("text/plain", deal.id)
+        e.dataTransfer.effectAllowed = "move"
+        onDragStart(deal.id)
+      }}
+      onDragEnd={() => onDragEnd?.()}
       className={cn(
         "group relative bg-card border border-border rounded-lg p-3.5 cursor-pointer",
         "hover:border-primary/40 hover:shadow-[0_0_0_1px_rgba(196,151,42,0.15)] transition-all duration-150",
-        deleting && "opacity-50 pointer-events-none"
+        deleting && "opacity-50 pointer-events-none",
+        isDragging && "opacity-30",
       )}
     >
       <div className="flex items-start justify-between gap-2">
