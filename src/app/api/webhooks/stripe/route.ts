@@ -20,6 +20,7 @@ import {
   handleProductSubscriptionUpdated,
   handleProductChargeRefunded,
 } from "@/lib/stripe/handlers/handle-product-purchase"
+import { handleCreditTopupCompleted } from "@/lib/stripe/handlers/handle-credit-topup"
 
 export async function POST(req: Request) {
   const body = await req.text()
@@ -73,11 +74,12 @@ export async function POST(req: Request) {
     switch (event.type) {
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session
-        // Both legacy serviceArm checkouts and new product checkouts run
-        // through this event type. Each handler self-gates on metadata
-        // and bails fast if it isn't its own variant.
+        // Multiple checkout variants run through this event type. Each
+        // handler self-gates on metadata.source and bails fast if it
+        // isn't its own variant.
         await handleCheckoutCompleted(session)
         await handleProductCheckoutCompleted(session)
+        await handleCreditTopupCompleted(session)
         break
       }
 
