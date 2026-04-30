@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Briefcase, Loader2, Check, ArrowRight, AlertTriangle } from "lucide-react"
 import Link from "next/link"
+import { toast } from "sonner"
 
 interface ConvertToDealButtonProps {
   responseId: string
@@ -46,6 +47,13 @@ export function ConvertToDealButton({
         return
       }
       setDealId(data.dealId)
+      toast.success("Lead converted to deal", {
+        description: "All audit answers + AI summary moved to the deal notes.",
+        action: {
+          label: "Open deal",
+          onClick: () => router.push(`/portal/crm/${data.dealId}`),
+        },
+      })
       router.refresh()
     } catch (err) {
       setError(err instanceof Error ? err.message : "Network error")

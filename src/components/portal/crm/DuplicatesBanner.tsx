@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
+import { toast } from "sonner"
 import {
   AlertTriangle,
   Merge,
@@ -104,6 +105,10 @@ export function DuplicatesBanner() {
             ),
         ),
       )
+      const mergedCount = others.length
+      toast.success(`${mergedCount} duplicate${mergedCount === 1 ? "" : "s"} merged`, {
+        description: "Contacts, notes, proposals, and invoices moved to the canonical deal.",
+      })
       startTransition(() => router.refresh())
     } catch (err) {
       setError(err instanceof Error ? err.message : "Merge failed")

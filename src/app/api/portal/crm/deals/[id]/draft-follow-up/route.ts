@@ -5,6 +5,7 @@ import { logger } from "@/lib/logger"
 import { ensureDbUserIdForApi } from "@/lib/auth/ensure-user"
 import { analyzeWithClaude } from "@/lib/ai"
 import { debitCredits, hasBalance, InsufficientCreditsError } from "@/lib/enrichment/credits/ledger"
+import { stripDashes } from "@/lib/text/strip-dashes"
 
 export const dynamic = "force-dynamic"
 export const maxDuration = 30
@@ -250,16 +251,14 @@ Hard rules:
       )
     }
 
-    // Defensive em-dash sweep on AI output. Even with the system prompt
-    // forbidding em-dashes, occasional models slip them through.
-    const stripEmDashes = (s: string | undefined | null): string =>
-      (s ?? "").replace(/\s*—\s*/g, ": ").replace(/—/g, ",")
-
+    // Defensive long-dash sweep on AI output. Catches em-dash, en-dash,
+    // figure dash, horizontal bar, two-em / three-em — every variant
+    // that reads as 'AI-written' in cold outreach.
     return NextResponse.json({
       ok: true,
-      subject: stripEmDashes(parsed.subject) || `Following up: ${deal.companyName}`,
-      body: stripEmDashes(parsed.body),
-      rationale: stripEmDashes(parsed.rationale) || null,
+      subject: stripDashes(parsed.subject) || `Following up: ${deal.companyName}`,
+      body: stripDashes(parsed.body),
+      rationale: stripDashes(parsed.rationale) || null,
       recipient: {
         name: recipientName,
         email: primaryContact?.email ?? deal.contactEmail ?? null,

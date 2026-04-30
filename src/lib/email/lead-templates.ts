@@ -260,12 +260,13 @@ export function renderTemplate(
   let subject = fill(template.subject)
   let body = fill(template.body)
 
-  // Defensive em-dash sweep at render time. Even if a future edit
-  // reintroduces an em-dash anywhere in the source, this strips it
-  // before the operator ever sees it. Replace with a period+space so
-  // sentence boundaries stay clean.
-  subject = subject.replace(/\s*—\s*/g, ". ")
-  body = body.replace(/\s*—\s*/g, ". ")
+  // Defensive long-dash sweep at render time. Even if a future edit
+  // reintroduces an em / en / figure / horizontal-bar dash anywhere
+  // in the source, this strips them before the operator ever sees
+  // them. Replace with a period+space so sentence boundaries stay clean.
+  const LONG_DASHES = /\s*[‒–—―−⸺⸻]\s*/g
+  subject = subject.replace(LONG_DASHES, ". ")
+  body = body.replace(LONG_DASHES, ". ")
 
   // Clean up trailing artifacts.
   body = body

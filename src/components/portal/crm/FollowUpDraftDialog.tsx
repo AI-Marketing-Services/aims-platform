@@ -13,6 +13,7 @@ import {
   RotateCcw,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { toast } from "sonner"
 
 interface FollowUpDraftDialogProps {
   dealId: string
@@ -104,6 +105,9 @@ export function FollowUpDraftDialog({
         rationale: data.rationale ?? null,
         recipientEmail: data.recipient?.email ?? defaultRecipientEmail,
       })
+      toast.success("Email drafted", {
+        description: "Edit it inline below, then copy or open in your mail client.",
+      })
     } catch (err) {
       setError(err instanceof Error ? err.message : "Network error")
     } finally {
@@ -122,6 +126,13 @@ export function FollowUpDraftDialog({
     try {
       await navigator.clipboard.writeText(text)
       setCopied(which)
+      toast.success(
+        which === "subject"
+          ? "Subject copied"
+          : which === "body"
+            ? "Email body copied"
+            : "Full email copied",
+      )
       setTimeout(() => setCopied(null), 2000)
     } catch {
       // ignore

@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
+import { toast } from "sonner"
 import {
   Sparkles,
   Loader2,
@@ -18,6 +19,7 @@ import {
   AlertTriangle,
   RefreshCw,
 } from "lucide-react"
+import { EnrichmentProgress } from "./EnrichmentProgress"
 
 interface EnrichmentData {
   id: string
@@ -90,7 +92,15 @@ export function EnrichmentCard({
       const getRes = await fetch(`/api/portal/crm/deals/${dealId}/enrich`)
       const getBody = await getRes.json().catch(() => ({}))
       if (getRes.ok && getBody.enrichment) setEnrichment(getBody.enrichment)
-      // Server-side data (contacts, deal industry) updated — refresh
+      // Server-side data (contacts, deal industry) updated, refresh
+      const cost = typeof body.totalCreditsCost === "number" ? body.totalCreditsCost : 0
+      const contactsAdded = typeof body.contactsAdded === "number" ? body.contactsAdded : 0
+      toast.success("Enrichment complete", {
+        description:
+          contactsAdded > 0
+            ? `${contactsAdded} new contact${contactsAdded === 1 ? "" : "s"} found · ${cost} credits used`
+            : `${cost} credits used · No new contacts found beyond what you already had`,
+      })
       startTransition(() => router.refresh())
     } catch (err) {
       setError(err instanceof Error ? err.message : "Network error")
@@ -163,10 +173,12 @@ export function EnrichmentCard({
       {!enrichment && !running && (
         <div className="text-xs text-muted-foreground py-3 text-center">
           Click Enrich to fill in company data, social profiles, and verified
-          contact emails. Cheaper sources run first — you only pay for what we
+          contact emails. Cheaper sources run first, you only pay for what we
           find.
         </div>
       )}
+
+      {running && <EnrichmentProgress done={false} />}
 
       {enrichment && (
         <div className="space-y-3 pt-1">

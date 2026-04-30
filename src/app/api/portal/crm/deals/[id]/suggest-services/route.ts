@@ -5,6 +5,7 @@ import { ensureDbUserIdForApi } from "@/lib/auth/ensure-user"
 import { analyzeWithClaude } from "@/lib/ai"
 import { debitCredits, hasBalance, InsufficientCreditsError } from "@/lib/enrichment/credits/ledger"
 import { PLAYBOOK_MANIFEST } from "@/lib/playbooks/manifest"
+import { stripDashes, stripDashesArr } from "@/lib/text/strip-dashes"
 
 export const dynamic = "force-dynamic"
 export const maxDuration = 30
@@ -226,22 +227,16 @@ Recommend the AI services pitch for this exact business. JSON only.${
       )
     }
 
-    // Defensive em-dash sweep on every string field returned to the
-    // client. Even with the system prompt forbidding them, occasional
-    // model outputs slip through.
-    const stripDash = (s: string | undefined | null): string =>
-      (s ?? "").replace(/\s*—\s*/g, ": ").replace(/—/g, ",")
-    const stripDashArr = (arr: string[] | undefined): string[] =>
-      (arr ?? []).map(stripDash).filter(Boolean)
-
+    // Defensive long-dash sweep on every string field returned to the
+    // client (em, en, figure, horizontal-bar, two-em, three-em).
     return NextResponse.json({
       ok: true,
-      services: stripDashArr(parsed.services),
-      painPoints: stripDashArr(parsed.painPoints),
-      integrations: stripDashArr(parsed.integrations),
-      pitchAngle: stripDash(parsed.pitchAngle) || null,
+      services: stripDashesArr(parsed.services),
+      painPoints: stripDashesArr(parsed.painPoints),
+      integrations: stripDashesArr(parsed.integrations),
+      pitchAngle: stripDashes(parsed.pitchAngle) || null,
       estimatedMonthlyValue:
-        stripDash(parsed.estimatedMonthlyValue) || null,
+        stripDashes(parsed.estimatedMonthlyValue) || null,
       creditsCost: SUGGEST_COST,
       matchedPlaybook: matchedPlaybook ? matchedPlaybook.industry : null,
     })

@@ -6,6 +6,7 @@ import { analyzeWithClaude } from "@/lib/ai"
 import { trackUsage } from "@/lib/usage"
 import { randomBytes } from "crypto"
 import { getOrCreateDbUserByClerkId } from "@/lib/auth/ensure-user"
+import { stripDashes } from "@/lib/text/strip-dashes"
 
 async function getDbUserId(clerkId: string): Promise<string | null> {
   const user = await getOrCreateDbUserByClerkId(clerkId)
@@ -202,12 +203,11 @@ Output ONLY the proposal markdown — no preamble, no commentary, no code fence 
 
     const shareToken = randomBytes(20).toString("hex")
 
-    // Defensive em-dash sweep: even with the system prompt forbidding it,
-    // older models occasionally slip an em-dash through. Strip them before
-    // we save so the proposal never contains one.
-    const cleanedContent = text
-      .replace(/\s*—\s*/g, ": ") // most common pattern: "Label — body" becomes "Label: body"
-      .replace(/—/g, ",") // any remaining em-dashes become commas
+    // Defensive long-dash sweep: even with the system prompt forbidding
+    // them, older models occasionally slip in em-dashes, en-dashes, or
+    // horizontal bars. Strip ALL long-dash variants before we save so
+    // proposals always read like a human wrote them.
+    const cleanedContent = stripDashes(text)
 
     const proposal = await db.clientProposal.create({
       data: {

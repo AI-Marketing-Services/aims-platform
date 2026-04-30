@@ -2,7 +2,23 @@
 
 import { useState, useTransition, useRef } from "react"
 import { useRouter } from "next/navigation"
-import { FileText, Sparkles, ChevronDown, ChevronUp, ExternalLink, Trash2, Wand2, Loader2, AlertTriangle } from "lucide-react"
+import { toast } from "sonner"
+import {
+  FileText,
+  Sparkles,
+  ChevronDown,
+  ChevronUp,
+  ExternalLink,
+  Trash2,
+  Wand2,
+  Loader2,
+  AlertTriangle,
+  CheckCircle2,
+  Quote,
+  Target,
+  Plug,
+  BookOpen,
+} from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface Proposal {
@@ -43,6 +59,7 @@ export function ProposalGenerator({
   const [suggesting, setSuggesting] = useState(false)
   const [suggestError, setSuggestError] = useState<string | null>(null)
   const [aiSuggestion, setAiSuggestion] = useState<{
+    services: string[]
     pitchAngle: string | null
     painPoints: string[]
     integrations: string[]
@@ -99,13 +116,21 @@ export function ProposalGenerator({
         titleInputRef.current.value = `AI Services Proposal — ${companyName}`
       }
 
-      // Show the matched-playbook + chip summary above the form
+      // Show the full structured AI recommendation as a deliverable
       setAiSuggestion({
+        services: data.services ?? [],
         pitchAngle: data.pitchAngle ?? null,
         painPoints: data.painPoints ?? [],
         integrations: data.integrations ?? [],
         estimatedMonthlyValue: data.estimatedMonthlyValue ?? null,
         matchedPlaybook: data.matchedPlaybook ?? null,
+      })
+      const serviceCount = (data.services ?? []).length
+      toast.success("AI recommendation ready", {
+        description:
+          serviceCount > 0
+            ? `${serviceCount} services suggested. Form pre-filled below.`
+            : "Form pre-filled below. Edit then generate.",
       })
     } catch (err) {
       setSuggestError(err instanceof Error ? err.message : "Network error")
@@ -141,6 +166,9 @@ export function ProposalGenerator({
       const { proposal } = await res.json()
       setProposals((prev) => [proposal, ...prev])
       setShowForm(false)
+      toast.success("Proposal generated", {
+        description: `"${proposal.title}" is ready to review and send.`,
+      })
       router.push(`/portal/crm/${dealId}/proposals/${proposal.id}`)
     })
   }
@@ -257,30 +285,118 @@ export function ProposalGenerator({
                 <span>{suggestError}</span>
               </div>
             )}
-            {aiSuggestion && (
-              <div className="mt-2 space-y-1.5 text-[11px] text-muted-foreground border-t border-primary/20 pt-2">
-                {aiSuggestion.matchedPlaybook && (
-                  <p>
-                    Matched playbook:{" "}
-                    <span className="text-foreground font-medium">
-                      {aiSuggestion.matchedPlaybook}
-                    </span>
-                  </p>
-                )}
-                {aiSuggestion.estimatedMonthlyValue && (
-                  <p>
-                    Target value:{" "}
-                    <span className="text-foreground font-medium">
-                      {aiSuggestion.estimatedMonthlyValue}
-                    </span>
-                  </p>
-                )}
-                <p className="italic">
-                  Edit the suggestions below before generating the proposal.
-                </p>
-              </div>
-            )}
           </div>
+
+          {aiSuggestion && (
+            <div className="rounded-xl border border-primary/30 bg-gradient-to-br from-primary/5 via-primary/[0.02] to-transparent p-4 space-y-4 animate-in fade-in slide-in-from-top-1 duration-300">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  <div className="h-7 w-7 rounded-lg bg-primary/15 flex items-center justify-center">
+                    <Sparkles className="h-3.5 w-3.5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-foreground leading-tight">
+                      AI Recommendation
+                    </p>
+                    <p className="text-[10px] text-muted-foreground">
+                      Tailored to {companyName} based on enrichment + playbook
+                    </p>
+                  </div>
+                </div>
+                {aiSuggestion.estimatedMonthlyValue && (
+                  <div className="text-right shrink-0">
+                    <p className="text-[9px] uppercase tracking-wider text-muted-foreground font-semibold">
+                      Target MRR
+                    </p>
+                    <p className="text-sm font-bold text-primary leading-tight">
+                      {aiSuggestion.estimatedMonthlyValue}
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {aiSuggestion.matchedPlaybook && (
+                <div className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/5 px-2.5 py-1 text-[10px] font-semibold text-primary">
+                  <BookOpen className="h-3 w-3" />
+                  {aiSuggestion.matchedPlaybook} playbook matched
+                </div>
+              )}
+
+              {aiSuggestion.pitchAngle && (
+                <div className="rounded-lg border-l-2 border-primary bg-background/40 p-3">
+                  <div className="flex items-start gap-2">
+                    <Quote className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
+                    <p className="text-sm text-foreground italic leading-relaxed">
+                      {aiSuggestion.pitchAngle}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {aiSuggestion.services.length > 0 && (
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-1.5 flex items-center gap-1">
+                    <Sparkles className="h-2.5 w-2.5" />
+                    Recommended services
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {aiSuggestion.services.map((s) => (
+                      <span
+                        key={s}
+                        className="inline-flex items-center gap-1 rounded-md bg-primary/10 border border-primary/20 px-2 py-1 text-[11px] text-foreground font-medium"
+                      >
+                        <CheckCircle2 className="h-3 w-3 text-primary" />
+                        {s}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {aiSuggestion.painPoints.length > 0 && (
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-1.5 flex items-center gap-1">
+                    <Target className="h-2.5 w-2.5" />
+                    Pain points to address
+                  </p>
+                  <ul className="space-y-1">
+                    {aiSuggestion.painPoints.map((p) => (
+                      <li
+                        key={p}
+                        className="flex items-start gap-2 text-xs text-foreground leading-snug"
+                      >
+                        <span className="mt-1.5 h-1 w-1 rounded-full bg-primary shrink-0" />
+                        {p}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {aiSuggestion.integrations.length > 0 && (
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-1.5 flex items-center gap-1">
+                    <Plug className="h-2.5 w-2.5" />
+                    Integration angles
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {aiSuggestion.integrations.map((i) => (
+                      <span
+                        key={i}
+                        className="inline-flex items-center rounded-md border border-border bg-background px-2 py-1 text-[11px] text-muted-foreground"
+                      >
+                        {i}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <p className="text-[10px] text-muted-foreground italic border-t border-primary/15 pt-2.5">
+                The form below has been pre-filled. Edit any field then hit Generate to ship the full proposal.
+              </p>
+            </div>
+          )}
 
           <div>
             <label className="block text-xs text-muted-foreground mb-1">Proposal title</label>

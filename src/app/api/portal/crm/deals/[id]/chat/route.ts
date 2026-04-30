@@ -9,6 +9,7 @@ import {
   hasBalance,
   InsufficientCreditsError,
 } from "@/lib/enrichment/credits/ledger"
+import { stripDashes } from "@/lib/text/strip-dashes"
 
 export const dynamic = "force-dynamic"
 export const maxDuration = 30
@@ -280,11 +281,8 @@ Respond to the operator's last message. Be specific, grounded, and concise.`,
       clientId: dealId,
     })
 
-    // Strip em-dashes defensively
-    const reply = (result.text ?? "")
-      .replace(/\s*—\s*/g, ": ")
-      .replace(/—/g, ",")
-      .trim()
+    // Strip all long-dash variants defensively
+    const reply = stripDashes(result.text).trim()
 
     return NextResponse.json({
       ok: true,

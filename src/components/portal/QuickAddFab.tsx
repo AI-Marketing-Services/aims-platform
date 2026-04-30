@@ -3,6 +3,7 @@
 import { useState, useTransition, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { toast } from "sonner"
 import {
   Plus,
   X,
@@ -88,6 +89,9 @@ export function QuickAddFab() {
       const data = await res.json()
       const dealId = data?.deal?.id
       setOpen(false)
+      toast.success(`${trimmed} added to CRM`, {
+        description: "Open the deal to enrich, log notes, and pitch.",
+      })
       // Navigate to the new deal so the operator can immediately add
       // contact / notes / enrichment.
       if (dealId) {

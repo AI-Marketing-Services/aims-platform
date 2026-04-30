@@ -4,6 +4,7 @@ import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
 import { ensureDbUserIdForApi } from "@/lib/auth/ensure-user"
 import { emitEvent, EVENT_TYPES } from "@/lib/events/emit"
+import { stripDashes } from "@/lib/text/strip-dashes"
 import type { Prisma } from "@prisma/client"
 
 export const dynamic = "force-dynamic"
@@ -228,6 +229,6 @@ function buildNotesBlock(response: AuditResponseLite): string {
     }
   }
 
-  // Strip em-dashes defensively
-  return lines.join("\n").replace(/\s*—\s*/g, ": ").replace(/—/g, ",").trim()
+  // Strip all long-dash variants defensively
+  return stripDashes(lines.join("\n")).trim()
 }
