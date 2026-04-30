@@ -7,6 +7,7 @@ import { PortalSidebar } from "@/components/portal/Sidebar"
 import { MobilePortalNav } from "@/components/portal/MobilePortalNav"
 import { getProgressForUser } from "@/lib/onboarding/progress"
 import { PortalChatWidget } from "@/components/portal/PortalChatWidget"
+import { QuickAddFab } from "@/components/portal/QuickAddFab"
 import { ReferralClaimHandler } from "@/components/portal/ReferralClaimHandler"
 import { PageTransition } from "@/components/shared/PageTransition"
 import { AdminPreviewBanner } from "@/components/shared/AdminPreviewBanner"
@@ -139,6 +140,7 @@ export default async function PortalLayout({
       <MobilePortalNav hasUnread={unreadCount > 0} isAdminEmail={isAdminish && !isPreviewing} />
 
       <PortalChatWidget firstName={firstName} serviceCount={serviceCount} />
+      <QuickAddFab />
       <ReferralClaimHandler />
     </div>
   )

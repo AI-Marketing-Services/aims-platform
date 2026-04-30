@@ -128,8 +128,8 @@ export default async function PortalDashboard({
 
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold">Welcome, {firstName}</h1>
-        <p className="mt-1 text-muted-foreground text-sm">
+        <h1 className="text-xl sm:text-2xl font-bold">Welcome, {firstName}</h1>
+        <p className="mt-1 text-muted-foreground text-xs sm:text-sm">
           Here&apos;s what&apos;s happening across your pipeline today.
         </p>
       </div>
@@ -141,7 +141,7 @@ export default async function PortalDashboard({
       {dbUser && <TodayCard userId={dbUser.id} />}
 
       {/* ── ONBOARDING CHECKLIST — always primary ── */}
-      <div className="rounded-2xl border border-border bg-card p-6">
+      <div className="rounded-2xl border border-border bg-card p-4 sm:p-6">
         <div className="flex items-center justify-between gap-2 mb-5">
           <div className="flex items-center gap-2">
             <Check className="h-4 w-4 text-primary" />
@@ -242,32 +242,32 @@ export default async function PortalDashboard({
               Open CRM <ArrowRight className="h-3 w-3" />
             </Link>
           </div>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-2 sm:gap-3">
             <Link
               href="/portal/crm"
-              className="rounded-xl border border-border bg-card p-4 hover:border-primary/30 transition-colors"
+              className="rounded-xl border border-border bg-card p-3 sm:p-4 hover:border-primary/30 transition-colors"
             >
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Pipeline Value</p>
-              <p className="text-xl font-bold text-foreground">
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Pipeline</p>
+              <p className="text-base sm:text-xl font-bold text-foreground">
                 {crmStats.pipelineValue > 0 ? `$${crmStats.pipelineValue.toLocaleString()}` : "—"}
               </p>
-              <p className="text-xs text-muted-foreground mt-0.5">{crmStats.totalDeals} deals tracked</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">{crmStats.totalDeals} deals</p>
             </Link>
             <Link
               href="/portal/crm"
-              className="rounded-xl border border-border bg-card p-4 hover:border-primary/30 transition-colors"
+              className="rounded-xl border border-border bg-card p-3 sm:p-4 hover:border-primary/30 transition-colors"
             >
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Active Clients</p>
-              <p className="text-xl font-bold text-emerald-600">{crmStats.activeDeals}</p>
-              <p className="text-xs text-muted-foreground mt-0.5">on retainer</p>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Active</p>
+              <p className="text-base sm:text-xl font-bold text-emerald-600">{crmStats.activeDeals}</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">on retainer</p>
             </Link>
             <Link
               href="/portal/crm/scout"
-              className="rounded-xl border border-border bg-card p-4 hover:border-primary/30 transition-colors"
+              className="rounded-xl border border-border bg-card p-3 sm:p-4 hover:border-primary/30 transition-colors"
             >
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Find More Leads</p>
-              <p className="text-xl font-bold text-primary">Scout</p>
-              <p className="text-xs text-muted-foreground mt-0.5">AI-powered search</p>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Find leads</p>
+              <p className="text-base sm:text-xl font-bold text-primary">Scout</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">AI search</p>
             </Link>
           </div>
         </div>
