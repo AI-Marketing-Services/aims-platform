@@ -128,6 +128,31 @@ export default function InvoiceDetailPage() {
     }
   }, [id, invoice, fetchInvoice])
 
+  const [sendingReminder, setSendingReminder] = useState(false)
+  const [reminderSent, setReminderSent] = useState(false)
+  const handleSendReminder = useCallback(async () => {
+    if (!invoice) return
+    setSendingReminder(true)
+    setActionError(null)
+    try {
+      const res = await fetch(
+        `/api/portal/invoices/${id}/send-reminder`,
+        { method: "POST" },
+      )
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}))
+        throw new Error(d.error ?? "Failed to send reminder")
+      }
+      setReminderSent(true)
+      setTimeout(() => setReminderSent(false), 3000)
+      await fetchInvoice()
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : "Reminder failed")
+    } finally {
+      setSendingReminder(false)
+    }
+  }, [id, invoice, fetchInvoice])
+
   const handleMarkPaid = useCallback(async () => {
     if (!invoice) return
     setMarkingPaid(true)
@@ -293,6 +318,33 @@ export default function InvoiceDetailPage() {
             >
               <Send className="h-3.5 w-3.5" />
               Send Invoice
+            </button>
+          )}
+
+          {/* Send-reminder button — surfaces only for SENT or OVERDUE
+              invoices (no point on DRAFT, no need on PAID/CANCELLED). */}
+          {(invoice.status === "SENT" || invoice.status === "OVERDUE") && (
+            <button
+              onClick={handleSendReminder}
+              disabled={sendingReminder}
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-border text-foreground text-xs font-bold hover:border-primary hover:bg-primary/5 hover:text-primary disabled:opacity-50 transition-colors"
+            >
+              {sendingReminder ? (
+                <>
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  Sending…
+                </>
+              ) : reminderSent ? (
+                <>
+                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+                  Reminder sent
+                </>
+              ) : (
+                <>
+                  <Send className="h-3.5 w-3.5" />
+                  {invoice.status === "OVERDUE" ? "Nudge (overdue)" : "Send reminder"}
+                </>
+              )}
             </button>
           )}
         </div>
