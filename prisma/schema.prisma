@@ -1334,6 +1334,10 @@ model ClientDeal {
   lastEnrichedAt  DateTime?
   source          String?  // "scout" | "manual" | "import" | "audit-converted"
 
+  // Auto-derived priority score (0-100) computed by deriveAutoTags on
+  // every enrichment run. null = not yet enriched.
+  leadScore       Int?
+
   stage    ClientDealStage @default(PROSPECT)
   value    Float           @default(0)
   currency String          @default("USD")

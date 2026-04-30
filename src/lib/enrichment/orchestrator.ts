@@ -545,7 +545,7 @@ export async function runEnrichmentPipeline(args: {
     )
     await db.clientDeal.update({
       where: { id: dealCore.id },
-      data: { tags: merged },
+      data: { tags: merged, leadScore: autoTags.leadScore },
     })
   } catch (err) {
     logger.warn("Auto-tag write failed (non-fatal)", {

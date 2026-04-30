@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Building2, DollarSign, User, Trash2 } from "lucide-react"
+import { Building2, DollarSign, User, Trash2, Sparkles, Flame } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface ClientDeal {
@@ -14,8 +14,51 @@ interface ClientDeal {
   currency: string
   stage: string
   tags: string[]
+  leadScore: number | null
+  lastEnrichedAt: string | null
   updatedAt: string
   _count: { activities: number }
+}
+
+// Tags applied automatically by deriveAutoTags — render with subtle
+// styling so operators can distinguish AI-derived signals from their
+// own manually-set tags.
+const AUTO_TAG_PREFIXES = new Set([
+  "high-fit",
+  "medium-fit",
+  "low-fit",
+  "smb",
+  "mid-market",
+  "enterprise",
+  "missing-website",
+  "missing-contact",
+  "recent",
+  "legacy",
+])
+const AUTO_TAG_INDUSTRY_IDS = new Set([
+  "hvac",
+  "dental",
+  "realestate",
+  "restaurants",
+  "law",
+  "ecommerce",
+  "roofing",
+  "gym",
+  "financial",
+  "property",
+])
+
+function isAutoTag(tag: string): boolean {
+  const normalized = tag.toLowerCase().replace(/\s+/g, "-")
+  return (
+    AUTO_TAG_PREFIXES.has(normalized) || AUTO_TAG_INDUSTRY_IDS.has(normalized)
+  )
+}
+
+function scoreBucketColor(score: number): string {
+  if (score >= 70) return "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
+  if (score >= 45) return "bg-amber-500/15 text-amber-400 border-amber-500/30"
+  return "bg-muted text-muted-foreground border-border"
 }
 
 interface ClientDealCardProps {
@@ -91,18 +134,34 @@ export function ClientDealCard({
           </p>
         </div>
 
-        <button
-          onClick={handleDelete}
-          className={cn(
-            "opacity-0 group-hover:opacity-100 p-1 rounded transition-all shrink-0",
-            confirmDelete
-              ? "opacity-100 text-red-400 bg-red-400/10"
-              : "text-muted-foreground hover:text-red-400 hover:bg-red-400/10"
+        <div className="flex items-center gap-1 shrink-0">
+          {/* Lead score badge — derived from enrichment, surfaces priority. */}
+          {typeof deal.leadScore === "number" && (
+            <span
+              className={cn(
+                "inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded border tabular-nums",
+                scoreBucketColor(deal.leadScore),
+              )}
+              title={`AI lead score · auto-derived from enrichment`}
+            >
+              {deal.leadScore >= 70 && <Flame className="h-2.5 w-2.5" />}
+              {deal.leadScore}
+            </span>
           )}
-          title={confirmDelete ? "Click again to confirm" : "Delete deal"}
-        >
-          <Trash2 className="h-3.5 w-3.5" />
-        </button>
+
+          <button
+            onClick={handleDelete}
+            className={cn(
+              "opacity-0 group-hover:opacity-100 p-1 rounded transition-all",
+              confirmDelete
+                ? "opacity-100 text-red-400 bg-red-400/10"
+                : "text-muted-foreground hover:text-red-400 hover:bg-red-400/10"
+            )}
+            title={confirmDelete ? "Click again to confirm" : "Delete deal"}
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+          </button>
+        </div>
       </div>
 
       {deal.contactName && (
@@ -128,15 +187,40 @@ export function ClientDealCard({
 
       {deal.tags.length > 0 && (
         <div className="flex flex-wrap gap-1 mt-2">
-          {deal.tags.slice(0, 3).map((tag) => (
-            <span
-              key={tag}
-              className="inline-block text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary/80 font-medium"
-            >
-              {tag}
-            </span>
-          ))}
+          {deal.tags.slice(0, 4).map((tag) => {
+            const auto = isAutoTag(tag)
+            return (
+              <span
+                key={tag}
+                className={cn(
+                  "inline-block text-[10px] px-1.5 py-0.5 rounded font-medium",
+                  auto
+                    ? "bg-muted/60 text-muted-foreground border border-border/60"
+                    : "bg-primary/10 text-primary/80 border border-primary/20",
+                )}
+                title={auto ? "Auto-tag (from enrichment)" : "Custom tag"}
+              >
+                {tag}
+              </span>
+            )
+          })}
         </div>
+      )}
+
+      {/* Soft enrich-prompt for cards that haven't been enriched yet —
+          encourages operators to fire enrichment on stale prospects. */}
+      {!deal.lastEnrichedAt && (
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation()
+            router.push(`/portal/crm/${deal.id}`)
+          }}
+          className="mt-2 w-full inline-flex items-center justify-center gap-1 rounded-md border border-dashed border-primary/30 px-2 py-1 text-[10px] font-semibold text-primary/80 hover:border-primary/60 hover:bg-primary/5 transition-colors"
+        >
+          <Sparkles className="h-2.5 w-2.5" />
+          Enrich for full profile
+        </button>
       )}
     </div>
   )

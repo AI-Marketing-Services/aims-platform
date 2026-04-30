@@ -14,6 +14,8 @@ interface ClientDeal {
   currency: string
   stage: string
   tags: string[]
+  leadScore: number | null
+  lastEnrichedAt: string | null
   updatedAt: string
   _count: { activities: number }
 }
@@ -93,7 +95,16 @@ export function KanbanPipeline({ initialDeals }: KanbanPipelineProps) {
   return (
     <div className="flex gap-3 overflow-x-auto pb-4 min-h-[calc(100vh-12rem)]">
       {STAGES.map((stage) => {
-        const stageDeals = deals.filter((d) => d.stage === stage.key)
+        const stageDeals = deals
+          .filter((d) => d.stage === stage.key)
+          .sort((a, b) => {
+            // Lead score desc (nulls last), then value desc, then most-recent
+            const sa = a.leadScore ?? -1
+            const sb = b.leadScore ?? -1
+            if (sa !== sb) return sb - sa
+            if (a.value !== b.value) return b.value - a.value
+            return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+          })
         const total = formatTotal(totalValue(stageDeals))
         const isDropTarget = dragOverStage === stage.key
 

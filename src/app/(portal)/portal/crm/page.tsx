@@ -114,6 +114,8 @@ export default async function CrmPage() {
             currency: d.currency,
             stage: d.stage,
             tags: d.tags,
+            leadScore: d.leadScore,
+            lastEnrichedAt: d.lastEnrichedAt?.toISOString() ?? null,
             updatedAt: d.updatedAt.toISOString(),
             _count: d._count,
           }))}
