@@ -29,6 +29,7 @@
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
 import { emitEvent, emitEvents, EVENT_TYPES } from "@/lib/events/emit"
+import { deriveAutoTags } from "./auto-tag"
 import {
   debitCredits,
   grantCredits,
@@ -520,6 +521,39 @@ export async function runEnrichmentPipeline(args: {
     }
   }
 
+  // Auto-tag + lead-score derivation — pure-function pass over the
+  // freshly-enriched data. Free, fast, no Claude. Tags get merged onto
+  // ClientDeal.tags so the Kanban + CRM list show priority signals
+  // immediately. Lead score lives in metadata for now (no schema field
+  // yet — surface via tags + sort hints).
+  const autoTags = deriveAutoTags({
+    industry: dealCore.industry ?? company.industry ?? null,
+    enrichment: enrichment as unknown as import("@prisma/client").ClientDealEnrichment,
+    hasContacts: contactsAdded > 0,
+    hasWebsite: Boolean(dealCore.website),
+    hasContactEmail: Boolean(dealCore.contactEmail),
+  })
+  try {
+    // Merge with any existing tags on the ClientDeal — we don't want
+    // to clobber operator-set tags like industry-specific custom labels.
+    const current = await db.clientDeal.findUnique({
+      where: { id: dealCore.id },
+      select: { tags: true },
+    })
+    const merged = Array.from(
+      new Set([...(current?.tags ?? []), ...autoTags.tags]),
+    )
+    await db.clientDeal.update({
+      where: { id: dealCore.id },
+      data: { tags: merged },
+    })
+  } catch (err) {
+    logger.warn("Auto-tag write failed (non-fatal)", {
+      dealId: dealCore.id,
+      error: err instanceof Error ? err.message : String(err),
+    })
+  }
+
   // Universal event log — Today dashboard / daily digest / activity
   // timeline all read from here.
   void emitEvent({
@@ -532,6 +566,9 @@ export async function runEnrichmentPipeline(args: {
       creditsCost: totalCreditsCost,
       domain: company.domain ?? websiteDomain ?? null,
       industry: company.industry ?? dealCore.industry ?? null,
+      leadScore: autoTags.leadScore,
+      tags: autoTags.tags,
+      scoreBreakdown: autoTags.scoreBreakdown,
     },
   })
   if (contactsAdded > 0) {
