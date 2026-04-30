@@ -3,7 +3,7 @@ import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
 import { KanbanPipeline } from "@/components/portal/crm/KanbanPipeline"
 import { BulkEnrichBanner } from "@/components/portal/crm/BulkEnrichBanner"
-import { Briefcase, Download, MapPin } from "lucide-react"
+import { Briefcase, Download, MapPin, Upload } from "lucide-react"
 import Link from "next/link"
 
 async function getDeals(userId: string) {
@@ -66,6 +66,13 @@ export default async function CrmPage() {
             <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Total</p>
             <p className="text-sm font-bold text-foreground">{deals.length}</p>
           </div>
+          <Link
+            href="/portal/crm/import"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground border border-border/50 hover:border-border hover:bg-surface transition-all"
+          >
+            <Upload className="h-3.5 w-3.5" />
+            Import CSV
+          </Link>
           {deals.length > 0 && (
             <a
               href="/api/portal/crm/export"
