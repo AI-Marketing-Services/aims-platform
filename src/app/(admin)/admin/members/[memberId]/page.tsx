@@ -29,7 +29,10 @@ export const dynamic = "force-dynamic"
 
 async function getMember(memberId: string) {
   return db.user.findFirst({
-    where: { id: memberId, role: "CLIENT" },
+    // Removed the role: "CLIENT" filter so admin / reseller / intern
+    // detail pages also work. Used to be CLIENT-only which made the
+    // index page rows for non-CLIENT users 404 when clicked.
+    where: { id: memberId },
     include: {
       memberProfile: true,
       memberOnboardingSteps: {

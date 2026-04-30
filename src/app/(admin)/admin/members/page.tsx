@@ -4,17 +4,32 @@ import Link from "next/link"
 import { db } from "@/lib/db"
 import { Breadcrumbs } from "@/components/shared/Breadcrumbs"
 import { TOTAL_STEPS } from "@/lib/onboarding/steps"
-import { Users, CheckCircle2, TrendingUp, Clock, Briefcase } from "lucide-react"
+import { Users, CheckCircle2, TrendingUp, Clock, Briefcase, ShieldCheck } from "lucide-react"
 import { formatDistanceToNow } from "date-fns"
 import { RefreshButton } from "@/components/admin/RefreshButton"
+import type { UserRole } from "@prisma/client"
 
 export const dynamic = "force-dynamic"
 
 export const metadata = { title: "Portal Members" }
 
-async function getMembers() {
+const ROLE_FILTERS = [
+  { key: "all", label: "All", roles: null },
+  { key: "client", label: "Members", roles: ["CLIENT"] },
+  { key: "admin", label: "Admins", roles: ["ADMIN", "SUPER_ADMIN"] },
+  { key: "reseller", label: "Resellers", roles: ["RESELLER"] },
+  { key: "intern", label: "Interns", roles: ["INTERN"] },
+] as const
+
+type RoleFilterKey = (typeof ROLE_FILTERS)[number]["key"]
+
+function isValidFilter(key: string | undefined): key is RoleFilterKey {
+  return ROLE_FILTERS.some((f) => f.key === key)
+}
+
+async function getMembers(roles: readonly UserRole[] | null) {
   return db.user.findMany({
-    where: { role: "CLIENT" },
+    where: roles ? { role: { in: [...roles] } } : undefined,
     include: {
       memberProfile: { select: { businessName: true, logoUrl: true, onboardingCompletedAt: true } },
       memberOnboardingSteps: { select: { completedAt: true }, orderBy: { completedAt: "desc" } },
@@ -54,13 +69,35 @@ function getLastActivity(member: Member) {
   return member.clientDeals[0].updatedAt
 }
 
-export default async function AdminMembersPage() {
+const ROLE_BADGE: Record<UserRole, { label: string; className: string }> = {
+  CLIENT: { label: "Member", className: "text-muted-foreground bg-muted" },
+  RESELLER: { label: "Reseller", className: "text-foreground bg-primary/[0.08]" },
+  INTERN: { label: "Intern", className: "text-foreground bg-muted" },
+  ADMIN: { label: "Admin", className: "text-primary bg-primary/15 font-semibold" },
+  SUPER_ADMIN: {
+    label: "Super Admin",
+    className: "text-primary-foreground bg-primary font-semibold",
+  },
+}
+
+export default async function AdminMembersPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ role?: string }>
+}) {
   const { userId, sessionClaims } = await auth()
   if (!userId) redirect("/sign-in")
-  const role = (sessionClaims?.metadata as { role?: string })?.role
-  if (!role || !["ADMIN", "SUPER_ADMIN"].includes(role)) redirect("/portal/dashboard")
+  const callerRole = (sessionClaims?.metadata as { role?: string })?.role
+  if (!callerRole || !["ADMIN", "SUPER_ADMIN"].includes(callerRole)) {
+    redirect("/portal/dashboard")
+  }
 
-  const members = await getMembers()
+  const params = await searchParams
+  const filterKey: RoleFilterKey = isValidFilter(params.role) ? params.role : "all"
+  const activeFilter =
+    ROLE_FILTERS.find((f) => f.key === filterKey) ?? ROLE_FILTERS[0]
+
+  const members = await getMembers(activeFilter.roles)
 
   const totalOnboarded = members.filter((m) => getOnboardingPercent(m) === 100).length
   const totalWithDeals = members.filter((m) => m.clientDeals.length > 0).length
@@ -75,21 +112,21 @@ export default async function AdminMembersPage() {
         ]}
       />
 
-      <div className="mb-6 flex items-start justify-between gap-4 flex-wrap">
+      <div className="mb-5 flex items-start justify-between gap-4 flex-wrap">
         <div>
           <div className="flex items-center gap-3 mb-1">
             <h1 className="text-2xl font-bold text-foreground">Portal Members</h1>
             <RefreshButton />
           </div>
           <p className="text-muted-foreground text-sm">
-            {members.length} CLIENT users, onboarding progress and CRM activity
+            {members.length} {activeFilter.key === "all" ? "users total" : `${activeFilter.label.toLowerCase()}`}, onboarding progress and CRM activity across the platform
           </p>
         </div>
 
         {/* Summary stats */}
         <div className="flex gap-4 flex-wrap">
           <div className="text-right">
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Members</p>
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Users</p>
             <p className="text-lg font-bold text-foreground">{members.length}</p>
           </div>
           <div className="text-right">
@@ -109,10 +146,33 @@ export default async function AdminMembersPage() {
         </div>
       </div>
 
+      {/* Role filter pills */}
+      <div className="mb-4 flex items-center gap-1.5 flex-wrap">
+        {ROLE_FILTERS.map((f) => {
+          const isActive = f.key === filterKey
+          const href = f.key === "all" ? "/admin/members" : `/admin/members?role=${f.key}`
+          return (
+            <Link
+              key={f.key}
+              href={href}
+              className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
+                isActive
+                  ? "bg-primary text-primary-foreground"
+                  : "border border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground"
+              }`}
+            >
+              {f.label}
+            </Link>
+          )
+        })}
+      </div>
+
       {members.length === 0 ? (
         <div className="bg-card border border-border rounded-xl p-12 text-center">
           <Users className="h-10 w-10 text-muted-foreground/30 mx-auto mb-3" />
-          <p className="text-muted-foreground">No CLIENT users yet</p>
+          <p className="text-muted-foreground">
+            No {activeFilter.label.toLowerCase()} found
+          </p>
         </div>
       ) : (
         <div className="bg-card border border-border rounded-xl overflow-hidden">
@@ -121,6 +181,9 @@ export default async function AdminMembersPage() {
               <tr className="border-b border-border">
                 <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                   Member
+                </th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider hidden sm:table-cell">
+                  Role
                 </th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider hidden md:table-cell">
                   Onboarding
@@ -144,11 +207,15 @@ export default async function AdminMembersPage() {
                 const mrr = getMrr(member)
                 const lastActivity = getLastActivity(member)
                 const adminDealId = member.deals[0]?.id
+                const isCaller = member.clerkId === userId
+                const roleBadge = ROLE_BADGE[member.role]
 
                 return (
                   <tr
                     key={member.id}
-                    className="border-b border-border/50 last:border-0 hover:bg-surface/30 transition-colors"
+                    className={`border-b border-border/50 last:border-0 hover:bg-surface/30 transition-colors ${
+                      isCaller ? "bg-primary/[0.03]" : ""
+                    }`}
                   >
                     {/* Member */}
                     <td className="px-4 py-3">
@@ -159,12 +226,31 @@ export default async function AdminMembersPage() {
                           </span>
                         </div>
                         <div className="min-w-0">
-                          <p className="text-sm font-medium text-foreground truncate">
-                            {member.memberProfile?.businessName ?? member.name ?? "—"}
-                          </p>
+                          <div className="flex items-center gap-1.5">
+                            <p className="text-sm font-medium text-foreground truncate">
+                              {member.memberProfile?.businessName ?? member.name ?? "—"}
+                            </p>
+                            {isCaller && (
+                              <span className="text-[9px] uppercase tracking-wider text-primary font-semibold shrink-0">
+                                You
+                              </span>
+                            )}
+                          </div>
                           <p className="text-xs text-muted-foreground truncate">{member.email}</p>
                         </div>
                       </div>
+                    </td>
+
+                    {/* Role badge */}
+                    <td className="px-4 py-3 hidden sm:table-cell">
+                      <span
+                        className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium ${roleBadge.className}`}
+                      >
+                        {(member.role === "ADMIN" || member.role === "SUPER_ADMIN") && (
+                          <ShieldCheck className="h-2.5 w-2.5" />
+                        )}
+                        {roleBadge.label}
+                      </span>
                     </td>
 
                     {/* Onboarding */}
