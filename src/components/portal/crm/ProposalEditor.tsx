@@ -219,10 +219,33 @@ export function ProposalEditor({
         </div>
       </div>
 
-      {/* Content */}
+      {/* Content — preview uses readable theme colors (foreground for body,
+          stronger contrast for headings/strong/links). Previously used
+          prose-invert which is for dark backgrounds and made the entire
+          proposal invisible-grey on the light card background. */}
       <div className="bg-card border border-border rounded-xl min-h-[500px]">
         {mode === "preview" ? (
-          <div className="prose prose-invert prose-sm max-w-none p-6 print:text-black print:bg-white">
+          <div
+            className={cn(
+              "max-w-none p-6 print:text-black print:bg-white",
+              // Base prose
+              "prose prose-base",
+              // Anchor every text token to theme variables so it works in
+              // light + dark + admin-preview without invisible text.
+              "prose-headings:text-foreground prose-headings:font-bold",
+              "prose-h1:text-2xl prose-h2:text-xl prose-h3:text-lg",
+              "prose-p:text-foreground prose-p:leading-relaxed",
+              "prose-strong:text-foreground prose-strong:font-semibold",
+              "prose-em:text-foreground",
+              "prose-li:text-foreground prose-li:my-1",
+              "prose-ul:text-foreground prose-ol:text-foreground",
+              "prose-a:text-primary hover:prose-a:underline",
+              "prose-blockquote:text-muted-foreground prose-blockquote:border-l-primary/40",
+              "prose-code:text-primary prose-code:bg-primary/5 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none",
+              "prose-hr:border-border",
+              "prose-table:text-foreground prose-th:text-foreground prose-td:text-foreground",
+            )}
+          >
             <ReactMarkdown>{content}</ReactMarkdown>
           </div>
         ) : (
