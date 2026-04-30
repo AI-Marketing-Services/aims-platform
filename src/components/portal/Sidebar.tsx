@@ -29,6 +29,7 @@ import {
   Bell,
   PenLine,
   ClipboardCheck,
+  Sparkles,
 } from "lucide-react"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
@@ -73,6 +74,8 @@ interface PortalSidebarProps {
   onboardingPercent?: number
   onboardingCompletedAt?: string | null
   isAdminEmail?: boolean
+  creditBalance?: number
+  creditPlanTier?: string
 }
 
 export function PortalSidebar({
@@ -82,7 +85,10 @@ export function PortalSidebar({
   onboardingPercent = 0,
   onboardingCompletedAt = null,
   isAdminEmail = false,
+  creditBalance = 0,
+  creditPlanTier = "trial",
 }: PortalSidebarProps) {
+  const lowBalance = creditBalance < 50
   const pathname = usePathname()
   const [collapsed, setCollapsed] = useState(false)
 
@@ -155,6 +161,35 @@ export function PortalSidebar({
         onboardingCompletedAt={onboardingCompletedAt}
         collapsed={collapsed}
       />
+
+      {/* Enrichment credits — shown on every page so operators always
+          know their balance before spending on Enrich / Scout. */}
+      {!collapsed && (
+        <Link
+          href="/portal/billing"
+          className={cn(
+            "mx-3 mb-2 flex items-center justify-between gap-2 rounded-lg px-3 py-2 text-xs transition-colors",
+            lowBalance
+              ? "border border-amber-500/30 bg-amber-500/5 hover:bg-amber-500/10"
+              : "border border-border bg-surface/40 hover:bg-surface",
+          )}
+        >
+          <div className="flex items-center gap-2">
+            <Sparkles className={cn("h-3.5 w-3.5", lowBalance ? "text-amber-500" : "text-primary")} />
+            <div>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold leading-none">
+                Credits
+              </p>
+              <p className={cn("text-sm font-bold leading-tight mt-0.5", lowBalance ? "text-amber-400" : "text-foreground")}>
+                {creditBalance.toLocaleString()}
+              </p>
+            </div>
+          </div>
+          <span className="text-[9px] text-muted-foreground uppercase tracking-wider">
+            {creditPlanTier}
+          </span>
+        </Link>
+      )}
 
       {/* Monthly Investment */}
       {!collapsed && totalMrr > 0 && (

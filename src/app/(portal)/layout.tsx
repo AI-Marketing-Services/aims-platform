@@ -49,6 +49,8 @@ export default async function PortalLayout({
   let dbUser: {
     id: string
     name: string | null
+    creditBalance: number
+    creditPlanTier: string
     subscriptions: { monthlyAmount: number }[]
   } | null = null
   try {
@@ -57,6 +59,8 @@ export default async function PortalLayout({
       select: {
         id: true,
         name: true,
+        creditBalance: true,
+        creditPlanTier: true,
         subscriptions: {
           where: { status: "ACTIVE" },
           select: { monthlyAmount: true },
@@ -119,6 +123,8 @@ export default async function PortalLayout({
           onboardingCompletedCount={onboardingProgress?.completedCount ?? 0}
           onboardingPercent={onboardingProgress?.percent ?? 0}
           onboardingCompletedAt={onboardingProgress?.onboardingCompletedAt?.toISOString() ?? null}
+          creditBalance={dbUser?.creditBalance ?? 0}
+          creditPlanTier={dbUser?.creditPlanTier ?? "trial"}
           isAdminEmail={isAdminish && !isPreviewing}
         />
         <main id="main-content" className="flex-1 overflow-y-auto custom-scrollbar">

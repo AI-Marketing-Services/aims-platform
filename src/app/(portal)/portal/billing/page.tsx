@@ -2,6 +2,7 @@ import { CreditCard, CheckCircle, Clock, AlertTriangle, ArrowRight, Download } f
 import Link from "next/link"
 import { BillingPortalButton } from "./BillingPortalButton"
 import { CancelSubscriptionButton } from "./CancelSubscriptionButton"
+import { CreditsSection } from "@/components/portal/billing/CreditsSection"
 import { db } from "@/lib/db"
 import { stripe } from "@/lib/stripe"
 import { ensureDbUser } from "@/lib/auth/ensure-user"
@@ -67,6 +68,10 @@ export default async function BillingPage() {
         <h1 className="text-2xl font-bold text-foreground mb-1">Billing</h1>
         <p className="text-muted-foreground">Manage your subscriptions and payment details</p>
       </div>
+
+      {/* Enrichment credits — top of page so operators see balance + topup
+          before scrolling to subscription management. */}
+      <CreditsSection userId={baseUser.id} />
 
       {/* Past-due alert */}
       {pastDueSubs.length > 0 && (
