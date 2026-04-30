@@ -41,9 +41,11 @@ export function MapsDiscovery() {
   const [results, setResults] = useState<PlaceResult[]>([])
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [searching, setSearching] = useState(false)
+  const [loadingMore, setLoadingMore] = useState(false)
   const [importing, setImporting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [lastCost, setLastCost] = useState<number | null>(null)
+  const [nextPageToken, setNextPageToken] = useState<string | null>(null)
   const [importSummary, setImportSummary] = useState<{
     created: number
     skipped: number
@@ -57,6 +59,7 @@ export function MapsDiscovery() {
     setSearching(true)
     setSelected(new Set())
     setImportSummary(null)
+    setNextPageToken(null)
     try {
       const res = await fetch("/api/portal/crm/scout/maps-search", {
         method: "POST",
@@ -80,10 +83,47 @@ export function MapsDiscovery() {
       }
       setResults(data.results ?? [])
       setLastCost(data.creditCost ?? 0)
+      setNextPageToken(data.nextPageToken ?? null)
     } catch (err) {
       setError(err instanceof Error ? err.message : "Network error")
     } finally {
       setSearching(false)
+    }
+  }
+
+  async function handleLoadMore() {
+    if (!nextPageToken || !query.trim()) return
+    setError(null)
+    setLoadingMore(true)
+    try {
+      const res = await fetch("/api/portal/crm/scout/maps-search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          query: query.trim(),
+          min_rating: minRating === "" ? undefined : minRating,
+          min_reviews: minReviews === "" ? undefined : minReviews,
+          page_token: nextPageToken,
+        }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        setError(typeof data.error === "string" ? data.error : "Load more failed")
+        return
+      }
+      // Append, dedup by place_id
+      setResults((prev) => {
+        const seen = new Set(prev.map((r) => r.place_id))
+        const fresh = (data.results ?? []).filter(
+          (r: PlaceResult) => !seen.has(r.place_id),
+        )
+        return [...prev, ...fresh]
+      })
+      setNextPageToken(data.nextPageToken ?? null)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Network error")
+    } finally {
+      setLoadingMore(false)
     }
   }
 
@@ -354,6 +394,28 @@ export function MapsDiscovery() {
               )
             })}
           </ul>
+
+          {/* Load-more — Google Places returns up to 60 results per query
+              across 3 pages of 20. Each page costs another 1 credit. */}
+          {nextPageToken && (
+            <div className="text-center">
+              <button
+                type="button"
+                onClick={handleLoadMore}
+                disabled={loadingMore}
+                className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-4 py-2 text-xs font-semibold text-foreground hover:border-primary hover:text-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                {loadingMore ? (
+                  <>
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    Loading more…
+                  </>
+                ) : (
+                  <>Load 20 more (1 credit)</>
+                )}
+              </button>
+            </div>
+          )}
 
           {/* Bulk import bar */}
           {selected.size > 0 && (

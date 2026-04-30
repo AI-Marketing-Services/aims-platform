@@ -10,6 +10,7 @@ import { ProposalGenerator } from "@/components/portal/crm/ProposalGenerator"
 import { FollowUpButton } from "@/components/portal/crm/FollowUpButton"
 import { RecommendedPlaysCard } from "@/components/portal/crm/RecommendedPlaysCard"
 import { ContactsManager } from "@/components/portal/crm/ContactsManager"
+import { DealQuickActions } from "@/components/portal/crm/DealQuickActions"
 import { matchPlaybookForIndustry } from "@/lib/playbooks/match"
 import { DealChecklist } from "@/components/portal/crm/DealChecklist"
 import { EnrichmentCard } from "@/components/portal/crm/EnrichmentCard"
@@ -88,6 +89,14 @@ export default async function DealDetailPage({
           </div>
         )}
       </div>
+
+      {/* Quick actions — most-used operator actions in one row */}
+      <DealQuickActions
+        dealId={deal.id}
+        companyName={deal.companyName}
+        defaultRecipientEmail={deal.contactEmail ?? deal.contacts[0]?.email ?? null}
+        hasEnrichment={Boolean(deal.enrichment)}
+      />
 
       {/* Stage selector */}
       <div className="bg-card border border-border rounded-xl p-4 space-y-2">
@@ -262,7 +271,7 @@ export default async function DealDetailPage({
         })()}
 
         {/* Proposals */}
-        <div className="bg-card border border-border rounded-xl p-4">
+        <div id="proposal-section" className="bg-card border border-border rounded-xl p-4 scroll-mt-4">
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
             Proposals
           </p>

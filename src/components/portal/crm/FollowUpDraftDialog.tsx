@@ -135,6 +135,22 @@ export function FollowUpDraftDialog({
     const to = draft.recipientEmail ?? ""
     const url = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
     window.open(url, "_blank", "noopener,noreferrer")
+
+    // Log the send — fire-and-forget. We assume opening mailto: means
+    // the operator intends to send (their mail client is open with the
+    // pre-filled draft). Updates deal.updatedAt so the daily digest
+    // stops surfacing this as a stale follow-up.
+    void fetch(`/api/portal/crm/deals/${dealId}/log-followup`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        subject,
+        recipientEmail: draft.recipientEmail,
+        tone,
+        intent,
+        customNote: customNote.trim() || undefined,
+      }),
+    }).catch(() => {})
   }
 
   if (!open) return null
