@@ -36,36 +36,59 @@ import { cn } from "@/lib/utils"
 import { NotificationBell } from "@/components/shared/NotificationBell"
 import { OnboardingProgressWidget } from "@/components/portal/OnboardingProgressWidget"
 
+// Sidebar items grouped logically. Items in `ADMIN_ONLY_ROUTES` below
+// are filtered out for non-admin viewers so the portal stays focused
+// on what an operator (Katie) actually uses day-to-day.
 const PORTAL_NAV = [
+  // Mission control + getting started
   { label: "Dashboard", href: "/portal/dashboard", icon: LayoutDashboard },
   { label: "Getting Started", href: "/portal/onboard", icon: Rocket },
+
+  // Daily operator work
   { label: "Client CRM", href: "/portal/crm", icon: Briefcase },
-  { label: "Follow-up Rules", href: "/portal/follow-up-rules", icon: Bell },
-  { label: "Invoices", href: "/portal/invoices", icon: FileText },
-  { label: "Revenue", href: "/portal/revenue", icon: TrendingUp },
   { label: "Lead Scout", href: "/portal/crm/scout", icon: MapPin },
   { label: "AI Audit", href: "/portal/audits", icon: ClipboardCheck },
+  { label: "Follow-up Rules", href: "/portal/follow-up-rules", icon: Bell },
+
+  // Revenue + reporting
+  { label: "Invoices", href: "/portal/invoices", icon: FileText },
+  { label: "Revenue", href: "/portal/revenue", icon: TrendingUp },
+  { label: "My Metrics", href: "/portal/metrics", icon: BarChart3 },
+
+  // AI + content tools
   { label: "AI Scripts", href: "/portal/scripts", icon: FileCode2 },
   { label: "Content Engine", href: "/portal/content", icon: PenLine },
   { label: "Toolkit", href: "/portal/tools", icon: Wrench },
-  { label: "My Metrics", href: "/portal/metrics", icon: TrendingUp },
   { label: "Playbooks", href: "/portal/playbooks", icon: BookOpen },
   { label: "Pricing Calc", href: "/portal/calculator", icon: Calculator },
+
+  // Admin-only (filtered out below for clients)
   { label: "Ops Excellence", href: "/portal/ops-excellence", icon: Gauge },
   { label: "My Services", href: "/portal/services", icon: Layers },
   { label: "Marketplace", href: "/portal/marketplace", icon: ShoppingBag },
   { label: "Campaigns", href: "/portal/campaigns", icon: BarChart3 },
   { label: "Signal", href: "/portal/signal", icon: Newspaper },
+
+  // Account
   { label: "Billing", href: "/portal/billing", icon: CreditCard },
   { label: "Referrals", href: "/portal/referrals", icon: Users },
   { label: "Support", href: "/portal/support", icon: LifeBuoy },
   { label: "Settings", href: "/portal/settings", icon: Settings },
 ] as const
 
-// Admin-only items in the client sidebar. (Currently empty — services /
-// marketplace / campaigns / ops-excellence are now visible to all clients
-// so Katie + future testers can fully exercise the portal.)
-const ADMIN_ONLY_ROUTES: string[] = []
+// Routes hidden from CLIENT users. Admins (and admins previewing as
+// client) still see them so they can manage the wider platform.
+//
+// Decision: Ops Excellence / My Services / Marketplace / Campaigns /
+// Signal are all platform / admin features that distract from the
+// operator's daily flow (CRM, audit, scripts, content, billing).
+const ADMIN_ONLY_ROUTES: string[] = [
+  "/portal/ops-excellence",
+  "/portal/services",
+  "/portal/marketplace",
+  "/portal/campaigns",
+  "/portal/signal",
+]
 
 interface PortalSidebarProps {
   totalMrr?: number
@@ -110,7 +133,10 @@ export function PortalSidebar({
         </Link>
       </div>
 
-      {/* Navigation */}
+      {/* Navigation. Bumped up from py-1.5/text-xs to py-2/text-[13px]
+          for slightly more substance, but stays compact enough that
+          even the full nav (~18 items for clients) fits without a
+          scrollbar on a ~900px viewport. Icons stay 4×4 (16px). */}
       <nav className="flex-1 py-2 px-2 space-y-0.5 overflow-y-auto custom-scrollbar">
         {visibleNav.map((item) => {
           const isActive = pathname.startsWith(item.href)
@@ -119,7 +145,7 @@ export function PortalSidebar({
               key={item.href}
               href={item.href}
               className={cn(
-                "flex items-center gap-2.5 rounded-lg py-1.5 text-xs font-medium transition-all duration-150",
+                "flex items-center gap-2.5 rounded-lg py-2 text-[13px] font-medium transition-all duration-150",
                 isActive
                   ? "bg-primary/10 text-primary border-l-2 border-primary pl-[10px]"
                   : "text-muted-foreground hover:text-foreground hover:bg-surface/80 pl-3"
