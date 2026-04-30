@@ -5,13 +5,15 @@ import { useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { X } from "lucide-react"
 
+// Tonal scale of primary (crimson) for the funnel + neutral for end states.
+// Avoids rainbow color-coding in favor of intensity that maps to deal heat.
 const STAGES = [
-  { key: "PROSPECT", label: "Prospect", color: "bg-blue-400/20 text-blue-400 border-blue-400/30" },
-  { key: "DISCOVERY_CALL", label: "Discovery", color: "bg-violet-400/20 text-violet-400 border-violet-400/30" },
-  { key: "PROPOSAL_SENT", label: "Proposal", color: "bg-amber-400/20 text-amber-400 border-amber-400/30" },
-  { key: "ACTIVE_RETAINER", label: "Active", color: "bg-emerald-400/20 text-emerald-400 border-emerald-400/30" },
-  { key: "COMPLETED", label: "Completed", color: "bg-primary/20 text-primary border-primary/30" },
-  { key: "LOST", label: "Lost", color: "bg-red-400/20 text-red-400 border-red-400/30" },
+  { key: "PROSPECT", label: "Prospect", color: "bg-muted/60 text-muted-foreground border-border" },
+  { key: "DISCOVERY_CALL", label: "Discovery", color: "bg-primary/[0.08] text-foreground border-primary/20" },
+  { key: "PROPOSAL_SENT", label: "Proposal", color: "bg-primary/15 text-primary border-primary/30" },
+  { key: "ACTIVE_RETAINER", label: "Active", color: "bg-primary/20 text-primary border-primary/40 font-semibold" },
+  { key: "COMPLETED", label: "Completed", color: "bg-primary text-primary-foreground border-primary" },
+  { key: "LOST", label: "Lost", color: "bg-background text-muted-foreground border-border line-through" },
 ] as const
 
 const LOST_REASONS = [

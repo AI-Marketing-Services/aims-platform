@@ -214,7 +214,7 @@ export function LeadScout() {
                     className={cn(
                       "rounded-lg border p-3 transition-all",
                       isImported
-                        ? "bg-green-50 border-green-200"
+                        ? "bg-primary/5 border-primary/30"
                         : "bg-background border-border"
                     )}
                   >
@@ -225,7 +225,7 @@ export function LeadScout() {
                       {isImported ? (
                         <a
                           href={`/portal/crm/${state.dealId}`}
-                          className="shrink-0 flex items-center gap-1 px-2 py-1 rounded text-[10px] font-semibold bg-green-100 text-green-700 hover:bg-green-200 transition-colors"
+                          className="shrink-0 flex items-center gap-1 px-2 py-1 rounded text-[10px] font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
                         >
                           <Check className="h-3 w-3" />
                           In CRM

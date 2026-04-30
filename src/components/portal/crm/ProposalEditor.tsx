@@ -37,11 +37,13 @@ interface ProposalEditorProps {
 }
 
 const STATUS_OPTIONS = ["DRAFT", "SENT", "ACCEPTED", "REJECTED"] as const
+// Tonal scale of primary instead of rainbow status badges. Matches
+// the rest of the AIMS UI: nothing competes with the brand color.
 const STATUS_COLORS: Record<string, string> = {
-  DRAFT: "bg-surface text-muted-foreground border-border",
-  SENT: "bg-blue-500/10 text-blue-400 border-blue-500/20",
-  ACCEPTED: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
-  REJECTED: "bg-red-500/10 text-red-400 border-red-500/20",
+  DRAFT: "bg-muted text-muted-foreground border-border",
+  SENT: "bg-primary/[0.08] text-primary border-primary/30",
+  ACCEPTED: "bg-primary text-primary-foreground border-primary",
+  REJECTED: "bg-muted text-muted-foreground border-border line-through",
 }
 
 export function ProposalEditor({
@@ -191,7 +193,7 @@ export function ProposalEditor({
               onClick={copyShareLink}
               className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-surface border border-border transition-all"
             >
-              {copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
+              {copied ? <Check className="h-3.5 w-3.5 text-primary" /> : <Copy className="h-3.5 w-3.5" />}
               {copied ? "Copied!" : "Share link"}
             </button>
           )}

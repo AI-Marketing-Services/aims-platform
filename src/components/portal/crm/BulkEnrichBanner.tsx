@@ -86,19 +86,19 @@ export function BulkEnrichBanner({ creditBalance }: { creditBalance: number }) {
 
   if (result) {
     return (
-      <div className="mb-4 rounded-xl border border-emerald-500/30 bg-emerald-500/5 px-4 py-3 flex items-start gap-3">
-        <Check className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
+      <div className="mb-4 rounded-xl border border-primary/30 bg-primary/5 px-4 py-3 flex items-start gap-3">
+        <Check className="h-4 w-4 text-primary shrink-0 mt-0.5" />
         <div className="flex-1 text-sm">
           <p className="font-semibold text-foreground">
             Enriched {result.enriched} deal{result.enriched === 1 ? "" : "s"}.
           </p>
           {result.errors > 0 && (
             <p className="text-xs text-muted-foreground mt-0.5">
-              {result.errors} failed — check Deal detail pages for retry.
+              {result.errors} failed. Check Deal detail pages for retry.
             </p>
           )}
           {result.stopped && result.stoppedReason && (
-            <p className="text-xs text-amber-500 mt-0.5">{result.stoppedReason}</p>
+            <p className="text-xs text-primary mt-0.5">{result.stoppedReason}</p>
           )}
         </div>
         <button

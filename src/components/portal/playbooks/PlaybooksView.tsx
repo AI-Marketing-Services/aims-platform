@@ -10,10 +10,11 @@ interface PlaybooksViewProps {
   playbooks: IndustryPlaybook[]
 }
 
+// Tonal primary intensity instead of green/amber/red rainbow.
 const DIFFICULTY_COLORS: Record<string, string> = {
-  Easy: "bg-green-50 text-green-700 border-green-200",
-  Medium: "bg-amber-50 text-amber-700 border-amber-200",
-  Advanced: "bg-red-50 text-red-600 border-red-200",
+  Easy: "bg-muted text-muted-foreground border-border",
+  Medium: "bg-primary/[0.08] text-primary border-primary/20",
+  Advanced: "bg-primary/15 text-primary border-primary/30",
 }
 
 export function PlaybooksView({ playbooks }: PlaybooksViewProps) {

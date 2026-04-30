@@ -13,18 +13,20 @@ interface ToolsGridProps {
 }
 
 const BADGE_COLORS: Record<string, string> = {
-  New: "bg-blue-50 text-blue-700 border border-blue-200",
-  Popular: "bg-amber-50 text-amber-700 border border-amber-100",
-  Beta: "bg-violet-50 text-violet-700 border border-violet-200",
+  New: "bg-primary text-primary-foreground border border-primary",
+  Popular: "bg-primary/10 text-primary border border-primary/30",
+  Beta: "bg-muted text-muted-foreground border border-border",
 }
 
+// All categories share a muted neutral avatar; the icon does the work.
+// Keeps the grid feeling cohesive instead of confetti-coded.
 const CATEGORY_AVATAR: Record<string, string> = {
-  automation: "bg-orange-100 text-orange-700",
-  outreach: "bg-blue-100 text-blue-700",
-  content: "bg-violet-100 text-violet-700",
-  research: "bg-green-100 text-green-700",
-  finance: "bg-emerald-100 text-emerald-700",
-  ops: "bg-gray-100 text-gray-600",
+  automation: "bg-muted text-muted-foreground",
+  outreach: "bg-muted text-muted-foreground",
+  content: "bg-muted text-muted-foreground",
+  research: "bg-muted text-muted-foreground",
+  finance: "bg-muted text-muted-foreground",
+  ops: "bg-muted text-muted-foreground",
 }
 
 const GATE_LABELS: Record<UnlockGate, string> = {

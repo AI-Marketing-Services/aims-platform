@@ -297,7 +297,7 @@ export function PricingCalculator() {
             {monthlyWithMargin > 0 && (
               <div>
                 <p className="text-[10px] text-muted-foreground">Monthly retainer</p>
-                <p className="text-xl font-bold text-emerald-400">${monthlyWithMargin.toLocaleString()}<span className="text-xs font-normal text-muted-foreground">/mo</span></p>
+                <p className="text-xl font-bold text-primary">${monthlyWithMargin.toLocaleString()}<span className="text-xs font-normal text-muted-foreground">/mo</span></p>
                 <p className="text-[10px] text-muted-foreground/50">
                   Cost: ${monthlyTotal.toLocaleString()} · Margin: ${(monthlyWithMargin - monthlyTotal).toLocaleString()}
                 </p>
@@ -311,9 +311,9 @@ export function PricingCalculator() {
 
           {/* Annual */}
           {monthlyWithMargin > 0 && (
-            <div className="bg-emerald-500/5 border border-emerald-500/15 rounded-xl p-3">
+            <div className="bg-primary/5 border border-primary/20 rounded-xl p-3">
               <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Annual contract value</p>
-              <p className="text-lg font-bold text-emerald-400">
+              <p className="text-lg font-bold text-primary">
                 ${(setupWithMargin + monthlyWithMargin * 12).toLocaleString()}
               </p>
               <p className="text-[10px] text-muted-foreground/60">

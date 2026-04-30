@@ -138,11 +138,11 @@ export function BugReportWidget({ variant = "pill" }: BugReportWidgetProps) {
 
             {submitted ? (
               <div className="p-8 text-center space-y-3">
-                <div className="mx-auto h-10 w-10 rounded-full bg-emerald-500/10 flex items-center justify-center">
-                  <CheckCircle2 className="h-5 w-5 text-emerald-500" />
+                <div className="mx-auto h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  <CheckCircle2 className="h-5 w-5 text-primary" />
                 </div>
                 <p className="text-sm font-semibold text-foreground">
-                  Thanks — we got it
+                  Thanks, we got it
                 </p>
                 <p className="text-xs text-muted-foreground">
                   Our team will review it and follow up if needed.

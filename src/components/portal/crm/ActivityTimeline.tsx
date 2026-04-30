@@ -32,14 +32,17 @@ const ACTIVITY_ICONS: Record<string, React.ComponentType<{ className?: string }>
   CONTACT_ADDED: UserPlus,
 }
 
+// Activity types share a single muted treatment + the type icon does
+// the visual differentiation. Keeps the timeline on-brand (no rainbow
+// chips) and easier to scan.
 const ACTIVITY_COLORS: Record<string, string> = {
-  NOTE: "bg-surface border-border text-muted-foreground",
-  CALL: "bg-blue-500/10 border-blue-500/20 text-blue-400",
-  EMAIL: "bg-violet-500/10 border-violet-500/20 text-violet-400",
-  MEETING: "bg-amber-500/10 border-amber-500/20 text-amber-400",
-  PROPOSAL_SENT: "bg-emerald-500/10 border-emerald-500/20 text-emerald-400",
+  NOTE: "bg-muted/40 border-border text-muted-foreground",
+  CALL: "bg-muted/40 border-border text-muted-foreground",
+  EMAIL: "bg-muted/40 border-border text-muted-foreground",
+  MEETING: "bg-muted/40 border-border text-muted-foreground",
+  PROPOSAL_SENT: "bg-primary/10 border-primary/20 text-primary",
   STAGE_CHANGE: "bg-primary/10 border-primary/20 text-primary",
-  CONTACT_ADDED: "bg-cyan-500/10 border-cyan-500/20 text-cyan-400",
+  CONTACT_ADDED: "bg-muted/40 border-border text-muted-foreground",
 }
 
 const ACTIVITY_LABELS: Record<string, string> = {

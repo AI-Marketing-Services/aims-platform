@@ -41,7 +41,7 @@ function StepRow({
       className={cn(
         "flex items-start gap-3 rounded-xl border px-4 py-3 transition-all",
         step.completed
-          ? "border-emerald-200 bg-emerald-50/50"
+          ? "border-primary/20 bg-primary/[0.04]"
           : "border-border bg-background hover:border-border"
       )}
     >
@@ -52,7 +52,7 @@ function StepRow({
         aria-label={step.completed ? `Unmark ${step.title}` : `Mark ${step.title} complete`}
       >
         {step.completed ? (
-          <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+          <CheckCircle2 className="h-5 w-5 text-primary" />
         ) : (
           <Circle className={cn("h-5 w-5 text-muted-foreground", isPending && "opacity-50")} />
         )}
@@ -178,7 +178,7 @@ export function OnboardingChecklist({ initialCompletedKeys, variant = "full", cl
               >
                 <div className="flex items-center gap-2">
                   {weekComplete ? (
-                    <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                    <CheckCircle2 className="h-4 w-4 text-primary" />
                   ) : (
                     <Circle className="h-4 w-4 text-muted-foreground" />
                   )}

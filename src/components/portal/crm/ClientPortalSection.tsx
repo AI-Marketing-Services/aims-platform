@@ -155,11 +155,11 @@ export function ClientPortalSection({ dealId, initialAccess }: ClientPortalSecti
         </div>
 
         {activeAccess ? (
-          <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-900 text-emerald-200">
+          <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-primary text-primary-foreground">
             Active
           </span>
         ) : (
-          <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-gray-700 text-gray-300">
+          <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-muted text-muted-foreground">
             Inactive
           </span>
         )}

@@ -33,17 +33,17 @@ function StatusBadge({ status }: { status: ClientInvoiceStatus }) {
     },
     SENT: {
       label: "Sent",
-      className: "bg-blue-50 text-blue-700 border border-blue-200",
+      className: "bg-primary/[0.08] text-primary border border-primary/30",
       icon: <Send className="h-3 w-3" />,
     },
     PAID: {
       label: "Paid",
-      className: "bg-green-50 text-green-700 border border-green-200",
+      className: "bg-primary text-primary-foreground border border-primary",
       icon: <CheckCircle2 className="h-3 w-3" />,
     },
     OVERDUE: {
       label: "Overdue",
-      className: "bg-red-50 text-red-600 border border-red-200",
+      className: "bg-destructive/10 text-destructive border border-destructive/30",
       icon: <AlertCircle className="h-3 w-3" />,
     },
     CANCELLED: {

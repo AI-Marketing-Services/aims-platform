@@ -69,10 +69,10 @@ const STATUS_CONFIG: Record<
   { label: string; className: string }
 > = {
   DRAFT: { label: "Draft", className: "bg-muted text-muted-foreground border border-border" },
-  SENT: { label: "Sent", className: "bg-blue-50 text-blue-700 border border-blue-200" },
-  PAID: { label: "Paid", className: "bg-green-50 text-green-700 border border-green-200" },
-  OVERDUE: { label: "Overdue", className: "bg-red-50 text-red-600 border border-red-200" },
-  CANCELLED: { label: "Cancelled", className: "bg-muted text-muted-foreground border border-border" },
+  SENT: { label: "Sent", className: "bg-primary/[0.08] text-primary border border-primary/30" },
+  PAID: { label: "Paid", className: "bg-primary text-primary-foreground border border-primary" },
+  OVERDUE: { label: "Overdue", className: "bg-destructive/10 text-destructive border border-destructive/30" },
+  CANCELLED: { label: "Cancelled", className: "bg-muted text-muted-foreground border border-border line-through" },
 }
 
 const BASE_URL =
@@ -300,7 +300,7 @@ export default function InvoiceDetailPage() {
             <button
               onClick={handleMarkPaid}
               disabled={markingPaid}
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 text-xs font-semibold hover:bg-emerald-500/20 transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-colors disabled:opacity-50"
             >
               {markingPaid ? (
                 <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -336,7 +336,7 @@ export default function InvoiceDetailPage() {
                 </>
               ) : reminderSent ? (
                 <>
-                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+                  <CheckCircle2 className="h-3.5 w-3.5 text-primary" />
                   Reminder sent
                 </>
               ) : (
@@ -360,14 +360,14 @@ export default function InvoiceDetailPage() {
 
       {/* Share link */}
       {shareUrl && (
-        <div className="bg-blue-500/5 border border-blue-500/20 rounded-xl p-4 flex items-center justify-between gap-4">
+        <div className="bg-primary/5 border border-primary/30 rounded-xl p-4 flex items-center justify-between gap-4">
           <div>
-            <p className="text-xs font-semibold text-blue-600 mb-1">Public Invoice Link</p>
+            <p className="text-xs font-semibold text-primary mb-1">Public Invoice Link</p>
             <p className="text-xs text-muted-foreground font-mono truncate max-w-[400px]">{shareUrl}</p>
           </div>
           <button
             onClick={handleCopyLink}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-600 text-xs font-semibold hover:bg-blue-500/20 transition-colors shrink-0"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-colors shrink-0"
           >
             {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
             {copied ? "Copied!" : "Copy Link"}
@@ -523,7 +523,7 @@ export default function InvoiceDetailPage() {
               {invoice.recipientEmail ?? "No email set — add one first"}
             </p>
             {!invoice.recipientEmail && (
-              <div className="flex items-center gap-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg px-3 py-2 mb-4 text-xs text-yellow-400">
+              <div className="flex items-center gap-2 bg-primary/10 border border-primary/30 rounded-lg px-3 py-2 mb-4 text-xs text-primary">
                 <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
                 Add a recipient email before sending.
               </div>

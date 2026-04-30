@@ -107,8 +107,8 @@ export function EditDealInlineForm({ dealId, defaults }: EditDealInlineFormProps
         >
           {saved ? (
             <>
-              <Check className="h-3 w-3 text-emerald-400" />
-              <span className="text-emerald-400">Saved</span>
+              <Check className="h-3 w-3 text-primary" />
+              <span className="text-primary">Saved</span>
             </>
           ) : (
             <>

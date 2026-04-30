@@ -213,7 +213,7 @@ export function ContactsManager({ dealId, initialContacts }: ContactsManagerProp
                       {fullName}
                     </p>
                     {c.isPrimary && (
-                      <Star className="h-3 w-3 text-amber-500 fill-amber-500 shrink-0" />
+                      <Star className="h-3 w-3 text-primary fill-primary shrink-0" />
                     )}
                   </div>
                   {c.title && (

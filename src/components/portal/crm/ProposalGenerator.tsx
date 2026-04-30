@@ -39,10 +39,10 @@ interface ProposalGeneratorProps {
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  DRAFT: "bg-surface text-muted-foreground border-border",
-  SENT: "bg-blue-500/10 text-blue-400 border-blue-500/20",
-  ACCEPTED: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
-  REJECTED: "bg-red-500/10 text-red-400 border-red-500/20",
+  DRAFT: "bg-muted text-muted-foreground border-border",
+  SENT: "bg-primary/[0.08] text-primary border-primary/30",
+  ACCEPTED: "bg-primary text-primary-foreground border-primary",
+  REJECTED: "bg-muted text-muted-foreground border-border line-through",
 }
 
 export function ProposalGenerator({

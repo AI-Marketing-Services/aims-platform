@@ -395,7 +395,7 @@ export function MapsDiscovery() {
       )}
 
       {importSummary && (
-        <div className="flex items-start gap-2 rounded-md border border-emerald-500/30 bg-emerald-500/5 px-3 py-2 text-xs text-emerald-600">
+        <div className="flex items-start gap-2 rounded-md border border-primary/30 bg-primary/5 px-3 py-2 text-xs text-primary">
           <Check className="h-3.5 w-3.5 shrink-0 mt-0.5" />
           <span>
             Imported <strong>{importSummary.created}</strong> new deal
@@ -455,7 +455,7 @@ export function MapsDiscovery() {
                         {r.name}
                       </p>
                       {r.rating !== null && (
-                        <span className="inline-flex items-center gap-0.5 text-[11px] text-amber-500 font-semibold">
+                        <span className="inline-flex items-center gap-0.5 text-[11px] text-primary font-semibold">
                           <Star className="h-3 w-3 fill-current" />
                           {r.rating.toFixed(1)}
                           {r.reviews_count !== null && (

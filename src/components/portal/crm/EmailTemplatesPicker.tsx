@@ -201,7 +201,7 @@ export function EmailTemplatesPicker({
                   >
                     {copied === "subject" ? (
                       <>
-                        <Check className="h-2.5 w-2.5 text-emerald-500" />
+                        <Check className="h-2.5 w-2.5 text-primary" />
                         Copied
                       </>
                     ) : (
@@ -231,7 +231,7 @@ export function EmailTemplatesPicker({
                   >
                     {copied === "body" ? (
                       <>
-                        <Check className="h-2.5 w-2.5 text-emerald-500" />
+                        <Check className="h-2.5 w-2.5 text-primary" />
                         Copied
                       </>
                     ) : (
@@ -262,7 +262,7 @@ export function EmailTemplatesPicker({
                 >
                   {copied === "all" ? (
                     <>
-                      <Check className="h-3 w-3 text-emerald-500" />
+                      <Check className="h-3 w-3 text-primary" />
                       Copied!
                     </>
                   ) : (

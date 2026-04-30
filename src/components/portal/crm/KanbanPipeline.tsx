@@ -26,11 +26,11 @@ interface KanbanPipelineProps {
 
 const STAGES = [
   { key: "PROSPECT", label: "Prospect", color: "text-muted-foreground", dot: "bg-muted-foreground/40" },
-  { key: "DISCOVERY_CALL", label: "Discovery", color: "text-muted-foreground", dot: "bg-muted-foreground/40" },
-  { key: "PROPOSAL_SENT", label: "Proposal", color: "text-foreground", dot: "bg-foreground/40" },
+  { key: "DISCOVERY_CALL", label: "Discovery", color: "text-muted-foreground", dot: "bg-primary/30" },
+  { key: "PROPOSAL_SENT", label: "Proposal", color: "text-foreground", dot: "bg-primary/60" },
   { key: "ACTIVE_RETAINER", label: "Active", color: "text-primary", dot: "bg-primary" },
-  { key: "COMPLETED", label: "Completed", color: "text-green-600", dot: "bg-green-500" },
-  { key: "LOST", label: "Lost", color: "text-red-500", dot: "bg-red-400" },
+  { key: "COMPLETED", label: "Completed", color: "text-primary", dot: "bg-primary" },
+  { key: "LOST", label: "Lost", color: "text-muted-foreground", dot: "bg-muted-foreground/40" },
 ] as const
 
 type StageKey = (typeof STAGES)[number]["key"]

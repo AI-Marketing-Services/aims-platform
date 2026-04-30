@@ -265,7 +265,7 @@ export function ImportWizard({ creditBalance }: ImportWizardProps) {
           </div>
 
           {!mappingHasCompany && (
-            <div className="rounded-md border border-amber-500/30 bg-amber-500/5 px-3 py-2 text-xs text-amber-600 inline-flex items-start gap-2">
+            <div className="rounded-md border border-primary/30 bg-primary/5 px-3 py-2 text-xs text-primary inline-flex items-start gap-2">
               <Info className="h-3.5 w-3.5 shrink-0 mt-0.5" />
               At least one column must be mapped to <strong>Company name</strong>{" "}
               before you can continue.
@@ -550,8 +550,10 @@ export function ImportWizard({ creditBalance }: ImportWizardProps) {
       {/* STEP: RESULT */}
       {step === "result" && result && (
         <div className="space-y-4">
-          <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-5 text-center">
-            <Check className="h-10 w-10 text-emerald-500 mx-auto mb-2" />
+          <div className="rounded-2xl border border-primary/30 bg-primary/5 p-5 text-center">
+            <div className="h-12 w-12 rounded-full bg-primary/15 flex items-center justify-center mx-auto mb-2">
+              <Check className="h-6 w-6 text-primary" strokeWidth={2.5} />
+            </div>
             <p className="text-lg font-bold text-foreground">
               Import complete.
             </p>
@@ -563,19 +565,19 @@ export function ImportWizard({ creditBalance }: ImportWizardProps) {
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <Stat label="Total rows" value={result.total} />
-            <Stat label="New deals" value={result.created} accent="emerald" />
+            <Stat label="New deals" value={result.created} accent="primary" />
             <Stat label="Duplicates skipped" value={result.dupes} accent="muted" />
-            <Stat label="Invalid rows" value={result.invalid} accent={result.invalid > 0 ? "amber" : "muted"} />
+            <Stat label="Invalid rows" value={result.invalid} accent={result.invalid > 0 ? "primary" : "muted"} />
             {result.enriched > 0 && (
               <Stat label="Auto-enriched" value={result.enriched} accent="primary" />
             )}
             {result.enrichErrors > 0 && (
-              <Stat label="Enrich errors" value={result.enrichErrors} accent="amber" />
+              <Stat label="Enrich errors" value={result.enrichErrors} accent="primary" />
             )}
           </div>
 
           {result.enrichStopped && (
-            <div className="rounded-md border border-amber-500/30 bg-amber-500/5 px-3 py-2 text-xs text-amber-600 flex items-start gap-2">
+            <div className="rounded-md border border-primary/30 bg-primary/5 px-3 py-2 text-xs text-primary flex items-start gap-2">
               <AlertTriangle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
               Auto-enrichment stopped midway because credits ran out. The deals
               are imported. Top up and re-enrich them via the bulk-enrich banner
@@ -646,7 +648,7 @@ function Stepper({ step }: { step: Step }) {
               i === idx
                 ? "bg-primary text-primary-foreground"
                 : i < idx
-                  ? "text-emerald-500"
+                  ? "text-primary"
                   : "text-muted-foreground/60",
             )}
           >
@@ -673,16 +675,10 @@ function Stat({
 }: {
   label: string
   value: number
-  accent?: "emerald" | "amber" | "primary" | "muted"
+  accent?: "primary" | "muted"
 }) {
   const accentClass =
-    accent === "emerald"
-      ? "text-emerald-500"
-      : accent === "amber"
-        ? "text-amber-500"
-        : accent === "primary"
-          ? "text-primary"
-          : "text-foreground"
+    accent === "primary" ? "text-primary" : "text-foreground"
   return (
     <div className="rounded-xl border border-border bg-card p-3">
       <p className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">

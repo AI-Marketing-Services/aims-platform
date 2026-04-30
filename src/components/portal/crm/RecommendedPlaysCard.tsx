@@ -32,10 +32,11 @@ interface RecommendedPlaysCardProps {
   industryId: string
 }
 
+// Difficulty pill uses tonal primary intensity instead of green/amber/red.
 const DIFFICULTY_COLORS: Record<string, string> = {
-  Easy: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
-  Medium: "bg-amber-500/10 text-amber-500 border-amber-500/20",
-  Advanced: "bg-red-500/10 text-red-500 border-red-500/20",
+  Easy: "bg-muted text-muted-foreground border-border",
+  Medium: "bg-primary/[0.08] text-primary border-primary/20",
+  Advanced: "bg-primary/15 text-primary border-primary/30",
 }
 
 export function RecommendedPlaysCard({
@@ -158,7 +159,7 @@ export function RecommendedPlaysCard({
             >
               {copiedId === play.id ? (
                 <>
-                  <Check className="h-3.5 w-3.5 text-emerald-500" />
+                  <Check className="h-3.5 w-3.5 text-primary" />
                   Pitch copied
                 </>
               ) : (

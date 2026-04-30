@@ -19,6 +19,7 @@ import {
   X,
   Clock,
   AlertCircle,
+  BarChart3,
 } from "lucide-react"
 import { db } from "@/lib/db"
 import { EVENT_TYPES } from "@/lib/events/emit"
@@ -110,6 +111,26 @@ export async function TodayCard({ userId }: TodayCardProps) {
     dealsAdvanced.length +
     dealsWon.length
 
+  // Build 7-day activity histogram from weekEvents. Each bar = one day.
+  // We bucket every interesting event type so the chart reflects real
+  // throughput, not just one metric.
+  const days: Array<{ date: Date; label: string; count: number }> = []
+  for (let i = 6; i >= 0; i--) {
+    const start = new Date()
+    start.setHours(0, 0, 0, 0)
+    start.setDate(start.getDate() - i)
+    const end = new Date(start)
+    end.setDate(end.getDate() + 1)
+    const dayName = start.toLocaleDateString("en-US", { weekday: "short" })
+    const count = weekEvents.filter((e) => {
+      const t = new Date(e.createdAt).getTime()
+      return t >= start.getTime() && t < end.getTime()
+    }).length
+    days.push({ date: start, label: dayName, count })
+  }
+  const maxDayCount = Math.max(...days.map((d) => d.count), 1)
+  const weekTotal = days.reduce((s, d) => s + d.count, 0)
+
   return (
     <section className="space-y-4">
       <div className="flex items-center justify-between">
@@ -139,26 +160,89 @@ export async function TodayCard({ userId }: TodayCardProps) {
           icon={<ClipboardCheck className="h-4 w-4" />}
           label="Audits today"
           value={auditCompleted.length}
-          accent="primary"
+          isHero={auditCompleted.length > 0}
         />
         <StatCard
           icon={<Building2 className="h-4 w-4" />}
           label="Enriched today"
           value={dealsEnriched.length}
-          accent="emerald"
+          isHero={dealsEnriched.length > 0}
         />
         <StatCard
           icon={<TrendingUp className="h-4 w-4" />}
           label="Stages moved"
           value={dealsAdvanced.length}
-          accent="sky"
+          isHero={dealsAdvanced.length > 0}
         />
         <StatCard
           icon={<Trophy className="h-4 w-4" />}
           label="Wins"
           value={dealsWon.length}
-          accent="amber"
+          isHero={dealsWon.length > 0}
         />
+      </div>
+
+      {/* 7-day activity histogram. Today's bar is filled solid primary;
+          past days use a muted primary tint so the chart visually leads
+          the eye to the current day. Empty days render as a thin
+          baseline so the operator can still see the day axis. */}
+      <div className="rounded-xl border border-border bg-card p-4">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <BarChart3 className="h-3.5 w-3.5 text-primary" />
+            <p className="text-xs font-semibold text-foreground uppercase tracking-wider">
+              Last 7 days
+            </p>
+          </div>
+          <div className="text-right">
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
+              Total actions
+            </p>
+            <p className="text-lg font-bold tabular-nums text-foreground leading-tight">
+              {weekTotal}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-end gap-1.5 sm:gap-2 h-24">
+          {days.map((d, i) => {
+            const isToday = i === days.length - 1
+            const heightPct =
+              d.count === 0 ? 4 : Math.max(8, (d.count / maxDayCount) * 100)
+            return (
+              <div
+                key={i}
+                className="flex-1 flex flex-col items-center justify-end h-full group"
+                title={`${d.count} action${d.count === 1 ? "" : "s"} on ${d.date.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })}`}
+              >
+                <div className="relative w-full flex items-end justify-center h-[calc(100%-1.25rem)]">
+                  {d.count > 0 && (
+                    <span className="absolute -top-4 text-[10px] font-bold tabular-nums text-foreground opacity-0 group-hover:opacity-100 transition-opacity">
+                      {d.count}
+                    </span>
+                  )}
+                  <div
+                    className={`w-full rounded-t-md transition-all ${
+                      isToday
+                        ? "bg-primary"
+                        : d.count > 0
+                          ? "bg-primary/30 group-hover:bg-primary/50"
+                          : "bg-muted"
+                    }`}
+                    style={{ height: `${heightPct}%`, minHeight: "4px" }}
+                  />
+                </div>
+                <span
+                  className={`text-[10px] mt-1.5 font-medium ${
+                    isToday ? "text-primary font-bold" : "text-muted-foreground"
+                  }`}
+                >
+                  {d.label}
+                </span>
+              </div>
+            )
+          })}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -218,7 +302,7 @@ export async function TodayCard({ userId }: TodayCardProps) {
               Follow-ups due
             </p>
             {staleDeals.length > 0 && (
-              <span className="text-[11px] text-amber-500 font-semibold">
+              <span className="text-[11px] text-primary font-semibold">
                 {staleDeals.length}
               </span>
             )}
@@ -273,26 +357,42 @@ function StatCard({
   icon,
   label,
   value,
-  accent,
+  isHero,
 }: {
   icon: React.ReactNode
   label: string
   value: number
-  accent: "primary" | "emerald" | "sky" | "amber"
+  /** When true, the card has activity worth surfacing — primary accent.
+   *  When false (zero activity), the card stays neutral so the eye
+   *  jumps to the cards that actually have signal. */
+  isHero: boolean
 }) {
-  const accentClass = {
-    primary: "text-primary",
-    emerald: "text-emerald-500",
-    sky: "text-sky-500",
-    amber: "text-amber-500",
-  }[accent]
   return (
-    <div className="rounded-xl border border-border bg-card p-3">
-      <div className={`flex items-center gap-1.5 ${accentClass}`}>
+    <div
+      className={`relative overflow-hidden rounded-xl border bg-card p-4 transition-colors ${
+        isHero
+          ? "border-primary/30 bg-gradient-to-br from-primary/[0.06] to-transparent"
+          : "border-border"
+      }`}
+    >
+      <div
+        className={`flex items-center gap-1.5 ${isHero ? "text-primary" : "text-muted-foreground"}`}
+      >
         {icon}
-        <span className="text-[10px] uppercase tracking-wider font-semibold">{label}</span>
+        <span className="text-[10px] uppercase tracking-wider font-semibold">
+          {label}
+        </span>
       </div>
-      <p className="text-2xl font-bold text-foreground mt-1.5 tabular-nums">{value}</p>
+      <p
+        className={`text-3xl font-bold mt-2 tabular-nums ${
+          isHero ? "text-foreground" : "text-muted-foreground/40"
+        }`}
+      >
+        {value}
+      </p>
+      {isHero && (
+        <div className="absolute -right-2 -bottom-2 h-12 w-12 rounded-full bg-primary/5" />
+      )}
     </div>
   )
 }

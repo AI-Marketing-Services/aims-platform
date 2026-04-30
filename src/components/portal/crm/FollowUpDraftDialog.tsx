@@ -324,7 +324,7 @@ export function FollowUpDraftDialog({
                 >
                   {copied === "subject" ? (
                     <>
-                      <Check className="h-3 w-3 text-emerald-500" />
+                      <Check className="h-3 w-3 text-primary" />
                       Copied
                     </>
                   ) : (
@@ -354,7 +354,7 @@ export function FollowUpDraftDialog({
                 >
                   {copied === "body" ? (
                     <>
-                      <Check className="h-3 w-3 text-emerald-500" />
+                      <Check className="h-3 w-3 text-primary" />
                       Copied
                     </>
                   ) : (
@@ -396,7 +396,7 @@ export function FollowUpDraftDialog({
                 >
                   {copied === "all" ? (
                     <>
-                      <Check className="h-3.5 w-3.5 text-emerald-500" />
+                      <Check className="h-3.5 w-3.5 text-primary" />
                       Copied!
                     </>
                   ) : (

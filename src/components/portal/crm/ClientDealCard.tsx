@@ -55,9 +55,11 @@ function isAutoTag(tag: string): boolean {
   )
 }
 
+// Score buckets use a tonal primary scale instead of green/amber/grey
+// so the score chip stays on-brand. Higher score = solid primary.
 function scoreBucketColor(score: number): string {
-  if (score >= 70) return "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
-  if (score >= 45) return "bg-amber-500/15 text-amber-400 border-amber-500/30"
+  if (score >= 70) return "bg-primary/15 text-primary border-primary/40 font-bold"
+  if (score >= 45) return "bg-primary/[0.06] text-primary border-primary/20"
   return "bg-muted text-muted-foreground border-border"
 }
 
@@ -174,8 +176,8 @@ export function ClientDealCard({
       <div className="flex items-center justify-between mt-2.5">
         {displayValue ? (
           <div className="flex items-center gap-1">
-            <DollarSign className="h-3 w-3 text-emerald-500" />
-            <span className="text-xs font-semibold text-emerald-400">{displayValue}</span>
+            <DollarSign className="h-3 w-3 text-primary" />
+            <span className="text-xs font-semibold text-foreground">{displayValue}</span>
           </div>
         ) : (
           <span className="text-xs text-muted-foreground/50">No value set</span>

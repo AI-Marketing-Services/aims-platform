@@ -118,10 +118,10 @@ export function DuplicatesBanner() {
   }
 
   return (
-    <div className="mb-4 rounded-xl border border-amber-500/30 bg-amber-500/5 px-4 py-3">
+    <div className="mb-4 rounded-xl border border-primary/30 bg-primary/5 px-4 py-3">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-2 min-w-0">
-          <AlertTriangle className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
+          <AlertTriangle className="h-4 w-4 text-primary shrink-0 mt-0.5" />
           <div className="min-w-0">
             <p className="text-sm font-semibold text-foreground">
               {dupCount} duplicate {dupCount === 1 ? "deal" : "deals"} detected
@@ -159,7 +159,7 @@ export function DuplicatesBanner() {
           return (
             <li
               key={clusterKey}
-              className="rounded-lg border border-amber-500/20 bg-background overflow-hidden"
+              className="rounded-lg border border-primary/20 bg-background overflow-hidden"
             >
               <button
                 type="button"
