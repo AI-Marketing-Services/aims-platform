@@ -24,6 +24,11 @@ interface Props {
     locationCount: number
     emailNotifs: boolean
     slackNotifs: boolean
+    notifNewPurchase: boolean
+    notifFulfillmentUpdate: boolean
+    notifSupportReply: boolean
+    notifBillingAlert: boolean
+    notifMarketingDigest: boolean
   } | null
 }
 
@@ -245,12 +250,24 @@ export function PortalSettingsClient({ clerkUser, dbUser }: Props) {
   const [slackNotifs, setSlackNotifs] = useState(dbUser?.slackNotifs ?? false)
   const [inAppNotifs, setInAppNotifs] = useState(true) // Always on by default
 
-  // Notification state - per event type
-  const [notifNewPurchase, setNotifNewPurchase] = useState(true)
-  const [notifFulfillmentUpdate, setNotifFulfillmentUpdate] = useState(true)
-  const [notifSupportReply, setNotifSupportReply] = useState(true)
-  const [notifBillingAlert, setNotifBillingAlert] = useState(true)
-  const [notifMarketingDigest, setNotifMarketingDigest] = useState(true)
+  // Notification state - per event type. Defaults match the User
+  // schema defaults; loaded from dbUser when available so the UI shows
+  // the actual current state, not optimistic-on values.
+  const [notifNewPurchase, setNotifNewPurchase] = useState(
+    dbUser?.notifNewPurchase ?? true,
+  )
+  const [notifFulfillmentUpdate, setNotifFulfillmentUpdate] = useState(
+    dbUser?.notifFulfillmentUpdate ?? true,
+  )
+  const [notifSupportReply, setNotifSupportReply] = useState(
+    dbUser?.notifSupportReply ?? true,
+  )
+  const [notifBillingAlert, setNotifBillingAlert] = useState(
+    dbUser?.notifBillingAlert ?? true,
+  )
+  const [notifMarketingDigest, setNotifMarketingDigest] = useState(
+    dbUser?.notifMarketingDigest ?? false,
+  )
 
   // Saving state for notification preferences
   const [notifSaving, setNotifSaving] = useState(false)
@@ -468,8 +485,8 @@ export function PortalSettingsClient({ clerkUser, dbUser }: Props) {
               onChange={setNotifBillingAlert}
             />
             <NotifToggle
-              label="Marketing Digest"
-              description="Weekly performance summaries and feature announcements"
+              label="Daily morning brief"
+              description="7am Mon-Fri email with hot leads, follow-ups due, yesterday's wins. Only fires on days where you have signal — quiet days = no email."
               value={notifMarketingDigest}
               onChange={setNotifMarketingDigest}
             />

@@ -23,6 +23,11 @@ export default async function PortalSettingsPage() {
       locationCount: true,
       emailNotifs: true,
       slackNotifs: true,
+      notifNewPurchase: true,
+      notifFulfillmentUpdate: true,
+      notifSupportReply: true,
+      notifBillingAlert: true,
+      notifMarketingDigest: true,
     },
   })
 
