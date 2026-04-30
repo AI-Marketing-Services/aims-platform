@@ -16,6 +16,7 @@ import { getProgressForUser } from "@/lib/onboarding/progress"
 import { TOTAL_STEPS } from "@/lib/onboarding/steps"
 import { OnboardingChecklist } from "@/components/portal/OnboardingChecklist"
 import { TodayCard } from "@/components/portal/TodayCard"
+import { FirstRunWelcomeCard } from "@/components/portal/FirstRunWelcomeCard"
 
 export const metadata: Metadata = { title: "Dashboard" }
 
@@ -132,6 +133,9 @@ export default async function PortalDashboard({
           Here&apos;s what&apos;s happening across your pipeline today.
         </p>
       </div>
+
+      {/* ── FIRST-RUN — only renders for fresh operators with zero activity ── */}
+      {dbUser && <FirstRunWelcomeCard userId={dbUser.id} firstName={firstName} />}
 
       {/* ── TODAY CARD — daily-open hook, surfaces hot leads + follow-ups ── */}
       {dbUser && <TodayCard userId={dbUser.id} />}
