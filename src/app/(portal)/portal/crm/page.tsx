@@ -3,6 +3,7 @@ import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
 import { KanbanPipeline } from "@/components/portal/crm/KanbanPipeline"
 import { BulkEnrichBanner } from "@/components/portal/crm/BulkEnrichBanner"
+import { DuplicatesBanner } from "@/components/portal/crm/DuplicatesBanner"
 import { Briefcase, Download, MapPin, Upload } from "lucide-react"
 import Link from "next/link"
 
@@ -86,8 +87,11 @@ export default async function CrmPage() {
         </div>
       </div>
 
-      {/* Bulk-enrich banner — shows only when there are unenriched deals */}
-      <div className="px-6 pt-4">
+      {/* Banners. Both are self-fetching and self-hiding when nothing
+          actionable. Duplicates first since merging is a prerequisite
+          for clean enrichment. */}
+      <div className="px-6 pt-4 space-y-3">
+        <DuplicatesBanner />
         <BulkEnrichBanner creditBalance={creditBalance} />
       </div>
 
