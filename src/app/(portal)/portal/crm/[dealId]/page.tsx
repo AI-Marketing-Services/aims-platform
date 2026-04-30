@@ -8,6 +8,8 @@ import { ChevronLeft, Building2, User, Mail, Phone, Globe, DollarSign } from "lu
 import { EditDealInlineForm } from "@/components/portal/crm/EditDealInlineForm"
 import { ProposalGenerator } from "@/components/portal/crm/ProposalGenerator"
 import { FollowUpButton } from "@/components/portal/crm/FollowUpButton"
+import { RecommendedPlaysCard } from "@/components/portal/crm/RecommendedPlaysCard"
+import { matchPlaybookForIndustry } from "@/lib/playbooks/match"
 import { DealChecklist } from "@/components/portal/crm/DealChecklist"
 import { EnrichmentCard } from "@/components/portal/crm/EnrichmentCard"
 import { MAX_ENRICHMENT_COST } from "@/lib/enrichment/credits/pricing"
@@ -210,6 +212,36 @@ export default async function DealDetailPage({
             defaultRecipientEmail={deal.contactEmail ?? deal.contacts[0]?.email ?? null}
           />
         </div>
+
+        {/* Industry-matched playbook recommendations — surfaced from
+            PLAYBOOK_MANIFEST based on the deal's enriched/declared
+            industry. Saves operators from browsing /portal/playbooks. */}
+        {(() => {
+          const industryToMatch =
+            deal.enrichment?.industry ?? deal.industry ?? null
+          const matched = matchPlaybookForIndustry(industryToMatch)
+          if (!matched) return null
+          return (
+            <RecommendedPlaysCard
+              dealId={deal.id}
+              industry={industryToMatch}
+              matchedIndustry={matched.playbook.industry}
+              matchType={matched.matchType}
+              industryId={matched.playbook.id}
+              plays={matched.topUseCases.map((u) => ({
+                id: u.id,
+                title: u.title,
+                problem: u.problem,
+                solution: u.solution,
+                tools: u.tools,
+                monthlyValue: u.monthlyValue,
+                difficulty: u.difficulty,
+                timeToDeliver: u.timeToDeliver,
+                pitchLine: u.pitchLine,
+              }))}
+            />
+          )
+        })()}
 
         {/* Proposals */}
         <div className="bg-card border border-border rounded-xl p-4">
