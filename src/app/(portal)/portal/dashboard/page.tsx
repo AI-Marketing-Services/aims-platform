@@ -28,6 +28,7 @@ import { OnboardingChecklist } from "@/components/portal/OnboardingChecklist"
 import { TodayCard } from "@/components/portal/TodayCard"
 import { FirstRunWelcomeCard } from "@/components/portal/FirstRunWelcomeCard"
 import { NextQuestWidget } from "@/components/quests/NextQuestWidget"
+import { WelcomeVideoCard } from "@/components/quests/WelcomeVideoCard"
 import { LineChart } from "@/components/portal/charts/LineChart"
 import { DonutChart } from "@/components/portal/charts/DonutChart"
 
@@ -368,6 +369,9 @@ export default async function PortalDashboard({
 
       {/* ── NEXT QUEST — the single "what to do next" hint ── */}
       <NextQuestWidget />
+
+      {/* ── WELCOME VIDEO — Tier 0, self-hides once watched ── */}
+      <WelcomeVideoCard />
 
       {/* ── HEADLINE STAT TILES (4 across) ── */}
       {crmStats && revenue && (

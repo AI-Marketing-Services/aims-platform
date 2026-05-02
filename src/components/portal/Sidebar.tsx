@@ -31,7 +31,10 @@ import {
   ClipboardCheck,
   Sparkles,
   Trophy,
+  Lock,
 } from "lucide-react"
+import type { FeatureKey } from "@/lib/quests/registry"
+import { useQuests } from "@/components/quests/QuestContext"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
 import { NotificationBell } from "@/components/shared/NotificationBell"
@@ -41,40 +44,51 @@ import { QuestProgressRing } from "@/components/quests/QuestProgressRing"
 // Sidebar items grouped logically. Items in `ADMIN_ONLY_ROUTES` below
 // are filtered out for non-admin viewers so the portal stays focused
 // on what an operator (Katie) actually uses day-to-day.
-const PORTAL_NAV = [
-  // Mission control + getting started
+// `gate`: optional FeatureKey from the quest system. If set, item shows a
+// Lock badge (and reduced opacity) until the user unlocks it. The link is
+// still clickable so admins/preview can navigate; LockedFeatureCard on the
+// destination page handles the empty state.
+type NavItem = {
+  label: string
+  href: string
+  icon: typeof LayoutDashboard
+  gate?: FeatureKey
+}
+
+const PORTAL_NAV: readonly NavItem[] = [
+  // Mission control + getting started — never gated
   { label: "Dashboard", href: "/portal/dashboard", icon: LayoutDashboard },
   { label: "Getting Started", href: "/portal/onboard", icon: Rocket },
   { label: "Quests", href: "/portal/quests", icon: Trophy },
 
   // Daily operator work
-  { label: "Client CRM", href: "/portal/crm", icon: Briefcase },
-  { label: "Lead Scout", href: "/portal/crm/scout", icon: MapPin },
-  { label: "AI Audit", href: "/portal/audits", icon: ClipboardCheck },
-  { label: "Follow-up Rules", href: "/portal/follow-up-rules", icon: Bell },
+  { label: "Client CRM", href: "/portal/crm", icon: Briefcase, gate: "crm" },
+  { label: "Lead Scout", href: "/portal/crm/scout", icon: MapPin, gate: "lead_scout" },
+  { label: "AI Audit", href: "/portal/audits", icon: ClipboardCheck, gate: "audits" },
+  { label: "Follow-up Rules", href: "/portal/follow-up-rules", icon: Bell, gate: "follow_up_rules" },
 
   // Revenue + reporting
   { label: "Invoices", href: "/portal/invoices", icon: FileText },
-  { label: "Revenue", href: "/portal/revenue", icon: TrendingUp },
+  { label: "Revenue", href: "/portal/revenue", icon: TrendingUp, gate: "revenue" },
   { label: "My Metrics", href: "/portal/metrics", icon: BarChart3 },
 
   // AI + content tools
-  { label: "AI Scripts", href: "/portal/scripts", icon: FileCode2 },
-  { label: "Content Engine", href: "/portal/content", icon: PenLine },
-  { label: "Toolkit", href: "/portal/tools", icon: Wrench },
-  { label: "Playbooks", href: "/portal/playbooks", icon: BookOpen },
-  { label: "Pricing Calc", href: "/portal/calculator", icon: Calculator },
+  { label: "AI Scripts", href: "/portal/scripts", icon: FileCode2, gate: "scripts" },
+  { label: "Content Engine", href: "/portal/content", icon: PenLine, gate: "content" },
+  { label: "Toolkit", href: "/portal/tools", icon: Wrench, gate: "ai_tools" },
+  { label: "Playbooks", href: "/portal/playbooks", icon: BookOpen, gate: "playbooks" },
+  { label: "Pricing Calc", href: "/portal/calculator", icon: Calculator, gate: "calculator" },
 
   // Admin-only (filtered out below for clients)
   { label: "Ops Excellence", href: "/portal/ops-excellence", icon: Gauge },
   { label: "My Services", href: "/portal/services", icon: Layers },
-  { label: "Marketplace", href: "/portal/marketplace", icon: ShoppingBag },
+  { label: "Marketplace", href: "/portal/marketplace", icon: ShoppingBag, gate: "marketplace" },
   { label: "Campaigns", href: "/portal/campaigns", icon: BarChart3 },
-  { label: "Signal", href: "/portal/signal", icon: Newspaper },
+  { label: "Signal", href: "/portal/signal", icon: Newspaper, gate: "signal" },
 
   // Account
   { label: "Billing", href: "/portal/billing", icon: CreditCard },
-  { label: "Referrals", href: "/portal/referrals", icon: Users },
+  { label: "Referrals", href: "/portal/referrals", icon: Users, gate: "referrals" },
   { label: "Support", href: "/portal/support", icon: LifeBuoy },
   { label: "Settings", href: "/portal/settings", icon: Settings },
 ] as const
@@ -117,6 +131,7 @@ export function PortalSidebar({
   const lowBalance = creditBalance < 50
   const pathname = usePathname()
   const [collapsed, setCollapsed] = useState(false)
+  const { isFeatureUnlocked, loading: questsLoading } = useQuests()
 
   const visibleNav = PORTAL_NAV.filter(
     (item) => !ADMIN_ONLY_ROUTES.includes(item.href) || isAdminEmail
@@ -143,20 +158,34 @@ export function PortalSidebar({
       <nav className="flex-1 py-2 px-2 space-y-0.5 overflow-y-auto custom-scrollbar">
         {visibleNav.map((item) => {
           const isActive = pathname.startsWith(item.href)
+          // Don't dim items while quests are still loading — avoids a flash of
+          // "everything is locked" on first paint.
+          const isLocked =
+            !!item.gate && !questsLoading && !isFeatureUnlocked(item.gate)
           return (
             <Link
               key={item.href}
               href={item.href}
+              title={
+                isLocked
+                  ? "Locked — open the Quests map to unlock"
+                  : undefined
+              }
               className={cn(
                 "flex items-center gap-2.5 rounded-lg py-2 text-[13px] font-medium transition-all duration-150",
                 isActive
                   ? "bg-primary/10 text-primary border-l-2 border-primary pl-[10px]"
-                  : "text-muted-foreground hover:text-foreground hover:bg-surface/80 pl-3"
+                  : isLocked
+                    ? "text-muted-foreground/50 hover:text-muted-foreground hover:bg-surface/40 pl-3"
+                    : "text-muted-foreground hover:text-foreground hover:bg-surface/80 pl-3"
               )}
             >
               <item.icon className={cn("h-4 w-4 shrink-0", isActive && "text-primary")} />
               {!collapsed && (
                 <span className="flex-1">{item.label}</span>
+              )}
+              {!collapsed && isLocked && (
+                <Lock className="h-3 w-3 shrink-0 text-muted-foreground/50" />
               )}
               {!collapsed && item.label === "Dashboard" && hasUnread && (
                 <span className="ml-auto h-2 w-2 rounded-full bg-primary" />

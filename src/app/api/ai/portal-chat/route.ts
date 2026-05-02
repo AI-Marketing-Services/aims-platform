@@ -10,6 +10,8 @@ import { searchKnowledge } from "@/lib/knowledge"
 import { upsertChatSession } from "@/lib/db/chat-sessions"
 import { hasEntitlement, ENTITLEMENT_KEYS } from "@/lib/entitlements"
 import { logger } from "@/lib/logger"
+import { getOrCreateDbUserByClerkId } from "@/lib/auth/ensure-user"
+import { markQuestEvent } from "@/lib/quests"
 
 export const maxDuration = 30
 
@@ -43,6 +45,19 @@ export async function POST(req: Request) {
   if (!Array.isArray(rawMessages)) {
     return Response.json({ error: "messages must be an array" }, { status: 400 })
   }
+
+  // Quest: Meet Your AI Co-pilot + Tinkerer side-quest. Best-effort, never
+  // blocks the chat response. Idempotent — subsequent messages are no-ops.
+  void getOrCreateDbUserByClerkId(userId)
+    .then((u) => {
+      void markQuestEvent(u.id, "ai_chat.first_message", {
+        metadata: { surface: "portal-chat-widget" },
+      })
+      void markQuestEvent(u.id, "ai_bot.used", {
+        metadata: { bot: "portal-chat" },
+      })
+    })
+    .catch(() => {})
 
   // Persist chat session (non-blocking)
   if (sessionId) {

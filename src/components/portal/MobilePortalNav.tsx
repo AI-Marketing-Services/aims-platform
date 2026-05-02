@@ -3,15 +3,18 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
-  LayoutDashboard, Briefcase, FileText, MapPin, Settings
+  LayoutDashboard, Briefcase, MapPin, Settings, Trophy,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
+// 5 slots, daily-flow ordered. Quests sits center as the "compass" of the
+// platform — it's the user's map of what to do next. Invoices is reachable
+// from CRM rows when needed; it doesn't earn a top-level mobile slot.
 const MOBILE_NAV_DEFAULT = [
   { label: "Dashboard", href: "/portal/dashboard", icon: LayoutDashboard },
   { label: "CRM", href: "/portal/crm", icon: Briefcase },
+  { label: "Quests", href: "/portal/quests", icon: Trophy },
   { label: "Scout", href: "/portal/crm/scout", icon: MapPin },
-  { label: "Invoices", href: "/portal/invoices", icon: FileText },
   { label: "Settings", href: "/portal/settings", icon: Settings },
 ]
 
