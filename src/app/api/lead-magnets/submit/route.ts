@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { z } from "zod"
 import { createLeadMagnetSubmission } from "@/lib/db/queries"
-import { formRatelimit, getIp } from "@/lib/ratelimit"
+import { formRatelimit, getIp, rateLimitedResponse } from "@/lib/ratelimit"
 import { sendLeadMagnetResults } from "@/lib/email"
 import { queueEmailSequence } from "@/lib/email/queue"
 import { sendQuizResultsEmail, sendCalculatorResultsEmail, sendAuditResultsEmail, sendCreditScoreEmail, sendOpsAuditEmail, sendW2PlaybookEmail, sendBusinessAIAuditEmail } from "@/lib/email/lead-magnet-results"
@@ -99,7 +99,7 @@ const SEQUENCE_MAP: Record<string, "post-quiz" | "post-calculator" | "post-audit
 export async function POST(req: Request) {
   if (formRatelimit) {
     const { success } = await formRatelimit.limit(getIp(req))
-    if (!success) return NextResponse.json({ error: "Too many requests" }, { status: 429 })
+    if (!success) return rateLimitedResponse(req, "POST /api/lead-magnets/submit")
   }
 
   try {

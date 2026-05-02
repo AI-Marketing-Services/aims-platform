@@ -5,6 +5,7 @@ import { z } from "zod"
 import { Resend } from "resend"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
+import { escapeHtml } from "@/lib/email"
 import { getOrCreateDbUserByClerkId } from "@/lib/auth/ensure-user"
 
 const inviteSchema = z.object({
@@ -131,6 +132,9 @@ interface EmailParams {
 }
 
 function buildPortalInviteEmail(p: EmailParams): string {
+  const safeOperatorName = escapeHtml(p.operatorName)
+  const safeRecipientName = escapeHtml(p.recipientName)
+  const safeCompany = escapeHtml(p.company)
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -148,12 +152,12 @@ function buildPortalInviteEmail(p: EmailParams): string {
           </tr>
           <tr>
             <td style="padding:40px 48px;">
-              <h1 style="margin:0 0 8px;font-size:24px;font-weight:700;color:#F0EBE0;">${p.operatorName}</h1>
+              <h1 style="margin:0 0 8px;font-size:24px;font-weight:700;color:#F0EBE0;">${safeOperatorName}</h1>
               <p style="margin:0 0 32px;font-size:14px;color:#9CA3AF;">has shared your project portal with you</p>
 
-              <p style="margin:0 0 16px;font-size:16px;color:#F0EBE0;">Hi${p.recipientName},</p>
+              <p style="margin:0 0 16px;font-size:16px;color:#F0EBE0;">Hi${safeRecipientName},</p>
               <p style="margin:0 0 24px;font-size:15px;color:#D1D5DB;line-height:1.6;">
-                You now have access to your dedicated project portal for <strong style="color:#F0EBE0;">${p.company}</strong>.
+                You now have access to your dedicated project portal for <strong style="color:#F0EBE0;">${safeCompany}</strong>.
                 View your project status, proposals, and invoices in one place.
               </p>
 

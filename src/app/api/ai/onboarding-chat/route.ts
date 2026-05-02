@@ -3,6 +3,7 @@ import { streamText, convertToModelMessages } from "ai"
 import { chatRatelimit, getIp } from "@/lib/ratelimit"
 import { logApiCost, estimateAnthropicCost } from "@/lib/ai"
 import { upsertChatSession } from "@/lib/db/chat-sessions"
+import { logger } from "@/lib/logger"
 
 export const maxDuration = 30
 
@@ -144,7 +145,7 @@ export async function POST(req: Request) {
   try {
     messages = await convertToModelMessages(trimmedMessages as Parameters<typeof convertToModelMessages>[0])
   } catch (err) {
-    console.error("[onboarding-chat] failed to convert messages:", err)
+    logger.error("Failed to convert messages", err, { endpoint: "onboarding-chat" })
     return Response.json({ error: "Invalid message format" }, { status: 400 })
   }
 
@@ -155,7 +156,7 @@ export async function POST(req: Request) {
       messages,
       maxOutputTokens: 512,
       onError: (err) => {
-        console.error("[onboarding-chat] stream error:", err)
+        logger.error("Stream error", err, { endpoint: "onboarding-chat" })
       },
       onFinish: async ({ usage }) => {
         const model = "claude-haiku-4-5-20251001"
@@ -175,7 +176,7 @@ export async function POST(req: Request) {
 
     return result.toTextStreamResponse()
   } catch (err) {
-    console.error("[onboarding-chat] failed to initialize stream:", err)
+    logger.error("Failed to initialize stream", err, { endpoint: "onboarding-chat" })
     return Response.json({ error: "Failed to start AI response" }, { status: 500 })
   }
 }

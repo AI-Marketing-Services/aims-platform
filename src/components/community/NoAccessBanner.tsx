@@ -11,9 +11,9 @@ export function NoAccessBanner() {
   if (params.get("no_access") !== "1") return null
 
   return (
-    <div className="fixed top-0 inset-x-0 z-50 bg-amber-50 border-b border-amber-200 px-4 py-3">
-      <div className="max-w-3xl mx-auto flex items-center justify-between gap-4">
-        <p className="text-sm text-amber-800">
+    <div className="bg-amber-50 border-b border-amber-200 px-4 py-3">
+      <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
+        <p className="text-sm text-amber-800 text-center sm:text-left">
           <strong>Access restricted.</strong> Your account does not have portal access yet.
           {" "}Contact support or sign out and use an authorized account.
         </p>

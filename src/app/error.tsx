@@ -3,6 +3,7 @@
 import { useEffect } from "react"
 import { AlertTriangle, RotateCcw, Home } from "lucide-react"
 import Link from "next/link"
+import { captureException } from "@/lib/observability"
 
 export default function RootError({
   error,
@@ -12,7 +13,10 @@ export default function RootError({
   reset: () => void
 }) {
   useEffect(() => {
-    console.error("Root error boundary caught:", error.digest)
+    captureException(error, {
+      tags: { boundary: "root" },
+      extra: { digest: error.digest },
+    })
   }, [error])
 
   return (

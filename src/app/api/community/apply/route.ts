@@ -1,13 +1,14 @@
 import { NextResponse } from "next/server"
 import { z } from "zod"
 import { db } from "@/lib/db"
-import { formRatelimit, getIp } from "@/lib/ratelimit"
+import { formRatelimit, getIp, rateLimitedResponse } from "@/lib/ratelimit"
 import { logger } from "@/lib/logger"
 import { notify, notifyHotLead } from "@/lib/notifications"
 import { createCloseLead } from "@/lib/close"
 import { getValidatedAttributionResellerId } from "@/lib/tenant/attribution"
-// No drip is queued at apply-submit time — the post-booking drip fires
-// from the Calendly webhook instead, once the applicant has booked.
+// Application-received confirmation fires at submit time so Ryan gets BCC'd.
+// Post-booking drip fires from the Calendly webhook instead.
+import { sendApplicationReceivedEmail } from "@/lib/email/abandoned-application"
 import { QUESTIONS, calculateScore, getCalendarUrl } from "@/lib/collective-application"
 
 const validValues = QUESTIONS.reduce<Record<string, string[]>>((acc, q) => {
@@ -49,7 +50,7 @@ export async function POST(req: Request) {
   if (formRatelimit) {
     const { success } = await formRatelimit.limit(getIp(req))
     if (!success) {
-      return NextResponse.json({ error: "Too many requests" }, { status: 429 })
+      return rateLimitedResponse(req, "POST /api/community/apply")
     }
   }
 
@@ -184,7 +185,7 @@ export async function POST(req: Request) {
             activities: {
               create: {
                 type: "FORM_SUBMITTED",
-                detail: `Re-applied. New score: ${normalizedScore}/100 (${tier}).${shouldUpgradeScore ? " Deal score upgraded." : " Existing score kept (higher)."}`,
+                detail: `Re-applied. New score: ${normalizedScore}/100 (${tier}). Zip: ${zipCode}.${shouldUpgradeScore ? " Deal score upgraded." : " Existing score kept (higher)."}`,
               },
             },
           },
@@ -276,10 +277,14 @@ export async function POST(req: Request) {
         logger.error("Failed to mark partial application as completed", err)
       )
 
-    // Email drips only queue AFTER the applicant books a call (see Calendly
-    // webhook). If they never book, the nurture-unbooked cron handles day
-    // 2/5/9 booking reminders. No drip fires at apply-submit time — the
-    // prospect hasn't proven intent yet.
+    // Application-received confirmation — BCC'd to Ryan so he can track
+    // the form-submit → booking step of the funnel. Fires async so the
+    // response stays fast; failure is logged but does not block the user.
+    sendApplicationReceivedEmail({
+      to: email,
+      name,
+      calLink: getCalendarUrl(tier),
+    }).catch((err) => logger.error("Failed to send application-received email", err))
 
     if (tier === "hot") {
       notifyHotLead({
@@ -313,6 +318,11 @@ export async function POST(req: Request) {
         phone,
         source: `ai-operator-collective-application (${tier})`,
         dealId: deal.id,
+        score: normalizedScore,
+        tier,
+        zipCode,
+        answers,
+        submittedAt: new Date().toISOString(),
       })
         .then((closeLeadId) => {
           if (closeLeadId) {

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { z } from "zod"
 import { db } from "@/lib/db"
-import { formRatelimit, getIp } from "@/lib/ratelimit"
+import { formRatelimit, getIp, rateLimitedResponse } from "@/lib/ratelimit"
 import { notifyNewLead } from "@/lib/notifications"
 import { createCloseLead } from "@/lib/close"
 import { getValidatedAttributionResellerId } from "@/lib/tenant/attribution"
@@ -33,9 +33,7 @@ const schema = z.object({
 export async function POST(req: Request) {
   if (formRatelimit) {
     const { success } = await formRatelimit.limit(getIp(req))
-    if (!success) {
-      return NextResponse.json({ error: "Too many requests" }, { status: 429 })
-    }
+    if (!success) return rateLimitedResponse(req, "POST /api/tenant/lead")
   }
 
   let body: unknown
@@ -55,8 +53,12 @@ export async function POST(req: Request) {
   const input = parsed.data
 
   // Validate the reseller claim. Requires: user exists, role is reseller-ish,
-  // owns a published OperatorSite. Anything else → fall back to the
-  // attribution cookie; if that's also bad, fall back to untagged.
+  // owns a published OperatorSite, AND the request actually originated from
+  // that reseller's whitelabel domain. Without the Origin/Host check, anyone
+  // could POST `resellerId: "<their-own-id>"` from a competing site and
+  // harvest leads that didn't actually come through their funnel — fraudulent
+  // commission. Cookie fallback covers the legitimate case where the visitor
+  // navigated via reseller link and the cookie is set.
   let validReferringResellerId: string | null = null
   try {
     const reseller = await db.user.findUnique({
@@ -64,15 +66,50 @@ export async function POST(req: Request) {
       select: {
         id: true,
         role: true,
-        operatorSite: { select: { isPublished: true, subdomain: true } },
+        operatorSite: {
+          select: { isPublished: true, subdomain: true, customDomain: true },
+        },
       },
     })
     const isEligibleRole =
       reseller?.role === "RESELLER" ||
       reseller?.role === "ADMIN" ||
       reseller?.role === "SUPER_ADMIN"
+
     if (reseller && isEligibleRole && reseller.operatorSite?.isPublished) {
-      validReferringResellerId = reseller.id
+      // Origin / Host validation. Compare the request origin to the
+      // reseller's published domain(s) — subdomain on aioperatorcollective.com
+      // OR custom domain. Reject if mismatched.
+      const requestHost =
+        req.headers.get("origin")?.replace(/^https?:\/\//, "").split("/")[0] ??
+        req.headers.get("x-forwarded-host") ??
+        req.headers.get("host") ??
+        ""
+
+      const expectedSub = reseller.operatorSite.subdomain
+        ? `${reseller.operatorSite.subdomain}.aioperatorcollective.com`
+        : null
+      const expectedCustom = reseller.operatorSite.customDomain ?? null
+
+      const originMatches =
+        (expectedSub && requestHost.toLowerCase() === expectedSub.toLowerCase()) ||
+        (expectedCustom && requestHost.toLowerCase() === expectedCustom.toLowerCase()) ||
+        // Allow our own apex/www in case admin is testing the form locally
+        // or from the canonical site — these are first-party hosts.
+        requestHost.toLowerCase() === "aioperatorcollective.com" ||
+        requestHost.toLowerCase() === "www.aioperatorcollective.com"
+
+      if (originMatches) {
+        validReferringResellerId = reseller.id
+      } else {
+        logger.warn("Tenant lead: rejected resellerId — origin mismatch", {
+          endpoint: "POST /api/tenant/lead",
+          claimedResellerId: input.resellerId,
+          requestHost,
+          expectedSub,
+          expectedCustom,
+        })
+      }
     }
   } catch (err) {
     logger.error("Reseller validation failed; continuing with cookie fallback", err, {

@@ -9,6 +9,50 @@ function getAnthropicClient() {
   return new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 }
 
+/**
+ * Inspects an error from the Anthropic SDK and classifies it for HTTP routes.
+ *
+ * Anthropic returns:
+ *   429 — RateLimitError (we're sending too fast)
+ *   529 — OverloadedError (Anthropic itself is overloaded)
+ *   401 — invalid API key
+ *   500/502/503 — transient server errors
+ *
+ * For 429 and 529 the right thing is to tell the caller "try again in a
+ * moment" rather than show a generic "Failed to generate" — the request is
+ * NOT broken, the upstream is just busy. Returns the appropriate HTTP
+ * status + user-facing message, or null if the error isn't an Anthropic
+ * SDK error.
+ */
+export function classifyAnthropicError(
+  err: unknown
+): { status: number; message: string } | null {
+  if (!err || typeof err !== "object") return null
+  const e = err as { status?: number; name?: string; message?: string }
+  const status = typeof e.status === "number" ? e.status : null
+  const name = typeof e.name === "string" ? e.name : null
+
+  if (status === 429 || name === "RateLimitError") {
+    return {
+      status: 503,
+      message: "AI is busy right now. Please try again in a moment.",
+    }
+  }
+  if (status === 529 || name === "OverloadedError") {
+    return {
+      status: 503,
+      message: "AI is temporarily overloaded. Please try again in a moment.",
+    }
+  }
+  if (status === 401 || name === "AuthenticationError") {
+    return {
+      status: 500,
+      message: "AI is misconfigured. Our team has been notified.",
+    }
+  }
+  return null
+}
+
 // ============ COST TRACKING ============
 
 export const AI_PRICING: Record<string, { input: number; output: number }> = {

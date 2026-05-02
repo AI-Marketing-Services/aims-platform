@@ -94,6 +94,17 @@ const isPublicRoute = createRouteMatcher([
   "/api/community/lead(.*)",
   "/api/community/apply(.*)",
   "/api/unsubscribe(.*)",
+  // Vercel cron jobs — authenticate via Bearer ${CRON_SECRET} inside the
+  // handler, NOT via Clerk. Without this, every cron invocation gets
+  // bounced to /sign-in before its own auth check ever runs.
+  "/api/cron(.*)",
+  // Public proposal share pages — clients arrive via emailed magic links
+  // and must be able to view + accept without a Clerk account. The share
+  // token in the URL is the auth.
+  "/proposals(.*)",
+  "/api/proposals(.*)",
+  // Public invoice viewer for clients (link/token-authenticated).
+  "/invoice(.*)",
   // Client-facing whitelabel portal — token-authenticated, no Clerk required.
   "/client-portal(.*)",
   "/api/client-portal(.*)",

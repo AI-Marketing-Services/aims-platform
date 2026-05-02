@@ -12,6 +12,7 @@ import {
 } from "lucide-react"
 import { PageTransition } from "@/components/shared/PageTransition"
 import { AdminPreviewBanner } from "@/components/shared/AdminPreviewBanner"
+import { BugReportWidget } from "@/components/portal/BugReportWidget"
 import { getEffectiveRole, dashboardForRole } from "@/lib/auth"
 
 export const metadata: Metadata = {
@@ -101,6 +102,7 @@ export default async function ResellerLayout({
           </Link>
         ))}
       </nav>
+      <BugReportWidget variant="pill" />
     </div>
   )
 }

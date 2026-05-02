@@ -65,8 +65,8 @@ model User {
   // Enrichment credits — denormalized current balance + plan tier; the
   // canonical history lives in the CreditTransaction ledger so we can
   // always reconstruct/audit a balance.
-  creditBalance      Int       @default(50)
-  creditPlanTier     String    @default("trial") // trial | operator | pro | agency
+  creditBalance      Int                 @default(50)
+  creditPlanTier     String              @default("trial") // trial | operator | pro | agency
   creditGrantedAt    DateTime?
   creditTransactions CreditTransaction[]
   operatorEvents     OperatorEvent[]     @relation("OperatorEventActor")
@@ -80,6 +80,13 @@ model User {
   notifSignalDigest      Boolean @default(false)
   signalSmsOptIn         Boolean @default(false)
   signalPhoneE164        String?
+
+  // Quest / achievement system — see lib/quests
+  totalXp    Int         @default(0)
+  questLevel Int         @default(0) // 0..5 (FOUNDATION → RETENTION)
+  userQuests UserQuest[]
+  userBadges UserBadge[]
+  userStreak UserStreak?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -852,9 +859,9 @@ model PageView {
 
 model UtmLink {
   id          String   @id @default(cuid())
-  name        String   // human-readable label e.g. "LinkedIn Bio — April Launch"
+  name        String // human-readable label e.g. "LinkedIn Bio — April Launch"
   baseUrl     String   @default("https://aioperatorcollective.com/apply")
-  channel     String   // linkedin | twitter | instagram | email | youtube | tiktok | podcast | newsletter | sms | other
+  channel     String // linkedin | twitter | instagram | email | youtube | tiktok | podcast | newsletter | sms | other
   utmSource   String
   utmMedium   String
   utmCampaign String
@@ -1335,13 +1342,13 @@ model ClientDeal {
   industry     String?
 
   // Discovery + enrichment metadata (populated by Scout import + Enrich button)
-  googlePlaceId   String?  @unique // dedup imports from Google Places
-  lastEnrichedAt  DateTime?
-  source          String?  // "scout" | "manual" | "import" | "audit-converted"
+  googlePlaceId  String?   @unique // dedup imports from Google Places
+  lastEnrichedAt DateTime?
+  source         String? // "scout" | "manual" | "import" | "audit-converted"
 
   // Auto-derived priority score (0-100) computed by deriveAutoTags on
   // every enrichment run. null = not yet enriched.
-  leadScore       Int?
+  leadScore Int?
 
   stage    ClientDealStage @default(PROSPECT)
   value    Float           @default(0)
@@ -1349,19 +1356,19 @@ model ClientDeal {
   notes    String?         @db.Text
   tags     String[]
 
-  contacts   ClientContact[]
-  activities ClientDealActivity[]
-  proposals  ClientProposal[]
-  invoices   ClientInvoice[]
-  aiScripts  AiScript[]
-  portalAccess ClientPortalAccess[]
+  contacts      ClientContact[]
+  activities    ClientDealActivity[]
+  proposals     ClientProposal[]
+  invoices      ClientInvoice[]
+  aiScripts     AiScript[]
+  portalAccess  ClientPortalAccess[]
   contentPieces ContentPiece[]
   followUpRules FollowUpRule[]
   enrichment    ClientDealEnrichment?
   meetingNotes  ClientDealNote[]
 
-  wonAt  DateTime?
-  lostAt DateTime?
+  wonAt      DateTime?
+  lostAt     DateTime?
   lostReason String?
 
   createdAt DateTime @default(now())
@@ -1382,27 +1389,27 @@ model ClientDealEnrichment {
   clientDeal   ClientDeal @relation(fields: [clientDealId], references: [id], onDelete: Cascade)
 
   // Company-level data (Prospeo + Perplexity)
-  domain          String?
-  description     String?  @db.Text
-  industry        String?
-  employeeCount   Int?
-  employeeRange   String?
-  revenueRange   String?
-  foundedYear     Int?
-  city            String?
-  state           String?
-  country         String?
-  linkedinUrl     String?
-  twitterUrl      String?
-  facebookUrl     String?
-  instagramUrl    String?
-  logoUrl         String?
+  domain            String?
+  description       String? @db.Text
+  industry          String?
+  employeeCount     Int?
+  employeeRange     String?
+  revenueRange      String?
+  foundedYear       Int?
+  city              String?
+  state             String?
+  country           String?
+  linkedinUrl       String?
+  twitterUrl        String?
+  facebookUrl       String?
+  instagramUrl      String?
+  logoUrl           String?
   managementCompany String?
   prospeoCompanyId  String? // re-enrich without re-billing
 
   // Provenance: { website: {found, paths}, perplexity: {...}, hunter: {domainContacts, emailFinder}, prospeo: {company, persons} }
-  sources         Json
-  totalCreditsCost Int     @default(0)
+  sources          Json
+  totalCreditsCost Int       @default(0)
   startedAt        DateTime
   completedAt      DateTime?
   errorMessage     String?
@@ -1440,20 +1447,20 @@ model ClientDealNote {
   clientDealId String
   clientDeal   ClientDeal @relation(fields: [clientDealId], references: [id], onDelete: Cascade)
 
-  kind        ClientDealNoteKind @default(NOTE)
-  title       String?            // "Discovery call 4/29", "Proposal feedback PDF"
-  content     String?            @db.Text // pasted text / transcript / typed note
-  fileUrl     String?            // Vercel Blob URL for uploaded files
-  fileName    String?            // original filename for display
-  fileSize    Int?               // bytes
-  fileType    String?            // mime type
+  kind     ClientDealNoteKind @default(NOTE)
+  title    String? // "Discovery call 4/29", "Proposal feedback PDF"
+  content  String?            @db.Text // pasted text / transcript / typed note
+  fileUrl  String? // Vercel Blob URL for uploaded files
+  fileName String? // original filename for display
+  fileSize Int? // bytes
+  fileType String? // mime type
 
   // When the meeting / call occurred — separate from createdAt
   // (createdAt = when uploaded, meetingDate = when it happened).
   meetingDate DateTime?
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([clientDealId])
   @@index([clientDealId, createdAt])
@@ -1461,11 +1468,11 @@ model ClientDealNote {
 }
 
 enum ClientDealNoteKind {
-  NOTE          // free-form typed note
-  TRANSCRIPT    // meeting transcript (pasted)
-  RECORDING     // audio/video file
-  PDF           // uploaded PDF
-  FILE          // any other file
+  NOTE // free-form typed note
+  TRANSCRIPT // meeting transcript (pasted)
+  RECORDING // audio/video file
+  PDF // uploaded PDF
+  FILE // any other file
 }
 
 model ClientDealActivity {
@@ -1487,14 +1494,14 @@ model ClientProposal {
   clientDealId String
   clientDeal   ClientDeal @relation(fields: [clientDealId], references: [id], onDelete: Cascade)
 
-  title       String
-  content     String   @db.Text
-  status      String   @default("DRAFT") // DRAFT | SENT | ACCEPTED | REJECTED
-  shareToken  String?  @unique
-  totalValue  Float    @default(0)
-  currency    String   @default("USD")
+  title      String
+  content    String  @db.Text
+  status     String  @default("DRAFT") // DRAFT | SENT | ACCEPTED | REJECTED
+  shareToken String? @unique
+  totalValue Float   @default(0)
+  currency   String  @default("USD")
 
-  generatedAt DateTime @default(now())
+  generatedAt DateTime  @default(now())
   sentAt      DateTime?
 
   createdAt DateTime @default(now())
@@ -1519,7 +1526,7 @@ model MemberProfile {
   brandColor   String? // hex e.g. "#C4972A"
   tagline      String? // Short tagline for public pages
   faviconUrl   String?
-  fontHeading  String?  @default("DM Sans")
+  fontHeading  String? @default("DM Sans")
   accentColor  String? // secondary brand color
 
   onboardingStartedAt   DateTime  @default(now())
@@ -1550,13 +1557,68 @@ model MemberOnboardingStep {
   @@index([completedAt])
 }
 
+// ============ QUEST / ACHIEVEMENT SYSTEM ============
+// Quest *definitions* live in code (src/lib/quests/registry.ts) so we can
+// version-control them. The DB only stores per-user state.
+
+enum QuestStatus {
+  LOCKED // prerequisites not met
+  AVAILABLE // can be started
+  IN_PROGRESS // user has started but not finished
+  COMPLETED // satisfied — reward unclaimed
+  CLAIMED // reward redeemed
+}
+
+model UserQuest {
+  id            String      @id @default(cuid())
+  userId        String
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  questKey      String
+  status        QuestStatus @default(AVAILABLE)
+  progress      Int         @default(0) // for multi-step quests (e.g. "run 5 audits")
+  startedAt     DateTime?
+  completedAt   DateTime?
+  claimedAt     DateTime?
+  rewardPayload Json? // { credits, badge, mysteryBox, xp }
+  metadata      Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, questKey])
+  @@index([userId, status])
+  @@index([questKey])
+}
+
+model UserBadge {
+  id       String   @id @default(cuid())
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badgeKey String
+  earnedAt DateTime @default(now())
+  metadata Json?
+
+  @@unique([userId, badgeKey])
+  @@index([userId])
+}
+
+model UserStreak {
+  userId          String   @id
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  currentDays     Int      @default(0)
+  longestDays     Int      @default(0)
+  lastActiveDate  DateTime
+  totalActiveDays Int      @default(0)
+  updatedAt       DateTime @updatedAt
+}
+
 // ============ USAGE LEDGER ============
 
 model UsageEvent {
   id        String   @id @default(cuid())
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  type      String   // "lead_scout" | "proposal_generate" | "signal_digest" | "ai_chat"
+  type      String // "lead_scout" | "proposal_generate" | "signal_digest" | "ai_chat"
   credits   Int      @default(1)
   metadata  Json?
   createdAt DateTime @default(now())
@@ -1594,16 +1656,16 @@ enum ClientInvoiceStatus {
 }
 
 model ClientInvoice {
-  id           String     @id @default(cuid())
+  id           String      @id @default(cuid())
   userId       String
-  user         User       @relation("UserInvoices", fields: [userId], references: [id], onDelete: Cascade)
+  user         User        @relation("UserInvoices", fields: [userId], references: [id], onDelete: Cascade)
   clientDealId String?
   clientDeal   ClientDeal? @relation(fields: [clientDealId], references: [id], onDelete: SetNull)
 
-  invoiceNumber  String   @unique // e.g. INV-2026-001
-  title          String
-  recipientName  String?
-  recipientEmail String?
+  invoiceNumber    String  @unique // e.g. INV-2026-001
+  title            String
+  recipientName    String?
+  recipientEmail   String?
   recipientCompany String?
 
   status       ClientInvoiceStatus @default(DRAFT)
@@ -1613,15 +1675,15 @@ model ClientInvoice {
   taxAmount    Float               @default(0)
   total        Float               @default(0)
   notes        String?             @db.Text
-  paymentTerms String?             // e.g. "Net 30"
+  paymentTerms String? // e.g. "Net 30"
 
-  shareToken        String?   @unique
+  shareToken        String? @unique
   stripePaymentLink String?
   stripeSessionId   String?
 
-  dueAt    DateTime?
-  sentAt   DateTime?
-  paidAt   DateTime?
+  dueAt  DateTime?
+  sentAt DateTime?
+  paidAt DateTime?
 
   lineItems ClientInvoiceLineItem[]
 
@@ -1661,9 +1723,9 @@ enum AiScriptType {
 }
 
 model AiScript {
-  id           String     @id @default(cuid())
+  id           String      @id @default(cuid())
   userId       String
-  user         User       @relation("UserAiScripts", fields: [userId], references: [id], onDelete: Cascade)
+  user         User        @relation("UserAiScripts", fields: [userId], references: [id], onDelete: Cascade)
   clientDealId String?
   clientDeal   ClientDeal? @relation(fields: [clientDealId], references: [id], onDelete: SetNull)
 
@@ -1722,9 +1784,9 @@ enum ContentPieceStatus {
 }
 
 model ContentPiece {
-  id           String     @id @default(cuid())
+  id           String      @id @default(cuid())
   userId       String
-  user         User       @relation("UserContent", fields: [userId], references: [id], onDelete: Cascade)
+  user         User        @relation("UserContent", fields: [userId], references: [id], onDelete: Cascade)
   clientDealId String?
   clientDeal   ClientDeal? @relation(fields: [clientDealId], references: [id], onDelete: SetNull)
 
@@ -1735,8 +1797,8 @@ model ContentPiece {
   prompt  String?            @db.Text
 
   publishedAt DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   @@index([userId])
   @@index([userId, type])
@@ -1746,14 +1808,14 @@ model ContentPiece {
 // ============ TIER 2 — FOLLOW-UP NUDGES ============
 
 model FollowUpRule {
-  id           String     @id @default(cuid())
+  id           String      @id @default(cuid())
   userId       String
-  user         User       @relation("UserFollowUpRules", fields: [userId], references: [id], onDelete: Cascade)
+  user         User        @relation("UserFollowUpRules", fields: [userId], references: [id], onDelete: Cascade)
   clientDealId String?
   clientDeal   ClientDeal? @relation(fields: [clientDealId], references: [id], onDelete: SetNull)
 
   stageTrigger  ClientDealStage // fire when deal is in this stage
-  daysStale     Int             // after N days of inactivity
+  daysStale     Int // after N days of inactivity
   message       String?         @db.Text
   isActive      Boolean         @default(true)
   lastTriggered DateTime?
@@ -1771,7 +1833,7 @@ model FollowUpRule {
 // by scripts/ingest-mighty.ts and the /api/cron/ingest-mighty endpoint.
 
 model KnowledgeEntry {
-  id        String @id @default(cuid())
+  id       String @id @default(cuid())
   // "mighty:post", "mighty:coursework", "mighty:event" — whatever shape
   // future sources take (docs, public FAQ, etc.) they get their own
   // source prefix so the unique constraint below is stable.
@@ -1780,7 +1842,7 @@ model KnowledgeEntry {
 
   title    String
   // Plain-text body used for search ranking + chat-visible snippets.
-  body     String @db.Text
+  body     String  @db.Text
   // Original HTML body if the upstream source had one, so an admin UI
   // can render the real formatting without another round-trip.
   bodyHtml String? @db.Text
@@ -1974,20 +2036,20 @@ model CommissionEvent {
   baseAmountCents Int
   // Rate at time of event in basis points (snapshotted from Product so a
   // future product-rate change doesn't retroactively adjust history).
-  commissionBps Int
+  commissionBps   Int
   // Signed; negative for clawback. Always derivable from base * bps but
   // stored explicitly for fast aggregation queries.
-  amountCents Int
-  currency    String @default("usd")
+  amountCents     Int
+  currency        String @default("usd")
 
   // "pending" — within the clawback window (default 30 days)
   // "payable" — clawback window passed, ready to pay
   // "paid"    — Stripe Connect Transfer executed
   // "clawed_back" — refund landed before payable; this event nullifies an earlier one
   // "voided"  — admin manually nullified (chargeback, fraud)
-  status     String
-  payableAt  DateTime?
-  paidAt     DateTime?
+  status           String
+  payableAt        DateTime?
+  paidAt           DateTime?
   stripeTransferId String?
 
   notes String? @db.Text
@@ -2004,25 +2066,25 @@ model CommissionEvent {
 // or questions. Replaces the previous email-based flow so admins triage
 // from /admin/feedback instead of an inbox.
 model PortalFeedback {
-  id        String  @id @default(cuid())
+  id         String  @id @default(cuid())
   reporterId String?
-  reporter  User?   @relation("PortalFeedbackReporter", fields: [reporterId], references: [id], onDelete: SetNull)
+  reporter   User?   @relation("PortalFeedbackReporter", fields: [reporterId], references: [id], onDelete: SetNull)
 
   // Snapshot of reporter identity at submission time so the row stays
   // useful even if the User row is later deleted.
   reporterEmail String
   reporterName  String?
 
-  category String  // BUG | IDEA | QUESTION | OTHER
+  category String // BUG | IDEA | QUESTION | OTHER
   title    String
-  details  String  @db.Text
+  details  String @db.Text
 
   pageUrl   String?
   userAgent String?
 
   // NEW | TRIAGED | IN_PROGRESS | RESOLVED | WONT_FIX
-  status    String   @default("NEW")
-  adminNote String?  @db.Text
+  status    String  @default("NEW")
+  adminNote String? @db.Text
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -2043,10 +2105,10 @@ model AuditQuiz {
   ownerId String
   owner   User   @relation("AuditQuizOwner", fields: [ownerId], references: [id], onDelete: Cascade)
 
-  slug         String  @unique
-  title        String
-  subtitle     String?
-  ctaLabel     String  @default("Take the Audit")
+  slug     String  @unique
+  title    String
+  subtitle String?
+  ctaLabel String  @default("Take the Audit")
 
   // Branding overrides — falls back to operator's MemberProfile when null.
   logoUrl      String?
@@ -2129,10 +2191,10 @@ model CreditTransaction {
   id           String   @id @default(cuid())
   userId       String
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  amount       Int      // negative = debit (spend), positive = grant/refund
-  reason       String   // "enrichment-debit" | "places-search" | "monthly-grant" | "topup-purchase" | "refund-error" | "trial-grant"
-  metadata     Json?    // { dealId, source, operation, ... }
-  balanceAfter Int      // running balance after this tx applied
+  amount       Int // negative = debit (spend), positive = grant/refund
+  reason       String // "enrichment-debit" | "places-search" | "monthly-grant" | "topup-purchase" | "refund-error" | "trial-grant"
+  metadata     Json? // { dealId, source, operation, ... }
+  balanceAfter Int // running balance after this tx applied
   createdAt    DateTime @default(now())
 
   @@index([userId, createdAt])
@@ -2155,8 +2217,8 @@ model OperatorEvent {
   actorId      String
   actor        User     @relation("OperatorEventActor", fields: [actorId], references: [id], onDelete: Cascade)
   targetUserId String?
-  type         String   // canonical event name — see EVENT_TYPES in src/lib/events/emit.ts
-  entityType   String?  // "ClientDeal" | "AuditQuiz" | "AuditResponse" | "Playbook" | etc.
+  type         String // canonical event name — see EVENT_TYPES in src/lib/events/emit.ts
+  entityType   String? // "ClientDeal" | "AuditQuiz" | "AuditResponse" | "Playbook" | etc.
   entityId     String?
   metadata     Json?
   createdAt    DateTime @default(now())

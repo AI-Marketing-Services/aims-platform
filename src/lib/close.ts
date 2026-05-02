@@ -273,6 +273,48 @@ export function primaryName(lead: CloseLead): string {
 
 // ─── Create / update lead ───────────────────────────────────────────────
 
+// ─── Answer label maps (from collective-application.ts) ─────────────────
+
+const TIMELINE_LABELS: Record<string, string> = {
+  right_now:   "Right now — I need this yesterday",
+  within_30:   "Within the next 30 days",
+  next_60_90:  "Next 60–90 days",
+  researching: "Just researching for now",
+}
+
+const REVENUE_GOAL_LABELS: Record<string, string> = {
+  "2k_5k":   "$2,000–$5,000/mo",
+  "5k_10k":  "$5,000–$10,000/mo",
+  "10k_20k": "$10,000–$20,000/mo",
+  "20k_plus": "$20,000+/mo",
+}
+
+const INVESTMENT_LABELS: Record<string, string> = {
+  under_200: "Under $200/mo",
+  "200_500": "$200–$500/mo",
+  "500_1k":  "$500–$1,000/mo",
+  "1k_plus": "$1,000+/mo",
+}
+
+const DECISION_MAKER_LABELS: Record<string, string> = {
+  my_decision:     "My decision entirely",
+  partner_spouse:  "Run by partner/spouse",
+  check_finances:  "Need to check finances first",
+}
+
+const BACKGROUND_LABELS: Record<string, string> = {
+  technology:    "Technology/Software/IT",
+  sales:         "Sales/Business Development",
+  consulting:    "Consulting/Professional Services",
+  marketing:     "Marketing/Advertising",
+  finance:       "Finance/Accounting/Banking",
+  operations:    "Operations/Supply Chain",
+  real_estate:   "Real Estate",
+  healthcare:    "Healthcare/Life Sciences",
+  legal:         "Legal/Compliance/HR",
+  other:         "Other",
+}
+
 /**
  * Create a Close lead pre-stamped with BTC Business Line = AOC so
  * Stephen's shared workspace automation recognises it as ours.
@@ -286,9 +328,51 @@ export async function createCloseLead(params: {
   source?: string | null
   services?: string[]
   dealId: string
+  score?: number | null
+  tier?: string | null
+  zipCode?: string | null
+  answers?: Record<string, string> | null
+  submittedAt?: string | null
 }): Promise<string | null> {
   const headers = closeHeaders()
   if (!headers) return null
+
+  const descriptionParts: string[] = [
+    `Source: ${params.source ?? "AIMS platform"}`,
+    `AIMS Deal ID: ${params.dealId}`,
+    params.submittedAt ? `Submitted: ${params.submittedAt}` : "",
+    "",
+    params.score != null || params.tier
+      ? `Lead Score: ${params.score ?? "N/A"}/100 — Tier: ${params.tier ?? "N/A"}`
+      : "",
+    params.zipCode ? `Zip Code: ${params.zipCode}` : "",
+  ]
+
+  if (params.answers) {
+    descriptionParts.push("", "Application Answers:")
+    const a = params.answers
+    if (a.timeline)
+      descriptionParts.push(`  Timeline: ${TIMELINE_LABELS[a.timeline] ?? a.timeline}`)
+    if (a.revenue_goal)
+      descriptionParts.push(`  Revenue Goal: ${REVENUE_GOAL_LABELS[a.revenue_goal] ?? a.revenue_goal}`)
+    if (a.investment)
+      descriptionParts.push(`  Investment: ${INVESTMENT_LABELS[a.investment] ?? a.investment}`)
+    if (a.decision_maker)
+      descriptionParts.push(`  Decision Maker: ${DECISION_MAKER_LABELS[a.decision_maker] ?? a.decision_maker}`)
+    if (a.background)
+      descriptionParts.push(`  Background: ${BACKGROUND_LABELS[a.background] ?? a.background}`)
+  }
+
+  if (params.services?.length) {
+    descriptionParts.push("", `Interested in: ${params.services.join(", ")}`)
+  }
+
+  const description = descriptionParts.filter((line, i, arr) => {
+    // Collapse consecutive blank lines but keep single separators
+    if (line !== "") return true
+    const prev = arr[i - 1]
+    return prev !== undefined && prev !== ""
+  }).join("\n").trimEnd()
 
   const res = await closeFetch(
     `${CLOSE_API_BASE}/lead/`,
@@ -298,13 +382,7 @@ export async function createCloseLead(params: {
       body: JSON.stringify({
         name: params.company ?? params.contactName,
         url: params.website ?? undefined,
-        description: [
-          `Source: ${params.source ?? "AIMS platform"}`,
-          params.services?.length ? `Interested in: ${params.services.join(", ")}` : "",
-          `AIMS Deal ID: ${params.dealId}`,
-        ]
-          .filter(Boolean)
-          .join("\n"),
+        description,
         contacts: [
           {
             name: params.contactName,

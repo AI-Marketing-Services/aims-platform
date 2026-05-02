@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
-import { sendTrackedEmail } from "@/lib/email"
+import { sendTrackedEmail, escapeHtml } from "@/lib/email"
 import { z } from "zod"
 import { getOrCreateDbUserByClerkId } from "@/lib/auth/ensure-user"
 
@@ -52,6 +52,13 @@ export async function POST(
   const brandColor = profile?.brandColor ?? "#C4972A"
   const shareUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://aioperatorcollective.com"}/proposals/${proposal.shareToken}`
 
+  const safeOperatorName = escapeHtml(operatorName)
+  const safeOneLiner = profile?.oneLiner ? escapeHtml(profile.oneLiner) : ""
+  const safeRecipientName = recipientName ? escapeHtml(recipientName) : ""
+  const safeMessage = message ? escapeHtml(message).replace(/\n/g, "<br>") : ""
+  const safeCompanyName = escapeHtml(proposal.clientDeal.companyName)
+  const safeProposalTitle = escapeHtml(proposal.title)
+
   const html = `<!DOCTYPE html>
 <html lang="en">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
@@ -61,15 +68,15 @@ export async function POST(
       <table role="presentation" width="560" cellpadding="0" cellspacing="0" border="0" style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.08)">
         <!-- Header -->
         <tr><td style="background:${brandColor};padding:24px 32px">
-          <p style="margin:0;font-size:20px;font-weight:700;color:#fff">${operatorName}</p>
-          ${profile?.oneLiner ? `<p style="margin:4px 0 0;font-size:13px;color:rgba(255,255,255,0.8)">${profile.oneLiner}</p>` : ""}
+          <p style="margin:0;font-size:20px;font-weight:700;color:#fff">${safeOperatorName}</p>
+          ${safeOneLiner ? `<p style="margin:4px 0 0;font-size:13px;color:rgba(255,255,255,0.8)">${safeOneLiner}</p>` : ""}
         </td></tr>
         <!-- Body -->
         <tr><td style="padding:32px">
-          <p style="margin:0 0 8px;font-size:14px;color:#374151">Hi${recipientName ? ` ${recipientName}` : ""},</p>
-          ${message ? `<p style="margin:0 0 20px;font-size:14px;color:#374151;line-height:1.6">${message.replace(/\n/g, "<br>")}</p>` : `<p style="margin:0 0 20px;font-size:14px;color:#374151;line-height:1.6">Please find your proposal for <strong>${proposal.clientDeal.companyName}</strong> at the link below.</p>`}
+          <p style="margin:0 0 8px;font-size:14px;color:#374151">Hi${safeRecipientName ? ` ${safeRecipientName}` : ""},</p>
+          ${safeMessage ? `<p style="margin:0 0 20px;font-size:14px;color:#374151;line-height:1.6">${safeMessage}</p>` : `<p style="margin:0 0 20px;font-size:14px;color:#374151;line-height:1.6">Please find your proposal for <strong>${safeCompanyName}</strong> at the link below.</p>`}
           <p style="margin:0 0 8px;font-size:13px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:.05em">Proposal</p>
-          <p style="margin:0 0 20px;font-size:16px;font-weight:700;color:#111827">${proposal.title}</p>
+          <p style="margin:0 0 20px;font-size:16px;font-weight:700;color:#111827">${safeProposalTitle}</p>
           <a href="${shareUrl}" style="display:inline-block;background:${brandColor};color:#fff;font-size:14px;font-weight:600;text-decoration:none;padding:12px 24px;border-radius:8px">
             View Proposal →
           </a>
@@ -80,7 +87,7 @@ export async function POST(
         <!-- Footer -->
         <tr><td style="padding:16px 32px;border-top:1px solid #f3f4f6">
           <p style="margin:0;font-size:11px;color:#9ca3af">
-            Sent by ${operatorName} via AI Operator Collective
+            Sent by ${safeOperatorName} via AI Operator Collective
           </p>
         </td></tr>
       </table>

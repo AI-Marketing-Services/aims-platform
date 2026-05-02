@@ -8,6 +8,14 @@ const ADMIN_EMAILS = (process.env.BOOTSTRAP_ADMIN_EMAILS ?? "adam@modern-ameniti
   .filter(Boolean)
 
 export async function POST(req: Request) {
+  // Defense-in-depth: even if BOOTSTRAP_SECRET leaks, this endpoint is a
+  // black hole in production unless explicitly enabled by setting
+  // ALLOW_BOOTSTRAP=1. Bootstrap is a one-time op, so the env flag should
+  // be unset again immediately after promoting the first admin.
+  if (process.env.NODE_ENV === "production" && process.env.ALLOW_BOOTSTRAP !== "1") {
+    return new Response(null, { status: 404 })
+  }
+
   // Require a secret token via Authorization header (POST-only for sensitive operations)
   const authHeader = req.headers.get("authorization")
 

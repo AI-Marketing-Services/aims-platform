@@ -7,6 +7,7 @@ import { trackUsage } from "@/lib/usage"
 import { randomBytes } from "crypto"
 import { getOrCreateDbUserByClerkId } from "@/lib/auth/ensure-user"
 import { stripDashes } from "@/lib/text/strip-dashes"
+import { markQuestEvent } from "@/lib/quests"
 
 async function getDbUserId(clerkId: string): Promise<string | null> {
   const user = await getOrCreateDbUserByClerkId(clerkId)
@@ -230,6 +231,14 @@ Output ONLY the proposal markdown — no preamble, no commentary, no code fence 
     })
 
     trackUsage(dbUserId, "proposal_generate", { dealId, proposalId: proposal.id }).catch(() => {})
+
+    // Quest: First Proposal + AI bot used
+    void markQuestEvent(dbUserId, "proposal.first_generated", {
+      metadata: { dealId, proposalId: proposal.id },
+    })
+    void markQuestEvent(dbUserId, "ai_bot.used", {
+      metadata: { bot: "proposal-generator" },
+    })
 
     return NextResponse.json({ proposal }, { status: 201 })
   } catch (err) {

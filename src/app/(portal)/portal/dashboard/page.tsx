@@ -27,6 +27,7 @@ import { TOTAL_STEPS } from "@/lib/onboarding/steps"
 import { OnboardingChecklist } from "@/components/portal/OnboardingChecklist"
 import { TodayCard } from "@/components/portal/TodayCard"
 import { FirstRunWelcomeCard } from "@/components/portal/FirstRunWelcomeCard"
+import { NextQuestWidget } from "@/components/quests/NextQuestWidget"
 import { LineChart } from "@/components/portal/charts/LineChart"
 import { DonutChart } from "@/components/portal/charts/DonutChart"
 
@@ -364,6 +365,9 @@ export default async function PortalDashboard({
 
       {/* ── FIRST-RUN — only renders for fresh operators with zero activity ── */}
       {dbUser && <FirstRunWelcomeCard userId={dbUser.id} firstName={firstName} />}
+
+      {/* ── NEXT QUEST — the single "what to do next" hint ── */}
+      <NextQuestWidget />
 
       {/* ── HEADLINE STAT TILES (4 across) ── */}
       {crmStats && revenue && (

@@ -4,6 +4,7 @@ import { AdminSidebar } from "@/components/admin/AdminSidebar"
 import { MobileAdminNav } from "@/components/admin/MobileAdminNav"
 import { PageTransition } from "@/components/shared/PageTransition"
 import { KeyboardShortcuts } from "@/components/shared/KeyboardShortcuts"
+import { BugReportWidget } from "@/components/portal/BugReportWidget"
 import { getEffectiveRole, dashboardForRole } from "@/lib/auth"
 
 export const metadata: Metadata = {
@@ -48,6 +49,7 @@ export default async function AdminLayout({
       {/* Mobile bottom nav */}
       <MobileAdminNav />
       <KeyboardShortcuts />
+      <BugReportWidget variant="pill" />
     </div>
   )
 }

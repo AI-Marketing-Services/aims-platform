@@ -3,10 +3,11 @@ import { auth } from "@clerk/nextjs/server"
 import { z } from "zod"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
-import { analyzeWithClaude } from "@/lib/ai"
+import { analyzeWithClaude, classifyAnthropicError } from "@/lib/ai"
 import { trackUsage } from "@/lib/usage"
 import { ContentPieceType } from "@prisma/client"
 import { getOrCreateDbUserByClerkId } from "@/lib/auth/ensure-user"
+import { markQuestEvent } from "@/lib/quests"
 
 const generateSchema = z.object({
   type: z.nativeEnum(ContentPieceType),
@@ -194,8 +195,25 @@ export async function POST(req: Request) {
 
     const title = deriveTitle(type, dealInfo?.companyName, memberProfile?.businessName)
 
+    // Quest: First Content Asset + AI bot side-quest
+    void markQuestEvent(dbUserId, "content.first_generated", {
+      metadata: { contentType: type, dealId: dealId ?? null },
+    })
+    void markQuestEvent(dbUserId, "ai_bot.used", {
+      metadata: { bot: "content-engine" },
+    })
+
     return NextResponse.json({ title, content: result.text })
   } catch (err) {
+    const classified = classifyAnthropicError(err)
+    if (classified) {
+      logger.warn("AI content generation: upstream busy", {
+        endpoint: "POST /api/portal/content/generate",
+        status: classified.status,
+        userId,
+      })
+      return NextResponse.json({ error: classified.message }, { status: classified.status })
+    }
     logger.error("AI content generation failed", err, { userId })
     return NextResponse.json({ error: "Failed to generate content" }, { status: 500 })
   }

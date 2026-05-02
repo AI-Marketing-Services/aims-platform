@@ -90,9 +90,8 @@ export function MightyInvitePanel({
       toast.success(`Invited ${contactName || contactEmail} to ${tier}`)
       setInvites((prev) => [mapInvite(body.invite), ...prev])
       setStatus("pending")
-    } catch (err) {
+    } catch {
       toast.error("Network error")
-      console.error(err)
     } finally {
       setBusy(false)
     }
@@ -115,9 +114,8 @@ export function MightyInvitePanel({
       setInvites((prev) =>
         prev.map((i) => (i.id === body.invite.id ? mapInvite(body.invite) : i))
       )
-    } catch (err) {
+    } catch {
       toast.error("Network error")
-      console.error(err)
     } finally {
       setBusy(false)
     }

@@ -85,9 +85,8 @@ export function InviteButton({
       toast.success(`${contactName || contactEmail} invited to Collective`)
       setStatus(body.invite?.status ?? "sent")
       setMemberId(body.invite?.mightyMemberId ?? null)
-    } catch (err) {
+    } catch {
       toast.error("Network error")
-      console.error(err)
     } finally {
       setBusy(false)
     }

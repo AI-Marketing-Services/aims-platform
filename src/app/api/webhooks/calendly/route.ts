@@ -84,9 +84,14 @@ async function resolveDeal(email: string) {
   }
 
   // Fallback: deal itself may exist with a different email than the application.
+  // Restrict to AOC application deals only — other sources (tool audit, intake
+  // form, etc.) must not be matched just because they share the same email.
   const deal = await db.deal
     .findFirst({
-      where: { contactEmail: { equals: email, mode: "insensitive" } },
+      where: {
+        contactEmail: { equals: email, mode: "insensitive" },
+        source: "ai-operator-collective-application",
+      },
       orderBy: { createdAt: "desc" },
       select: { id: true },
     })
@@ -162,6 +167,16 @@ export async function POST(req: Request) {
       null,
       { action: "calendly_webhook_no_filter", eventTypeUri, eventTypeName }
     )
+    // Slack-alert ops loudly. Without the env filter, real users booking AOC
+    // consults will get NO welcome email, NO deal stage update, and NO
+    // morning-of reminder. Better to find out the moment a booking arrives
+    // than to discover a black hole the next day from a cron log.
+    notify({
+      type: "config_error",
+      title: "Calendly webhook silent — AOC env filter missing",
+      message: `CALENDLY_AOC_EVENT_TYPE_URIS is not set in this environment. A real Calendly booking just arrived (${name || email}, ${eventTypeName ?? "?"}) but was skipped to prevent fanning out the AOC welcome to every workspace booking. Set the env var to re-enable the booking flow.`,
+      urgency: "high",
+    }).catch(() => {})
     return NextResponse.json({ ok: true, skipped: "no_event_type_filter" })
   }
   if (!eventTypeUri || !AOC_EVENT_TYPE_URIS.includes(eventTypeUri)) {
@@ -221,8 +236,16 @@ export async function POST(req: Request) {
           ? `Calendly consult booked by ${name} (${email}).`
           : `Calendly consult booked by ${name} (${email}) — matched on deal email (applicant may have used a different email at /apply).`
 
+      // Fetch current stage so we never downgrade a deal that has already
+      // progressed beyond APPLICATION_SUBMITTED (e.g. CONSULT_COMPLETED,
+      // MIGHTY_INVITED, MEMBER_JOINED).
+      const currentDeal = await db.deal.findUnique({
+        where: { id: match.dealId },
+        select: { stage: true },
+      })
+
       const updateData: Prisma.DealUpdateInput = {
-        stage: "CONSULT_BOOKED",
+        ...(currentDeal?.stage === "APPLICATION_SUBMITTED" ? { stage: "CONSULT_BOOKED" } : {}),
         activities: {
           create: {
             type: "DEMO_COMPLETED",

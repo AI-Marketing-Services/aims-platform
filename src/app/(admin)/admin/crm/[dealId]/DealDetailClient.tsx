@@ -40,6 +40,7 @@ import {
 import { cn, timeAgo } from "@/lib/utils"
 import { MightyInvitePanel, type MightyInviteRecord } from "./MightyInvitePanel"
 import { MemberOnboardingPanel } from "@/components/admin/MemberOnboardingPanel"
+import { QUESTIONS } from "@/lib/collective-application"
 
 type ActivityType =
   | "EMAIL_SENT"
@@ -135,6 +136,16 @@ interface Props {
     idealClient: string | null
     businessUrl: string | null
   } | null
+  zipCode?: string | null
+  country?: string | null
+  applicationAnswers?: {
+    timeline?: string
+    revenue_goal?: string
+    investment?: string
+    decision_maker?: string
+    background?: string
+  } | null
+  applicationSubmittedAt?: string | null
 }
 
 const ACTIVITY_ICONS: Record<ActivityType, React.ReactNode> = {
@@ -300,6 +311,10 @@ export function DealDetailClient({
   onboardingPercent = 0,
   onboardingLastCompletedAt = null,
   onboardingProfile = null,
+  zipCode = null,
+  country = null,
+  applicationAnswers = null,
+  applicationSubmittedAt = null,
 }: Props) {
   const router = useRouter()
   const [stage, setStage] = useState(currentStage)
@@ -889,6 +904,58 @@ export function DealDetailClient({
             </div>
           </div>
 
+          {/* Application Answers — shown immediately after score for AOC applicants.
+              Uses the canonical QUESTIONS source so labels & points stay in sync. */}
+          {applicationAnswers != null && (
+            <div className="bg-card border border-border rounded-xl p-5">
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-sm font-semibold text-foreground">Application Answers</h2>
+                {(zipCode || country) && (
+                  <span className="text-xs text-muted-foreground">
+                    {[zipCode, country].filter(Boolean).join(" · ")}
+                  </span>
+                )}
+              </div>
+              <div className="space-y-3">
+                {QUESTIONS.map((q, i) => {
+                  const val = applicationAnswers[q.id as keyof typeof applicationAnswers]
+                  const opt = q.options.find((o) => o.value === val)
+                  return (
+                    <div key={q.id} className="flex gap-2.5 text-xs">
+                      <span className="shrink-0 w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-[10px]">
+                        {i + 1}
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-muted-foreground mb-0.5">{q.question}</p>
+                        {opt ? (
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-semibold text-foreground">{opt.label}</span>
+                            <span className={cn(
+                              "shrink-0 px-1.5 py-0.5 rounded font-mono text-[10px] font-bold",
+                              opt.points >= 3 ? "bg-primary/10 text-primary" :
+                              opt.points >= 2 ? "bg-primary/5 text-primary/70" :
+                              opt.points >= 1 ? "bg-muted text-muted-foreground" :
+                              "bg-muted/50 text-muted-foreground/60"
+                            )}>
+                              {opt.points} pt{opt.points !== 1 ? "s" : ""}
+                            </span>
+                          </div>
+                        ) : (
+                          <span className="text-muted-foreground italic">—</span>
+                        )}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+              {applicationSubmittedAt && (
+                <p className="mt-3 pt-3 border-t border-border text-[10px] text-muted-foreground">
+                  Submitted {new Date(applicationSubmittedAt).toLocaleString()}
+                </p>
+              )}
+            </div>
+          )}
+
           {/* Attribution */}
           {(source || channelTag || utmSource || utmMedium || utmCampaign || createdAt || submissionResultsUrl) && (
             <div className="bg-card border border-border rounded-xl p-5">
@@ -953,6 +1020,7 @@ export function DealDetailClient({
               </div>
             </div>
           )}
+
         </div>
       </div>
     </div>

@@ -19,11 +19,17 @@ import type { MightyWebhookEvent } from "@/lib/mighty/types"
 function verifySignature(raw: string, signatureHeader: string | null): boolean {
   const secret = process.env.MIGHTY_WEBHOOK_SECRET
   if (!secret) {
-    // Fail-closed in production: refuse unsigned webhooks if no secret is set.
-    // Allow in dev so local testing without Mighty config still works.
-    if (process.env.NODE_ENV === "production") {
+    // Fail-closed in any deployed environment. NODE_ENV alone isn't enough —
+    // Vercel preview deployments run with NODE_ENV=production but if anyone
+    // ever forces a preview as 'development' (or stages prod-like data), we
+    // don't want forged MemberJoined/MemberLeft events to grant/remove
+    // community access. Only allow unsigned webhooks for local dev (no VERCEL
+    // env present at all).
+    const isDeployed =
+      process.env.NODE_ENV === "production" || process.env.VERCEL === "1"
+    if (isDeployed) {
       logger.error(
-        "MIGHTY_WEBHOOK_SECRET is not configured — refusing webhook in production",
+        "MIGHTY_WEBHOOK_SECRET is not configured — refusing webhook in deployed environment",
         null,
         { action: "webhook" }
       )

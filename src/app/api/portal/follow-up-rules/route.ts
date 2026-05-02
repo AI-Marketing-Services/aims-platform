@@ -4,6 +4,7 @@ import { z } from "zod"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
 import { getOrCreateDbUserByClerkId } from "@/lib/auth/ensure-user"
+import { markQuestEvent } from "@/lib/quests"
 
 async function getDbUserId(clerkId: string): Promise<string | null> {
   const user = await getOrCreateDbUserByClerkId(clerkId)
@@ -67,6 +68,11 @@ export async function POST(req: Request) {
         isActive: parsed.data.isActive ?? true,
         clientDealId: parsed.data.clientDealId ?? null,
       },
+    })
+
+    // Quest: First Follow-Up Rule
+    void markQuestEvent(dbUserId, "follow_up.first_rule_created", {
+      metadata: { ruleId: rule.id, stageTrigger: rule.stageTrigger },
     })
 
     return NextResponse.json({ rule }, { status: 201 })

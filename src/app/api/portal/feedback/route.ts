@@ -5,6 +5,7 @@ import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
 import { getOrCreateDbUserByClerkId } from "@/lib/auth/ensure-user"
 import { notifyPortalFeedback } from "@/lib/notifications"
+import { formRatelimit, rateLimitedResponse } from "@/lib/ratelimit"
 
 const feedbackSchema = z.object({
   category: z.enum(["BUG", "IDEA", "QUESTION", "OTHER"]).default("BUG"),
@@ -18,6 +19,14 @@ export async function POST(req: Request) {
   const { userId: clerkId } = await auth()
   if (!clerkId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
+  // Rate-limit per user. Prevents an authenticated tester (or compromised
+  // session) from filling the PortalFeedback table with 4000-char rows.
+  // 5 submissions per minute is plenty even for a fast-clicking tester.
+  if (formRatelimit) {
+    const { success } = await formRatelimit.limit(`feedback:${clerkId}`)
+    if (!success) return rateLimitedResponse(req, "POST /api/portal/feedback", clerkId)
   }
 
   let parsed

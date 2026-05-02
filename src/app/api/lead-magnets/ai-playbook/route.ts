@@ -3,7 +3,7 @@ import { z } from "zod"
 import { generateAIPlaybookPDF } from "@/lib/pdf/generate"
 import { sendAIPlaybookEmail } from "@/lib/email/ai-playbook"
 import { createLeadMagnetSubmission } from "@/lib/db/queries"
-import { formRatelimit, getIp } from "@/lib/ratelimit"
+import { formRatelimit, getIp, rateLimitedResponse } from "@/lib/ratelimit"
 import { db } from "@/lib/db"
 import { notifyNewLead } from "@/lib/notifications"
 import { createCloseLead } from "@/lib/close"
@@ -29,7 +29,7 @@ const submitSchema = z.object({
 export async function POST(req: Request) {
   if (formRatelimit) {
     const { success } = await formRatelimit.limit(getIp(req))
-    if (!success) return NextResponse.json({ error: "Too many requests" }, { status: 429 })
+    if (!success) return rateLimitedResponse(req, "POST /api/lead-magnets/ai-playbook")
   }
 
   try {

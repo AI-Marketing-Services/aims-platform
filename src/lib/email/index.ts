@@ -18,10 +18,24 @@ export function getResend() {
   return new Resend(process.env.RESEND_API_KEY ?? "re_placeholder")
 }
 
-// Wrapper that logs cost for every email sent via Resend (~$0.001/email on paid plan)
+// Wrapper that logs cost for every email sent via Resend (~$0.001/email on paid plan).
+// Resend's `emails.send` returns `{ data, error }` on failure WITHOUT throwing — so
+// without explicit error handling, failed sends would be invisible. We log loudly
+// when `result.error` is present so triage during testing isn't blind.
 export async function sendTrackedEmail(params: Parameters<ReturnType<typeof getResend>["emails"]["send"]>[0] & { serviceArm?: string; clientId?: string }) {
   const { serviceArm, clientId, ...emailParams } = params
+  const to = Array.isArray(emailParams.to) ? emailParams.to[0] : emailParams.to
   const result = await getResend().emails.send(emailParams)
+
+  if (result.error) {
+    logger.error("Resend send failed", result.error, {
+      action: "sendTrackedEmail",
+      to,
+      subject: emailParams.subject,
+      serviceArm: serviceArm ?? "email",
+    })
+  }
+
   db.apiCostLog.create({
     data: {
       provider: "resend",
@@ -31,7 +45,11 @@ export async function sendTrackedEmail(params: Parameters<ReturnType<typeof getR
       cost: 0.001,
       serviceArm: serviceArm ?? "email",
       clientId,
-      metadata: { to: Array.isArray(emailParams.to) ? emailParams.to[0] : emailParams.to, subject: emailParams.subject },
+      metadata: {
+        to,
+        subject: emailParams.subject,
+        ...(result.error ? { error: String(result.error.message ?? result.error) } : {}),
+      },
     },
   }).catch(() => {})
   return result

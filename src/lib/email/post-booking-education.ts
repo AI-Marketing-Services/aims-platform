@@ -8,7 +8,7 @@ import {
   divider,
 } from "./index"
 import { buildAIPlaybookPDF } from "@/lib/pdf/ai-playbook"
-import { AOC_FROM_EMAIL as FROM_EMAIL, AOC_REPLY_TO as REPLY_TO } from "./senders"
+import { AOC_FROM_EMAIL as FROM_EMAIL, AOC_REPLY_TO as REPLY_TO, RYAN_SALES_BCC } from "./senders"
 
 export interface EmailContent {
   subject: string
@@ -106,6 +106,7 @@ export async function sendPostBookingConfirmationEmail(params: {
   return sendTrackedEmail({
     from: FROM_EMAIL,
     to: params.to,
+    bcc: RYAN_SALES_BCC,
     replyTo: REPLY_TO,
     subject: `${firstName}, your AI Operator call is confirmed`,
     html: emailLayout(

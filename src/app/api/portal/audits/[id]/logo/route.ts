@@ -6,11 +6,14 @@ import { ensureDbUserIdForApi } from "@/lib/auth/ensure-user"
 
 export const dynamic = "force-dynamic"
 
+// SVG intentionally excluded — SVG files can carry inline <script> tags that
+// execute when opened directly in a browser. Since the logo URL is served from
+// public.blob.vercel-storage.com and may be linked or opened in new tabs, we
+// don't accept SVG. PNG/JPEG/WEBP are inert image formats.
 const ALLOWED_TYPES: Record<string, string> = {
   "image/png": "png",
   "image/jpeg": "jpg",
   "image/webp": "webp",
-  "image/svg+xml": "svg",
 }
 const MAX_BYTES = 2 * 1024 * 1024 // 2 MB
 

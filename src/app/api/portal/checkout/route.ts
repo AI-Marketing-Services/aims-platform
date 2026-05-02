@@ -18,7 +18,16 @@ export async function POST(req: Request) {
   const dbUser = await getOrCreateDbUserByClerkId(clerkId)
   if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 })
 
-  const body = await req.json()
+  // Wrap req.json() so a malformed body returns 400 instead of an unhandled
+  // SyntaxError → blank 500. Paying flow: any 500 here looks like the checkout
+  // is broken when really the client just sent bad JSON.
+  let body: unknown
+  try {
+    body = await req.json()
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 })
+  }
+
   const parsed = checkoutSchema.safeParse(body)
   if (!parsed.success) {
     return NextResponse.json({ error: "Invalid data", details: parsed.error.flatten() }, { status: 400 })

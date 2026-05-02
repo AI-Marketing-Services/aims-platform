@@ -77,9 +77,27 @@ async function fireSequence(
 }
 
 export async function GET(req: Request) {
+  // Production guard: this route blasts ~30 emails on every call and shares
+  // CRON_SECRET with 13 other cron jobs (single point of failure). Disable
+  // it entirely in prod unless the operator explicitly opts in via env.
+  if (process.env.NODE_ENV === "production" && !process.env.ALLOW_TEST_EMAILS) {
+    return new Response(null, { status: 404 })
+  }
+
   const authHeader = req.headers.get("authorization")
   if (!process.env.CRON_SECRET || authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
+  // Belt-and-suspenders: require an explicit confirmation query param so a
+  // stray browser fetch / curl with the bearer token doesn't fire 30 emails
+  // by accident.
+  const url = new URL(req.url)
+  if (url.searchParams.get("confirm") !== "YES") {
+    return NextResponse.json(
+      { error: "Confirmation required. Append ?confirm=YES to fire the test blast." },
+      { status: 400 },
+    )
   }
 
   const results: Result[] = []

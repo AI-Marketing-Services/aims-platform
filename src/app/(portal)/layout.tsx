@@ -9,6 +9,9 @@ import { getProgressForUser } from "@/lib/onboarding/progress"
 import { PortalChatWidget } from "@/components/portal/PortalChatWidget"
 import { QuickAddFab } from "@/components/portal/QuickAddFab"
 import { ReferralClaimHandler } from "@/components/portal/ReferralClaimHandler"
+import { BugReportWidget } from "@/components/portal/BugReportWidget"
+import { QuestProvider } from "@/components/quests/QuestContext"
+import { UnlockModal } from "@/components/quests/UnlockModal"
 import { PageTransition } from "@/components/shared/PageTransition"
 import { AdminPreviewBanner } from "@/components/shared/AdminPreviewBanner"
 import { db } from "@/lib/db"
@@ -105,7 +108,8 @@ export default async function PortalLayout({
   const firstName = dbUser?.name?.split(" ")[0] ?? "there"
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <QuestProvider>
+      <div className="min-h-screen bg-background text-foreground">
       {/* Mobile top header - only visible on mobile */}
       <div className="lg:hidden flex items-center justify-between h-14 px-4 bg-deep border-b border-border sticky top-0 z-40">
         <Link href="/" className="flex items-center" aria-label="Home">
@@ -142,6 +146,9 @@ export default async function PortalLayout({
       <PortalChatWidget firstName={firstName} serviceCount={serviceCount} />
       <QuickAddFab />
       <ReferralClaimHandler />
-    </div>
+      <BugReportWidget variant="pill" />
+      <UnlockModal />
+      </div>
+    </QuestProvider>
   )
 }

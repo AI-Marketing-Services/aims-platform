@@ -10,6 +10,17 @@ import {
   resetStep,
 } from "@/lib/onboarding/progress"
 import { getOrCreateDbUserByClerkId } from "@/lib/auth/ensure-user"
+import { markQuestEvent } from "@/lib/quests"
+import type { TriggerEvent } from "@/lib/quests/registry"
+
+// Map onboarding step keys → quest events. Some step completions also
+// satisfy quest triggers (intro_post, attending a call, etc.).
+const STEP_TO_QUEST_EVENT: Record<string, TriggerEvent> = {
+  "week1.intro_post": "community.intro_posted",
+  "week1.complete_profile": "profile.completed",
+  "week2.module_1": "onboarding.track_selected",
+  "week34.rsvp_call": "cohort.first_attended",
+}
 
 async function resolveDbUser(clerkId: string) {
   const user = await getOrCreateDbUserByClerkId(clerkId)
@@ -70,6 +81,14 @@ export async function POST(req: Request) {
       method: "self",
       completedBy: null,
     })
+
+    // Bridge step → quest event (best effort).
+    const event = STEP_TO_QUEST_EVENT[parsed.data.stepKey]
+    if (event) {
+      void markQuestEvent(dbUser.id, event, {
+        metadata: { stepKey: parsed.data.stepKey },
+      })
+    }
 
     return NextResponse.json({ ok: true })
   } catch (err) {

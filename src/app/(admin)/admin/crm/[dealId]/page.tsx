@@ -54,6 +54,31 @@ export default async function AdminDealDetailPage({ params }: { params: Promise<
     orderBy: { createdAt: "desc" },
   }).catch(() => null)
 
+  // Fetch the Collective application submission to surface answers on the detail page
+  const applicationSubmission = await db.leadMagnetSubmission.findFirst({
+    where: { dealId, type: "COLLECTIVE_APPLICATION" },
+    select: { data: true, createdAt: true },
+    orderBy: { createdAt: "desc" },
+  }).catch(() => null)
+
+  // The apply route spreads answers flat into the data blob:
+  //   data: { ...answers, firstName, lastName, phone, zipCode, country, ... }
+  // So timeline/revenue_goal/etc. live at the TOP LEVEL of appData — not nested.
+  const appData = applicationSubmission?.data as Record<string, unknown> | null | undefined
+  const zipCode = typeof appData?.zipCode === "string" ? appData.zipCode : null
+  const country = typeof appData?.country === "string" ? appData.country : null
+  const applicationAnswers =
+    appData != null
+      ? {
+          timeline:       typeof appData.timeline       === "string" ? appData.timeline       : undefined,
+          revenue_goal:   typeof appData.revenue_goal   === "string" ? appData.revenue_goal   : undefined,
+          investment:     typeof appData.investment     === "string" ? appData.investment     : undefined,
+          decision_maker: typeof appData.decision_maker === "string" ? appData.decision_maker : undefined,
+          background:     typeof appData.background     === "string" ? appData.background     : undefined,
+        }
+      : null
+  const applicationSubmittedAt = applicationSubmission?.createdAt?.toISOString() ?? null
+
   const mightyInvites = await db.mightyInvite
     .findMany({ where: { dealId }, orderBy: { sentAt: "desc" } })
     .catch(() => [])
@@ -160,6 +185,10 @@ export default async function AdminDealDetailPage({ params }: { params: Promise<
         onboardingPercent={onboardingSummary.progress?.percent ?? 0}
         onboardingLastCompletedAt={onboardingSummary.progress?.lastCompletedAt?.toISOString() ?? null}
         onboardingProfile={onboardingSummary.profile}
+        zipCode={zipCode}
+        country={country}
+        applicationAnswers={applicationAnswers}
+        applicationSubmittedAt={applicationSubmittedAt}
       />
     </div>
   )

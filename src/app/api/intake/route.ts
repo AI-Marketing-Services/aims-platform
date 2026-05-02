@@ -4,7 +4,7 @@ import { db } from "@/lib/db"
 import { notifyNewLead } from "@/lib/notifications"
 import { createCloseLead } from "@/lib/close"
 import { scoreLeadFromSignals } from "@/lib/scoring/lead-scorer"
-import { formRatelimit, getIp } from "@/lib/ratelimit"
+import { formRatelimit, getIp, rateLimitedResponse } from "@/lib/ratelimit"
 import { logger } from "@/lib/logger"
 
 const intakeSchema = z.object({
@@ -22,7 +22,7 @@ const intakeSchema = z.object({
 export async function POST(req: Request) {
   if (formRatelimit) {
     const { success } = await formRatelimit.limit(getIp(req))
-    if (!success) return NextResponse.json({ error: "Too many requests" }, { status: 429 })
+    if (!success) return rateLimitedResponse(req, "POST /api/intake")
   }
 
   try {
@@ -45,28 +45,43 @@ export async function POST(req: Request) {
       isVendingpreneur: data.industry?.toLowerCase().includes("vend") || false,
     })
 
-    const deal = await db.deal.create({
-      data: {
-        contactName: data.name,
-        contactEmail: data.email,
-        company: data.company,
-        phone: data.phone,
-        website: data.website,
-        industry: data.industry,
-        source: "get-started-form",
-        sourceDetail: `locations:${data.locations ?? "1"}`,
-        leadScore: scored.score,
-        leadScoreTier: scored.tier,
-        leadScoreReason: scored.reason,
-        priority: scored.priority as import("@prisma/client").DealPriority,
-        activities: {
-          create: {
-            type: "FORM_SUBMITTED",
-            detail: `Strategy call request - services: ${data.services.join(", ") || "not specified"}. Goal: ${data.goal ?? "-"}`,
+    let deal: { id: string } | null = null
+    try {
+      deal = await db.deal.create({
+        data: {
+          contactName: data.name,
+          contactEmail: data.email,
+          company: data.company,
+          phone: data.phone,
+          website: data.website,
+          industry: data.industry,
+          source: "get-started-form",
+          sourceDetail: `locations:${data.locations ?? "1"}`,
+          leadScore: scored.score,
+          leadScoreTier: scored.tier,
+          leadScoreReason: scored.reason,
+          priority: scored.priority as import("@prisma/client").DealPriority,
+          activities: {
+            create: {
+              type: "FORM_SUBMITTED",
+              detail: `Strategy call request - services: ${data.services.join(", ") || "not specified"}. Goal: ${data.goal ?? "-"}`,
+            },
           },
         },
-      },
-    })
+        select: { id: true },
+      })
+    } catch (err) {
+      // Fail loudly so the user knows their submission didn't land — better
+      // than a silent "thanks!" while the deal is missing from the CRM.
+      logger.error("Intake: deal create failed", err, { endpoint: "POST /api/intake" })
+      return NextResponse.json(
+        {
+          error:
+            "We couldn't save your strategy call request right now. Please try again or email us at noreply@aioperatorcollective.com if this keeps happening.",
+        },
+        { status: 502 }
+      )
+    }
 
     await notifyNewLead({
       contactName: data.name,

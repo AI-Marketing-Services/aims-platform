@@ -41,6 +41,9 @@ export function CommunityFooter() {
             <Link href="/privacy" className="hover:text-[#1A1A1A] transition-colors">
               Privacy
             </Link>
+            <Link href="/terms" className="hover:text-[#1A1A1A] transition-colors">
+              Terms
+            </Link>
           </nav>
         </div>
 

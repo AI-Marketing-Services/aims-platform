@@ -4,6 +4,7 @@ import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
 import { createContactSchema } from "@/lib/crm/schemas"
 import { getOrCreateDbUserByClerkId } from "@/lib/auth/ensure-user"
+import { markQuestEvent } from "@/lib/quests"
 
 async function getDbUserId(clerkId: string): Promise<string | null> {
   const user = await getOrCreateDbUserByClerkId(clerkId)
@@ -54,6 +55,11 @@ export async function POST(
         },
       }),
     ])
+
+    // Quest: First Lead
+    void markQuestEvent(dbUserId, "crm.first_contact_added", {
+      metadata: { dealId, contactId: contact.id },
+    })
 
     return NextResponse.json({ contact }, { status: 201 })
   } catch (err) {

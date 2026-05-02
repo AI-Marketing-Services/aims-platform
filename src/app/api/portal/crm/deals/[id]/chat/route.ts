@@ -10,6 +10,7 @@ import {
   InsufficientCreditsError,
 } from "@/lib/enrichment/credits/ledger"
 import { stripDashes } from "@/lib/text/strip-dashes"
+import { markQuestEvent } from "@/lib/quests"
 
 export const dynamic = "force-dynamic"
 export const maxDuration = 30
@@ -283,6 +284,12 @@ Respond to the operator's last message. Be specific, grounded, and concise.`,
 
     // Strip all long-dash variants defensively
     const reply = stripDashes(result.text).trim()
+
+    // Quest: Meet Your AI Co-pilot + Tinkerer side-quest
+    void markQuestEvent(dbUserId, "ai_chat.first_message", {
+      metadata: { dealId, surface: "deal-chat" },
+    })
+    void markQuestEvent(dbUserId, "ai_bot.used", { metadata: { bot: "deal-chat" } })
 
     return NextResponse.json({
       ok: true,

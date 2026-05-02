@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client"
 import { PrismaNeon } from "@prisma/adapter-neon"
+import { logger } from "@/lib/logger"
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
@@ -25,22 +26,12 @@ function createPrismaClient() {
           try {
             return await query(args)
           } catch (err) {
-            const e = err as {
-              name?: string
-              message?: string
-              code?: string
-              meta?: unknown
-            }
-            console.error(
-              `[prisma] ${model}.${operation} failed`,
-              JSON.stringify({
-                name: e.name,
-                code: e.code,
-                meta: e.meta,
-                message: e.message?.split("\n").slice(0, 4).join(" | "),
-                args: JSON.stringify(args).slice(0, 500),
-              }),
-            )
+            logger.error(`Prisma ${model}.${operation} failed`, err, {
+              endpoint: "prisma",
+              model,
+              operation,
+              args: JSON.stringify(args).slice(0, 500),
+            })
             throw err
           }
         },

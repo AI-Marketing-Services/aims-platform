@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { useEffect } from "react"
+import { captureException } from "@/lib/observability"
 
 export default function GlobalError({
   error,
@@ -11,8 +12,12 @@ export default function GlobalError({
   reset: () => void
 }) {
   useEffect(() => {
-    console.error("Global error boundary caught:", error.digest)
-  }, [error.digest])
+    captureException(error, {
+      tags: { boundary: "global" },
+      extra: { digest: error.digest },
+      level: "fatal",
+    })
+  }, [error])
 
   return (
     <html lang="en">

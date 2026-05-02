@@ -5,6 +5,7 @@ import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
 import { AiScriptType } from "@prisma/client"
 import { getOrCreateDbUserByClerkId } from "@/lib/auth/ensure-user"
+import { markQuestEvent } from "@/lib/quests"
 
 const createScriptSchema = z.object({
   type: z.nativeEnum(AiScriptType),
@@ -98,6 +99,11 @@ export async function POST(req: Request) {
         prompt: prompt ?? null,
         clientDealId: clientDealId ?? null,
       },
+    })
+
+    // Quest: First Script
+    void markQuestEvent(dbUserId, "scripts.first_saved", {
+      metadata: { scriptId: script.id, type: script.type },
     })
 
     return NextResponse.json({ script }, { status: 201 })

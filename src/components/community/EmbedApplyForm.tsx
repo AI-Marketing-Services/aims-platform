@@ -744,12 +744,17 @@ export function EmbedApplyForm() {
               {currentQuestion.allowOther &&
                 answers[currentQuestion.id] === "other" && (
                   <div className="mt-3 space-y-2">
+                    <label className="sr-only" htmlFor="embed-apply-other">
+                      Describe your background
+                    </label>
                     <input
+                      id="embed-apply-other"
                       type="text"
                       value={otherText}
                       onChange={(e) => setOtherText(e.target.value)}
                       className="w-full rounded-md border border-[#E3E3E3] bg-white px-4 py-3 text-base text-[#1A1A1A] placeholder:text-[#ccc] focus:outline-none focus:border-[#981B1B] focus:ring-1 focus:ring-[#981B1B] transition-colors"
                       placeholder="Tell us about your background..."
+                      aria-label="Describe your background"
                       autoFocus
                       onKeyDown={(e) => {
                         if (e.key === "Enter" && otherText.trim().length > 0)

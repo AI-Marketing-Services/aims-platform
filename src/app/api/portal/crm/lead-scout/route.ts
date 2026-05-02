@@ -3,6 +3,8 @@ import { logger } from "@/lib/logger"
 import { scoutLeads } from "@/lib/crm/lead-scout"
 import { trackUsage } from "@/lib/usage"
 import { ensureDbUserIdForApi } from "@/lib/auth/ensure-user"
+import { classifyAnthropicError } from "@/lib/ai"
+import { markQuestEvent } from "@/lib/quests"
 import { z } from "zod"
 
 const scoutSchema = z.object({
@@ -31,8 +33,23 @@ export async function POST(req: Request) {
 
     trackUsage(dbUserId, "lead_scout", { businessType: parsed.data.businessType, location: parsed.data.location }).catch(() => {})
 
+    // Quest: Lead Scout Apprentice + Investigator + AI bot used
+    void markQuestEvent(dbUserId, "lead_scout.run_completed", {
+      metadata: { businessType: parsed.data.businessType, location: parsed.data.location, count: leads.length },
+    })
+    void markQuestEvent(dbUserId, "ai_bot.used", { metadata: { bot: "lead-scout" } })
+
     return NextResponse.json({ leads, count: leads.length })
   } catch (err) {
+    const classified = classifyAnthropicError(err)
+    if (classified) {
+      logger.warn("Lead scout: upstream busy", {
+        endpoint: "POST /api/portal/crm/lead-scout",
+        status: classified.status,
+        userId: dbUserId,
+      })
+      return NextResponse.json({ error: classified.message }, { status: classified.status })
+    }
     logger.error("Lead scout API failed", err, { userId: dbUserId })
     return NextResponse.json({ error: "Failed to search for leads" }, { status: 500 })
   }

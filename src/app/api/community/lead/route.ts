@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { z } from "zod"
 import { db } from "@/lib/db"
-import { formRatelimit, getIp } from "@/lib/ratelimit"
+import { formRatelimit, getIp, rateLimitedResponse } from "@/lib/ratelimit"
 import { logger } from "@/lib/logger"
 import { notify } from "@/lib/notifications"
 import { createCloseLead } from "@/lib/close"
@@ -20,9 +20,7 @@ const schema = z.object({
 export async function POST(req: Request) {
   if (formRatelimit) {
     const { success } = await formRatelimit.limit(getIp(req))
-    if (!success) {
-      return NextResponse.json({ error: "Too many requests" }, { status: 429 })
-    }
+    if (!success) return rateLimitedResponse(req, "POST /api/community/lead")
   }
 
   try {

@@ -4,6 +4,7 @@ import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
 import { profileSchema } from "@/lib/onboarding/schemas"
 import { getOrCreateDbUserByClerkId } from "@/lib/auth/ensure-user"
+import { markQuestEvent } from "@/lib/quests"
 
 async function resolveDbUser(clerkId: string) {
   const user = await getOrCreateDbUserByClerkId(clerkId)
@@ -74,6 +75,17 @@ export async function PUT(req: Request) {
           authorId: dbUser.id,
           metadata: {},
         },
+      })
+    }
+
+    // Quest: Operator Profile Complete (fires when the three core fields exist)
+    if (
+      profile.businessName &&
+      profile.niche &&
+      profile.oneLiner
+    ) {
+      void markQuestEvent(dbUser.id, "profile.completed", {
+        metadata: { profileId: profile.id },
       })
     }
 

@@ -1,6 +1,8 @@
 // lib/vercel-domains.ts
 // Vercel Domains API wrapper for reseller whitelabel custom domain management.
 
+import { logger } from "@/lib/logger"
+
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
@@ -156,7 +158,11 @@ async function vercelFetch<T>(
     const message: string = body?.error?.message ?? response.statusText
 
     if (isServerError) {
-      console.error(`[vercel-domains] Upstream ${response.status} on ${path}:`, message)
+      logger.error(`Upstream ${response.status} on ${path}`, message, {
+        endpoint: "vercel-domains",
+        status: response.status,
+        path,
+      })
     }
 
     throw new VercelDomainsApiError(response.status, code, message)

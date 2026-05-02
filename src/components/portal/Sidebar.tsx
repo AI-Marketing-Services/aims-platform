@@ -30,11 +30,13 @@ import {
   PenLine,
   ClipboardCheck,
   Sparkles,
+  Trophy,
 } from "lucide-react"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
 import { NotificationBell } from "@/components/shared/NotificationBell"
 import { OnboardingProgressWidget } from "@/components/portal/OnboardingProgressWidget"
+import { QuestProgressRing } from "@/components/quests/QuestProgressRing"
 
 // Sidebar items grouped logically. Items in `ADMIN_ONLY_ROUTES` below
 // are filtered out for non-admin viewers so the portal stays focused
@@ -43,6 +45,7 @@ const PORTAL_NAV = [
   // Mission control + getting started
   { label: "Dashboard", href: "/portal/dashboard", icon: LayoutDashboard },
   { label: "Getting Started", href: "/portal/onboard", icon: Rocket },
+  { label: "Quests", href: "/portal/quests", icon: Trophy },
 
   // Daily operator work
   { label: "Client CRM", href: "/portal/crm", icon: Briefcase },
@@ -232,6 +235,7 @@ export function PortalSidebar({
           {!collapsed && (
             <>
               <span className="text-sm text-muted-foreground truncate flex-1">My Account</span>
+              <QuestProgressRing size={26} />
               <NotificationBell variant="light" />
             </>
           )}

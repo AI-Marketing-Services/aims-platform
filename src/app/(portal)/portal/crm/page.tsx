@@ -87,6 +87,48 @@ export default async function CrmPage() {
         </div>
       </div>
 
+      {/* Mobile-only stats + action row. Without this, mobile users have no
+          way to import CSV or export, and no visibility into pipeline value. */}
+      <div className="sm:hidden flex items-center justify-between gap-3 px-4 py-3 border-b border-border bg-surface/50 shrink-0">
+        <div className="flex items-center gap-4 text-xs">
+          <div>
+            <p className="text-[9px] text-muted-foreground uppercase tracking-wider">Pipeline</p>
+            <p className="text-sm font-bold text-foreground">
+              {pipelineValue > 0 ? `$${(pipelineValue / 1000).toFixed(0)}K` : "—"}
+            </p>
+          </div>
+          <div>
+            <p className="text-[9px] text-muted-foreground uppercase tracking-wider">Active</p>
+            <p className="text-sm font-bold text-foreground">{activeCount}</p>
+          </div>
+          <div>
+            <p className="text-[9px] text-muted-foreground uppercase tracking-wider">Total</p>
+            <p className="text-sm font-bold text-foreground">{deals.length}</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/portal/crm/import"
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-md text-[11px] font-medium text-muted-foreground hover:text-foreground border border-border/50 active:bg-surface transition-all"
+            aria-label="Import CSV"
+          >
+            <Upload className="h-3 w-3" />
+            Import
+          </Link>
+          {deals.length > 0 && (
+            <a
+              href="/api/portal/crm/export"
+              download
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-md text-[11px] font-medium text-muted-foreground hover:text-foreground border border-border/50 active:bg-surface transition-all"
+              aria-label="Export CSV"
+            >
+              <Download className="h-3 w-3" />
+              Export
+            </a>
+          )}
+        </div>
+      </div>
+
       {/* Banners. Both are self-fetching and self-hiding when nothing
           actionable. Duplicates first since merging is a prerequisite
           for clean enrichment. */}

@@ -6,6 +6,7 @@ import { notify } from "@/lib/notifications"
 import { updateDealSchema } from "@/lib/crm/schemas"
 import { getOrCreateDbUserByClerkId } from "@/lib/auth/ensure-user"
 import { emitEvent, EVENT_TYPES } from "@/lib/events/emit"
+import { markQuestEvent } from "@/lib/quests"
 
 async function getDbUserId(clerkId: string): Promise<string | null> {
   const user = await getOrCreateDbUserByClerkId(clerkId)
@@ -104,6 +105,18 @@ export async function PATCH(
         activities: { orderBy: { createdAt: "desc" } },
       },
     })
+
+    // Quest: First Closed Deal — fires when stage moves to ACTIVE_RETAINER
+    // (signed) or COMPLETED (finished). Idempotent.
+    if (
+      parsed.data.stage &&
+      parsed.data.stage !== existing.stage &&
+      (parsed.data.stage === "ACTIVE_RETAINER" || parsed.data.stage === "COMPLETED")
+    ) {
+      void markQuestEvent(dbUserId, "deal.first_closed_won", {
+        metadata: { dealId: id, fromStage: existing.stage, toStage: parsed.data.stage },
+      })
+    }
 
     // Universal event log — Today dashboard / digest / activity timeline
     if (parsed.data.stage && parsed.data.stage !== existing.stage) {

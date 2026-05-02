@@ -5,6 +5,7 @@ import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
 import { sendTrackedEmail } from "@/lib/email"
 import { notify } from "@/lib/notifications"
+import { markQuestEvent } from "@/lib/quests"
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.aioperatorcollective.com"
 const FROM_EMAIL = "hello@aioperatorcollective.com"
@@ -175,15 +176,6 @@ export async function POST(
       dbUser.memberProfile?.businessName ?? "AI Operator Collective"
     const brandColor = dbUser.memberProfile?.brandColor ?? "#C4972A"
 
-    const updated = await db.clientInvoice.update({
-      where: { id },
-      data: {
-        status: "SENT",
-        sentAt: new Date(),
-        shareToken,
-      },
-    })
-
     const emailHtml = buildInvoiceEmail({
       invoiceNumber: invoice.invoiceNumber,
       title: invoice.title,
@@ -196,12 +188,40 @@ export async function POST(
       brandColor,
     })
 
-    await sendTrackedEmail({
+    // Send the email FIRST. Only mark the invoice SENT after Resend confirms
+    // the message was accepted — otherwise an operator could see "Sent" in the
+    // UI when the client never received the email (e.g. Resend rejects the
+    // recipient, suppressed domain, quota hit, network blip).
+    const sendResult = await sendTrackedEmail({
       from: FROM_EMAIL,
       to: invoice.recipientEmail,
       subject: `Invoice ${invoice.invoiceNumber} from ${operatorName}`,
       html: emailHtml,
       serviceArm: "invoices",
+    })
+
+    if (sendResult.error) {
+      logger.error("Invoice email send failed", sendResult.error, {
+        action: "sendInvoice",
+        invoiceId: id,
+        recipient: invoice.recipientEmail,
+      })
+      return NextResponse.json(
+        {
+          error:
+            "We couldn't send the invoice email right now. Your invoice is saved as a draft — please try again in a moment.",
+        },
+        { status: 502 }
+      )
+    }
+
+    const updated = await db.clientInvoice.update({
+      where: { id },
+      data: {
+        status: "SENT",
+        sentAt: new Date(),
+        shareToken,
+      },
     })
 
     // Log activity on deal if linked
@@ -216,6 +236,11 @@ export async function POST(
         logger.warn("Failed to log invoice activity", { invoiceId: id, err: String(err) })
       })
     }
+
+    // Quest: First Invoice Sent
+    void markQuestEvent(dbUser.id, "invoice.first_sent", {
+      metadata: { invoiceId: id, invoiceNumber: invoice.invoiceNumber },
+    })
 
     // In-app notification: invoice sent
     notify({

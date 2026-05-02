@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { z } from "zod"
 import { db } from "@/lib/db"
-import { formRatelimit, getIp } from "@/lib/ratelimit"
+import { formRatelimit, getIp, rateLimitedResponse } from "@/lib/ratelimit"
 import { createLeadMagnetSubmission } from "@/lib/db/queries"
 import { createCloseLead } from "@/lib/close"
 import { notifyNewLead } from "@/lib/notifications"
@@ -35,7 +35,7 @@ const submitSchema = z.object({
 export async function POST(req: Request) {
   if (formRatelimit) {
     const { success } = await formRatelimit.limit(getIp(req))
-    if (!success) return NextResponse.json({ error: "Too many requests" }, { status: 429 })
+    if (!success) return rateLimitedResponse(req, "POST /api/lead-magnets/daily-signal")
   }
 
   try {

@@ -113,13 +113,18 @@ export async function POST(req: NextRequest) {
     }
     return NextResponse.json({ ok: true, skipped: `Unhandled event: ${key}` })
   } catch (err) {
+    // Return 200 even on handler failure so Close stops retrying.
+    // Returning 500 here causes Close to retry the same event repeatedly,
+    // which (a) hammers the Close API on each retry to re-fetch the lead,
+    // (b) doubles up STAGE_CHANGE activities, and (c) can mask whatever
+    // bug is in the handler. We want the failure logged loudly here, not
+    // amplified by Close's retry policy.
     logger.error(`Close webhook ${key} handler failed`, err, {
       action: "close_webhook_handler",
+      eventKey: key,
+      objectId: event.object_id,
     })
-    return NextResponse.json(
-      { error: "Handler failed" },
-      { status: 500 }
-    )
+    return NextResponse.json({ ok: false, error: "Handler failed (logged)" })
   }
 }
 

@@ -6,6 +6,7 @@ import { sendWelcomeEmail } from "@/lib/email"
 import { queueEmailSequence } from "@/lib/email/queue"
 import { createFulfillmentTask } from "@/lib/asana"
 import { getDubClient } from "@/lib/dub"
+import { markQuestEvent } from "@/lib/quests"
 
 /**
  * Handles checkout.session.completed events for cart-based multi-service checkout.
@@ -201,6 +202,11 @@ export async function handleCheckoutCompleted(session: Stripe.Checkout.Session) 
         })
       })
     }
+
+    // Quest: First Marketplace Service
+    void markQuestEvent(userId, "marketplace.first_used", {
+      metadata: { serviceArmSlug: serviceArm.slug, subscriptionId: subscription.id },
+    })
 
     // Notifications + welcome email + post-purchase sequence for first item only
     if (i === 0 && user) {

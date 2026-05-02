@@ -154,17 +154,28 @@ export default function ScriptsPage() {
   const [scripts, setScripts] = useState<ScriptListItem[]>([])
   const [activeFilter, setActiveFilter] = useState<AiScriptType | "ALL">("ALL")
   const [loading, setLoading] = useState(true)
+  const [fetchError, setFetchError] = useState<string | null>(null)
 
   const fetchScripts = useCallback(async (filter: AiScriptType | "ALL") => {
     setLoading(true)
+    setFetchError(null)
     try {
       const url =
         filter === "ALL"
           ? "/api/portal/scripts"
           : `/api/portal/scripts?type=${filter}`
       const res = await fetch(url)
+      if (!res.ok) {
+        throw new Error(`Server returned ${res.status}`)
+      }
       const data = await res.json()
       setScripts(data.scripts ?? [])
+    } catch (err) {
+      // Surface real errors instead of silently showing "No scripts yet" —
+      // users were assuming the feature was broken when really the API
+      // was just down. Now they see an actionable retry CTA.
+      setFetchError(err instanceof Error ? err.message : "Could not load scripts")
+      setScripts([])
     } finally {
       setLoading(false)
     }
@@ -230,6 +241,26 @@ export default function ScriptsPage() {
               className="rounded-xl bg-card border border-border p-5 h-44 animate-pulse"
             />
           ))}
+        </div>
+      ) : fetchError ? (
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+          <div className="h-14 w-14 rounded-2xl bg-destructive/10 flex items-center justify-center mb-4">
+            <FileCode2 className="h-7 w-7 text-destructive/70" />
+          </div>
+          <p className="text-foreground font-semibold mb-1">Could not load scripts</p>
+          <p className="text-sm text-muted-foreground mb-1">
+            Something went wrong on our end.
+          </p>
+          <p className="text-xs text-muted-foreground/70 font-mono mb-4">
+            {fetchError}
+          </p>
+          <button
+            onClick={() => fetchScripts(activeFilter)}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm font-medium text-foreground hover:bg-surface transition-colors"
+          >
+            <Plus className="h-4 w-4 rotate-45" />
+            Try Again
+          </button>
         </div>
       ) : scripts.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-center">

@@ -5,6 +5,7 @@ import { logger } from "@/lib/logger"
 import { createDealSchema } from "@/lib/crm/schemas"
 import { getOrCreateDbUserByClerkId } from "@/lib/auth/ensure-user"
 import { emitEvent, EVENT_TYPES } from "@/lib/events/emit"
+import { markQuestEvent } from "@/lib/quests"
 
 async function getDbUserId(clerkId: string): Promise<string | null> {
   const user = await getOrCreateDbUserByClerkId(clerkId)
@@ -85,6 +86,18 @@ export async function POST(req: Request) {
         source: deal.source ?? "manual",
       },
     })
+
+    // Quest: First Lead
+    void markQuestEvent(dbUserId, "crm.first_contact_added", {
+      metadata: { dealId: deal.id },
+    })
+
+    // Quest: First Closed Deal — when deal is created at a "won" stage
+    if (deal.stage === "ACTIVE_RETAINER" || deal.stage === "COMPLETED") {
+      void markQuestEvent(dbUserId, "deal.first_closed_won", {
+        metadata: { dealId: deal.id },
+      })
+    }
 
     return NextResponse.json({ deal }, { status: 201 })
   } catch (err) {

@@ -8,6 +8,7 @@ import {
   DEFAULT_QUIZ_DEFAULTS,
 } from "@/lib/audits/template"
 import { generateUniqueSlug } from "@/lib/audits/slug"
+import { markQuestEvent } from "@/lib/quests"
 
 export const dynamic = "force-dynamic"
 
@@ -90,6 +91,11 @@ export async function POST() {
         emailRequired: true,
         isPublished: true,
       },
+    })
+
+    // Quest: First Audit
+    void markQuestEvent(dbUserId, "audit.first_completed", {
+      metadata: { quizId: quiz.id },
     })
 
     return NextResponse.json({ quiz }, { status: 201 })

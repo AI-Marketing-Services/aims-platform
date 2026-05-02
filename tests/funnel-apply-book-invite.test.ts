@@ -89,7 +89,8 @@ describe("POST /api/community/apply — wiring", () => {
 
   it("rate-limits via Upstash", () => {
     expect(content).toMatch(/formRatelimit/)
-    expect(content).toMatch(/status:\s*429/)
+    // Either inline 429 or the rateLimitedResponse() helper is acceptable.
+    expect(content).toMatch(/status:\s*429|rateLimitedResponse/)
   })
 
   it("creates both LeadMagnetSubmission and Deal", () => {

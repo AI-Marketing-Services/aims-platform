@@ -158,8 +158,11 @@ export async function POST(req: Request) {
       userId: dbUserId,
       query: parsed.data.query,
     })
+    // Don't leak the underlying error message to the client — it can include
+    // Google Places API key suffixes, internal lib paths, or quota messages.
+    // Log the full err server-side (above) and return a generic message.
     return NextResponse.json(
-      { error: err instanceof Error ? err.message : "Search failed" },
+      { error: "Search failed. Please try again in a moment." },
       { status: 500 },
     )
   }

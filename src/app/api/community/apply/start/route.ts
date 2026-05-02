@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { z } from "zod"
 import { db } from "@/lib/db"
-import { formRatelimit, getIp } from "@/lib/ratelimit"
+import { formRatelimit, getIp, rateLimitedResponse } from "@/lib/ratelimit"
 import { logger } from "@/lib/logger"
 
 /**
@@ -24,9 +24,7 @@ const schema = z.object({
 export async function POST(req: Request) {
   if (formRatelimit) {
     const { success } = await formRatelimit.limit(getIp(req))
-    if (!success) {
-      return NextResponse.json({ error: "Too many requests" }, { status: 429 })
-    }
+    if (!success) return rateLimitedResponse(req, "POST /api/community/apply/start")
   }
 
   try {
@@ -52,10 +50,20 @@ export async function POST(req: Request) {
     })
 
     if (recent) {
-      // Refresh updatedAt so we can still identify them as an active session
+      // Refresh updatedAt so we can still identify them as an active session.
+      // Also refresh attribution: if the user clicked through a fresh ad and
+      // re-started the form, the new UTM values should win — otherwise we
+      // lose attribution data for the visit that actually drove the action.
       await db.partialApplication.update({
         where: { id: recent.id },
-        data: { firstName: firstName.trim(), lastName: lastName.trim() },
+        data: {
+          firstName: firstName.trim(),
+          lastName: lastName.trim(),
+          ...(source ? { source } : {}),
+          ...(utmSource ? { utmSource } : {}),
+          ...(utmMedium ? { utmMedium } : {}),
+          ...(utmCampaign ? { utmCampaign } : {}),
+        },
       })
       return NextResponse.json({ ok: true, id: recent.id, existing: true })
     }

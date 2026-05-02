@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { put } from "@vercel/blob"
+import { randomUUID } from "crypto"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
 import { getOrCreateDbUserByClerkId } from "@/lib/auth/ensure-user"
@@ -67,8 +68,19 @@ export async function POST(req: Request) {
       )
     }
 
+    // Derive the extension from the validated MIME type — never trust
+    // file.name (attacker-controlled, can contain path-traversal segments
+    // like "../../" or null bytes). Use a server-generated UUID for the
+    // basename so uploads can't collide or overwrite each other either.
+    const ext =
+      file.type === "image/png" ? "png" :
+      file.type === "image/jpeg" ? "jpg" :
+      file.type === "image/webp" ? "webp" :
+      file.type === "image/gif" ? "gif" : "bin"
+    const safeName = `${randomUUID()}.${ext}`
+
     const blob = await put(
-      `logos/${dbUser.id}/${file.name}`,
+      `logos/${dbUser.id}/${safeName}`,
       file,
       {
         access: "public",

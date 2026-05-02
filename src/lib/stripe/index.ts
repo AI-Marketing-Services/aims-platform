@@ -1,8 +1,11 @@
 import Stripe from "stripe"
 import { db } from "@/lib/db"
+import { logger } from "@/lib/logger"
 
 if (!process.env.STRIPE_SECRET_KEY) {
-  console.warn("STRIPE_SECRET_KEY is not configured - Stripe operations will fail")
+  logger.warn("STRIPE_SECRET_KEY is not configured - Stripe operations will fail", {
+    endpoint: "stripe",
+  })
 }
 
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? "sk_placeholder_not_configured", {

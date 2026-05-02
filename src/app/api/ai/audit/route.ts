@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { z } from "zod"
 import Anthropic from "@anthropic-ai/sdk"
-import { auditRatelimit, getIp } from "@/lib/ratelimit"
+import { auditRatelimit, getIp, rateLimitedResponse } from "@/lib/ratelimit"
 import { logApiCost, estimateAnthropicCost } from "@/lib/ai"
 import { logger } from "@/lib/logger"
 
@@ -37,7 +37,7 @@ const auditSchema = z.object({
 export async function POST(req: Request) {
   if (auditRatelimit) {
     const { success } = await auditRatelimit.limit(getIp(req))
-    if (!success) return NextResponse.json({ error: "Too many requests" }, { status: 429 })
+    if (!success) return rateLimitedResponse(req, "POST /api/ai/audit")
   }
 
   if (!process.env.ANTHROPIC_API_KEY) {

@@ -9,6 +9,7 @@ import {
   CheckCircle2,
   Calendar,
   Check,
+  Users,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import {
@@ -16,7 +17,6 @@ import {
   ALLOWED_COUNTRIES,
   getCalendarUrl,
   getStepIntro,
-  getCalendarIntro,
   getContactIntro,
   type CountryCode,
 } from "@/lib/collective-application"
@@ -538,8 +538,6 @@ export function ApplyForm() {
   /* ======================================================================== */
 
   if (phase === "calendar" && scoreResult) {
-    const intro = getCalendarIntro(firstName.trim(), scoreResult.tier, answers)
-
     return (
       <div className="min-h-[60vh] flex flex-col">
         {/* Progress bar — 100% */}
@@ -548,18 +546,14 @@ export function ApplyForm() {
         </div>
 
         <div className="flex-1 flex flex-col items-center px-4 sm:px-6 py-6 sm:py-10">
+
+          {/* ── ACTION HEADLINE — leads the page ── */}
           <div className="w-full max-w-2xl text-center mb-6">
-            <div className="inline-flex items-center gap-2 text-crimson mb-3">
-              <Calendar className="w-5 h-5" />
-              <span className="text-xs font-mono uppercase tracking-wider">
-                Book your consult call
-              </span>
-            </div>
-            <h2 className="font-playfair text-2xl sm:text-3xl text-[#1A1A1A] mb-3">
-              {intro.heading}
+            <h2 className="font-playfair text-3xl sm:text-4xl md:text-5xl text-[#1A1A1A] mb-3 leading-[1.1]">
+              Book Your Consult Below
             </h2>
-            <p className="text-[#737373] text-sm sm:text-base max-w-lg mx-auto">
-              {intro.subheading}
+            <p className="text-[#4B5563] text-base sm:text-lg max-w-xl mx-auto">
+              Your application stood out. Now let&apos;s see if we&apos;re the right fit for each other.
             </p>
           </div>
 
@@ -571,65 +565,8 @@ export function ApplyForm() {
             </div>
           )}
 
-          {/* Always-visible top-of-page "Open in new tab" CTA. Iframe
-              loading is the primary path; this guarantees the booking is
-              one click away even if the embed below fails or hasn't
-              rendered yet. */}
-          <div className="w-full max-w-2xl mb-4 flex justify-center">
-            <a
-              href={getCalendarUrl(scoreResult.tier)}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-2 rounded-md border border-[#E3E3E3] bg-white px-4 py-2 text-xs font-semibold uppercase tracking-wider text-[#1A1A1A] hover:border-crimson hover:text-crimson transition-colors"
-            >
-              <Calendar className="w-3.5 h-3.5" />
-              Open calendar in a new tab
-            </a>
-          </div>
-
-          {/* What this call covers — branded pre-booking card. Mirrors the
-              event-details copy so the attendee knows what to expect before
-              they give up a calendar slot. Calendly's own event-details
-              screen is disabled (hide_event_type_details=1) so users don't
-              see a duplicate list. */}
-          <div className="w-full max-w-2xl mb-6 rounded-xl border border-[#E3E3E3] bg-white p-6 text-left">
-            <h3 className="font-semibold text-[#1A1A1A] text-base sm:text-lg mb-2">
-              AI Operator Collective Consult Call
-            </h3>
-            <p className="text-sm text-[#4B5563] leading-relaxed mb-3">
-              45-minute virtual discovery call designed to have an open
-              conversation about your goals and explore whether we&apos;re the
-              right fit to work together. We&apos;ll cover:
-            </p>
-            <ul className="space-y-1.5 text-sm text-[#4B5563]">
-              <li className="flex gap-2">
-                <span className="text-crimson shrink-0">•</span>
-                Who we are and how our approach works.
-              </li>
-              <li className="flex gap-2">
-                <span className="text-crimson shrink-0">•</span>
-                Your background, goals, and what you&apos;re hoping to build.
-              </li>
-              <li className="flex gap-2">
-                <span className="text-crimson shrink-0">•</span>
-                Investment expectations, cost overview, and potential ROI.
-              </li>
-              <li className="flex gap-2">
-                <span className="text-crimson shrink-0">•</span>
-                Whether this is the right time for you to start a business.
-              </li>
-              <li className="flex gap-2">
-                <span className="text-crimson shrink-0">•</span>
-                Mutual fit and what next steps could look like.
-              </li>
-            </ul>
-          </div>
-
-          {/* Widget.js container with timeout-based fallback. We NEVER want
-              a blank screen — if the widget doesn't render in 4 seconds,
-              swap to a giant clickthrough that guarantees the visitor can
-              still book. */}
-          <div className="w-full max-w-2xl">
+          {/* ── CALENDLY WIDGET — directly below headline ── */}
+          <div className="w-full max-w-2xl mb-4">
             {calendarFallback ? (
               <div className="w-full rounded-lg border border-[#E3E3E3] bg-white p-8 text-center">
                 <Calendar className="w-10 h-10 text-crimson mx-auto mb-4" />
@@ -697,6 +634,56 @@ export function ApplyForm() {
               .
             </p>
           </div>
+
+          {/* ── COHORT SCARCITY NUDGE — below the calendar ── */}
+          <div className="w-full max-w-2xl mb-6">
+            <div className="rounded-lg border border-[#E3E3E3] bg-[#FAFAF7] px-5 py-3 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6">
+              <span className="flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider text-[#737373]">
+                <Calendar className="w-3.5 h-3.5 text-crimson shrink-0" />
+                Next cohort opens Q2 2026
+              </span>
+              <span className="hidden sm:inline text-[#D1D1D1]">|</span>
+              <span className="flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider text-[#737373]">
+                <Users className="w-3.5 h-3.5 text-crimson shrink-0" />
+                First cohort: limited to 10 members
+              </span>
+            </div>
+          </div>
+
+          {/* ── WHAT THIS CALL COVERS — below the calendar ── */}
+          <div className="w-full max-w-2xl rounded-xl border border-[#E3E3E3] bg-white p-6 text-left">
+            <h3 className="font-semibold text-[#1A1A1A] text-base sm:text-lg mb-2">
+              AI Operator Collective Consult Call
+            </h3>
+            <p className="text-sm text-[#4B5563] leading-relaxed mb-3">
+              45-minute virtual discovery call designed to have an open
+              conversation about your goals and explore whether we&apos;re the
+              right fit to work together. We&apos;ll cover:
+            </p>
+            <ul className="space-y-1.5 text-sm text-[#4B5563]">
+              <li className="flex gap-2">
+                <span className="text-crimson shrink-0">•</span>
+                Who we are and how our approach works.
+              </li>
+              <li className="flex gap-2">
+                <span className="text-crimson shrink-0">•</span>
+                Your background, goals, and what you&apos;re hoping to build.
+              </li>
+              <li className="flex gap-2">
+                <span className="text-crimson shrink-0">•</span>
+                Investment expectations, cost overview, and potential ROI.
+              </li>
+              <li className="flex gap-2">
+                <span className="text-crimson shrink-0">•</span>
+                Whether this is the right time for you to start a business.
+              </li>
+              <li className="flex gap-2">
+                <span className="text-crimson shrink-0">•</span>
+                Mutual fit and what next steps could look like.
+              </li>
+            </ul>
+          </div>
+
         </div>
       </div>
     )
@@ -937,12 +924,17 @@ export function ApplyForm() {
                 {currentQuestion.allowOther &&
                   answers[currentQuestion.id] === "other" && (
                     <div className="mt-4 space-y-3">
+                      <label className="sr-only" htmlFor="apply-other">
+                        Describe your background
+                      </label>
                       <input
+                        id="apply-other"
                         type="text"
                         value={otherText}
                         onChange={(e) => setOtherText(e.target.value)}
                         className="w-full rounded-md border border-[#E3E3E3] bg-white px-4 py-3.5 text-base text-[#1A1A1A] placeholder:text-[#ccc] focus:outline-none focus:border-crimson focus:ring-1 focus:ring-crimson transition-colors"
                         placeholder="Tell us about your background..."
+                        aria-label="Describe your background"
                         autoFocus
                         onKeyDown={(e) => {
                           if (e.key === "Enter" && otherText.trim().length > 0)
