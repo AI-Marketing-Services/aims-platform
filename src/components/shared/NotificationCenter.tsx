@@ -1,7 +1,8 @@
 "use client"
 
 import { memo } from "react"
-import { Bell, Users, DollarSign, BarChart2, LifeBuoy, Zap, Activity, X, CheckCheck, ClipboardList } from "lucide-react"
+import { Bell, Users, DollarSign, BarChart2, LifeBuoy, Zap, Activity, X, CheckCheck, ClipboardList, ArrowRight } from "lucide-react"
+import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { cn, timeAgo } from "@/lib/utils"
 
@@ -192,6 +193,19 @@ export function NotificationCenter({
             <NotificationRow key={n.id} item={n} onMarkRead={onMarkRead} />
           ))
         )}
+      </div>
+
+      {/* Footer — link to the full surface so admins can scroll past 20
+          and bulk-clear noise (e.g. orphan-Calendly flood). */}
+      <div className="border-t border-border px-4 py-2.5">
+        <Link
+          href="/admin/notifications"
+          onClick={onClose}
+          className="flex items-center justify-between text-xs text-primary hover:underline"
+        >
+          <span>See all notifications</span>
+          <ArrowRight className="h-3 w-3" />
+        </Link>
       </div>
     </div>
   )

@@ -5,6 +5,7 @@ import { db } from "@/lib/db"
 import { QUESTIONS } from "@/lib/collective-application"
 import { Breadcrumbs } from "@/components/shared/Breadcrumbs"
 import { InviteButton } from "./InviteButton"
+import { DeleteApplicationButton } from "./DeleteApplicationButton"
 
 export const dynamic = "force-dynamic"
 
@@ -129,6 +130,9 @@ export default async function ApplicationsPage() {
                 <th className="text-right p-3 text-xs font-mono uppercase tracking-wider text-ink/60">
                   Date
                 </th>
+                <th className="text-center p-3 text-xs font-mono uppercase tracking-wider text-ink/60 w-12">
+                  <span className="sr-only">Delete</span>
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -192,13 +196,20 @@ export default async function ApplicationsPage() {
                         year: "numeric",
                       })}
                     </td>
+                    <td className="p-3 text-center">
+                      <DeleteApplicationButton
+                        submissionId={s.id}
+                        contactEmail={s.email}
+                        contactName={s.name ?? s.email}
+                      />
+                    </td>
                   </tr>
                 )
               })}
               {submissions.length === 0 && (
                 <tr>
                   <td
-                    colSpan={7}
+                    colSpan={8}
                     className="p-8 text-center text-ink/50 text-sm"
                   >
                     No applications yet.

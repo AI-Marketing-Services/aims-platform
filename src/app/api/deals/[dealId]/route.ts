@@ -131,11 +131,17 @@ export async function DELETE(
   const skipClose = url.searchParams.get("skipClose") === "1"
 
   try {
-    // Look up closeLeadId BEFORE deleting so we can cascade the delete
-    // to Close even if the local Prisma delete is what runs first.
+    // Look up closeLeadId + email BEFORE deleting so we can cascade the
+    // delete to (a) Close CRM and (b) every locally-linked submission
+    // that points at this deal — by FK or by matching contactEmail.
     const deal = await db.deal.findUnique({
       where: { id: dealId },
-      select: { closeLeadId: true, contactName: true, company: true },
+      select: {
+        closeLeadId: true,
+        contactName: true,
+        contactEmail: true,
+        company: true,
+      },
     })
     if (!deal) {
       return NextResponse.json({ error: "Deal not found" }, { status: 404 })
@@ -162,12 +168,45 @@ export async function DELETE(
       }
     }
 
-    await db.deal.delete({ where: { id: dealId } })
+    // Cascade local cleanup. Submissions soft-point at Deal via dealId
+    // (no FK), so a naked deal.delete leaves them dangling — they keep
+    // showing up on /admin/applications with no Stage. We also clean up
+    // anything matching the email so a single delete clears the lead
+    // out of every surface in the workspace.
+    //
+    // Order matters: child rows first, then the deal itself.
+    const normalizedEmail = deal.contactEmail.trim().toLowerCase()
+    const tx = await db.$transaction([
+      db.leadMagnetSubmission.deleteMany({
+        where: {
+          OR: [
+            { dealId },
+            {
+              type: "COLLECTIVE_APPLICATION",
+              email: { equals: normalizedEmail, mode: "insensitive" },
+            },
+          ],
+        },
+      }),
+      db.partialApplication.deleteMany({
+        where: {
+          OR: [
+            { dealId },
+            { email: { equals: normalizedEmail, mode: "insensitive" } },
+          ],
+        },
+      }),
+      db.deal.delete({ where: { id: dealId } }),
+    ])
+    const submissionsDeleted = tx[0]?.count ?? 0
+    const partialsDeleted = tx[1]?.count ?? 0
 
     logger.info("Deal deleted", {
       dealId,
       closeLeadId: deal.closeLeadId,
       cascadedToClose: Boolean(deal.closeLeadId && !skipClose),
+      submissionsDeleted,
+      partialsDeleted,
       company: deal.company,
       deletedBy: userId,
     })
@@ -175,6 +214,8 @@ export async function DELETE(
     return NextResponse.json({
       deleted: true,
       cascadedToClose: Boolean(deal.closeLeadId && !skipClose),
+      submissionsDeleted,
+      partialsDeleted,
     })
   } catch (err) {
     logger.error(`Failed to delete deal ${dealId}:`, err)

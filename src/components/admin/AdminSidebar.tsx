@@ -34,6 +34,7 @@ import {
   Package,
   DollarSign,
   Bug,
+  Bell,
 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
@@ -124,6 +125,7 @@ const ADMIN_NAV = [
     section: "Team",
     items: [
       { label: "Team Access", href: "/admin/users", icon: ShieldCheck },
+      { label: "Notifications", href: "/admin/notifications", icon: Bell },
       { label: "Support Tickets", href: "/admin/support", icon: LifeBuoy },
       { label: "Portal Feedback", href: "/admin/feedback", icon: Bug },
       { label: "Chat Sessions", href: "/admin/chat-sessions", icon: MessageSquare },
