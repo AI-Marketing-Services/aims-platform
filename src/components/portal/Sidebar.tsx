@@ -148,6 +148,21 @@ export function PortalSidebar({
     (item) => !ADMIN_ONLY_ROUTES.includes(item.href) || isAdminEmail
   )
 
+  // Pick the single best-matching nav item for the current pathname so that
+  // /portal/crm/scout doesn't light up BOTH "Client CRM" (prefix /portal/crm)
+  // and "Lead Scout" (prefix /portal/crm/scout). Longest matching prefix wins.
+  const activeHref = visibleNav
+    .filter((item) => {
+      if (pathname === item.href) return true
+      // Match nested routes only on a path-segment boundary so /portal/crm
+      // doesn't accidentally match /portal/crm-something.
+      return pathname.startsWith(`${item.href}/`)
+    })
+    .reduce<string | null>((best, item) => {
+      if (!best || item.href.length > best.length) return item.href
+      return best
+    }, null)
+
   return (
     <aside
       className={cn(
@@ -168,7 +183,7 @@ export function PortalSidebar({
           scrollbar on a ~900px viewport. Icons stay 4×4 (16px). */}
       <nav className="flex-1 py-2 px-2 space-y-0.5 overflow-y-auto custom-scrollbar">
         {visibleNav.map((item) => {
-          const isActive = pathname.startsWith(item.href)
+          const isActive = activeHref === item.href
           // Don't dim items while quests are still loading — avoids a flash of
           // "everything is locked" on first paint.
           const isQuestLocked =
