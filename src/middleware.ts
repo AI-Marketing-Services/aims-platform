@@ -233,6 +233,17 @@ export default clerkMiddleware(async (auth, req) => {
   const { userId, sessionClaims } = await auth()
 
   if (!userId) {
+    // For /api/* callers, return a JSON 401 instead of redirecting to
+    // an HTML sign-in page. Otherwise client-side fetch() in components
+    // (e.g. the live domain availability check on /reseller/settings/domain)
+    // silently follows the redirect and tries to JSON-parse HTML, which
+    // breaks the UI without surfacing a real error.
+    if (req.nextUrl.pathname.startsWith("/api/")) {
+      return NextResponse.json(
+        { error: "Sign in required", reason: "unauthenticated" },
+        { status: 401 },
+      )
+    }
     const signInUrl = new URL("/sign-in", req.url)
     signInUrl.searchParams.set("redirect_url", req.url)
     return NextResponse.redirect(signInUrl)
