@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server"
-import { auth } from "@clerk/nextjs/server"
 import { z } from "zod"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
@@ -13,6 +12,7 @@ import {
 } from "@/lib/vercel-domains"
 import { invalidateTenantCache } from "@/lib/tenant/resolve-tenant"
 import { Prisma } from "@prisma/client"
+import { checkWhitelabelAccess } from "@/lib/auth/whitelabel"
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -48,14 +48,11 @@ function buildRecordsFromVerification(
 }
 
 async function requireReseller() {
-  const { userId: clerkId, sessionClaims } = await auth()
-  if (!clerkId) return { error: "Unauthorized", status: 401, clerkId: null }
-
-  const role = (sessionClaims?.metadata as { role?: string })?.role
-  if (!role || !["RESELLER", "ADMIN", "SUPER_ADMIN"].includes(role)) {
-    return { error: "Forbidden", status: 403, clerkId: null }
+  const access = await checkWhitelabelAccess()
+  if (!access.ok) {
+    return { error: access.error, status: access.status, clerkId: null as string | null }
   }
-  return { error: null, status: 200, clerkId }
+  return { error: null, status: 200, clerkId: access.clerkId as string | null }
 }
 
 // ---------------------------------------------------------------------------

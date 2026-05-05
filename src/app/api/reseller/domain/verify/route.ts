@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server"
-import { auth } from "@clerk/nextjs/server"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
 import {
@@ -9,6 +8,7 @@ import {
   type VerificationRecord,
 } from "@/lib/vercel-domains"
 import { invalidateTenantCache } from "@/lib/tenant/resolve-tenant"
+import { checkWhitelabelAccess } from "@/lib/auth/whitelabel"
 
 type DnsRecordShape = {
   type: "A" | "CNAME" | "TXT"
@@ -25,13 +25,11 @@ function friendlyLabel(type: string): string {
 }
 
 export async function POST() {
-  const { userId: clerkId, sessionClaims } = await auth()
-  if (!clerkId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-
-  const role = (sessionClaims?.metadata as { role?: string })?.role
-  if (!role || !["RESELLER", "ADMIN", "SUPER_ADMIN"].includes(role)) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+  const access = await checkWhitelabelAccess()
+  if (!access.ok) {
+    return NextResponse.json({ error: access.error, reason: access.reason }, { status: access.status })
   }
+  const clerkId = access.clerkId
 
   try {
     const dbUser = await db.user.findUnique({

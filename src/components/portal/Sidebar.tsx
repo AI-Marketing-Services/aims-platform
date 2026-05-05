@@ -53,6 +53,13 @@ type NavItem = {
   href: string
   icon: typeof LayoutDashboard
   gate?: FeatureKey
+  /**
+   * When true, the link is dimmed + lock-iconned until the user has
+   * `MemberProfile.onboardingCompletedAt` set. Used for whitelabel
+   * (Branding + Domain), which we only expose to clients who have
+   * finished setting up — avoids untrained users configuring DNS.
+   */
+  requiresOnboardingComplete?: boolean
 }
 
 const PORTAL_NAV: readonly NavItem[] = [
@@ -85,6 +92,10 @@ const PORTAL_NAV: readonly NavItem[] = [
   { label: "Marketplace", href: "/portal/marketplace", icon: ShoppingBag, gate: "marketplace" },
   { label: "Campaigns", href: "/portal/campaigns", icon: BarChart3 },
   { label: "Signal", href: "/portal/signal", icon: Newspaper, gate: "signal" },
+
+  // Whitelabel — opens once onboarding hits 100%
+  { label: "Branding", href: "/reseller/settings/branding", icon: Sparkles, requiresOnboardingComplete: true },
+  { label: "Domain", href: "/reseller/settings/domain", icon: Settings, requiresOnboardingComplete: true },
 
   // Account
   { label: "Billing", href: "/portal/billing", icon: CreditCard },
@@ -160,16 +171,26 @@ export function PortalSidebar({
           const isActive = pathname.startsWith(item.href)
           // Don't dim items while quests are still loading — avoids a flash of
           // "everything is locked" on first paint.
-          const isLocked =
+          const isQuestLocked =
             !!item.gate && !questsLoading && !isFeatureUnlocked(item.gate)
+          const isOnboardingLocked =
+            !!item.requiresOnboardingComplete && !onboardingCompletedAt
+          const isLocked = isQuestLocked || isOnboardingLocked
+          // Locked whitelabel items send the user to /portal/onboard instead
+          // of bouncing them with a 403 — better than a dead-end click.
+          const targetHref = isOnboardingLocked
+            ? "/portal/onboard?from=whitelabel"
+            : item.href
           return (
             <Link
               key={item.href}
-              href={item.href}
+              href={targetHref}
               title={
-                isLocked
-                  ? "Locked — open the Quests map to unlock"
-                  : undefined
+                isOnboardingLocked
+                  ? "Finish onboarding to unlock whitelabel"
+                  : isQuestLocked
+                    ? "Locked — open the Quests map to unlock"
+                    : undefined
               }
               className={cn(
                 "flex items-center gap-2.5 rounded-lg py-2 text-[13px] font-medium transition-all duration-150",
