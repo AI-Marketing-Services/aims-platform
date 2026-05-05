@@ -36,7 +36,7 @@ export function OnboardTabs({ roadmapSection, profileSection, completedCount, to
             </span>
           )}
           {percent === 100 && (
-            <span className="ml-1 text-xs bg-emerald-500/10 text-emerald-500 px-1.5 py-0.5 rounded-full">
+            <span className="ml-1 text-xs bg-primary/50/10 text-primary px-1.5 py-0.5 rounded-full">
               Done
             </span>
           )}

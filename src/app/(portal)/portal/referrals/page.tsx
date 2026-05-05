@@ -193,28 +193,28 @@ export default async function ReferralsPage() {
       </div>
 
       {/* Earning projections */}
-      <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-6 mb-6">
+      <div className="bg-primary/5 border border-primary/20 rounded-xl p-6 mb-6">
         <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
-          <TrendingUp className="w-4 h-4 text-emerald-700" />
+          <TrendingUp className="w-4 h-4 text-primary" />
           Earning Potential
         </h3>
         <div className="space-y-4">
-          <div className="bg-card border border-emerald-200 rounded-lg p-4">
+          <div className="bg-card border border-primary/20 rounded-lg p-4">
             <p className="text-sm text-muted-foreground mb-1">If 10 referrals sign up at $297/mo:</p>
             <p className="text-sm font-medium text-foreground">
               You earn:{" "}
-              <span className="text-emerald-700 font-bold">$594/mo for 3 months</span>
+              <span className="text-primary font-bold">$594/mo for 3 months</span>
               <span className="text-muted-foreground"> = </span>
-              <span className="text-emerald-700 font-bold">$1,782 total</span>
+              <span className="text-primary font-bold">$1,782 total</span>
             </p>
           </div>
-          <div className="bg-card border border-emerald-200 rounded-lg p-4">
+          <div className="bg-card border border-primary/20 rounded-lg p-4">
             <p className="text-sm text-muted-foreground mb-1">If 5 referrals sign up at $497/mo:</p>
             <p className="text-sm font-medium text-foreground">
               You earn:{" "}
-              <span className="text-emerald-700 font-bold">$497/mo for 3 months</span>
+              <span className="text-primary font-bold">$497/mo for 3 months</span>
               <span className="text-muted-foreground"> = </span>
-              <span className="text-emerald-700 font-bold">$1,491 total</span>
+              <span className="text-primary font-bold">$1,491 total</span>
             </p>
           </div>
         </div>

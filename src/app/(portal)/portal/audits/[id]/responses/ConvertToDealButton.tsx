@@ -67,7 +67,7 @@ export function ConvertToDealButton({
       <Link
         href={`/portal/crm/${dealId}`}
         onClick={(e) => e.stopPropagation()}
-        className={`inline-flex items-center gap-1 rounded-md border border-emerald-500/30 bg-emerald-500/5 px-2.5 py-1 text-[11px] font-semibold text-emerald-600 hover:border-emerald-500/60 transition-colors ${className ?? ""}`}
+        className={`inline-flex items-center gap-1 rounded-md border border-primary/30 bg-primary/50/5 px-2.5 py-1 text-[11px] font-semibold text-primary hover:border-emerald-500/60 transition-colors ${className ?? ""}`}
       >
         <Check className="h-3 w-3" />
         In CRM

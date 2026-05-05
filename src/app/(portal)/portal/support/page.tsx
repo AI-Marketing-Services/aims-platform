@@ -34,7 +34,7 @@ const statusConfig = {
   resolved: {
     icon: CheckCircle,
     label: "Resolved",
-    className: "text-emerald-700 bg-emerald-50 border-emerald-200",
+    className: "text-primary bg-primary/5 border-primary/20",
   },
   closed: {
     icon: CheckCircle,
@@ -410,7 +410,7 @@ export default function SupportPage() {
 
       {/* Success banner */}
       {submitted && (
-        <div className="flex items-center gap-3 p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-700 text-sm">
+        <div className="flex items-center gap-3 p-4 bg-primary/5 border border-primary/20 rounded-xl text-primary text-sm">
           <CheckCircle className="w-4 h-4 flex-shrink-0" />
           Your ticket has been submitted. You will receive a confirmation email shortly. Our team typically responds within 24 hours.
         </div>

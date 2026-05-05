@@ -118,7 +118,7 @@ function StatCard({ label, value, sub, change, icon, accent }: StatCardProps) {
         <span
           className={`self-start inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold ${
             changePositive
-              ? "bg-green-50 text-green-700 border border-green-200"
+              ? "bg-primary/5 text-primary border border-primary/20"
               : "bg-red-50 text-red-600 border border-red-200"
           }`}
         >
@@ -300,7 +300,7 @@ export default function RevenueDashboardPage() {
               label="Won This Month"
               value={fmt(data.wonThisMonth)}
               sub={`${data.wonCountThisMonth} deal${data.wonCountThisMonth !== 1 ? "s" : ""} closed`}
-              icon={<CheckCircle2 className="h-4 w-4 text-emerald-700" />}
+              icon={<CheckCircle2 className="h-4 w-4 text-primary" />}
             />
             <StatCard
               label="Lost This Month"

@@ -4,6 +4,7 @@ import { z } from "zod"
 import { db } from "@/lib/db"
 import { stripe } from "@/lib/stripe"
 import { getValidatedAttributionResellerId } from "@/lib/tenant/attribution"
+import { getOrCreateDbUserByClerkId } from "@/lib/auth/ensure-user"
 import { logger } from "@/lib/logger"
 
 export const dynamic = "force-dynamic"
@@ -72,10 +73,10 @@ export async function POST(
     return NextResponse.json({ error: "price_not_configured" }, { status: 503 })
   }
 
-  const dbUser = await db.user.findUnique({ where: { clerkId } })
-  if (!dbUser) {
-    return NextResponse.json({ error: "user_not_found" }, { status: 404 })
-  }
+  // Lazy-create the User row if Clerk's user.created webhook hasn't
+  // landed yet — otherwise a fresh tester clicking Buy in the first
+  // 30s after sign-up gets a confusing 404.
+  const dbUser = await getOrCreateDbUserByClerkId(clerkId)
 
   // First-touch attribution from the cookie. If unset (visitor came in
   // straight to the marketplace without ever touching a tenant page),

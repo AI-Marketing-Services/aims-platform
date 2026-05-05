@@ -43,12 +43,15 @@ const TYPE_LABELS: Record<ContentPieceType, string> = {
   TWEET_THREAD: "Tweet Thread",
 }
 
+// Type pills are intentionally neutral — the icon carries the type
+// signal, the brand stays cohesive. Colored-by-type pills made the page
+// look like a Trello board next to the rest of the portal.
 const TYPE_COLORS: Record<ContentPieceType, string> = {
-  LINKEDIN_POST: "bg-blue-500/10 text-blue-600 border-blue-500/20",
-  CASE_STUDY: "bg-purple-500/10 text-purple-600 border-purple-500/20",
-  EMAIL_SEQUENCE: "bg-emerald-500/10 text-emerald-700 border-emerald-500/20",
-  TESTIMONIAL: "bg-amber-500/10 text-amber-400 border-amber-500/20",
-  TWEET_THREAD: "bg-sky-500/10 text-sky-400 border-sky-500/20",
+  LINKEDIN_POST: "bg-muted text-foreground border-border",
+  CASE_STUDY: "bg-muted text-foreground border-border",
+  EMAIL_SEQUENCE: "bg-muted text-foreground border-border",
+  TESTIMONIAL: "bg-muted text-foreground border-border",
+  TWEET_THREAD: "bg-muted text-foreground border-border",
 }
 
 const TYPE_ICONS: Record<ContentPieceType, React.ElementType> = {
@@ -59,10 +62,12 @@ const TYPE_ICONS: Record<ContentPieceType, React.ElementType> = {
   TWEET_THREAD: Hash,
 }
 
+// Semantic status: published = brand primary (success surface),
+// draft = neutral, archived = muted.
 const STATUS_COLORS: Record<ContentPieceStatus, string> = {
-  DRAFT: "bg-muted/5 text-muted-foreground/50 border-border/10",
-  PUBLISHED: "bg-emerald-500/10 text-emerald-700 border-emerald-500/20",
-  ARCHIVED: "bg-zinc-500/10 text-zinc-500 border-zinc-500/20",
+  DRAFT: "bg-muted text-muted-foreground border-border",
+  PUBLISHED: "bg-primary/10 text-primary border-primary/20",
+  ARCHIVED: "bg-muted/50 text-muted-foreground/70 border-border/50",
 }
 
 const TYPE_FILTER_TABS: Array<{ label: string; value: ContentPieceType | "ALL" }> = [

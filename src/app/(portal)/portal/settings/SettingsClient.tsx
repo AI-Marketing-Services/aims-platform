@@ -102,7 +102,7 @@ function EditableField({
       ) : (
         <div className="flex items-center gap-1.5 group">
           <p className="text-sm text-foreground">{value || "-"}</p>
-          {saved && <span className="text-[10px] text-emerald-700 font-medium">Saved</span>}
+          {saved && <span className="text-[10px] text-primary font-medium">Saved</span>}
           <button
             onClick={() => { setDraft(value); setEditing(true) }}
             className="opacity-0 group-hover:opacity-100 transition-opacity p-0.5 rounded hover:bg-muted"
@@ -162,7 +162,7 @@ function EditableSelectField({
       ) : (
         <div className="flex items-center gap-1.5 group">
           <p className="text-sm text-foreground">{value || "-"}</p>
-          {saved && <span className="text-[10px] text-emerald-700 font-medium">Saved</span>}
+          {saved && <span className="text-[10px] text-primary font-medium">Saved</span>}
           <button
             onClick={() => { setDraft(value); setEditing(true) }}
             className="opacity-0 group-hover:opacity-100 transition-opacity p-0.5 rounded hover:bg-muted"
@@ -502,7 +502,7 @@ export function PortalSettingsClient({ clerkUser, dbUser }: Props) {
               {notifSaving ? "Saving..." : "Save Preferences"}
             </button>
             {notifSaved && (
-              <span className="text-xs text-emerald-700 font-medium">Preferences saved</span>
+              <span className="text-xs text-primary font-medium">Preferences saved</span>
             )}
           </div>
         </div>

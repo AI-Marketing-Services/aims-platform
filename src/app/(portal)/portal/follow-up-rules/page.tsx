@@ -30,7 +30,7 @@ const STAGE_COLORS: Record<Stage, string> = {
   DISCOVERY_CALL: "bg-gray-100 text-gray-600 border-gray-200",
   PROPOSAL_SENT: "bg-amber-50 text-amber-700 border-amber-200",
   ACTIVE_RETAINER: "bg-primary/10 text-primary border-primary/20",
-  COMPLETED: "bg-green-50 text-green-700 border-green-200",
+  COMPLETED: "bg-primary/5 text-primary border-primary/20",
   LOST: "bg-red-50 text-red-600 border-red-200",
 }
 

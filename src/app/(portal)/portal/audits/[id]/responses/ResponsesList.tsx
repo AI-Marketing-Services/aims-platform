@@ -64,7 +64,7 @@ function scoreBucket(score: number | null) {
     return {
       label: String(score),
       className:
-        "bg-emerald-500/10 text-emerald-500 border-emerald-500/30",
+        "bg-primary/50/10 text-primary border-primary/30",
     }
   }
   if (score >= 50) {

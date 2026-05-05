@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { getCustomerPortalUrl } from "@/lib/stripe"
-import { db } from "@/lib/db"
+import { getOrCreateDbUserByClerkId } from "@/lib/auth/ensure-user"
 import { logger } from "@/lib/logger"
 
 export async function POST(req: Request) {
@@ -24,9 +24,13 @@ export async function POST(req: Request) {
   }
 
   try {
-    const user = await db.user.findUnique({ where: { clerkId } })
-    if (!user?.stripeCustomerId) {
-      return NextResponse.json({ error: "No billing account found" }, { status: 404 })
+    const user = await getOrCreateDbUserByClerkId(clerkId)
+    if (!user.stripeCustomerId) {
+      // No subscription yet — surface a friendlier message than 404.
+      return NextResponse.json(
+        { error: "No billing account yet. Subscribe to a plan to access the billing portal." },
+        { status: 404 },
+      )
     }
 
     const url = await getCustomerPortalUrl(user.stripeCustomerId, safeReturnUrl)

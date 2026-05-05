@@ -98,9 +98,9 @@ export default async function DealDetailPage({
           </div>
         </div>
         {deal.value > 0 && (
-          <div className="flex items-center gap-1.5 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-1.5">
-            <DollarSign className="h-3.5 w-3.5 text-emerald-700" />
-            <span className="text-sm font-bold text-emerald-700">
+          <div className="flex items-center gap-1.5 bg-primary/5 border border-primary/20 rounded-lg px-3 py-1.5">
+            <DollarSign className="h-3.5 w-3.5 text-primary" />
+            <span className="text-sm font-bold text-primary">
               {deal.value.toLocaleString()} {deal.currency}
             </span>
           </div>

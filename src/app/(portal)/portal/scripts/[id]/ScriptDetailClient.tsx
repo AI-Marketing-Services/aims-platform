@@ -152,7 +152,7 @@ export function ScriptDetailClient({
               >
                 {copied ? (
                   <>
-                    <Check className="h-3.5 w-3.5 text-emerald-500" />
+                    <Check className="h-3.5 w-3.5 text-primary" />
                     Copied
                   </>
                 ) : (
@@ -221,7 +221,7 @@ export function ScriptDetailClient({
         </div>
       )}
       {savedAt && !editing && (
-        <p className="text-[11px] text-emerald-500">Saved at {savedAt}</p>
+        <p className="text-[11px] text-primary">Saved at {savedAt}</p>
       )}
 
       {/* Content body */}

@@ -64,7 +64,7 @@ export default async function OnboardPage() {
         <p className="text-sm text-muted-foreground ml-12">
           Your 30-day roadmap for getting the most out of the AI Operator Collective.
           {progress.percent === 100 && (
-            <span className="ml-2 inline-flex items-center gap-1 text-emerald-600 font-medium">
+            <span className="ml-2 inline-flex items-center gap-1 text-primary font-medium">
               Completed!
             </span>
           )}

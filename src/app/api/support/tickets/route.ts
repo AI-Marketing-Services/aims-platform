@@ -4,6 +4,7 @@ import { z } from "zod"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
 import { notify } from "@/lib/notifications"
+import { getOrCreateDbUserByClerkId } from "@/lib/auth/ensure-user"
 import {
   sendTicketConfirmationEmail,
   sendTicketNotificationToAdmin,
@@ -19,8 +20,7 @@ export async function POST(req: Request) {
   const { userId: clerkId } = await auth()
   if (!clerkId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
-  const dbUser = await db.user.findUnique({ where: { clerkId } })
-  if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 })
+  const dbUser = await getOrCreateDbUserByClerkId(clerkId)
 
   let body: unknown
   try {
@@ -85,8 +85,7 @@ export async function GET() {
   if (!clerkId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
   try {
-    const dbUser = await db.user.findUnique({ where: { clerkId } })
-    if (!dbUser) return NextResponse.json([], { status: 200 })
+    const dbUser = await getOrCreateDbUserByClerkId(clerkId)
 
     const tickets = await db.supportTicket.findMany({
       where: { userId: dbUser.id },

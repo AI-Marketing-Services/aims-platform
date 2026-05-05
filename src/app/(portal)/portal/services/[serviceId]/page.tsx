@@ -14,7 +14,7 @@ const PILLAR_PILL: Record<string, string> = {
 }
 
 const STATUS_CONFIG: Record<string, { icon: React.FC<{ className?: string }>; label: string; color: string }> = {
-  done: { icon: CheckCircle2, label: "Complete", color: "text-emerald-700" },
+  done: { icon: CheckCircle2, label: "Complete", color: "text-primary" },
   in_progress: { icon: Clock, label: "In Progress", color: "text-primary" },
   blocked: { icon: AlertCircle, label: "Blocked", color: "text-primary" },
   todo: { icon: Circle, label: "Pending", color: "text-muted-foreground" },
@@ -23,9 +23,9 @@ const STATUS_CONFIG: Record<string, { icon: React.FC<{ className?: string }>; la
 const FULFILLMENT_LABELS: Record<string, { label: string; color: string }> = {
   PENDING_SETUP: { label: "Pending Setup", color: "text-muted-foreground bg-muted/50 border-border" },
   IN_PROGRESS: { label: "In Progress", color: "text-primary bg-primary/5 border-primary/30" },
-  ACTIVE_MANAGED: { label: "Active", color: "text-emerald-700 bg-emerald-50 border-emerald-200" },
+  ACTIVE_MANAGED: { label: "Active", color: "text-primary bg-primary/5 border-primary/20" },
   NEEDS_ATTENTION: { label: "Needs Attention", color: "text-primary bg-primary/10 border-primary/30" },
-  COMPLETED: { label: "Completed", color: "text-emerald-700 bg-emerald-50 border-emerald-200" },
+  COMPLETED: { label: "Completed", color: "text-primary bg-primary/5 border-primary/20" },
   ON_HOLD: { label: "On Hold", color: "text-muted-foreground bg-muted/40 border-border" },
 }
 
@@ -126,7 +126,7 @@ export default async function PortalServiceDetailPage({
           {/* Progress bar */}
           <div className="mb-5 h-2 w-full rounded-full bg-muted overflow-hidden">
             <div
-              className="h-full rounded-full bg-[#981B1B] transition-all duration-500"
+              className="h-full rounded-full bg-primary transition-all duration-500"
               style={{ width: `${progress}%` }}
             />
           </div>

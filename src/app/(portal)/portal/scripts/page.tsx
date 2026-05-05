@@ -35,12 +35,14 @@ const TYPE_LABELS: Record<AiScriptType, string> = {
   PROPOSAL_FOLLOW_UP: "Proposal Follow-Up",
 }
 
+// Neutral pills — icon carries the type signal so the page reads as
+// part of the brand instead of as a Trello board.
 const TYPE_COLORS: Record<AiScriptType, string> = {
-  COLD_EMAIL: "bg-blue-50 text-blue-700 border-blue-200",
-  DISCOVERY_CALL: "bg-violet-50 text-violet-700 border-violet-200",
-  FOLLOW_UP: "bg-green-50 text-green-700 border-green-200",
-  LINKEDIN_DM: "bg-sky-50 text-sky-700 border-sky-200",
-  PROPOSAL_FOLLOW_UP: "bg-amber-50 text-amber-700 border-amber-200",
+  COLD_EMAIL: "bg-muted text-foreground border-border",
+  DISCOVERY_CALL: "bg-muted text-foreground border-border",
+  FOLLOW_UP: "bg-muted text-foreground border-border",
+  LINKEDIN_DM: "bg-muted text-foreground border-border",
+  PROPOSAL_FOLLOW_UP: "bg-muted text-foreground border-border",
 }
 
 const TYPE_ICONS: Record<AiScriptType, React.ElementType> = {

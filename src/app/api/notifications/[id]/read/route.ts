@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { db } from "@/lib/db"
+import { getOrCreateDbUserByClerkId } from "@/lib/auth/ensure-user"
 import { logger } from "@/lib/logger"
 
 export async function PATCH(_req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -11,9 +12,9 @@ export async function PATCH(_req: Request, { params }: { params: Promise<{ id: s
   const role = (sessionClaims?.metadata as { role?: string })?.role
   const isAdmin = role === "ADMIN" || role === "SUPER_ADMIN"
 
-  // Resolve the DB user
-  const dbUser = await db.user.findUnique({ where: { clerkId: userId }, select: { id: true } })
-  if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 })
+  // Resolve (or lazy-create) the DB user so a fresh tester whose Clerk
+  // webhook hasn't landed yet can still mark notifications as read.
+  const dbUser = await getOrCreateDbUserByClerkId(userId)
 
   // Fetch the notification first to verify ownership (admins may mark any notification)
   const notification = await db.notification.findUnique({ where: { id }, select: { userId: true } })

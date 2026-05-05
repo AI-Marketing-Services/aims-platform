@@ -252,7 +252,7 @@ function LiveUrlRow({ label, host, url }: LiveUrlRowProps) {
         className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[11px] font-medium text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all shrink-0"
       >
         {copied ? (
-          <Check className="h-3 w-3 text-emerald-500" />
+          <Check className="h-3 w-3 text-primary" />
         ) : (
           <Copy className="h-3 w-3" />
         )}
@@ -755,7 +755,7 @@ export function AuditEditor({ quiz, site }: AuditEditorProps) {
               className="ml-1 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[11px] font-medium text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all"
             >
               {copied ? (
-                <Check className="h-3 w-3 text-emerald-500" />
+                <Check className="h-3 w-3 text-primary" />
               ) : (
                 <Copy className="h-3 w-3" />
               )}
@@ -774,7 +774,7 @@ export function AuditEditor({ quiz, site }: AuditEditorProps) {
           <span
             className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-medium ${
               state.isPublished
-                ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
+                ? "bg-primary/50/10 text-primary border-primary/20"
                 : "bg-muted/40 text-muted-foreground border-border"
             }`}
           >
