@@ -89,7 +89,7 @@ const PORTAL_NAV: readonly NavItem[] = [
   // Admin-only (filtered out below for clients)
   { label: "Ops Excellence", href: "/portal/ops-excellence", icon: Gauge },
   { label: "My Services", href: "/portal/services", icon: Layers },
-  { label: "Marketplace", href: "/portal/marketplace", icon: ShoppingBag, gate: "marketplace" },
+  { label: "Marketplace", href: "/portal/marketplace", icon: ShoppingBag },
   { label: "Campaigns", href: "/portal/campaigns", icon: BarChart3 },
   { label: "Signal", href: "/portal/signal", icon: Newspaper, gate: "signal" },
 
@@ -107,13 +107,12 @@ const PORTAL_NAV: readonly NavItem[] = [
 // Routes hidden from CLIENT users. Admins (and admins previewing as
 // client) still see them so they can manage the wider platform.
 //
-// Decision: Ops Excellence / My Services / Marketplace / Campaigns /
-// Signal are all platform / admin features that distract from the
-// operator's daily flow (CRM, audit, scripts, content, billing).
+// Marketplace is now the buy-surface for plans + credit packs, so it
+// stays visible to clients. Ops Excellence / My Services / Campaigns /
+// Signal remain admin-only — those are platform-management surfaces.
 const ADMIN_ONLY_ROUTES: string[] = [
   "/portal/ops-excellence",
   "/portal/services",
-  "/portal/marketplace",
   "/portal/campaigns",
   "/portal/signal",
 ]

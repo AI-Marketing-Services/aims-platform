@@ -68,6 +68,13 @@ model User {
   creditBalance      Int                 @default(1000)
   creditPlanTier     String              @default("trial") // trial | operator | pro | agency
   creditGrantedAt    DateTime?
+
+  // Active subscription plan slug — references Product.slug for products
+  // of type="tier". Drives feature entitlements + monthly credit grants.
+  // "free" is the implicit default; webhooks bump this on plan upgrade
+  // and revert it on subscription.deleted. Stays in sync with Purchase
+  // rows for active recurring subscriptions.
+  planSlug           String              @default("free")
   creditTransactions CreditTransaction[]
   operatorEvents     OperatorEvent[]     @relation("OperatorEventActor")
 
@@ -1934,6 +1941,23 @@ model Product {
   grantsRole String?
 
   metadata Json?
+
+  // Marketing video embed URL (Vimeo / Loom / YouTube / Screen Studio).
+  // Rendered in the paywall overlay AND on the marketplace card so we
+  // can sell each plan / add-on with a 60-second walkthrough instead of
+  // pure copy. Optional — UI shows a placeholder while empty.
+  marketingVideoUrl String?
+
+  // For "tier" Products that act as recurring plans (free / pro / operator):
+  // how many enrichment credits to grant the user every month at renewal.
+  // For "addon" Products that are one-time credit packs: ignored here, see
+  // creditsOneTime instead.
+  creditsPerMonth Int @default(0)
+
+  // For one-time credit-pack Products (type="addon"): how many credits to
+  // grant immediately on checkout.session.completed. 0 means this is not
+  // a credit pack.
+  creditsOneTime Int @default(0)
 
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt

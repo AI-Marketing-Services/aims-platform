@@ -1,13 +1,13 @@
-import { FeatureGate } from "@/components/quests/FeatureGate"
+import { EntitlementGate } from "@/components/quests/EntitlementGate"
+import { FEATURE_ENTITLEMENTS } from "@/lib/plans/registry"
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <FeatureGate
-      feature="follow_up_rules"
-      featureName="Follow-up Rules"
+    <EntitlementGate
+      feature={FEATURE_ENTITLEMENTS.FOLLOW_UP_RULES}
       blurb="Auto-nudge stale deals — set a stage trigger and let the system handle the chase."
     >
       {children}
-    </FeatureGate>
+    </EntitlementGate>
   )
 }

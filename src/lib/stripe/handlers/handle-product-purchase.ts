@@ -3,6 +3,8 @@ import { UserRole } from "@prisma/client"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
 import { reconcileEntitlementsForUser } from "@/lib/entitlements"
+import { grantCredits } from "@/lib/enrichment/credits/ledger"
+import { DEFAULT_PLAN_SLUG } from "@/lib/plans/registry"
 import {
   createPendingCommission,
   appendClawback,
@@ -115,6 +117,45 @@ export async function handleProductCheckoutCompleted(
   // Sync entitlements from active purchases.
   await reconcileEntitlementsForUser(userId)
 
+  // Plan upgrade: tier products set User.planSlug and grant the monthly
+  // credit pack. Idempotency comes from the early `existing` Purchase
+  // check above — by the time we get here we know this is a fresh purchase.
+  if (product.type === "tier") {
+    await db.user.update({
+      where: { id: userId },
+      data: { planSlug: product.slug, creditPlanTier: product.slug },
+    })
+    if (product.creditsPerMonth > 0) {
+      await grantCredits({
+        userId,
+        amount: product.creditsPerMonth,
+        reason: "monthly-grant",
+        metadata: { source: "plan-checkout", planSlug: product.slug, sessionId: session.id },
+      }).catch((err) =>
+        logger.error("Failed to grant plan credits on checkout", err, {
+          userId,
+          planSlug: product.slug,
+        }),
+      )
+    }
+  }
+
+  // Credit pack: addon products with creditsOneTime > 0 grant credits
+  // immediately. No entitlements, no recurring charge.
+  if (product.type === "addon" && product.creditsOneTime > 0) {
+    await grantCredits({
+      userId,
+      amount: product.creditsOneTime,
+      reason: "topup-purchase",
+      metadata: { source: "credit-pack", productSlug: product.slug, sessionId: session.id },
+    }).catch((err) =>
+      logger.error("Failed to grant credit pack on checkout", err, {
+        userId,
+        productSlug: product.slug,
+      }),
+    )
+  }
+
   // First-time commission event.
   // Re-validate the reseller is still eligible at webhook time. Without this,
   // a downgraded user (RESELLER → CLIENT) or a user whose site was unpublished
@@ -184,7 +225,17 @@ export async function handleProductInvoicePaid(invoice: Stripe.Invoice): Promise
 
   const purchase = await db.purchase.findFirst({
     where: { stripeSubscriptionId: subId },
-    include: { product: { select: { commissionBps: true, name: true } } },
+    include: {
+      product: {
+        select: {
+          commissionBps: true,
+          name: true,
+          slug: true,
+          type: true,
+          creditsPerMonth: true,
+        },
+      },
+    },
   })
   if (!purchase) return // not a product purchase we manage
 
@@ -198,6 +249,28 @@ export async function handleProductInvoicePaid(invoice: Stripe.Invoice): Promise
 
   // Refresh entitlements (push expiresAt forward for subs).
   await reconcileEntitlementsForUser(purchase.userId)
+
+  // Plan renewal: re-grant the monthly credit pack on each billing cycle.
+  // The ledger function is itself idempotent within a single calendar
+  // month (it skips if creditGrantedAt is in the same month) — so even
+  // if Stripe re-sends the invoice.paid webhook we won't double-grant.
+  if (purchase.product.type === "tier" && purchase.product.creditsPerMonth > 0) {
+    await grantCredits({
+      userId: purchase.userId,
+      amount: purchase.product.creditsPerMonth,
+      reason: "monthly-grant",
+      metadata: {
+        source: "plan-renewal",
+        planSlug: purchase.product.slug,
+        invoiceId: invoice.id,
+      },
+    }).catch((err) =>
+      logger.error("Failed to grant plan renewal credits", err, {
+        userId: purchase.userId,
+        planSlug: purchase.product.slug,
+      }),
+    )
+  }
 
   // Re-validate reseller eligibility on every renewal — see initial-purchase
   // path for rationale (downgraded resellers shouldn't keep earning).
@@ -244,6 +317,7 @@ export async function handleProductSubscriptionDeleted(
 ): Promise<void> {
   const purchase = await db.purchase.findFirst({
     where: { stripeSubscriptionId: sub.id },
+    include: { product: { select: { slug: true, type: true } } },
   })
   if (!purchase) return
 
@@ -253,6 +327,24 @@ export async function handleProductSubscriptionDeleted(
   })
 
   await reconcileEntitlementsForUser(purchase.userId)
+
+  // Tier sub canceled → revert User.planSlug to "free" so the marketplace
+  // and paywall flows behave correctly. Only if the canceled product was
+  // actually their current plan — guards against a previous downgrade
+  // from operator → pro where the operator sub cancellation shouldn't
+  // demote them all the way to free.
+  if (purchase.product.type === "tier") {
+    const user = await db.user.findUnique({
+      where: { id: purchase.userId },
+      select: { planSlug: true },
+    })
+    if (user?.planSlug === purchase.product.slug) {
+      await db.user.update({
+        where: { id: purchase.userId },
+        data: { planSlug: DEFAULT_PLAN_SLUG, creditPlanTier: "trial" },
+      })
+    }
+  }
 }
 
 /**
