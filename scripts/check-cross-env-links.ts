@@ -60,6 +60,12 @@ const ALLOWED_PAIRS = new Set<string>([
   "src/app/(portal)/layout.tsx::/admin/dashboard",
   "src/app/(reseller)/layout.tsx::/admin/dashboard",
   "src/app/(intern)/layout.tsx::/admin/dashboard",
+  // Whitelabel clients (CLIENT role with onboarding complete) live in
+  // /portal/* normally; the reseller layout's logo bounces them home.
+  "src/app/(reseller)/layout.tsx::/portal/dashboard",
+  // CLIENT users without onboarding-complete who land in /reseller/*
+  // get sent to their onboarding hub to unlock whitelabel.
+  "src/app/(reseller)/layout.tsx::/portal/onboard?from=whitelabel",
 ])
 
 async function* walk(dir: string): AsyncIterable<string> {
