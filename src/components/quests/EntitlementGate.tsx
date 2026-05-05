@@ -3,6 +3,7 @@ import { hasEntitlement } from "@/lib/entitlements"
 import {
   cheapestPlanFor,
   FEATURE_LABELS,
+  getFeature,
   type FeatureEntitlement,
 } from "@/lib/plans/registry"
 import { db } from "@/lib/db"
@@ -52,7 +53,13 @@ export async function EntitlementGate({
   const planName = plan?.name ?? "Pro"
   const planSlug = plan?.slug ?? "pro"
   const planPriceMonthly = plan?.priceMonthly ?? 97
-  const highlights = plan?.highlights
+
+  // Prefer feature-specific marketing copy from FEATURE_CATALOG (the
+  // description tells the user what THIS feature does), and fall back to
+  // the plan-level highlights only if a feature has no catalog entry.
+  const featureDef = getFeature(feature)
+  const highlights = featureDef?.highlights ?? plan?.highlights
+  const richDescription = featureDef?.description ?? blurb
 
   // Pull the marketing video URL from the Product row (admin-editable
   // without a redeploy). Keep this as a single read; failure → no video.
@@ -69,13 +76,14 @@ export async function EntitlementGate({
     }
   }
 
-  const headline = featureName ?? FEATURE_LABELS[feature] ?? "Upgrade required"
+  const headline =
+    featureName ?? featureDef?.name ?? FEATURE_LABELS[feature] ?? "Upgrade required"
 
   return (
     <PaywallOverlay
       featureKey={feature}
       featureName={headline}
-      blurb={blurb}
+      blurb={richDescription}
       planName={planName}
       planSlug={planSlug}
       planPriceMonthly={planPriceMonthly}

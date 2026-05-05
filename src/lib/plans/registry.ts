@@ -254,3 +254,266 @@ export const FEATURE_LABELS: Record<FeatureEntitlement, string> = {
   feature_revenue: "Revenue Dashboard",
   feature_referrals: "Referrals",
 }
+
+// ---------------------------------------------------------------
+// FEATURE CATALOG — marketing-grade copy for each gated feature.
+// Used by /portal/marketplace + every paywall overlay.
+// ---------------------------------------------------------------
+
+export interface FeatureDef {
+  /** Stable entitlement key. */
+  key: FeatureEntitlement
+  /** Display name. */
+  name: string
+  /** lucide icon name (rendered via dynamic <Icon /> lookup). */
+  iconName: string
+  /** One-liner shown on marketplace card under the title. */
+  tagline: string
+  /** Full description used in the paywall overlay + marketplace details. */
+  description: string
+  /** Bullet-point use cases / capabilities — the "what you get" copy. */
+  highlights: string[]
+  /** Direct link into the feature once unlocked (deep-link from card). */
+  href: string
+  /** Display order on the marketplace features grid. */
+  sortOrder: number
+}
+
+export const FEATURE_CATALOG: FeatureDef[] = [
+  {
+    key: FEATURE_ENTITLEMENTS.CRM,
+    name: "Client CRM",
+    iconName: "Briefcase",
+    tagline: "Pipeline, contacts, and deal management for every client.",
+    description:
+      "A purpose-built CRM for AI operators. Track every prospect from first touch to closed-won, manage contacts, log activity, and watch deals move through your pipeline. Built around the operator workflow — no Salesforce sprawl, no plug-ins to install.",
+    highlights: [
+      "Drag-and-drop kanban pipeline (Prospect → Discovery → Proposal → Won)",
+      "Contact + company enrichment with one click",
+      "Activity feed with email + meeting history",
+      "Custom stages + win-rate analytics",
+      "Bulk import from CSV or LinkedIn export",
+    ],
+    href: "/portal/crm",
+    sortOrder: 0,
+  },
+  {
+    key: FEATURE_ENTITLEMENTS.LEAD_SCOUT,
+    name: "Lead Scout",
+    iconName: "MapPin",
+    tagline: "Find prospects on autopilot — filter, enrich, push to CRM.",
+    description:
+      "Tell Lead Scout your ICP — industry, geography, company size, tech stack — and it surfaces qualified prospects with verified emails, phone numbers, and signals worth a call. Push the winners straight into your CRM with one click.",
+    highlights: [
+      "Search 200M+ companies by ICP filters",
+      "Verified emails + LinkedIn URLs out of the box",
+      "Buying-signal alerts (hiring, funding, tech changes)",
+      "Map-based discovery for local services",
+      "Bulk-export to CRM with deduplication",
+    ],
+    href: "/portal/crm/scout",
+    sortOrder: 1,
+  },
+  {
+    key: FEATURE_ENTITLEMENTS.AUDITS,
+    name: "AI Audits",
+    iconName: "ClipboardCheck",
+    tagline: "Branded intake quizzes that capture leads + score them with AI.",
+    description:
+      "Spin up a fully-branded intake quiz in minutes. Prospects answer 9 questions, your AI grades their fit, and you get a buyer summary in your inbox before the call. The single highest-converting top-of-funnel asset for AI operators.",
+    highlights: [
+      "9-question template — clone, customize, share",
+      "AI-generated buyer summary on every submission",
+      "Branded landing page (your logo, colors, copy)",
+      "One-click convert quiz responses to CRM deals",
+      "Embed on your site or run on a subdomain",
+    ],
+    href: "/portal/audits",
+    sortOrder: 2,
+  },
+  {
+    key: FEATURE_ENTITLEMENTS.INVOICES,
+    name: "Invoices",
+    iconName: "FileText",
+    tagline: "Send branded invoices, track payment, get paid faster.",
+    description:
+      "Stop bouncing between Stripe, QuickBooks, and Google Docs. Build a professional invoice in 30 seconds, send it from your domain, and let your client pay with a card — your dollars land in your bank, not a marketplace's.",
+    highlights: [
+      "Branded invoice PDFs with your logo",
+      "One-click 'pay now' Stripe checkout link",
+      "Automatic late-payment reminders",
+      "Recurring monthly retainers + usage-based add-ons",
+      "Itemized line items with tax + discount support",
+    ],
+    href: "/portal/invoices",
+    sortOrder: 3,
+  },
+  {
+    key: FEATURE_ENTITLEMENTS.SCRIPTS,
+    name: "AI Scripts",
+    iconName: "FileCode2",
+    tagline: "Generate cold emails, discovery scripts, and follow-ups in seconds.",
+    description:
+      "Stop staring at blank pages. AI Scripts writes you cold emails, discovery-call openers, follow-up nudges, LinkedIn DMs, and proposal narratives — tuned to YOUR ICP, your voice, and the exact deal stage you're working.",
+    highlights: [
+      "5 script types: cold email, discovery, follow-up, LinkedIn DM, proposal",
+      "Personalized to the contact (auto-pulls company context)",
+      "Save your favorites + iterate with one click",
+      "Tone presets (professional, founder-led, direct)",
+      "Export to your email client or copy-paste ready",
+    ],
+    href: "/portal/scripts",
+    sortOrder: 4,
+  },
+  {
+    key: FEATURE_ENTITLEMENTS.CONTENT,
+    name: "Content Engine",
+    iconName: "PenLine",
+    tagline: "Spin up branded social posts, blog drafts, and email blasts.",
+    description:
+      "One prompt → an entire week of content. The Content Engine writes social posts, blog drafts, and newsletter blasts in your voice, with your CTA, ready to publish or queue. Stop hiring content writers — start shipping.",
+    highlights: [
+      "LinkedIn posts, Twitter threads, blog articles, email newsletters",
+      "Trained on your existing content for consistent voice",
+      "Generate a 7-day content calendar in one click",
+      "Inline editing + AI-assisted rewrites",
+      "Schedule directly to social or export drafts",
+    ],
+    href: "/portal/content",
+    sortOrder: 5,
+  },
+  {
+    key: FEATURE_ENTITLEMENTS.PLAYBOOKS,
+    name: "Playbooks",
+    iconName: "BookOpen",
+    tagline: "Step-by-step workflows for every service track.",
+    description:
+      "The complete operator's library — proven workflows for every service track in the Collective. Each playbook is a checklist, a script, a doc template, and an asset bundle. Stop reinventing the process every client engagement.",
+    highlights: [
+      "Workflows for cold outbound, audits, voice agents, content, and more",
+      "Bookmark + checklist your way through delivery",
+      "Asset library: proposals, contracts, onboarding emails",
+      "Updated monthly as the playbook evolves",
+      "Share your own playbooks with the community",
+    ],
+    href: "/portal/playbooks",
+    sortOrder: 6,
+  },
+  {
+    key: FEATURE_ENTITLEMENTS.CALCULATOR,
+    name: "Pricing Calculator",
+    iconName: "Calculator",
+    tagline: "Build proposals fast with instant scoped pricing.",
+    description:
+      "Input the scope, the calculator outputs your tiered pricing — Discovery, Build, Retainer — with margin baked in. Use it on a discovery call to quote on the spot, then export the line items straight into a proposal or invoice.",
+    highlights: [
+      "Pre-loaded with operator-tested service margins",
+      "Tiered pricing (Lite / Standard / Premium)",
+      "One-click export to invoice or proposal",
+      "Adjust hourly rate, retainer length, scope multipliers",
+      "Save quote templates for repeatable services",
+    ],
+    href: "/portal/calculator",
+    sortOrder: 7,
+  },
+  {
+    key: FEATURE_ENTITLEMENTS.BRANDING,
+    name: "Custom Branding",
+    iconName: "Sparkles",
+    tagline: "White-label the entire portal under your brand.",
+    description:
+      "Upload your logo, set your brand colors, customize copy. Every client-facing touchpoint — audits, proposals, the portal itself — runs as YOUR brand instead of AIMS. Run an agency without ever mentioning the platform.",
+    highlights: [
+      "Logo + favicon + brand color palette",
+      "Custom typography",
+      "Replace 'AIMS' with your agency name everywhere",
+      "Branded email templates (invoices, audit notifications)",
+      "Branded login + sign-up pages",
+    ],
+    href: "/reseller/settings/branding",
+    sortOrder: 8,
+  },
+  {
+    key: FEATURE_ENTITLEMENTS.DOMAIN,
+    name: "Custom Domain",
+    iconName: "Globe",
+    tagline: "Run the portal under app.youragency.com.",
+    description:
+      "Point a CNAME at your subdomain and the entire client portal runs under your domain — `app.youragency.com`, `portal.client.com`, anywhere you want. Zero AIMS branding in the URL bar, full SSL, two-minute DNS setup.",
+    highlights: [
+      "Subdomain or apex domain support",
+      "Automatic SSL certificate provisioning",
+      "DNS-verified live availability check",
+      "Multiple domains per account (one per client tier)",
+      "Per-domain branding overrides",
+    ],
+    href: "/reseller/settings/domain",
+    sortOrder: 9,
+  },
+  {
+    key: FEATURE_ENTITLEMENTS.FOLLOW_UP_RULES,
+    name: "Follow-up Rules",
+    iconName: "Bell",
+    tagline: "Auto-nudge stale deals — let the system handle the chase.",
+    description:
+      "Set a rule: 'If a deal sits in Proposal Sent for 5 days, send the follow-up.' Then forget it. Follow-up Rules picks up the slack on every deal you'd otherwise let rot — and books meetings while you sleep.",
+    highlights: [
+      "Stage-triggered automation (any pipeline stage → action)",
+      "Custom message templates per rule",
+      "Time-based triggers (X days stale)",
+      "Pause / resume per deal",
+      "Activity log for every triggered nudge",
+    ],
+    href: "/portal/follow-up-rules",
+    sortOrder: 10,
+  },
+  {
+    key: FEATURE_ENTITLEMENTS.REVENUE,
+    name: "Revenue Dashboard",
+    iconName: "TrendingUp",
+    tagline: "Track MRR, paid invoices, and outstanding balance.",
+    description:
+      "The CFO view of your agency — MRR, ARR, paid invoices, outstanding balance, cash-collected, and per-client lifetime value, all in one dashboard. Know exactly where you stand without exporting CSVs from Stripe.",
+    highlights: [
+      "MRR + ARR + churn metrics",
+      "Outstanding invoice tracker with overdue alerts",
+      "Per-client revenue + lifetime value",
+      "Monthly + quarterly P&L view",
+      "Export to CSV for accounting",
+    ],
+    href: "/portal/revenue",
+    sortOrder: 11,
+  },
+  {
+    key: FEATURE_ENTITLEMENTS.REFERRALS,
+    name: "Referrals",
+    iconName: "Users",
+    tagline: "Earn 20% commission on every operator you bring in.",
+    description:
+      "Built-in affiliate program. Share your unique link, sign people up, and earn 20% recurring commission for the lifetime of every customer you refer. Real-time payout dashboard, automated tracking, monthly Stripe payouts.",
+    highlights: [
+      "Unique referral link + custom landing page",
+      "20% recurring commission (lifetime, not just first month)",
+      "Real-time click + signup + commission tracking",
+      "Automated monthly Stripe Connect payouts",
+      "Branded co-marketing assets to share",
+    ],
+    href: "/portal/referrals",
+    sortOrder: 12,
+  },
+]
+
+const FEATURE_BY_KEY: Record<string, FeatureDef> = Object.fromEntries(
+  FEATURE_CATALOG.map((f) => [f.key, f]),
+)
+
+export function getFeature(key: string): FeatureDef | null {
+  return FEATURE_BY_KEY[key] ?? null
+}
+
+/** Plans that include a given feature, sorted by price (asc). */
+export function plansIncludingFeature(key: FeatureEntitlement): PlanDef[] {
+  return PLANS.filter((p) => p.entitlements.includes(key)).sort(
+    (a, b) => a.priceMonthly - b.priceMonthly,
+  )
+}

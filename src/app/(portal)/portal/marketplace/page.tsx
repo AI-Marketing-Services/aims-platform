@@ -1,7 +1,12 @@
 import { ShoppingBag } from "lucide-react"
 import { db } from "@/lib/db"
 import { ensureDbUser } from "@/lib/auth/ensure-user"
-import { PLANS, CREDIT_PACKS } from "@/lib/plans/registry"
+import {
+  PLANS,
+  CREDIT_PACKS,
+  FEATURE_CATALOG,
+  plansIncludingFeature,
+} from "@/lib/plans/registry"
 import { PortalMarketplaceClient } from "./PortalMarketplaceClient"
 
 export const metadata = { title: "Marketplace" }
@@ -61,6 +66,28 @@ export default async function PortalMarketplacePage() {
     isCheckoutReady: Boolean(productBySlug[pack.slug]?.stripePriceOneTime),
   }))
 
+  // Features grid — every gated feature with its full description, the
+  // plans that include it, and the deep-link to use it once unlocked.
+  // The lowest-priced plan that includes the feature wins as the "from $X"
+  // label so users see the cheapest path to unlock.
+  const features = FEATURE_CATALOG.map((feature) => {
+    const includingPlans = plansIncludingFeature(feature.key)
+    const cheapest = includingPlans[0] ?? null
+    return {
+      key: feature.key,
+      name: feature.name,
+      iconName: feature.iconName,
+      tagline: feature.tagline,
+      description: feature.description,
+      highlights: feature.highlights,
+      href: feature.href,
+      sortOrder: feature.sortOrder,
+      includedOnPlans: includingPlans.map((p) => p.name),
+      cheapestPlanName: cheapest?.name ?? null,
+      cheapestPlanPriceMonthly: cheapest?.priceMonthly ?? null,
+    }
+  })
+
   return (
     <div className="space-y-8">
       <div className="flex items-center gap-3">
@@ -80,6 +107,7 @@ export default async function PortalMarketplacePage() {
         currentPlanSlug={dbUser.planSlug}
         plans={plans}
         creditPacks={creditPacks}
+        features={features}
       />
     </div>
   )

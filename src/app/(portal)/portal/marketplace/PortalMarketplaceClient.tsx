@@ -1,7 +1,28 @@
 "use client"
 
 import { useState } from "react"
-import { Check, Sparkles, Zap, ArrowRight, CreditCard } from "lucide-react"
+import Link from "next/link"
+import {
+  Check,
+  Sparkles,
+  Zap,
+  ArrowRight,
+  CreditCard,
+  Briefcase,
+  MapPin,
+  ClipboardCheck,
+  FileText,
+  FileCode2,
+  PenLine,
+  BookOpen,
+  Calculator,
+  Globe,
+  Bell,
+  TrendingUp,
+  Users,
+  Lock,
+  type LucideIcon,
+} from "lucide-react"
 
 interface PlanCard {
   slug: string
@@ -27,16 +48,50 @@ interface CreditPackCard {
   isCheckoutReady: boolean
 }
 
+interface FeatureCard {
+  key: string
+  name: string
+  iconName: string
+  tagline: string
+  description: string
+  highlights: string[]
+  href: string
+  sortOrder: number
+  includedOnPlans: string[]
+  cheapestPlanName: string | null
+  cheapestPlanPriceMonthly: number | null
+}
+
+// Mapped here (instead of dynamic import) so tree-shaking still works
+// and we don't bundle every lucide icon.
+const FEATURE_ICONS: Record<string, LucideIcon> = {
+  Briefcase,
+  MapPin,
+  ClipboardCheck,
+  FileText,
+  FileCode2,
+  PenLine,
+  BookOpen,
+  Calculator,
+  Sparkles,
+  Globe,
+  Bell,
+  TrendingUp,
+  Users,
+}
+
 interface Props {
   currentPlanSlug: string
   plans: PlanCard[]
   creditPacks: CreditPackCard[]
+  features: FeatureCard[]
 }
 
 export function PortalMarketplaceClient({
   currentPlanSlug,
   plans,
   creditPacks,
+  features,
 }: Props) {
   const [busy, setBusy] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -270,6 +325,107 @@ export function PortalMarketplaceClient({
               )}
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Features grid — every gated feature with full marketing copy.
+          Helps users understand exactly what they unlock with each plan
+          before they buy. Each card deep-links to the feature for users
+          who already have the entitlement. */}
+      <section>
+        <div className="flex items-baseline justify-between mb-5">
+          <div>
+            <h2 className="text-lg font-bold text-foreground">
+              Everything in the platform
+            </h2>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Each feature below is unlocked through the plan it&apos;s
+              included on. Hover any card to see what you get.
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          {features.map((feature) => {
+            const Icon = FEATURE_ICONS[feature.iconName] ?? Sparkles
+            const isOnCurrentPlan = feature.includedOnPlans.some(
+              (planName) => planName.toLowerCase() === currentPlanSlug,
+            )
+            return (
+              <div
+                key={feature.key}
+                className="rounded-2xl border border-border bg-card p-5 flex flex-col hover:border-primary/40 hover:shadow-sm transition-all"
+              >
+                <div className="flex items-start justify-between gap-3 mb-3">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                      <Icon className="h-4 w-4 text-primary" />
+                    </div>
+                    <div className="min-w-0">
+                      <h3 className="text-sm font-bold text-foreground truncate">
+                        {feature.name}
+                      </h3>
+                      <p className="text-[11px] text-muted-foreground mt-0.5">
+                        {feature.tagline}
+                      </p>
+                    </div>
+                  </div>
+                  {isOnCurrentPlan ? (
+                    <span className="shrink-0 text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+                      Active
+                    </span>
+                  ) : (
+                    <Lock className="h-3.5 w-3.5 text-muted-foreground/60 shrink-0 mt-1" />
+                  )}
+                </div>
+
+                <p className="text-xs text-muted-foreground leading-relaxed mb-4 line-clamp-4">
+                  {feature.description}
+                </p>
+
+                <ul className="space-y-1.5 mb-4 flex-1">
+                  {feature.highlights.slice(0, 3).map((h) => (
+                    <li
+                      key={h}
+                      className="flex items-start gap-2 text-[11px] text-muted-foreground"
+                    >
+                      <Check className="h-3 w-3 text-primary shrink-0 mt-0.5" />
+                      <span>{h}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="flex items-center justify-between gap-2 pt-3 border-t border-border">
+                  <div className="text-[11px] text-muted-foreground">
+                    {feature.cheapestPlanName ? (
+                      <>
+                        Included on{" "}
+                        <span className="font-bold text-foreground">
+                          {feature.cheapestPlanName}
+                        </span>
+                        {feature.cheapestPlanPriceMonthly ? (
+                          <>
+                            {" "}
+                            (${feature.cheapestPlanPriceMonthly}/mo)
+                          </>
+                        ) : null}
+                      </>
+                    ) : (
+                      "Unavailable"
+                    )}
+                  </div>
+                  {isOnCurrentPlan ? (
+                    <Link
+                      href={feature.href}
+                      className="inline-flex items-center gap-1 text-[11px] font-bold text-primary hover:underline"
+                    >
+                      Open <ArrowRight className="h-3 w-3" />
+                    </Link>
+                  ) : null}
+                </div>
+              </div>
+            )
+          })}
         </div>
       </section>
     </div>
