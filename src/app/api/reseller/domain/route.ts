@@ -8,6 +8,7 @@ import {
   safeGetDomainStatus,
   buildDnsInstructions,
   VercelDomainsNotConfiguredError,
+  VercelDomainsApiError,
   type VerificationRecord,
 } from "@/lib/vercel-domains"
 import { invalidateTenantCache } from "@/lib/tenant/resolve-tenant"
@@ -141,6 +142,52 @@ export async function POST(req: Request) {
   } catch (err) {
     if (err instanceof VercelDomainsNotConfiguredError) {
       return NextResponse.json({ error: "not_configured" }, { status: 503 })
+    }
+    // Translate known Vercel error codes into clean user-facing messages
+    // instead of a generic 500. Domains that are already attached to a
+    // different project in the same team return `domain_already_in_use`
+    // (different from `domain_already_exists` which is same-project and
+    // gets soft-handled inside addDomain()).
+    if (err instanceof VercelDomainsApiError) {
+      if (err.code === "domain_already_in_use") {
+        return NextResponse.json(
+          {
+            error:
+              "This domain is already attached to another project in your Vercel team. Detach it there first, or pick a different domain.",
+            code: err.code,
+          },
+          { status: 409 },
+        )
+      }
+      if (err.code === "forbidden" || err.code === "not_found") {
+        return NextResponse.json(
+          {
+            error:
+              "Couldn't attach this domain. Verify you own it and that it isn't claimed by another Vercel team.",
+            code: err.code,
+          },
+          { status: 409 },
+        )
+      }
+      if (err.code === "invalid_domain") {
+        return NextResponse.json(
+          { error: "That doesn't look like a valid domain.", code: err.code },
+          { status: 400 },
+        )
+      }
+      // Surface any other Vercel-side error verbatim instead of swallowing
+      // it as a generic 500 — admins debugging custom-domain flows need
+      // to see what actually went wrong.
+      logger.error("Vercel domain API error", err, {
+        endpoint: "POST /api/reseller/domain",
+        userId: auth2.clerkId,
+        vercelCode: err.code,
+        vercelStatus: err.status,
+      })
+      return NextResponse.json(
+        { error: err.message || "Vercel rejected the domain", code: err.code },
+        { status: err.status >= 400 && err.status < 500 ? err.status : 502 },
+      )
     }
     logger.error("Failed to add domain", err, {
       endpoint: "POST /api/reseller/domain",
