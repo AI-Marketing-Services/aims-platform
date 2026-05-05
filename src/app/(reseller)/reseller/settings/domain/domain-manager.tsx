@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef, useTransition } from "react"
 import { toast } from "sonner"
-import { Loader2, Globe, CheckCircle2, Trash2, ToggleLeft, ToggleRight } from "lucide-react"
+import { Loader2, Globe, CheckCircle2, Trash2, ToggleLeft, ToggleRight, AlertCircle, XCircle } from "lucide-react"
 import { DnsInstructions } from "@/components/reseller/domain/dns-instructions"
 import { isReservedSubdomain } from "@/lib/tenant/reserved-subdomains"
 
@@ -227,6 +227,18 @@ export function DomainManager({
   const pollRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const pollStartRef = useRef<number | null>(null)
 
+  // Live availability check for the Add Domain field. Debounced so we
+  // don't hammer Vercel on every keystroke.
+  type AvailabilityState = {
+    status: "idle" | "checking" | "available" | "in_use_other_project" | "in_use_this_project" | "invalid" | "unknown"
+    message: string
+  }
+  const [availability, setAvailability] = useState<AvailabilityState>({
+    status: "idle",
+    message: "",
+  })
+  const availabilityAbortRef = useRef<AbortController | null>(null)
+
   // ---------------------------------------------------------------------------
   // Fetch current domain status
   // ---------------------------------------------------------------------------
@@ -285,6 +297,63 @@ export function DomainManager({
     return () => stopPolling()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [customDomain])
+
+  // ---------------------------------------------------------------------------
+  // Live availability check (debounced 400ms after typing stops)
+  // ---------------------------------------------------------------------------
+  useEffect(() => {
+    if (!vercelConfigured) return
+    const raw = addInput.trim().toLowerCase()
+    if (!raw || raw.length < 4) {
+      setAvailability({ status: "idle", message: "" })
+      return
+    }
+    if (!/^[a-z0-9.-]+\.[a-z]{2,}$/.test(raw)) {
+      setAvailability({
+        status: "invalid",
+        message: "Invalid format. Example: portal.mycompany.com",
+      })
+      return
+    }
+    setAvailability({ status: "checking", message: "Checking availability…" })
+
+    // Cancel any in-flight check from a prior keystroke.
+    availabilityAbortRef.current?.abort()
+    const ctl = new AbortController()
+    availabilityAbortRef.current = ctl
+
+    const timer = setTimeout(async () => {
+      try {
+        const res = await fetch(
+          `/api/reseller/domain/check?domain=${encodeURIComponent(raw)}`,
+          { signal: ctl.signal },
+        )
+        if (!res.ok) {
+          setAvailability({
+            status: "unknown",
+            message: "Couldn't verify availability — try anyway.",
+          })
+          return
+        }
+        const data = (await res.json()) as {
+          status: AvailabilityState["status"]
+          message: string
+        }
+        setAvailability({ status: data.status, message: data.message })
+      } catch (err) {
+        if ((err as { name?: string })?.name === "AbortError") return
+        setAvailability({
+          status: "unknown",
+          message: "Couldn't verify availability — try anyway.",
+        })
+      }
+    }, 400)
+
+    return () => {
+      clearTimeout(timer)
+      ctl.abort()
+    }
+  }, [addInput, vercelConfigured])
 
   // ---------------------------------------------------------------------------
   // Add domain
@@ -408,7 +477,17 @@ export function DomainManager({
                 Domain Name
               </label>
               <div className="flex items-center gap-2">
-                <div className="flex items-center gap-2 flex-1 h-9 rounded-md border border-border bg-surface px-3">
+                <div
+                  className={`flex items-center gap-2 flex-1 h-9 rounded-md border bg-surface px-3 transition-colors ${
+                    availability.status === "available"
+                      ? "border-emerald-500/50"
+                      : availability.status === "in_use_other_project" ||
+                          availability.status === "in_use_this_project" ||
+                          availability.status === "invalid"
+                        ? "border-red-500/50"
+                        : "border-border"
+                  }`}
+                >
                   <Globe className="h-4 w-4 text-muted-foreground flex-shrink-0" aria-hidden />
                   <input
                     id="customDomain"
@@ -420,17 +499,55 @@ export function DomainManager({
                     }}
                     placeholder="portal.mycompany.com"
                     className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
+                    aria-describedby="domain-availability"
                   />
+                  {availability.status === "checking" && (
+                    <Loader2 className="h-4 w-4 animate-spin text-muted-foreground flex-shrink-0" aria-hidden />
+                  )}
+                  {availability.status === "available" && (
+                    <CheckCircle2 className="h-4 w-4 text-emerald-400 flex-shrink-0" aria-hidden />
+                  )}
+                  {(availability.status === "in_use_other_project" ||
+                    availability.status === "in_use_this_project") && (
+                    <XCircle className="h-4 w-4 text-red-400 flex-shrink-0" aria-hidden />
+                  )}
+                  {availability.status === "invalid" && (
+                    <AlertCircle className="h-4 w-4 text-red-400 flex-shrink-0" aria-hidden />
+                  )}
                 </div>
                 <button
                   type="submit"
-                  disabled={isAdding || !addInput.trim()}
+                  disabled={
+                    isAdding ||
+                    !addInput.trim() ||
+                    availability.status === "checking" ||
+                    availability.status === "in_use_other_project" ||
+                    availability.status === "in_use_this_project" ||
+                    availability.status === "invalid"
+                  }
                   className="flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
                 >
                   {isAdding && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
                   {isAdding ? "Adding…" : "Add Domain"}
                 </button>
               </div>
+              {availability.status !== "idle" && availability.message && (
+                <p
+                  id="domain-availability"
+                  className={`text-xs ${
+                    availability.status === "available"
+                      ? "text-emerald-400"
+                      : availability.status === "in_use_other_project" ||
+                          availability.status === "in_use_this_project" ||
+                          availability.status === "invalid"
+                        ? "text-red-400"
+                        : "text-muted-foreground"
+                  }`}
+                  role={availability.status === "in_use_other_project" || availability.status === "invalid" ? "alert" : undefined}
+                >
+                  {availability.message}
+                </p>
+              )}
               {addError && (
                 <p className="text-xs text-red-400" role="alert">
                   {addError}
