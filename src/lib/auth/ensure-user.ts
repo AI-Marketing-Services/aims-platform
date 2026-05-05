@@ -1,7 +1,17 @@
 import { auth, currentUser } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
+import { logger } from "@/lib/logger"
 import type { User } from "@prisma/client"
+
+/**
+ * Trial credit grant given to every brand-new user. Mirrored as the User
+ * row default in `prisma/schema.prisma` (`creditBalance @default(1000)`),
+ * but we also write an explicit CreditTransaction ledger entry so the audit
+ * trail / billing UI history both show "+1000 trial-grant" instead of a
+ * mystery starting balance.
+ */
+const SIGNUP_TRIAL_CREDITS = 1000
 
 /**
  * Resolve (or lazily create) the DB User row for the signed-in Clerk user.
@@ -47,7 +57,7 @@ export async function getOrCreateDbUserByClerkId(clerkId: string): Promise<User>
     }
   }
 
-  return db.user.upsert({
+  const created = await db.user.upsert({
     where: { clerkId },
     update: {
       ...(email && { email }),
@@ -59,8 +69,42 @@ export async function getOrCreateDbUserByClerkId(clerkId: string): Promise<User>
       email: email || `${clerkId}@placeholder.local`,
       name,
       avatarUrl: cu?.imageUrl ?? null,
+      // creditBalance is set via @default(1000) in schema. We also stamp
+      // the grant timestamp so the monthly-grant cron knows we just gave
+      // them their starter pack and shouldn't double-grant on the 1st.
+      creditGrantedAt: new Date(),
     },
   })
+
+  // Best-effort ledger entry so the billing UI shows "+1000 trial-grant"
+  // and admins can audit who got the bonus. Idempotent: an unique
+  // (userId, reason="trial-grant") guard isn't enforced at the DB level —
+  // we instead skip if a row already exists for safety on re-runs.
+  try {
+    const alreadyGranted = await db.creditTransaction.findFirst({
+      where: { userId: created.id, reason: "trial-grant" },
+      select: { id: true },
+    })
+    if (!alreadyGranted) {
+      await db.creditTransaction.create({
+        data: {
+          userId: created.id,
+          amount: SIGNUP_TRIAL_CREDITS,
+          balanceAfter: created.creditBalance,
+          reason: "trial-grant",
+          metadata: { source: "ensureDbUser", grantedAt: new Date().toISOString() },
+        },
+      })
+    }
+  } catch (err) {
+    // Don't let a ledger failure block the user from logging in. The
+    // creditBalance default already applied; we just lose the audit row.
+    logger.error("Failed to write signup trial-grant ledger entry", err, {
+      userId: created.id,
+    })
+  }
+
+  return created
 }
 
 /** Page-friendly: redirects to /sign-in if there is no Clerk session. */

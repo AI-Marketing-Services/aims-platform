@@ -65,7 +65,7 @@ model User {
   // Enrichment credits — denormalized current balance + plan tier; the
   // canonical history lives in the CreditTransaction ledger so we can
   // always reconstruct/audit a balance.
-  creditBalance      Int                 @default(50)
+  creditBalance      Int                 @default(1000)
   creditPlanTier     String              @default("trial") // trial | operator | pro | agency
   creditGrantedAt    DateTime?
   creditTransactions CreditTransaction[]
