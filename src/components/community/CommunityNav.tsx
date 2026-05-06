@@ -47,13 +47,22 @@ export function CommunityNav() {
           </Link>
 
           <nav className="hidden md:flex items-center justify-center gap-7 text-sm absolute left-1/2 -translate-x-1/2">
-            <Link href="/#program" className="text-[#737373] hover:text-[#1A1A1A] transition-colors">
-              Program
+            <Link
+              href="/#how-it-works"
+              className="text-[#737373] hover:text-[#1A1A1A] transition-colors"
+            >
+              How It Works
             </Link>
-            <Link href="/#mentors" className="text-[#737373] hover:text-[#1A1A1A] transition-colors">
-              Mentors
+            <Link
+              href="/#who-its-for"
+              className="text-[#737373] hover:text-[#1A1A1A] transition-colors"
+            >
+              Who It Is For
             </Link>
-            <Link href="/#faq" className="text-[#737373] hover:text-[#1A1A1A] transition-colors">
+            <Link
+              href="/#faq"
+              className="text-[#737373] hover:text-[#1A1A1A] transition-colors"
+            >
               FAQ
             </Link>
           </nav>
@@ -62,7 +71,7 @@ export function CommunityNav() {
             href={APPLY_URL}
             className="inline-flex items-center justify-center rounded-md bg-crimson text-white px-5 py-2.5 text-xs font-bold uppercase tracking-wider hover:bg-crimson-dark transition-colors shadow-[0_0_0_1px_rgba(153,27,27,0.3)]"
           >
-            Apply Now
+            Apply
           </a>
         </div>
       </div>

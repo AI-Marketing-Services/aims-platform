@@ -2,32 +2,24 @@ import { ShieldAlert } from "lucide-react"
 
 const DISCLOSURES = [
   {
-    title: "No Income Or Earnings Claims",
-    body: "The AI Operator Collective makes no income, earnings, revenue, client, engagement, or business outcome claims of any kind. Anything stated on this page about results, retainers, or operator outcomes is descriptive of the AIMS portfolio (not member outcomes) and is not a representation of what any individual member will achieve.",
+    title: "No outcome guarantees",
+    body: "The AI Operator Collective makes no income, earnings, revenue, client, placement, employment, subcontractor, or business outcome guarantees.",
   },
   {
-    title: "Results Not Typical",
-    body: "Any results referenced on this page or in the program materials, including the case studies attributed to AIMS portfolio engagements, are not representative of typical outcomes. Most people who attempt to build a services business do not earn the results referenced. Your results will depend entirely on your own skill, effort, market, capital, and execution.",
+    title: "AIMS context is background, not a promise",
+    body: "Any references to AIMS, operator experience, implementation work, app infrastructure, or company revenue ranges describe the background and operating context behind AIOC. They are not promises of member outcomes.",
   },
   {
-    title: "Application-Only Program",
-    body: "The Collective is application-only. Submitting your name and email is not enrollment and is not a payment. We will only accept members who, in our sole discretion, are a fit for the program. Pricing, terms, and program structure are shared over email with applicants who are offered a cohort seat, before either party commits.",
+    title: "Results depend on you",
+    body: "Member results depend on individual effort, skill, market, relationships, timing, execution, and starting point.",
   },
   {
-    title: "Forward-Looking Statements",
-    body: "Some statements on this page describe how the program is structured, how we plan to run sessions, or what we intend to deliver in the founding cohort. These are forward-looking statements and may change as the cohort is finalized. The official terms of service provided at enrollment are the controlling document.",
+    title: "Application-only",
+    body: "Submitting an application is not enrollment and does not guarantee acceptance. Pricing, terms, cohort dates, and application requirements are shared with qualified applicants before any enrollment decision is made.",
   },
   {
-    title: "Mentor & Consortium Disclosures",
-    body: "Operator mentor credentials shown on this page are sourced from public profiles and internal records. Mentor availability, session formats, and one-on-one access are subject to scheduling and may vary across cohorts. No specific mentor is guaranteed to be present at any specific session.",
-  },
-  {
-    title: "Not Legal, Tax, Or Financial Advice",
-    body: "Curriculum content related to LLC formation, pricing, contracts, taxes, or financial planning is educational only and is not legal, tax, accounting, or financial advice. Members should consult their own qualified professionals for personalized guidance.",
-  },
-  {
-    title: "Operated By Modern Amenities LLC",
-    body: "The AI Operator Collective is operated by Modern Amenities LLC. Powered by AIMS. All references to the AIMS portfolio refer to the businesses operated, advised, or held by the Modern Amenities LLC team and consortium members.",
+    title: "Powered by AIMS",
+    body: "The AI Operator Collective is powered by AI Managing Services (AIMS).",
   },
 ]
 
@@ -43,11 +35,11 @@ export function CommunityDisclosures() {
             <ShieldAlert className="w-5 h-5 text-crimson" />
           </div>
           <h2 className="font-playfair text-2xl sm:text-3xl text-[#1A1A1A] leading-tight">
-            Important Disclosures
+            Important disclosures
           </h2>
           <p className="mt-3 text-sm text-[#737373]">
-            Please read these in full before applying or making any business decision based on
-            the information on this page.
+            Please read these in full before applying or making any business
+            decision based on the information on this page.
           </p>
         </div>
 
@@ -66,7 +58,11 @@ export function CommunityDisclosures() {
         </div>
 
         <p className="mt-10 text-center text-[11px] text-[#737373]/60 font-mono uppercase tracking-wider">
-          Last updated: {new Date().toLocaleDateString("en-US", { year: "numeric", month: "long" })}
+          Last updated:{" "}
+          {new Date().toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+          })}
         </p>
       </div>
     </section>

@@ -9,15 +9,29 @@ export function FinalCTASection() {
       className="relative py-24 sm:py-32 border-t border-[#E3E3E3] bg-[#F5F5F5] overflow-hidden texture-light dot-grid-light"
     >
       <div className="relative z-10 mx-auto max-w-3xl px-6 text-center">
-        <h2 className="font-playfair text-4xl sm:text-5xl md:text-6xl text-[#1A1A1A] leading-[1.25] pb-2">
-          Another Quarter of{" "}
-          <span className="block text-crimson italic">Watching This Pass You By?</span>
+        <h2 className="font-playfair text-4xl sm:text-5xl md:text-6xl text-[#1A1A1A] leading-[1.2] pb-2">
+          If this is the practical path
+          <span className="block text-crimson italic">
+            you have been looking for, start here.
+          </span>
         </h2>
 
-        <p className="mt-6 text-lg text-[#737373] max-w-2xl mx-auto">
-          The tools are only getting better. The layoffs are only getting bigger. The people
-          who turn their expertise into an AI practice this year own the next decade.
-        </p>
+        <div className="mt-8 max-w-2xl mx-auto space-y-3 text-base sm:text-lg text-[#737373] leading-relaxed">
+          <p>The AI Operator path is not just about tools.</p>
+          <p>It is not just about sales.</p>
+          <p>It is not just about delivery.</p>
+          <p className="text-[#1A1A1A] font-medium">
+            It is the motion that connects all three.
+          </p>
+          <p className="pt-2">
+            Finding the right businesses. Running the right conversations.
+            Diagnosing the right problems. Scoping the right solution. Then using
+            AI where it actually creates leverage.
+          </p>
+          <p className="text-[#1A1A1A]">
+            Apply for the next cohort. AIOC will see if there is a fit.
+          </p>
+        </div>
 
         <div className="mt-10">
           <a

@@ -1,8 +1,10 @@
 import type { Metadata } from "next"
 import { CommunityHero } from "@/components/community/CommunityHero"
-import { ComparisonTable } from "@/components/community/ComparisonTable"
-import { WhatIsSection } from "@/components/community/WhatIsSection"
+import { ProblemStakes } from "@/components/community/ProblemStakes"
+import { OperatorMotion } from "@/components/community/OperatorMotion"
+import { HowItWorksPlan } from "@/components/community/HowItWorksPlan"
 import { ConsortiumMentors } from "@/components/community/ConsortiumMentors"
+import { WhatIsSection } from "@/components/community/WhatIsSection"
 import { CommunityFAQ } from "@/components/community/CommunityFAQ"
 import { FinalCTASection } from "@/components/community/FinalCTASection"
 import { CommunityDisclosures } from "@/components/community/CommunityDisclosures"
@@ -16,24 +18,27 @@ import { ApplicationCard } from "@/components/community/ApplicationCard"
 ─── */
 
 export const metadata: Metadata = {
-  title: "AI Operator Collective | Turn Your Career Into an AI Services Business",
+  title:
+    "AI Operator Collective | Move from AI-Curious to AI-Capable",
   description:
-    "An application-only, operator-led program for displaced W-2 professionals and corporate leaders building an AI services business. Business fundamentals first, AI tooling second. Free AI Operator Playbook Vault on signup.",
+    "AIOC is a cohort-based apprenticeship for people who want to become useful where AI turns into business value: prospecting, discovery, diagnosis, scoping, setup, and delivery. Application-only. 10 seats per cohort.",
   alternates: { canonical: "https://aioperatorcollective.com" },
   openGraph: {
     type: "website",
     url: "https://aioperatorcollective.com",
     siteName: "AI Operator Collective",
-    title: "AI Operator Collective | Turn Your Career Into an AI Services Business",
+    title:
+      "AI Operator Collective | Move from AI-Curious to AI-Capable",
     description:
-      "Operator-led program for displaced W-2 professionals and corporate leaders building an AI services business. Free Playbook Vault delivered instantly on signup.",
+      "Cohort-based apprenticeship for people who want to become credible AI Operators. Application-only. 10 seats per cohort. Powered by AIMS.",
     images: [{ url: "/og-image.png?v=2", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "AI Operator Collective | Turn Your Career Into an AI Services Business",
+    title:
+      "AI Operator Collective | Move from AI-Curious to AI-Capable",
     description:
-      "Operator-led program for professionals building an AI services business. Free Playbook Vault delivered instantly on signup.",
+      "Cohort-based apprenticeship for credible AI Operators. Application-only. Powered by AIMS.",
     images: [{ url: "/og-image.png?v=2", width: 1200, height: 630 }],
   },
 }
@@ -59,18 +64,26 @@ const FAQ_SCHEMA = {
   mainEntity: [
     {
       "@type": "Question",
-      name: "Do I need a tech background?",
+      name: "Do I need a technical background?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "No. You need domain expertise and a willingness to work. AI tools are taught in week 5 - after you have a business to deploy them in. The sequencing is intentional.",
+        text: "No. AIOC is not built for AI engineers. It is built for smart, operator-minded people who want to understand how AI can solve real business problems. Technical curiosity helps. Business judgment matters more.",
       },
     },
     {
       "@type": "Question",
-      name: "What if I'm still in my W-2?",
+      name: "Can I do this while I am still in my W2?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Most members start while still employed. The program is designed so you can build your pipeline and get your first client before you make the leap.",
+        text: "Yes. Many people will be building capability while still employed. Your day-to-day work gives you a place to start noticing processes, handoffs, repeated questions, and small operational fires differently. Depending on your role, your current job may become a useful testing ground for the operator lens.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Is this an AI agency course?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Not in the usual internet sense. AIOC is not built around copy-this-offer scripts. The focus is the full operator motion: market selection, prospecting, discovery, diagnosis, workflow mapping, ROI thinking, practical AI-enabled solutioning, and credible business conversations.",
       },
     },
     {
@@ -78,7 +91,7 @@ const FAQ_SCHEMA = {
       name: "Will this get me clients?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "The program gives you the exact system AIMS operators use. Your results depend entirely on the work you put in. We make no income claims.",
+        text: "No one can honestly guarantee that. AIOC is designed to help you build the judgment, language, prospecting rhythm, workflow thinking, and practical reps that support credible client conversations. Outcomes depend on your effort and execution.",
       },
     },
     {
@@ -86,15 +99,23 @@ const FAQ_SCHEMA = {
       name: "What does it cost?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Pricing is shared over email with applicants who are offered a cohort seat. No payment to apply - ever. No surprise pitch calls.",
+        text: "The first cost is time — roughly one to two hours per day to build real momentum. Applicants who are a fit will receive current pricing, terms, and cohort details before making any enrollment decision.",
       },
     },
     {
       "@type": "Question",
-      name: "What do I get for free right now?",
+      name: "Is AIOC a fixed-duration program?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "The AI Operator Playbook Vault - cold email sequences, discovery frameworks, pricing models, and outreach scripts - delivered to your inbox the moment you apply. Yours to keep regardless of whether you join.",
+        text: "No. AIOC is built more like an operator development track than a one-and-done course. The first phase gives you structure: the operator lens, discovery reps, scoping practice, business setup, and delivery standards. The bigger goal is operator judgment, communication, and follow-through over time.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What happens after I apply?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "We review your application, then qualified applicants are invited to a call with someone from our team. That call is a mutual fit conversation, not a pressure pitch. We are looking for curious, high-agency operators who want to build real capability.",
       },
     },
   ],
@@ -112,9 +133,14 @@ export default function LandingPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_SCHEMA) }}
       />
       <CommunityHero />
-      <ComparisonTable />
-      <WhatIsSection />
+      <ProblemStakes />
+      <OperatorMotion />
+      <HowItWorksPlan />
+      {/* Built by operators for future operators — keeps the board-of-operators
+          card grid Jess wanted retained inside this section. */}
       <ConsortiumMentors />
+      {/* "Who It Is For" — probably-for-you / probably-not-for-you split. */}
+      <WhatIsSection />
       <CommunityFAQ />
       <FinalCTASection />
       <CommunityDisclosures />
