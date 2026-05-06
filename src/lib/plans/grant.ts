@@ -4,6 +4,7 @@
  * Used by:
  *   - The admin "comp this tester" endpoint at /api/admin/users/[id]/grant-plan
  *   - The grandfather script (scripts/grandfather-plan.ts)
+ *   - First-login auto-comp via PRE_GRANTED_EMAILS below
  *
  * The plumbing for paid plan grants lives in the Stripe webhook, NOT here —
  * this is the manual / admin path that bypasses Stripe entirely. Both paths
@@ -20,6 +21,36 @@ import {
   getPlan,
   type PlanDef,
 } from "./registry"
+
+/**
+ * Hard-coded comp list. When a user with one of these emails signs in for
+ * the first time, ensureDbUser auto-grants them the listed plan. This
+ * lets us pre-comp testers whose Clerk invite hasn't yet hit our DB —
+ * critical for the beta-tester onboarding flow, otherwise they'd see
+ * paywalls everywhere on first login.
+ *
+ * Edit + redeploy to add new comp'd testers, or use the /admin grant-plan
+ * UI for one-offs after they've already signed in.
+ *
+ * Email matching is case-insensitive (we lowercase both sides at lookup).
+ */
+export const PRE_GRANTED_EMAILS: Record<string, "free" | "pro" | "operator"> = {
+  // Pre-launch beta cohort — full Operator access on day one.
+  "adamwolfe102@gmail.com": "operator",
+  "adamwolfe100@gmail.com": "operator",
+  "adam@meetcursive.com": "operator",
+  "ryan@modern-amenities.com": "operator",
+  "matt@modern-amenities.com": "operator",
+  "adam@modern-amenities.com": "operator",
+  "katie@vendingpreneurs.com": "operator",
+  "katie@kinkead.io": "operator",
+  "james@aioperatorcollective.com": "operator",
+}
+
+export function lookupPreGrantedPlan(email: string): "free" | "pro" | "operator" | null {
+  const normalized = email.toLowerCase().trim()
+  return PRE_GRANTED_EMAILS[normalized] ?? null
+}
 
 export interface GrantPlanOptions {
   /** Skip the credit grant — useful for grandfathering testers who already have credits. */

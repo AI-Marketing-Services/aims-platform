@@ -309,7 +309,10 @@ export async function sendInternalNotification(params: {
     <pre style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:6px;padding:16px;font-size:13px;color:#374151;white-space:pre-wrap;overflow-wrap:break-word;">${params.message}</pre>
     ${btn("Open Admin Portal →", "https://www.aioperatorcollective.com/admin")}
   `
-  const internalTo = process.env.INTERNAL_NOTIFY_TO ?? "team@aioperatorcollective.com"
+  // Default falls back to the SUPER_ADMIN inbox so the email always goes
+  // somewhere real even when INTERNAL_NOTIFY_TO isn't set (test env, fresh
+  // local dev). Production sets INTERNAL_NOTIFY_TO explicitly.
+  const internalTo = process.env.INTERNAL_NOTIFY_TO ?? "adamwolfe102@gmail.com"
   return sendTrackedEmail({
     from: FROM_EMAIL,
     to: internalTo,

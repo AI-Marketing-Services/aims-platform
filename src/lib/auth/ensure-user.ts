@@ -104,6 +104,35 @@ export async function getOrCreateDbUserByClerkId(clerkId: string): Promise<User>
     })
   }
 
+  // Auto-comp pre-known testers. If their email is in PRE_GRANTED_EMAILS we
+  // upgrade them straight to the configured plan + grant entitlements +
+  // credits. Lazy-imported to keep this hot path lean for non-comped users.
+  if (created.email) {
+    try {
+      const { lookupPreGrantedPlan, grantPlanToUser } = await import(
+        "@/lib/plans/grant"
+      )
+      const planSlug = lookupPreGrantedPlan(created.email)
+      if (planSlug && planSlug !== "free") {
+        await grantPlanToUser(created.id, planSlug, {
+          // Skip credit grant — the trial-grant above already credited
+          // the new starter pack. Plan switch shouldn't double-grant.
+          skipCredits: true,
+          note: "pre-granted on first login",
+        })
+        // Re-read so the returned object reflects the new planSlug.
+        const refreshed = await db.user.findUnique({ where: { id: created.id } })
+        if (refreshed) return refreshed
+      }
+    } catch (err) {
+      // Auto-comp failure should never block sign-in. Log + carry on.
+      logger.error("Auto-comp on first login failed", err, {
+        userId: created.id,
+        email: created.email,
+      })
+    }
+  }
+
   return created
 }
 
