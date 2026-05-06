@@ -18,7 +18,10 @@ import {
   getCalendarUrl,
   getStepIntro,
   getContactIntro,
+  getOutcomeMessage,
+  shouldShowCalendar,
   type CountryCode,
+  type RoutingTier,
 } from "@/lib/collective-application"
 
 /* -------------------------------------------------------------------------- */
@@ -35,7 +38,25 @@ import {
  */
 const TOTAL_FORM_STEPS = QUESTIONS.length + 2 // welcome(0) + name(1) + questions(5) + contact(7) = 8 steps total
 
-type Phase = "form" | "submitting" | "calendar" | "done" | "error"
+/**
+ * Application phases:
+ *   form        — they're filling out the questions
+ *   submitting  — POST in flight to /api/community/apply
+ *   calendar    — green tier; show the Calendly embed (book the call)
+ *   review      — yellow tier; "we'll review and follow up" message
+ *   nurture     — red tier; "may not be the right room yet, here are
+ *                 resources" + waitlist
+ *   done        — booking confirmed (calendar.event_scheduled fired)
+ *   error       — irrecoverable submit failure (very rare)
+ */
+type Phase =
+  | "form"
+  | "submitting"
+  | "calendar"
+  | "review"
+  | "nurture"
+  | "done"
+  | "error"
 
 const slideVariants = {
   enter: { opacity: 0, x: 24 },
@@ -72,6 +93,7 @@ export function ApplyForm() {
   const [scoreResult, setScoreResult] = useState<{
     normalizedScore: number
     tier: "hot" | "warm" | "cold"
+    routingTier: RoutingTier
   } | null>(null)
 
   // Pre-computed score for contact-step intro (computed locally after last question)
@@ -287,12 +309,18 @@ export function ApplyForm() {
     setPhase("submitting")
 
     const payload = buildPayload()
-    // Default score (cold) so the calendar renders even if save fails.
-    // All tiers route to the same AOC Calendly link, so this never sends
-    // the visitor to the wrong calendar.
-    let resolvedScore: { normalizedScore: number; tier: "hot" | "warm" | "cold" } = {
+    // Default score (cold) so the form still routes if save fails. We
+    // intentionally route a save-failure to the calendar (rather than
+    // nurture) so a transient save bug never blocks an applicant from
+    // booking — the team can clean up data afterwards.
+    let resolvedScore: {
+      normalizedScore: number
+      tier: "hot" | "warm" | "cold"
+      routingTier: RoutingTier
+    } = {
       normalizedScore: 0,
       tier: "cold",
+      routingTier: "green",
     }
     let saveFailed = false
     let serverMessage: string | null = null
@@ -306,7 +334,11 @@ export function ApplyForm() {
 
       if (res.ok) {
         const data = await res.json()
-        resolvedScore = { normalizedScore: data.score, tier: data.tier }
+        resolvedScore = {
+          normalizedScore: data.score,
+          tier: data.tier,
+          routingTier: data.routingTier ?? "green",
+        }
       } else {
         saveFailed = true
         try {
@@ -338,7 +370,16 @@ export function ApplyForm() {
     }
 
     setScoreResult(resolvedScore)
-    setPhase("calendar")
+    // Branch on routing tier per Jess's spec: only green-tier applicants
+    // see the Calendly embed. Yellow gets a "we'll review and follow up"
+    // message; Red gets a nurture / waitlist screen with resources.
+    if (shouldShowCalendar(resolvedScore.routingTier)) {
+      setPhase("calendar")
+    } else if (resolvedScore.routingTier === "yellow") {
+      setPhase("review")
+    } else {
+      setPhase("nurture")
+    }
     submittingRef.current = false
   }
 
@@ -526,6 +567,73 @@ export function ApplyForm() {
           Open the calendar
           <ArrowRight className="w-4 h-4" />
         </a>
+      </div>
+    )
+  }
+
+  /* ======================================================================== */
+  /*  RENDER — Review (yellow) phase                                           */
+  /* ======================================================================== */
+  //
+  // Yellow tier per Jess spec: applicant has potential but doesn't clear all
+  // green-tier gates (e.g. 5-9 hours/week, mid-strength answers). We don't
+  // expose Calendly — we tell them we'll review and reach back out. The
+  // application is fully saved on the API side; the team picks them up
+  // from the admin CRM.
+
+  if (phase === "review" && scoreResult) {
+    const outcome = getOutcomeMessage(firstName, "yellow")
+    return (
+      <div className="min-h-[60vh] sm:min-h-[70vh] flex flex-col items-center justify-center px-5 sm:px-6 py-12 text-center">
+        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-crimson/10 flex items-center justify-center mb-5 sm:mb-6">
+          <CheckCircle2 className="w-7 h-7 sm:w-8 sm:h-8 text-crimson" />
+        </div>
+        <h2 className="font-playfair text-2xl sm:text-3xl md:text-4xl text-[#1A1A1A] mb-3 sm:mb-4">
+          {outcome.heading}
+        </h2>
+        <p className="text-base sm:text-lg text-[#737373] max-w-xl mb-6 leading-relaxed">
+          {outcome.body}
+        </p>
+        {saveWarning && (
+          <p className="mt-2 text-xs text-[#999] max-w-md">
+            (Note: there was a hiccup saving your application. We&apos;ve
+            queued it to retry — no action needed on your side.)
+          </p>
+        )}
+      </div>
+    )
+  }
+
+  /* ======================================================================== */
+  /*  RENDER — Nurture (red) phase                                             */
+  /* ======================================================================== */
+  //
+  // Red tier per Jess spec: applicant tripped a hard gate (0-4 hrs/wk,
+  // refused outreach, refused sales conversations, or "not ready to invest").
+  // We don't reject — we offer free resources + waitlist instead.
+
+  if (phase === "nurture" && scoreResult) {
+    const outcome = getOutcomeMessage(firstName, "red")
+    return (
+      <div className="min-h-[60vh] sm:min-h-[70vh] flex flex-col items-center justify-center px-5 sm:px-6 py-12 text-center">
+        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#F5F5F5] flex items-center justify-center mb-5 sm:mb-6">
+          <Users className="w-7 h-7 sm:w-8 sm:h-8 text-[#737373]" />
+        </div>
+        <h2 className="font-playfair text-2xl sm:text-3xl md:text-4xl text-[#1A1A1A] mb-3 sm:mb-4">
+          {outcome.heading}
+        </h2>
+        <p className="text-base sm:text-lg text-[#737373] max-w-xl mb-6 leading-relaxed">
+          {outcome.body}
+        </p>
+        {outcome.cta && (
+          <a
+            href={outcome.cta.href}
+            className="inline-flex items-center gap-2 rounded-md bg-crimson text-white px-7 py-3 text-sm font-bold uppercase tracking-wider hover:bg-crimson-dark transition-colors"
+          >
+            {outcome.cta.label}
+            <ArrowRight className="w-4 h-4" />
+          </a>
+        )}
       </div>
     )
   }

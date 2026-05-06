@@ -83,7 +83,8 @@ export async function POST(req: Request) {
     } = parsed.data
 
     const name = `${firstName} ${lastName}`
-    const { normalizedScore, tier, priority, reason } = calculateScore(answers)
+    const { normalizedScore, tier, routingTier, priority, reason } =
+      calculateScore(answers)
     // All fresh applications start at APPLICATION_SUBMITTED. Hot/warm/cold
     // lives on leadScoreTier — the stage reflects where they are in the
     // community funnel, not the score.
@@ -115,6 +116,7 @@ export async function POST(req: Request) {
           duplicate: true,
           score: recentSubmission.score ?? normalizedScore,
           tier,
+          routingTier,
         },
         { status: 200 }
       )
@@ -345,7 +347,10 @@ export async function POST(req: Request) {
         )
     }
 
-    return NextResponse.json({ ok: true, score: normalizedScore, tier }, { status: 201 })
+    return NextResponse.json(
+      { ok: true, score: normalizedScore, tier, routingTier },
+      { status: 201 },
+    )
   } catch (err) {
     logger.error("Application submission failed", err, {
       endpoint: "POST /api/community/apply",

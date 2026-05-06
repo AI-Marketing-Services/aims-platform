@@ -2,13 +2,19 @@
  * AI Operator Collective application questions, scoring, calendar routing,
  * and personalization logic.
  *
- * Shared by the client form components and the API validation route.
+ * Source of truth for the form (ApplyForm.tsx + EmbedApplyForm.tsx) and
+ * the API validator at /api/community/apply.
  *
- * Flow order (VP-flip model):
- *   1. Name + email (minimal friction)
- *   2–6. Qualifying questions with dynamic personalization
- *   7. Contact details (phone, zip, country, SMS consent)
- *   8. Score-based Calendly routing
+ * Refreshed per Jess's typeform-application-spec.md (2026-05-06):
+ *  - 10 application questions (was 5).
+ *  - Three-tier routing: Green (book a call), Yellow (we'll review +
+ *    follow up), Red/Nurture (waitlist).
+ *  - Hard gates that drop applicants into Yellow/Red regardless of
+ *    numeric score: hours <5/wk, refusal of outreach, refusal of sales
+ *    conversations, or "not ready to invest" → Yellow or Red.
+ *  - Internal tier names (hot/warm/cold) preserved for downstream
+ *    compatibility — they are mapped from the public routing tier:
+ *    green↔hot, yellow↔warm, red↔cold.
  */
 
 export interface QuestionOption {
@@ -21,134 +27,319 @@ export interface Question {
   id: string
   question: string
   description: string
+  /** "single" (default) or "multi" — multi rendered as checkboxes. */
+  selection?: "single" | "multi"
+  /** Single-line free-text follow-up (rendered when this option is selected). */
+  followUp?: { whenValue: string; question: string; minLength?: number }
+  /** Top-level free-text input attached to the question (e.g. "Why now?"). */
+  text?: { question: string; description?: string; minLength?: number }
   options: QuestionOption[]
   allowOther?: boolean
 }
 
+/**
+ * 10-question application aligned to the Jess spec.
+ *
+ * Scoring is intentionally light — the routing tier is determined more
+ * by hard gates (hours, outreach willingness, sales comfort, investment
+ * readiness) than by a raw point total.
+ */
 export const QUESTIONS: Question[] = [
   {
-    id: "timeline",
-    question: "When are you looking to make a move?",
+    id: "current_role",
+    question: "Which best describes you right now?",
     description:
-      "Tells us your timeline so we can match you to the right cohort start date.",
+      "Helps us understand where you're starting from. We don't gate on this — every background can become a strong operator.",
     options: [
-      { label: "Right now — I need this yesterday", value: "right_now", points: 3 },
-      { label: "Within the next 30 days", value: "within_30", points: 3 },
-      { label: "Next 60–90 days", value: "next_60_90", points: 2 },
-      { label: "Just researching for now", value: "researching", points: 0 },
+      { label: "W2 employee", value: "w2", points: 2 },
+      { label: "Between roles / recently laid off", value: "between_roles", points: 2 },
+      { label: "Freelancer or consultant", value: "freelancer", points: 2 },
+      { label: "Agency owner", value: "agency_owner", points: 2 },
+      { label: "Other", value: "other", points: 1 },
+    ],
+    allowOther: true,
+  },
+  {
+    id: "why_now",
+    question: "What made you look at AIOC now?",
+    description:
+      "20-30 characters, in your own words. We use this to score intent and prep for the call.",
+    text: {
+      question: "Why now?",
+      minLength: 20,
+    },
+    // The text answer is the real signal here; options are required by the
+    // form widget but a single placeholder option keeps scoring stable.
+    options: [
+      { label: "Submit", value: "submitted", points: 2 },
     ],
   },
   {
-    id: "revenue_goal",
-    question: "How much monthly consulting revenue are you aiming to generate?",
-    description:
-      "Helps us understand your goal so we can show you exactly what it takes to get there.",
-    options: [
-      { label: "$2,000 – $5,000 / mo", value: "2k_5k", points: 1 },
-      { label: "$5,000 – $10,000 / mo", value: "5k_10k", points: 2 },
-      { label: "$10,000 – $20,000 / mo", value: "10k_20k", points: 3 },
-      { label: "$20,000+ / mo", value: "20k_plus", points: 3 },
-    ],
-  },
-  {
-    id: "investment",
+    id: "hours_per_week",
     question:
-      "What are you comfortable investing per month to build this business?",
+      "How many hours per week can you realistically commit over the next 30 days?",
     description:
-      "We\u2019re upfront: this is a professional program, not a $97 course. We ask so neither side wastes time if it\u2019s not the right fit financially.",
+      "AIOC is an apprenticeship, not a passive course. Real reps need real hours.",
     options: [
-      { label: "Under $200 / mo", value: "under_200", points: 0 },
-      { label: "$200 – $500 / mo", value: "200_500", points: 1 },
-      { label: "$500 – $1,000 / mo", value: "500_1k", points: 2 },
-      { label: "$1,000+ / mo", value: "1k_plus", points: 3 },
+      { label: "0–4 hours", value: "0_4", points: 0 },
+      { label: "5–9 hours", value: "5_9", points: 1 },
+      { label: "10–14 hours", value: "10_14", points: 3 },
+      { label: "15+ hours", value: "15_plus", points: 3 },
     ],
   },
   {
-    id: "decision_maker",
-    question:
-      "Is this your decision to make, or do you need to loop someone else in?",
+    id: "build_toward",
+    question: "What are you trying to build toward first?",
     description:
-      "Not a trick question — helps us know whether to have one conversation or two.",
+      "There's no wrong answer — this just helps us know where to start with you.",
     options: [
-      { label: "My decision entirely", value: "my_decision", points: 3 },
       {
-        label: "I\u2019ll want to run it by my partner / spouse",
-        value: "partner_spouse",
+        label: "Better AI / operator judgment in my current role",
+        value: "judgment_in_role",
         points: 2,
       },
-      { label: "I need to check finances first", value: "check_finances", points: 1 },
+      {
+        label: "My first credible client conversations",
+        value: "first_conversations",
+        points: 2,
+      },
+      { label: "My first paid client", value: "first_paid_client", points: 2 },
+      {
+        label: "Better delivery for existing clients",
+        value: "delivery_quality",
+        points: 2,
+      },
+      {
+        label: "I am still figuring that out",
+        value: "still_figuring_out",
+        points: 1,
+      },
     ],
   },
   {
-    id: "background",
+    id: "outreach_willingness",
     question:
-      "What best describes your current or most recent professional background?",
+      "Are you willing to practice finding and reaching out to businesses that may need help?",
     description:
-      "Helps us match you with the right advisors and use cases from day one.",
-    allowOther: true,
+      "Operators have to find their own opportunities. AIOC will give you the structure and reps — but the willingness has to come from you.",
     options: [
-      { label: "Technology / Software / IT", value: "technology", points: 3 },
-      { label: "Sales / Business Development", value: "sales", points: 3 },
+      { label: "Yes, I will do it", value: "yes_will_do", points: 3 },
       {
-        label: "Consulting / Professional Services",
-        value: "consulting",
+        label: "Yes, if I have a clear process",
+        value: "yes_with_process",
         points: 3,
       },
       {
-        label: "Marketing / Advertising / Communications",
-        value: "marketing",
+        label: "I am nervous, but willing to practice",
+        value: "nervous_willing",
         points: 2,
       },
-      { label: "Finance / Accounting / Banking", value: "finance", points: 2 },
       {
-        label: "Operations / Supply Chain / Logistics",
-        value: "operations",
+        label: "No, I do not want to do outreach",
+        value: "no_outreach",
+        points: 0,
+      },
+    ],
+  },
+  {
+    id: "industries",
+    question:
+      "Which industries or business types do you already understand or have access to?",
+    description:
+      "Pick all that apply. We use this to tailor your call — we never gate on industry alone.",
+    selection: "multi",
+    options: [
+      { label: "Healthcare", value: "healthcare", points: 1 },
+      { label: "Home services", value: "home_services", points: 1 },
+      { label: "Real estate", value: "real_estate", points: 1 },
+      { label: "Local retail", value: "local_retail", points: 1 },
+      { label: "Professional services", value: "professional_services", points: 1 },
+      { label: "E-commerce", value: "ecommerce", points: 1 },
+      { label: "Manufacturing", value: "manufacturing", points: 1 },
+      { label: "Finance / accounting", value: "finance_accounting", points: 1 },
+      { label: "Marketing / sales teams", value: "marketing_sales", points: 1 },
+      {
+        label: "Operations-heavy businesses",
+        value: "operations_heavy",
+        points: 1,
+      },
+      { label: "Other", value: "other", points: 1 },
+    ],
+    allowOther: true,
+  },
+  {
+    id: "tried_before",
+    question:
+      "What have you already tried to create opportunities or clients?",
+    description: "Pick all that apply.",
+    selection: "multi",
+    followUp: {
+      whenValue: "*", // always show the follow-up after this question
+      question:
+        "Add any context that would help us understand what happened.",
+      minLength: 10,
+    },
+    options: [
+      { label: "Nothing yet", value: "nothing_yet", points: 0 },
+      { label: "Referrals / network", value: "referrals", points: 2 },
+      { label: "LinkedIn outreach", value: "linkedin", points: 2 },
+      { label: "Cold email", value: "cold_email", points: 2 },
+      { label: "Cold DM", value: "cold_dm", points: 2 },
+      { label: "Upwork / Fiverr", value: "marketplaces", points: 1 },
+      { label: "Paid ads", value: "paid_ads", points: 1 },
+      { label: "I already have clients", value: "have_clients", points: 3 },
+    ],
+  },
+  {
+    id: "discovery_comfort",
+    question:
+      "How comfortable are you having business discovery conversations?",
+    description:
+      "The job is asking better questions, not pitching harder. We'll teach the framework, but the willingness has to be there.",
+    options: [
+      { label: "Comfortable", value: "comfortable", points: 3 },
+      {
+        label: "I can do it with a framework",
+        value: "with_framework",
+        points: 3,
+      },
+      {
+        label: "Nervous, but willing to practice",
+        value: "nervous_willing",
         points: 2,
       },
-      { label: "Real Estate", value: "real_estate", points: 2 },
-      { label: "Healthcare / Life Sciences", value: "healthcare", points: 1 },
-      { label: "Legal / Compliance / HR", value: "legal", points: 1 },
-      { label: "Other", value: "other", points: 1 },
+      {
+        label: "I do not want to do sales conversations",
+        value: "no_sales",
+        points: 0,
+      },
+    ],
+  },
+  {
+    id: "operator_traits",
+    question:
+      "Which operator traits feel most natural to you right now?",
+    description:
+      "Pick the ones that genuinely sound like you — not what you think we want to hear.",
+    selection: "multi",
+    options: [
+      { label: "Curiosity", value: "curiosity", points: 1 },
+      { label: "High agency", value: "high_agency", points: 1 },
+      { label: "Systems thinking", value: "systems_thinking", points: 1 },
+      { label: "Clear communication", value: "clear_communication", points: 1 },
+      { label: "Follow-through", value: "follow_through", points: 1 },
+      {
+        label: "Comfort with ambiguity",
+        value: "comfort_ambiguity",
+        points: 1,
+      },
+    ],
+  },
+  {
+    id: "investment_readiness",
+    question:
+      "If AIOC is a strategic fit, are you prepared to invest time, effort, and money to start now?",
+    description:
+      "Pricing is shared with qualified applicants on the call. This is just about readiness, not commitment.",
+    options: [
+      { label: "Yes, I am ready", value: "ready", points: 3 },
+      { label: "I need a few details first", value: "need_details", points: 2 },
+      { label: "Not right now", value: "not_now", points: 0 },
     ],
   },
 ]
 
 /* -------------------------------------------------------------------------- */
-/*  Scoring                                                                    */
+/*  Scoring + 3-tier routing                                                   */
 /* -------------------------------------------------------------------------- */
 
-export const MAX_RAW_SCORE = 15 // 3 + 3 + 3 + 3 + 3
+/**
+ * Max raw score across all single-select scored options.
+ *
+ * Most-points-per-question mapping:
+ *   current_role:           2
+ *   why_now (text):         2 (placeholder option)
+ *   hours_per_week:         3
+ *   build_toward:           2
+ *   outreach_willingness:   3
+ *   discovery_comfort:      3
+ *   investment_readiness:   3
+ * (Multi-select questions excluded — their points are caller-summed below.)
+ *
+ * Total: 18.
+ */
+export const MAX_RAW_SCORE = 18
 
-export function calculateScore(answers: Record<string, string>) {
+/** Public tier the spec uses: green (book), yellow (we'll review), red (nurture). */
+export type RoutingTier = "green" | "yellow" | "red"
+
+/** Internal tier preserved for backward-compat with email/notify code. */
+export type LegacyTier = "hot" | "warm" | "cold"
+
+const ROUTING_TO_LEGACY: Record<RoutingTier, LegacyTier> = {
+  green: "hot",
+  yellow: "warm",
+  red: "cold",
+}
+
+export function calculateScore(answers: Record<string, string | string[]>) {
   let rawScore = 0
 
   for (const q of QUESTIONS) {
     const selected = answers[q.id]
-    const option = q.options.find((o) => o.value === selected)
-    if (option) {
-      rawScore += option.points
+    if (q.selection === "multi" && Array.isArray(selected)) {
+      // Multi-select: cap at 2 to avoid runaway "I picked everything" scores.
+      const matched = q.options.filter((o) => selected.includes(o.value))
+      const sum = matched.reduce((acc, o) => acc + o.points, 0)
+      rawScore += Math.min(sum, 2)
+    } else if (typeof selected === "string") {
+      const option = q.options.find((o) => o.value === selected)
+      if (option) rawScore += option.points
     }
   }
 
   const normalizedScore = Math.round((rawScore / MAX_RAW_SCORE) * 100)
 
-  let tier: "hot" | "warm" | "cold"
-  let priority: "HIGH" | "MEDIUM" | "LOW"
+  /* ── Hard gates (Jess spec) ──────────────────────────────────────
+   *
+   * Any of these → Red / nurture. We do not let a high numeric score
+   * override these — the spec is explicit that operators who refuse
+   * outreach or sales are not the right fit, regardless of polish.
+   */
+  const hours = answers.hours_per_week
+  const outreach = answers.outreach_willingness
+  const discovery = answers.discovery_comfort
+  const investment = answers.investment_readiness
 
-  if (normalizedScore >= 80) {
-    tier = "hot"
-    priority = "HIGH"
-  } else if (normalizedScore >= 47) {
-    tier = "warm"
-    priority = "MEDIUM"
+  let routingTier: RoutingTier
+  if (
+    hours === "0_4" ||
+    outreach === "no_outreach" ||
+    discovery === "no_sales"
+  ) {
+    routingTier = "red"
+  } else if (investment === "not_now") {
+    // Spec says "Not right now" routes to nurture — call it red so the
+    // copy on the outcome page matches.
+    routingTier = "red"
+  } else if (hours === "5_9") {
+    // Slower path — still allowed through but flagged for the team.
+    routingTier = "yellow"
+  } else if (normalizedScore >= 70) {
+    routingTier = "green"
+  } else if (normalizedScore >= 45) {
+    routingTier = "yellow"
   } else {
-    tier = "cold"
-    priority = "LOW"
+    routingTier = "red"
   }
 
-  const reason = `Application score: ${rawScore}/${MAX_RAW_SCORE} (${normalizedScore}%). Tier: ${tier}.`
+  const tier: LegacyTier = ROUTING_TO_LEGACY[routingTier]
+  const priority: "HIGH" | "MEDIUM" | "LOW" =
+    routingTier === "green" ? "HIGH" : routingTier === "yellow" ? "MEDIUM" : "LOW"
 
-  return { rawScore, normalizedScore, tier, priority, reason }
+  const reason = `Application score: ${rawScore}/${MAX_RAW_SCORE} (${normalizedScore}%). Tier: ${tier} (routing=${routingTier}).`
+
+  return { rawScore, normalizedScore, tier, routingTier, priority, reason }
 }
 
 /* -------------------------------------------------------------------------- */
@@ -172,24 +363,28 @@ export const CALENDLY_MATT = CALENDLY_AOC
 export const CALENDLY_RYAN = CALENDLY_AOC
 export const CAL_LINK = CALENDLY_AOC
 
-export function getCalendarUrl(_tier: "hot" | "warm" | "cold") {
+export function getCalendarUrl(_tier: LegacyTier) {
   return CALENDLY_AOC
 }
 
-export function getCalendarOwner(_tier: "hot" | "warm" | "cold") {
+export function getCalendarOwner(_tier: LegacyTier) {
   return "the AI Operator Collective team"
+}
+
+/**
+ * Should this applicant see the Calendly embed on the success page?
+ *
+ * Spec: only green-tier applicants book a call directly. Yellow gets a
+ * "we'll review and follow up" message; Red gets a nurture / waitlist
+ * message with resources.
+ */
+export function shouldShowCalendar(routingTier: RoutingTier): boolean {
+  return routingTier === "green"
 }
 
 /* -------------------------------------------------------------------------- */
 /*  Personalization helpers (used by form components)                           */
 /* -------------------------------------------------------------------------- */
-
-const REVENUE_LABELS: Record<string, string> = {
-  "2k_5k": "$2K–$5K/mo",
-  "5k_10k": "$5K–$10K/mo",
-  "10k_20k": "$10K–$20K/mo",
-  "20k_plus": "$20K+/mo",
-}
 
 /**
  * Returns a short, conversational lead-in shown above each question.
@@ -198,37 +393,33 @@ const REVENUE_LABELS: Record<string, string> = {
 export function getStepIntro(
   questionIndex: number,
   firstName: string,
-  answers: Record<string, string>
+  answers: Record<string, string | string[]>,
 ): string {
   switch (questionIndex) {
-    case 0: // Timeline
-      return `Hey ${firstName}, let\u2019s start with timing.`
-
-    case 1: {
-      // Revenue goal — reference timeline
-      const t = answers.timeline
-      if (t === "right_now" || t === "within_30")
-        return `Love the urgency, ${firstName}. Let\u2019s talk goals.`
-      if (t === "next_60_90")
-        return `Good timing. Let\u2019s talk about where you\u2019re headed.`
-      return "Smart to do your homework. Where are you aiming?"
-    }
-
+    case 0:
+      return `Hey ${firstName}, let's start with where you are right now.`
+    case 1:
+      return `Tell me what's pulling you toward AIOC.`
     case 2: {
-      // Investment — reference revenue goal
-      const r = answers.revenue_goal
-      const label = REVENUE_LABELS[r] ?? "your target"
-      if (r === "20k_plus" || r === "10k_20k")
-        return `${label} \u2014 you\u2019re thinking big. Let\u2019s talk investment.`
-      return `Shooting for ${label}. One more on the financial side \u2014`
+      const role = answers.current_role
+      if (role === "between_roles")
+        return `Got it. Let's talk about how much time you can really commit.`
+      return "Quick reality-check on your time."
     }
-
-    case 3: // Decision maker
-      return `Almost there, ${firstName}. Quick logistical question.`
-
-    case 4: // Background
-      return `Last one, ${firstName}. This helps us match you with the right advisors.`
-
+    case 3:
+      return `Where do you want to land first?`
+    case 4:
+      return `This one's important, ${firstName}. Be honest with yourself.`
+    case 5:
+      return `Helps us tailor the call to where you already have context.`
+    case 6:
+      return `What you've already tried tells us a lot about your starting point.`
+    case 7:
+      return `Sales conversations — how do you feel about them?`
+    case 8:
+      return `Now the operator-traits question. Pick the ones that genuinely sound like you.`
+    case 9:
+      return `Last one, ${firstName}. The honest one.`
     default:
       return ""
   }
@@ -240,35 +431,51 @@ export function getStepIntro(
  */
 export function getCalendarIntro(
   firstName: string,
-  tier: "hot" | "warm" | "cold",
-  answers: Record<string, string>
+  tier: LegacyTier,
+  _answers: Record<string, string | string[]>,
 ): { heading: string; subheading: string } {
-  const bgOption = QUESTIONS.find((q) => q.id === "background")?.options.find(
-    (o) => o.value === answers.background
-  )
-  const bgLabel = bgOption ? bgOption.label.toLowerCase() : "your field"
-
   if (tier === "hot") {
     return {
       heading: `${firstName}, you look like a strong fit.`,
-      subheading: `Based on your timeline, goals, and background in ${bgLabel}, let\u2019s get you on a strategy call with the AI Operator Collective team.`,
+      subheading: `Pick a time that works and we'll have a strategic fit conversation about your goals, your timeline, and where AIOC can help.`,
     }
   }
 
   return {
-    heading: `Great application, ${firstName}.`,
-    subheading: `Let\u2019s get you on a call with the AI Operator Collective team to explore how the Collective can help you hit your goals.`,
+    heading: `Thanks for applying, ${firstName}.`,
+    subheading: `Let's get on a call to see if AIOC is the right next room for you.`,
+  }
+}
+
+/**
+ * Outcome-page copy for non-green applicants — yellow ("we'll review")
+ * and red ("nurture / waitlist"). Matches the spec word-for-word.
+ */
+export function getOutcomeMessage(
+  firstName: string,
+  routingTier: RoutingTier,
+): { heading: string; body: string; cta?: { label: string; href: string } } {
+  if (routingTier === "yellow") {
+    return {
+      heading: `Thanks for applying, ${firstName}.`,
+      body: "We'll review your responses and follow up with the best next step. AIOC is selective on purpose — we'll get back to you within a few days.",
+    }
+  }
+  return {
+    heading: `Thanks for sharing where you are, ${firstName}.`,
+    body: "AIOC may not be the right next room yet, but we can send you resources and updates as the next cohort develops. No hard feelings — most great operators get here in their own time.",
+    cta: { label: "Send me the resources", href: "/tools" },
   }
 }
 
 /** Intro shown above the contact-details step (after qualifying questions). */
 export function getContactIntro(
   firstName: string,
-  normalizedScore: number
+  normalizedScore: number,
 ): string {
-  if (normalizedScore >= 80)
-    return `${firstName}, you\u2019re looking like a strong candidate. Just a few more details to complete your application.`
-  return `Great answers, ${firstName}. Let\u2019s get your details to wrap things up.`
+  if (normalizedScore >= 70)
+    return `${firstName}, strong answers. Just a few details to wrap up.`
+  return `Thanks ${firstName}. Last few details and we're done.`
 }
 
 /* -------------------------------------------------------------------------- */

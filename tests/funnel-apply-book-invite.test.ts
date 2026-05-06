@@ -22,60 +22,82 @@ function file(relPath: string): string {
   return readFileSync(join(SRC, relPath), "utf-8")
 }
 
-// ─── 1. Scoring ─────────────────────────────────────────────────────────────
+// ─── 1. Scoring (refreshed for 10-question Jess spec) ──────────────────────
+//
+// Question library evolved from 5 timeline/revenue/investment-style questions
+// to a 10-question apprenticeship-fit application with hard gates on hours,
+// outreach willingness, sales comfort, and investment readiness. Tests below
+// hit the contract that matters: max-strength answers route to green, hard
+// gates always force red, mid-strength answers can be yellow or green.
 
-const firstValue = (qid: string, criterion: (opt: { points: number }) => boolean) =>
-  QUESTIONS.find((q) => q.id === qid)!.options.find(criterion)!.value
-
-const hotAnswers = Object.fromEntries(
+// Build "best-case" answers — pick the highest-points option for each Q,
+// and an empty array for multi-select questions (multi caps at +2 anyway).
+const greenAnswers: Record<string, string | string[]> = Object.fromEntries(
   QUESTIONS.map((q) => {
+    if (q.selection === "multi") return [q.id, []]
     const max = Math.max(...q.options.map((o) => o.points))
     return [q.id, q.options.find((o) => o.points === max)!.value]
-  })
+  }),
 )
 
-const coldAnswers = Object.fromEntries(
+// Build "worst-case" answers — lowest-points option per Q. The hard gates
+// (hours = 0_4, outreach = no_outreach, etc.) end up triggered automatically.
+const redAnswers: Record<string, string | string[]> = Object.fromEntries(
   QUESTIONS.map((q) => {
+    if (q.selection === "multi") return [q.id, []]
     const min = Math.min(...q.options.map((o) => o.points))
     return [q.id, q.options.find((o) => o.points === min)!.value]
-  })
+  }),
 )
 
-const warmAnswers: Record<string, string> = {
-  ...coldAnswers,
-  // flip the two heaviest-weight questions to a mid-tier option to land in warm range
-  timeline: firstValue("timeline", (o) => o.points === 2 || o.points === 3),
-  revenue_goal: firstValue("revenue_goal", (o) => o.points === 2),
-}
-
-describe("calculateScore — classifies applicants correctly", () => {
-  it("all-max answers → hot tier (≥80) with HIGH priority", () => {
-    const r = calculateScore(hotAnswers)
+describe("calculateScore — Jess 3-tier routing", () => {
+  it("all-max answers → green tier with HIGH priority + hot legacy", () => {
+    const r = calculateScore(greenAnswers)
+    expect(r.routingTier).toBe("green")
     expect(r.tier).toBe("hot")
     expect(r.priority).toBe("HIGH")
-    expect(r.normalizedScore).toBeGreaterThanOrEqual(80)
   })
 
-  it("all-min answers → cold tier (<47) with LOW priority", () => {
-    const r = calculateScore(coldAnswers)
+  it("all-min answers → red tier with LOW priority + cold legacy", () => {
+    const r = calculateScore(redAnswers)
+    expect(r.routingTier).toBe("red")
     expect(r.tier).toBe("cold")
     expect(r.priority).toBe("LOW")
-    expect(r.normalizedScore).toBeLessThan(47)
   })
 
-  it("mid-tier answers → warm tier (47–79) with MEDIUM priority", () => {
-    const r = calculateScore(warmAnswers)
-    // With low-base + two mid-weight picks we should land in the warm band.
-    expect(["warm", "cold", "hot"]).toContain(r.tier)
-    if (r.tier === "warm") {
-      expect(r.priority).toBe("MEDIUM")
-      expect(r.normalizedScore).toBeGreaterThanOrEqual(47)
-      expect(r.normalizedScore).toBeLessThan(80)
-    }
+  it("hard gate: hours = 0_4 always routes red regardless of other answers", () => {
+    const r = calculateScore({ ...greenAnswers, hours_per_week: "0_4" })
+    expect(r.routingTier).toBe("red")
+  })
+
+  it("hard gate: outreach refusal always routes red", () => {
+    const r = calculateScore({
+      ...greenAnswers,
+      outreach_willingness: "no_outreach",
+    })
+    expect(r.routingTier).toBe("red")
+  })
+
+  it("hard gate: sales-conversation refusal always routes red", () => {
+    const r = calculateScore({ ...greenAnswers, discovery_comfort: "no_sales" })
+    expect(r.routingTier).toBe("red")
+  })
+
+  it("hard gate: investment 'not now' routes red (nurture)", () => {
+    const r = calculateScore({
+      ...greenAnswers,
+      investment_readiness: "not_now",
+    })
+    expect(r.routingTier).toBe("red")
+  })
+
+  it("slow-path gate: 5-9 hours/wk caps at yellow even with strong answers", () => {
+    const r = calculateScore({ ...greenAnswers, hours_per_week: "5_9" })
+    expect(r.routingTier).toBe("yellow")
   })
 
   it("score + reason always produced", () => {
-    const r = calculateScore(hotAnswers)
+    const r = calculateScore(greenAnswers)
     expect(r.reason).toMatch(/Tier:\s*(hot|warm|cold)/)
     expect(r.normalizedScore).toBeGreaterThanOrEqual(0)
     expect(r.normalizedScore).toBeLessThanOrEqual(100)
