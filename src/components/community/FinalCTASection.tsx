@@ -9,9 +9,9 @@ export function FinalCTASection() {
       className="relative py-24 sm:py-32 border-t border-[#E3E3E3] bg-[#F5F5F5] overflow-hidden texture-light dot-grid-light"
     >
       <div className="relative z-10 mx-auto max-w-3xl px-6 text-center">
-        <h2 className="font-playfair text-4xl sm:text-5xl md:text-6xl text-[#1A1A1A] leading-[1.2] pb-2">
-          If this is the practical path
-          <span className="block text-crimson italic">
+        <h2 className="font-playfair text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-[#1A1A1A] leading-[1.15] tracking-tight text-balance pb-2">
+          If this is the practical path{" "}
+          <span className="md:block text-crimson italic">
             you have been looking for, start here.
           </span>
         </h2>

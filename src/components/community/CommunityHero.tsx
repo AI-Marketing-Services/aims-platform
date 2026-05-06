@@ -12,9 +12,11 @@ export function CommunityHero() {
           For people who want to move from AI-curious to AI-capable
         </p>
 
-        <h1 className="font-playfair text-5xl sm:text-6xl md:text-7xl lg:text-[88px] leading-[1.1] pb-2 tracking-tight text-neutral-900">
-          Real Business Problems
-          <span className="block text-crimson italic">Solved by Real AI Operators</span>
+        <h1 className="font-playfair text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[88px] leading-[1.1] pb-2 tracking-tight text-neutral-900 text-balance">
+          Real Business Problems{" "}
+          <span className="md:block text-crimson italic">
+            Solved by Real AI Operators
+          </span>
         </h1>
 
         <p className="mt-8 text-lg sm:text-xl text-neutral-500 max-w-3xl mx-auto leading-relaxed">

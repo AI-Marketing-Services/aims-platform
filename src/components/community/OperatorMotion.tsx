@@ -35,9 +35,9 @@ export function OperatorMotion() {
     >
       <div className="relative z-10 mx-auto max-w-[1280px] px-6">
         <div className="text-center max-w-3xl mx-auto">
-          <h2 className="font-playfair text-4xl sm:text-5xl md:text-6xl text-[#1A1A1A] leading-[1.2] pb-2">
-            The work most AI content
-            <span className="block text-crimson italic">skips.</span>
+          <h2 className="font-playfair text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-[#1A1A1A] leading-[1.15] tracking-tight text-balance pb-2">
+            The work most AI content{" "}
+            <span className="md:block text-crimson italic">skips.</span>
           </h2>
           <p className="mt-6 text-base sm:text-lg text-[#737373] leading-relaxed">
             AIOC is not here to hand you another pile of tutorials. Inside the cohort,

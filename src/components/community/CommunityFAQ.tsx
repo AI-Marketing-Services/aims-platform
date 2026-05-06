@@ -45,7 +45,7 @@ export function CommunityFAQ() {
     >
       <div className="relative z-10 mx-auto max-w-3xl px-6">
         <div className="text-center">
-          <h2 className="font-playfair text-4xl sm:text-5xl md:text-6xl text-[#1A1A1A] leading-[1.2] pb-2">
+          <h2 className="font-playfair text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-[#1A1A1A] leading-[1.15] tracking-tight text-balance pb-2">
             Frequently asked.
           </h2>
         </div>

@@ -27,7 +27,7 @@ export function WhatIsSection() {
     >
       <div className="relative z-10 mx-auto max-w-[1280px] px-6">
         <div className="text-center max-w-3xl mx-auto">
-          <h2 className="font-playfair text-4xl sm:text-5xl md:text-6xl text-[#1A1A1A] leading-[1.2] pb-2">
+          <h2 className="font-playfair text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-[#1A1A1A] leading-[1.15] tracking-tight text-balance pb-2">
             This is probably{" "}
             <span className="text-crimson italic">for you</span> if…
           </h2>

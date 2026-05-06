@@ -10,9 +10,11 @@ export function ProblemStakes() {
       className="relative py-20 sm:py-24 border-t border-neutral-200 bg-white texture-light dot-grid-light"
     >
       <div className="relative z-10 mx-auto max-w-3xl px-6">
-        <h2 className="font-playfair text-3xl sm:text-4xl md:text-5xl text-neutral-900 leading-[1.2] pb-2">
-          Learning AI is not the same as
-          <span className="block text-crimson italic">becoming useful with it.</span>
+        <h2 className="font-playfair text-3xl sm:text-4xl md:text-5xl text-neutral-900 leading-[1.15] tracking-tight text-balance pb-2">
+          Learning AI is not the same as{" "}
+          <span className="md:block text-crimson italic">
+            becoming useful with it.
+          </span>
         </h2>
 
         <div className="mt-8 space-y-5 text-base sm:text-lg text-neutral-600 leading-relaxed">
