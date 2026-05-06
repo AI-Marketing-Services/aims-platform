@@ -36,7 +36,7 @@ export function NextQuestWidget() {
           All Quests Complete
         </div>
         <p className="text-base font-semibold text-foreground mb-1">
-          You've mastered the platform.
+          You&apos;ve mastered the platform.
         </p>
         <p className="text-xs text-muted-foreground">
           Keep your streak alive and refer operators to earn ongoing rewards.

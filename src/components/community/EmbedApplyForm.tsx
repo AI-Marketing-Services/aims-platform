@@ -205,12 +205,10 @@ export function EmbedApplyForm() {
           serverMessage =
             "We couldn't save your details right now (too many requests), but you can still book your call below."
         }
-        // eslint-disable-next-line no-console
         console.error("Embed apply save failed:", res.status, serverMessage)
       }
     } catch (err) {
       saveFailed = true
-      // eslint-disable-next-line no-console
       console.error("Embed apply save failed (network):", err)
       serverMessage =
         "We couldn't save your details right now, but you can still book your call below."

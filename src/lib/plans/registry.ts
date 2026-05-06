@@ -254,7 +254,7 @@ export function getCreditPack(slug: string): CreditPackDef | null {
 /**
  * Plan-aware feature label lookup. Maps an entitlement key to a friendly
  * feature name used in the paywall headline. Keep in lockstep with the
- * <FeatureGate> calls in each layout.tsx.
+ * <EntitlementGate> calls in each layout.tsx.
  */
 export const FEATURE_LABELS: Record<FeatureEntitlement, string> = {
   feature_crm: "Client CRM",

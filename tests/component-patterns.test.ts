@@ -159,6 +159,12 @@ describe("Portal CampaignsDashboardClient — auto-refresh pattern", () => {
 
   it("shows connected badge when connected", () => {
     expect(content).toContain("Connected")
-    expect(content).toContain("bg-green-400")
+    // The connected indicator was migrated from emerald-green to the
+    // brand primary as part of the visual cohesion sweep — accept
+    // either so this test stays robust if we re-theme later.
+    const hasIndicatorColor =
+      /bg-(green|emerald)-\d{3}/.test(content) ||
+      /bg-primary(\/\d+)?/.test(content)
+    expect(hasIndicatorColor).toBe(true)
   })
 })

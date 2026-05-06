@@ -167,6 +167,7 @@ export default async function ClientPortalPage({
       >
         <div className="flex items-center gap-3">
           {operator.logoUrl && (
+            // eslint-disable-next-line @next/next/no-img-element
             <img
               src={operator.logoUrl}
               alt={operator.businessName ?? "Operator logo"}

@@ -49,7 +49,7 @@ export function WelcomeVideoCard() {
             </h3>
             <p className="text-xs text-muted-foreground mb-4 leading-relaxed">
               A quick tour of where everything lives — CRM, audits, scripts,
-              the AI co-pilot. Pour a coffee, watch this, then we'll pick your
+              the AI co-pilot. Pour a coffee, watch this, then we&apos;ll pick your
               first quest together.
             </p>
             <div className="flex items-center gap-2">
@@ -124,7 +124,7 @@ function VideoModal({
               Welcome video coming soon
             </p>
             <p className="text-xs text-muted-foreground max-w-sm">
-              We're recording the official 60-second walkthrough. For now,
+              We&apos;re recording the official 60-second walkthrough. For now,
               the dashboard, the Client CRM, and the AI co-pilot in the bottom
               right are your three starting points.
             </p>
@@ -138,7 +138,7 @@ function VideoModal({
             onChange={(e) => setAcknowledged(e.target.checked)}
             className="h-4 w-4 rounded border-border bg-deep accent-primary"
           />
-          I've got the lay of the land — let's go.
+          I&apos;ve got the lay of the land — let&apos;s go.
         </label>
 
         <button

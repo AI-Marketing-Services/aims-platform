@@ -271,7 +271,6 @@ export function ApplyForm() {
           body: JSON.stringify(payload),
         })
         if (res.ok) {
-          // eslint-disable-next-line no-console
           console.info("Apply save retry succeeded")
           return
         }
@@ -320,12 +319,10 @@ export function ApplyForm() {
           serverMessage =
             "We couldn't save your details right now (too many requests), but your call is booked from the calendar below."
         }
-        // eslint-disable-next-line no-console
         console.error("Apply save failed:", res.status, serverMessage)
       }
     } catch (err) {
       saveFailed = true
-      // eslint-disable-next-line no-console
       console.error("Apply save failed (network):", err)
       serverMessage =
         "We couldn't save your details right now, but you can still book your call below."

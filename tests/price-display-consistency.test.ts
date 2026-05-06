@@ -9,9 +9,12 @@ import { join } from "path"
 
 const SRC = join(__dirname, "..", "src")
 
-// Files that display prices to users and must convert cents → dollars
+// Files that display prices to users and must convert cents → dollars.
+// PortalMarketplaceClient was rewritten to consume lib/plans/registry where
+// priceMonthly is already in DOLLARS, so it's exempt from the divide-by-100
+// rule (covered separately by the "Plan registry stores prices in DOLLARS"
+// test below).
 const PRICE_DISPLAY_FILES = [
-  "app/(portal)/portal/marketplace/PortalMarketplaceClient.tsx",
   "app/(portal)/portal/dashboard/page.tsx",
   "app/(portal)/portal/services/page.tsx",
   "app/(portal)/portal/services/[serviceId]/page.tsx",
@@ -48,14 +51,20 @@ describe("Price display files must divide by 100", () => {
 })
 
 describe("No raw cent values displayed", () => {
-  it("PortalMarketplaceClient priceLabel divides by 100", () => {
-    const content = readFileSync(
-      join(SRC, "app/(portal)/portal/marketplace/PortalMarketplaceClient.tsx"),
-      "utf-8"
-    )
-    // The priceLabel function must divide by 100
-    const priceLabelBlock = content.match(/function priceLabel[\s\S]*?^}/m)?.[0] ?? ""
-    expect(priceLabelBlock).toContain("/ 100")
+  it("Plan registry stores prices in DOLLARS (not cents)", () => {
+    // The marketplace was rewritten: plans + credit packs come from
+    // lib/plans/registry.ts where priceMonthly / price are integer
+    // dollars. The Stripe sync script multiplies by 100 to create the
+    // Stripe Price object. Asserting dollars-not-cents at the source
+    // guarantees no display can show a 4-digit price by accident.
+    const content = readFileSync(join(SRC, "lib/plans/registry.ts"), "utf-8")
+    // Pro should be priceMonthly: 97 (dollars), not 9700 (cents)
+    expect(content).toMatch(/priceMonthly:\s*97\b/)
+    expect(content).toMatch(/priceMonthly:\s*297\b/)
+    // Credit packs should be in dollars too (25, 79, 169 — not 2500/7900/16900)
+    expect(content).toMatch(/price:\s*25\b/)
+    expect(content).toMatch(/price:\s*79\b/)
+    expect(content).toMatch(/price:\s*169\b/)
   })
 
   // MarketplaceClient no longer has pricing (engagements are custom-scoped)

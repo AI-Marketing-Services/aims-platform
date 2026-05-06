@@ -22,11 +22,44 @@ export async function GET() {
   try {
     const deals = await db.clientDeal.findMany({
       where: { userId: dbUserId },
-      include: {
-        contacts: { select: { id: true, firstName: true, lastName: true, email: true, isPrimary: true } },
+      // Explicit select — ClientDeal carries text blobs (notes) we don't
+      // need on the list view. Keeping payloads small keeps the kanban
+      // snappy as deal counts grow.
+      select: {
+        id: true,
+        companyName: true,
+        contactName: true,
+        contactEmail: true,
+        contactPhone: true,
+        website: true,
+        industry: true,
+        stage: true,
+        value: true,
+        currency: true,
+        tags: true,
+        leadScore: true,
+        lastEnrichedAt: true,
+        source: true,
+        createdAt: true,
+        updatedAt: true,
+        wonAt: true,
+        lostAt: true,
+        contacts: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+            isPrimary: true,
+          },
+        },
         _count: { select: { activities: true } },
       },
       orderBy: { updatedAt: "desc" },
+      // Cap to a sane upper bound. Operators with >500 active deals
+      // need a paginated UI anyway — the kanban can't render that many
+      // cards usefully. Older/won/lost deals remain queryable via filters.
+      take: 500,
     })
     return NextResponse.json({ deals })
   } catch (err) {

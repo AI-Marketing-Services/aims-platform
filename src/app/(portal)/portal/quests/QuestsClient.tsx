@@ -281,7 +281,7 @@ function SideQuestList({
     <section>
       <p className="text-sm text-muted-foreground mb-4 max-w-2xl">
         Optional missions. Complete them for credits, badges, and the
-        occasional mystery box. Sidequests don't gate features — they just
+        occasional mystery box. Sidequests don&apos;t gate features — they just
         keep things interesting.
       </p>
       <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
@@ -334,7 +334,7 @@ function AchievementList({ progress }: { progress: UserProgress }) {
             Hidden discoveries
           </h2>
           <p className="text-xs text-muted-foreground mb-4">
-            Quietly tracked. You've found these without being told.
+            Quietly tracked. You&apos;ve found these without being told.
           </p>
           <div className="grid gap-3 md:grid-cols-2">
             {hiddenCompleted.map((q) => (

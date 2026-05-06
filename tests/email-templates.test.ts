@@ -229,8 +229,11 @@ describe("Lead magnet result email templates", () => {
     expect(content).toContain("toLocaleString()")
   })
 
-  it("all lead magnet emails include strategy call CTA", () => {
-    expect(content).toContain("/get-started")
-    expect(content).toContain("strategy call")
+  it("all lead magnet emails include AOC apply CTA", () => {
+    // The lead-magnet funnel was retargeted to apply.aioperatorcollective.com
+    // (previously /get-started with "strategy call" CTA). Both aim to book
+    // a sales call — copy just got tighter.
+    expect(content).toContain("aioperatorcollective.com/apply")
+    expect(content).toContain("Apply to the AI Operator Collective")
   })
 })

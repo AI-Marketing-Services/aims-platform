@@ -41,6 +41,10 @@ export default async function PublicBookingPage({
       <div className="w-full max-w-3xl">
         <div className="text-center mb-6">
           {logoUrl ? (
+            // User-uploaded logos can come from arbitrary domains
+            // (Vercel Blob, Cloudinary, etc.) — using <img> instead of
+            // next/image avoids domain whitelist friction.
+            // eslint-disable-next-line @next/next/no-img-element
             <img
               src={logoUrl}
               alt={operatorName}

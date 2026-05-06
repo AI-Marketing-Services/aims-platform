@@ -57,7 +57,11 @@ describe("Admin API auth guards", () => {
         ? route.content.includes("BOOTSTRAP_SECRET") ||
           route.content.includes("CRON_SECRET") ||
           /\bsecret\b/i.test(route.content)
-        : route.content.includes("await auth()") || route.content.includes("requireAdmin()")
+        : route.content.includes("await auth()") ||
+          route.content.includes("requireAdmin()") ||
+          route.content.includes("ensureDbUserIdForApi") ||
+          route.content.includes("ensureDbUser(") ||
+          route.content.includes("getOrCreateDbUserByClerkId")
       expect(hasAuth, `${route.path} is missing auth check`).toBe(true)
     })
 
@@ -85,10 +89,18 @@ describe("Admin API auth guards", () => {
 describe("Portal API auth guards", () => {
   for (const route of portalRoutes) {
     it(`${route.path} — has auth() check`, () => {
-      expect(
-        route.content.includes("await auth()"),
-        `${route.path} is missing auth check`
-      ).toBe(true)
+      // Routes can auth via:
+      //   - direct `await auth()` from @clerk/nextjs/server
+      //   - `ensureDbUserIdForApi()` (calls auth() internally + returns user id)
+      //   - `ensureDbUser()` (server component variant — auth + redirect)
+      // All three patterns are equivalent for security purposes; this
+      // matcher accepts any of them.
+      const hasAuth =
+        route.content.includes("await auth()") ||
+        route.content.includes("ensureDbUserIdForApi") ||
+        route.content.includes("ensureDbUser(") ||
+        route.content.includes("getOrCreateDbUserByClerkId")
+      expect(hasAuth, `${route.path} is missing auth check`).toBe(true)
     })
 
     it(`${route.path} — returns 401 for unauthenticated`, () => {

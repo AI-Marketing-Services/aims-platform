@@ -36,6 +36,12 @@ async function getMembers(roles: readonly UserRole[] | null) {
       clientDeals: {
         select: { stage: true, value: true, updatedAt: true },
         orderBy: { updatedAt: "desc" },
+        // Cap deals per member so a single power-user with thousands of
+        // deals can't blow up the page render. The aggregate fields the
+        // UI computes (pipeline value, MRR, last activity) work fine
+        // with the most recent 200 — anything older is materially
+        // irrelevant to the table summary.
+        take: 200,
       },
       deals: {
         select: { id: true },
@@ -43,6 +49,11 @@ async function getMembers(roles: readonly UserRole[] | null) {
       },
     },
     orderBy: { createdAt: "desc" },
+    // Hard cap so the admin members table stays under the Vercel
+    // serverless body-size limit even at hyper-growth scale. Pagination
+    // can come later — for now 500 is well above realistic short-term
+    // member counts.
+    take: 500,
   })
 }
 

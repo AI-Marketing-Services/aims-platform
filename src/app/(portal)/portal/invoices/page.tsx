@@ -13,11 +13,30 @@ async function getInvoices(clerkId: string) {
 
   return db.clientInvoice.findMany({
     where: { userId: dbUser.id },
-    include: {
-      lineItems: false,
+    select: {
+      id: true,
+      invoiceNumber: true,
+      title: true,
+      recipientName: true,
+      recipientEmail: true,
+      recipientCompany: true,
+      status: true,
+      currency: true,
+      total: true,
+      dueAt: true,
+      sentAt: true,
+      paidAt: true,
+      createdAt: true,
+      updatedAt: true,
+      shareToken: true,
       clientDeal: { select: { companyName: true, contactName: true } },
     },
     orderBy: { createdAt: "desc" },
+    // Cap so power users with thousands of invoices don't explode the
+    // page render. Pagination is a follow-up; 200 covers any realistic
+    // recent-history view and the older invoices remain queryable
+    // through the API.
+    take: 200,
   })
 }
 

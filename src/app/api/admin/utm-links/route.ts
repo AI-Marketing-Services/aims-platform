@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { z } from "zod"
 import { db } from "@/lib/db"
+import { logger } from "@/lib/logger"
 import { DealStage } from "@prisma/client"
 
 function isAdmin(role?: string) {
@@ -94,6 +95,9 @@ export async function GET() {
 
     return NextResponse.json({ links: result })
   } catch (err) {
+    logger.error("List UTM links failed", err, {
+      endpoint: "GET /api/admin/utm-links",
+    })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
@@ -135,6 +139,9 @@ export async function POST(req: NextRequest) {
       { status: 201 }
     )
   } catch (err) {
+    logger.error("Create UTM link failed", err, {
+      endpoint: "POST /api/admin/utm-links",
+    })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

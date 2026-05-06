@@ -52,6 +52,8 @@ export async function GET() {
         clientDeal: { select: { id: true, companyName: true, contactName: true } },
       },
       orderBy: { createdAt: "desc" },
+      // Match the page-level cap so pagination policy is consistent.
+      take: 200,
     })
     return NextResponse.json({ invoices })
   } catch (err) {

@@ -137,7 +137,14 @@ describe("Portal campaigns page uses client component", () => {
       join(SRC, "app/(portal)/portal/campaigns/page.tsx"),
       "utf-8"
     )
-    expect(content).toContain("auth()")
+    // Accept either direct `auth()` or the `ensureDbUser` helper (which
+    // wraps auth() and bounces unauthenticated visitors). Both forms are
+    // equivalent for security.
+    const hasAuth =
+      content.includes("auth()") ||
+      content.includes("ensureDbUser(") ||
+      content.includes("ensureDbUserIdForApi")
+    expect(hasAuth).toBe(true)
     expect(content).not.toContain('"use client"')
   })
 })

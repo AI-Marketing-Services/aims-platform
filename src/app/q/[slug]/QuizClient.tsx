@@ -273,6 +273,7 @@ export default function QuizClient(props: QuizClientProps) {
         </div>
         <div className="max-w-2xl mx-auto px-5 sm:px-6 py-3 flex items-center gap-3">
           {props.branding.logoUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
             <img
               src={props.branding.logoUrl}
               alt={operatorLabel}
