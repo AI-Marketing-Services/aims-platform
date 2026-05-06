@@ -138,7 +138,7 @@ export function MemberOnboardingPanel({
 
       {/* Steps grouped by week */}
       <div className="space-y-4">
-        {(["week1", "week2", "week34"] as const).map((weekKey) => {
+        {(["week1", "week2", "week3", "week4", "week5"] as const).map((weekKey) => {
           const week = weeks[weekKey]
           return (
             <div key={weekKey}>

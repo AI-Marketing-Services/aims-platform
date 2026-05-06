@@ -158,29 +158,44 @@ export async function sendOperatorSignupWelcome(params: {
   name: string | null
 }) {
   const firstName = params.name?.split(" ")[0] ?? "there"
-  const portalUrl = "https://www.aioperatorcollective.com/portal/dashboard"
+  const onboardUrl = "https://www.aioperatorcollective.com/portal/onboard"
 
+  // Foundation-first welcome per Jess's "walk before run" spec.
+  // Intentionally does NOT push the AI tools, lead magnets, or
+  // diagnostic flows in the first email. We point straight at Week 1
+  // (Foundation) so new members orient on mindset + community first;
+  // the toolkit unlocks later, after they've built the operator's
+  // judgment those tools amplify.
   const body = `
     ${h1(`Welcome aboard, ${firstName}`)}
-    ${p(`Your AI Operator Collective workspace is ready. You start with <strong style="color:#111827;">50 enrichment credits</strong> on the house — enough to fully enrich your first ~3 leads end-to-end.`)}
-    <p style="margin:0 0 16px;font-size:15px;color:#4B5563;line-height:1.7;">Pick any of these to start your first hour:</p>
+    ${p(`You're in. The first thing to know: AIOC is built as an apprenticeship, not a tool dump. We'll walk before we run. Mindset first, then prospecting, then revenue activities, then problem diagnosis. The AI tools come in later — once you have the operator judgment that makes them useful instead of overwhelming.`)}
+    <p style="margin:0 0 16px;font-size:15px;color:#4B5563;line-height:1.7;font-weight:600;color:#111827;">This week's focus: Foundation.</p>
     <ol style="margin:0 0 24px;padding-left:20px;color:#4B5563;line-height:1.9;font-size:15px;">
-      <li><strong style="color:#111827;">Discover via Google Maps</strong> — Search any business type + city, import to your CRM in one click.</li>
-      <li><strong style="color:#111827;">Enrich a lead</strong> — Click Enrich on any deal. AI fills company description, employees, revenue, contacts.</li>
-      <li><strong style="color:#111827;">Browse playbooks</strong> — 40+ proven AI service plays organized by industry.</li>
-      <li><strong style="color:#111827;">Try AI Recommend</strong> — On any enriched deal, watch a tailored proposal pitch fill in.</li>
+      <li><strong style="color:#111827;">Complete your profile + intro post</strong> — small room, real people. Say hello.</li>
+      <li><strong style="color:#111827;">Start Module 1: AI Operator Foundations</strong> — five short lessons on what the work actually is.</li>
+      <li><strong style="color:#111827;">Comment on two community threads</strong> — relationships compound here.</li>
     </ol>
-    ${btn("Open your dashboard →", portalUrl)}
+    ${btn("Open your onboarding →", onboardUrl)}
     ${divider()}
-    ${p(`Your daily morning brief is opt-in — <a href="${portalUrl.replace("/dashboard", "/settings")}" style="color:#981B1B;font-weight:600;text-decoration:underline;">enable it in Settings</a> if you want a 7am Mon-Fri summary of hot leads, follow-ups due, and yesterday's wins. Quiet days = no email.`)}
-    ${p(`Reply with any questions — I read every one.`)}
+    ${p(`<strong style="color:#111827;">What you'll unlock as you go:</strong>`)}
+    <ul style="margin:0 0 24px;padding-left:20px;color:#4B5563;line-height:1.9;font-size:14px;">
+      <li>Week 2 — <strong style="color:#111827;">Prospecting</strong> (find businesses worth talking to)</li>
+      <li>Week 3 — <strong style="color:#111827;">Revenue activities</strong> (outreach, conversations, reps)</li>
+      <li>Week 4 — <strong style="color:#111827;">Problem diagnosis</strong> (discovery frameworks, mapping pain)</li>
+      <li>Week 5+ — <strong style="color:#111827;">Solutioning</strong> (now the AI toolkit + audits + ROI calculators come in)</li>
+    </ul>
+    ${p(`The sequence is intentional. Most AI courses start with the tools — then operators get overwhelmed and quit. We start with the operator. Reply with any questions; I read every one.`)}
   `
   return sendTrackedEmail({
     from: FROM_EMAIL,
     to: params.to,
     replyTo: REPLY_TO,
-    subject: `Welcome to AI Operator Collective, ${firstName}`,
-    html: emailLayout(body, `Your workspace is ready. 50 credits to start.`, params.to),
+    subject: `Welcome to AI Operator Collective, ${firstName} — start with Week 1`,
+    html: emailLayout(
+      body,
+      `You're in. We walk before we run — start with Foundation this week.`,
+      params.to,
+    ),
     serviceArm: "operator-signup",
   })
 }

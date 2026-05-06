@@ -164,11 +164,19 @@ export function OnboardingChecklist({ initialCompletedKeys, variant = "full", cl
         </div>
       </div>
 
-      {(Object.entries(weeks) as [string, { label: string; steps: StepWithCompleted[] }][]).map(
-        ([weekKey, { label, steps }]) => {
-          const weekComplete = steps.every((s) => s.completed)
-          const isExpanded = expandedWeeks[weekKey] ?? true
-          return (
+      {Object.entries(weeks).map(([weekKey, { label, steps: weekSteps }]) => {
+        // Hydrate WeekGroup steps with their completion state so the row
+        // renderer below can render checkmarks. The lib doesn't ship the
+        // `completed` flag because step records are static — we attach it
+        // here at render-time from the live completedKeys set.
+        const steps: StepWithCompleted[] = weekSteps.map((s) => ({
+          ...s,
+          completed: completedKeys.has(s.key),
+        }))
+        const weekComplete = steps.length > 0 && steps.every((s) => s.completed)
+        const isExpanded = expandedWeeks[weekKey] ?? true
+        if (steps.length === 0) return null
+        return (
             <div key={weekKey} className="rounded-xl border border-border overflow-hidden">
               <button
                 className="w-full flex items-center justify-between px-4 py-3 bg-muted/30 hover:bg-muted/50 transition-colors"
@@ -208,8 +216,7 @@ export function OnboardingChecklist({ initialCompletedKeys, variant = "full", cl
               )}
             </div>
           )
-        }
-      )}
+      })}
     </div>
   )
 }

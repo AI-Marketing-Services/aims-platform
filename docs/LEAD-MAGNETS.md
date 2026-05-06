@@ -8,6 +8,8 @@ Click each link to test the live tool on production. Every tool ends in either:
 
 After each test submission, the matching email lands in `adamwolfe102@gmail.com` (or whatever email you enter). Verify the send in [Resend → Emails](https://resend.com/emails).
 
+> **🚦 Jess note (2026-05-06)**: lead magnets are TOP-OF-FUNNEL hooks for **cold visitors** on the public site. They're not appropriate for new members in their first weeks — that would feel overwhelming and break the apprenticeship sequence. New members go through Foundation → Prospecting → Revenue → Diagnosis FIRST; the diagnostic-style magnets only get surfaced inside the portal once a member reaches the **Solutioning** phase (Week 5+). See [JOURNEY-PHILOSOPHY.md](./JOURNEY-PHILOSOPHY.md). The new "Send phase" column below shows when each is appropriate to push to a member.
+
 ---
 
 ## 🚪 Tools hub (start here)
@@ -21,33 +23,57 @@ After each test submission, the matching email lands in `adamwolfe102@gmail.com`
 
 ## 📊 Quiz / scorecard lead magnets (interactive — submit to see email)
 
-| # | Tool | Link | Triggers email | What it does |
-|---|---|---|---|---|
-| 1 | **AI Readiness Quiz** | [/tools/ai-readiness-quiz](https://www.aioperatorcollective.com/tools/ai-readiness-quiz) | `sendQuizResultsEmail` | 7 questions. Returns a 0-100 readiness score + 3 recommendations. |
-| 2 | **ROI Calculator** | [/tools/roi-calculator](https://www.aioperatorcollective.com/tools/roi-calculator) | `sendCalculatorResultsEmail` | Inputs: team size, hourly rate, manual hours/week. Outputs monthly + annual savings. |
-| 3 | **Website Audit** | [/tools/website-audit](https://www.aioperatorcollective.com/tools/website-audit) | `sendAuditResultsEmail` | Submit any URL. AI scans the site and grades conversion-readiness 0-100. |
-| 4 | **Business Credit Score** | [/tools/business-credit-score](https://www.aioperatorcollective.com/tools/business-credit-score) | `sendCreditScoreEmail` | Free check of business credit (D&B / Experian Commercial). Score + improvement plan. |
-| 5 | **Executive Operations Audit** | [/tools/executive-ops-audit](https://www.aioperatorcollective.com/tools/executive-ops-audit) | `sendOpsAuditEmail` | C-suite-grade ops audit. 12 dimensions scored, top 3 fixes, executive summary email. |
-| 6 | **AI Opportunity Audit** | [/tools/ai-opportunity-audit](https://www.aioperatorcollective.com/tools/ai-opportunity-audit) | `sendBusinessAIAuditEmail` | Heaviest tool. Submit website + describe business; AI generates a custom opportunity report with priority moves + 3 ranked opportunities. |
+| # | Tool | Link | Send phase | Triggers email | What it does |
+|---|---|---|---|---|---|
+| 1 | **AI Readiness Quiz** | [/tools/ai-readiness-quiz](https://www.aioperatorcollective.com/tools/ai-readiness-quiz) | 🟢 **Public + Prospecting** | `sendQuizResultsEmail` | 7 questions. Returns a 0-100 readiness score + 3 recommendations. Self-assessment, OK early. |
+| 2 | **ROI Calculator** | [/tools/roi-calculator](https://www.aioperatorcollective.com/tools/roi-calculator) | 🟣 **Solutioning** (Week 5+) | `sendCalculatorResultsEmail` | Inputs: team size, hourly rate, manual hours/week. Numbers-heavy — not appropriate for new members. |
+| 3 | **Website Audit** | [/tools/website-audit](https://www.aioperatorcollective.com/tools/website-audit) | 🟣 **Solutioning** | `sendAuditResultsEmail` | Submit any URL. Diagnostic; only useful once a member knows what to do with the score. |
+| 4 | **Business Credit Score** | [/tools/business-credit-score](https://www.aioperatorcollective.com/tools/business-credit-score) | 🟣 **Solutioning** | `sendCreditScoreEmail` | D&B / Experian commercial check. Late-funnel. |
+| 5 | **Executive Operations Audit** | [/tools/executive-ops-audit](https://www.aioperatorcollective.com/tools/executive-ops-audit) | 🟣 **Solutioning** | `sendOpsAuditEmail` | C-suite-grade ops audit. Heavy diagnostic; needs operator context to land. |
+| 6 | **AI Opportunity Audit** | [/tools/ai-opportunity-audit](https://www.aioperatorcollective.com/tools/ai-opportunity-audit) | 🟣 **Solutioning** | `sendBusinessAIAuditEmail` | Heaviest tool. Custom AI report. Surface ONLY after a member has discovery reps under their belt. |
 
 ---
 
 ## 📥 Download / opt-in lead magnets
 
-| # | Tool | Link | Delivers | What it does |
-|---|---|---|---|---|
-| 7 | **AI Operator Playbook** | [/tools/ai-playbook](https://www.aioperatorcollective.com/tools/ai-playbook) | PDF attachment via `sendAIPlaybookEmail` | 12 plays for W-2 → AI operator transition. Email with PDF attached. |
-| 8 | **Daily Signal** | [/tools/daily-signal](https://www.aioperatorcollective.com/tools/daily-signal) | Daily SMS + email digest | Opt-in to a daily intel briefing. Confirmation page at [/tools/daily-signal/confirmed](https://www.aioperatorcollective.com/tools/daily-signal/confirmed). |
-| 9 | **AI Operating System** | [/tools/ai-operating-system](https://www.aioperatorcollective.com/tools/ai-operating-system) | Free playbook + onboarding sequence | Top-of-funnel landing for the OS framework — lives under `/(landing)/tools` so it shares the AOC navigation chrome. |
+| # | Tool | Link | Send phase | Delivers | What it does |
+|---|---|---|---|---|---|
+| 7 | **AI Operator Playbook** | [/tools/ai-playbook](https://www.aioperatorcollective.com/tools/ai-playbook) | 🟢 **Foundation** (Week 1) | PDF via `sendAIPlaybookEmail` | 12 plays for W-2 → AI operator transition. Foundational; safe early. |
+| 8 | **Daily Signal** | [/tools/daily-signal](https://www.aioperatorcollective.com/tools/daily-signal) | 🟡 **Revenue** (Week 3) | Daily SMS + email digest | Daily intel briefing. Best once a member is doing prospecting reps. |
+| 9 | **AI Operating System** | [/tools/ai-operating-system](https://www.aioperatorcollective.com/tools/ai-operating-system) | 🟢 **Foundation** | Free playbook + onboarding sequence | Top-of-funnel landing for the OS framework. Foundational. |
 
 ---
 
 ## 🧰 Reference / discovery tools (no email — exploration only)
 
-| # | Tool | Link | What it does |
-|---|---|---|---|
-| 10 | **Audience Segment Explorer** | [/tools/segment-explorer](https://www.aioperatorcollective.com/tools/segment-explorer) | Browse the ICPs AIMS targets. Reference for prospecting + discovery practice. |
-| 11 | **AI Stack Configurator** | [/tools/stack-configurator](https://www.aioperatorcollective.com/tools/stack-configurator) | Pick your service + scale; get a tool-stack recommendation (Claude / Vapi / Apollo / etc.). |
+| # | Tool | Link | Send phase | What it does |
+|---|---|---|---|---|
+| 10 | **Audience Segment Explorer** | [/tools/segment-explorer](https://www.aioperatorcollective.com/tools/segment-explorer) | 🟠 **Prospecting** (Week 2) | Browse the ICPs AIMS targets. Reference for prospecting + discovery practice. |
+| 11 | **AI Stack Configurator** | [/tools/stack-configurator](https://www.aioperatorcollective.com/tools/stack-configurator) | 🟣 **Solutioning** | Pick your service + scale; get a tool-stack recommendation. Late-funnel. |
+
+---
+
+## 🗓 Phase-to-magnet mapping (for the email sequencer)
+
+When sending a lead magnet to a member (vs. a public visitor on `/tools/*`), the system at `src/lib/journey/phases.ts` checks:
+
+```ts
+isMagnetUnlocked(magnetKey, currentPhase) // true if member has reached the magnet's required phase
+```
+
+| Phase | Member sees / receives |
+|---|---|
+| 🟢 **Foundation** (Week 1) | AI Playbook · AI Operating System · Operator Vault · W2 Playbook |
+| 🟠 **Prospecting** (Week 2) | + AI Readiness Quiz · Segment Explorer |
+| 🟡 **Revenue Activities** (Week 3) | + Daily Signal |
+| 🔵 **Problem Diagnosis** (Week 4) | (no new magnets — this is where discovery framework lessons live, not tools) |
+| 🟣 **Solutioning** (Week 5+) | **Everything**: Website Audit · ROI Calculator · Credit Score · Executive Ops Audit · AI Opportunity Audit · Stack Configurator |
+
+This gating applies to:
+1. The **email sequence** sent to new members after acceptance
+2. The **portal** lead-magnet surface (Toolkit / Tools page)
+
+Public visitors hitting `/tools/*` directly are unaffected — they see everything. The gating is about what we **proactively send** to members, not what's reachable on the open web.
 
 ---
 
@@ -89,6 +115,6 @@ These look like tools but aren't customer-facing magnets:
 
 ## 📅 Last reviewed
 
-This document is generated from the route map under `src/app/(marketing)/tools/*` and `src/app/(landing)/tools/*`. If you add a new lead magnet, drop a row here and re-deploy.
+This document is generated from the route map under `src/app/(marketing)/tools/*` and `src/app/(landing)/tools/*`, plus the phase mapping in `src/lib/journey/phases.ts`. If you add a new lead magnet, drop a row here AND add it to `LEAD_MAGNET_PHASE` in the journey lib so the gating system knows when to surface it.
 
 Last updated: 2026-05-06
