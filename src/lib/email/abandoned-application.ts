@@ -44,6 +44,7 @@ export async function sendAbandonedApplicationEmail(params: {
     subject: `${firstName}, you didn't finish your application`,
     html: emailLayout(body, "3 minutes to finish, and your playbook is on the other side."),
     serviceArm: "ai-operator-collective",
+    templateKey: "aoc.application-abandoned",
   })
 }
 
@@ -91,5 +92,6 @@ export async function sendApplicationReceivedEmail(params: {
       params.to
     ),
     serviceArm: "ai-operator-collective",
+    templateKey: "aoc.application-received",
   })
 }

@@ -123,6 +123,7 @@ export async function sendPostBookingConfirmationEmail(params: {
         ]
       : undefined,
     serviceArm: "ai-operator-collective",
+    templateKey: "aoc.post-booking-confirmation",
   })
 }
 

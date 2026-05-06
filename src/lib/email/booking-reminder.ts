@@ -68,5 +68,6 @@ export async function sendBookingReminderEmail(params: {
     subject: `${firstName}, ${cfg.subject}`,
     html: emailLayout(html, cfg.preview),
     serviceArm: "ai-operator-collective",
+    templateKey: `aoc.booking-reminder.day-${params.day}`,
   })
 }

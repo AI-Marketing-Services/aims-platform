@@ -57,6 +57,7 @@ export async function sendQuizResultsEmail(params: {
     subject: `Your AI Readiness Score: ${score}/100 - Recommendations Inside`,
     html: emailLayout(body, `You scored ${score}/100 on the AI Readiness Quiz. Here are your top recommendations.`),
     serviceArm: "lead-magnet",
+    templateKey: "lead-magnet.ai-readiness-quiz",
   })
 }
 
@@ -167,6 +168,7 @@ export async function sendCalculatorResultsEmail(params: {
       ? `You could save $${monthlySavings.toLocaleString()}/mo with AI automation.`
       : "Your personalized ROI report is ready to view."),
     serviceArm: "lead-magnet",
+    templateKey: "lead-magnet.roi-calculator",
   })
 }
 
@@ -212,6 +214,7 @@ export async function sendAuditResultsEmail(params: {
     subject: `Your Website Scored ${score}/100 - ${recommendations.length} Priority Fixes Inside`,
     html: emailLayout(body, `Your website scored ${score}/100. Here are the fixes that matter most.`),
     serviceArm: "lead-magnet",
+    templateKey: "lead-magnet.website-audit",
   })
 }
 
@@ -278,6 +281,7 @@ export async function sendCreditScoreEmail({
     subject: `Your Business Credit Score: ${s}/100 — Here's Your Action Plan`,
     html,
     serviceArm: "lead-magnet",
+    templateKey: "lead-magnet.business-credit-score",
   })
 }
 
@@ -358,6 +362,7 @@ export async function sendOpsAuditEmail({
     subject: `Your Executive Ops Audit: ${s}/100 — $${cost > 0 ? cost.toLocaleString() : "X"} in Annual Inefficiency Identified`,
     html,
     serviceArm: "lead-magnet",
+    templateKey: "lead-magnet.executive-ops-audit",
   })
 }
 
@@ -505,6 +510,7 @@ export async function sendBusinessAIAuditEmail(params: {
     subject: `Your AI Opportunity Report for ${report?.companyName ?? "your business"}`,
     html: emailLayout(body, `Your AI opportunity report is ready — ${topOpportunities.length} high-impact moves identified.`, params.to),
     serviceArm: "ai-operator-collective",
+    templateKey: "lead-magnet.ai-opportunity-audit",
   })
 }
 
@@ -556,5 +562,6 @@ export async function sendW2PlaybookEmail(params: {
     subject: "The AI Operator Playbook (twelve plays inside)",
     html: emailLayout(body, "Your AI Operator Playbook is ready — twelve specific plays for W-2 operators.", params.to),
     serviceArm: "ai-operator-collective",
+    templateKey: "lead-magnet.w2-playbook",
   })
 }

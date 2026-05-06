@@ -2487,3 +2487,29 @@ model Booking {
   @@index([userId, startAt])
   @@index([startAt, status])
 }
+
+/// Admin-editable override for any email template that ships from
+/// `src/lib/email/*`. The catalog of editable templates lives in
+/// `src/lib/email/catalog.ts` keyed by stable `templateKey` strings —
+/// this table just stores the customised subject + HTML body the team
+/// has saved through /admin/email-templates.
+///
+/// Each `send*Email` helper passes its templateKey to `sendTrackedEmail`,
+/// which looks up the most recent override and uses its subject/html
+/// instead of the code defaults when one exists. Deleting a row reverts
+/// to the hard-coded default with zero risk — defaults are always
+/// available because they live in code.
+model EmailTemplateOverride {
+  id          String   @id @default(cuid())
+  templateKey String   @unique
+  /// Human-readable note saved alongside the edit ("Updated CTA copy").
+  note        String?
+  subject     String
+  html        String   @db.Text
+  /// Clerk user id of whoever last saved this override.
+  updatedById String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([templateKey])
+}

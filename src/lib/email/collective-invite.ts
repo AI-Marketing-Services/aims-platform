@@ -188,6 +188,7 @@ export async function sendCollectiveInviteEmail(params: {
         "You're in. Here's your login link and 30-day roadmap for getting the most out of the Collective."
       ),
       serviceArm: "ai-operator-collective",
+      templateKey: "aoc.collective-invite",
     })
     return { ok: !!res }
   } catch (err) {

@@ -30,6 +30,7 @@ export async function sendTicketConfirmationEmail(params: {
     subject: `Ticket received: ${safeSubject}`,
     html: emailLayout(body, "We received your support ticket and will respond within 24 hours."),
     serviceArm: "support",
+    templateKey: "support.ticket-confirmation",
   })
 }
 
@@ -115,6 +116,7 @@ export async function sendReplyNotificationToClient(params: {
     subject: `Re: ${safeSubject} - AIMS Support`,
     html: emailLayout(body, `The AIMS team replied to your support ticket.`),
     serviceArm: "support",
+    templateKey: "support.reply-to-client",
   })
 }
 
@@ -161,5 +163,6 @@ export async function sendTicketStatusChangeEmail(params: {
     subject: `Ticket ${statusLabel}: ${safeSubject}`,
     html: emailLayout(body, `Your support ticket "${safeSubject}" has been ${statusLabel.toLowerCase()}.`),
     serviceArm: "support",
+    templateKey: "support.ticket-resolved",
   })
 }

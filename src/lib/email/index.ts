@@ -22,8 +22,38 @@ export function getResend() {
 // Resend's `emails.send` returns `{ data, error }` on failure WITHOUT throwing — so
 // without explicit error handling, failed sends would be invisible. We log loudly
 // when `result.error` is present so triage during testing isn't blind.
-export async function sendTrackedEmail(params: Parameters<ReturnType<typeof getResend>["emails"]["send"]>[0] & { serviceArm?: string; clientId?: string }) {
-  const { serviceArm, clientId, ...emailParams } = params
+export async function sendTrackedEmail(
+  params: Parameters<ReturnType<typeof getResend>["emails"]["send"]>[0] & {
+    serviceArm?: string
+    clientId?: string
+    /** Stable identifier — see src/lib/email/catalog.ts. When set,
+     *  enables admin edits at /admin/email-templates to override
+     *  subject + html at send-time. */
+    templateKey?: string
+  },
+) {
+  const { serviceArm, clientId, templateKey, ...emailParams } = params
+
+  // Admin override hook — best-effort, falls back to defaults on any
+  // DB hiccup so a broken override layer never blocks an outgoing
+  // email.
+  if (templateKey) {
+    try {
+      const { applyTemplateOverride } = await import("./overrides")
+      Object.assign(
+        emailParams,
+        await applyTemplateOverride(templateKey, {
+          subject: emailParams.subject as string | undefined,
+          html: emailParams.html as string | undefined,
+        }),
+      )
+    } catch (err) {
+      logger.error("applyTemplateOverride failed — using code default", err, {
+        templateKey,
+      })
+    }
+  }
+
   const to = Array.isArray(emailParams.to) ? emailParams.to[0] : emailParams.to
   const result = await getResend().emails.send(emailParams)
 
@@ -33,6 +63,7 @@ export async function sendTrackedEmail(params: Parameters<ReturnType<typeof getR
       to,
       subject: emailParams.subject,
       serviceArm: serviceArm ?? "email",
+      templateKey,
     })
   }
 
@@ -48,6 +79,7 @@ export async function sendTrackedEmail(params: Parameters<ReturnType<typeof getR
       metadata: {
         to,
         subject: emailParams.subject,
+        templateKey: templateKey ?? null,
         ...(result.error ? { error: String(result.error.message ?? result.error) } : {}),
       },
     },
@@ -197,6 +229,7 @@ export async function sendOperatorSignupWelcome(params: {
       params.to,
     ),
     serviceArm: "operator-signup",
+    templateKey: "welcome.operator-signup",
   })
 }
 
@@ -225,6 +258,7 @@ export async function sendWelcomeEmail(params: {
     replyTo: REPLY_TO,
     subject: `Welcome to AIMS - Your ${params.serviceName} is live`,
     html: emailLayout(body, `Your ${params.serviceName} is now active. Here's what to expect.`),
+    templateKey: "welcome.paid-subscription",
   })
 }
 
@@ -302,6 +336,7 @@ export async function sendFulfillmentAssignment(params: {
     replyTo: REPLY_TO,
     subject: `New client: ${params.clientName} - ${params.serviceName}`,
     html: emailLayout(body, `New fulfillment: ${params.clientName} signed up for ${params.serviceName}.`),
+    templateKey: "ops.fulfillment-assignment",
   })
 }
 
@@ -364,6 +399,7 @@ export async function sendCancellationEmail(params: {
     replyTo: REPLY_TO,
     subject: `Your ${params.serviceName} subscription has been cancelled`,
     html: emailLayout(body, `Your ${params.serviceName} subscription has been cancelled.`, params.to),
+    templateKey: "lifecycle.cancellation",
   })
 }
 
@@ -400,6 +436,7 @@ export async function sendRenewalEmail(params: {
     replyTo: REPLY_TO,
     subject: `Payment confirmed - ${params.serviceName} renewed`,
     html: emailLayout(body, `Your $${params.amount}/mo ${params.serviceName} subscription has been renewed.`, params.to),
+    templateKey: "lifecycle.renewal",
   })
 }
 
@@ -429,6 +466,7 @@ export async function sendPaymentFailedEmail(params: {
     replyTo: REPLY_TO,
     subject: `Action required: Payment failed for ${params.serviceName}`,
     html: emailLayout(body, `Your payment of $${params.amount} for ${params.serviceName} failed. Action required.`, params.to),
+    templateKey: "lifecycle.payment-failed",
   })
 }
 

@@ -112,5 +112,6 @@ export async function sendOperatorVaultEmail(params: { to: string; name: string 
     subject: "The AI Operator Playbook Vault — Chapter 1 is inside",
     html: emailLayout(body, "Your first 5 operator moves, pulled straight from the AIMS portfolio playbook."),
     serviceArm: "ai-operator-collective",
+    templateKey: "lead-magnet.operator-vault",
   })
 }
