@@ -78,6 +78,15 @@ model User {
   creditTransactions CreditTransaction[]
   operatorEvents     OperatorEvent[]     @relation("OperatorEventActor")
 
+  // Phase-2 productivity features
+  templates       UserTemplate[]
+  emailSequences  EmailSequence[]
+  sequenceEnrollments SequenceEnrollment[]
+  clientUpdates   ClientUpdate[]
+  callRecordings  CallRecording[]
+  bookingAvailability BookingAvailability?
+  bookings        Booking[]
+
   // Granular notification preferences
   notifNewPurchase       Boolean @default(true)
   notifFulfillmentUpdate Boolean @default(true)
@@ -2251,4 +2260,230 @@ model OperatorEvent {
   @@index([actorId, type, createdAt])
   @@index([entityType, entityId])
   @@index([type, createdAt])
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// PHASE 2 — productivity features (templates, sequences, client updates,
+// recordings, booking)
+// ────────────────────────────────────────────────────────────────────────────
+
+/// Reusable template — emails, proposal sections, scripts, content drafts.
+/// Variables like {{contact.firstName}} get merged at use-time.
+model UserTemplate {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Type drives where the template surfaces:
+  //   "email"    — AI Scripts, Sequences, Client Updates
+  //   "proposal" — Proposal builder (header, scope, terms blocks)
+  //   "script"   — Discovery / cold-call / follow-up scripts
+  //   "content"  — Social, blog, newsletter
+  //   "snippet"  — short reusable text (sigs, openers)
+  type      String
+
+  title     String
+  body      String   @db.Text
+  /// Comma-list of variable names this template uses, for UI auto-complete.
+  variables String[]
+  /// Public templates are curated by the platform admins; private are
+  /// owned by the user. Admin UI flips a row public.
+  isPublic  Boolean  @default(false)
+  tags      String[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, type])
+  @@index([isPublic, type])
+}
+
+/// Multi-step cold outreach sequence definition.
+model EmailSequence {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name      String
+  /// "draft" | "active" | "paused"
+  status    String   @default("draft")
+  /// Whether to auto-pause the enrollment when the prospect replies.
+  pauseOnReply Boolean @default(true)
+  /// Optional from-name override; defaults to the user's name.
+  fromName  String?
+
+  steps        SequenceStep[]
+  enrollments  SequenceEnrollment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, status])
+}
+
+/// One step within an EmailSequence. Steps run in `order` ascending; each
+/// has a delay (in days) from the previous step's send.
+model SequenceStep {
+  id         String   @id @default(cuid())
+  sequenceId String
+  sequence   EmailSequence @relation(fields: [sequenceId], references: [id], onDelete: Cascade)
+
+  order      Int
+  delayDays  Int      @default(0)
+  subject    String
+  body       String   @db.Text
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([sequenceId, order])
+  @@index([sequenceId])
+}
+
+/// One contact's enrollment in a sequence. Tracks per-step send progress so
+/// the cron worker (or "Send now" button) can pick up where it left off.
+model SequenceEnrollment {
+  id         String   @id @default(cuid())
+  sequenceId String
+  sequence   EmailSequence @relation(fields: [sequenceId], references: [id], onDelete: Cascade)
+
+  // Owner of the enrollment (mirrors sequence.userId for query convenience).
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  /// Optional link back to a CRM ClientDeal so replies can route to the deal.
+  clientDealId String?
+
+  // Recipient identity. We store inline (not just dealId) so a sequence can
+  // enroll cold prospects who don't have a CRM row yet.
+  recipientEmail String
+  recipientName  String?
+
+  /// 0-indexed pointer into `sequence.steps` ordered by `order`.
+  /// When `currentStep === sequence.steps.length` the enrollment is done.
+  currentStep    Int    @default(0)
+  /// "active" | "paused" | "done" | "replied" | "stopped"
+  status         String @default("active")
+  lastStepSentAt DateTime?
+  nextSendAt     DateTime?
+  repliedAt      DateTime?
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([sequenceId, status])
+  @@index([userId, status])
+  @@index([nextSendAt, status])
+}
+
+/// AI-generated weekly status email for an active retainer client.
+model ClientUpdate {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  /// Optional link to the deal this update is for.
+  clientDealId String?
+
+  /// "draft" — generated, not yet sent
+  /// "sent"  — operator approved + sent
+  /// "skipped" — operator skipped this week's update
+  status    String   @default("draft")
+
+  weekStartDate DateTime
+  subject       String
+  body          String   @db.Text
+  /// JSON of the data slice we generated from (activity, invoices, content)
+  /// so we can re-render or audit later.
+  generatedFrom Json?
+  sentAt        DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, status, weekStartDate])
+}
+
+/// Discovery call recording — transcript or audio upload + AI summary.
+model CallRecording {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  clientDealId String?
+
+  title          String
+  /// Free-form name or paste of the source ("Zoom — Acme Co intro call").
+  source         String?
+  durationSeconds Int?
+
+  /// Raw transcript pasted by user, or transcribed from upload.
+  transcript     String   @db.Text
+  /// AI-extracted structured summary: pains, budget, decision-makers, objections, action items.
+  summary        Json?
+  /// Pre-drafted follow-up email body.
+  followUpDraft  String?  @db.Text
+
+  /// "uploading" | "ready" — set "ready" once transcript + summary present.
+  status         String   @default("ready")
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([userId, createdAt])
+}
+
+/// Per-user availability config for the branded booking page.
+model BookingAvailability {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  /// Public URL handle — e.g. "adam" → /book/adam
+  handle    String   @unique
+  isActive  Boolean  @default(true)
+
+  /// Fixed meeting length in minutes.
+  durationMinutes Int @default(30)
+  /// Buffer between meetings.
+  bufferMinutes   Int @default(15)
+  /// IANA timezone, e.g. "America/Los_Angeles".
+  timezone        String @default("America/Los_Angeles")
+
+  /// JSON shape: { mon: [{start:"09:00",end:"17:00"}], tue: [...], ... }
+  /// Empty array on a day = unavailable.
+  weeklyHours     Json
+
+  /// Welcome copy on the public booking page.
+  welcomeTitle    String?
+  welcomeBody     String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+/// A confirmed booking on someone's branded scheduler.
+model Booking {
+  id        String   @id @default(cuid())
+  userId    String   // operator (booking page owner)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  /// Optional link to a CRM deal we auto-created.
+  clientDealId String?
+
+  inviteeName    String
+  inviteeEmail   String
+  inviteePhone   String?
+  notes          String?  @db.Text
+
+  startAt        DateTime
+  endAt          DateTime
+  /// "confirmed" | "canceled" | "no_show"
+  status         String   @default("confirmed")
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([userId, startAt])
+  @@index([startAt, status])
 }

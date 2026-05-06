@@ -14,6 +14,7 @@ import { DealQuickActions } from "@/components/portal/crm/DealQuickActions"
 import { MeetingNotesCard } from "@/components/portal/crm/MeetingNotesCard"
 import { EmailTemplatesPicker } from "@/components/portal/crm/EmailTemplatesPicker"
 import { DealChatPanel } from "@/components/portal/crm/DealChatPanel"
+import { DealAssistantWidget } from "@/components/portal/deal-assistant/DealAssistantWidget"
 import { matchPlaybookForIndustry } from "@/lib/playbooks/match"
 import { DealChecklist } from "@/components/portal/crm/DealChecklist"
 import { EnrichmentCard } from "@/components/portal/crm/EnrichmentCard"
@@ -264,7 +265,12 @@ export default async function DealDetailPage({
           }))}
         />
 
-        {/* Per-deal AI chat. Full deal context preloaded server-side. */}
+        {/* Deal Assistant — entitlement-gated AI co-pilot with full deal
+            context. Replaces the older free-form chat for Pro+ users. */}
+        <DealAssistantWidget dealId={deal.id} />
+
+        {/* Per-deal AI chat — kept for legacy compatibility; will be
+            deprecated once Deal Assistant covers all use cases. */}
         <div className="bg-card border border-border rounded-xl p-4">
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
             Ask AI

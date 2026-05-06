@@ -32,6 +32,13 @@ import {
   Sparkles,
   Trophy,
   Lock,
+  FileSignature,
+  Bot,
+  Library,
+  Send,
+  Mail,
+  Mic,
+  CalendarDays,
 } from "lucide-react"
 import type { FeatureKey } from "@/lib/quests/registry"
 import { useQuests } from "@/components/quests/QuestContext"
@@ -72,16 +79,23 @@ const PORTAL_NAV: readonly NavItem[] = [
   { label: "Client CRM", href: "/portal/crm", icon: Briefcase, gate: "crm" },
   { label: "Lead Scout", href: "/portal/crm/scout", icon: MapPin, gate: "lead_scout" },
   { label: "AI Audit", href: "/portal/audits", icon: ClipboardCheck, gate: "audits" },
+  { label: "Email Sequences", href: "/portal/sequences", icon: Send },
+  { label: "Booking Page", href: "/portal/booking", icon: CalendarDays },
+  { label: "Discovery Recorder", href: "/portal/recordings", icon: Mic },
   { label: "Follow-up Rules", href: "/portal/follow-up-rules", icon: Bell, gate: "follow_up_rules" },
 
   // Revenue + reporting
+  { label: "Proposals", href: "/portal/proposals", icon: FileSignature },
   { label: "Invoices", href: "/portal/invoices", icon: FileText },
+  { label: "Client Updates", href: "/portal/client-updates", icon: Mail },
   { label: "Revenue", href: "/portal/revenue", icon: TrendingUp, gate: "revenue" },
   { label: "My Metrics", href: "/portal/metrics", icon: BarChart3 },
 
   // AI + content tools
+  { label: "Deal Assistant", href: "/portal/deal-assistant", icon: Bot },
   { label: "AI Scripts", href: "/portal/scripts", icon: FileCode2, gate: "scripts" },
   { label: "Content Engine", href: "/portal/content", icon: PenLine, gate: "content" },
+  { label: "Templates", href: "/portal/templates", icon: Library },
   { label: "Toolkit", href: "/portal/tools", icon: Wrench, gate: "ai_tools" },
   { label: "Playbooks", href: "/portal/playbooks", icon: BookOpen, gate: "playbooks" },
   { label: "Pricing Calc", href: "/portal/calculator", icon: Calculator, gate: "calculator" },

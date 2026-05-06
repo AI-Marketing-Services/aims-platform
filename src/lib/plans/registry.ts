@@ -46,6 +46,16 @@ export const FEATURE_ENTITLEMENTS = {
   FOLLOW_UP_RULES: "feature_follow_up_rules",
   REVENUE: "feature_revenue",
   REFERRALS: "feature_referrals",
+  // Phase-2 features (proposals already exists nested in CRM; surfacing it as
+  // a top-level entitlement so we can paywall the index page consistently
+  // with the others).
+  PROPOSALS: "feature_proposals",
+  DEAL_ASSISTANT: "feature_deal_assistant",
+  TEMPLATES: "feature_templates",
+  SEQUENCES: "feature_sequences",
+  CLIENT_UPDATES: "feature_client_updates",
+  RECORDINGS: "feature_recordings",
+  BOOKING: "feature_booking",
 } as const
 
 export type FeatureEntitlement =
@@ -110,7 +120,7 @@ export const PLANS: PlanDef[] = [
     name: "Pro",
     tagline: "Everything you need to run AI-assisted client work.",
     description:
-      "AI Scripts, Content Engine, Invoices, Follow-up Rules, Pricing Calculator, Playbooks, and Referrals. The Pro plan unlocks the daily-driver toolkit so you can write outreach, generate content, send invoices, and follow up on autopilot.",
+      "AI Scripts, Content Engine, Invoices, Proposals, Deal Assistant, Templates, Email Sequences, Follow-up Rules, Pricing Calculator, Playbooks, and Referrals. The Pro plan unlocks the daily-driver toolkit so you can write outreach, run sequences, generate content, send invoices, and follow up on autopilot.",
     priceMonthly: 97,
     creditsPerMonth: 1000,
     entitlements: [
@@ -121,14 +131,19 @@ export const PLANS: PlanDef[] = [
       FEATURE_ENTITLEMENTS.CALCULATOR,
       FEATURE_ENTITLEMENTS.PLAYBOOKS,
       FEATURE_ENTITLEMENTS.REFERRALS,
+      FEATURE_ENTITLEMENTS.PROPOSALS,
+      FEATURE_ENTITLEMENTS.DEAL_ASSISTANT,
+      FEATURE_ENTITLEMENTS.TEMPLATES,
+      FEATURE_ENTITLEMENTS.SEQUENCES,
     ],
     highlights: [
       "Everything in Free",
       "1,000 enrichment credits per month",
-      "AI Scripts + Content Engine",
-      "Invoices + Follow-up Rules",
-      "Pricing Calculator + Playbooks",
-      "Referral commission tracking",
+      "AI Scripts + Content Engine + Templates",
+      "Email Sequences + Follow-up Rules",
+      "Proposals + Deal Assistant",
+      "Invoices + Pricing Calculator",
+      "Playbooks + Referral tracking",
     ],
     marketingVideoUrl: null,
     sortOrder: 1,
@@ -139,15 +154,17 @@ export const PLANS: PlanDef[] = [
     name: "Operator",
     tagline: "Full white-label agency stack.",
     description:
-      "Everything in Pro plus the heavy artillery — Client CRM, Lead Scout, AI Audit, Revenue dashboard, custom Branding, and your own Domain. The full operator workflow: prospect, audit, propose, close, deliver, white-label, repeat.",
+      "Everything in Pro plus the agency stack — Client CRM, Lead Scout, AI Audit, Revenue dashboard, Client Weekly Updates, Discovery Call Recorder, Booking Page, custom Branding, and your own Domain. The full operator workflow: prospect, audit, book, propose, record, close, deliver, white-label, repeat.",
     priceMonthly: 297,
     creditsPerMonth: 5000,
     entitlements: ALL_FEATURE_ENTITLEMENTS,
     highlights: [
       "Everything in Pro",
       "5,000 enrichment credits per month",
-      "Client CRM + Lead Scout",
-      "AI Audit (branded intake quizzes)",
+      "Client CRM + Lead Scout + Audits",
+      "Discovery Call Recorder + AI summaries",
+      "Branded Booking Page",
+      "Client weekly update generator",
       "Revenue dashboard",
       "Custom branding + domain (white-label)",
     ],
@@ -253,6 +270,13 @@ export const FEATURE_LABELS: Record<FeatureEntitlement, string> = {
   feature_follow_up_rules: "Follow-up Rules",
   feature_revenue: "Revenue Dashboard",
   feature_referrals: "Referrals",
+  feature_proposals: "Proposals",
+  feature_deal_assistant: "Deal Assistant",
+  feature_templates: "Templates Library",
+  feature_sequences: "Email Sequences",
+  feature_client_updates: "Client Updates",
+  feature_recordings: "Discovery Recorder",
+  feature_booking: "Booking Page",
 }
 
 // ---------------------------------------------------------------
@@ -500,6 +524,125 @@ export const FEATURE_CATALOG: FeatureDef[] = [
     ],
     href: "/portal/referrals",
     sortOrder: 12,
+  },
+  {
+    key: FEATURE_ENTITLEMENTS.PROPOSALS,
+    name: "Proposals",
+    iconName: "FileSignature",
+    tagline: "Branded proposal builder with shareable links + e-signatures.",
+    description:
+      "Turn any deal into a branded proposal in minutes. Pull in scope from the calculator, line-item pricing from your templates, and send a public share link to your prospect. They review, accept, and sign — and the deal moves itself to Closed-Won. No more bouncing between Pandadoc and Google Docs.",
+    highlights: [
+      "Branded cover, scope, timeline, pricing, terms",
+      "Public share link with view tracking",
+      "Inline accept / reject / e-sign flow",
+      "Auto-converts to invoice on acceptance",
+      "Save your proposal layouts as templates",
+    ],
+    href: "/portal/proposals",
+    sortOrder: 13,
+  },
+  {
+    key: FEATURE_ENTITLEMENTS.DEAL_ASSISTANT,
+    name: "Deal Assistant",
+    iconName: "Bot",
+    tagline: "An AI co-pilot inside every deal. Knows your pipeline.",
+    description:
+      "On every deal in your CRM, the Deal Assistant has full context — company, contact, audit response, proposal status, last touch. Ask it 'what should I send next?', 'score this deal', or 'draft the follow-up' and it answers using your data, your tone, your templates.",
+    highlights: [
+      "Context-aware AI sidebar on every deal page",
+      "Drafts follow-ups using your CRM history",
+      "Scores deals 1-10 with reasoning",
+      "Suggests the next best action by stage",
+      "Powered by Claude — fast, no setup needed",
+    ],
+    href: "/portal/deal-assistant",
+    sortOrder: 14,
+  },
+  {
+    key: FEATURE_ENTITLEMENTS.TEMPLATES,
+    name: "Templates Library",
+    iconName: "Library",
+    tagline: "Save once, reuse forever — emails, proposals, scripts, content.",
+    description:
+      "Every artifact you build can be saved as a template. Email sequences, proposal sections, script openers, content drafts, follow-up notes. Curated public templates from the Collective plus your own private library. Variables auto-merge contact + company data on insert.",
+    highlights: [
+      "Universal template library across every feature",
+      "Public + private templates with sharing controls",
+      "{{contact.firstName}} variable merging",
+      "One-click 'use template' on every artifact",
+      "Curated starter pack from the Collective",
+    ],
+    href: "/portal/templates",
+    sortOrder: 15,
+  },
+  {
+    key: FEATURE_ENTITLEMENTS.SEQUENCES,
+    name: "Email Sequences",
+    iconName: "Send",
+    tagline: "Multi-step cold outreach — drip prospects until they reply.",
+    description:
+      "Build a 5-step sequence once, run it across every lead from Lead Scout. Drips automatically, pauses on reply, syncs replies into the CRM as inbound activity. The bridge between 'I have 200 leads' and 'I have 20 booked calls'.",
+    highlights: [
+      "Multi-step sequences with delays + conditions",
+      "Auto-pauses on reply (no awkward double-tap)",
+      "Sends from your domain via Resend",
+      "Per-step open/click/reply analytics",
+      "Bulk-enroll CRM contacts in one click",
+    ],
+    href: "/portal/sequences",
+    sortOrder: 16,
+  },
+  {
+    key: FEATURE_ENTITLEMENTS.CLIENT_UPDATES,
+    name: "Client Updates",
+    iconName: "Mail",
+    tagline: "Auto-generate weekly retainer recap emails.",
+    description:
+      "For each active retainer, the Client Updates engine pulls activity from your CRM, content shipped, and invoices, then drafts a friendly weekly recap email in YOUR voice. Review, edit, send. Your clients feel taken care of without you spending Friday afternoons writing recaps.",
+    highlights: [
+      "AI-drafted weekly recap per active client",
+      "Pulls from CRM activity + content + invoices",
+      "Branded email template (your domain, your voice)",
+      "Edit before send — never autopilot a relationship",
+      "Send-tracking back to the deal",
+    ],
+    href: "/portal/client-updates",
+    sortOrder: 17,
+  },
+  {
+    key: FEATURE_ENTITLEMENTS.RECORDINGS,
+    name: "Discovery Recorder",
+    iconName: "Mic",
+    tagline: "Record discovery calls. Get AI summaries + action items.",
+    description:
+      "Paste a Zoom/Meet transcript or upload an audio file, and the Discovery Recorder extracts the buyer's pain, budget, decision-makers, and objections — then drafts the follow-up email and pushes action items into the deal. Every call becomes an activity log automatically.",
+    highlights: [
+      "Paste transcript OR upload audio (Whisper)",
+      "AI buyer summary: pain, budget, DM, objections",
+      "Auto-drafts the follow-up email",
+      "Pushes action items into the linked deal",
+      "Search every discovery call you've ever had",
+    ],
+    href: "/portal/recordings",
+    sortOrder: 18,
+  },
+  {
+    key: FEATURE_ENTITLEMENTS.BOOKING,
+    name: "Booking Page",
+    iconName: "CalendarDays",
+    tagline: "Branded scheduler — book.youragency.com → CRM in one click.",
+    description:
+      "A Calendly-style booking page that runs under your brand and your domain. Set your weekly availability, share your link, prospects pick a slot. Each booking auto-creates a deal in your CRM with their context attached. End-to-end: audit → book → CRM → close — all inside your platform.",
+    highlights: [
+      "Branded booking page (your colors, your copy)",
+      "Custom URL handle (book.youragency.com/you)",
+      "Weekly availability windows",
+      "Auto-creates a CRM deal on every booking",
+      "Email confirmations + reminders",
+    ],
+    href: "/portal/booking",
+    sortOrder: 19,
   },
 ]
 

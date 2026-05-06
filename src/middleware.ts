@@ -94,6 +94,10 @@ const isPublicRoute = createRouteMatcher([
   "/api/community/lead(.*)",
   "/api/community/apply(.*)",
   "/api/unsubscribe(.*)",
+  // Public branded booking pages — anonymous visitors pick a slot,
+  // POST a booking. Auth happens inside the route handler.
+  "/book/(.*)",
+  "/api/booking/(.*)",
   // Vercel cron jobs — authenticate via Bearer ${CRON_SECRET} inside the
   // handler, NOT via Clerk. Without this, every cron invocation gets
   // bounced to /sign-in before its own auth check ever runs.
