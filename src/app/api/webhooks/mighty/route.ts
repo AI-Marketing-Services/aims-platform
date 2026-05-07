@@ -8,15 +8,24 @@ import type { MightyWebhookEvent } from "@/lib/mighty/types"
 /**
  * POST /api/webhooks/mighty
  *
- * Configure in Mighty Networks Admin > Settings > Webhooks:
- *   URL:    https://aioperatorcollective.com/api/webhooks/mighty
- *   Secret: set MIGHTY_WEBHOOK_SECRET env var to the same value
+ * Configure in Mighty Networks Admin > Settings > Integrations > Webhooks:
+ *   URL:     https://www.aioperatorcollective.com/api/webhooks/mighty
+ *   API Key: paste the value of MIGHTY_WEBHOOK_SECRET here. Mighty will send
+ *            this back to us as `Authorization: Bearer <key>` on every event.
+ *   Events:  MemberJoined, MemberLeft, MemberCourseProgressCompleted,
+ *            MemberPurchased.
  *
- * Handled events: MemberJoined, MemberLeft, MemberCourseProgressCompleted,
- * MemberPurchased.
+ * Auth model — Mighty does NOT sign webhook bodies (unlike Stripe/Calendly).
+ * Their auth is Bearer-token: the API Key configured in their dashboard is
+ * sent in the Authorization header on every callback. We compare it against
+ * MIGHTY_WEBHOOK_SECRET in constant time.
+ *
+ * For backwards-compat with any older Mighty signed-webhook setup, we also
+ * still accept an HMAC-SHA256 signature in `x-mighty-signature` /
+ * `x-signature` if present — but the modern path is Bearer auth.
  */
 
-function verifySignature(raw: string, signatureHeader: string | null): boolean {
+function verifyAuth(raw: string, req: NextRequest): boolean {
   const secret = process.env.MIGHTY_WEBHOOK_SECRET
   if (!secret) {
     // Fail-closed ALWAYS when secret is missing. Previously had a dev/preview
@@ -30,31 +39,66 @@ function verifySignature(raw: string, signatureHeader: string | null): boolean {
     )
     return false
   }
-  if (!signatureHeader) return false
-  const expected = crypto
-    .createHmac("sha256", secret)
-    .update(raw)
-    .digest("hex")
-  try {
-    return crypto.timingSafeEqual(
-      Buffer.from(expected),
-      Buffer.from(signatureHeader.replace(/^sha256=/, ""))
-    )
-  } catch {
-    return false
+
+  // Path A — Bearer-token auth (Mighty's actual model). The Authorization
+  // header is "Bearer <secret>" and we compare against the env in constant
+  // time so we don't leak via timing whether the prefix matched or not.
+  const authHeader = req.headers.get("authorization")
+  if (authHeader) {
+    const presented = authHeader.replace(/^Bearer\s+/i, "")
+    if (presented.length === secret.length) {
+      try {
+        if (
+          crypto.timingSafeEqual(
+            Buffer.from(presented),
+            Buffer.from(secret),
+          )
+        ) {
+          return true
+        }
+      } catch {
+        // length-mismatch falls through to false
+      }
+    }
   }
+
+  // Path B — HMAC signature fallback for any legacy Mighty install that
+  // signs the body. Most Mighty tenants don't do this; harmless to keep.
+  const signatureHeader =
+    req.headers.get("x-mighty-signature") ??
+    req.headers.get("x-signature") ??
+    null
+  if (signatureHeader) {
+    const expected = crypto
+      .createHmac("sha256", secret)
+      .update(raw)
+      .digest("hex")
+    const presented = signatureHeader.replace(/^sha256=/, "")
+    if (presented.length === expected.length) {
+      try {
+        if (
+          crypto.timingSafeEqual(
+            Buffer.from(expected),
+            Buffer.from(presented),
+          )
+        ) {
+          return true
+        }
+      } catch {
+        // fall through
+      }
+    }
+  }
+
+  return false
 }
 
 export async function POST(req: NextRequest) {
   const raw = await req.text()
-  const signature =
-    req.headers.get("x-mighty-signature") ??
-    req.headers.get("x-signature") ??
-    null
 
-  if (!verifySignature(raw, signature)) {
-    logger.warn("[Mighty Webhook] Invalid signature", { action: "webhook" })
-    return NextResponse.json({ error: "Invalid signature" }, { status: 401 })
+  if (!verifyAuth(raw, req)) {
+    logger.warn("[Mighty Webhook] Invalid auth", { action: "webhook" })
+    return NextResponse.json({ error: "Invalid auth" }, { status: 401 })
   }
 
   let event: MightyWebhookEvent
