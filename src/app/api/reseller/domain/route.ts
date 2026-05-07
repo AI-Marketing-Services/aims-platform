@@ -4,6 +4,7 @@ import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
 import {
   addDomain,
+  getDomainDetail,
   removeDomain,
   safeGetDomainStatus,
   buildDnsInstructions,
@@ -275,9 +276,44 @@ export async function GET() {
 
     let records: DnsRecordShape[] = []
     if (statusResult.ok && statusResult.config) {
-      // Build records from stored verification data if available
+      // Build records from stored verification data if available.
       const stored = site.vercelDomainData as { verification?: VerificationRecord[] } | null
-      const verification: VerificationRecord[] = stored?.verification ?? []
+      let verification: VerificationRecord[] = stored?.verification ?? []
+
+      // Auto-heal: when the stored verification array is empty (legacy
+      // rows from before the verification-gate hotfix, or domains added
+      // while Vercel was reporting them auto-verified), re-fetch the
+      // live verification challenge from Vercel and persist it back.
+      // Without this the TXT _vercel record shows up in the operator UI
+      // with an empty Value column and the operator can't actually
+      // configure the challenge.
+      if (verification.length === 0) {
+        try {
+          const detail = await getDomainDetail(site.customDomain)
+          if (detail.verification.length > 0) {
+            verification = detail.verification
+            const refreshedVercelData: Prisma.InputJsonValue = {
+              name: detail.name,
+              verified: detail.verified,
+              verification: detail.verification as unknown as Prisma.InputJsonValue,
+            }
+            await db.operatorSite.update({
+              where: { userId: dbUser.id },
+              data: { vercelDomainData: refreshedVercelData },
+            })
+          }
+        } catch (err) {
+          // Non-fatal — keep going with empty verification so the rest
+          // of the page renders. The verify endpoint will surface the
+          // real issue if Vercel is misbehaving.
+          logger.warn("Failed to refresh empty verification from Vercel", {
+            endpoint: "GET /api/reseller/domain",
+            domain: site.customDomain,
+            error: err instanceof Error ? err.message : String(err),
+          })
+        }
+      }
+
       records = buildRecordsFromVerification(site.customDomain, verification)
 
       // Annotate status from config
