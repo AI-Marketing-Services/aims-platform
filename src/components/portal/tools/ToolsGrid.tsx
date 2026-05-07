@@ -1,10 +1,23 @@
 "use client"
 
 import { useState } from "react"
-import Image from "next/image"
 import { ExternalLink, Lock, Sparkles } from "lucide-react"
 import { cn } from "@/lib/utils"
 import type { Tool, ToolCategory, UnlockGate } from "@/lib/tools/manifest"
+
+/**
+ * Tiered logo sources. Clearbit's free logo API was retired by HubSpot in
+ * late 2024, so we lead with Google's favicon endpoint (which serves the
+ * real hi-res favicon every modern SaaS ships in their HTML), then fall
+ * back to DuckDuckGo before showing initials.
+ *
+ * Each entry returns a fully-qualified URL for a given domain.
+ */
+const LOGO_SOURCES: Array<(domain: string) => string> = [
+  (domain) => `https://www.google.com/s2/favicons?domain=${domain}&sz=128`,
+  (domain) => `https://icons.duckduckgo.com/ip3/${domain}.ico`,
+  (domain) => `https://logo.clearbit.com/${domain}`,
+]
 
 interface ToolsGridProps {
   tools: Tool[]
@@ -118,28 +131,45 @@ export function ToolsGrid({ tools, categories, unlockedGates }: ToolsGridProps) 
 }
 
 function ToolLogo({ tool, isUnlocked }: { tool: Tool; isUnlocked: boolean }) {
-  const [failed, setFailed] = useState(false)
+  // Walk through LOGO_SOURCES in order, bumping the index every time the
+  // current source 404s. When we exhaust the list, render initials.
+  const [sourceIdx, setSourceIdx] = useState(0)
+  const exhausted = sourceIdx >= LOGO_SOURCES.length
+
   const avatarClass = CATEGORY_AVATAR[tool.category] ?? "bg-gray-100 text-gray-600"
   const initials = tool.name.slice(0, 2).toUpperCase()
 
-  if (!failed) {
+  if (!exhausted) {
+    const src = LOGO_SOURCES[sourceIdx](tool.logoDomain)
     return (
-      <div className={cn("h-9 w-9 rounded-lg overflow-hidden shrink-0 flex items-center justify-center bg-white border border-border/30", !isUnlocked && "grayscale")}>
-        <Image
-          src={`https://logo.clearbit.com/${tool.logoDomain}`}
-          alt={tool.name}
+      <div
+        className={cn(
+          "h-9 w-9 rounded-lg overflow-hidden shrink-0 flex items-center justify-center bg-white border border-border/30",
+          !isUnlocked && "grayscale",
+        )}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={src}
+          alt={`${tool.name} logo`}
           width={36}
           height={36}
+          loading="lazy"
+          referrerPolicy="no-referrer"
           className="object-contain w-full h-full"
-          onError={() => setFailed(true)}
-          unoptimized
+          onError={() => setSourceIdx((i) => i + 1)}
         />
       </div>
     )
   }
 
   return (
-    <div className={cn("h-9 w-9 rounded-lg flex items-center justify-center text-xs font-bold shrink-0", avatarClass)}>
+    <div
+      className={cn(
+        "h-9 w-9 rounded-lg flex items-center justify-center text-xs font-bold shrink-0",
+        avatarClass,
+      )}
+    >
       {initials}
     </div>
   )

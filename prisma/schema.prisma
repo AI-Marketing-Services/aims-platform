@@ -40,6 +40,7 @@ model User {
   ideas                    Idea[]                    @relation("IdeaOwner")
   memberProfile            MemberProfile?
   memberOnboardingSteps    MemberOnboardingStep[]
+  weeklyScorecards         OperatorWeeklyScorecard[]
   clientDeals              ClientDeal[]
   usageEvents              UsageEvent[]
   invoices                 ClientInvoice[]           @relation("UserInvoices")
@@ -65,9 +66,9 @@ model User {
   // Enrichment credits — denormalized current balance + plan tier; the
   // canonical history lives in the CreditTransaction ledger so we can
   // always reconstruct/audit a balance.
-  creditBalance      Int                 @default(1000)
-  creditPlanTier     String              @default("trial") // trial | operator | pro | agency
-  creditGrantedAt    DateTime?
+  creditBalance   Int       @default(1000)
+  creditPlanTier  String    @default("trial") // trial | operator | pro | agency
+  creditGrantedAt DateTime?
 
   // Active subscription plan slug — references Product.slug for products
   // of type="tier". Drives feature entitlements + monthly credit grants.
@@ -79,13 +80,13 @@ model User {
   operatorEvents     OperatorEvent[]     @relation("OperatorEventActor")
 
   // Phase-2 productivity features
-  templates       UserTemplate[]
-  emailSequences  EmailSequence[]
+  templates           UserTemplate[]
+  emailSequences      EmailSequence[]
   sequenceEnrollments SequenceEnrollment[]
-  clientUpdates   ClientUpdate[]
-  callRecordings  CallRecording[]
+  clientUpdates       ClientUpdate[]
+  callRecordings      CallRecording[]
   bookingAvailability BookingAvailability?
-  bookings        Booking[]
+  bookings            Booking[]
 
   // Granular notification preferences
   notifNewPurchase       Boolean @default(true)
@@ -139,6 +140,9 @@ model OperatorSite {
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
   user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Whitelabel lead-magnet submissions attributed to this operator site.
+  leadSubmissions LeadMagnetSubmission[] @relation("OperatorSubmissions")
 
   @@index([subdomain])
   @@index([customDomain])
@@ -511,6 +515,16 @@ model LeadMagnetSubmission {
   userId String?
   user   User?   @relation(fields: [userId], references: [id])
 
+  // Whitelabel attribution: when an operator drives a prospect to a tool
+  // hosted on their subdomain or custom domain, the resulting submission
+  // is tagged with that operator's site id. The auto-created Deal is
+  // routed into THEIR pipeline (operatorUserId) rather than the platform's.
+  operatorId     String?
+  operatorSite   OperatorSite? @relation("OperatorSubmissions", fields: [operatorId], references: [id], onDelete: SetNull)
+  // Cached for fast queries on the operator's own dashboard without
+  // joining through OperatorSite. Populated by the submit endpoint.
+  operatorUserId String?
+
   type    LeadMagnetType
   email   String
   name    String?
@@ -520,7 +534,7 @@ model LeadMagnetSubmission {
   results Json?
   score   Float?
 
-  source      String?
+  source      String? // "platform" | "owned-domain" | "outbound" | tool slug
   utmSource   String?
   utmMedium   String?
   utmCampaign String?
@@ -535,6 +549,8 @@ model LeadMagnetSubmission {
   @@index([type])
   @@index([email])
   @@index([createdAt])
+  @@index([operatorId])
+  @@index([operatorUserId])
 }
 
 enum LeadMagnetType {
@@ -1352,6 +1368,12 @@ enum ClientActivityType {
   ENRICHMENT_RUN
   FOLLOW_UP_DRAFTED
   FOLLOW_UP_SENT
+  // Scorecard-driven activity logging — recorded when an operator
+  // bumps the matching scorecard row OR uses the per-deal "log activity"
+  // affordance. Distinct enum values so the auto-tally counts them
+  // unambiguously without metadata sniffing.
+  REFERRAL_ASK_SENT
+  DISCOVERY_REQUESTED
   PORTAL_INVITED
   PORTAL_REVOKED
   CONTENT_GENERATED
@@ -1386,6 +1408,24 @@ model ClientDeal {
   currency String          @default("USD")
   notes    String?         @db.Text
   tags     String[]
+
+  // ── Prospecting Activity Tracker fields ──────────────────────────
+  // The bottom table on /portal/scorecard pivots ClientDeals onto a
+  // single row per prospect with these inline-editable columns. They
+  // can be auto-pre-filled from the activity log (e.g. firstMessageAt
+  // = first EMAIL activity's createdAt) but the operator's manual
+  // input always wins — these fields are the source of truth.
+  contactRole     String?
+  relationship    String? // "Source / Relationship" column on the sheet
+  possibleProblem String?   @db.Text
+  outreachType    String? // "email" | "linkedin" | "sms" | "call" | "in-person"
+  messageStatus   String? // "drafted" | "sent" | "replied" | "no-reply" | "booked"
+  firstMessageAt  DateTime?
+  followUp1At     DateTime?
+  followUp2At     DateTime?
+  discoveryAskAt  DateTime?
+  nextAction      String?   @db.Text
+  nextActionDueAt DateTime?
 
   contacts      ClientContact[]
   activities    ClientDealActivity[]
@@ -1504,6 +1544,10 @@ enum ClientDealNoteKind {
   RECORDING // audio/video file
   PDF // uploaded PDF
   FILE // any other file
+  // Scorecard-driven note kinds — used by the Weekly Prospecting
+  // Scorecard's "+1" affordance for the matching rows.
+  PROBLEM_HYPOTHESIS
+  QUICK_WIN_HYPOTHESIS
 }
 
 model ClientDealActivity {
@@ -1563,10 +1607,68 @@ model MemberProfile {
   onboardingStartedAt   DateTime  @default(now())
   onboardingCompletedAt DateTime?
 
+  // ── Weekly Prospecting Activity Scorecard config ──────────────────
+  // The scorecard is the operator's source of truth — these fields
+  // configure the weekly tracker (target multiplier, focus, goal, rule).
+  // Per-week manual counts live on OperatorWeeklyScorecard; this row is
+  // the persistent global config.
+  commitmentLevel     OperatorCommitmentLevel @default(PART_TIME)
+  weeklyGoalText      String?                 @default("Create real business conversations")
+  weeklyRule          String?                 @default("Do not pitch AI first. Diagnose the business problem.")
+  scorecardFocusNiche String? // operator-customisable Focus Niche field on the scorecard header
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([userId])
+}
+
+enum OperatorCommitmentLevel {
+  PART_TIME
+  FULL_TIME
+}
+
+/**
+ * One row per operator per ISO week. Stores the operator's MANUAL entries
+ * for that week — the scorecard treats the operator's input as the
+ * source of truth, so every count, the revenue impact, and the strong
+ * opportunities number are stored here. The CRM-derived auto-tally is
+ * just a hint surfaced in the UI; if the operator clicks "apply" we
+ * copy the value into the matching manual field on this row.
+ * `weekStart` is a calendar date (Monday 00:00 in the operator's local
+ * timezone, normalised to UTC midnight on that calendar date) so we
+ * can use a unique index without TZ ambiguity.
+ */
+model OperatorWeeklyScorecard {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  weekStart DateTime @db.Date
+
+  // ── Per-row manual counts ────────────────────────────────────────
+  manualNewProspects       Int @default(0)
+  manualOutreachSent       Int @default(0)
+  manualFollowUpsSent      Int @default(0)
+  manualReferralAsks       Int @default(0)
+  manualProblemHypotheses  Int @default(0)
+  manualDiscoveryRequested Int @default(0)
+  manualDiscoveryBooked    Int @default(0)
+  manualDiscoveryCompleted Int @default(0)
+  manualQuickWinHypotheses Int @default(0)
+
+  // ── Manual KPIs (no CRM derivation by design) ────────────────────
+  // The operator continually updates these as conversations progress.
+  revenueImpact       Float @default(0)
+  strongOpportunities Int   @default(0)
+
+  // Weekly journal-style notes shown alongside the scorecard.
+  notes String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, weekStart])
+  @@index([userId, weekStart])
 }
 
 model MemberOnboardingStep {
@@ -2285,9 +2387,9 @@ model OperatorEvent {
 /// Reusable template — emails, proposal sections, scripts, content drafts.
 /// Variables like {{contact.firstName}} get merged at use-time.
 model UserTemplate {
-  id        String   @id @default(cuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   // Type drives where the template surfaces:
   //   "email"    — AI Scripts, Sequences, Client Updates
@@ -2295,7 +2397,7 @@ model UserTemplate {
   //   "script"   — Discovery / cold-call / follow-up scripts
   //   "content"  — Social, blog, newsletter
   //   "snippet"  — short reusable text (sigs, openers)
-  type      String
+  type String
 
   title     String
   body      String   @db.Text
@@ -2315,20 +2417,20 @@ model UserTemplate {
 
 /// Multi-step cold outreach sequence definition.
 model EmailSequence {
-  id        String   @id @default(cuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  name      String
+  name         String
   /// "draft" | "active" | "paused"
-  status    String   @default("draft")
+  status       String  @default("draft")
   /// Whether to auto-pause the enrollment when the prospect replies.
   pauseOnReply Boolean @default(true)
   /// Optional from-name override; defaults to the user's name.
-  fromName  String?
+  fromName     String?
 
-  steps        SequenceStep[]
-  enrollments  SequenceEnrollment[]
+  steps       SequenceStep[]
+  enrollments SequenceEnrollment[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -2339,17 +2441,17 @@ model EmailSequence {
 /// One step within an EmailSequence. Steps run in `order` ascending; each
 /// has a delay (in days) from the previous step's send.
 model SequenceStep {
-  id         String   @id @default(cuid())
+  id         String        @id @default(cuid())
   sequenceId String
   sequence   EmailSequence @relation(fields: [sequenceId], references: [id], onDelete: Cascade)
 
-  order      Int
-  delayDays  Int      @default(0)
-  subject    String
-  body       String   @db.Text
+  order     Int
+  delayDays Int    @default(0)
+  subject   String
+  body      String @db.Text
 
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([sequenceId, order])
   @@index([sequenceId])
@@ -2358,13 +2460,13 @@ model SequenceStep {
 /// One contact's enrollment in a sequence. Tracks per-step send progress so
 /// the cron worker (or "Send now" button) can pick up where it left off.
 model SequenceEnrollment {
-  id         String   @id @default(cuid())
+  id         String        @id @default(cuid())
   sequenceId String
   sequence   EmailSequence @relation(fields: [sequenceId], references: [id], onDelete: Cascade)
 
   // Owner of the enrollment (mirrors sequence.userId for query convenience).
-  userId     String
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   /// Optional link back to a CRM ClientDeal so replies can route to the deal.
   clientDealId String?
@@ -2376,15 +2478,15 @@ model SequenceEnrollment {
 
   /// 0-indexed pointer into `sequence.steps` ordered by `order`.
   /// When `currentStep === sequence.steps.length` the enrollment is done.
-  currentStep    Int    @default(0)
+  currentStep    Int       @default(0)
   /// "active" | "paused" | "done" | "replied" | "stopped"
-  status         String @default("active")
+  status         String    @default("active")
   lastStepSentAt DateTime?
   nextSendAt     DateTime?
   repliedAt      DateTime?
 
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([sequenceId, status])
   @@index([userId, status])
@@ -2393,9 +2495,9 @@ model SequenceEnrollment {
 
 /// AI-generated weekly status email for an active retainer client.
 model ClientUpdate {
-  id        String   @id @default(cuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   /// Optional link to the deal this update is for.
   clientDealId String?
@@ -2403,11 +2505,11 @@ model ClientUpdate {
   /// "draft" — generated, not yet sent
   /// "sent"  — operator approved + sent
   /// "skipped" — operator skipped this week's update
-  status    String   @default("draft")
+  status String @default("draft")
 
   weekStartDate DateTime
   subject       String
-  body          String   @db.Text
+  body          String    @db.Text
   /// JSON of the data slice we generated from (activity, invoices, content)
   /// so we can re-render or audit later.
   generatedFrom Json?
@@ -2421,57 +2523,57 @@ model ClientUpdate {
 
 /// Discovery call recording — transcript or audio upload + AI summary.
 model CallRecording {
-  id        String   @id @default(cuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   clientDealId String?
 
-  title          String
+  title           String
   /// Free-form name or paste of the source ("Zoom — Acme Co intro call").
-  source         String?
+  source          String?
   durationSeconds Int?
 
   /// Raw transcript pasted by user, or transcribed from upload.
-  transcript     String   @db.Text
+  transcript    String  @db.Text
   /// AI-extracted structured summary: pains, budget, decision-makers, objections, action items.
-  summary        Json?
+  summary       Json?
   /// Pre-drafted follow-up email body.
-  followUpDraft  String?  @db.Text
+  followUpDraft String? @db.Text
 
   /// "uploading" | "ready" — set "ready" once transcript + summary present.
-  status         String   @default("ready")
+  status String @default("ready")
 
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([userId, createdAt])
 }
 
 /// Per-user availability config for the branded booking page.
 model BookingAvailability {
-  id        String   @id @default(cuid())
-  userId    String   @unique
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   /// Public URL handle — e.g. "adam" → /book/adam
-  handle    String   @unique
-  isActive  Boolean  @default(true)
+  handle   String  @unique
+  isActive Boolean @default(true)
 
   /// Fixed meeting length in minutes.
-  durationMinutes Int @default(30)
+  durationMinutes Int    @default(30)
   /// Buffer between meetings.
-  bufferMinutes   Int @default(15)
+  bufferMinutes   Int    @default(15)
   /// IANA timezone, e.g. "America/Los_Angeles".
   timezone        String @default("America/Los_Angeles")
 
   /// JSON shape: { mon: [{start:"09:00",end:"17:00"}], tue: [...], ... }
   /// Empty array on a day = unavailable.
-  weeklyHours     Json
+  weeklyHours Json
 
   /// Welcome copy on the public booking page.
-  welcomeTitle    String?
-  welcomeBody     String? @db.Text
+  welcomeTitle String?
+  welcomeBody  String? @db.Text
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -2479,25 +2581,25 @@ model BookingAvailability {
 
 /// A confirmed booking on someone's branded scheduler.
 model Booking {
-  id        String   @id @default(cuid())
-  userId    String   // operator (booking page owner)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(cuid())
+  userId String // operator (booking page owner)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   /// Optional link to a CRM deal we auto-created.
   clientDealId String?
 
-  inviteeName    String
-  inviteeEmail   String
-  inviteePhone   String?
-  notes          String?  @db.Text
+  inviteeName  String
+  inviteeEmail String
+  inviteePhone String?
+  notes        String? @db.Text
 
-  startAt        DateTime
-  endAt          DateTime
+  startAt DateTime
+  endAt   DateTime
   /// "confirmed" | "canceled" | "no_show"
-  status         String   @default("confirmed")
+  status  String   @default("confirmed")
 
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([userId, startAt])
   @@index([startAt, status])

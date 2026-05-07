@@ -340,19 +340,21 @@ export const FEATURE_CATALOG: FeatureDef[] = [
   },
   {
     key: FEATURE_ENTITLEMENTS.AUDITS,
-    name: "AI Audits",
+    name: "AI Audits & Lead Magnets",
     iconName: "ClipboardCheck",
-    tagline: "Branded intake quizzes that capture leads + score them with AI.",
+    tagline:
+      "Branded intake quizzes + 7 whitelabel lead-magnet tools that pipe straight into your CRM.",
     description:
-      "Spin up a fully-branded intake quiz in minutes. Prospects answer 9 questions, your AI grades their fit, and you get a buyer summary in your inbox before the call. The single highest-converting top-of-funnel asset for AI operators.",
+      "Spin up a fully-branded intake quiz in minutes — OR host any of the 7 platform lead magnets (Website Audit, ROI Calculator, Ops Audit, Business Credit Score, Stack Configurator, Segment Explorer, AI Readiness Quiz) on your subdomain. Every submission lands in your CRM as a scored Deal, the prospect gets a branded PDF in their inbox, and hot-pain leads ping you on Slack. The single highest-converting top-of-funnel asset for AI operators.",
     highlights: [
-      "9-question template — clone, customize, share",
+      "9-question audit-quiz template + 7 whitelabel lead-magnet tools",
       "AI-generated buyer summary on every submission",
       "Branded landing page (your logo, colors, copy)",
+      "Branded PDF deliverable shipped to the prospect automatically",
       "One-click convert quiz responses to CRM deals",
-      "Embed on your site or run on a subdomain",
+      "Industry-specific lead magnets (HVAC, Dental, Real Estate) — pre-order in the dashboard",
     ],
-    href: "/portal/audits",
+    href: "/portal/lead-magnets",
     sortOrder: 2,
   },
   {

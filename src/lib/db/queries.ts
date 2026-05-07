@@ -345,6 +345,10 @@ export async function createLeadMagnetSubmission(data: {
   utmSource?: string
   utmMedium?: string
   utmCampaign?: string
+  /** Whitelabel attribution — operator site that hosted the funnel. */
+  operatorId?: string | null
+  /** Cached operator userId (avoids a join from the operator dashboard). */
+  operatorUserId?: string | null
 }) {
   const submission = await db.leadMagnetSubmission.create({
     data: {
@@ -360,6 +364,8 @@ export async function createLeadMagnetSubmission(data: {
       utmSource: data.utmSource,
       utmMedium: data.utmMedium,
       utmCampaign: data.utmCampaign,
+      operatorId: data.operatorId ?? null,
+      operatorUserId: data.operatorUserId ?? null,
     },
   })
   return submission

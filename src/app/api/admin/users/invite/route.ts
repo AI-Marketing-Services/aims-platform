@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { auth, clerkClient } from "@clerk/nextjs/server"
 import { z } from "zod"
 import { logger } from "@/lib/logger"
+import { sendOperatorInvitationEmail } from "@/lib/email/invitations"
 
 export const dynamic = "force-dynamic"
 
@@ -71,13 +72,26 @@ export async function POST(req: Request) {
     // Case B: a prior invitation is still pending. Revoke it so we can
     // reissue (e.g., if the role was wrong, or the invite was never
     // opened). Clerk rejects duplicates otherwise.
-    const pending = await clerk.invitations.getInvitationList({
-      status: "pending",
-    })
-    for (const inv of pending.data) {
-      if (inv.emailAddress.toLowerCase() === trimmedEmail) {
-        await clerk.invitations.revokeInvitation(inv.id)
+    //
+    // Pages explicitly through the entire pending list — `getInvitationList`
+    // only returns the first page, and a stale invite for `trimmedEmail`
+    // sitting on page two would otherwise survive and block the create
+    // call below.
+    const PAGE_SIZE = 100
+    let offset = 0
+    while (true) {
+      const pending = await clerk.invitations.getInvitationList({
+        status: "pending",
+        limit: PAGE_SIZE,
+        offset,
+      })
+      for (const inv of pending.data) {
+        if (inv.emailAddress.toLowerCase() === trimmedEmail) {
+          await clerk.invitations.revokeInvitation(inv.id)
+        }
       }
+      if (pending.data.length < PAGE_SIZE) break
+      offset += PAGE_SIZE
     }
 
     // Build an ABSOLUTE sign-up redirect URL. Clerk rejects relative
@@ -97,16 +111,82 @@ export async function POST(req: Request) {
         : new URL(req.url).origin
     const redirectUrl = `${origin}${redirectPath}`
 
+    // notify: false = Clerk creates the invitation record but does NOT
+    // send its default plain email. We render our own crimson-branded
+    // email below so the invite matches the rest of the platform.
+    // Clerk still returns `invitation.url` — the one-time accept link
+    // is the only thing we actually need from them.
     const invitation = await clerk.invitations.createInvitation({
       emailAddress: trimmedEmail,
       redirectUrl,
       publicMetadata: { role },
-      notify: true,
+      notify: false,
       ignoreExisting: false,
     })
 
+    // Resolve the inviter's display name for the "Invited by …" line.
+    // Best-effort: any failure falls back to omitting the line so a
+    // hiccup in Clerk's user lookup never blocks the actual send.
+    let invitedBy: string | null = null
+    try {
+      const me = await clerk.users.getUser(userId)
+      const fullName = [me.firstName, me.lastName].filter(Boolean).join(" ").trim()
+      invitedBy =
+        fullName ||
+        me.emailAddresses[0]?.emailAddress ||
+        null
+    } catch (e) {
+      logger.warn("Failed to resolve inviter name for invitation email", {
+        action: "admin_invite_inviter_lookup_failed",
+        userId,
+        error: e instanceof Error ? e.message : String(e),
+      })
+    }
+
+    // Clerk's `Invitation.url` is the one-time accept link — the entire
+    // reason we set notify=false. Falling back to the bare /sign-up URL
+    // would email the operator a link with NO ticket, which dead-ends
+    // them on a page that just shows "your invitation has expired or
+    // was already used". Fail loud so the admin can retry instead.
+    if (!invitation.url) {
+      logger.error(
+        "Clerk invitation has no url — cannot send branded email",
+        new Error("invitation.url missing"),
+        { email: trimmedEmail, invitationId: invitation.id },
+      )
+      return NextResponse.json(
+        {
+          error:
+            "Clerk did not return an invitation URL. Try resending in a moment, or invite the user from the Clerk dashboard manually.",
+          invitationId: invitation.id,
+        },
+        { status: 502 },
+      )
+    }
+
+    // Send the branded invitation email. Failure here is logged but
+    // doesn't roll back the invitation — the admin can resend via
+    // the same endpoint, and the operator can also use the "click
+    // here" fallback link Clerk exposes via /invitations/<id>.
+    const emailResult = await sendOperatorInvitationEmail({
+      to: trimmedEmail,
+      firstName: firstName ?? null,
+      fullName: [firstName, lastName].filter(Boolean).join(" ") || null,
+      role,
+      invitationUrl: invitation.url,
+      invitedBy,
+    }).catch((err) => {
+      logger.error("Branded invitation email send failed", err, {
+        email: trimmedEmail,
+        invitationId: invitation.id,
+      })
+      return null
+    })
+
     logger.info(
-      `Team invite sent: ${trimmedEmail} (${role}) by ${userId}`,
+      `Team invite sent: ${trimmedEmail} (${role}) by ${userId}${
+        emailResult?.error ? " [email send failed]" : ""
+      }`,
       { action: "admin_invite_sent" }
     )
 
@@ -118,6 +198,7 @@ export async function POST(req: Request) {
         role,
         firstName: firstName ?? null,
         lastName: lastName ?? null,
+        emailDelivered: !!emailResult && !emailResult.error,
       },
     })
   } catch (err) {
