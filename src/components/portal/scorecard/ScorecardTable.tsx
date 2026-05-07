@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Check, Minus, Plus, Sparkles } from "lucide-react"
 import {
   SCORECARD_ROWS,
@@ -138,6 +138,34 @@ function Row({
   const progress = target > 0 ? Math.min(100, Math.round((manual / target) * 100)) : 0
   const reachedTarget = target > 0 && manual >= target
 
+  // Local string draft so the operator can blank the input, type a
+  // multi-digit value, then commit on blur (or Enter). The previous
+  // controlled-on-onChange version fired one PATCH per keystroke
+  // ("100" = 3 PATCHes) and made it impossible to clear the field.
+  // Re-syncs to `manual` whenever the parent's value changes (e.g.,
+  // after the auto-tally "Apply" hint runs or the row is nudged).
+  const [draft, setDraft] = useState<string>(String(manual))
+  useEffect(() => {
+    setDraft(String(manual))
+  }, [manual])
+
+  function commitDraft() {
+    const trimmed = draft.trim()
+    if (trimmed === "") {
+      // Empty input → restore the canonical value rather than committing
+      // a zero the operator didn't ask for.
+      setDraft(String(manual))
+      return
+    }
+    const n = parseInt(trimmed, 10)
+    if (!Number.isFinite(n) || n < 0) {
+      setDraft(String(manual))
+      return
+    }
+    if (n === manual) return
+    onPatch({ [row.manualField]: n })
+  }
+
   function nudge(delta: number) {
     const next = Math.max(0, manual + delta)
     onPatch({ [row.manualField]: next })
@@ -182,11 +210,17 @@ function Row({
           <input
             type="number"
             min={0}
-            value={manual}
-            onChange={(e) => {
-              const n = parseInt(e.target.value, 10)
-              if (Number.isFinite(n) && n >= 0) {
-                onPatch({ [row.manualField]: n })
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            onBlur={commitDraft}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault()
+                commitDraft()
+                ;(e.target as HTMLInputElement).blur()
+              } else if (e.key === "Escape") {
+                setDraft(String(manual))
+                ;(e.target as HTMLInputElement).blur()
               }
             }}
             className="w-10 bg-transparent text-center text-sm font-semibold text-foreground tabular-nums focus:outline-none"
