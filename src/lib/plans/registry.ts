@@ -56,6 +56,10 @@ export const FEATURE_ENTITLEMENTS = {
   CLIENT_UPDATES: "feature_client_updates",
   RECORDINGS: "feature_recordings",
   BOOKING: "feature_booking",
+  // Whitelabel Website builder — template-driven full-site rendering on
+  // the operator's subdomain or verified custom domain. Granted via the
+  // Operator plan or a standalone marketplace add-on.
+  WEBSITE: "feature_website",
 } as const
 
 export type FeatureEntitlement =
@@ -277,6 +281,7 @@ export const FEATURE_LABELS: Record<FeatureEntitlement, string> = {
   feature_client_updates: "Client Updates",
   feature_recordings: "Discovery Recorder",
   feature_booking: "Booking Page",
+  feature_website: "Website",
 }
 
 // ---------------------------------------------------------------
@@ -645,6 +650,25 @@ export const FEATURE_CATALOG: FeatureDef[] = [
     ],
     href: "/portal/booking",
     sortOrder: 19,
+  },
+  {
+    key: FEATURE_ENTITLEMENTS.WEBSITE,
+    name: "Website",
+    iconName: "Globe",
+    tagline:
+      "Pick a template, fill in your copy, publish under your domain. Lead form auto-feeds your CRM.",
+    description:
+      "Three production-ready website templates designed for modern AI service businesses. Pick a layout, edit your copy in plain forms (no code), and publish under your subdomain or custom domain. Every contact-form submission lands in your CRM as a Deal — no Zapier, no third-party form builder. Brand colors, fonts, and logo are pulled live from your Branding settings, so any update there instantly re-renders the site.",
+    highlights: [
+      "Three SaaS-grade templates (Service Pro, Modern SaaS, Luxury Studio)",
+      "Edit copy through forms — no HTML, no breakage",
+      "Lead form posts directly to your CRM as a tagged Deal",
+      "Brand colors, logo, font auto-applied from your Branding tab",
+      "One-click publish under your subdomain or custom domain",
+      "Auto-fill body copy from your business profile",
+    ],
+    href: "/reseller/site",
+    sortOrder: 20,
   },
 ]
 

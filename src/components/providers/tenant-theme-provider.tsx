@@ -13,6 +13,11 @@ export type TenantContext = {
     seoTitle: string | null
     seoDescription: string | null
     homepageContent: unknown
+    /** Active Website-builder template id, or null if the operator
+     *  hasn't picked one (renderer falls back to the default template). */
+    activeTemplateId: string | null
+    /** Per-section content overrides keyed by section instance id. */
+    templateContent: unknown
   }
   // The reseller who owns this site — needed to attribute leads back
   // to them when a visitor submits a form on the tenant page.

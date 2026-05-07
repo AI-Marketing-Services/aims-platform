@@ -19,6 +19,8 @@ function mapRowToTenant(site: {
   analyticsId: string | null
   seoTitle: string | null
   seoDescription: string | null
+  activeTemplateId: string | null
+  templateContent: unknown
   user: {
     id: string
     memberProfile: {
@@ -50,6 +52,8 @@ function mapRowToTenant(site: {
       analyticsId: site.analyticsId ?? null,
       seoTitle: site.seoTitle ?? null,
       seoDescription: site.seoDescription ?? null,
+      activeTemplateId: site.activeTemplateId ?? null,
+      templateContent: site.templateContent ?? {},
     },
     reseller: {
       id: site.user?.id ?? '',

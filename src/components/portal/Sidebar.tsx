@@ -33,6 +33,7 @@ import {
   Trophy,
   Lock,
   Target,
+  Globe,
   FileSignature,
   Bot,
   Library,
@@ -114,6 +115,7 @@ const PORTAL_NAV: readonly NavItem[] = [
   { label: "Signal", href: "/portal/signal", icon: Newspaper, gate: "signal" },
 
   // Whitelabel — opens once onboarding hits 100%
+  { label: "Website", href: "/reseller/site", icon: Globe, requiresOnboardingComplete: true },
   { label: "Branding", href: "/reseller/settings/branding", icon: Sparkles, requiresOnboardingComplete: true },
   { label: "Domain", href: "/reseller/settings/domain", icon: Settings, requiresOnboardingComplete: true },
 
