@@ -33,10 +33,20 @@ export function CtaForm({ content, brand }: Props) {
     if (submitting || done) return
     setError(null)
     setSubmitting(true)
+
+    // Abort the request after 10s so a network hang doesn't leave the
+    // visitor staring at an indefinite "Sending…" spinner. The lead
+    // pipeline normally finishes in under a second; a 10s ceiling is
+    // generous enough that real prod latency never trips it but any
+    // transient network freeze surfaces as a recoverable error.
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 10_000)
+
     try {
       const res = await fetch("/api/tenant/lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        signal: controller.signal,
         body: JSON.stringify({
           // Existing endpoint contract — `resellerId` is the operator's
           // userId; the route validates ownership of the published site
@@ -53,8 +63,15 @@ export function CtaForm({ content, brand }: Props) {
       }
       setDone(true)
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Send failed")
+      const message =
+        err instanceof Error && err.name === "AbortError"
+          ? "Request timed out — please try again."
+          : err instanceof Error
+            ? err.message
+            : "Send failed"
+      setError(message)
     } finally {
+      clearTimeout(timeoutId)
       setSubmitting(false)
     }
   }

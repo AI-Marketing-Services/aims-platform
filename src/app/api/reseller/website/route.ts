@@ -8,6 +8,58 @@ import { getTemplate, TEMPLATES } from "@/lib/website/templates"
 import { resolveSection } from "@/lib/website/registry"
 import type { SectionType } from "@/lib/website/types"
 import { buildAutofillOverrides } from "@/lib/website/autofill"
+import { hasEntitlement } from "@/lib/entitlements"
+import { FEATURE_ENTITLEMENTS } from "@/lib/plans/registry"
+
+/**
+ * Combined whitelabel + Website-feature-entitlement check. Returns the
+ * resolved dbUser when allowed, or a NextResponse to short-circuit the
+ * caller when access is denied. The Website feature is a paid add-on
+ * gated separately from the broader whitelabel role check, so an
+ * operator with the RESELLER role but no Website entitlement (e.g.
+ * Free tier or not yet upgraded) should not reach the editor APIs.
+ */
+async function authorizeWebsiteAccess(): Promise<
+  | { ok: true; dbUser: NonNullable<Awaited<ReturnType<typeof db.user.findUnique>>> }
+  | { ok: false; response: NextResponse }
+> {
+  const access = await checkWhitelabelAccess()
+  if (!access.ok) {
+    return {
+      ok: false,
+      response: NextResponse.json(
+        { error: access.error },
+        { status: access.status },
+      ),
+    }
+  }
+
+  const dbUser = await db.user.findUnique({
+    where: { clerkId: access.clerkId },
+  })
+  if (!dbUser) {
+    return {
+      ok: false,
+      response: NextResponse.json(
+        { error: "User not found" },
+        { status: 404 },
+      ),
+    }
+  }
+
+  const allowed = await hasEntitlement(dbUser.id, FEATURE_ENTITLEMENTS.WEBSITE)
+  if (!allowed) {
+    return {
+      ok: false,
+      response: NextResponse.json(
+        { error: "Website feature is not unlocked on your plan." },
+        { status: 402 },
+      ),
+    }
+  }
+
+  return { ok: true, dbUser }
+}
 
 export const dynamic = "force-dynamic"
 
@@ -15,45 +67,44 @@ export const dynamic = "force-dynamic"
 // GET — current website state for the editor
 // ─────────────────────────────────────────────────────────────────────
 export async function GET() {
-  const access = await checkWhitelabelAccess()
-  if (!access.ok) {
-    return NextResponse.json(
-      { error: access.error },
-      { status: access.status },
-    )
-  }
+  const auth = await authorizeWebsiteAccess()
+  if (!auth.ok) return auth.response
 
-  const dbUser = await db.user.findUnique({
-    where: { clerkId: access.clerkId },
-    include: { operatorSite: true },
-  })
-  if (!dbUser)
-    return NextResponse.json({ error: "User not found" }, { status: 404 })
+  try {
+    const operatorSite = await db.operatorSite.findUnique({
+      where: { userId: auth.dbUser.id },
+    })
 
-  return NextResponse.json({
-    activeTemplateId: dbUser.operatorSite?.activeTemplateId ?? null,
-    templateContent: dbUser.operatorSite?.templateContent ?? {},
-    websitePublishedAt:
-      dbUser.operatorSite?.websitePublishedAt?.toISOString() ?? null,
-    isPublished: dbUser.operatorSite?.isPublished ?? false,
-    subdomain: dbUser.operatorSite?.subdomain ?? null,
-    customDomain: dbUser.operatorSite?.customDomain ?? null,
-    customDomainVerified:
-      dbUser.operatorSite?.customDomainVerified ?? false,
-    templates: TEMPLATES.map((t) => ({
-      id: t.id,
-      name: t.name,
-      tagline: t.tagline,
-      bestFor: t.bestFor,
-      thumbnailUrl: t.thumbnailUrl,
-      mode: t.mode,
-      sections: t.sections.map((s) => ({
-        id: s.id,
-        type: s.type,
-        defaults: s.defaults,
+    return NextResponse.json({
+      activeTemplateId: operatorSite?.activeTemplateId ?? null,
+      templateContent: operatorSite?.templateContent ?? {},
+      websitePublishedAt:
+        operatorSite?.websitePublishedAt?.toISOString() ?? null,
+      isPublished: operatorSite?.isPublished ?? false,
+      subdomain: operatorSite?.subdomain ?? null,
+      customDomain: operatorSite?.customDomain ?? null,
+      customDomainVerified: operatorSite?.customDomainVerified ?? false,
+      templates: TEMPLATES.map((t) => ({
+        id: t.id,
+        name: t.name,
+        tagline: t.tagline,
+        bestFor: t.bestFor,
+        thumbnailUrl: t.thumbnailUrl,
+        mode: t.mode,
+        sections: t.sections.map((s) => ({
+          id: s.id,
+          type: s.type,
+          defaults: s.defaults,
+        })),
       })),
-    })),
-  })
+    })
+  } catch (err) {
+    logger.error("Failed to load website state", err, {
+      endpoint: "GET /api/reseller/website",
+      userId: auth.dbUser.id,
+    })
+    return NextResponse.json({ error: "Internal error" }, { status: 500 })
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────────
@@ -74,13 +125,8 @@ const patchSchema = z.object({
 })
 
 export async function PATCH(req: Request) {
-  const access = await checkWhitelabelAccess()
-  if (!access.ok) {
-    return NextResponse.json(
-      { error: access.error },
-      { status: access.status },
-    )
-  }
+  const auth = await authorizeWebsiteAccess()
+  if (!auth.ok) return auth.response
 
   const json = await req.json().catch(() => null)
   const parsed = patchSchema.safeParse(json)
@@ -93,7 +139,7 @@ export async function PATCH(req: Request) {
 
   try {
     const dbUser = await db.user.findUnique({
-      where: { clerkId: access.clerkId },
+      where: { id: auth.dbUser.id },
       include: { operatorSite: true },
     })
     if (!dbUser)
@@ -184,9 +230,15 @@ export async function PATCH(req: Request) {
       return NextResponse.json({ ok: true, noop: true })
     }
 
-    await db.operatorSite.update({
+    const updated = await db.operatorSite.update({
       where: { userId: dbUser.id },
       data: update,
+      select: {
+        activeTemplateId: true,
+        templateContent: true,
+        isPublished: true,
+        websitePublishedAt: true,
+      },
     })
 
     invalidateTenantCache({
@@ -194,11 +246,20 @@ export async function PATCH(req: Request) {
       customDomains: [site.customDomain],
     })
 
-    return NextResponse.json({ ok: true })
+    // Return the updated state so the editor can avoid a second GET.
+    // Eliminates the autofill silent-data-loss bug where a failed
+    // refetch could blank the operator's overrides locally.
+    return NextResponse.json({
+      ok: true,
+      activeTemplateId: updated.activeTemplateId,
+      templateContent: updated.templateContent,
+      isPublished: updated.isPublished,
+      websitePublishedAt: updated.websitePublishedAt?.toISOString() ?? null,
+    })
   } catch (err) {
     logger.error("Failed to save website", err, {
       endpoint: "PATCH /api/reseller/website",
-      userId: access.clerkId,
+      userId: auth.dbUser.id,
     })
     return NextResponse.json(
       { error: "Internal error" },

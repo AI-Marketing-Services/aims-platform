@@ -81,7 +81,11 @@ export function WebsiteEditor({ site, profile, templates }: Props) {
   }, [site])
 
   const onPickTemplate = useCallback(async (templateId: string) => {
-    setActiveTemplateId(templateId)
+    // Set state ONLY after the server confirms. The previous version
+    // optimistically flipped the picker before the PATCH; on PATCH
+    // failure the picker stayed on the new template while the server
+    // remained on the old one — a mismatch the user only discovered on
+    // next page load.
     setSaving(true)
     try {
       const res = await fetch("/api/reseller/website", {
@@ -90,6 +94,7 @@ export function WebsiteEditor({ site, profile, templates }: Props) {
         body: JSON.stringify({ activeTemplateId: templateId }),
       })
       if (!res.ok) throw new Error("Save failed")
+      setActiveTemplateId(templateId)
       toast.success("Template selected — preview your site to see it live.")
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Couldn't save template")
@@ -113,10 +118,16 @@ export function WebsiteEditor({ site, profile, templates }: Props) {
         body: JSON.stringify({ autofill: true }),
       })
       if (!res.ok) throw new Error("Save failed")
-      // Refresh from server so the editor's local state matches the
-      // newly-written autofill blob.
-      const fresh = await fetch("/api/reseller/website").then((r) => r.json())
-      setOverrides(fresh.templateContent ?? {})
+      // PATCH now returns the fresh templateContent directly — the
+      // previous "second GET to refresh" pattern could silently blank
+      // the operator's overrides if the GET returned a non-200 (e.g.
+      // session expiry between the PATCH and the GET round-trip).
+      const json = (await res.json().catch(() => ({}))) as {
+        templateContent?: Record<string, Record<string, unknown>>
+      }
+      if (json.templateContent && typeof json.templateContent === "object") {
+        setOverrides(json.templateContent)
+      }
       toast.success("Copy refreshed from your business profile.")
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Couldn't auto-fill")

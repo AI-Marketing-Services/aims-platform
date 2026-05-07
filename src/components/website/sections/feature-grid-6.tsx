@@ -70,7 +70,7 @@ export function FeatureGrid6({ content, brand }: Props) {
                     color: brand.primaryColor,
                   }}
                 >
-                  <Icon className="h-4.5 w-4.5" aria-hidden />
+                  <Icon className="h-4 w-4" aria-hidden />
                 </div>
 
                 <h3

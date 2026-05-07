@@ -134,13 +134,23 @@ describe("schemas reject malicious / oversized input", () => {
     expect(FaqSchema.safeParse({ items }).success).toBe(false)
   })
 
-  it("footer rejects non-https URLs in social links", () => {
-    const result = FooterSchema.safeParse({
-      socialLinks: [{ platform: "twitter", href: "ftp://twitter.com/x" }],
-    })
-    // social schema uses bare z.string().url(), so ftp passes the URL check
-    // but we expect to add a tighter https constraint in v2; for now just
-    // assert structure validates. (Documentation marker for tomorrow.)
-    expect(result.success).toBe(true)
+  it("footer rejects non-http(s) URLs in social links", () => {
+    // ftp:// is a valid URL per WHATWG but not safe in an anchor href —
+    // schemas now use HttpsUrl which rejects anything other than http(s).
+    expect(
+      FooterSchema.safeParse({
+        socialLinks: [{ platform: "twitter", href: "ftp://twitter.com/x" }],
+      }).success,
+    ).toBe(false)
+    expect(
+      FooterSchema.safeParse({
+        socialLinks: [{ platform: "twitter", href: "javascript:alert(1)" }],
+      }).success,
+    ).toBe(false)
+    expect(
+      FooterSchema.safeParse({
+        socialLinks: [{ platform: "twitter", href: "https://twitter.com/x" }],
+      }).success,
+    ).toBe(true)
   })
 })

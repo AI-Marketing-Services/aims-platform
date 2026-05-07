@@ -267,7 +267,13 @@ export const FooterSchema = z.object({
           "youtube",
           "github",
         ]),
-        href: z.string().url().max(500),
+        // Restrict to http(s) so a copy-paste of `javascript:alert(1)`
+        // can't slip into the rendered footer's anchor href and run
+        // when a visitor clicks the icon.
+        href: HttpsUrl.refine(
+          (u) => u.length <= 500,
+          "URL too long (500 char max)",
+        ),
       }),
     )
     .max(6)
