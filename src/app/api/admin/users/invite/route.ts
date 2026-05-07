@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { auth, clerkClient } from "@clerk/nextjs/server"
 import { z } from "zod"
 import { logger } from "@/lib/logger"
+import { sendOperatorInvitationEmail } from "@/lib/email/invitations"
 
 export const dynamic = "force-dynamic"
 
@@ -97,16 +98,61 @@ export async function POST(req: Request) {
         : new URL(req.url).origin
     const redirectUrl = `${origin}${redirectPath}`
 
+    // notify: false = Clerk creates the invitation record but does NOT
+    // send its default plain email. We render our own crimson-branded
+    // email below so the invite matches the rest of the platform.
+    // Clerk still returns `invitation.url` — the one-time accept link
+    // is the only thing we actually need from them.
     const invitation = await clerk.invitations.createInvitation({
       emailAddress: trimmedEmail,
       redirectUrl,
       publicMetadata: { role },
-      notify: true,
+      notify: false,
       ignoreExisting: false,
     })
 
+    // Resolve the inviter's display name for the "Invited by …" line.
+    // Best-effort: any failure falls back to omitting the line so a
+    // hiccup in Clerk's user lookup never blocks the actual send.
+    let invitedBy: string | null = null
+    try {
+      const me = await clerk.users.getUser(userId)
+      const fullName = [me.firstName, me.lastName].filter(Boolean).join(" ").trim()
+      invitedBy =
+        fullName ||
+        me.emailAddresses[0]?.emailAddress ||
+        null
+    } catch (e) {
+      logger.warn("Failed to resolve inviter name for invitation email", {
+        action: "admin_invite_inviter_lookup_failed",
+        userId,
+        error: e instanceof Error ? e.message : String(e),
+      })
+    }
+
+    // Send the branded invitation email. Failure here is logged but
+    // doesn't roll back the invitation — the admin can resend via
+    // the same endpoint, and the operator can also use the "click
+    // here" fallback link Clerk exposes via /invitations/<id>.
+    const emailResult = await sendOperatorInvitationEmail({
+      to: trimmedEmail,
+      firstName: firstName ?? null,
+      fullName: [firstName, lastName].filter(Boolean).join(" ") || null,
+      role,
+      invitationUrl: invitation.url ?? redirectUrl,
+      invitedBy,
+    }).catch((err) => {
+      logger.error("Branded invitation email send failed", err, {
+        email: trimmedEmail,
+        invitationId: invitation.id,
+      })
+      return null
+    })
+
     logger.info(
-      `Team invite sent: ${trimmedEmail} (${role}) by ${userId}`,
+      `Team invite sent: ${trimmedEmail} (${role}) by ${userId}${
+        emailResult?.error ? " [email send failed]" : ""
+      }`,
       { action: "admin_invite_sent" }
     )
 
@@ -118,6 +164,7 @@ export async function POST(req: Request) {
         role,
         firstName: firstName ?? null,
         lastName: lastName ?? null,
+        emailDelivered: !!emailResult && !emailResult.error,
       },
     })
   } catch (err) {
