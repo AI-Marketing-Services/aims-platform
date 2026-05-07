@@ -5,6 +5,7 @@ import { logger } from "@/lib/logger"
 
 // Vercel Cron: runs daily at 9am UTC
 // vercel.json: { "path": "/api/cron/follow-up-nudges", "schedule": "0 9 * * *" }
+export const maxDuration = 120
 
 const TERMINAL_STAGES = new Set(["COMPLETED", "LOST"])
 

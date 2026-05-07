@@ -66,33 +66,35 @@ export const TIMELINE_BUCKETS: TimelineBucket[] = [
     key: "lead-magnet-quiz",
     label: "Lead Magnet — AI Readiness Quiz drip",
     blurb:
-      "Inline results email + 6-email post-quiz nurture sequence. Also reused by the AI Playbook PDF gate.",
+      "Inline results email fires immediately. Note: the 6-email post-quiz nurture drip is enrolled in the queue but NOT yet wired in process-email-queue — those follow-ups are silently cancelled until the handler is added.",
   },
   {
     key: "lead-magnet-calculator",
     label: "Lead Magnet — ROI Calculator drip",
-    blurb: "Inline ROI report + 6-email post-calculator nurture sequence.",
+    blurb:
+      "Inline ROI report fires immediately. Note: the 6-email post-calculator drip is queued but NOT wired — follow-ups silently cancelled until the handler is added.",
   },
   {
     key: "lead-magnet-audit",
     label: "Lead Magnet — Website Audit drip",
-    blurb: "Inline audit report + 5-email post-audit nurture sequence.",
+    blurb:
+      "Inline audit report fires immediately. Note: the 5-email post-audit drip is queued but NOT wired — follow-ups silently cancelled until the handler is added.",
   },
   {
     key: "lead-magnet-vault",
     label: "Lead Magnet — Operator Vault drip",
     blurb:
-      "Inline Chapter 1 + 6-email chapter sequence (Chapters 2–5 + closing).",
+      "Inline Chapter 1 + 5-email chapter sequence — drip IS wired and sends Chapters 2–5 + closing email.",
   },
   {
     key: "lead-magnet-w2",
     label: "Lead Magnet — W-2 Playbook drip",
-    blurb: "Welcome + 2-email follow-up sequence.",
+    blurb: "Welcome email + 2-email follow-up sequence — drip IS wired.",
   },
   {
     key: "lead-magnet-business-audit",
     label: "Lead Magnet — AI Opportunity Audit drip",
-    blurb: "Custom audit report + 2-email follow-up sequence.",
+    blurb: "Custom audit report + 2-email follow-up sequence — drip IS wired.",
   },
   {
     key: "lead-magnet-other",
@@ -104,13 +106,13 @@ export const TIMELINE_BUCKETS: TimelineBucket[] = [
     key: "lifecycle",
     label: "Lifecycle — Billing & subscription",
     blurb:
-      "Welcome on paid checkout, renewal receipt each cycle, cancellation, payment-failed.",
+      "Welcome (T+0) + renewal receipt + payment-failed + cancellation. Note: the 6-email post-purchase onboarding drip is enrolled but NOT wired in process-email-queue — follow-ups silently cancelled until the handler is added.",
   },
   {
     key: "ops-support",
     label: "Ops & Support",
     blurb:
-      "Internal ops emails (assignment) and member-facing support ticket lifecycle emails.",
+      "Internal ops emails (fulfillment-assignment is not yet fired by production code, only by admin test-send) and member-facing support ticket lifecycle emails.",
   },
 ]
 

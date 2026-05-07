@@ -205,6 +205,17 @@ model Deal {
   @@index([mightyInviteStatus])
   @@index([mightyMemberId])
   @@index([referringResellerId])
+  // Hot lookup path on every Mighty/Close webhook + abandoned-applications
+  // cron. The cron uses `mode: "insensitive"` (translates to
+  // LOWER(contactEmail) = LOWER(?)) which a plain btree can't accelerate.
+  // A separate expression index `LOWER("contactEmail")` is created via raw
+  // SQL in prisma/migrations/manual/lower-contact-email.sql — Prisma schema
+  // doesn't natively support expression indexes, so we apply that one out
+  // of band. The plain @@index here still covers exact-match lookups (Close
+  // sync uses raw equality without `mode: insensitive`).
+  @@index([contactEmail])
+  // Composite for the nurture-unbooked cron's source+stage+createdAt filter.
+  @@index([source, stage, createdAt])
 }
 
 enum DealStage {
@@ -263,6 +274,10 @@ model DealActivity {
   @@index([dealId])
   @@index([type])
   @@index([createdAt])
+  // Composite for the nurture-unbooked dedup query (`dealId` + `type` +
+  // detail LIKE filter). Without this, every deal in the cron loop scans
+  // all of its EMAIL_SENT activities.
+  @@index([dealId, type])
 }
 
 enum ActivityType {

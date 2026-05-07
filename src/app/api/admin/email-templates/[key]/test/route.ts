@@ -8,8 +8,11 @@ export const dynamic = "force-dynamic"
 
 const bodySchema = z.object({
   /**
-   * Recipient for the test send. Defaults to the admin's own Clerk
-   * email so the team can never accidentally test-send to a real client.
+   * Recipient for the test send. Optional in the request body for backwards
+   * compatibility, but the handler ALWAYS overrides it with the signed-in
+   * admin's Clerk email. Locking this prevents the editor from being weaponised
+   * to send arbitrary HTML from our verified Resend domain to any external
+   * address (deliverability + reputation risk).
    */
   to: z.string().email().optional(),
 })
@@ -55,19 +58,34 @@ export async function POST(
     )
   }
 
-  // Default to the signed-in admin's Clerk email so we never accidentally
-  // test-send to a customer.
-  let recipient = parsed.data.to
-  if (!recipient) {
-    const me = await currentUser()
-    recipient = me?.emailAddresses?.[0]?.emailAddress ?? ""
-    if (!recipient) {
-      return NextResponse.json(
-        { error: "Could not resolve recipient — set 'to' in the request body" },
-        { status: 400 },
-      )
-    }
+  // ALWAYS resolve recipient to the signed-in admin's Clerk email. Ignore
+  // the body's `to` field — the editor field exists for UX (admin sees what
+  // address the test will hit) but the server never trusts it. Without this
+  // an authenticated admin (or attacker with a stolen session) could send
+  // crafted phishing HTML from our verified Resend domain to any external
+  // recipient — abusing our deliverability reputation.
+  const me = await currentUser()
+  // Use primaryEmailAddress — emailAddresses[0] points to whichever email
+  // was added first, which may not be the user's primary inbox if they
+  // changed it later. primaryEmailAddress is the stable canonical reference.
+  const adminEmail =
+    me?.primaryEmailAddress?.emailAddress ??
+    me?.emailAddresses?.[0]?.emailAddress ??
+    ""
+  if (!adminEmail) {
+    return NextResponse.json(
+      { error: "Could not resolve your Clerk email — re-sign-in and retry." },
+      { status: 400 },
+    )
   }
+  if (parsed.data.to && parsed.data.to.toLowerCase() !== adminEmail.toLowerCase()) {
+    logger.warn("Test send 'to' override ignored — locked to admin email", {
+      attempted: parsed.data.to,
+      adminEmail,
+      templateKey: key,
+    })
+  }
+  const recipient = adminEmail
 
   try {
     const args = entry.sample(recipient)

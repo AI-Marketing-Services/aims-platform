@@ -12,6 +12,22 @@ const simulateLeadSchema = z.object({
 })
 
 export async function POST(req: Request) {
+  // Production guard FIRST, before auth. Returning 404 (not 403) matches
+  // test-emails / bootstrap behaviour — hides the route's existence from
+  // unauthenticated callers in prod, no endpoint-existence leak.
+  //
+  // Use VERCEL_ENV (not NODE_ENV) — Vercel sets NODE_ENV=production for both
+  // Production and Preview deploys, so a NODE_ENV check would also block
+  // Preview demos where we DO want to simulate. VERCEL_ENV is the stable
+  // production-only signal. Falls back to NODE_ENV for local dev where
+  // VERCEL_ENV is unset.
+  const isProduction =
+    process.env.VERCEL_ENV === "production" ||
+    (process.env.VERCEL_ENV == null && process.env.NODE_ENV === "production")
+  if (isProduction) {
+    return new Response(null, { status: 404 })
+  }
+
   const { userId, sessionClaims } = await auth()
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 

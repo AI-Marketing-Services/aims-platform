@@ -4,6 +4,11 @@ import { sendBookingReminderEmail } from "@/lib/email/booking-reminder"
 import { logCronExecution } from "@/lib/cron-log"
 import { logger } from "@/lib/logger"
 
+// Up to 200 deals × 3 reminder days × Resend latency (~150ms) ≈ 90s. Default
+// Vercel serverless timeout is 10s on Hobby / 60s on Pro — both can fail
+// mid-batch. Bump to 5min so a single run can drain a backlog cleanly.
+export const maxDuration = 300
+
 // Runs daily. For every applicant still in APPLICATION_SUBMITTED (i.e. they
 // applied but didn't book a consult), send a nudge on day 2, 5, or 9 from
 // application. Marks each reminder with a DealActivity to dedupe.

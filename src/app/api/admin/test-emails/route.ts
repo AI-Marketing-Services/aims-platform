@@ -80,7 +80,12 @@ export async function GET(req: Request) {
   // Production guard: this route blasts ~30 emails on every call and shares
   // CRON_SECRET with 13 other cron jobs (single point of failure). Disable
   // it entirely in prod unless the operator explicitly opts in via env.
-  if (process.env.NODE_ENV === "production" && !process.env.ALLOW_TEST_EMAILS) {
+  // Use VERCEL_ENV — NODE_ENV=production also covers Preview deploys, but we
+  // want test-emails available on previews for QA without forcing the opt-in.
+  const isProduction =
+    process.env.VERCEL_ENV === "production" ||
+    (process.env.VERCEL_ENV == null && process.env.NODE_ENV === "production")
+  if (isProduction && !process.env.ALLOW_TEST_EMAILS) {
     return new Response(null, { status: 404 })
   }
 

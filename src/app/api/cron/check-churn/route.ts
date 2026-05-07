@@ -6,6 +6,7 @@ import { logger } from "@/lib/logger"
 
 // Vercel Cron: runs daily at 9am UTC
 // Configure in vercel.json: { "crons": [{ "path": "/api/cron/check-churn", "schedule": "0 9 * * *" }] }
+export const maxDuration = 120
 
 export async function GET(req: Request) {
   // Verify cron secret to prevent unauthorized access

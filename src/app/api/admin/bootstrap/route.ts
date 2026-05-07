@@ -12,7 +12,12 @@ export async function POST(req: Request) {
   // black hole in production unless explicitly enabled by setting
   // ALLOW_BOOTSTRAP=1. Bootstrap is a one-time op, so the env flag should
   // be unset again immediately after promoting the first admin.
-  if (process.env.NODE_ENV === "production" && process.env.ALLOW_BOOTSTRAP !== "1") {
+  // Use VERCEL_ENV (not NODE_ENV) — Vercel sets NODE_ENV=production for both
+  // Production AND Preview deploys; we want to allow bootstrap on preview.
+  const isProduction =
+    process.env.VERCEL_ENV === "production" ||
+    (process.env.VERCEL_ENV == null && process.env.NODE_ENV === "production")
+  if (isProduction && process.env.ALLOW_BOOTSTRAP !== "1") {
     return new Response(null, { status: 404 })
   }
 
