@@ -9,13 +9,16 @@ import {
   Receipt,
   Loader2,
   ExternalLink,
+  Megaphone,
 } from "lucide-react"
 import { FollowUpDraftDialog } from "./FollowUpDraftDialog"
 import { cn } from "@/lib/utils"
+import { buildMetaAdLibraryUrl } from "@/lib/crm/meta-ad-library"
 
 interface DealQuickActionsProps {
   dealId: string
   companyName: string
+  website?: string | null
   defaultRecipientEmail: string | null
   hasEnrichment: boolean
 }
@@ -34,9 +37,12 @@ interface DealQuickActionsProps {
 export function DealQuickActions({
   dealId,
   companyName,
+  website,
   defaultRecipientEmail,
   hasEnrichment,
 }: DealQuickActionsProps) {
+  const metaAdLibraryUrl = buildMetaAdLibraryUrl({ companyName, website })
+
   const router = useRouter()
   const [enriching, setEnriching] = useState(false)
   const [enrichError, setEnrichError] = useState<string | null>(null)
@@ -139,6 +145,20 @@ export function DealQuickActions({
           New invoice
           <ExternalLink className="h-2.5 w-2.5 opacity-50" />
         </button>
+
+        {metaAdLibraryUrl && (
+          <a
+            href={metaAdLibraryUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 min-w-[140px] inline-flex items-center justify-center gap-1.5 rounded-md border border-border px-3 py-2 text-xs font-semibold hover:border-primary hover:bg-primary/5 hover:text-primary transition-colors"
+            title={`Search Meta Ad Library for ${companyName}`}
+          >
+            <Megaphone className="h-3.5 w-3.5" />
+            Check Meta ads
+            <ExternalLink className="h-2.5 w-2.5 opacity-50" />
+          </a>
+        )}
       </div>
       {enrichError && (
         <p className="text-[11px] text-destructive mt-1">{enrichError}</p>

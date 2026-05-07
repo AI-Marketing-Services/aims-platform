@@ -112,6 +112,7 @@ export default async function DealDetailPage({
       <DealQuickActions
         dealId={deal.id}
         companyName={deal.companyName}
+        website={deal.website}
         defaultRecipientEmail={deal.contactEmail ?? deal.contacts[0]?.email ?? null}
         hasEnrichment={Boolean(deal.enrichment)}
       />
