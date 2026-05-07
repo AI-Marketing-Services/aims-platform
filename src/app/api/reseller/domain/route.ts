@@ -104,14 +104,24 @@ export async function POST(req: Request) {
       verification: result.verification as unknown as Prisma.InputJsonValue,
     }
 
-    // Upsert OperatorSite
+    // IMPORTANT: We deliberately ignore `result.verified` here and always
+    // write `customDomainVerified: false` on add. Vercel's `verified` flag
+    // means "this project claims this domain" (e.g., the domain was
+    // previously added, or Vercel auto-detected an existing TXT) — NOT
+    // "DNS actually points to your deployment and the tenant page is
+    // serving correctly". Trusting Vercel's verified=true here is what
+    // caused the UI to flip to "Live at <domain>" the moment a reseller
+    // typed the domain in, before they'd configured any DNS. The verify
+    // endpoint (POST /api/reseller/domain/verify) is the only place that
+    // flips this gate, and only when the live DNS config also shows
+    // `misconfigured: false`.
     const existing = await db.operatorSite.findUnique({ where: { userId: dbUser.id } })
     if (existing) {
       await db.operatorSite.update({
         where: { userId: dbUser.id },
         data: {
           customDomain: domain,
-          customDomainVerified: result.verified,
+          customDomainVerified: false,
           vercelDomainData,
         },
       })
@@ -128,7 +138,7 @@ export async function POST(req: Request) {
           userId: dbUser.id,
           subdomain: fallbackSubdomain,
           customDomain: domain,
-          customDomainVerified: result.verified,
+          customDomainVerified: false,
           vercelDomainData,
         },
       })
@@ -138,7 +148,7 @@ export async function POST(req: Request) {
       })
     }
 
-    return NextResponse.json({ domain, records, verified: result.verified })
+    return NextResponse.json({ domain, records, verified: false })
   } catch (err) {
     if (err instanceof VercelDomainsNotConfiguredError) {
       return NextResponse.json({ error: "not_configured" }, { status: 503 })
@@ -226,6 +236,43 @@ export async function GET() {
 
     const statusResult = await safeGetDomainStatus(site.customDomain)
 
+    // `liveDnsHealthy` is "Vercel says ownership is verified AND live
+    // DNS isn't misconfigured." It's a diagnostic signal — used for
+    // auto-correcting DB drift below and surfaced separately on the
+    // response so the UI can show "DNS looks ready, click Check now"
+    // hints — but it is NOT the canonical verified gate.
+    let liveDnsHealthy = false
+    if (statusResult.ok && statusResult.config && statusResult.verify) {
+      liveDnsHealthy =
+        statusResult.verify.verified === true &&
+        statusResult.config.misconfigured === false
+    }
+
+    // Auto-correct drift in ONE direction only: DB says verified but
+    // live truth disagrees (operator changed DNS, domain got removed
+    // out-of-band on Vercel, or a previous bug stored verified=true
+    // incorrectly) → downgrade + auto-unpublish so the tenant route
+    // stops serving stale. We deliberately do NOT auto-upgrade here —
+    // the explicit /verify endpoint is the only path that flips the
+    // gate to true, even when DNS becomes healthy. This preserves the
+    // "no silent flip" invariant introduced by this PR.
+    if (
+      statusResult.ok &&
+      site.customDomainVerified &&
+      !liveDnsHealthy
+    ) {
+      await db.operatorSite.update({
+        where: { userId: dbUser.id },
+        data: { customDomainVerified: false, isPublished: false },
+      })
+      invalidateTenantCache({
+        subdomains: [site.subdomain],
+        customDomains: [site.customDomain],
+      })
+      site.customDomainVerified = false
+      site.isPublished = false
+    }
+
     let records: DnsRecordShape[] = []
     if (statusResult.ok && statusResult.config) {
       // Build records from stored verification data if available
@@ -244,7 +291,14 @@ export async function GET() {
     return NextResponse.json({
       domain: site.customDomain,
       records,
+      // Canonical persisted gate — the middleware uses the same field
+      // to decide whether to serve the tenant page on this domain, so
+      // GET must always reflect the same value.
       verified: site.customDomainVerified,
+      // Diagnostic-only: indicates Vercel says DNS is healthy.
+      // Surfaces "DNS ready — click Check now to verify" UX states
+      // without ever flipping the canonical gate behind the user's back.
+      liveDnsHealthy,
       published: site.isPublished,
     })
   } catch (err) {
