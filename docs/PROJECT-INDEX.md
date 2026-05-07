@@ -1,6 +1,6 @@
 # Project Index — Where Everything Lives
 
-**Audience:** Jess (and anyone adding new content).
+**Audience:** Anyone adding new content to the platform — engineers, content owners, ops.
 **Use this to:** find where stuff lives, find the file you need to edit, know the format/pattern before you start a new thing.
 
 ---
@@ -40,7 +40,7 @@ aims-platform/
 └── public/               ← Static assets (logos, images)
 ```
 
-The two folders that contain almost everything Jess will care about:
+The two folders that contain almost everything content owners will touch:
 - **`src/app/`** — every page on the site (one folder = one URL path)
 - **`src/lib/`** — content that's rendered on those pages (emails, quests, lessons, etc.)
 
@@ -59,14 +59,14 @@ Each folder in parentheses is a "route group" — it groups related pages withou
 | `(portal)/portal/` | `/portal/*` | Members (CLIENT role) | `/portal/dashboard`, `/portal/onboard`, `/portal/quests`, `/portal/playbooks` |
 | `(reseller)/reseller/` | `/reseller/*` | Resellers (RESELLER role) | `/reseller/dashboard`, `/reseller/settings/branding` |
 | `(intern)/intern/` | `/intern/*` | Interns (INTERN role) | `/intern/dashboard` |
-| `(admin)/admin/` | `/admin/*` | You + Jess (ADMIN role) | `/admin/dashboard`, `/admin/crm`, `/admin/email-templates`, `/admin/applications` |
+| `(admin)/admin/` | `/admin/*` | Team (ADMIN role) | `/admin/dashboard`, `/admin/crm`, `/admin/email-templates`, `/admin/applications` |
 | `api/` | `/api/*` | Backend (no UI) | Webhooks, form submits, cron jobs |
 
 ---
 
 ## "I want to add a community resource" — the most likely paths
 
-Jess, when you say "community resources," I'm guessing you mean one of these. Pick the one that matches and follow that section:
+"Community resource" usually means one of the following. Pick the one that matches and follow that section:
 
 ### A. A new written guide / article (member-facing)
 **The platform doesn't currently have a member-only blog or knowledge base.** The closest existing thing is the public blog at `/blog`. Two options:
@@ -82,7 +82,7 @@ Jess, when you say "community resources," I'm guessing you mean one of these. Pi
    title: "5 Signs Your Business Needs an AI Audit"
    description: "Not sure if AI can help your business? These 5 warning signs mean you're leaving money on the table."
    date: "2026-05-07"
-   author: "Jess Mayo"
+   author: "Your Name"
    category: "Getting Started"
    image: "/blog/your-image.jpg"
    ---
@@ -122,7 +122,7 @@ Two paths depending on whether you want to **edit existing copy** or **add a bra
 - Future sends use your version automatically
 - See `docs/EMAIL-TIMELINE.md` for the full sending order
 
-**Add a brand-new email** (this requires Adam or Codex):
+**Add a brand-new email** (requires a code change):
 1. Create `src/lib/email/your-email.ts` — a function that returns HTML
 2. Register it in `src/lib/email/catalog.ts` (so it shows up in the admin editor)
 3. Add a row in `src/lib/email/timeline.ts` (so it shows up in the right journey bucket on the email-templates page)
@@ -200,7 +200,7 @@ If you want to read more before changing anything, here's what each doc covers:
 |---|---|
 | **`PROJECT-INDEX.md`** (this file) | Where everything lives |
 | `EMAIL-TIMELINE.md` | The exact order every email fires + cron schedule |
-| `JOURNEY-PHILOSOPHY.md` | The 5-phase walk-before-run model (Jess wrote this) |
+| `JOURNEY-PHILOSOPHY.md` | The 5-phase walk-before-run model |
 | `LEAD-MAGNETS.md` | All 8 lead magnets with clickable test URLs |
 | `AUDIT_REPORT_2026-05-06.md` | Most recent end-to-end audit (security/perf/UX) |
 | `AIMS-PLATFORM-BUILD-PROMPT.md` | Original architecture spec (engineer-focused) |
@@ -243,9 +243,9 @@ The platform follows a few stylistic rules — match these so anything new fits 
 
 ---
 
-## Where to put new community-facing content (Jess-specific guidance)
+## Where to put new community-facing content (decision guide)
 
-Based on what I think you mean by "community resources," here's the call I'd make for each kind of resource:
+Based on what type of resource you're adding, here's the call to make:
 
 | Resource | Where it should go | Why |
 |---|---|---|
@@ -256,13 +256,13 @@ Based on what I think you mean by "community resources," here's the call I'd mak
 | **A worksheet/template/PDF** | Upload to Vercel Blob, link from a Mighty Lesson | We don't currently have a "Resources" page on the portal. Ask if you want one. |
 | **A lesson script/outline for a video** | Mighty (attached to the module that contains the video) | Same place the video itself lives. |
 
-If you have a specific resource in mind and you're not sure which of the above it is, drop it in Slack with a one-line description and I'll point you at the file.
+If a specific resource doesn't fit any of the above cleanly, ask in Slack with a one-line description and someone on the team will point you at the right file.
 
 ---
 
 ## Things you can't add without a code change
 
-Some things require Adam, Codex, or Claude to wire up because they touch the database or business logic:
+Some things require an engineer (or a coding agent like Claude / Codex) to wire up because they touch the database or business logic:
 
 - New journey phase (we have 5; adding a 6th means schema + UI changes)
 - New role type (CLIENT, RESELLER, INTERN, ADMIN, SUPER_ADMIN are all that exist)
