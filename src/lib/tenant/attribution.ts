@@ -17,27 +17,62 @@ import { cookies } from "next/headers"
 export const ATTRIBUTION_COOKIE = "aoc_ref"
 const ATTRIBUTION_TTL_DAYS = 30
 
-/** Set the attribution cookie for the given reseller. Called from tenant page layouts. */
+/**
+ * Set the attribution cookie for the given reseller. Called from tenant
+ * page layouts.
+ *
+ * Next.js 16 throws when `cookies().set()` is called from a Server
+ * Component (it's only valid in Server Actions and Route Handlers).
+ * Tenant page layouts ARE Server Components, so calling this function
+ * the obvious way crashes the entire page with "Cookies can only be
+ * modified in a Server Action or Route Handler", and the visitor sees
+ * the global error.tsx instead of the operator's branded landing.
+ *
+ * We swallow the failure with a warn-level log because attribution is
+ * a nice-to-have, not a correctness boundary. Cross-domain attribution
+ * for custom-domain visitors is handled at form-submit time anyway
+ * (see /api/tenant/lead). The attribution cookie is only valuable when
+ * the visitor lands on a subdomain on the platform apex AND later
+ * converts on the platform apex itself — a narrow case.
+ *
+ * Long-term cleanup: move this into the platform middleware so cookies
+ * are set on the response object directly, where Next.js permits it.
+ */
 export async function setAttributionCookie(resellerId: string): Promise<void> {
   if (!resellerId) return
-  const store = await cookies()
-  // Don't overwrite an existing attribution if present. First-touch wins —
-  // matches how most affiliate networks handle repeat visitors to avoid
-  // credit-war churn between two resellers.
-  if (store.get(ATTRIBUTION_COOKIE)?.value) return
 
-  store.set({
-    name: ATTRIBUTION_COOKIE,
-    value: resellerId,
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
-    maxAge: ATTRIBUTION_TTL_DAYS * 24 * 60 * 60,
-    // No `domain` — default scopes to the apex the visitor is on. On a
-    // custom domain the cookie doesn't leak; on the platform apex it
-    // travels across subdomains naturally.
-  })
+  try {
+    const store = await cookies()
+    // Don't overwrite an existing attribution if present. First-touch wins —
+    // matches how most affiliate networks handle repeat visitors to avoid
+    // credit-war churn between two resellers.
+    if (store.get(ATTRIBUTION_COOKIE)?.value) return
+
+    store.set({
+      name: ATTRIBUTION_COOKIE,
+      value: resellerId,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: ATTRIBUTION_TTL_DAYS * 24 * 60 * 60,
+      // No `domain` — default scopes to the apex the visitor is on. On a
+      // custom domain the cookie doesn't leak; on the platform apex it
+      // travels across subdomains naturally.
+    })
+  } catch (err) {
+    // In Next.js 16, calling cookies().set() from a Server Component
+    // throws. Tenant layouts are Server Components, so this branch is
+    // hit on every tenant page render. Log + continue — the alternative
+    // (re-throwing) crashes the whole landing page with a generic
+    // "Something went wrong" for first-time visitors.
+    if (process.env.NODE_ENV !== "production") {
+      console.warn(
+        "[attribution] cookies().set failed in tenant layout — non-fatal",
+        err instanceof Error ? err.message : err,
+      )
+    }
+  }
 }
 
 /** Read the attribution cookie. Returns null if absent. */
