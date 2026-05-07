@@ -74,12 +74,22 @@ export function EditDealInlineForm({ dealId, defaults }: EditDealInlineFormProps
   if (!editing) {
     return (
       <div className="space-y-3">
-        <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-3">
           {defaults.value > 0 && (
             <Field label="Value" value={`$${defaults.value.toLocaleString()}`} />
           )}
           {defaults.industry && <Field label="Industry" value={defaults.industry} />}
-          {defaults.website && <Field label="Website" value={defaults.website} />}
+          {defaults.website && (
+            <Field
+              label="Website"
+              value={defaults.website}
+              href={
+                defaults.website.startsWith("http")
+                  ? defaults.website
+                  : `https://${defaults.website}`
+              }
+            />
+          )}
           {defaults.notes && <Field label="Notes" value={defaults.notes} span />}
           {defaults.tags.length > 0 && (
             <div className="col-span-2">
@@ -210,11 +220,39 @@ export function EditDealInlineForm({ dealId, defaults }: EditDealInlineFormProps
   )
 }
 
-function Field({ label, value, span }: { label: string; value: string; span?: boolean }) {
+function Field({
+  label,
+  value,
+  span,
+  href,
+}: {
+  label: string
+  value: string
+  span?: boolean
+  href?: string
+}) {
+  // Strip leading protocol so the displayed text is shorter and cleaner; the
+  // underlying href still uses the full URL so links resolve correctly.
+  const displayValue = href ? value.replace(/^https?:\/\//, "").replace(/\/$/, "") : value
+
   return (
-    <div className={span ? "col-span-2" : ""}>
+    <div className={`min-w-0 ${span ? "col-span-2" : ""}`}>
       <p className="text-[10px] text-muted-foreground/60 uppercase tracking-wider">{label}</p>
-      <p className="text-sm text-foreground mt-0.5 leading-relaxed">{value}</p>
+      {href ? (
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          title={value}
+          className="block text-sm text-primary hover:underline mt-0.5 leading-relaxed truncate"
+        >
+          {displayValue}
+        </a>
+      ) : (
+        <p className="text-sm text-foreground mt-0.5 leading-relaxed break-words">
+          {displayValue}
+        </p>
+      )}
     </div>
   )
 }

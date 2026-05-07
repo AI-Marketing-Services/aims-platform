@@ -2,6 +2,8 @@
 
 import { useState } from "react"
 import { Bot, Send, Sparkles, AlertCircle, Copy, Check } from "lucide-react"
+import ReactMarkdown from "react-markdown"
+import remarkGfm from "remark-gfm"
 
 interface Props {
   dealId: string
@@ -157,10 +159,18 @@ export function DealAssistantWidget({ dealId, presets = DEFAULT_PRESETS }: Props
               className={
                 m.role === "operator"
                   ? "ml-auto max-w-[85%] rounded-xl bg-primary/10 text-foreground px-3 py-2 text-sm"
-                  : "max-w-[95%] rounded-xl bg-muted/40 text-foreground px-3 py-2 text-sm relative group"
+                  : "max-w-[95%] rounded-xl bg-muted/40 text-foreground px-3 py-2 pr-8 text-sm relative group"
               }
             >
-              <p className="whitespace-pre-wrap">{m.text}</p>
+              {m.role === "operator" ? (
+                <p className="whitespace-pre-wrap">{m.text}</p>
+              ) : (
+                <div className="prose prose-sm max-w-none text-foreground prose-headings:text-foreground prose-headings:font-semibold prose-h1:text-base prose-h1:mt-2 prose-h1:mb-1.5 prose-h2:text-sm prose-h2:mt-2 prose-h2:mb-1 prose-h3:text-[13px] prose-h3:mt-1.5 prose-h3:mb-1 prose-p:my-1.5 prose-p:leading-relaxed prose-strong:text-foreground prose-strong:font-semibold prose-ul:my-1.5 prose-ul:pl-4 prose-ol:my-1.5 prose-ol:pl-4 prose-li:my-0.5 prose-li:marker:text-muted-foreground prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-code:text-primary prose-code:bg-primary/10 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:text-[12px] prose-code:before:content-none prose-code:after:content-none prose-hr:my-3 prose-hr:border-border">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {m.text}
+                  </ReactMarkdown>
+                </div>
+              )}
               {m.role === "assistant" && (
                 <button
                   type="button"
