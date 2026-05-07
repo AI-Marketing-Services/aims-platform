@@ -11,6 +11,18 @@ export function escapeHtml(str: string): string {
     .replace(/'/g, "&#039;")
 }
 
+/**
+ * Strip CRLF + control chars from values that flow into email "header-ish"
+ * surfaces (subject, preheader, From display name). Email-client subject
+ * parsing is sensitive to embedded newlines — a multi-line `name` field
+ * can corrupt rendering or, in worst case with non-Resend transports,
+ * enable RFC 5322 header injection. Resend's SDK escapes most of this,
+ * but defense-in-depth: never let user-controlled CRLF reach a header.
+ */
+export function sanitizeHeaderText(str: string): string {
+  return str.replace(/[\r\n\t]+/g, " ").trim()
+}
+
 export function getResend() {
   if (!process.env.RESEND_API_KEY || process.env.RESEND_API_KEY === "re_placeholder") {
     logger.warn("RESEND_API_KEY is not configured - emails will not be delivered")
@@ -288,13 +300,14 @@ export async function sendWelcomeEmail(params: {
     ${divider()}
     ${p(`Need help? Just reply to this email - we typically respond within 2 business hours.`)}
   `
+  const headerService = sanitizeHeaderText(params.serviceName)
   return sendTrackedEmail({
     from: FROM_EMAIL,
     to: params.to,
     replyTo: REPLY_TO,
-    // Subject is plain text — no HTML escape needed but raw user input would
-    // still be ugly. Use the safe variant for consistency.
-    subject: `Welcome to AIMS - Your ${params.serviceName} is live`,
+    // Subject is plain text — sanitize to strip CRLF that would corrupt
+    // header parsing if a malicious tier/serviceName ever leaked through.
+    subject: `Welcome to AIMS - Your ${headerService} is live`,
     html: emailLayout(body, `Your ${safeService} is now active. Here's what to expect.`),
     templateKey: "welcome.paid-subscription",
   })
@@ -378,12 +391,17 @@ export async function sendFulfillmentAssignment(params: {
     ${btn("Open Admin Portal →", "https://www.aioperatorcollective.com/admin")}
     ${p("Check the admin portal for setup tasks and the fulfillment checklist.")}
   `
+  // Header-text fields (subject + preheader) get the plain-text sanitizer.
+  // escapeHtml() is for HTML body — subject is plain text and embedded
+  // newlines from form data would corrupt header parsing.
+  const headerClient = sanitizeHeaderText(params.clientName)
+  const headerService = sanitizeHeaderText(params.serviceName)
   return sendTrackedEmail({
     from: FROM_EMAIL,
     to: params.to,
     replyTo: REPLY_TO,
-    subject: `New client: ${params.clientName} - ${params.serviceName}`,
-    html: emailLayout(body, `New fulfillment: ${params.clientName} signed up for ${params.serviceName}.`),
+    subject: `New client: ${headerClient} - ${headerService}`,
+    html: emailLayout(body, `New fulfillment: ${headerClient} signed up for ${headerService}.`),
     templateKey: "ops.fulfillment-assignment",
   })
 }
@@ -449,12 +467,13 @@ export async function sendCancellationEmail(params: {
       </tr>
     </table>
   `
+  const headerServiceC = sanitizeHeaderText(params.serviceName)
   return sendTrackedEmail({
     from: FROM_EMAIL,
     to: params.to,
     replyTo: REPLY_TO,
-    subject: `Your ${params.serviceName} subscription has been cancelled`,
-    html: emailLayout(body, `Your ${params.serviceName} subscription has been cancelled.`, params.to),
+    subject: `Your ${headerServiceC} subscription has been cancelled`,
+    html: emailLayout(body, `Your ${headerServiceC} subscription has been cancelled.`, params.to),
     templateKey: "lifecycle.cancellation",
   })
 }
@@ -488,12 +507,13 @@ export async function sendRenewalEmail(params: {
     ${divider()}
     ${p("Thank you for continuing to grow with AIMS. If you have questions about your account or want to explore additional services, reply to this email any time.")}
   `
+  const headerServiceR = sanitizeHeaderText(params.serviceName)
   return sendTrackedEmail({
     from: FROM_EMAIL,
     to: params.to,
     replyTo: REPLY_TO,
-    subject: `Payment confirmed - ${params.serviceName} renewed`,
-    html: emailLayout(body, `Your $${params.amount}/mo ${params.serviceName} subscription has been renewed.`, params.to),
+    subject: `Payment confirmed - ${headerServiceR} renewed`,
+    html: emailLayout(body, `Your $${params.amount}/mo ${headerServiceR} subscription has been renewed.`, params.to),
     templateKey: "lifecycle.renewal",
   })
 }
@@ -519,12 +539,13 @@ export async function sendPaymentFailedEmail(params: {
     ${params.retryDate ? p(`We'll automatically retry your payment on <strong>${params.retryDate.toLocaleDateString("en-US", { month: "long", day: "numeric" })}</strong>. Update your payment details before then to avoid any disruption.`) : ""}
     ${p("Need help? Reply to this email and we'll sort it out immediately.")}
   `
+  const headerServicePF = sanitizeHeaderText(params.serviceName)
   return sendTrackedEmail({
     from: FROM_EMAIL,
     to: params.to,
     replyTo: REPLY_TO,
-    subject: `Action required: Payment failed for ${params.serviceName}`,
-    html: emailLayout(body, `Your payment of $${params.amount} for ${params.serviceName} failed. Action required.`, params.to),
+    subject: `Action required: Payment failed for ${headerServicePF}`,
+    html: emailLayout(body, `Your payment of $${params.amount} for ${headerServicePF} failed. Action required.`, params.to),
     templateKey: "lifecycle.payment-failed",
   })
 }

@@ -23,8 +23,14 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   }
 
-  // Block in production - ALLOW_SIMULATE must never be set in prod env vars
-  if (process.env.NODE_ENV === "production") {
+  // Block ONLY in real production. Vercel sets NODE_ENV=production for both
+  // Production AND Preview, so a NODE_ENV-only check would also block
+  // preview demos where simulation is wanted. VERCEL_ENV is the stable
+  // production-only signal; falls back to NODE_ENV for local dev.
+  const isProduction =
+    process.env.VERCEL_ENV === "production" ||
+    (process.env.VERCEL_ENV == null && process.env.NODE_ENV === "production")
+  if (isProduction) {
     return NextResponse.json({ error: "Simulation disabled in production" }, { status: 403 })
   }
 

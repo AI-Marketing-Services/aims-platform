@@ -11,11 +11,12 @@ export const dynamic = "force-dynamic"
 const upsertSchema = z.object({
   // Subject is plain text — strip control chars + CRLF to prevent header injection
   // and keep it on one line. Length cap is generous; Gmail truncates ~75 anyway.
+  // Validate AFTER the transform so a string of only whitespace/control chars
+  // (e.g. "\r\n\t") doesn't pass .min(1) only to land in the DB as empty.
   subject: z
     .string()
-    .min(1)
-    .max(300)
-    .transform((s) => s.replace(/[\r\n\t]+/g, " ").trim()),
+    .transform((s) => s.replace(/[\r\n\t]+/g, " ").trim())
+    .pipe(z.string().min(1).max(300)),
   html: z.string().min(1).max(200_000),
   note: z.string().max(500).optional(),
 })

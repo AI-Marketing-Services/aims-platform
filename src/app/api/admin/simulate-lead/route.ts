@@ -15,7 +15,16 @@ export async function POST(req: Request) {
   // Mirror simulate-purchase: never allow synthetic data writes in production.
   // Without this guard, a compromised admin session could spam fake leads
   // into prod CRM, fire notifyHotLead alerts, and pollute funnel analytics.
-  if (process.env.NODE_ENV === "production") {
+  //
+  // Use VERCEL_ENV (not NODE_ENV) — Vercel sets NODE_ENV=production for both
+  // Production and Preview deploys, so a NODE_ENV check would also block
+  // Preview demos where we DO want to simulate. VERCEL_ENV is the stable
+  // production-only signal. Falls back to NODE_ENV for local dev where
+  // VERCEL_ENV is unset.
+  const isProduction =
+    process.env.VERCEL_ENV === "production" ||
+    (process.env.VERCEL_ENV == null && process.env.NODE_ENV === "production")
+  if (isProduction) {
     return NextResponse.json(
       { error: "simulate-lead is disabled in production" },
       { status: 403 },

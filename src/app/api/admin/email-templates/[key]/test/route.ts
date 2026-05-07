@@ -65,7 +65,13 @@ export async function POST(
   // crafted phishing HTML from our verified Resend domain to any external
   // recipient — abusing our deliverability reputation.
   const me = await currentUser()
-  const adminEmail = me?.emailAddresses?.[0]?.emailAddress ?? ""
+  // Use primaryEmailAddress — emailAddresses[0] points to whichever email
+  // was added first, which may not be the user's primary inbox if they
+  // changed it later. primaryEmailAddress is the stable canonical reference.
+  const adminEmail =
+    me?.primaryEmailAddress?.emailAddress ??
+    me?.emailAddresses?.[0]?.emailAddress ??
+    ""
   if (!adminEmail) {
     return NextResponse.json(
       { error: "Could not resolve your Clerk email — re-sign-in and retry." },
