@@ -140,6 +140,9 @@ model OperatorSite {
   updatedAt            DateTime @updatedAt
   user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  // Whitelabel lead-magnet submissions attributed to this operator site.
+  leadSubmissions      LeadMagnetSubmission[] @relation("OperatorSubmissions")
+
   @@index([subdomain])
   @@index([customDomain])
 }
@@ -511,6 +514,16 @@ model LeadMagnetSubmission {
   userId String?
   user   User?   @relation(fields: [userId], references: [id])
 
+  // Whitelabel attribution: when an operator drives a prospect to a tool
+  // hosted on their subdomain or custom domain, the resulting submission
+  // is tagged with that operator's site id. The auto-created Deal is
+  // routed into THEIR pipeline (operatorUserId) rather than the platform's.
+  operatorId     String?
+  operatorSite   OperatorSite? @relation("OperatorSubmissions", fields: [operatorId], references: [id], onDelete: SetNull)
+  // Cached for fast queries on the operator's own dashboard without
+  // joining through OperatorSite. Populated by the submit endpoint.
+  operatorUserId String?
+
   type    LeadMagnetType
   email   String
   name    String?
@@ -520,7 +533,7 @@ model LeadMagnetSubmission {
   results Json?
   score   Float?
 
-  source      String?
+  source      String? // "platform" | "owned-domain" | "outbound" | tool slug
   utmSource   String?
   utmMedium   String?
   utmCampaign String?
@@ -535,6 +548,8 @@ model LeadMagnetSubmission {
   @@index([type])
   @@index([email])
   @@index([createdAt])
+  @@index([operatorId])
+  @@index([operatorUserId])
 }
 
 enum LeadMagnetType {

@@ -79,6 +79,7 @@ const PORTAL_NAV: readonly NavItem[] = [
   { label: "Client CRM", href: "/portal/crm", icon: Briefcase, gate: "crm" },
   { label: "Lead Scout", href: "/portal/crm/scout", icon: MapPin, gate: "lead_scout" },
   { label: "AI Audit", href: "/portal/audits", icon: ClipboardCheck, gate: "audits" },
+  { label: "Lead Magnets", href: "/portal/lead-magnets", icon: FileText, gate: "audits" },
   { label: "Email Sequences", href: "/portal/sequences", icon: Send },
   { label: "Booking Page", href: "/portal/booking", icon: CalendarDays },
   { label: "Discovery Recorder", href: "/portal/recordings", icon: Mic },

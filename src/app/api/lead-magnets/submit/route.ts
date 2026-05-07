@@ -8,6 +8,8 @@ import { sendQuizResultsEmail, sendCalculatorResultsEmail, sendAuditResultsEmail
 import { db } from "@/lib/db"
 import { notifyNewLead, notify } from "@/lib/notifications"
 import { getValidatedAttributionResellerId } from "@/lib/tenant/attribution"
+import { resolveOperatorFromRequest } from "@/lib/tenant/resolve-operator"
+import { buildBrandedSubmissionPDF } from "@/lib/pdf/branded"
 import { createCloseLead } from "@/lib/close"
 import { logger } from "@/lib/logger"
 
@@ -34,6 +36,11 @@ const submitSchema = z.object({
   utmSource: z.string().optional(),
   utmMedium: z.string().optional(),
   utmCampaign: z.string().optional(),
+  // Whitelabel override: when an operator embeds the form on a third-party
+  // page (or wires an outbound prospecting funnel) they can pass their
+  // subdomain to claim the lead. Server still validates against an
+  // OperatorSite row before trusting it.
+  operatorSlug: z.string().min(1).max(63).optional(),
 })
 
 // Map quiz score → lead tier and priority
@@ -113,7 +120,28 @@ export async function POST(req: Request) {
       )
     }
 
-    const submission = await createLeadMagnetSubmission(parsed.data)
+    // Resolve operator FIRST so we can attribute both the submission
+    // and the auto-created Deal to the correct pipeline. Reads the
+    // request hostname / origin / explicit slug — never throws.
+    const operator = await resolveOperatorFromRequest(req, {
+      operatorSlug: parsed.data.operatorSlug ?? null,
+    })
+
+    // Tag the source so analytics can split platform vs operator funnels.
+    // Operator submissions on their own domain get "owned-domain"; explicit
+    // header/body overrides come from outbound or embedded funnels.
+    const sourceTag = operator
+      ? operator.via === "explicit"
+        ? "outbound"
+        : "owned-domain"
+      : parsed.data.source ?? "platform"
+
+    const submission = await createLeadMagnetSubmission({
+      ...parsed.data,
+      operatorId: operator?.operatorId ?? null,
+      operatorUserId: operator?.operatorUserId ?? null,
+      source: sourceTag,
+    })
 
     const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.aioperatorcollective.com"
     const typeSlug = parsed.data.type.toLowerCase().replace(/_/g, "-")
@@ -122,19 +150,36 @@ export async function POST(req: Request) {
     const { score, tier, priority, reason } = scoreToTier(parsed.data.score, parsed.data.type)
 
     // Attribution fallback: was this visitor driven here by a reseller?
-    const referringResellerId = await getValidatedAttributionResellerId(db)
+    // Skipped when we already resolved an operator from the host —
+    // the host-based attribution wins because it's deterministic and
+    // not subject to cookie loss across cross-site iframes.
+    const referringResellerId = operator
+      ? null
+      : await getValidatedAttributionResellerId(db)
 
-    // Auto-create Deal with scoring
+    // Auto-create the platform Deal (master record for admin reporting).
+    // referringResellerId attribution still flows here so the platform
+    // can report on operator-driven volume centrally.
     const deal = await db.deal.create({
       data: {
         contactName: parsed.data.name ?? parsed.data.email.split("@")[0],
         contactEmail: parsed.data.email,
         company: parsed.data.company,
         phone: parsed.data.phone,
-        referringResellerId,
+        referringResellerId: operator?.operatorUserId ?? referringResellerId,
         source: typeSlug,
-        sourceDetail: `Score: ${score}/100 (${tier}). ${reason}${referringResellerId ? " [attributed via cookie]" : ""}`,
-        channelTag: referringResellerId ? "reseller" : (parsed.data.utmSource ?? "organic"),
+        sourceDetail: `Score: ${score}/100 (${tier}). ${reason}${
+          operator
+            ? ` [operator: ${operator.subdomain} via ${operator.via}]`
+            : referringResellerId
+              ? " [attributed via cookie]"
+              : ""
+        }`,
+        channelTag: operator
+          ? "whitelabel"
+          : referringResellerId
+            ? "reseller"
+            : (parsed.data.utmSource ?? "organic"),
         utmSource: parsed.data.utmSource,
         utmMedium: parsed.data.utmMedium,
         utmCampaign: parsed.data.utmCampaign,
@@ -152,6 +197,34 @@ export async function POST(req: Request) {
         },
       },
     }).catch((e) => { logger.error("Failed to create deal from lead magnet", e); return null })
+
+    // When an operator owns this funnel, ALSO create a ClientDeal under
+    // their userId so the lead is immediately visible in their CRM.
+    // Best-effort: failures don't block the platform Deal flow.
+    if (operator) {
+      await db.clientDeal.create({
+        data: {
+          userId: operator.operatorUserId,
+          companyName: parsed.data.company ?? parsed.data.email.split("@")[1] ?? parsed.data.email,
+          contactName: parsed.data.name ?? parsed.data.email.split("@")[0],
+          contactEmail: parsed.data.email,
+          contactPhone: parsed.data.phone,
+          source: `audit:${typeSlug}`,
+          notes: `Captured via ${operator.via === "explicit" ? "outbound funnel" : `whitelabel site (${operator.subdomain})`}. Score: ${score}/100 (${tier}). ${reason}`,
+          leadScore: score,
+          tags: [`audit:${typeSlug}`, tier === "hot" ? "hot" : tier === "warm" ? "warm" : "cold"],
+          stage: "PROSPECT",
+          activities: {
+            create: {
+              type: "STAGE_CHANGE",
+              description: `Captured via ${typeSlug} (${operator.via}). ${reason}`,
+            },
+          },
+        },
+      }).catch((e) =>
+        logger.error("Failed to create operator ClientDeal from lead magnet", e),
+      )
+    }
 
     if (deal) {
       // Link submission to deal
@@ -211,7 +284,23 @@ export async function POST(req: Request) {
       ? `${appUrl}/tools/${typeSlug}/results/${submission.id}`
       : `${appUrl}/tools/${typeSlug}`
 
-    // Send type-specific results email for quiz/calculator/audit, generic for others
+    // Build a branded PDF attachment when a template exists for this
+    // submission type. For Phase 1 we only ship Website Audit; other
+    // tools fall through to email-only until their templates land.
+    // Falls back to default AIOC tokens when no operator owns the
+    // submission, so platform funnels still get a polished asset.
+    const pdfAttachment = await buildBrandedSubmissionPDF({
+      type: parsed.data.type,
+      operatorUserId: operator?.operatorUserId ?? null,
+      submissionData: parsed.data.data as Record<string, unknown>,
+      submissionResults: parsed.data.results as Record<string, unknown> | undefined,
+      score: parsed.data.score,
+      recipientName: parsed.data.name ?? null,
+    })
+
+    // Send type-specific results email for quiz/calculator/audit, generic for others.
+    // Branded PDF (when generated) is attached only to senders whose template
+    // expects one — Phase 1 = Website Audit. Other senders ignore attachments.
     const detailedEmailParams = {
       to: parsed.data.email,
       name: parsed.data.name ?? "",
@@ -233,7 +322,10 @@ export async function POST(req: Request) {
         )
         break
       case "WEBSITE_AUDIT":
-        await sendAuditResultsEmail(detailedEmailParams).catch(
+        await sendAuditResultsEmail({
+          ...detailedEmailParams,
+          attachments: pdfAttachment ? [pdfAttachment] : undefined,
+        }).catch(
           (err) => logger.error("Failed to send audit results email", err)
         )
         break

@@ -181,6 +181,8 @@ export async function sendAuditResultsEmail(params: {
   resultsUrl: string
   data: Record<string, unknown>
   results: Record<string, unknown> | undefined
+  /** Optional branded PDF — attached when an operator owns this funnel. */
+  attachments?: Array<{ filename: string; content: Buffer }>
 }) {
   const score = params.score ?? 50
   const strategyUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://www.aioperatorcollective.com"}/get-started`
@@ -215,6 +217,7 @@ export async function sendAuditResultsEmail(params: {
     html: emailLayout(body, `Your website scored ${score}/100. Here are the fixes that matter most.`),
     serviceArm: "lead-magnet",
     templateKey: "lead-magnet.website-audit",
+    attachments: params.attachments,
   })
 }
 
