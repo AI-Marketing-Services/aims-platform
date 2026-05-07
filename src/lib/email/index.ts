@@ -34,10 +34,19 @@ export async function sendTrackedEmail(
 ) {
   const { serviceArm, clientId, templateKey, ...emailParams } = params
 
+  // Dry-run short-circuit. When the admin editor renders a template
+  // preview, it wraps the send call in `withDryRun(...)`. We capture
+  // the rendered subject + html and skip Resend entirely so previews
+  // are zero-cost and zero-side-effect.
+  const { isDryRun, shouldSkipOverride, captureDryRun } = await import(
+    "./dry-run"
+  )
+
   // Admin override hook — best-effort, falls back to defaults on any
   // DB hiccup so a broken override layer never blocks an outgoing
-  // email.
-  if (templateKey) {
+  // email. In dry-run we honour `skipOverride` so the editor can
+  // render the pristine code default for its baseline.
+  if (templateKey && !(isDryRun() && shouldSkipOverride())) {
     try {
       const { applyTemplateOverride } = await import("./overrides")
       Object.assign(
@@ -52,6 +61,19 @@ export async function sendTrackedEmail(
         templateKey,
       })
     }
+  }
+
+  if (isDryRun()) {
+    captureDryRun({
+      subject: emailParams.subject as string | undefined,
+      html: emailParams.html as string | undefined,
+      to: emailParams.to as string | string[] | undefined,
+      from: emailParams.from as string | undefined,
+      templateKey,
+    })
+    return { data: { id: "dry-run" }, error: null } as Awaited<
+      ReturnType<ReturnType<typeof getResend>["emails"]["send"]>
+    >
   }
 
   const to = Array.isArray(emailParams.to) ? emailParams.to[0] : emailParams.to

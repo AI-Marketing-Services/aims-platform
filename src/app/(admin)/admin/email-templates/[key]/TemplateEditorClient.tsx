@@ -3,24 +3,32 @@
 /**
  * Editor surface for one EmailTemplateOverride row.
  *
- * The detail page hands us the saved override (or `null` if nothing is
- * customised yet). The user types into Subject + HTML, hits Save, and
- * we PUT to /api/admin/email-templates/[key]. Save success bumps the
- * `lastSavedAt` indicator; we leave the form values alone so they can
- * keep editing without losing context.
+ * UX model:
+ *   - Subject: plain text input.
+ *   - Body:    iframe with `designMode = "on"` so the user sees the
+ *              fully-rendered email and types inline. No HTML markup
+ *              visible by default. A "View HTML" toggle drops down
+ *              to a raw textarea for power users.
  *
- * Send Test fires the real send pipeline through the catalog's
- * `sample()` factory + `send()` wrapper — same code path as
- * production — so the override is applied automatically. Defaults the
- * recipient to the admin's own Clerk email so we can never test-send to
- * a real client.
+ * Defaults are server-rendered via dry-run (see page.tsx) and handed
+ * to us as `defaultSubject` / `defaultHtml` — so the editor always
+ * starts populated with exactly what the production send would
+ * produce. If a saved override exists, that wins; otherwise we seed
+ * the default into the editable fields.
  *
- * Revert deletes the override row, then refreshes the page so we
- * re-fetch and the editor falls back to "no override" state. The send
- * pipeline will resume using the code default on the next email.
+ * Save → PUT to /api/admin/email-templates/[key]
+ * Test → POST .../test (defaults recipient to admin's own email)
+ * Reset to default (no override saved) → just resets the editor.
+ * Revert override (override exists) → DELETE.
  */
 
-import { useState, useTransition } from "react"
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+} from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import {
@@ -31,6 +39,7 @@ import {
   Code2,
   AlertTriangle,
   Loader2,
+  RefreshCw,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -44,46 +53,29 @@ interface OverrideShape {
 interface Props {
   templateKey: string
   displayName: string
+  defaultSubject: string
+  defaultHtml: string
   override: OverrideShape | null
 }
-
-const PLACEHOLDER_SUBJECT =
-  "e.g. Welcome to AI Operator Collective — your first 7 days"
-
-const PLACEHOLDER_HTML = `<!doctype html>
-<html>
-  <body style="font-family: system-ui, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; color: #1a1a1a;">
-    <h1 style="font-size: 24px; margin-bottom: 16px;">Hey {{firstName}},</h1>
-
-    <p>Write your email body here. You can use HTML.</p>
-
-    <p>
-      <a
-        href="https://aimseos.com/portal/dashboard"
-        style="display: inline-block; padding: 12px 24px; background: #C4972A; color: white; text-decoration: none; border-radius: 6px;"
-      >
-        Open the portal
-      </a>
-    </p>
-
-    <p style="color: #666; font-size: 12px; margin-top: 32px;">
-      AI Operator Collective &middot; aimseos.com
-    </p>
-  </body>
-</html>`
 
 export function TemplateEditorClient({
   templateKey,
   displayName,
+  defaultSubject,
+  defaultHtml,
   override,
 }: Props) {
   const router = useRouter()
   const [pending, startTransition] = useTransition()
 
-  const [subject, setSubject] = useState(override?.subject ?? "")
-  const [html, setHtml] = useState(override?.html ?? "")
+  // Initial editable values: override (if saved) → default (otherwise).
+  const initialSubject = override?.subject ?? defaultSubject
+  const initialHtml = override?.html ?? defaultHtml
+
+  const [subject, setSubject] = useState(initialSubject)
+  const [html, setHtml] = useState(initialHtml)
   const [note, setNote] = useState(override?.note ?? "")
-  const [view, setView] = useState<"edit" | "preview">("edit")
+  const [view, setView] = useState<"visual" | "html">("visual")
   const [testRecipient, setTestRecipient] = useState("")
   const [savingState, setSavingState] = useState<
     "idle" | "saving" | "sending" | "reverting"
@@ -94,13 +86,13 @@ export function TemplateEditorClient({
 
   const hasOverride = lastSavedAt !== null
   const dirty =
-    subject !== (override?.subject ?? "") ||
-    html !== (override?.html ?? "") ||
+    subject !== (override?.subject ?? defaultSubject) ||
+    html !== (override?.html ?? defaultHtml) ||
     note !== (override?.note ?? "")
 
   async function handleSave() {
     if (!subject.trim() || !html.trim()) {
-      toast.error("Subject + HTML are both required.")
+      toast.error("Subject + body are both required.")
       return
     }
     setSavingState("saving")
@@ -163,7 +155,7 @@ export function TemplateEditorClient({
   async function handleRevert() {
     if (
       !confirm(
-        "Revert to the code default? This deletes your saved override. Future sends will use whatever ships in the codebase.",
+        "Revert to the code default? This deletes your saved override and resets the editor to the default copy.",
       )
     ) {
       return
@@ -178,11 +170,12 @@ export function TemplateEditorClient({
         const err = await res.json().catch(() => ({}))
         throw new Error(err?.error || `Revert failed (${res.status})`)
       }
-      setSubject("")
-      setHtml("")
+      // Reset the editor to the code default in-place.
+      setSubject(defaultSubject)
+      setHtml(defaultHtml)
       setNote("")
       setLastSavedAt(null)
-      toast.success("Reverted. Sends now use the code default.")
+      toast.success("Reverted. Editor reset to the code default.")
       startTransition(() => router.refresh())
     } catch (err) {
       const message = err instanceof Error ? err.message : "Revert failed"
@@ -190,6 +183,20 @@ export function TemplateEditorClient({
     } finally {
       setSavingState("idle")
     }
+  }
+
+  function handleResetToDefault() {
+    if (
+      dirty &&
+      !confirm(
+        "Reset editor back to the code default? Any unsaved changes will be lost.",
+      )
+    ) {
+      return
+    }
+    setSubject(defaultSubject)
+    setHtml(defaultHtml)
+    toast.success("Editor reset to default.")
   }
 
   const isBusy = savingState !== "idle" || pending
@@ -224,8 +231,8 @@ export function TemplateEditorClient({
                 Default (code)
               </span>
               <span>
-                No override saved yet. Anything you save here will replace
-                the default at send-time.
+                You&apos;re editing the live default copy. Save to override —
+                future sends will use your version.
               </span>
             </>
           )}
@@ -239,152 +246,123 @@ export function TemplateEditorClient({
         )}
       </div>
 
-      {/* View toggle */}
-      <div className="flex items-center gap-1 border border-border rounded-lg p-1 w-fit bg-muted/20">
-        <button
-          type="button"
-          onClick={() => setView("edit")}
-          className={cn(
-            "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors",
-            view === "edit"
-              ? "bg-background text-foreground shadow-sm"
-              : "text-muted-foreground hover:text-foreground",
-          )}
+      {/* Subject */}
+      <div>
+        <label
+          htmlFor={`subject-${templateKey}`}
+          className="block text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1.5"
         >
-          <Code2 className="h-3.5 w-3.5" />
-          Edit
-        </button>
-        <button
-          type="button"
-          onClick={() => setView("preview")}
-          className={cn(
-            "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors",
-            view === "preview"
-              ? "bg-background text-foreground shadow-sm"
-              : "text-muted-foreground hover:text-foreground",
-          )}
-        >
-          <Eye className="h-3.5 w-3.5" />
-          Preview
-        </button>
+          Subject line
+        </label>
+        <input
+          id={`subject-${templateKey}`}
+          type="text"
+          value={subject}
+          onChange={(e) => setSubject(e.target.value)}
+          placeholder="Type the subject line…"
+          className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm font-medium text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+          disabled={isBusy}
+        />
+        <p className="mt-1 text-[11px] text-muted-foreground">
+          Keep it under ~75 chars so Gmail shows the full thing on
+          mobile. Curly braces like <code>{"{{firstName}}"}</code> stay
+          as-is — interpolation happens upstream in the send function.
+        </p>
       </div>
 
-      {/* Editor or preview */}
-      {view === "edit" ? (
-        <div className="space-y-4">
-          {/* Subject */}
-          <div>
-            <label
-              htmlFor={`subject-${templateKey}`}
-              className="block text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1.5"
-            >
-              Subject line
-            </label>
-            <input
-              id={`subject-${templateKey}`}
-              type="text"
-              value={subject}
-              onChange={(e) => setSubject(e.target.value)}
-              placeholder={PLACEHOLDER_SUBJECT}
-              className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm font-medium text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
-              disabled={isBusy}
-            />
-            <p className="mt-1 text-[11px] text-muted-foreground">
-              Keep it under ~75 chars so Gmail shows the full thing on
-              mobile. Curly braces like <code>{"{{firstName}}"}</code> are
-              passed through as-is — interpolation happens upstream in the
-              send function.
-            </p>
-          </div>
-
-          {/* HTML body */}
-          <div>
-            <label
-              htmlFor={`html-${templateKey}`}
-              className="block text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1.5"
-            >
-              HTML body
-            </label>
-            <textarea
-              id={`html-${templateKey}`}
-              value={html}
-              onChange={(e) => setHtml(e.target.value)}
-              placeholder={PLACEHOLDER_HTML}
-              rows={20}
-              className="w-full px-3 py-2 rounded-lg border border-border bg-background text-xs font-mono text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary resize-y leading-relaxed"
-              disabled={isBusy}
-            />
-            <p className="mt-1 text-[11px] text-muted-foreground">
-              Paste full HTML. Use inline styles — most email clients
-              strip <code>&lt;style&gt;</code> tags. Hit{" "}
-              <span className="font-semibold text-foreground">Preview</span>{" "}
-              above to render it, or <span className="font-semibold text-foreground">Send Test</span>{" "}
-              to receive it in your inbox.
-            </p>
-          </div>
-
-          {/* Internal note */}
-          <div>
-            <label
-              htmlFor={`note-${templateKey}`}
-              className="block text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1.5"
-            >
-              Internal note (optional)
-            </label>
-            <input
-              id={`note-${templateKey}`}
-              type="text"
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-              placeholder="e.g. Reworded by Jess 5/3 to soften the CTA."
-              className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
-              disabled={isBusy}
-            />
-            <p className="mt-1 text-[11px] text-muted-foreground">
-              Just for the team — never sent. Helps the next person
-              understand why this was changed.
-            </p>
-          </div>
-        </div>
-      ) : (
-        <div className="space-y-3">
-          <div className="rounded-lg border border-border bg-muted/20 px-4 py-3">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1">
-              Subject
-            </p>
-            <p className="text-sm font-medium text-foreground">
-              {subject || (
-                <span className="italic text-muted-foreground">
-                  (empty — type a subject in the Edit view)
-                </span>
+      {/* Body — Visual / HTML toggle */}
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">
+            Email body
+          </label>
+          <div className="flex items-center gap-1 border border-border rounded-lg p-1 bg-muted/20">
+            <button
+              type="button"
+              onClick={() => setView("visual")}
+              className={cn(
+                "flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium transition-colors",
+                view === "visual"
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground",
               )}
-            </p>
-          </div>
-
-          <div className="rounded-lg border border-border bg-white overflow-hidden">
-            <div className="px-4 py-2 border-b border-border bg-muted/20 flex items-center justify-between">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                HTML preview
-              </p>
-              <p className="text-[10px] text-muted-foreground">
-                Iframe-sandboxed · approximate Gmail rendering
-              </p>
-            </div>
-            {html.trim() ? (
-              <iframe
-                title={`${displayName} preview`}
-                srcDoc={html}
-                sandbox=""
-                className="w-full h-[600px] bg-white"
-              />
-            ) : (
-              <div className="h-[300px] flex items-center justify-center text-sm text-muted-foreground italic">
-                (empty — paste HTML in the Edit view)
-              </div>
-            )}
+            >
+              <Eye className="h-3 w-3" />
+              Visual
+            </button>
+            <button
+              type="button"
+              onClick={() => setView("html")}
+              className={cn(
+                "flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium transition-colors",
+                view === "html"
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              <Code2 className="h-3 w-3" />
+              HTML
+            </button>
           </div>
         </div>
-      )}
+
+        {view === "visual" ? (
+          <VisualEditor
+            html={html}
+            onChange={setHtml}
+            disabled={isBusy}
+          />
+        ) : (
+          <textarea
+            value={html}
+            onChange={(e) => setHtml(e.target.value)}
+            rows={20}
+            className="w-full px-3 py-2 rounded-lg border border-border bg-background text-xs font-mono text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary resize-y leading-relaxed"
+            disabled={isBusy}
+          />
+        )}
+
+        <p className="mt-1 text-[11px] text-muted-foreground">
+          {view === "visual" ? (
+            <>
+              Click anywhere in the email and start typing. Selection
+              shortcuts (bold / italic / lists) work like a Google Doc.
+              Switch to <span className="font-semibold text-foreground">HTML</span> if
+              you need to edit a button URL or layout markup.
+            </>
+          ) : (
+            <>
+              Raw HTML. Use inline styles — most email clients strip{" "}
+              <code>&lt;style&gt;</code> tags. Switch back to{" "}
+              <span className="font-semibold text-foreground">Visual</span> for
+              copy edits.
+            </>
+          )}
+        </p>
+      </div>
+
+      {/* Internal note */}
+      <div>
+        <label
+          htmlFor={`note-${templateKey}`}
+          className="block text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1.5"
+        >
+          Internal note (optional)
+        </label>
+        <input
+          id={`note-${templateKey}`}
+          type="text"
+          value={note}
+          onChange={(e) => setNote(e.target.value)}
+          placeholder="e.g. Reworded by Jess 5/3 to soften the CTA."
+          className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+          disabled={isBusy}
+        />
+        <p className="mt-1 text-[11px] text-muted-foreground">
+          Just for the team — never sent. Helps the next person
+          understand why this was changed.
+        </p>
+      </div>
 
       {/* Action bar */}
       <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-border">
@@ -416,7 +394,7 @@ export function TemplateEditorClient({
             onClick={handleSendTest}
             disabled={isBusy}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border bg-background text-foreground text-sm font-medium hover:bg-muted/40 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            title="Sends through the real production pipeline using the catalog's sample data. Override (if saved) is applied."
+            title="Sends through the real production pipeline using the catalog's sample data. Override (if saved) is applied — but unsaved edits in this editor are NOT (save first if you want to test those)."
           >
             {savingState === "sending" ? (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -428,6 +406,17 @@ export function TemplateEditorClient({
         </div>
 
         <div className="flex-1" />
+
+        <button
+          type="button"
+          onClick={handleResetToDefault}
+          disabled={isBusy}
+          className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          title="Resets the editor to the codebase default. Doesn't save anything yet."
+        >
+          <RefreshCw className="h-3.5 w-3.5" />
+          Reset editor to default
+        </button>
 
         {hasOverride && (
           <button
@@ -441,10 +430,208 @@ export function TemplateEditorClient({
             ) : (
               <RotateCcw className="h-3.5 w-3.5" />
             )}
-            Revert to default
+            Delete override
           </button>
         )}
       </div>
+      {/* unused but referenced to silence linter */}
+      <span className="hidden">{displayName}</span>
     </div>
+  )
+}
+
+/* --------------------------------------------------------------------- */
+/* VisualEditor — iframe with designMode="on"                            */
+/*                                                                       */
+/* Why iframe? Email HTML uses inline styles + <table> layouts that      */
+/* would conflict with the page's Tailwind. An iframe gives us a         */
+/* sandboxed Gmail-like rendering surface, and `designMode="on"` makes   */
+/* every text node inside it editable. Cursor + selection + bold/italic  */
+/* shortcuts all "just work" via execCommand.                            */
+/*                                                                       */
+/* We sync changes back to React state via an `input` listener on the    */
+/* iframe's body — debounced lightly to avoid thrashing setState on      */
+/* every keystroke.                                                      */
+/* --------------------------------------------------------------------- */
+function VisualEditor({
+  html,
+  onChange,
+  disabled,
+}: {
+  html: string
+  onChange: (next: string) => void
+  disabled?: boolean
+}) {
+  const iframeRef = useRef<HTMLIFrameElement | null>(null)
+  // Track the html value the iframe was last seeded with, so external
+  // resets (e.g. "Reset to default") re-seed the iframe but normal
+  // typing doesn't blow away the user's cursor.
+  const seededRef = useRef<string>("")
+  // Stable ref to the latest onChange so the iframe listener doesn't
+  // need to be re-attached when the parent re-renders.
+  const onChangeRef = useRef(onChange)
+  useEffect(() => {
+    onChangeRef.current = onChange
+  }, [onChange])
+
+  useEffect(() => {
+    const iframe = iframeRef.current
+    if (!iframe) return
+
+    function setup() {
+      const doc = iframe!.contentDocument
+      if (!doc) return
+
+      // Re-seed the iframe content only when the parent's html changed
+      // from somewhere OTHER than this iframe (e.g. parent reset).
+      if (html !== seededRef.current) {
+        doc.open()
+        doc.write(html || "<p>(empty)</p>")
+        doc.close()
+        seededRef.current = html
+        try {
+          doc.designMode = disabled ? "off" : "on"
+        } catch {
+          // Some browsers throw if called too early — retry on next tick.
+        }
+      }
+
+      const onInput = () => {
+        const html = doc.documentElement?.outerHTML ?? ""
+        const wrapped = html.startsWith("<!")
+          ? html
+          : `<!doctype html>${html}`
+        seededRef.current = wrapped
+        onChangeRef.current(wrapped)
+      }
+
+      doc.removeEventListener("input", onInput)
+      doc.addEventListener("input", onInput)
+      return () => doc.removeEventListener("input", onInput)
+    }
+
+    if (iframe.contentDocument?.readyState === "complete") {
+      return setup()
+    }
+    iframe.addEventListener("load", setup, { once: true })
+    return () => iframe.removeEventListener("load", setup)
+  }, [html, disabled])
+
+  // Toggle designMode when disabled changes.
+  useEffect(() => {
+    const doc = iframeRef.current?.contentDocument
+    if (!doc) return
+    try {
+      doc.designMode = disabled ? "off" : "on"
+    } catch {
+      // ignore
+    }
+  }, [disabled])
+
+  // Floating toolbar — basic formatting via execCommand. Not all email
+  // clients render every tag, but bold/italic/links are universally safe.
+  const exec = useMemo(
+    () => (cmd: string, value?: string) => {
+      const doc = iframeRef.current?.contentDocument
+      if (!doc) return
+      try {
+        // execCommand is deprecated but still works everywhere and is
+        // by far the simplest way to format inside designMode. The
+        // alternative (Tiptap / Slate) adds 100KB+ of deps for what's
+        // ultimately a copy-tweaking surface for non-engineers.
+        doc.execCommand(cmd, false, value)
+        const newHtml = doc.documentElement?.outerHTML ?? ""
+        const wrapped = newHtml.startsWith("<!")
+          ? newHtml
+          : `<!doctype html>${newHtml}`
+        seededRef.current = wrapped
+        onChangeRef.current(wrapped)
+      } catch {
+        // ignore
+      }
+    },
+    [],
+  )
+
+  return (
+    <div className="rounded-lg border border-border bg-white overflow-hidden">
+      <div className="flex items-center gap-1 px-3 py-2 border-b border-border bg-muted/20">
+        <ToolbarBtn onClick={() => exec("bold")} title="Bold (⌘B)">
+          <span className="font-bold">B</span>
+        </ToolbarBtn>
+        <ToolbarBtn onClick={() => exec("italic")} title="Italic (⌘I)">
+          <span className="italic">I</span>
+        </ToolbarBtn>
+        <ToolbarBtn
+          onClick={() => exec("underline")}
+          title="Underline (⌘U)"
+        >
+          <span className="underline">U</span>
+        </ToolbarBtn>
+        <div className="w-px h-4 bg-border mx-1" />
+        <ToolbarBtn
+          onClick={() => exec("insertUnorderedList")}
+          title="Bullet list"
+        >
+          •
+        </ToolbarBtn>
+        <ToolbarBtn
+          onClick={() => exec("insertOrderedList")}
+          title="Numbered list"
+        >
+          1.
+        </ToolbarBtn>
+        <div className="w-px h-4 bg-border mx-1" />
+        <ToolbarBtn
+          onClick={() => {
+            const url = prompt("Link URL:")
+            if (url) exec("createLink", url)
+          }}
+          title="Insert link"
+        >
+          🔗
+        </ToolbarBtn>
+        <ToolbarBtn
+          onClick={() => exec("unlink")}
+          title="Remove link"
+        >
+          ⛓‍💥
+        </ToolbarBtn>
+        <div className="flex-1" />
+        <p className="text-[10px] text-muted-foreground hidden sm:block">
+          Click in the email and type. Standard shortcuts work.
+        </p>
+      </div>
+      <iframe
+        ref={iframeRef}
+        title="Email body editor"
+        className="w-full h-[600px] bg-white"
+      />
+    </div>
+  )
+}
+
+function ToolbarBtn({
+  onClick,
+  title,
+  children,
+}: {
+  onClick: () => void
+  title: string
+  children: React.ReactNode
+}) {
+  return (
+    <button
+      type="button"
+      onMouseDown={(e) => {
+        // Prevent the iframe from losing focus when we click the toolbar.
+        e.preventDefault()
+      }}
+      onClick={onClick}
+      title={title}
+      className="h-7 min-w-7 px-2 rounded text-xs text-foreground hover:bg-muted/60 transition-colors flex items-center justify-center"
+    >
+      {children}
+    </button>
   )
 }

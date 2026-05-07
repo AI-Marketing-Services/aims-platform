@@ -1,10 +1,12 @@
-import { auth } from "@clerk/nextjs/server"
+import { auth, currentUser } from "@clerk/nextjs/server"
 import { redirect, notFound } from "next/navigation"
 import Link from "next/link"
 import { ChevronLeft } from "lucide-react"
 import { db } from "@/lib/db"
 import { Breadcrumbs } from "@/components/shared/Breadcrumbs"
 import { getTemplateEntry, EMAIL_TEMPLATES } from "@/lib/email/catalog"
+import { withDryRun } from "@/lib/email/dry-run"
+import { logger } from "@/lib/logger"
 import { TemplateEditorClient } from "./TemplateEditorClient"
 
 export const dynamic = "force-dynamic"
@@ -25,22 +27,41 @@ export default async function EmailTemplateEditorPage({
   const entry = getTemplateEntry(key)
   if (!entry) notFound()
 
+  // Resolve a sample recipient that won't ever leak in the rendered
+  // preview (we use the admin's own Clerk email if present, else a
+  // safe placeholder). The string only flows into the sample()
+  // factory, so it appears in the rendered HTML where the template
+  // would normally show "to" the recipient.
+  const me = await currentUser()
+  const sampleRecipient =
+    me?.emailAddresses?.[0]?.emailAddress ?? "preview@aimseos.com"
+
+  // Render the pristine code default by running the catalog send
+  // wrapper inside a dry-run scope. `skipOverride: true` means the
+  // editor always shows what the codebase ships, even if a saved
+  // override exists — the override flows through the editable
+  // subject/html state instead.
+  let defaultSubject = ""
+  let defaultHtml = ""
+  try {
+    const { captured } = await withDryRun(
+      () => entry.send(entry.sample(sampleRecipient)),
+      { skipOverride: true },
+    )
+    const first = captured[0]
+    defaultSubject = first?.subject ?? ""
+    defaultHtml = first?.html ?? ""
+  } catch (err) {
+    logger.error("Failed to render template default for editor", err, {
+      templateKey: key,
+    })
+    // Editor will fall back to placeholders; admin can still type
+    // from scratch.
+  }
+
   const override = await db.emailTemplateOverride.findUnique({
     where: { templateKey: key },
   })
-
-  // Compute the default subject + html by calling the matching send
-  // function in "preview mode" — but we can't actually send during
-  // page render. Instead the client component re-renders the default
-  // by hitting a dedicated `?preview=1` flag (or just shows the saved
-  // override if one exists; new edits start from a blank if no
-  // override exists).
-  //
-  // Pragmatic approach: pass the override (if any) and an empty
-  // string for the default. The client knows to show "Edit override"
-  // when a row exists, "Create override" when none. The "Send test"
-  // button always renders the production default (with override
-  // applied) regardless.
 
   return (
     <div className="space-y-6">
@@ -75,6 +96,8 @@ export default async function EmailTemplateEditorPage({
       <TemplateEditorClient
         templateKey={entry.templateKey}
         displayName={entry.displayName}
+        defaultSubject={defaultSubject}
+        defaultHtml={defaultHtml}
         override={
           override
             ? {
