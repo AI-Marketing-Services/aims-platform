@@ -2,8 +2,8 @@ import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
 import {
-  verifyDomain,
   buildDnsInstructions,
+  safeGetDomainStatus,
   VercelDomainsNotConfiguredError,
   type VerificationRecord,
 } from "@/lib/vercel-domains"
@@ -43,15 +43,43 @@ export async function POST() {
       return NextResponse.json({ error: "No custom domain configured" }, { status: 404 })
     }
 
-    const result = await verifyDomain(site.customDomain)
+    // Use safeGetDomainStatus instead of bare verifyDomain so we get
+    // BOTH the verify response and the live DNS config in one shot.
+    // The gate only flips when ownership is verified AND DNS is not
+    // misconfigured — Vercel will sometimes report verified=true even
+    // when the A/CNAME records aren't pointing at the project, and
+    // serving the tenant page in that state shows visitors a Vercel
+    // 404 instead of the operator's branded site.
+    const status = await safeGetDomainStatus(site.customDomain)
+    if (!status.ok) {
+      return NextResponse.json(
+        { error: status.reason ?? "Vercel status check failed" },
+        { status: 502 },
+      )
+    }
+    const ownershipVerified = status.verify?.verified === true
+    const dnsHealthy = status.config?.misconfigured === false
+    const fullyVerified = ownershipVerified && dnsHealthy
 
-    if (result.verified && !site.customDomainVerified) {
-      // First-time verification — flip the gate and bust cache so the
+    if (fullyVerified && !site.customDomainVerified) {
+      // First-time fully-verified — flip the gate and bust cache so the
       // custom-domain URL starts serving the tenant page immediately
       // instead of after the 60s revalidate window.
       await db.operatorSite.update({
         where: { userId: dbUser.id },
         data: { customDomainVerified: true },
+      })
+      invalidateTenantCache({
+        subdomains: [site.subdomain],
+        customDomains: [site.customDomain],
+      })
+    } else if (!fullyVerified && site.customDomainVerified) {
+      // Drift in the wrong direction — the DB says verified but live
+      // truth disagrees. Downgrade and auto-unpublish so we stop
+      // serving the tenant route over a misconfigured domain.
+      await db.operatorSite.update({
+        where: { userId: dbUser.id },
+        data: { customDomainVerified: false, isPublished: false },
       })
       invalidateTenantCache({
         subdomains: [site.subdomain],
@@ -66,17 +94,26 @@ export async function POST() {
 
     const records: DnsRecordShape[] = instructions.records.map((r) => ({
       ...r,
-      status: result.verified
+      status: fullyVerified
         ? ("detected" as const)
-        : result.error?.code === "missing_txt_record"
+        : status.config?.misconfigured
           ? ("misconfigured" as const)
           : ("waiting" as const),
       friendlyLabel: friendlyLabel(r.type),
     }))
 
     return NextResponse.json({
-      verified: result.verified,
-      error: result.error,
+      verified: fullyVerified,
+      error: !fullyVerified
+        ? {
+            code: !ownershipVerified
+              ? "ownership_unverified"
+              : "dns_misconfigured",
+            message: !ownershipVerified
+              ? "Add the TXT verification record below — DNS changes can take up to 48 hours."
+              : "Ownership verified, but your A/CNAME records aren't pointing at Vercel yet.",
+          }
+        : undefined,
       records,
     })
   } catch (err) {

@@ -104,14 +104,24 @@ export async function POST(req: Request) {
       verification: result.verification as unknown as Prisma.InputJsonValue,
     }
 
-    // Upsert OperatorSite
+    // IMPORTANT: We deliberately ignore `result.verified` here and always
+    // write `customDomainVerified: false` on add. Vercel's `verified` flag
+    // means "this project claims this domain" (e.g., the domain was
+    // previously added, or Vercel auto-detected an existing TXT) — NOT
+    // "DNS actually points to your deployment and the tenant page is
+    // serving correctly". Trusting Vercel's verified=true here is what
+    // caused the UI to flip to "Live at <domain>" the moment a reseller
+    // typed the domain in, before they'd configured any DNS. The verify
+    // endpoint (POST /api/reseller/domain/verify) is the only place that
+    // flips this gate, and only when the live DNS config also shows
+    // `misconfigured: false`.
     const existing = await db.operatorSite.findUnique({ where: { userId: dbUser.id } })
     if (existing) {
       await db.operatorSite.update({
         where: { userId: dbUser.id },
         data: {
           customDomain: domain,
-          customDomainVerified: result.verified,
+          customDomainVerified: false,
           vercelDomainData,
         },
       })
@@ -128,7 +138,7 @@ export async function POST(req: Request) {
           userId: dbUser.id,
           subdomain: fallbackSubdomain,
           customDomain: domain,
-          customDomainVerified: result.verified,
+          customDomainVerified: false,
           vercelDomainData,
         },
       })
@@ -138,7 +148,7 @@ export async function POST(req: Request) {
       })
     }
 
-    return NextResponse.json({ domain, records, verified: result.verified })
+    return NextResponse.json({ domain, records, verified: false })
   } catch (err) {
     if (err instanceof VercelDomainsNotConfiguredError) {
       return NextResponse.json({ error: "not_configured" }, { status: 503 })
@@ -226,6 +236,40 @@ export async function GET() {
 
     const statusResult = await safeGetDomainStatus(site.customDomain)
 
+    // Live-truth verification: a domain is only "verified" from the
+    // operator dashboard's perspective if Vercel says BOTH that the
+    // ownership challenge passed (`verify.verified`) AND that the live
+    // DNS config is not misconfigured. Anything less means the user
+    // shouldn't see the "Live at <domain>" UI yet.
+    let liveVerified = false
+    if (statusResult.ok && statusResult.config && statusResult.verify) {
+      liveVerified =
+        statusResult.verify.verified === true &&
+        statusResult.config.misconfigured === false
+    }
+
+    // Auto-correct drift: if the DB still says verified but the live
+    // check disagrees (e.g., user changed DNS, domain got removed from
+    // Vercel out-of-band, or a previous bug stored verified=true
+    // incorrectly), downgrade the stored gate AND auto-unpublish so the
+    // tenant route stops serving stale.
+    if (
+      statusResult.ok &&
+      site.customDomainVerified &&
+      !liveVerified
+    ) {
+      await db.operatorSite.update({
+        where: { userId: dbUser.id },
+        data: { customDomainVerified: false, isPublished: false },
+      })
+      invalidateTenantCache({
+        subdomains: [site.subdomain],
+        customDomains: [site.customDomain],
+      })
+      site.customDomainVerified = false
+      site.isPublished = false
+    }
+
     let records: DnsRecordShape[] = []
     if (statusResult.ok && statusResult.config) {
       // Build records from stored verification data if available
@@ -244,7 +288,7 @@ export async function GET() {
     return NextResponse.json({
       domain: site.customDomain,
       records,
-      verified: site.customDomainVerified,
+      verified: liveVerified,
       published: site.isPublished,
     })
   } catch (err) {
