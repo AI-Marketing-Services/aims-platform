@@ -10,9 +10,9 @@ export async function sendAbandonedApplicationEmail(params: {
   const applyUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://aioperatorcollective.com"}/apply`
 
   const body = `
-    ${h1(`${firstName}, your AIOC application is still open.`)}
+    ${h1(`${firstName}, your AI Operator Collective application is still open.`)}
     ${p(
-      `Hi ${firstName}, Jess here from the AI Operator Collective. You started your AIOC application, but it looks like you did not get a chance to finish it.`
+      `Hi ${firstName}, Jess here from the AI Operator Collective. You started your application, but it looks like you did not get a chance to finish it.`
     )}
     ${p(
       "Totally understandable. These things usually happen between meetings, errands, tabs, and the small daily chaos of being a person with a laptop."
@@ -21,7 +21,7 @@ export async function sendAbandonedApplicationEmail(params: {
       "I just wanted to make sure you had an easy way back in."
     )}
     ${p(
-      "AIOC is application-only because the room is small. Each cohort is limited to 10 people, and we are looking for people who are serious about building useful AI skills around real business problems, not just collecting more tools."
+      "The Collective is application-only because the room is small. Each cohort is limited to 10 people, and we are looking for people who are serious about building useful AI skills around real business problems, not just collecting more tools."
     )}
     ${p("The application helps us understand a few things:")}
     <ul style="margin:0 0 24px;padding-left:20px;color:#4B5563;line-height:1.9;font-size:15px;">
@@ -53,7 +53,7 @@ export async function sendAbandonedApplicationEmail(params: {
     to: params.to,
     bcc: RYAN_SALES_BCC,
     replyTo: REPLY_TO,
-    subject: `${firstName}, your AIOC application is still open`,
+    subject: `${firstName}, your AI Operator Collective application is still open`,
     html: emailLayout(body, "No pressure. Just finish the application if this still feels like the right next step."),
     serviceArm: "ai-operator-collective",
     templateKey: "aoc.application-abandoned",
