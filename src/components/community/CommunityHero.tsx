@@ -20,30 +20,27 @@ export function CommunityHero() {
         </h1>
 
         <p className="mt-8 text-lg sm:text-xl text-neutral-500 max-w-3xl mx-auto leading-relaxed">
-          AIOC is a cohort-based apprenticeship for people who want to become useful
-          where AI turns into business value: finding the right companies, running better
-          discovery, spotting real operational pain, and scoping the right solution
-          before anyone touches a tool.
+          The AI Operator Collective is a cohort-based apprenticeship for people who
+          want to become useful where AI turns into business value: finding the right
+          companies, running better discovery, spotting real operational pain, and
+          scoping the right solution before anyone touches a tool.
         </p>
 
         <p className="mt-6 text-sm sm:text-base text-neutral-700 max-w-2xl mx-auto italic">
           Powered by Problem-First AI: diagnose the fire before pouring gasoline on it.
         </p>
 
-        {/* CTAs — primary + secondary */}
-        <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3">
+        {/* CTA — single primary button. Removed the duplicate
+            "Apply for the Next Cohort" outlined button per landing-copy
+            cleanup; both went to the same /apply URL and the doubled
+            buttons read as redundant. */}
+        <div className="mt-10 flex justify-center">
           <a
             href={APPLY_URL}
             className="pointer-events-auto group inline-flex items-center justify-center gap-3 rounded-md bg-crimson text-white px-14 py-4 text-sm font-bold uppercase tracking-wider hover:bg-crimson-dark transition-all shadow-[0_8px_24px_-4px_rgba(153,27,27,0.35)] min-w-[260px]"
           >
             Apply Now
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-          </a>
-          <a
-            href={APPLY_URL}
-            className="pointer-events-auto inline-flex items-center justify-center gap-2 rounded-md border border-crimson/30 bg-white text-crimson px-7 py-4 text-sm font-bold uppercase tracking-wider hover:bg-crimson/5 transition-all"
-          >
-            Apply for the Next Cohort
           </a>
         </div>
 

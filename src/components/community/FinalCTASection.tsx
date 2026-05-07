@@ -29,7 +29,7 @@ export function FinalCTASection() {
             AI where it actually creates leverage.
           </p>
           <p className="text-[#1A1A1A]">
-            Apply for the next cohort. AIOC will see if there is a fit.
+            Apply for the next cohort. We&apos;ll see if there is a fit.
           </p>
         </div>
 

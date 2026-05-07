@@ -241,7 +241,7 @@ export async function sendOperatorSignupWelcome(params: {
   // judgment those tools amplify.
   const body = `
     ${h1(`Welcome aboard, ${firstName}`)}
-    ${p(`You're in. The first thing to know: AIOC is built as an apprenticeship, not a tool dump. We'll walk before we run. Mindset first, then prospecting, then revenue activities, then problem diagnosis. The AI tools come in later — once you have the operator judgment that makes them useful instead of overwhelming.`)}
+    ${p(`You're in. The first thing to know: the AI Operator Collective is built as an apprenticeship, not a tool dump. We'll walk before we run. Mindset first, then prospecting, then revenue activities, then problem diagnosis. The AI tools come in later — once you have the operator judgment that makes them useful instead of overwhelming.`)}
     <p style="margin:0 0 16px;font-size:15px;color:#4B5563;line-height:1.7;font-weight:600;color:#111827;">This week's focus: Foundation.</p>
     <ol style="margin:0 0 24px;padding-left:20px;color:#4B5563;line-height:1.9;font-size:15px;">
       <li><strong style="color:#111827;">Complete your profile + intro post</strong> — small room, real people. Say hello.</li>

@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   title:
     "AI Operator Collective | Move from AI-Curious to AI-Capable",
   description:
-    "AIOC is a cohort-based apprenticeship for people who want to become useful where AI turns into business value: prospecting, discovery, diagnosis, scoping, setup, and delivery. Application-only. 10 seats per cohort.",
+    "The AI Operator Collective is a cohort-based apprenticeship for people who want to become useful where AI turns into business value: prospecting, discovery, diagnosis, scoping, setup, and delivery. Application-only. 10 seats per cohort.",
   alternates: { canonical: "https://aioperatorcollective.com" },
   openGraph: {
     type: "website",
@@ -67,7 +67,7 @@ const FAQ_SCHEMA = {
       name: "Do I need a technical background?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "No. AIOC is not built for AI engineers. It is built for smart, operator-minded people who want to understand how AI can solve real business problems. Technical curiosity helps. Business judgment matters more.",
+        text: "No. The Collective is not built for AI engineers. It is built for smart, operator-minded people who want to understand how AI can solve real business problems. Technical curiosity helps. Business judgment matters more.",
       },
     },
     {
@@ -83,7 +83,7 @@ const FAQ_SCHEMA = {
       name: "Is this an AI agency course?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Not in the usual internet sense. AIOC is not built around copy-this-offer scripts. The focus is the full operator motion: market selection, prospecting, discovery, diagnosis, workflow mapping, ROI thinking, practical AI-enabled solutioning, and credible business conversations.",
+        text: "Not in the usual internet sense. The Collective is not built around copy-this-offer scripts. The focus is the full operator motion: market selection, prospecting, discovery, diagnosis, workflow mapping, ROI thinking, practical AI-enabled solutioning, and credible business conversations.",
       },
     },
     {
@@ -91,7 +91,7 @@ const FAQ_SCHEMA = {
       name: "Will this get me clients?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "No one can honestly guarantee that. AIOC is designed to help you build the judgment, language, prospecting rhythm, workflow thinking, and practical reps that support credible client conversations. Outcomes depend on your effort and execution.",
+        text: "No one can honestly guarantee that. The Collective is designed to help you build the judgment, language, prospecting rhythm, workflow thinking, and practical reps that support credible client conversations. Outcomes depend on your effort and execution.",
       },
     },
     {
@@ -104,10 +104,10 @@ const FAQ_SCHEMA = {
     },
     {
       "@type": "Question",
-      name: "Is AIOC a fixed-duration program?",
+      name: "Is the AI Operator Collective a fixed-duration program?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "No. AIOC is built more like an operator development track than a one-and-done course. The first phase gives you structure: the operator lens, discovery reps, scoping practice, business setup, and delivery standards. The bigger goal is operator judgment, communication, and follow-through over time.",
+        text: "No. The Collective is built more like an operator development track than a one-and-done course. The first phase gives you structure: the operator lens, discovery reps, scoping practice, business setup, and delivery standards. The bigger goal is operator judgment, communication, and follow-through over time.",
       },
     },
     {

@@ -7,7 +7,7 @@ const DISCLOSURES = [
   },
   {
     title: "AIMS context is background, not a promise",
-    body: "Any references to AIMS, operator experience, implementation work, app infrastructure, or company revenue ranges describe the background and operating context behind AIOC. They are not promises of member outcomes.",
+    body: "Any references to AIMS, operator experience, implementation work, app infrastructure, or company revenue ranges describe the background and operating context behind the Collective. They are not promises of member outcomes.",
   },
   {
     title: "Results depend on you",

@@ -6,7 +6,7 @@ const STEPS = [
   {
     n: "01",
     title: "Apply",
-    body: "start with the application so AIOC can understand your background, goals, and available time.",
+    body: "start with the application so the Collective can understand your background, goals, and available time.",
   },
   {
     n: "02",
@@ -44,7 +44,7 @@ export function HowItWorksPlan() {
             </span>
           </h2>
           <p className="mt-6 text-base sm:text-lg text-[#737373] leading-relaxed">
-            AIOC runs through monthly cohort intake. Each cohort is limited to 10
+            The Collective runs through monthly cohort intake. Each cohort is limited to 10
             people so members can progress together, bring real questions into the
             room, and practice both sides of the work: finding the opportunity and
             solving the problem.

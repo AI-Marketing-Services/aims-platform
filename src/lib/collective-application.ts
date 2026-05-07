@@ -61,7 +61,7 @@ export const QUESTIONS: Question[] = [
   },
   {
     id: "why_now",
-    question: "What made you look at AIOC now?",
+    question: "What made you look at the AI Operator Collective now?",
     description:
       "20-30 characters, in your own words. We use this to score intent and prep for the call.",
     text: {
@@ -79,7 +79,7 @@ export const QUESTIONS: Question[] = [
     question:
       "How many hours per week can you realistically commit over the next 30 days?",
     description:
-      "AIOC is an apprenticeship, not a passive course. Real reps need real hours.",
+      "The Collective is an apprenticeship, not a passive course. Real reps need real hours.",
     options: [
       { label: "0–4 hours", value: "0_4", points: 0 },
       { label: "5–9 hours", value: "5_9", points: 1 },
@@ -121,7 +121,7 @@ export const QUESTIONS: Question[] = [
     question:
       "Are you willing to practice finding and reaching out to businesses that may need help?",
     description:
-      "Operators have to find their own opportunities. AIOC will give you the structure and reps — but the willingness has to come from you.",
+      "Operators have to find their own opportunities. The Collective will give you the structure and reps — but the willingness has to come from you.",
     options: [
       { label: "Yes, I will do it", value: "yes_will_do", points: 3 },
       {
@@ -238,7 +238,7 @@ export const QUESTIONS: Question[] = [
   {
     id: "investment_readiness",
     question:
-      "If AIOC is a strategic fit, are you prepared to invest time, effort, and money to start now?",
+      "If the Collective is a strategic fit, are you prepared to invest time, effort, and money to start now?",
     description:
       "Pricing is shared with qualified applicants on the call. This is just about readiness, not commitment.",
     options: [
@@ -399,7 +399,7 @@ export function getStepIntro(
     case 0:
       return `Hey ${firstName}, let's start with where you are right now.`
     case 1:
-      return `Tell me what's pulling you toward AIOC.`
+      return `Tell me what's pulling you toward the Collective.`
     case 2: {
       const role = answers.current_role
       if (role === "between_roles")
@@ -437,13 +437,13 @@ export function getCalendarIntro(
   if (tier === "hot") {
     return {
       heading: `${firstName}, you look like a strong fit.`,
-      subheading: `Pick a time that works and we'll have a strategic fit conversation about your goals, your timeline, and where AIOC can help.`,
+      subheading: `Pick a time that works and we'll have a strategic fit conversation about your goals, your timeline, and where the Collective can help.`,
     }
   }
 
   return {
     heading: `Thanks for applying, ${firstName}.`,
-    subheading: `Let's get on a call to see if AIOC is the right next room for you.`,
+    subheading: `Let's get on a call to see if the Collective is the right next room for you.`,
   }
 }
 
@@ -458,12 +458,12 @@ export function getOutcomeMessage(
   if (routingTier === "yellow") {
     return {
       heading: `Thanks for applying, ${firstName}.`,
-      body: "We'll review your responses and follow up with the best next step. AIOC is selective on purpose — we'll get back to you within a few days.",
+      body: "We'll review your responses and follow up with the best next step. The Collective is selective on purpose — we'll get back to you within a few days.",
     }
   }
   return {
     heading: `Thanks for sharing where you are, ${firstName}.`,
-    body: "AIOC may not be the right next room yet, but we can send you resources and updates as the next cohort develops. No hard feelings — most great operators get here in their own time.",
+    body: "The Collective may not be the right next room yet, but we can send you resources and updates as the next cohort develops. No hard feelings — most great operators get here in their own time.",
     cta: { label: "Send me the resources", href: "/tools" },
   }
 }

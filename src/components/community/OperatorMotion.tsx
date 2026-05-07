@@ -40,7 +40,7 @@ export function OperatorMotion() {
             <span className="md:block text-crimson italic">skips.</span>
           </h2>
           <p className="mt-6 text-base sm:text-lg text-[#737373] leading-relaxed">
-            AIOC is not here to hand you another pile of tutorials. Inside the cohort,
+            The Collective is not here to hand you another pile of tutorials. Inside the cohort,
             members practice the operating motion behind credible AI work:
             prospecting, discovery, diagnosis, scoping, setup, and delivery.
           </p>

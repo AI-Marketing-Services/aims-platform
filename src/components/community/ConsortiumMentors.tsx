@@ -60,7 +60,7 @@ export function ConsortiumMentors() {
             </span>
           </h2>
           <p className="mt-6 text-base sm:text-lg text-[#737373] leading-relaxed">
-            AIOC is powered by AI Managing Services (AIMS), an operator-led AI
+            The Collective is powered by AI Managing Services (AIMS), an operator-led AI
             implementation company. That matters because the internet is full of AI
             education made by people who are good at content, not necessarily
             operations.
@@ -72,7 +72,7 @@ export function ConsortiumMentors() {
             or decorative.
           </p>
           <p className="mt-4 text-base sm:text-lg text-[#737373] leading-relaxed">
-            AIOC brings that operating lens into a cohort-based environment for
+            The Collective brings that operating lens into a cohort-based environment for
             people who want to become credible AI Operators.
           </p>
         </div>
