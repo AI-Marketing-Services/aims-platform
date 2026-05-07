@@ -12,9 +12,9 @@ const simulateLeadSchema = z.object({
 })
 
 export async function POST(req: Request) {
-  // Mirror simulate-purchase: never allow synthetic data writes in production.
-  // Without this guard, a compromised admin session could spam fake leads
-  // into prod CRM, fire notifyHotLead alerts, and pollute funnel analytics.
+  // Production guard FIRST, before auth. Returning 404 (not 403) matches
+  // test-emails / bootstrap behaviour — hides the route's existence from
+  // unauthenticated callers in prod, no endpoint-existence leak.
   //
   // Use VERCEL_ENV (not NODE_ENV) — Vercel sets NODE_ENV=production for both
   // Production and Preview deploys, so a NODE_ENV check would also block
@@ -25,10 +25,7 @@ export async function POST(req: Request) {
     process.env.VERCEL_ENV === "production" ||
     (process.env.VERCEL_ENV == null && process.env.NODE_ENV === "production")
   if (isProduction) {
-    return NextResponse.json(
-      { error: "simulate-lead is disabled in production" },
-      { status: 403 },
-    )
+    return new Response(null, { status: 404 })
   }
 
   const { userId, sessionClaims } = await auth()

@@ -15,15 +15,11 @@ const schema = z.object({
 })
 
 export async function POST(req: Request) {
-  // Auth and role check always run first
-  const { userId, sessionClaims } = await auth()
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-  const role = (sessionClaims?.metadata as { role?: string })?.role
-  if (!role || !["ADMIN", "SUPER_ADMIN"].includes(role)) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 })
-  }
-
-  // Block ONLY in real production. Vercel sets NODE_ENV=production for both
+  // Production guard FIRST, before auth — return 404 to hide the route's
+  // existence from unauthenticated callers in prod (matches the pattern
+  // in test-emails / bootstrap; CodeRabbit flagged the inconsistency).
+  //
+  // Use VERCEL_ENV (not NODE_ENV) — Vercel sets NODE_ENV=production for both
   // Production AND Preview, so a NODE_ENV-only check would also block
   // preview demos where simulation is wanted. VERCEL_ENV is the stable
   // production-only signal; falls back to NODE_ENV for local dev.
@@ -31,7 +27,14 @@ export async function POST(req: Request) {
     process.env.VERCEL_ENV === "production" ||
     (process.env.VERCEL_ENV == null && process.env.NODE_ENV === "production")
   if (isProduction) {
-    return NextResponse.json({ error: "Simulation disabled in production" }, { status: 403 })
+    return new Response(null, { status: 404 })
+  }
+
+  const { userId, sessionClaims } = await auth()
+  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  const role = (sessionClaims?.metadata as { role?: string })?.role
+  if (!role || !["ADMIN", "SUPER_ADMIN"].includes(role)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   }
 
   const body = await req.json()
