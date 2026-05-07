@@ -20,20 +20,64 @@
 const BASE_URL = "https://www.facebook.com/ads/library/"
 
 /**
- * Strip protocol, www., paths, and TLD from a URL/domain so the resulting
- * string is the cleanest possible search term.
+ * Strip protocol, common admin subdomains, paths, and TLD from a URL or
+ * domain so the resulting string is the cleanest possible search term
+ * for Meta's keyword-unordered Ad Library search.
  *
- * "https://www.agemanagementoptimalwellness.com/contact" →
- * "agemanagementoptimalwellness"
+ * Examples:
+ *   "https://www.agemanagementoptimalwellness.com/contact"
+ *     → "agemanagementoptimalwellness"
+ *   "app.brand.com"           → "brand"
+ *   "staging.acme.co.uk"      → "acme"
+ *   "shop.example.co.uk/path" → "example"
+ *
+ * For multi-label hostnames we drop a leading admin subdomain
+ * (`www`, `app`, `m`, `dev`, `staging`, `beta`, `shop`, `api`) and then
+ * return the second-from-last label, which is the brand name for
+ * standard TLDs (`example.com`) and country-code 2nd-level TLDs
+ * (`example.co.uk`) alike. Single-label hosts (rare) return as-is.
  */
+const ADMIN_SUBDOMAINS = new Set([
+  "www",
+  "app",
+  "m",
+  "mobile",
+  "dev",
+  "staging",
+  "beta",
+  "shop",
+  "api",
+])
+
 function brandFromWebsite(website: string): string | null {
   try {
     const trimmed = website.trim()
     if (!trimmed) return null
-    const withProtocol = trimmed.startsWith("http") ? trimmed : `https://${trimmed}`
+    const withProtocol = /^https?:\/\//i.test(trimmed)
+      ? trimmed
+      : `https://${trimmed}`
     const url = new URL(withProtocol)
-    const host = url.hostname.replace(/^www\./i, "")
-    const root = host.split(".")[0]
+    const labels = url.hostname
+      .split(".")
+      .filter(Boolean)
+      .map((s) => s.toLowerCase())
+    if (labels.length === 0) return null
+    // Drop a leading admin subdomain when present.
+    if (labels.length > 1 && ADMIN_SUBDOMAINS.has(labels[0])) {
+      labels.shift()
+    }
+    if (labels.length === 1) return labels[0] || null
+    // Detect a 2-label public suffix like `co.uk`, `com.au`, `co.nz`,
+    // `ac.uk` so `example.co.uk` → "example" rather than "co".
+    const last = labels[labels.length - 1]
+    const secondLast = labels[labels.length - 2]
+    const looksLike2LabelSuffix =
+      last.length === 2 &&
+      ["co", "com", "net", "org", "gov", "edu", "ac"].includes(secondLast)
+    const brandIdx = looksLike2LabelSuffix
+      ? labels.length - 3
+      : labels.length - 2
+    const root = labels[Math.max(0, brandIdx)]
     return root || null
   } catch {
     return null

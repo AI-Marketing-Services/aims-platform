@@ -28,11 +28,24 @@ function toLocalDate(iso: string | null): string {
   return iso.slice(0, 10)
 }
 
+/**
+ * Parses a YYYY-MM-DD calendar date (from `<input type="date">`) into the
+ * ISO instant for that date at the operator's LOCAL midnight, so the
+ * resulting timestamp surfaces as the same calendar day in any other
+ * `toLocaleDateString` rendering on the page (notably the "Date added"
+ * cell which calls `toLocaleDateString` on `row.createdAt`).
+ *
+ * Previously this stamped `T00:00:00.000Z` which kept the round-trip
+ * correct but rendered as "yesterday" for any operator west of UTC.
+ */
 function fromLocalDate(value: string): string | null {
   if (!value) return null
-  const d = new Date(`${value}T00:00:00.000Z`)
-  if (Number.isNaN(d.getTime())) return null
-  return d.toISOString()
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value)
+  if (!m) return null
+  const [, y, mo, d] = m
+  const local = new Date(Number(y), Number(mo) - 1, Number(d))
+  if (Number.isNaN(local.getTime())) return null
+  return local.toISOString()
 }
 
 export function ProspectingTracker({ rows, onUpdate, onAdd }: Props) {
@@ -139,10 +152,20 @@ function Row({
   row: TrackerRow
   onUpdate: (id: string, fields: Partial<TrackerRow>) => Promise<void>
 }) {
+  // Required fields on ClientDeal — clearing them would send `null` and
+  // either fail the PATCH or produce a deal with no name in the tracker.
+  // We restore the original value when the operator blanks one out.
+  const REQUIRED_FIELDS = new Set<keyof TrackerRow>(["companyName"])
+
   function patchString(field: keyof TrackerRow, original: string | null) {
     return (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       const v = e.target.value.trim()
       if (v === (original ?? "")) return
+      if (v.length === 0 && REQUIRED_FIELDS.has(field)) {
+        // Restore the original — required field can't be cleared inline.
+        e.target.value = original ?? ""
+        return
+      }
       onUpdate(row.id, { [field]: v.length === 0 ? null : v } as Partial<TrackerRow>)
     }
   }

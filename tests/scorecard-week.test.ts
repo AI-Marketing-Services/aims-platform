@@ -71,6 +71,13 @@ describe("parseWeekStart", () => {
     expect(parseWeekStart(undefined)).toBeNull()
     expect(parseWeekStart(42)).toBeNull()
   })
+
+  it("rejects calendar-impossible dates that JS would silently normalise", () => {
+    // JS would normalise these to the following month, which used to
+    // sneak through the parser before we added the round-trip check.
+    expect(parseWeekStart("2026-02-30")).toBeNull()
+    expect(parseWeekStart("2026-04-31")).toBeNull()
+  })
 })
 
 describe("subtractWeeks", () => {

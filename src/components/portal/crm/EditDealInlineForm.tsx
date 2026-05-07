@@ -84,7 +84,10 @@ export function EditDealInlineForm({ dealId, defaults }: EditDealInlineFormProps
               label="Website"
               value={defaults.website}
               href={
-                defaults.website.startsWith("http")
+                // Only treat explicit http:// or https:// as already-qualified.
+                // `startsWith("http")` would also match malformed schemes like
+                // "httpx://…" and skip the protocol prefix.
+                /^https?:\/\//i.test(defaults.website)
                   ? defaults.website
                   : `https://${defaults.website}`
               }

@@ -120,17 +120,18 @@ export function buildShareUrl(
   } | null,
 ): string {
   const path = `/tools/${tool.slug}`
+  // Verified custom domain wins — it's the cleanest URL the operator
+  // can paste into emails or LinkedIn.
   if (operator?.customDomain && operator.customDomainVerified) {
     return `https://${operator.customDomain}${path}`
   }
+  // Otherwise serve the operator subdomain on the platform apex.
   if (operator?.subdomain) {
     return `https://${operator.subdomain}.aioperatorcollective.com${path}`
   }
-  const apex = "https://www.aioperatorcollective.com"
-  if (operator?.subdomain) {
-    return `${apex}${path}?op=${encodeURIComponent(operator.subdomain)}`
-  }
-  return `${apex}${path}`
+  // No operator at all → bare platform URL. (No apex `?op=` fallback —
+  // when there's no subdomain there's nothing to attribute to.)
+  return `https://www.aioperatorcollective.com${path}`
 }
 
 /**

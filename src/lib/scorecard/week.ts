@@ -70,6 +70,10 @@ export function parseWeekStart(input: unknown): Date | null {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(input)) return null
   const parsed = new Date(`${input}T00:00:00.000Z`)
   if (Number.isNaN(parsed.getTime())) return null
+  // Round-trip check rejects calendar-impossible inputs that JS silently
+  // normalises (e.g. "2026-02-30" → 2026-03-02). Without this the parser
+  // would happily accept a fictitious date and stamp it onto the row.
+  if (toIsoDate(parsed) !== input) return null
   return isMonday(parsed) ? parsed : null
 }
 

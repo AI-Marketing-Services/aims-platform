@@ -69,14 +69,18 @@ export async function sendOperatorInvitationEmail(
     )}
 
     <div style="text-align:center;margin:32px 0;">
-      ${btn("Accept your invitation", params.invitationUrl)}
+      ${btn("Accept your invitation", escapeHtml(params.invitationUrl))}
     </div>
 
     <p style="margin:0 0 8px;font-size:13px;color:#737373;line-height:1.6;">
       Button not working? Paste this URL into your browser:
     </p>
     <p style="margin:0 0 24px;font-size:12px;color:#981B1B;line-height:1.5;word-break:break-all;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;">
-      <a href="${params.invitationUrl}" style="color:#981B1B;text-decoration:underline;">${params.invitationUrl}</a>
+      <a href="${escapeHtml(
+        params.invitationUrl,
+      )}" style="color:#981B1B;text-decoration:underline;">${escapeHtml(
+        params.invitationUrl,
+      )}</a>
     </p>
 
     ${divider()}

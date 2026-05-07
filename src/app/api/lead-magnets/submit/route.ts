@@ -158,15 +158,20 @@ export async function POST(req: Request) {
       : await getValidatedAttributionResellerId(db)
 
     // Auto-create the platform Deal (master record for admin reporting).
-    // referringResellerId attribution still flows here so the platform
-    // can report on operator-driven volume centrally.
+    // referringResellerId is the legacy reseller-affiliate attribution
+    // field — only valid for users with role RESELLER and a published
+    // OperatorSite. We deliberately do NOT overload it with the
+    // whitelabel operator's userId: that would corrupt reseller
+    // analytics with non-reseller IDs. Operator attribution lives in
+    // the channelTag + sourceDetail + the parallel ClientDeal created
+    // below under operator.operatorUserId.
     const deal = await db.deal.create({
       data: {
         contactName: parsed.data.name ?? parsed.data.email.split("@")[0],
         contactEmail: parsed.data.email,
         company: parsed.data.company,
         phone: parsed.data.phone,
-        referringResellerId: operator?.operatorUserId ?? referringResellerId,
+        referringResellerId,
         source: typeSlug,
         sourceDetail: `Score: ${score}/100 (${tier}). ${reason}${
           operator
@@ -287,16 +292,23 @@ export async function POST(req: Request) {
     // Build a branded PDF attachment when a template exists for this
     // submission type. For Phase 1 we only ship Website Audit; other
     // tools fall through to email-only until their templates land.
-    // Falls back to default AIOC tokens when no operator owns the
-    // submission, so platform funnels still get a polished asset.
-    const pdfAttachment = await buildBrandedSubmissionPDF({
-      type: parsed.data.type,
-      operatorUserId: operator?.operatorUserId ?? null,
-      submissionData: parsed.data.data as Record<string, unknown>,
-      submissionResults: parsed.data.results as Record<string, unknown> | undefined,
-      score: parsed.data.score,
-      recipientName: parsed.data.name ?? null,
-    })
+    // Gating the call here (instead of inside the builder) avoids the
+    // MemberProfile DB round-trip when the type would short-circuit to
+    // null anyway. Falls back to default AIOC tokens when no operator
+    // owns the submission, so platform funnels still get a polished asset.
+    const pdfAttachment =
+      parsed.data.type === "WEBSITE_AUDIT"
+        ? await buildBrandedSubmissionPDF({
+            type: parsed.data.type,
+            operatorUserId: operator?.operatorUserId ?? null,
+            submissionData: parsed.data.data as Record<string, unknown>,
+            submissionResults: parsed.data.results as
+              | Record<string, unknown>
+              | undefined,
+            score: parsed.data.score,
+            recipientName: parsed.data.name ?? null,
+          })
+        : null
 
     // Send type-specific results email for quiz/calculator/audit, generic for others.
     // Branded PDF (when generated) is attached only to senders whose template

@@ -43,14 +43,26 @@ export interface ResolvedOperator {
   via: "subdomain" | "custom" | "explicit"
 }
 
+/**
+ * Normalises a hostname value pulled from a request header. Trims
+ * surrounding whitespace and lowercases the entire string so suffix
+ * comparisons + Prisma equality lookups become case-insensitive
+ * (`Acme.Aioperatorcollective.com` and `acme.aioperatorcollective.com`
+ * resolve to the same operator).
+ */
+function normaliseHost(host: string): string {
+  return host.trim().toLowerCase()
+}
+
 function stripPort(host: string): string {
-  return host.split(":")[0]
+  return normaliseHost(host).split(":")[0]
 }
 
 function isPlatformHost(host: string): boolean {
   if (!host) return true
-  if (PLATFORM_HOSTS.has(host) || PLATFORM_HOSTS.has(stripPort(host))) return true
-  if (host.endsWith(".vercel.app")) return true
+  const n = normaliseHost(host)
+  if (PLATFORM_HOSTS.has(n) || PLATFORM_HOSTS.has(stripPort(n))) return true
+  if (n.endsWith(".vercel.app")) return true
   return false
 }
 
@@ -65,16 +77,18 @@ function extractSubdomain(host: string): string | null {
 function hostFromUrl(raw: string | null): string | null {
   if (!raw) return null
   try {
-    return new URL(raw).host
+    return normaliseHost(new URL(raw).host)
   } catch {
     return null
   }
 }
 
 async function findBySubdomain(slug: string): Promise<ResolvedOperator | null> {
+  const normalised = normaliseHost(slug)
+  if (!normalised) return null
   const site = await db.operatorSite
     .findFirst({
-      where: { subdomain: slug, isPublished: true },
+      where: { subdomain: normalised, isPublished: true },
       select: { id: true, userId: true, subdomain: true, customDomain: true },
     })
     .catch(() => null)
@@ -89,10 +103,12 @@ async function findBySubdomain(slug: string): Promise<ResolvedOperator | null> {
 }
 
 async function findByCustomDomain(host: string): Promise<ResolvedOperator | null> {
+  const customDomain = stripPort(host)
+  if (!customDomain) return null
   const site = await db.operatorSite
     .findFirst({
       where: {
-        customDomain: stripPort(host),
+        customDomain,
         customDomainVerified: true,
         isPublished: true,
       },

@@ -1,7 +1,41 @@
 import PDFDocument from "pdfkit"
 import path from "path"
 import fs from "fs"
+import { z } from "zod"
 import type { BrandTokens, WebsiteAuditPDFInput } from "./types"
+
+/**
+ * Validation schema for the audit payload that gets rendered into the
+ * PDF. Bounds are intentional: clamp the headline score to 0–100 (the
+ * scale shown on the cover band), cap each recommendation block so a
+ * single huge blob can't overflow the layout, and limit the recommendation
+ * list to 5 (matches the slice we render anyway). Frees the renderer from
+ * defensive checks at every drawing call.
+ */
+const InputSchema = z.object({
+  url: z.string().min(1).max(500),
+  score: z.number().min(0).max(100).int(),
+  recipientName: z.string().max(120).nullable(),
+  scores: z
+    .object({
+      seo: z.number().min(0).max(100).optional(),
+      aeo: z.number().min(0).max(100).optional(),
+      performance: z.number().min(0).max(100).optional(),
+      conversion: z.number().min(0).max(100).optional(),
+      mobile: z.number().min(0).max(100).optional(),
+    })
+    .optional(),
+  recommendations: z
+    .array(
+      z.object({
+        title: z.string().min(1).max(200),
+        description: z.string().min(1).max(1000),
+        impact: z.enum(["high", "medium", "low"]).optional(),
+      }),
+    )
+    .max(5)
+    .optional(),
+})
 
 const M = { top: 50, bottom: 50, left: 56, right: 56 }
 const PW = 612 // US Letter width
@@ -54,8 +88,21 @@ function severityLabel(score: number): string {
  */
 export async function buildBrandedWebsiteAuditPDF(
   brand: BrandTokens,
-  input: WebsiteAuditPDFInput,
+  rawInput: WebsiteAuditPDFInput,
 ): Promise<Buffer> {
+  // Round + clamp the score before parsing so a 47.6 from the audit
+  // engine doesn't fail the integer constraint.
+  const sanitized = {
+    ...rawInput,
+    score:
+      typeof rawInput.score === "number"
+        ? Math.max(0, Math.min(100, Math.round(rawInput.score)))
+        : 50,
+  }
+  // `parse` throws on invalid input so the caller's try/catch surfaces
+  // bad data as a build failure rather than rendering garbage.
+  const input = InputSchema.parse(sanitized)
+
   const doc = new PDFDocument({
     size: "LETTER",
     margins: M,

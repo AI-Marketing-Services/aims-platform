@@ -12,10 +12,10 @@ import { ProspectingTracker } from "./ProspectingTracker"
  * Top-level controller for the scorecard page. Owns:
  * - the currently-viewed week (Monday-anchored, local TZ)
  * - the loaded payload + tracker rows
- * - debounced patch helpers for inline manual edits
+ * - optimistic-with-rollback patch helpers for inline manual edits
  *
  * Subcomponents are pure renderers; all I/O lives here so optimistic
- * updates are easy and we don't fan out a refetch on every keystroke.
+ * updates have a single rollback path on save failure.
  */
 export function ScorecardClient() {
   const [tzOffset] = useState(() => new Date().getTimezoneOffset())
@@ -81,6 +81,9 @@ export function ScorecardClient() {
     ) => {
       if (!data) return
       setSaving(true)
+      // Snapshot the pre-update payload so we can roll back the optimistic
+      // mutation if the server rejects the patch.
+      const snapshot = structuredClone(data) as ScorecardPayload
       // Optimistic: merge delta into the local state immediately.
       setData((prev) => {
         if (!prev) return prev
@@ -128,6 +131,8 @@ export function ScorecardClient() {
         // Recompute targets server-side when commitment level changes.
         if (delta.commitmentLevel) await loadScorecard(data.week.start)
       } catch (err) {
+        // Roll back to the pre-patch snapshot so the UI matches reality.
+        setData(snapshot)
         setError(err instanceof Error ? err.message : "Save failed")
       } finally {
         setSaving(false)
@@ -156,9 +161,14 @@ export function ScorecardClient() {
 
   const updateTrackerRow = useCallback(
     async (id: string, fields: Partial<TrackerRow>) => {
-      // Optimistic update.
+      // Snapshot the matching row so we can revert if the server rejects.
+      let snapshot: TrackerRow | undefined
       setTracker((prev) =>
-        prev.map((r) => (r.id === id ? { ...r, ...fields } : r)),
+        prev.map((r) => {
+          if (r.id !== id) return r
+          snapshot = r
+          return { ...r, ...fields }
+        }),
       )
       try {
         const res = await fetch(`/api/portal/scorecard/tracker`, {
@@ -168,6 +178,14 @@ export function ScorecardClient() {
         })
         if (!res.ok) throw new Error(`Save failed (${res.status})`)
       } catch (err) {
+        // Roll back to the captured snapshot — falls back to a no-op
+        // when the row was added/removed concurrently.
+        if (snapshot) {
+          const restore = snapshot
+          setTracker((prev) =>
+            prev.map((r) => (r.id === id ? restore : r)),
+          )
+        }
         setError(err instanceof Error ? err.message : "Save failed")
       }
     },

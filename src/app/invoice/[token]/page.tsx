@@ -1,7 +1,13 @@
 import { notFound } from "next/navigation"
+import { z } from "zod"
 import { db } from "@/lib/db"
+import { logger } from "@/lib/logger"
 import { FileText, ExternalLink } from "lucide-react"
 import type { ClientInvoiceStatus } from "@prisma/client"
+
+const PublicInvoiceParamsSchema = z.object({
+  token: z.string().min(1).max(191),
+})
 
 interface LineItem {
   description: string
@@ -12,53 +18,61 @@ interface LineItem {
 }
 
 async function getPublicInvoice(token: string) {
-  const invoice = await db.clientInvoice.findUnique({
-    where: { shareToken: token },
-    select: {
-      invoiceNumber: true,
-      title: true,
-      recipientName: true,
-      recipientCompany: true,
-      status: true,
-      currency: true,
-      subtotal: true,
-      taxRate: true,
-      taxAmount: true,
-      total: true,
-      notes: true,
-      paymentTerms: true,
-      stripePaymentLink: true,
-      dueAt: true,
-      sentAt: true,
-      paidAt: true,
-      createdAt: true,
-      lineItems: {
-        orderBy: { sortOrder: "asc" },
-        select: {
-          description: true,
-          quantity: true,
-          unitPrice: true,
-          amount: true,
-          sortOrder: true,
+  // Public route — degrade gracefully on Prisma/DB errors. The page
+  // calls notFound() when this returns null, which gives the visitor a
+  // clean 404 instead of a Next.js error overlay leaking stack info.
+  try {
+    return await db.clientInvoice.findUnique({
+      where: { shareToken: token },
+      select: {
+        invoiceNumber: true,
+        title: true,
+        recipientName: true,
+        recipientCompany: true,
+        status: true,
+        currency: true,
+        subtotal: true,
+        taxRate: true,
+        taxAmount: true,
+        total: true,
+        notes: true,
+        paymentTerms: true,
+        stripePaymentLink: true,
+        dueAt: true,
+        sentAt: true,
+        paidAt: true,
+        createdAt: true,
+        lineItems: {
+          orderBy: { sortOrder: "asc" },
+          select: {
+            description: true,
+            quantity: true,
+            unitPrice: true,
+            amount: true,
+            sortOrder: true,
+          },
         },
-      },
-      user: {
-        select: {
-          memberProfile: {
-            select: {
-              businessName: true,
-              brandColor: true,
-              logoUrl: true,
-              tagline: true,
-              oneLiner: true,
+        user: {
+          select: {
+            memberProfile: {
+              select: {
+                businessName: true,
+                brandColor: true,
+                logoUrl: true,
+                tagline: true,
+                oneLiner: true,
+              },
             },
           },
         },
       },
-    },
-  })
-
-  return invoice
+    })
+  } catch (err) {
+    logger.error("Public invoice lookup failed", err, {
+      endpoint: "GET /invoice/[token]",
+    })
+    return null
+  }
 }
 
 function formatCurrency(amount: number, currency: string) {
@@ -90,7 +104,13 @@ export default async function PublicInvoicePage({
 }: {
   params: Promise<{ token: string }>
 }) {
-  const { token } = await params
+  // Validate the URL-segment token before hitting Prisma — caps length
+  // so a runaway path can't end up as a multi-megabyte query parameter,
+  // and rejects empty strings that would otherwise be passed to a
+  // findUnique with shareToken="".
+  const parsedParams = PublicInvoiceParamsSchema.safeParse(await params)
+  if (!parsedParams.success) notFound()
+  const { token } = parsedParams.data
   const invoice = await getPublicInvoice(token)
 
   if (!invoice) notFound()

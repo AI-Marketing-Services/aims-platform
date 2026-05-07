@@ -28,26 +28,26 @@ export default async function LeadMagnetsPage() {
   })
 
   // Aggregate per-tool submission counts attributed to this operator.
-  // We group by submission type so each card shows its own funnel volume.
-  const groupedRows = operatorSite
-    ? await db.leadMagnetSubmission.groupBy({
-        by: ["type"],
-        where: { operatorId: operatorSite.id },
-        _count: { _all: true },
-      })
-    : []
-
+  // The lifetime + last-30-days groupBy queries are independent, so
+  // run them in parallel — halves DB round-trip latency on first paint.
   const since30 = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
-  const recentRows = operatorSite
-    ? await db.leadMagnetSubmission.groupBy({
-        by: ["type"],
-        where: {
-          operatorId: operatorSite.id,
-          createdAt: { gte: since30 },
-        },
-        _count: { _all: true },
-      })
-    : []
+  const [groupedRows, recentRows] = operatorSite
+    ? await Promise.all([
+        db.leadMagnetSubmission.groupBy({
+          by: ["type"],
+          where: { operatorId: operatorSite.id },
+          _count: { _all: true },
+        }),
+        db.leadMagnetSubmission.groupBy({
+          by: ["type"],
+          where: {
+            operatorId: operatorSite.id,
+            createdAt: { gte: since30 },
+          },
+          _count: { _all: true },
+        }),
+      ])
+    : [[], []]
 
   const totalByType = Object.fromEntries(
     groupedRows.map((r) => [r.type, r._count._all]),

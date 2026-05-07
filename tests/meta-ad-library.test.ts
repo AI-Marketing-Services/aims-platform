@@ -59,4 +59,31 @@ describe("buildMetaAdLibraryUrl", () => {
   it("returns null when website is malformed and no company name is provided", () => {
     expect(buildMetaAdLibraryUrl({ website: "::::" })).toBeNull()
   })
+
+  it("strips common admin subdomains (app, www, staging) for the search term", () => {
+    const cases: Array<[string, string]> = [
+      ["https://app.brand.com", "brand"],
+      ["https://www.brand.com", "brand"],
+      ["staging.acme.com", "acme"],
+      ["beta.example.io", "example"],
+    ]
+    for (const [website, expected] of cases) {
+      const url = buildMetaAdLibraryUrl({ website })
+      expect(url, website).not.toBeNull()
+      expect(new URL(url!).searchParams.get("q"), website).toBe(expected)
+    }
+  })
+
+  it("handles 2-label public suffixes (.co.uk, .com.au) by picking the brand label", () => {
+    const cases: Array<[string, string]> = [
+      ["https://example.co.uk", "example"],
+      ["https://shop.acme.co.uk/path", "acme"],
+      ["foo.bar.com.au", "bar"],
+    ]
+    for (const [website, expected] of cases) {
+      const url = buildMetaAdLibraryUrl({ website })
+      expect(url, website).not.toBeNull()
+      expect(new URL(url!).searchParams.get("q"), website).toBe(expected)
+    }
+  })
 })

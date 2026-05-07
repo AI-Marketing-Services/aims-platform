@@ -28,8 +28,11 @@ const schema = z.object({
     "problemHypotheses",
     "quickWinHypotheses",
   ]),
-  /** Required for activity rows, optional for note rows that don't tie to a deal. */
-  clientDealId: z.string().min(1).max(64).optional(),
+  /** Required: every loggable row creates either a ClientDealActivity or a
+   *  ClientDealNote, both of which require a clientDealId. The runtime
+   *  used to allow null and reject it later — schema is now the single
+   *  source of truth. */
+  clientDealId: z.string().min(1).max(64),
   /** Optional free-form copy attached to the activity / note. */
   description: z.string().max(2000).optional(),
 })
@@ -63,42 +66,28 @@ export async function POST(req: Request) {
 
   const def = ROW_TO_ACTIVITY[parsed.data.row as LoggableRow]
 
-  // Both activity rows and note rows require ownership of the deal.
-  if (parsed.data.clientDealId) {
+  try {
+    // Ownership check + write happen inside one try/catch so a Prisma
+    // hiccup on either query becomes a clean 500 rather than a leaked
+    // exception. The 404 below is intentional — middleware already
+    // gates portal access; this defends against a malicious operator
+    // logging activity on someone else's deal.
     const owns = await db.clientDeal.findFirst({
       where: { id: parsed.data.clientDealId, userId },
       select: { id: true },
     })
     if (!owns)
       return NextResponse.json({ error: "Deal not found" }, { status: 404 })
-  } else if (def.kind === "activity") {
-    return NextResponse.json(
-      { error: "clientDealId is required for activity rows" },
-      { status: 400 },
-    )
-  }
 
-  try {
     if (def.kind === "activity") {
       await db.clientDealActivity.create({
         data: {
-          clientDealId: parsed.data.clientDealId!,
+          clientDealId: parsed.data.clientDealId,
           type: def.type,
           description: parsed.data.description ?? null,
         },
       })
     } else {
-      // Notes optionally attach to a deal — when none is supplied we
-      // still create the row so the auto-tally counts it. Use a sentinel
-      // empty deal? No — schema requires clientDealId. Simpler: require
-      // it for notes too. Force the choice on the client side; the
-      // schema test above already returned 400 for the activity branch.
-      if (!parsed.data.clientDealId) {
-        return NextResponse.json(
-          { error: "clientDealId is required" },
-          { status: 400 },
-        )
-      }
       await db.clientDealNote.create({
         data: {
           clientDealId: parsed.data.clientDealId,

@@ -27,36 +27,37 @@ export async function buildBrandedSubmissionPDF(args: {
   score: number | undefined
   recipientName: string | null
 }): Promise<BrandedPDFAttachment | null> {
+  // Fast-path: no template registered for this type yet → skip the
+  // MemberProfile DB lookup entirely. The submit route also gates the
+  // call site, but defending here keeps the function safe to call
+  // without preconditions when more templates land.
+  if (args.type !== "WEBSITE_AUDIT") return null
+
   try {
     const brand = await loadBrandTokensForOperator(args.operatorUserId)
 
-    if (args.type === "WEBSITE_AUDIT") {
-      const url = pickString(args.submissionData?.url) ?? "your website"
-      const scores = (args.submissionData?.scores ?? args.submissionResults?.scores) as
-        | WebsiteAuditPDFInput["scores"]
-        | undefined
-      const recommendations = (args.submissionResults?.recommendations ??
-        args.submissionData?.recommendations) as
-        | WebsiteAuditPDFInput["recommendations"]
-        | undefined
+    const url = pickString(args.submissionData?.url) ?? "your website"
+    const scores = (args.submissionData?.scores ?? args.submissionResults?.scores) as
+      | WebsiteAuditPDFInput["scores"]
+      | undefined
+    const recommendations = (args.submissionResults?.recommendations ??
+      args.submissionData?.recommendations) as
+      | WebsiteAuditPDFInput["recommendations"]
+      | undefined
 
-      const pdf = await buildBrandedWebsiteAuditPDF(brand, {
-        url,
-        score: typeof args.score === "number" ? Math.round(args.score) : 50,
-        recipientName: args.recipientName,
-        scores,
-        recommendations,
-      })
+    const pdf = await buildBrandedWebsiteAuditPDF(brand, {
+      url,
+      score: typeof args.score === "number" ? Math.round(args.score) : 50,
+      recipientName: args.recipientName,
+      scores,
+      recommendations,
+    })
 
-      const safeUrl = url.replace(/[^a-z0-9.-]+/gi, "-").slice(0, 40) || "audit"
-      return {
-        filename: `website-audit-${safeUrl}.pdf`,
-        content: pdf,
-      }
+    const safeUrl = url.replace(/[^a-z0-9.-]+/gi, "-").slice(0, 40) || "audit"
+    return {
+      filename: `website-audit-${safeUrl}.pdf`,
+      content: pdf,
     }
-
-    // Other types: no template yet — caller falls through to email-only.
-    return null
   } catch (err) {
     logger.error("Failed to build branded PDF", err, {
       type: args.type,
