@@ -205,6 +205,12 @@ model Deal {
   @@index([mightyInviteStatus])
   @@index([mightyMemberId])
   @@index([referringResellerId])
+  // Hot lookup path on every Mighty/Close webhook + abandoned-applications
+  // cron — without this, every inbound webhook does a full table scan on
+  // contactEmail.
+  @@index([contactEmail])
+  // Composite for the nurture-unbooked cron's source+stage+createdAt filter.
+  @@index([source, stage, createdAt])
 }
 
 enum DealStage {
@@ -263,6 +269,10 @@ model DealActivity {
   @@index([dealId])
   @@index([type])
   @@index([createdAt])
+  // Composite for the nurture-unbooked dedup query (`dealId` + `type` +
+  // detail LIKE filter). Without this, every deal in the cron loop scans
+  // all of its EMAIL_SENT activities.
+  @@index([dealId, type])
 }
 
 enum ActivityType {

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { z } from "zod"
+import sanitizeHtml from "sanitize-html"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
 import { getTemplateEntry } from "@/lib/email/catalog"
@@ -8,10 +9,59 @@ import { getTemplateEntry } from "@/lib/email/catalog"
 export const dynamic = "force-dynamic"
 
 const upsertSchema = z.object({
-  subject: z.string().min(1).max(300),
+  // Subject is plain text — strip control chars + CRLF to prevent header injection
+  // and keep it on one line. Length cap is generous; Gmail truncates ~75 anyway.
+  subject: z
+    .string()
+    .min(1)
+    .max(300)
+    .transform((s) => s.replace(/[\r\n\t]+/g, " ").trim()),
   html: z.string().min(1).max(200_000),
   note: z.string().max(500).optional(),
 })
+
+/**
+ * Sanitize the HTML the admin saves. Allows the rich set of tags + inline
+ * styles email clients tolerate, but strips:
+ *   - <script> + every event-handler attribute (onerror=, onload=, etc.)
+ *   - javascript:/data: URLs in href/src
+ *   - <iframe>, <object>, <embed>
+ * This stops a compromised admin (or rogue staff) from saving an override
+ * that smuggles malicious markup into outgoing customer mail. Email clients
+ * mostly strip <script> already but mobile webviews and Outlook are
+ * inconsistent, and the Send Test path renders to a real inbox.
+ */
+const SANITIZE_OPTIONS: sanitizeHtml.IOptions = {
+  allowedTags: [
+    "html", "head", "body", "meta", "title",
+    "p", "br", "hr", "div", "span",
+    "h1", "h2", "h3", "h4", "h5", "h6",
+    "strong", "b", "em", "i", "u", "s",
+    "a", "img",
+    "ul", "ol", "li",
+    "table", "thead", "tbody", "tfoot", "tr", "td", "th",
+    "blockquote", "pre", "code",
+  ],
+  allowedAttributes: {
+    a: ["href", "name", "target", "rel", "style"],
+    img: ["src", "alt", "title", "width", "height", "style"],
+    table: ["border", "cellpadding", "cellspacing", "width", "style"],
+    td: ["colspan", "rowspan", "width", "align", "valign", "style"],
+    th: ["colspan", "rowspan", "width", "align", "valign", "style"],
+    tr: ["style", "valign"],
+    div: ["style", "align"],
+    span: ["style"],
+    p: ["style", "align"],
+    h1: ["style"], h2: ["style"], h3: ["style"], h4: ["style"], h5: ["style"], h6: ["style"],
+    ul: ["style"], ol: ["style"], li: ["style"],
+    "*": [],
+  },
+  allowedSchemes: ["https", "mailto"],
+  allowedSchemesByTag: { img: ["https", "data"] }, // data: only for inline image attachments
+  allowProtocolRelative: false,
+  // Drop unrecognized tags entirely rather than leaking their text content.
+  disallowedTagsMode: "discard",
+}
 
 async function requireAdmin() {
   const { userId, sessionClaims } = await auth()
@@ -104,19 +154,30 @@ export async function PUT(
     )
   }
 
+  // Sanitize HTML server-side BEFORE write. Never trust the editor — admin
+  // could paste from a compromised source, an attacker with a stolen session
+  // could craft a phishing template, etc. This is the canonical sink.
+  const cleanHtml = sanitizeHtml(parsed.data.html, SANITIZE_OPTIONS)
+  if (!cleanHtml.trim()) {
+    return NextResponse.json(
+      { error: "HTML body is empty after sanitization — paste content with allowed tags." },
+      { status: 400 },
+    )
+  }
+
   try {
     const saved = await db.emailTemplateOverride.upsert({
       where: { templateKey: key },
       create: {
         templateKey: key,
         subject: parsed.data.subject,
-        html: parsed.data.html,
+        html: cleanHtml,
         note: parsed.data.note ?? null,
         updatedById: auth.userId,
       },
       update: {
         subject: parsed.data.subject,
-        html: parsed.data.html,
+        html: cleanHtml,
         note: parsed.data.note ?? null,
         updatedById: auth.userId,
       },

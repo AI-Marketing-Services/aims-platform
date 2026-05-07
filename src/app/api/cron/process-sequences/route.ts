@@ -6,6 +6,9 @@ import { mergeVariables } from "@/lib/sequences/render"
 import { logger } from "@/lib/logger"
 
 export const dynamic = "force-dynamic"
+// take: 500 enrollments × ~150ms Resend latency = ~75s — needs more than the
+// 60s Pro default. Five minutes lets a stuck batch drain on the next tick.
+export const maxDuration = 300
 
 // Vercel Cron: runs every 30 min.
 // vercel.json: { "path": "/api/cron/process-sequences", "schedule": "*/30 * * * *" }

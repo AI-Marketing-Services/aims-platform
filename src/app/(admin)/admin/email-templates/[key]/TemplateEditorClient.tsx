@@ -40,6 +40,8 @@ import {
   AlertTriangle,
   Loader2,
   RefreshCw,
+  Link as LinkIcon,
+  Unlink,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -52,6 +54,7 @@ interface OverrideShape {
 
 interface Props {
   templateKey: string
+  /** Used as the title attribute on the iframe for accessibility. */
   displayName: string
   defaultSubject: string
   defaultHtml: string
@@ -308,6 +311,7 @@ export function TemplateEditorClient({
 
         {view === "visual" ? (
           <VisualEditor
+            title={displayName}
             html={html}
             onChange={setHtml}
             disabled={isBusy}
@@ -392,16 +396,20 @@ export function TemplateEditorClient({
           <button
             type="button"
             onClick={handleSendTest}
-            disabled={isBusy}
+            disabled={isBusy || dirty}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border bg-background text-foreground text-sm font-medium hover:bg-muted/40 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            title="Sends through the real production pipeline using the catalog's sample data. Override (if saved) is applied — but unsaved edits in this editor are NOT (save first if you want to test those)."
+            title={
+              dirty
+                ? "Save your changes first — Send test always uses the saved version, not your in-progress edits."
+                : "Sends through the real production pipeline using the catalog's sample data. Override (if saved) is applied."
+            }
           >
             {savingState === "sending" ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
               <Send className="h-4 w-4" />
             )}
-            Send test
+            {dirty ? "Save first to test" : "Send test"}
           </button>
         </div>
 
@@ -434,8 +442,6 @@ export function TemplateEditorClient({
           </button>
         )}
       </div>
-      {/* unused but referenced to silence linter */}
-      <span className="hidden">{displayName}</span>
     </div>
   )
 }
@@ -457,10 +463,12 @@ function VisualEditor({
   html,
   onChange,
   disabled,
+  title,
 }: {
   html: string
   onChange: (next: string) => void
   disabled?: boolean
+  title: string
 }) {
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
   // Track the html value the iframe was last seeded with, so external
@@ -483,10 +491,16 @@ function VisualEditor({
       if (!doc) return
 
       // Re-seed the iframe content only when the parent's html changed
-      // from somewhere OTHER than this iframe (e.g. parent reset).
+      // from somewhere OTHER than this iframe (e.g. parent reset). Strip any
+      // leading doctype before writing — `doc.write` re-adds one, so passing
+      // `<!doctype html><html>...</html>` would nest. We defensively normalise.
       if (html !== seededRef.current) {
+        const seedHtml = (html || "<p>(empty)</p>").replace(
+          /^\s*<!doctype[^>]*>\s*/i,
+          "",
+        )
         doc.open()
-        doc.write(html || "<p>(empty)</p>")
+        doc.write(seedHtml)
         doc.close()
         seededRef.current = html
         try {
@@ -497,24 +511,38 @@ function VisualEditor({
       }
 
       const onInput = () => {
-        const html = doc.documentElement?.outerHTML ?? ""
-        const wrapped = html.startsWith("<!")
-          ? html
-          : `<!doctype html>${html}`
+        const innerHtml = doc.documentElement?.outerHTML ?? ""
+        const wrapped = innerHtml.startsWith("<!")
+          ? innerHtml
+          : `<!doctype html>${innerHtml}`
         seededRef.current = wrapped
         onChangeRef.current(wrapped)
       }
 
-      doc.removeEventListener("input", onInput)
+      // Bind input listener. Capture the cleanup so the effect can tear it
+      // down — otherwise old `onInput` closures stack up across renders and
+      // every keystroke fires N setState calls (one per past render).
       doc.addEventListener("input", onInput)
       return () => doc.removeEventListener("input", onInput)
     }
 
-    if (iframe.contentDocument?.readyState === "complete") {
-      return setup()
+    // Setup returns its own cleanup (the input-listener teardown). We need
+    // to forward it whether setup ran inline (doc already loaded) or after
+    // the load event — otherwise switching between templates leaves the
+    // previous template's input listener attached to the now-recycled iframe.
+    let cleanup: (() => void) | undefined
+    const onLoad = () => {
+      cleanup = setup()
     }
-    iframe.addEventListener("load", setup, { once: true })
-    return () => iframe.removeEventListener("load", setup)
+    if (iframe.contentDocument?.readyState === "complete") {
+      cleanup = setup()
+    } else {
+      iframe.addEventListener("load", onLoad, { once: true })
+    }
+    return () => {
+      cleanup?.()
+      iframe.removeEventListener("load", onLoad)
+    }
   }, [html, disabled])
 
   // Toggle designMode when disabled changes.
@@ -589,13 +617,13 @@ function VisualEditor({
           }}
           title="Insert link"
         >
-          🔗
+          <LinkIcon className="h-3 w-3" />
         </ToolbarBtn>
         <ToolbarBtn
           onClick={() => exec("unlink")}
           title="Remove link"
         >
-          ⛓‍💥
+          <Unlink className="h-3 w-3" />
         </ToolbarBtn>
         <div className="flex-1" />
         <p className="text-[10px] text-muted-foreground hidden sm:block">
@@ -604,7 +632,7 @@ function VisualEditor({
       </div>
       <iframe
         ref={iframeRef}
-        title="Email body editor"
+        title={`${title} — body editor`}
         className="w-full h-[600px] bg-white"
       />
     </div>

@@ -4,6 +4,11 @@ import { sendAbandonedApplicationEmail } from "@/lib/email/abandoned-application
 import { logCronExecution } from "@/lib/cron-log"
 import { logger } from "@/lib/logger"
 
+// Cap a single run at 2 minutes — typical batch is small but Resend latency
+// + per-partial DB lookup on a busy day can stretch this past the 60s Pro
+// default and silently fail mid-loop.
+export const maxDuration = 120
+
 // Runs every 15 minutes. Finds PartialApplication rows that are 30 min to
 // 72 hours old, still not marked completed, and have no prior reminder
 // sent. Sends one warm "your playbook is waiting" email and stamps
@@ -62,10 +67,12 @@ export async function GET(req: Request) {
       }
 
       // Defensive: skip if a full application has landed for this email
-      // in the meantime (race between form submit and cron).
+      // in the meantime (race between form submit and cron). Use
+      // case-insensitive match — apply route stores email exactly as
+      // typed but partials may have been captured with different casing.
       const completedDeal = await db.deal.findFirst({
         where: {
-          contactEmail: partial.email,
+          contactEmail: { equals: partial.email, mode: "insensitive" },
           source: "ai-operator-collective-application",
         },
         select: { id: true },

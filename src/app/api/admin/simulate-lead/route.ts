@@ -12,6 +12,16 @@ const simulateLeadSchema = z.object({
 })
 
 export async function POST(req: Request) {
+  // Mirror simulate-purchase: never allow synthetic data writes in production.
+  // Without this guard, a compromised admin session could spam fake leads
+  // into prod CRM, fire notifyHotLead alerts, and pollute funnel analytics.
+  if (process.env.NODE_ENV === "production") {
+    return NextResponse.json(
+      { error: "simulate-lead is disabled in production" },
+      { status: 403 },
+    )
+  }
+
   const { userId, sessionClaims } = await auth()
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 

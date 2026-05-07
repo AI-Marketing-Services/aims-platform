@@ -89,23 +89,30 @@ export async function sendTrackedEmail(
     })
   }
 
-  db.apiCostLog.create({
-    data: {
-      provider: "resend",
-      model: "email",
-      endpoint: "emails.send",
-      tokens: 0,
-      cost: 0.001,
-      serviceArm: serviceArm ?? "email",
-      clientId,
-      metadata: {
-        to,
-        subject: emailParams.subject,
-        templateKey: templateKey ?? null,
-        ...(result.error ? { error: String(result.error.message ?? result.error) } : {}),
+  // CRITICAL: await the create — fire-and-forget would lose ~30% of
+  // cost logs to lambda freeze. The 1-2ms cost is well worth reliable
+  // billing analytics. catch() so a bad write never blocks the response.
+  await db.apiCostLog
+    .create({
+      data: {
+        provider: "resend",
+        model: "email",
+        endpoint: "emails.send",
+        tokens: 0,
+        cost: 0.001,
+        serviceArm: serviceArm ?? "email",
+        clientId,
+        metadata: {
+          to,
+          subject: emailParams.subject,
+          templateKey: templateKey ?? null,
+          ...(result.error ? { error: String(result.error.message ?? result.error) } : {}),
+        },
       },
-    },
-  }).catch(() => {})
+    })
+    .catch((err) => {
+      logger.error("apiCostLog write failed", err, { templateKey })
+    })
   return result
 }
 
@@ -262,9 +269,16 @@ export async function sendWelcomeEmail(params: {
   tier?: string
   portalUrl: string
 }) {
+  // Escape every user-controlled string before HTML interpolation. The name
+  // and serviceName flow through public form data → DB → email, so without
+  // escapeHtml a "<script>"-named user could smuggle markup into the email
+  // body that gets rendered in some clients.
+  const safeName = escapeHtml(params.name)
+  const safeService = escapeHtml(params.serviceName)
+  const safeTier = params.tier ? escapeHtml(params.tier) : null
   const body = `
-    ${h1(`Welcome aboard, ${params.name}!`)}
-    ${p(`Your <strong style="color:#111827;">${params.serviceName}${params.tier ? ` (${params.tier} tier)` : ""}</strong> subscription is now active. Here's what happens next:`)}
+    ${h1(`Welcome aboard, ${safeName}!`)}
+    ${p(`Your <strong style="color:#111827;">${safeService}${safeTier ? ` (${safeTier} tier)` : ""}</strong> subscription is now active. Here's what happens next:`)}
     <ol style="margin:0 0 24px;padding-left:20px;color:#4B5563;line-height:2;font-size:15px;">
       <li>Our team has been notified and will begin setup within <strong style="color:#111827;">24 hours</strong></li>
       <li>You'll receive a setup guide specific to your service</li>
@@ -278,8 +292,10 @@ export async function sendWelcomeEmail(params: {
     from: FROM_EMAIL,
     to: params.to,
     replyTo: REPLY_TO,
+    // Subject is plain text — no HTML escape needed but raw user input would
+    // still be ugly. Use the safe variant for consistency.
     subject: `Welcome to AIMS - Your ${params.serviceName} is live`,
-    html: emailLayout(body, `Your ${params.serviceName} is now active. Here's what to expect.`),
+    html: emailLayout(body, `Your ${safeService} is now active. Here's what to expect.`),
     templateKey: "welcome.paid-subscription",
   })
 }
@@ -299,8 +315,9 @@ export async function sendLeadMagnetResults(params: {
     "stack-configurator": "Your Recommended AI Stack",
   }
 
+  const safeNameLM = params.name ? escapeHtml(params.name) : ""
   const body = `
-    ${h1(`${params.name ? `Hey ${params.name}  - ` : "Hey  - "} your results are ready`)}
+    ${h1(`${safeNameLM ? `Hey ${safeNameLM}  - ` : "Hey  - "} your results are ready`)}
     ${params.score ? `
       <div style="background:#FEF2F2;border-left:4px solid #981B1B;border-radius:6px;padding:20px 24px;margin:0 0 24px;">
         <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#981B1B;text-transform:uppercase;letter-spacing:0.08em;">Your Score</p>
@@ -333,15 +350,24 @@ export async function sendFulfillmentAssignment(params: {
   clientEmail: string
   clientWebsite?: string
 }) {
+  // Escape every user-controlled string. clientName + clientEmail come
+  // from public form data; assigneeName + serviceName from internal data
+  // but better safe than sorry.
+  const safeAssignee = escapeHtml(params.assigneeName)
+  const safeClient = escapeHtml(params.clientName)
+  const safeService = escapeHtml(params.serviceName)
+  const safeTier = params.tier ? escapeHtml(params.tier) : null
+  const safeEmail = escapeHtml(params.clientEmail)
+  const safeWebsite = params.clientWebsite ? escapeHtml(params.clientWebsite) : null
   const body = `
     ${h1(`New fulfillment assignment`)}
-    ${p(`Hey ${params.assigneeName}, a new client has been assigned to you.`)}
+    ${p(`Hey ${safeAssignee}, a new client has been assigned to you.`)}
     <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #E5E7EB;border-radius:8px;overflow:hidden;margin:0 0 24px;">
       ${[
-        ["Client", params.clientName],
-        ["Service", `${params.serviceName}${params.tier ? ` (${params.tier})` : ""}`],
-        ["Email", params.clientEmail],
-        ...(params.clientWebsite ? [["Website", params.clientWebsite]] : []),
+        ["Client", safeClient],
+        ["Service", `${safeService}${safeTier ? ` (${safeTier})` : ""}`],
+        ["Email", safeEmail],
+        ...(safeWebsite ? [["Website", safeWebsite]] : []),
       ].map(([label, value], i) => `
         <tr style="background:${i % 2 === 0 ? "#F9FAFB" : "#ffffff"};">
           <td style="padding:12px 16px;font-size:13px;color:#6B7280;width:120px;">${label}</td>
@@ -369,16 +395,22 @@ export async function sendInternalNotification(params: {
   message: string
   urgency?: "low" | "normal" | "high"
 }) {
+  // Drop the warning emoji ("⚠") per global no-emoji rule. Use uppercase
+  // word marker for visual prominence in the inbox.
   const urgencyBar = params.urgency === "high"
-    ? `<div style="background:#981B1B;color:#ffffff;padding:10px 16px;border-radius:6px;font-size:13px;font-weight:700;margin-bottom:20px;">⚠ HIGH PRIORITY</div>`
+    ? `<div style="background:#981B1B;color:#ffffff;padding:10px 16px;border-radius:6px;font-size:13px;font-weight:700;margin-bottom:20px;letter-spacing:0.08em;">HIGH PRIORITY</div>`
     : params.urgency === "normal"
     ? `<div style="background:#FEF2F2;color:#981B1B;padding:10px 16px;border-radius:6px;font-size:13px;font-weight:600;margin-bottom:20px;">Notification</div>`
     : ""
 
+  // Escape — internal notifications can include error messages with
+  // user-controlled fragments (e.g. failed signups echoing email/name).
+  const safeSubject = escapeHtml(params.subject)
+  const safeMessage = escapeHtml(params.message)
   const body = `
     ${urgencyBar}
-    ${h1(params.subject)}
-    <pre style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:6px;padding:16px;font-size:13px;color:#374151;white-space:pre-wrap;overflow-wrap:break-word;">${params.message}</pre>
+    ${h1(safeSubject)}
+    <pre style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:6px;padding:16px;font-size:13px;color:#374151;white-space:pre-wrap;overflow-wrap:break-word;">${safeMessage}</pre>
     ${btn("Open Admin Portal →", "https://www.aioperatorcollective.com/admin")}
   `
   // Default falls back to the SUPER_ADMIN inbox so the email always goes
@@ -399,9 +431,11 @@ export async function sendCancellationEmail(params: {
   serviceName: string
   cancelledAt: Date
 }) {
+  const safeNameC = escapeHtml(params.name)
+  const safeServiceC = escapeHtml(params.serviceName)
   const body = `
-    ${h1(`We're sorry to see you go, ${params.name}`)}
-    ${p(`Your <strong style="color:#111827;">${params.serviceName}</strong> subscription has been cancelled as of ${params.cancelledAt.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}.`)}
+    ${h1(`We're sorry to see you go, ${safeNameC}`)}
+    ${p(`Your <strong style="color:#111827;">${safeServiceC}</strong> subscription has been cancelled as of ${params.cancelledAt.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}.`)}
     ${p("If this was a mistake or you'd like to discuss continuing, just reply to this email — we'll make it right.")}
     ${divider()}
     ${p("If there's anything we could have done better, we'd genuinely love to hear it. Your feedback helps us improve.")}
@@ -433,12 +467,14 @@ export async function sendRenewalEmail(params: {
   nextBillingDate: Date
   portalUrl: string
 }) {
+  const safeNameR = escapeHtml(params.name)
+  const safeServiceR = escapeHtml(params.serviceName)
   const body = `
-    ${h1(`Payment confirmed — ${params.serviceName}`)}
-    ${p(`Hi ${params.name}, your renewal payment of <strong style="color:#111827;">$${params.amount.toLocaleString()}</strong> has been processed successfully.`)}
+    ${h1(`Payment confirmed — ${safeServiceR}`)}
+    ${p(`Hi ${safeNameR}, your renewal payment of <strong style="color:#111827;">$${params.amount.toLocaleString()}</strong> has been processed successfully.`)}
     <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #E5E7EB;border-radius:8px;overflow:hidden;margin:0 0 24px;">
       ${[
-        ["Service", params.serviceName],
+        ["Service", safeServiceR],
         ["Amount", `$${params.amount.toLocaleString()}/month`],
         ["Next billing date", params.nextBillingDate.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })],
       ].map(([label, value], i) => `
@@ -470,11 +506,12 @@ export async function sendPaymentFailedEmail(params: {
   retryDate?: Date
   updatePaymentUrl: string
 }) {
+  const safeServicePF = escapeHtml(params.serviceName)
   const body = `
     ${h1(`Action required: Payment failed`)}
     <div style="background:#FEF2F2;border-left:4px solid #EF4444;border-radius:6px;padding:16px 20px;margin:0 0 24px;">
       <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#EF4444;text-transform:uppercase;letter-spacing:0.08em;">Payment Failed</p>
-      <p style="margin:0;font-size:14px;color:#374151;">We were unable to process your payment of <strong>$${params.amount.toLocaleString()}</strong> for <strong>${params.serviceName}</strong>.</p>
+      <p style="margin:0;font-size:14px;color:#374151;">We were unable to process your payment of <strong>$${params.amount.toLocaleString()}</strong> for <strong>${safeServicePF}</strong>.</p>
     </div>
     ${p("To keep your service running without interruption, please update your payment method.")}
     ${btn("Update Payment Method →", params.updatePaymentUrl)}

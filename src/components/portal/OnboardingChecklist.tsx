@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { toast } from "sonner"
 import { ONBOARDING_STEPS, groupStepsByWeek, TOTAL_STEPS, type OnboardingStep } from "@/lib/onboarding/steps"
 import { CheckCircle2, Circle, ExternalLink, ChevronDown, ChevronUp } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -92,10 +93,15 @@ export function OnboardingChecklist({ initialCompletedKeys, variant = "full", cl
   const [completedKeys, setCompletedKeys] = useState<Set<string>>(new Set(initialCompletedKeys))
   const [pendingKey, setPendingKey] = useState<string | null>(null)
 
+  // One key per week defined in lib/onboarding/steps.ts. The old `week34`
+  // key was a leftover from the 3-week curriculum — replaced with explicit
+  // week3/week4/week5 to match the current 5-phase journey.
   const [expandedWeeks, setExpandedWeeks] = useState<Record<string, boolean>>({
     week1: true,
     week2: true,
-    week34: true,
+    week3: true,
+    week4: true,
+    week5: true,
   })
 
   const weeks = groupStepsByWeek(completedKeys)
@@ -118,13 +124,15 @@ export function OnboardingChecklist({ initialCompletedKeys, variant = "full", cl
     try {
       await toggleStep(step.key, step.completed)
     } catch {
-      // Revert on error
+      // Revert on error and surface a toast — silent revert was confusing
+      // ("the box flickers and I don't know why") per audit feedback.
       setCompletedKeys((prev) => {
         const next = new Set(prev)
         if (nowCompleted) next.delete(step.key)
         else next.add(step.key)
         return next
       })
+      toast.error("Couldn't save your progress — try again.")
     } finally {
       setPendingKey(null)
     }
