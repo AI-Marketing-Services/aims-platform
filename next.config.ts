@@ -62,6 +62,20 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "img.clerk.com" },
       { protocol: "https", hostname: "images.clerk.dev" },
       { protocol: "https", hostname: "lh3.googleusercontent.com" },
+      // Vercel Blob — operator-uploaded logos + favicons live here
+      // (see /api/portal/onboarding/upload). Blob URLs are
+      // `<storeId>.public.blob.vercel-storage.com/<path>`. Without
+      // this entry next/image throws server-side and crashes the
+      // whitelabel landing page when an operator has uploaded a
+      // logo (the most common path right after onboarding).
+      {
+        protocol: "https",
+        hostname: "*.public.blob.vercel-storage.com",
+      },
+      {
+        protocol: "https",
+        hostname: "*.blob.vercel-storage.com",
+      },
     ],
     formats: ["image/avif", "image/webp"],
   },
