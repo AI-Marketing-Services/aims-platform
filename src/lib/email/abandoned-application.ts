@@ -10,25 +10,37 @@ export async function sendAbandonedApplicationEmail(params: {
   const applyUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://aioperatorcollective.com"}/apply`
 
   const body = `
-    ${h1(`${firstName}, totally understand if you got busy.`)}
+    ${h1(`${firstName}, your AIOC application is still open.`)}
     ${p(
-      `Hey ${firstName}, Matt here from the AI Operator Collective. I noticed you started your application but didn't get a chance to finish it. Totally understand, life gets in the way.`
+      `Hi ${firstName}, Jess here from the AI Operator Collective. You started your AIOC application, but it looks like you did not get a chance to finish it.`
     )}
     ${p(
-      "I just wanted to make sure you had a chance to finish up. Most of the operators I talk to are stuck in the same place: AI is moving fast, you know you should be using it, but between your day job, the LinkedIn noise, and a hundred tools claiming to be \"the one,\" it's hard to know where to even start. That's exactly why we built the Collective."
+      "Totally understandable. These things usually happen between meetings, errands, tabs, and the small daily chaos of being a person with a laptop."
     )}
     ${p(
-      "Once you finish the application and book a quick call with us, I'll send you our AI Operator Playbook (a PDF we normally keep inside the community), plus my personal list of the 10 AI tools I actually use every day, and the 5 prompts that save me the most time each week. All free, whether or not you end up joining."
+      "I just wanted to make sure you had an easy way back in."
     )}
     ${p(
-      `It's only 3 minutes to finish. Just a few short questions and a call time that works for you.`
+      "AIOC is application-only because the room is small. Each cohort is limited to 10 people, and we are looking for people who are serious about building useful AI skills around real business problems, not just collecting more tools."
     )}
+    ${p("The application helps us understand a few things:")}
+    <ul style="margin:0 0 24px;padding-left:20px;color:#4B5563;line-height:1.9;font-size:15px;">
+      <li>What kind of work you have done.</li>
+      <li>What you want this AI skill set to help you build toward.</li>
+      <li>How much time you can realistically commit.</li>
+      <li>Whether you are ready to practice business conversations, discovery, and outreach.</li>
+    </ul>
+    ${p("You do not need a perfect plan to finish it.")}
+    ${p("You just need enough honest context for us to understand where you are starting.")}
     ${btn("Finish my application", applyUrl)}
     ${p(
-      `If now isn't the right moment, no hard feelings at all. Just reply and tell me what's getting in the way and I'll figure out how to help. Either way, looking forward to meeting you, ${firstName}.`
+      "If now is not the right moment, no hard feelings. The worst move is forcing urgency where there is none."
+    )}
+    ${p(
+      "But if you are paying attention to AI because you want more agency in what comes next, finishing the application is the cleanest next step."
     )}
     <p style="margin:32px 0 0;font-size:13px;color:#4B5563;line-height:1.6;">
-      Matt<br/>
+      Jess<br/>
       <span style="color:#9CA3AF;font-size:12px;">AI Operator Collective</span>
     </p>
     <p style="margin:24px 0 0;font-size:11px;color:#9CA3AF;line-height:1.55;font-style:italic;">
@@ -41,8 +53,8 @@ export async function sendAbandonedApplicationEmail(params: {
     to: params.to,
     bcc: RYAN_SALES_BCC,
     replyTo: REPLY_TO,
-    subject: `${firstName}, you didn't finish your application`,
-    html: emailLayout(body, "3 minutes to finish, and your playbook is on the other side."),
+    subject: `${firstName}, your AIOC application is still open`,
+    html: emailLayout(body, "No pressure. Just finish the application if this still feels like the right next step."),
     serviceArm: "ai-operator-collective",
     templateKey: "aoc.application-abandoned",
   })
