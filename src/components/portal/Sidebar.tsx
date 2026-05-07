@@ -32,6 +32,7 @@ import {
   Sparkles,
   Trophy,
   Lock,
+  Target,
   FileSignature,
   Bot,
   Library,
@@ -74,6 +75,10 @@ const PORTAL_NAV: readonly NavItem[] = [
   { label: "Dashboard", href: "/portal/dashboard", icon: LayoutDashboard },
   { label: "Getting Started", href: "/portal/onboard", icon: Rocket },
   { label: "Quests", href: "/portal/quests", icon: Trophy },
+
+  // Daily-driver scorecard sits high — operators land here every morning
+  // to set their week, log activity, and track progress vs. target.
+  { label: "Scorecard", href: "/portal/scorecard", icon: Target, gate: "crm" },
 
   // Daily operator work
   { label: "Client CRM", href: "/portal/crm", icon: Briefcase, gate: "crm" },

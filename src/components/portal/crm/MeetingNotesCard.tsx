@@ -22,9 +22,21 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
+// Mirrors the ClientDealNoteKind enum so we don't drift when new kinds
+// (e.g. PROBLEM_HYPOTHESIS, QUICK_WIN_HYPOTHESIS) are added. Anything
+// outside the file/transcript card surfaces as a plain "NOTE" badge.
+type NoteKind =
+  | "NOTE"
+  | "TRANSCRIPT"
+  | "RECORDING"
+  | "PDF"
+  | "FILE"
+  | "PROBLEM_HYPOTHESIS"
+  | "QUICK_WIN_HYPOTHESIS"
+
 interface NoteRow {
   id: string
-  kind: "NOTE" | "TRANSCRIPT" | "RECORDING" | "PDF" | "FILE"
+  kind: NoteKind
   title: string | null
   content: string | null
   fileUrl: string | null
@@ -528,6 +540,8 @@ function iconForKind(kind: NoteRow["kind"]) {
 }
 
 function labelForKind(kind: NoteRow["kind"]) {
+  if (kind === "PROBLEM_HYPOTHESIS") return "Problem hypothesis"
+  if (kind === "QUICK_WIN_HYPOTHESIS") return "Quick-win hypothesis"
   return kind.charAt(0) + kind.slice(1).toLowerCase()
 }
 
