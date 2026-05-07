@@ -236,27 +236,30 @@ export async function GET() {
 
     const statusResult = await safeGetDomainStatus(site.customDomain)
 
-    // Live-truth verification: a domain is only "verified" from the
-    // operator dashboard's perspective if Vercel says BOTH that the
-    // ownership challenge passed (`verify.verified`) AND that the live
-    // DNS config is not misconfigured. Anything less means the user
-    // shouldn't see the "Live at <domain>" UI yet.
-    let liveVerified = false
+    // `liveDnsHealthy` is "Vercel says ownership is verified AND live
+    // DNS isn't misconfigured." It's a diagnostic signal — used for
+    // auto-correcting DB drift below and surfaced separately on the
+    // response so the UI can show "DNS looks ready, click Check now"
+    // hints — but it is NOT the canonical verified gate.
+    let liveDnsHealthy = false
     if (statusResult.ok && statusResult.config && statusResult.verify) {
-      liveVerified =
+      liveDnsHealthy =
         statusResult.verify.verified === true &&
         statusResult.config.misconfigured === false
     }
 
-    // Auto-correct drift: if the DB still says verified but the live
-    // check disagrees (e.g., user changed DNS, domain got removed from
-    // Vercel out-of-band, or a previous bug stored verified=true
-    // incorrectly), downgrade the stored gate AND auto-unpublish so the
-    // tenant route stops serving stale.
+    // Auto-correct drift in ONE direction only: DB says verified but
+    // live truth disagrees (operator changed DNS, domain got removed
+    // out-of-band on Vercel, or a previous bug stored verified=true
+    // incorrectly) → downgrade + auto-unpublish so the tenant route
+    // stops serving stale. We deliberately do NOT auto-upgrade here —
+    // the explicit /verify endpoint is the only path that flips the
+    // gate to true, even when DNS becomes healthy. This preserves the
+    // "no silent flip" invariant introduced by this PR.
     if (
       statusResult.ok &&
       site.customDomainVerified &&
-      !liveVerified
+      !liveDnsHealthy
     ) {
       await db.operatorSite.update({
         where: { userId: dbUser.id },
@@ -288,7 +291,14 @@ export async function GET() {
     return NextResponse.json({
       domain: site.customDomain,
       records,
-      verified: liveVerified,
+      // Canonical persisted gate — the middleware uses the same field
+      // to decide whether to serve the tenant page on this domain, so
+      // GET must always reflect the same value.
+      verified: site.customDomainVerified,
+      // Diagnostic-only: indicates Vercel says DNS is healthy.
+      // Surfaces "DNS ready — click Check now to verify" UX states
+      // without ever flipping the canonical gate behind the user's back.
+      liveDnsHealthy,
       published: site.isPublished,
     })
   } catch (err) {
