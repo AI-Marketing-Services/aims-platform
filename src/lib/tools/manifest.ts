@@ -36,7 +36,7 @@ export const TOOL_MANIFEST: Tool[] = [
     description:
       "The starting point for most AI operators. Use GPT-4 for client strategy, email drafts, research, and rapid prototyping.",
     url: "https://chatgpt.com",
-    logoDomain: "openai.com",
+    logoDomain: "chatgpt.com",
     logoEmoji: "🤖",
     category: "automation",
     gate: "free",
@@ -49,7 +49,7 @@ export const TOOL_MANIFEST: Tool[] = [
     description:
       "200K context window makes Claude the go-to for analyzing lengthy contracts, RFPs, and documents. Better at nuanced writing than GPT.",
     url: "https://claude.ai",
-    logoDomain: "anthropic.com",
+    logoDomain: "claude.ai",
     logoEmoji: "🧠",
     category: "content",
     gate: "free",
@@ -257,7 +257,7 @@ export const TOOL_MANIFEST: Tool[] = [
     description:
       "Track income, expenses, and invoices. Connect with Stripe for automatic reconciliation. Essential once you hit $5k/mo in client revenue.",
     url: "https://quickbooks.intuit.com",
-    logoDomain: "intuit.com",
+    logoDomain: "quickbooks.intuit.com",
     logoEmoji: "📊",
     category: "finance",
     gate: "onboarding:100",
