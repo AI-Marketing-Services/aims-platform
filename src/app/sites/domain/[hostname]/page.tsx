@@ -1,5 +1,5 @@
-import { requireTenantByCustomDomain } from '@/lib/tenant/resolve-tenant'
-import { TenantLanding } from '@/components/tenant/tenant-landing'
+import { requireTenantByCustomDomain } from "@/lib/tenant/resolve-tenant"
+import { WebsiteRenderer } from "@/components/website/website-renderer"
 
 type Props = {
   params: Promise<{ hostname: string }>
@@ -8,6 +8,5 @@ type Props = {
 export default async function DomainSitePage({ params }: Props) {
   const { hostname } = await params
   const tenant = await requireTenantByCustomDomain(hostname)
-
-  return <TenantLanding tenant={tenant} />
+  return <WebsiteRenderer tenant={tenant} />
 }

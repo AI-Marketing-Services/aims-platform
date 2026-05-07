@@ -124,28 +124,43 @@ enum UserRole {
 // ============ RESELLER WHITELABEL ============
 
 model OperatorSite {
-  id                   String   @id @default(cuid())
-  userId               String   @unique
-  subdomain            String   @unique // e.g. "acme" -> acme.aioperatorcollective.com
-  customDomain         String?  @unique
-  customDomainVerified Boolean  @default(false)
+  id                   String  @id @default(cuid())
+  userId               String  @unique
+  subdomain            String  @unique // e.g. "acme" -> acme.aioperatorcollective.com
+  customDomain         String? @unique
+  customDomainVerified Boolean @default(false)
   vercelDomainData     Json? // cached Vercel API state: verification challenges, DNS config
-  isPublished          Boolean  @default(false)
-  themeId              String   @default("aoc-default")
-  homepageContent      Json     @default("{}")
+  isPublished          Boolean @default(false)
+  themeId              String  @default("aoc-default")
+  homepageContent      Json    @default("{}")
   seoTitle             String?
   seoDescription       String?
-  customCss            String?  @db.Text
+  customCss            String? @db.Text
   analyticsId          String?
-  createdAt            DateTime @default(now())
-  updatedAt            DateTime @updatedAt
-  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // ── Website feature: template-driven full-site rendering ───────────────
+  // null = legacy fallback to the simple TenantLanding component (kept so
+  // existing operators don't suddenly see an empty page on the next deploy).
+  // Otherwise points to a template manifest in src/lib/website/registry.ts.
+  activeTemplateId   String?
+  // Per-section content overrides keyed by section id. Operators edit this
+  // through /reseller/site; renders merge over each template's defaults.
+  templateContent    Json      @default("{}")
+  // Track when the operator last published their website (separate from
+  // isPublished which gates the whole site). Surfaces "last published" UX
+  // and lets us show a "draft has changes" state in the editor.
+  websitePublishedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   // Whitelabel lead-magnet submissions attributed to this operator site.
   leadSubmissions LeadMagnetSubmission[] @relation("OperatorSubmissions")
 
   @@index([subdomain])
   @@index([customDomain])
+  @@index([activeTemplateId])
 }
 
 // ============ CRM & DEALS ============
