@@ -138,14 +138,15 @@ interface Props {
   } | null
   zipCode?: string | null
   country?: string | null
-  applicationAnswers?: {
-    timeline?: string
-    revenue_goal?: string
-    investment?: string
-    decision_maker?: string
-    background?: string
-  } | null
+  /** Map of question id → answer value. Single-select / text questions are
+   *  strings; multi-select questions are string[]. Keyed by current QUESTIONS
+   *  schema (current_role, why_now, hours_per_week, …). */
+  applicationAnswers?: Record<string, string | string[] | undefined> | null
   applicationSubmittedAt?: string | null
+  /** "Other" inline text, keyed by question id. */
+  applicationOtherText?: Record<string, string> | null
+  /** Always-shown follow-up text, keyed by question id. */
+  applicationFollowUpText?: Record<string, string> | null
 }
 
 const ACTIVITY_ICONS: Record<ActivityType, React.ReactNode> = {
@@ -315,6 +316,8 @@ export function DealDetailClient({
   country = null,
   applicationAnswers = null,
   applicationSubmittedAt = null,
+  applicationOtherText = null,
+  applicationFollowUpText = null,
 }: Props) {
   const router = useRouter()
   const [stage, setStage] = useState(currentStage)
@@ -578,55 +581,12 @@ export function DealDetailClient({
         {/* ── LEFT COLUMN (60%) ── */}
         <div className="lg:col-span-3 space-y-6">
 
-          {/* Service Arms Section */}
-          <div className="bg-card border border-border rounded-xl p-5">
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm font-semibold text-foreground">Service Arms</h2>
-              <button className="flex items-center gap-1.5 text-xs text-[#981B1B] hover:text-[#791515] font-medium transition-colors">
-                <Plus className="w-3.5 h-3.5" />
-                Add Service
-              </button>
-            </div>
-            {serviceArms.length === 0 ? (
-              <p className="text-sm text-muted-foreground text-center py-4">No service arms attached</p>
-            ) : (
-              <div className="space-y-2">
-                {serviceArms.map((sa) => (
-                  <div
-                    key={sa.id}
-                    className="flex items-center justify-between gap-3 rounded-lg bg-deep border border-border px-4 py-3"
-                  >
-                    <div>
-                      <span className="text-sm font-medium text-foreground">{sa.name}</span>
-                      {sa.tier && <span className="ml-2 text-xs text-muted-foreground">({sa.tier})</span>}
-                    </div>
-                    <div className="flex items-center gap-3">
-                      {sa.monthlyPrice != null && (
-                        <span className="text-xs font-mono text-muted-foreground">
-                          ${sa.monthlyPrice.toLocaleString()}/mo
-                        </span>
-                      )}
-                      <span
-                        className={cn(
-                          "text-xs px-2 py-0.5 rounded border font-medium",
-                          sa.status === "active"
-                            ? "text-emerald-700 bg-emerald-50 border-emerald-200"
-                            : "text-muted-foreground bg-muted/40 border-border"
-                        )}
-                      >
-                        {sa.status}
-                      </span>
-                      {sa.activatedAt && (
-                        <span className="text-xs text-muted-foreground">
-                          {new Date(sa.activatedAt).toLocaleDateString()}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          {/* Service Arms section removed — surfaced "Add Service" /
+              activation rows on every Deal even though the AOC pivot
+              doesn't sell per-arm subscriptions anymore. The sa data
+              still flows through props for backward compat (Stripe
+              webhooks still write to ServiceArm rows for legacy AIMS
+              clients) but isn't rendered on the application detail. */}
 
           {/* Activity Timeline */}
           <div className="bg-card border border-border rounded-xl p-5">
@@ -918,30 +878,89 @@ export function DealDetailClient({
               </div>
               <div className="space-y-3">
                 {QUESTIONS.map((q, i) => {
-                  const val = applicationAnswers[q.id as keyof typeof applicationAnswers]
-                  const opt = q.options.find((o) => o.value === val)
+                  const val = applicationAnswers[q.id]
+                  const otherText = applicationOtherText?.[q.id]?.trim() || null
+                  const followUpText = applicationFollowUpText?.[q.id]?.trim() || null
+
+                  // Render branches:
+                  //   - text question:     show the typed text verbatim
+                  //   - multi-select:      map each value to its label,
+                  //                        join with ", "; show "Other:" line
+                  //                        if applicable
+                  //   - single-select:     existing label + points pill;
+                  //                        show "Other:" line if applicable
+                  let body: React.ReactNode = (
+                    <span className="text-muted-foreground italic">—</span>
+                  )
+
+                  if (q.text && typeof val === "string" && val.length > 0) {
+                    body = (
+                      <p className="text-foreground whitespace-pre-wrap leading-snug">
+                        {val}
+                      </p>
+                    )
+                  } else if (q.selection === "multi" && Array.isArray(val) && val.length > 0) {
+                    const labels = val.map((v) => {
+                      const opt = q.options.find((o) => o.value === v)
+                      return opt?.label ?? v
+                    })
+                    body = (
+                      <p className="text-foreground">
+                        {labels.join(", ")}
+                      </p>
+                    )
+                  } else if (typeof val === "string" && val.length > 0) {
+                    const opt = q.options.find((o) => o.value === val)
+                    if (opt) {
+                      body = (
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span className="font-semibold text-foreground">
+                            {opt.label}
+                          </span>
+                          <span
+                            className={cn(
+                              "shrink-0 px-1.5 py-0.5 rounded font-mono text-[10px] font-bold",
+                              opt.points >= 3
+                                ? "bg-primary/10 text-primary"
+                                : opt.points >= 2
+                                  ? "bg-primary/5 text-primary/70"
+                                  : opt.points >= 1
+                                    ? "bg-muted text-muted-foreground"
+                                    : "bg-muted/50 text-muted-foreground/60",
+                            )}
+                          >
+                            {opt.points} pt{opt.points !== 1 ? "s" : ""}
+                          </span>
+                        </div>
+                      )
+                    } else {
+                      body = <p className="text-foreground">{val}</p>
+                    }
+                  }
+
                   return (
                     <div key={q.id} className="flex gap-2.5 text-xs">
                       <span className="shrink-0 w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-[10px]">
                         {i + 1}
                       </span>
-                      <div className="flex-1 min-w-0">
+                      <div className="flex-1 min-w-0 space-y-1">
                         <p className="text-muted-foreground mb-0.5">{q.question}</p>
-                        {opt ? (
-                          <div className="flex items-center gap-1.5">
-                            <span className="font-semibold text-foreground">{opt.label}</span>
-                            <span className={cn(
-                              "shrink-0 px-1.5 py-0.5 rounded font-mono text-[10px] font-bold",
-                              opt.points >= 3 ? "bg-primary/10 text-primary" :
-                              opt.points >= 2 ? "bg-primary/5 text-primary/70" :
-                              opt.points >= 1 ? "bg-muted text-muted-foreground" :
-                              "bg-muted/50 text-muted-foreground/60"
-                            )}>
-                              {opt.points} pt{opt.points !== 1 ? "s" : ""}
+                        {body}
+                        {otherText && (
+                          <p className="text-[11px] text-muted-foreground">
+                            <span className="font-mono uppercase tracking-wider mr-1">
+                              Other:
                             </span>
-                          </div>
-                        ) : (
-                          <span className="text-muted-foreground italic">—</span>
+                            {otherText}
+                          </p>
+                        )}
+                        {followUpText && (
+                          <p className="text-[11px] text-muted-foreground">
+                            <span className="font-mono uppercase tracking-wider mr-1">
+                              Context:
+                            </span>
+                            {followUpText}
+                          </p>
                         )}
                       </div>
                     </div>

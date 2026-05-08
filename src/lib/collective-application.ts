@@ -254,21 +254,35 @@ export const QUESTIONS: Question[] = [
 /* -------------------------------------------------------------------------- */
 
 /**
- * Max raw score across all single-select scored options.
- *
- * Most-points-per-question mapping:
- *   current_role:           2
- *   why_now (text):         2 (placeholder option)
- *   hours_per_week:         3
- *   build_toward:           2
- *   outreach_willingness:   3
- *   discovery_comfort:      3
- *   investment_readiness:   3
- * (Multi-select questions excluded — their points are caller-summed below.)
- *
- * Total: 18.
+ * Per-multi-select cap — mirrors the cap applied in calculateScore() so
+ * the denominator and the numerator stay consistent. Without this cap,
+ * "I picked everything" would dwarf substantive single-select answers.
  */
-export const MAX_RAW_SCORE = 18
+const MULTI_SELECT_CAP = 2
+
+/**
+ * Max raw score, computed from the QUESTIONS array so it stays in sync
+ * with the schema instead of drifting whenever a question is added/
+ * removed/re-pointed. Replaces the previous hardcoded 18 — that figure
+ * was correct under the original 5-question single-select model but
+ * went stale once Jess shipped the 10-question schema with multi-select
+ * questions, causing scores like "117/100" to appear in the CRM.
+ *
+ * Per-question max:
+ *   - text questions:   0 (the typed answer isn't enum-matched, so the
+ *                          placeholder option's points never apply)
+ *   - multi-select:     MULTI_SELECT_CAP (clamped, matches calculateScore)
+ *   - single-select:    max(option.points) across the question's options
+ */
+export const MAX_RAW_SCORE = QUESTIONS.reduce((sum, q) => {
+  if (q.text) return sum
+  if (q.selection === "multi") return sum + MULTI_SELECT_CAP
+  const best = q.options.reduce(
+    (m, o) => (o.points > m ? o.points : m),
+    0,
+  )
+  return sum + best
+}, 0)
 
 /** Public tier the spec uses: green (book), yellow (we'll review), red (nurture). */
 export type RoutingTier = "green" | "yellow" | "red"
@@ -288,17 +302,25 @@ export function calculateScore(answers: Record<string, string | string[]>) {
   for (const q of QUESTIONS) {
     const selected = answers[q.id]
     if (q.selection === "multi" && Array.isArray(selected)) {
-      // Multi-select: cap at 2 to avoid runaway "I picked everything" scores.
+      // Multi-select: cap at MULTI_SELECT_CAP to avoid runaway
+      // "I picked everything" scores. Same cap is reflected in MAX_RAW_SCORE.
       const matched = q.options.filter((o) => selected.includes(o.value))
       const sum = matched.reduce((acc, o) => acc + o.points, 0)
-      rawScore += Math.min(sum, 2)
+      rawScore += Math.min(sum, MULTI_SELECT_CAP)
     } else if (typeof selected === "string") {
       const option = q.options.find((o) => o.value === selected)
       if (option) rawScore += option.points
     }
   }
 
-  const normalizedScore = Math.round((rawScore / MAX_RAW_SCORE) * 100)
+  // Clamp to [0, 100] as a safety net — even with MAX_RAW_SCORE
+  // computed dynamically, a future schema change could in theory
+  // create transient drift. The CRM "Score / 100" UI must never be
+  // a lie.
+  const normalizedScore = Math.min(
+    100,
+    Math.max(0, Math.round((rawScore / MAX_RAW_SCORE) * 100)),
+  )
 
   /* ── Hard gates (Jess spec) ──────────────────────────────────────
    *
