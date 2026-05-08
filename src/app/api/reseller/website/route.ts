@@ -47,6 +47,14 @@ async function authorizeWebsiteAccess(): Promise<
     }
   }
 
+  // Admin / super-admin always pass — they're running the platform
+  // and don't need to grant themselves entitlements to use their own
+  // features. Mirrors the bypass already in the EntitlementGate server
+  // component used by the page-level layout.
+  if (dbUser.role === "ADMIN" || dbUser.role === "SUPER_ADMIN") {
+    return { ok: true, dbUser }
+  }
+
   const allowed = await hasEntitlement(dbUser.id, FEATURE_ENTITLEMENTS.WEBSITE)
   if (!allowed) {
     return {
