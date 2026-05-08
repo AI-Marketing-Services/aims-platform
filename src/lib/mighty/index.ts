@@ -879,25 +879,38 @@ export function mightyLoginUrl(email?: string): string {
   return `${base}?email=${encodeURIComponent(email)}`
 }
 
+/**
+ * Read a positive integer from an env var, falling back to the hardcoded
+ * default when the env var is missing, blank, or not a sane number. Lets
+ * us swap a stale Mighty space/plan/member ID without a code push: just
+ * set MIGHTY_SPACE_WELCOME=<new id> in Vercel env and redeploy.
+ */
+function envInt(name: string, fallback: number): number {
+  const raw = process.env[name]
+  if (!raw) return fallback
+  const n = parseInt(raw.trim(), 10)
+  return Number.isFinite(n) && n > 0 ? n : fallback
+}
+
 export const MIGHTY_IDS = {
-  network: 23411751,
+  network: envInt("MIGHTY_NETWORK_ID_NUMERIC", 23411751),
   collections: {
-    general: 3085145,
+    general: envInt("MIGHTY_COLLECTION_GENERAL", 3085145),
   },
   spaces: {
-    activityFeed: 23411752,
-    chat: 23411753,
-    curriculumPlaybooks: 23411754,
-    callsEvents: 23411755,
-    welcome: 23459013,
+    activityFeed: envInt("MIGHTY_SPACE_ACTIVITY_FEED", 23411752),
+    chat: envInt("MIGHTY_SPACE_CHAT", 23411753),
+    curriculumPlaybooks: envInt("MIGHTY_SPACE_CURRICULUM", 23411754),
+    callsEvents: envInt("MIGHTY_SPACE_CALLS", 23411755),
+    welcome: envInt("MIGHTY_SPACE_WELCOME", 23459013),
   },
   plans: {
-    community: 1976896,
-    accelerator: 1976897,
-    innerCircle: 1976902,
+    community: envInt("MIGHTY_PLAN_COMMUNITY", 1976896),
+    accelerator: envInt("MIGHTY_PLAN_ACCELERATOR", 1976897),
+    innerCircle: envInt("MIGHTY_PLAN_INNER_CIRCLE", 1976902),
   },
   members: {
-    ryan: 39232460,
-    adam: 39303293,
+    ryan: envInt("MIGHTY_MEMBER_RYAN", 39232460),
+    adam: envInt("MIGHTY_MEMBER_ADAM", 39303293),
   },
 } as const
