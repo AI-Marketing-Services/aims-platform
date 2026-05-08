@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { z } from "zod"
+import { UserRole } from "@prisma/client"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
 import { checkWhitelabelAccess } from "@/lib/auth/whitelabel"
@@ -51,7 +52,7 @@ async function authorizeWebsiteAccess(): Promise<
   // and don't need to grant themselves entitlements to use their own
   // features. Mirrors the bypass already in the EntitlementGate server
   // component used by the page-level layout.
-  if (dbUser.role === "ADMIN" || dbUser.role === "SUPER_ADMIN") {
+  if (dbUser.role === UserRole.ADMIN || dbUser.role === UserRole.SUPER_ADMIN) {
     return { ok: true, dbUser }
   }
 

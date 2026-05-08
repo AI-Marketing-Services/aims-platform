@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
-import { put } from "@vercel/blob"
+import { put, del } from "@vercel/blob"
 import { randomUUID } from "crypto"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
@@ -91,8 +91,11 @@ export async function POST(req: Request) {
       file.type === "image/vnd.microsoft.icon" ? "ico" : "bin"
     const safeName = `${randomUUID()}.${ext}`
 
+    // Upload to Blob first. If this fails we never touched the DB,
+    // so there's nothing to roll back.
+    let blob: Awaited<ReturnType<typeof put>>
     try {
-      const blob = await put(
+      blob = await put(
         `logos/${dbUser.id}/${safeName}`,
         file,
         {
@@ -100,14 +103,6 @@ export async function POST(req: Request) {
           contentType: file.type,
         },
       )
-
-      await db.memberProfile.upsert({
-        where: { userId: dbUser.id },
-        create: { userId: dbUser.id, logoUrl: blob.url },
-        update: { logoUrl: blob.url },
-      })
-
-      return NextResponse.json({ ok: true, url: blob.url })
     } catch (blobErr) {
       // Categorise the failure server-side and return a STABLE,
       // user-facing message — never the raw provider error, which
@@ -132,6 +127,47 @@ export async function POST(req: Request) {
         : "We couldn't save that file. Please try again, or contact support."
       return NextResponse.json(
         { ok: false, error: userMsg, requestId },
+        { status: 500 },
+      )
+    }
+
+    // Persist the URL. If the DB write fails after a successful upload,
+    // the blob is orphaned (publicly accessible, untracked) — best-effort
+    // delete it so we don't accumulate garbage every time Neon hiccups.
+    try {
+      await db.memberProfile.upsert({
+        where: { userId: dbUser.id },
+        create: { userId: dbUser.id, logoUrl: blob.url },
+        update: { logoUrl: blob.url },
+      })
+      return NextResponse.json({ ok: true, url: blob.url })
+    } catch (dbErr) {
+      const requestId = randomUUID()
+      logger.error("Persisting uploaded logo URL failed", dbErr, {
+        endpoint: "POST /api/portal/onboarding/upload",
+        userId,
+        blobUrl: blob.url,
+        requestId,
+      })
+      // Best-effort cleanup. Swallow any del() error — we already
+      // know the DB is in a bad state and a deletion failure here
+      // shouldn't change the response the operator sees.
+      try {
+        await del(blob.url)
+      } catch (cleanupErr) {
+        logger.error("Failed to clean up orphaned blob", cleanupErr, {
+          endpoint: "POST /api/portal/onboarding/upload",
+          userId,
+          blobUrl: blob.url,
+          requestId,
+        })
+      }
+      return NextResponse.json(
+        {
+          ok: false,
+          error: "We couldn't save your profile. Please try again.",
+          requestId,
+        },
         { status: 500 },
       )
     }
