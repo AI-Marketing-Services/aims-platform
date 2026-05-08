@@ -374,12 +374,22 @@ export function getCalendarOwner(_tier: LegacyTier) {
 /**
  * Should this applicant see the Calendly embed on the success page?
  *
- * Spec: only green-tier applicants book a call directly. Yellow gets a
- * "we'll review and follow up" message; Red gets a nurture / waitlist
- * message with resources.
+ * UPDATED: every completed application lands on the calendar. The
+ * original spec gated the calendar to green-tier only — yellow/red
+ * saw a "we'll follow up" or nurture screen instead. In practice that
+ * was a dead end: applicants who finished the entire questionnaire
+ * (real intent signal) hit a "thanks, bye" screen and never re-engaged.
+ * Jess (a clear ideal-fit applicant) tripped the slow-path yellow gate
+ * and lost the booking — that was the trigger for this change.
+ *
+ * The internal tier (hot/warm/cold) and routingTier are still computed
+ * and stored on the Deal, so the team can prioritise who to actually
+ * attend the call with from the CRM. The user-facing experience is now
+ * uniform: complete the form → book a call → real human reads the
+ * questionnaire and decides whether to keep, defer, or decline.
  */
-export function shouldShowCalendar(routingTier: RoutingTier): boolean {
-  return routingTier === "green"
+export function shouldShowCalendar(_routingTier: RoutingTier): boolean {
+  return true
 }
 
 /* -------------------------------------------------------------------------- */
