@@ -226,14 +226,22 @@ export function PortalMarketplaceClient({
                     Default for new accounts
                   </button>
                 ) : !plan.isCheckoutReady ? (
-                  <button
-                    type="button"
-                    disabled
-                    className="rounded-lg border border-border bg-card px-4 py-2.5 text-sm font-medium text-muted-foreground cursor-not-allowed"
-                    title="Run scripts/setup-plans.ts to create the Stripe price"
+                  // Stripe price isn't seeded for this plan yet. Render
+                  // a disabled "Contact us" button + a mailto fallback
+                  // so a willing buyer doesn't bounce — they can still
+                  // start the conversation while ops finishes the
+                  // Stripe Product setup. Previously the button copy
+                  // said "Coming soon" with a dev-only tooltip about
+                  // running scripts/setup-plans.ts, which left James
+                  // staring at an unreachable upgrade button.
+                  <a
+                    href={`mailto:hello@aioperatorcollective.com?subject=Upgrade%20to%20${encodeURIComponent(plan.name)}&body=I%27d%20like%20to%20upgrade%20to%20the%20${encodeURIComponent(plan.name)}%20plan%20but%20checkout%20isn%27t%20live%20yet.`}
+                    className="inline-flex items-center justify-center gap-2 rounded-lg border border-primary bg-card px-4 py-2.5 text-sm font-semibold text-primary hover:bg-primary/5 transition-colors"
+                    title="Stripe checkout for this plan isn't enabled yet — email us to upgrade today"
                   >
-                    Coming soon
-                  </button>
+                    Contact to upgrade
+                    <ArrowRight className="h-4 w-4" />
+                  </a>
                 ) : (
                   <button
                     type="button"

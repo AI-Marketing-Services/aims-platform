@@ -44,6 +44,7 @@ import {
 } from "lucide-react"
 import type { FeatureKey } from "@/lib/quests/registry"
 import { useQuests } from "@/components/quests/QuestContext"
+import { FEATURE_ENTITLEMENTS, type FeatureEntitlement } from "@/lib/plans/registry"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
 import { NotificationBell } from "@/components/shared/NotificationBell"
@@ -69,6 +70,16 @@ type NavItem = {
    * finished setting up — avoids untrained users configuring DNS.
    */
   requiresOnboardingComplete?: boolean
+  /**
+   * Entitlement key that gates the destination page. When the user
+   * does NOT have this entitlement active, the sidebar shows a Lock
+   * icon next to the label so they know clicking will hit a paywall.
+   * Mirrors the EntitlementGate that wraps the destination layout.
+   *
+   * Distinct from `gate` (which uses the quest system). Items can use
+   * either or both; the lock shows if EITHER signal indicates locked.
+   */
+  entitlement?: FeatureEntitlement
 }
 
 const PORTAL_NAV: readonly NavItem[] = [
@@ -79,33 +90,33 @@ const PORTAL_NAV: readonly NavItem[] = [
 
   // Daily-driver scorecard sits high — operators land here every morning
   // to set their week, log activity, and track progress vs. target.
-  { label: "Scorecard", href: "/portal/scorecard", icon: Target, gate: "crm" },
+  { label: "Scorecard", href: "/portal/scorecard", icon: Target, gate: "crm", entitlement: FEATURE_ENTITLEMENTS.CRM },
 
   // Daily operator work
-  { label: "Client CRM", href: "/portal/crm", icon: Briefcase, gate: "crm" },
-  { label: "Lead Scout", href: "/portal/crm/scout", icon: MapPin, gate: "lead_scout" },
-  { label: "AI Audit", href: "/portal/audits", icon: ClipboardCheck, gate: "audits" },
-  { label: "Lead Magnets", href: "/portal/lead-magnets", icon: FileText, gate: "audits" },
-  { label: "Email Sequences", href: "/portal/sequences", icon: Send },
-  { label: "Booking Page", href: "/portal/booking", icon: CalendarDays },
-  { label: "Discovery Recorder", href: "/portal/recordings", icon: Mic },
-  { label: "Follow-up Rules", href: "/portal/follow-up-rules", icon: Bell, gate: "follow_up_rules" },
+  { label: "Client CRM", href: "/portal/crm", icon: Briefcase, gate: "crm", entitlement: FEATURE_ENTITLEMENTS.CRM },
+  { label: "Lead Scout", href: "/portal/crm/scout", icon: MapPin, gate: "lead_scout", entitlement: FEATURE_ENTITLEMENTS.LEAD_SCOUT },
+  { label: "AI Audit", href: "/portal/audits", icon: ClipboardCheck, gate: "audits", entitlement: FEATURE_ENTITLEMENTS.AUDITS },
+  { label: "Lead Magnets", href: "/portal/lead-magnets", icon: FileText, gate: "audits", entitlement: FEATURE_ENTITLEMENTS.AUDITS },
+  { label: "Email Sequences", href: "/portal/sequences", icon: Send, entitlement: FEATURE_ENTITLEMENTS.SEQUENCES },
+  { label: "Booking Page", href: "/portal/booking", icon: CalendarDays, entitlement: FEATURE_ENTITLEMENTS.BOOKING },
+  { label: "Discovery Recorder", href: "/portal/recordings", icon: Mic, entitlement: FEATURE_ENTITLEMENTS.RECORDINGS },
+  { label: "Follow-up Rules", href: "/portal/follow-up-rules", icon: Bell, gate: "follow_up_rules", entitlement: FEATURE_ENTITLEMENTS.FOLLOW_UP_RULES },
 
   // Revenue + reporting
-  { label: "Proposals", href: "/portal/proposals", icon: FileSignature },
-  { label: "Invoices", href: "/portal/invoices", icon: FileText },
-  { label: "Client Updates", href: "/portal/client-updates", icon: Mail },
-  { label: "Revenue", href: "/portal/revenue", icon: TrendingUp, gate: "revenue" },
+  { label: "Proposals", href: "/portal/proposals", icon: FileSignature, entitlement: FEATURE_ENTITLEMENTS.PROPOSALS },
+  { label: "Invoices", href: "/portal/invoices", icon: FileText, entitlement: FEATURE_ENTITLEMENTS.INVOICES },
+  { label: "Client Updates", href: "/portal/client-updates", icon: Mail, entitlement: FEATURE_ENTITLEMENTS.CLIENT_UPDATES },
+  { label: "Revenue", href: "/portal/revenue", icon: TrendingUp, gate: "revenue", entitlement: FEATURE_ENTITLEMENTS.REVENUE },
   { label: "My Metrics", href: "/portal/metrics", icon: BarChart3 },
 
   // AI + content tools
-  { label: "Deal Assistant", href: "/portal/deal-assistant", icon: Bot },
-  { label: "AI Scripts", href: "/portal/scripts", icon: FileCode2, gate: "scripts" },
-  { label: "Content Engine", href: "/portal/content", icon: PenLine, gate: "content" },
-  { label: "Templates", href: "/portal/templates", icon: Library },
+  { label: "Deal Assistant", href: "/portal/deal-assistant", icon: Bot, entitlement: FEATURE_ENTITLEMENTS.DEAL_ASSISTANT },
+  { label: "AI Scripts", href: "/portal/scripts", icon: FileCode2, gate: "scripts", entitlement: FEATURE_ENTITLEMENTS.SCRIPTS },
+  { label: "Content Engine", href: "/portal/content", icon: PenLine, gate: "content", entitlement: FEATURE_ENTITLEMENTS.CONTENT },
+  { label: "Templates", href: "/portal/templates", icon: Library, entitlement: FEATURE_ENTITLEMENTS.TEMPLATES },
   { label: "Toolkit", href: "/portal/tools", icon: Wrench, gate: "ai_tools" },
-  { label: "Playbooks", href: "/portal/playbooks", icon: BookOpen, gate: "playbooks" },
-  { label: "Pricing Calc", href: "/portal/calculator", icon: Calculator, gate: "calculator" },
+  { label: "Playbooks", href: "/portal/playbooks", icon: BookOpen, gate: "playbooks", entitlement: FEATURE_ENTITLEMENTS.PLAYBOOKS },
+  { label: "Pricing Calc", href: "/portal/calculator", icon: Calculator, gate: "calculator", entitlement: FEATURE_ENTITLEMENTS.CALCULATOR },
 
   // Admin-only (filtered out below for clients)
   { label: "Ops Excellence", href: "/portal/ops-excellence", icon: Gauge },
@@ -148,6 +159,10 @@ interface PortalSidebarProps {
   isAdminEmail?: boolean
   creditBalance?: number
   creditPlanTier?: string
+  /** Active entitlement keys for the signed-in user. Used to decide
+   *  whether each nav item gets a Lock icon. Empty array = no
+   *  entitlements active (free tier). */
+  activeEntitlements?: string[]
 }
 
 export function PortalSidebar({
@@ -159,6 +174,7 @@ export function PortalSidebar({
   isAdminEmail = false,
   creditBalance = 0,
   creditPlanTier = "trial",
+  activeEntitlements = [],
 }: PortalSidebarProps) {
   const lowBalance = creditBalance < 50
   const pathname = usePathname()
@@ -211,7 +227,17 @@ export function PortalSidebar({
             !!item.gate && !questsLoading && !isFeatureUnlocked(item.gate)
           const isOnboardingLocked =
             !!item.requiresOnboardingComplete && !onboardingCompletedAt
-          const isLocked = isQuestLocked || isOnboardingLocked
+          // Entitlement check — admins / super-admins always pass (they
+          // bypass paywalls in EntitlementGate too). Non-admins see a
+          // Lock icon next to any item whose destination page is gated
+          // by an entitlement they don't have. Was missing for
+          // Proposals/Invoices/Sequences/etc. before this fix.
+          const isEntitlementLocked =
+            !isAdminEmail &&
+            !!item.entitlement &&
+            !activeEntitlements.includes(item.entitlement)
+          const isLocked =
+            isQuestLocked || isOnboardingLocked || isEntitlementLocked
           // Locked whitelabel items send the user to /portal/onboard instead
           // of bouncing them with a 403 — better than a dead-end click.
           const targetHref = isOnboardingLocked
@@ -224,9 +250,11 @@ export function PortalSidebar({
               title={
                 isOnboardingLocked
                   ? "Finish onboarding to unlock whitelabel"
-                  : isQuestLocked
-                    ? "Locked — open the Quests map to unlock"
-                    : undefined
+                  : isEntitlementLocked
+                    ? "Upgrade your plan to unlock"
+                    : isQuestLocked
+                      ? "Locked — open the Quests map to unlock"
+                      : undefined
               }
               className={cn(
                 "flex items-center gap-2.5 rounded-lg py-2 text-[13px] font-medium transition-all duration-150",

@@ -57,16 +57,14 @@ export const TEMPLATES: readonly Template[] = [
       {
         id: "logos",
         type: "logo-bar",
+        // Default to empty so the section auto-hides until the operator
+        // adds their own real client logos. The renderer returns null
+        // when logos.length === 0 — visitors never see fake placeholder
+        // brands like "Acme Co", "Globex" etc. Operators add real
+        // proof when they have it.
         defaults: {
           caption: "Trusted by teams at",
-          logos: [
-            { name: "Acme Co" },
-            { name: "Globex" },
-            { name: "Initech" },
-            { name: "Soylent" },
-            { name: "Hooli" },
-            { name: "Vandelay" },
-          ],
+          logos: [],
         },
       },
       {
@@ -130,82 +128,27 @@ export const TEMPLATES: readonly Template[] = [
       {
         id: "testimonials",
         type: "testimonial-grid",
+        // Empty by default — section auto-hides until the operator adds
+        // real client quotes. No fake testimonials with invented names
+        // ship to the live site.
         defaults: {
           eyebrow: "Proof",
           heading: "Operators who hired us once keep hiring us",
-          items: [
-            {
-              quote:
-                "We replaced two SDR roles with their lead-intake agent. Conversion went up, and our team has time for the conversations that matter.",
-              authorName: "Sarah Park",
-              authorTitle: "VP Sales",
-              authorCompany: "Greystone HVAC",
-            },
-            {
-              quote:
-                "The team gets it. They moved faster than any agency I've worked with and shipped something I can actually maintain.",
-              authorName: "Marcus Chen",
-              authorTitle: "COO",
-              authorCompany: "Brightline Marketing",
-            },
-            {
-              quote:
-                "First engagement paid for itself in 38 days. We're now on engagement four.",
-              authorName: "Diana Foster",
-              authorTitle: "Founder",
-              authorCompany: "Lakeshore Realty Partners",
-            },
-          ],
+          items: [],
         },
       },
       {
         id: "pricing",
         type: "pricing-3",
+        // Empty tiers — pricing varies wildly by operator (HVAC vs.
+        // consultancy vs. real estate). Section auto-hides until the
+        // operator adds their tiers. No invented dollar amounts ship
+        // to the live site.
         defaults: {
           eyebrow: "Pricing",
-          heading: "Three ways to start",
-          subheading: "All engagements include strategy, build, and 30 days of support.",
-          tiers: [
-            {
-              name: "Diagnostic",
-              price: "$2,500",
-              cadence: "one-time",
-              description: "Two-week audit + 90-day roadmap. No engagement required.",
-              features: [
-                "Workflow mapping interview",
-                "Top-5 automation opportunities",
-                "ROI projection per opportunity",
-              ],
-              ctaLabel: "Start the audit",
-            },
-            {
-              name: "Build sprint",
-              price: "$12,000",
-              cadence: "one-time",
-              description: "Diagnostic + one production-grade automation deployed.",
-              features: [
-                "Everything in Diagnostic",
-                "One automation, fully deployed",
-                "Native integrations + QA",
-                "30 days post-launch support",
-              ],
-              ctaLabel: "Book a build sprint",
-              highlight: true,
-            },
-            {
-              name: "Retainer",
-              price: "$6,500",
-              cadence: "month",
-              description: "Ongoing build + maintain across your funnel.",
-              features: [
-                "Up to 2 new automations / month",
-                "Existing automation maintenance",
-                "Monthly performance review",
-                "Priority Slack support",
-              ],
-              ctaLabel: "Talk about retainer",
-            },
-          ],
+          heading: "Simple, transparent pricing",
+          subheading: "",
+          tiers: [],
         },
       },
       {
@@ -306,16 +249,12 @@ export const TEMPLATES: readonly Template[] = [
       {
         id: "logos",
         type: "logo-bar",
+        // Empty by default — the section auto-hides until the operator
+        // adds their own real partner/customer logos. No fake brand
+        // placeholders ever ship to the live site.
         defaults: {
           caption: "Powering teams at",
-          logos: [
-            { name: "Acme Co" },
-            { name: "Stark Industries" },
-            { name: "Wayne Enterprises" },
-            { name: "Massive Dynamic" },
-            { name: "Wonka Industries" },
-            { name: "Cyberdyne" },
-          ],
+          logos: [],
         },
       },
       {
@@ -392,66 +331,27 @@ export const TEMPLATES: readonly Template[] = [
         },
       },
       {
-        id: "testimonial",
-        type: "testimonial-single",
+        id: "testimonials",
+        type: "testimonial-grid",
+        // Empty by default — section auto-hides until the operator adds
+        // real client quotes. Replaces the previous testimonial-single
+        // that shipped with a fake-named author.
         defaults: {
           eyebrow: "What operators say",
-          quote:
-            "I've worked with three AI consultancies. This is the only one that actually shipped something I can run without them.",
-          authorName: "Daniel Voss",
-          authorTitle: "CEO",
-          authorCompany: "Northstar Group",
+          heading: "Real outcomes from teams who shipped",
+          items: [],
         },
       },
       {
         id: "pricing",
         type: "pricing-3",
+        // Empty tiers — pricing varies by operator. Section auto-hides
+        // until tiers are added. No invented dollar amounts ship live.
         defaults: {
           eyebrow: "Pricing",
-          heading: "Right-sized engagements",
-          subheading:
-            "We don't do per-seat. You pay for outcomes, deployed.",
-          tiers: [
-            {
-              name: "Audit",
-              price: "$2,500",
-              cadence: "one-time",
-              description: "Diagnostic + 90-day roadmap.",
-              features: [
-                "Workflow mapping",
-                "Top-5 automation opportunities",
-                "ROI projection",
-              ],
-              ctaLabel: "Start the audit",
-            },
-            {
-              name: "Build",
-              price: "$15,000",
-              cadence: "one-time",
-              description: "Audit + one production deployment.",
-              features: [
-                "Everything in Audit",
-                "One automation deployed",
-                "Native integrations",
-                "30 days post-launch support",
-              ],
-              ctaLabel: "Book a build",
-              highlight: true,
-            },
-            {
-              name: "Operate",
-              price: "$8,500",
-              cadence: "month",
-              description: "Build + maintain, ongoing.",
-              features: [
-                "2 new automations / month",
-                "Existing maintenance",
-                "Monthly review + roadmap",
-                "Priority support",
-              ],
-              ctaLabel: "Talk about Operate",
-            },
-          ],
+          heading: "Simple, transparent pricing",
+          subheading: "",
+          tiers: [],
         },
       },
       {
@@ -543,15 +443,14 @@ export const TEMPLATES: readonly Template[] = [
         },
       },
       {
-        id: "testimonial",
-        type: "testimonial-single",
+        id: "testimonials",
+        type: "testimonial-grid",
+        // Empty by default — section auto-hides until the operator
+        // adds real testimonials. No fake-named studio quotes ship.
         defaults: {
-          eyebrow: "Testimonial",
-          quote:
-            "Working with them felt less like hiring an agency and more like adding two senior people to my team for a quarter.",
-          authorName: "Helena Vance",
-          authorTitle: "Founder",
-          authorCompany: "Vance & Co",
+          eyebrow: "Testimonials",
+          heading: "What clients have said",
+          items: [],
         },
       },
       {

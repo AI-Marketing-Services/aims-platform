@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { z } from "zod"
+import { UserRole } from "@prisma/client"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
 import { checkWhitelabelAccess } from "@/lib/auth/whitelabel"
@@ -45,6 +46,14 @@ async function authorizeWebsiteAccess(): Promise<
         { status: 404 },
       ),
     }
+  }
+
+  // Admin / super-admin always pass — they're running the platform
+  // and don't need to grant themselves entitlements to use their own
+  // features. Mirrors the bypass already in the EntitlementGate server
+  // component used by the page-level layout.
+  if (dbUser.role === UserRole.ADMIN || dbUser.role === UserRole.SUPER_ADMIN) {
+    return { ok: true, dbUser }
   }
 
   const allowed = await hasEntitlement(dbUser.id, FEATURE_ENTITLEMENTS.WEBSITE)
