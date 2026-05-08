@@ -3,6 +3,7 @@ import { Sparkles, ArrowUpRight, History } from "lucide-react"
 import { db } from "@/lib/db"
 import { PLAN_LABELS, PLAN_GRANTS } from "@/lib/enrichment/credits/pricing"
 import { CreditTopupButton } from "./CreditTopupButton"
+import { LocalTimestamp } from "./LocalTimestamp"
 
 export async function CreditsSection({ userId }: { userId: string }) {
   const user = await db.user.findUnique({
@@ -98,12 +99,12 @@ export async function CreditsSection({ userId }: { userId: string }) {
                   <div className="flex flex-col">
                     <span className="text-foreground">{labelForReason(t.reason)}</span>
                     <span className="text-[11px] text-muted-foreground">
-                      {new Date(t.createdAt).toLocaleString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                        hour: "numeric",
-                        minute: "2-digit",
-                      })}
+                      {/* Format on the client so the visitor's local
+                          timezone is used. SSR formatting on Vercel
+                          would emit UTC because functions run in UTC,
+                          which is what showed PST users a 7h-ahead
+                          timestamp. */}
+                      <LocalTimestamp iso={t.createdAt.toISOString()} />
                     </span>
                   </div>
                   <div className="flex items-center gap-3">

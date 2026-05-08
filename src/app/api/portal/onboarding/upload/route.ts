@@ -109,25 +109,29 @@ export async function POST(req: Request) {
 
       return NextResponse.json({ ok: true, url: blob.url })
     } catch (blobErr) {
-      // Surface the actual Vercel Blob failure category to the operator
-      // instead of the generic "Upload failed" — distinguishes between
-      // "token is wrong" (most common after a rotation) and "the blob
-      // store no longer exists" so they can self-serve the fix.
+      // Categorise the failure server-side and return a STABLE,
+      // user-facing message — never the raw provider error, which
+      // could leak internals (token prefixes, store ids, request ids).
+      // We log the full error server-side under a generated request id
+      // so support can find it in Vercel logs without the operator
+      // having to copy-paste anything sensitive.
       const errMessage =
         blobErr instanceof Error ? blobErr.message : String(blobErr)
+      const requestId = randomUUID()
       logger.error("Vercel Blob put() failed", blobErr, {
         endpoint: "POST /api/portal/onboarding/upload",
         userId,
         fileType: file.type,
         fileSize: file.size,
+        requestId,
       })
       const isAuthError =
         /token|unauthor|forbidden|invalid/i.test(errMessage)
-      const friendlyMsg = isAuthError
-        ? "Upload failed: the Vercel Blob token is invalid or expired. Rotate it in the Vercel project settings and redeploy."
-        : `Upload failed: ${errMessage.slice(0, 200)}`
+      const userMsg = isAuthError
+        ? "Logo uploads aren't connected yet. Contact support to enable them."
+        : "We couldn't save that file. Please try again, or contact support."
       return NextResponse.json(
-        { ok: false, error: friendlyMsg },
+        { ok: false, error: userMsg, requestId },
         { status: 500 },
       )
     }

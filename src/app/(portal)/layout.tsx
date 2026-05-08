@@ -17,6 +17,7 @@ import { AdminPreviewBanner } from "@/components/shared/AdminPreviewBanner"
 import { db } from "@/lib/db"
 import { getEffectiveRole, dashboardForRole } from "@/lib/auth"
 import { ensureDbUser } from "@/lib/auth/ensure-user"
+import { listActiveEntitlements } from "@/lib/entitlements"
 import { logger } from "@/lib/logger"
 
 export const metadata: Metadata = {
@@ -82,7 +83,7 @@ export default async function PortalLayout({
   const totalMrr = dbUser?.subscriptions.reduce((sum, s) => sum + s.monthlyAmount, 0) ?? 0
   const serviceCount = dbUser?.subscriptions.length ?? 0
 
-  const [unreadCount, onboardingProgress] = await Promise.all([
+  const [unreadCount, onboardingProgress, activeEntitlements] = await Promise.all([
     dbUser
       ? db.notification
           .count({ where: { userId: dbUser.id, read: false } })
@@ -103,6 +104,21 @@ export default async function PortalLayout({
           return null
         })
       : Promise.resolve(null),
+    // Active entitlement keys — fed to the sidebar so locked features
+    // get a Lock icon next to their nav label, mirroring how
+    // EntitlementGate paywalls them on click. Without this, items like
+    // Proposals/Invoices/Sequences had no lock indicator even though
+    // their pages 402/paywall on access. James flagged this on first
+    // dogfood as "some things that should be locked don't show locks".
+    dbUser
+      ? listActiveEntitlements(dbUser.id).catch((err) => {
+          logger.error("portal layout: listActiveEntitlements failed", err, {
+            endpoint: "(portal)/layout",
+            userId: dbUser.id,
+          })
+          return [] as string[]
+        })
+      : Promise.resolve([] as string[]),
   ])
 
   const firstName = dbUser?.name?.split(" ")[0] ?? "there"
@@ -131,6 +147,7 @@ export default async function PortalLayout({
           creditBalance={dbUser?.creditBalance ?? 0}
           creditPlanTier={dbUser?.creditPlanTier ?? "trial"}
           isAdminEmail={isAdminish && !isPreviewing}
+          activeEntitlements={activeEntitlements}
         />
         <main id="main-content" className="flex-1 overflow-y-auto custom-scrollbar">
           {isPreviewing && <AdminPreviewBanner viewingAs={effectiveRole} />}
