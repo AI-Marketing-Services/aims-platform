@@ -29,14 +29,17 @@ import {
 /* -------------------------------------------------------------------------- */
 
 /**
- * Step layout (VP-flip model):
- *   0  Welcome screen
- *   1  Name + email (minimal friction)
- *   2–6 Qualifying questions (QUESTIONS[0..4])
- *   7  Contact details (phone, zip, country, SMS consent)
- *   —  After step 7 submission → calendar phase
+ * Step layout:
+ *   1               Name + email (minimal friction — first thing users see)
+ *   2..(n+1)        Qualifying questions (QUESTIONS[0..n-1])
+ *   n+2             Contact details (phone, zip, country, SMS consent)
+ *   —               After contact submission → calendar phase
+ *
+ * Step 0 (welcome) was removed — visitors who clicked "Apply Now" from the
+ * marketing page were greeted with a second "Apply Now" button, which felt
+ * like a dead screen. Now they land straight on name+email.
  */
-const TOTAL_FORM_STEPS = QUESTIONS.length + 2 // welcome(0) + name(1) + questions(5) + contact(7) = 8 steps total
+const TOTAL_FORM_STEPS = QUESTIONS.length + 2 // name(1) + questions(2..n+1) + contact(n+2)
 
 /**
  * Application phases:
@@ -70,16 +73,27 @@ const slideVariants = {
 
 export function ApplyForm() {
   const [phase, setPhase] = useState<Phase>("form")
-  const [step, setStep] = useState(0)
+  // Start on name+email (step 1). Welcome screen (legacy step 0) removed —
+  // it was a redundant "Apply Now" button after the visitor already clicked
+  // Apply Now on the marketing page.
+  const [step, setStep] = useState(1)
 
   // Step 1 — Name + email
   const [firstName, setFirstName] = useState("")
   const [lastName, setLastName] = useState("")
   const [email, setEmail] = useState("")
 
-  // Steps 2-6 — Qualification answers
-  const [answers, setAnswers] = useState<Record<string, string>>({})
-  const [otherText, setOtherText] = useState("")
+  // Steps 2..(n+1) — Qualification answers.
+  //
+  // Single-select: answer is a string (option value).
+  // Multi-select:  answer is a string[] of selected option values.
+  // Text question: answer is a string (the typed answer).
+  const [answers, setAnswers] = useState<Record<string, string | string[]>>({})
+  // "Other" inline text for questions with allowOther — keyed per-question.
+  const [otherTextById, setOtherTextById] = useState<Record<string, string>>({})
+  // Free-text follow-ups that always show after a question (followUp.whenValue==="*").
+  const [followUpTextById, setFollowUpTextById] = useState<Record<string, string>>({})
+  // Single-select transient highlight state (still used for the auto-advance flash).
   const [selected, setSelected] = useState<string | null>(null)
 
   // Step 7 — Contact details
@@ -131,9 +145,7 @@ export function ApplyForm() {
   const progress =
     phase === "calendar" || phase === "done"
       ? 100
-      : step === 0
-        ? 0
-        : Math.round((step / (TOTAL_FORM_STEPS - 1)) * 100)
+      : Math.round(((step - 1) / (TOTAL_FORM_STEPS - 1)) * 100)
 
   /* ---- Validation ---- */
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
@@ -153,9 +165,8 @@ export function ApplyForm() {
     containerRef.current?.scrollTo({ top: 0, behavior: "smooth" })
 
   const goBack = () => {
-    if (step > 0) {
+    if (step > 1) {
       setSelected(null)
-      setOtherText("")
       setStep((s) => s - 1)
       scrollTop()
     }
@@ -190,12 +201,21 @@ export function ApplyForm() {
     scrollTop()
   }, [canAdvanceName, savePartialApplication])
 
-  /* ---- Compute pre-score after last question for contact step intro ---- */
+  /* ---- Compute pre-score after last question for contact step intro ----
+   *
+   * Lightweight client-side preview only — the authoritative score is
+   * recalculated server-side in calculateScore(). We only sum single-
+   * select option points here so multi-select arrays + free-text answers
+   * don't break the math. Good enough to drive the personalised intro
+   * copy on the contact step.
+   */
   const computePreScore = useCallback(
-    (ans: Record<string, string>) => {
+    (ans: Record<string, string | string[]>) => {
       let raw = 0
       for (const q of QUESTIONS) {
-        const opt = q.options.find((o) => o.value === ans[q.id])
+        const v = ans[q.id]
+        if (typeof v !== "string") continue
+        const opt = q.options.find((o) => o.value === v)
         if (opt) raw += opt.points
       }
       setPreScore(Math.round((raw / 15) * 100))
@@ -203,51 +223,70 @@ export function ApplyForm() {
     []
   )
 
-  /* ---- Question selection ---- */
-  const handleSelect = useCallback(
+  /* ---- Advance helper (last question → contact, else → next question) ---- */
+  const advanceQuestion = useCallback(
+    (latestAnswers?: Record<string, string | string[]>) => {
+      const questionIndex = step - 2
+      const isLastQuestion = questionIndex === QUESTIONS.length - 1
+      setSelected(null)
+      if (isLastQuestion) {
+        computePreScore(latestAnswers ?? answers)
+      }
+      setStep((s) => s + 1)
+      scrollTop()
+    },
+    [answers, step, computePreScore]
+  )
+
+  /* ---- Single-select option click (auto-advances after a brief flash) ---- */
+  const handleSingleSelect = useCallback(
     (questionId: string, value: string) => {
       setSelected(value)
       const updated = { ...answers, [questionId]: value }
       setAnswers(updated)
 
-      // If "other" selected on a question with allowOther, don't auto-advance
+      // If "other" selected on a question with allowOther, don't auto-advance —
+      // the inline text input needs to capture the operator's free-text first.
       const question = QUESTIONS.find((q) => q.id === questionId)
       if (question?.allowOther && value === "other") {
         return
       }
 
-      const questionIndex = step - 2 // steps 2..6 map to QUESTIONS[0..4]
-      const isLastQuestion = questionIndex === QUESTIONS.length - 1
-
-      setTimeout(() => {
-        setSelected(null)
-        if (isLastQuestion) {
-          computePreScore(updated)
-          setStep((s) => s + 1) // advance to contact details
-          scrollTop()
-        } else {
-          setStep((s) => s + 1)
-          scrollTop()
-        }
-      }, 350)
+      // Brief delay so the selected state is visible before we transition.
+      setTimeout(() => advanceQuestion(updated), 350)
     },
-    [answers, step, computePreScore]
+    [answers, advanceQuestion]
   )
 
-  /* ---- "Other" continue handler ---- */
-  const handleOtherContinue = useCallback(() => {
-    const questionIndex = step - 2
-    const isLastQuestion = questionIndex === QUESTIONS.length - 1
-    setSelected(null)
-    if (isLastQuestion) {
-      computePreScore(answers)
-      setStep((s) => s + 1)
-      scrollTop()
-    } else {
-      setStep((s) => s + 1)
-      scrollTop()
-    }
-  }, [answers, step, computePreScore])
+  /* ---- Multi-select toggle (no auto-advance — Continue button drives it) ---- */
+  const toggleMultiSelect = useCallback(
+    (questionId: string, value: string) => {
+      setAnswers((prev) => {
+        const existing = prev[questionId]
+        const arr = Array.isArray(existing) ? existing : []
+        const next = arr.includes(value)
+          ? arr.filter((v) => v !== value)
+          : [...arr, value]
+        return { ...prev, [questionId]: next }
+      })
+    },
+    []
+  )
+
+  /* ---- Text-question commit (sets answers[id] = trimmed text, advances) ---- */
+  const commitTextAnswer = useCallback(
+    (questionId: string, text: string) => {
+      const updated = { ...answers, [questionId]: text.trim() }
+      setAnswers(updated)
+      advanceQuestion(updated)
+    },
+    [answers, advanceQuestion]
+  )
+
+  /* ---- "Continue" handler for any question type that doesn't auto-advance ---- */
+  const handleContinue = useCallback(() => {
+    advanceQuestion()
+  }, [advanceQuestion])
 
   /* ---- Form submission (after contact details) ----
      CRITICAL: the calendar must ALWAYS render. Booking is the
@@ -274,8 +313,11 @@ export function ApplyForm() {
     smsConsentFollowup: smsFollowup,
     smsConsentPromo: smsPromo,
     answers,
-    backgroundOther:
-      answers.background === "other" ? otherText.trim() : undefined,
+    // "Other" free-text per question (current_role, industries, etc.) and
+    // any followUp text that always shows for a question. Server-side
+    // validators accept either map; keys are question ids.
+    otherTextById,
+    followUpTextById,
     source: "apply-form",
   })
 
@@ -830,35 +872,7 @@ export function ApplyForm() {
           )}
 
           <AnimatePresence mode="wait">
-            {/* ---- Step 0: Welcome ---- */}
-            {step === 0 && (
-              <motion.div
-                key="welcome"
-                variants={slideVariants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={{ duration: 0.25 }}
-                className="space-y-5 sm:space-y-6 text-center flex flex-col items-center"
-              >
-                <h2 className="font-playfair text-2xl sm:text-3xl md:text-4xl text-[#1A1A1A]">
-                  Apply to the AI Operator Collective
-                </h2>
-                <p className="text-[#737373] text-base sm:text-lg max-w-lg">
-                  3 minutes. No pitch call scheduled automatically. A real
-                  operator reads this within 24 hours.
-                </p>
-                <button
-                  onClick={() => setStep(1)}
-                  className="flex items-center justify-center gap-2 rounded-md bg-crimson text-white px-8 py-4 text-sm font-bold uppercase tracking-wider hover:bg-crimson-dark active:bg-crimson-dark shadow-[0_8px_24px_-4px_rgba(153,27,27,0.35)] transition-all min-h-[52px]"
-                >
-                  Apply Now
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </motion.div>
-            )}
-
-            {/* ---- Step 1: Name + Email ---- */}
+            {/* ---- Step 1: Name + Email (entry point) ---- */}
             {step === 1 && (
               <motion.div
                 key="name-email"
@@ -956,102 +970,110 @@ export function ApplyForm() {
               </motion.div>
             )}
 
-            {/* ---- Steps 2-6: Qualifying Questions ---- */}
-            {currentQuestion && (
-              <motion.div
-                key={`q-${currentQuestion.id}`}
-                variants={slideVariants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={{ duration: 0.25 }}
-                className="text-center"
-              >
-                {/* Personalized intro */}
-                <p className="text-crimson text-xs sm:text-sm font-medium mb-2 sm:mb-3">
-                  {getStepIntro(questionIndex, firstName.trim(), answers)}
-                </p>
+            {/* ---- Steps 2..(n+1): Qualifying Questions ---- */}
+            {currentQuestion && (() => {
+              // Question type branches:
+              //   - currentQuestion.text       → free-text textarea (e.g. "Why now?")
+              //   - selection === "multi"      → multi-select toggles + Continue
+              //   - default                    → single-select with auto-advance
+              const isText = !!currentQuestion.text
+              const isMulti = currentQuestion.selection === "multi"
+              const currentAnswer = answers[currentQuestion.id]
+              const selectedValues = Array.isArray(currentAnswer)
+                ? currentAnswer
+                : []
+              const textAnswer =
+                isText && typeof currentAnswer === "string" ? currentAnswer : ""
+              const otherText = otherTextById[currentQuestion.id] ?? ""
+              const followUpText = followUpTextById[currentQuestion.id] ?? ""
+              const followUpAlwaysShown =
+                currentQuestion.followUp?.whenValue === "*"
+              const followUpMinLength = currentQuestion.followUp?.minLength ?? 0
 
-                <h2 className="font-playfair text-lg sm:text-2xl md:text-3xl text-[#1A1A1A] mb-2 sm:mb-3 leading-snug">
-                  {currentQuestion.question}
-                </h2>
+              // Validation per question type — drives the Continue button.
+              const textMinLength = currentQuestion.text?.minLength ?? 1
+              const textValid = textAnswer.trim().length >= textMinLength
+              const multiHasSelection = selectedValues.length > 0
+              const otherRequired =
+                currentQuestion.allowOther &&
+                (isMulti
+                  ? selectedValues.includes("other")
+                  : currentAnswer === "other")
+              const otherValid = !otherRequired || otherText.trim().length > 0
+              const followUpValid =
+                !followUpAlwaysShown ||
+                followUpText.trim().length >= followUpMinLength
+              const canAdvance = isText
+                ? textValid
+                : isMulti
+                  ? multiHasSelection && otherValid && followUpValid
+                  : false // single-select uses auto-advance, not the button
 
-                <p className="text-[#737373] text-xs sm:text-sm mb-4 sm:mb-6">
-                  {currentQuestion.description}
-                </p>
-
-                <div
-                  className={cn(
-                    "grid gap-2 sm:gap-3",
-                    currentQuestion.options.length > 5
-                      ? "grid-cols-1 sm:grid-cols-2"
-                      : "grid-cols-1 sm:grid-cols-2"
-                  )}
+              return (
+                <motion.div
+                  key={`q-${currentQuestion.id}`}
+                  variants={slideVariants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{ duration: 0.25 }}
+                  className="text-center"
                 >
-                  {currentQuestion.options.map((option, i) => {
-                    const isSelected =
-                      selected === option.value ||
-                      answers[currentQuestion.id] === option.value
-                    return (
-                      <button
-                        key={option.value}
-                        onClick={() =>
-                          handleSelect(currentQuestion.id, option.value)
-                        }
-                        className={cn(
-                          "group relative text-left rounded-md border px-3 py-3 sm:p-4 transition-all active:scale-[0.98]",
-                          isSelected
-                            ? "border-crimson bg-crimson/5 shadow-[0_0_0_1px_rgba(153,27,27,0.3)]"
-                            : "border-[#E3E3E3] bg-white hover:border-crimson/30 hover:shadow-[0_8px_24px_-6px_rgba(0,0,0,0.12),0_2px_8px_-2px_rgba(0,0,0,0.06)]"
-                        )}
-                      >
-                        <div className="flex items-center gap-2.5 sm:gap-3">
-                          <span
-                            className={cn(
-                              "flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-mono font-bold border transition-colors",
-                              isSelected
-                                ? "bg-crimson text-white border-crimson"
-                                : "bg-[#F5F5F5] text-[#737373] border-[#E3E3E3] group-hover:border-crimson/30"
-                            )}
-                          >
-                            {String.fromCharCode(65 + i)}
-                          </span>
-                          <span className="text-[13px] sm:text-base text-[#1A1A1A] leading-snug">
-                            {option.label}
-                          </span>
-                        </div>
-                      </button>
-                    )
-                  })}
-                </div>
+                  {/* Personalized intro */}
+                  <p className="text-crimson text-xs sm:text-sm font-medium mb-2 sm:mb-3">
+                    {getStepIntro(questionIndex, firstName.trim(), answers)}
+                  </p>
 
-                {/* "Other" text input (shown when "other" is selected) */}
-                {currentQuestion.allowOther &&
-                  answers[currentQuestion.id] === "other" && (
-                    <div className="mt-4 space-y-3">
-                      <label className="sr-only" htmlFor="apply-other">
-                        Describe your background
+                  <h2 className="font-playfair text-lg sm:text-2xl md:text-3xl text-[#1A1A1A] mb-2 sm:mb-3 leading-snug">
+                    {currentQuestion.question}
+                  </h2>
+
+                  <p className="text-[#737373] text-xs sm:text-sm mb-4 sm:mb-6">
+                    {currentQuestion.description}
+                  </p>
+
+                  {/* ── Text-question branch (e.g. "Why now?") ── */}
+                  {isText && (
+                    <div className="space-y-3 text-left max-w-xl mx-auto">
+                      <label className="sr-only" htmlFor="apply-text">
+                        {currentQuestion.text?.question ?? "Your answer"}
                       </label>
-                      <input
-                        id="apply-other"
-                        type="text"
-                        value={otherText}
-                        onChange={(e) => setOtherText(e.target.value)}
-                        className="w-full rounded-md border border-[#E3E3E3] bg-white px-4 py-3.5 text-base text-[#1A1A1A] placeholder:text-[#ccc] focus:outline-none focus:border-crimson focus:ring-1 focus:ring-crimson transition-colors"
-                        placeholder="Tell us about your background..."
-                        aria-label="Describe your background"
+                      <textarea
+                        id="apply-text"
+                        value={textAnswer}
+                        onChange={(e) =>
+                          setAnswers((prev) => ({
+                            ...prev,
+                            [currentQuestion.id]: e.target.value,
+                          }))
+                        }
+                        rows={4}
+                        className="w-full rounded-md border border-[#E3E3E3] bg-white px-4 py-3.5 text-base text-[#1A1A1A] placeholder:text-[#ccc] focus:outline-none focus:border-crimson focus:ring-1 focus:ring-crimson transition-colors resize-none"
+                        placeholder="Type your answer here..."
                         autoFocus
                         onKeyDown={(e) => {
-                          if (e.key === "Enter" && otherText.trim().length > 0)
-                            handleOtherContinue()
+                          // Cmd/Ctrl+Enter to submit. Plain Enter inserts a
+                          // newline so people can write multi-line answers.
+                          if (
+                            (e.metaKey || e.ctrlKey) &&
+                            e.key === "Enter" &&
+                            textValid
+                          ) {
+                            commitTextAnswer(currentQuestion.id, textAnswer)
+                          }
                         }}
                       />
+                      <p className="text-[11px] text-[#999] font-mono">
+                        {textAnswer.trim().length} / min {textMinLength} characters
+                      </p>
                       <button
-                        onClick={handleOtherContinue}
-                        disabled={otherText.trim().length === 0}
+                        onClick={() =>
+                          commitTextAnswer(currentQuestion.id, textAnswer)
+                        }
+                        disabled={!textValid}
                         className={cn(
-                          "w-full sm:w-auto flex items-center justify-center gap-2 rounded-md px-6 py-3.5 text-sm font-bold uppercase tracking-wider transition-all min-h-[48px]",
-                          otherText.trim().length > 0
+                          "w-full flex items-center justify-center gap-2 rounded-md px-6 py-3.5 text-sm font-bold uppercase tracking-wider transition-all min-h-[48px]",
+                          textValid
                             ? "bg-crimson text-white hover:bg-crimson-dark"
                             : "bg-[#E3E3E3] text-[#999] cursor-not-allowed"
                         )}
@@ -1061,8 +1083,152 @@ export function ApplyForm() {
                       </button>
                     </div>
                   )}
-              </motion.div>
-            )}
+
+                  {/* ── Option-grid branch (single + multi select) ── */}
+                  {!isText && (
+                    <div className="grid gap-2 sm:gap-3 grid-cols-1 sm:grid-cols-2">
+                      {currentQuestion.options.map((option, i) => {
+                        const isSelected = isMulti
+                          ? selectedValues.includes(option.value)
+                          : selected === option.value ||
+                            currentAnswer === option.value
+                        return (
+                          <button
+                            key={option.value}
+                            type="button"
+                            aria-pressed={isMulti ? isSelected : undefined}
+                            onClick={() =>
+                              isMulti
+                                ? toggleMultiSelect(
+                                    currentQuestion.id,
+                                    option.value,
+                                  )
+                                : handleSingleSelect(
+                                    currentQuestion.id,
+                                    option.value,
+                                  )
+                            }
+                            className={cn(
+                              "group relative text-left rounded-md border px-3 py-3 sm:p-4 transition-all active:scale-[0.98]",
+                              isSelected
+                                ? "border-crimson bg-crimson/5 shadow-[0_0_0_1px_rgba(153,27,27,0.3)]"
+                                : "border-[#E3E3E3] bg-white hover:border-crimson/30 hover:shadow-[0_8px_24px_-6px_rgba(0,0,0,0.12),0_2px_8px_-2px_rgba(0,0,0,0.06)]"
+                            )}
+                          >
+                            <div className="flex items-center gap-2.5 sm:gap-3">
+                              <span
+                                className={cn(
+                                  "flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center text-[10px] sm:text-xs font-mono font-bold border transition-colors",
+                                  // Multi-select uses square checkbox-style;
+                                  // single-select keeps the round letter chip.
+                                  isMulti ? "rounded" : "rounded-full",
+                                  isSelected
+                                    ? "bg-crimson text-white border-crimson"
+                                    : "bg-[#F5F5F5] text-[#737373] border-[#E3E3E3] group-hover:border-crimson/30"
+                                )}
+                              >
+                                {isMulti && isSelected ? (
+                                  <Check className="w-3.5 h-3.5" />
+                                ) : (
+                                  String.fromCharCode(65 + i)
+                                )}
+                              </span>
+                              <span className="text-[13px] sm:text-base text-[#1A1A1A] leading-snug">
+                                {option.label}
+                              </span>
+                            </div>
+                          </button>
+                        )
+                      })}
+                    </div>
+                  )}
+
+                  {/* "Other" inline text (shown when "Other" is selected on
+                      a question with allowOther). Works for both single
+                      and multi select. */}
+                  {!isText && otherRequired && (
+                    <div className="mt-4 space-y-3 text-left max-w-xl mx-auto">
+                      <label className="sr-only" htmlFor="apply-other">
+                        Other — please specify
+                      </label>
+                      <input
+                        id="apply-other"
+                        type="text"
+                        value={otherText}
+                        onChange={(e) =>
+                          setOtherTextById((prev) => ({
+                            ...prev,
+                            [currentQuestion.id]: e.target.value,
+                          }))
+                        }
+                        className="w-full rounded-md border border-[#E3E3E3] bg-white px-4 py-3.5 text-base text-[#1A1A1A] placeholder:text-[#ccc] focus:outline-none focus:border-crimson focus:ring-1 focus:ring-crimson transition-colors"
+                        placeholder="Tell us more..."
+                        aria-label="Other — please specify"
+                        autoFocus
+                      />
+                    </div>
+                  )}
+
+                  {/* Always-shown follow-up text (e.g. "Add any context") */}
+                  {!isText && followUpAlwaysShown && (
+                    <div className="mt-4 space-y-2 text-left max-w-xl mx-auto">
+                      <label
+                        htmlFor="apply-followup"
+                        className="block text-[10px] sm:text-xs font-mono uppercase tracking-wider text-[#737373]"
+                      >
+                        {currentQuestion.followUp?.question}
+                      </label>
+                      <textarea
+                        id="apply-followup"
+                        value={followUpText}
+                        onChange={(e) =>
+                          setFollowUpTextById((prev) => ({
+                            ...prev,
+                            [currentQuestion.id]: e.target.value,
+                          }))
+                        }
+                        rows={3}
+                        className="w-full rounded-md border border-[#E3E3E3] bg-white px-4 py-3.5 text-base text-[#1A1A1A] placeholder:text-[#ccc] focus:outline-none focus:border-crimson focus:ring-1 focus:ring-crimson transition-colors resize-none"
+                        placeholder="A sentence or two is plenty."
+                      />
+                      {followUpMinLength > 0 && (
+                        <p className="text-[11px] text-[#999] font-mono">
+                          {followUpText.trim().length} / min {followUpMinLength}
+                          {" "}
+                          characters
+                        </p>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Continue button — multi-select + allowOther single-select */}
+                  {!isText &&
+                    (isMulti ||
+                      (currentQuestion.allowOther && otherRequired)) && (
+                      <div className="mt-5">
+                        <button
+                          onClick={handleContinue}
+                          disabled={!canAdvance}
+                          className={cn(
+                            "w-full sm:w-auto flex items-center justify-center gap-2 rounded-md px-8 py-3.5 text-sm font-bold uppercase tracking-wider transition-all min-h-[48px]",
+                            canAdvance
+                              ? "bg-crimson text-white hover:bg-crimson-dark"
+                              : "bg-[#E3E3E3] text-[#999] cursor-not-allowed"
+                          )}
+                        >
+                          Continue
+                          <ArrowRight className="w-4 h-4" />
+                        </button>
+                        {isMulti && !multiHasSelection && (
+                          <p className="mt-2 text-[11px] text-[#999]">
+                            Pick at least one to continue.
+                          </p>
+                        )}
+                      </div>
+                    )}
+                </motion.div>
+              )
+            })()}
 
             {/* ---- Step 7: Contact Details ---- */}
             {step === QUESTIONS.length + 2 && (

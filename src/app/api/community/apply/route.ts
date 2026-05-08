@@ -16,35 +16,70 @@ const validValues = QUESTIONS.reduce<Record<string, string[]>>((acc, q) => {
   return acc
 }, {})
 
-const answersSchema = z.object(
-  Object.fromEntries(
-    QUESTIONS.map((q) => [q.id, z.enum(validValues[q.id] as [string, ...string[]])])
+/**
+ * Per-question validator. Three shapes the form can send:
+ *   - text questions      → free string (server-side min 10 to give us
+ *     something useful even if the client min is loose).
+ *   - multi-select        → string[] of valid option values.
+ *   - single-select       → single string value from the option list.
+ *
+ * .partial() so the server doesn't reject a payload because a question
+ * was skipped (e.g. an applicant who bailed mid-flow). Scoring/gating
+ * tolerates missing answers.
+ */
+const answersSchema = z
+  .object(
+    Object.fromEntries(
+      QUESTIONS.map((q) => {
+        const allowed = validValues[q.id] as [string, ...string[]]
+        if (q.text) {
+          return [q.id, z.string().min(1).max(2_000)]
+        }
+        if (q.selection === "multi") {
+          return [
+            q.id,
+            z
+              .array(z.enum(allowed))
+              .min(0)
+              .max(allowed.length),
+          ]
+        }
+        return [q.id, z.enum(allowed)]
+      })
+    )
   )
-)
+  .partial()
 
-const schema = z
-  .object({
-    firstName: z.string().min(1).max(60),
-    lastName: z.string().min(1).max(60),
-    email: z.string().email().max(180),
-    phone: z.string().min(1).max(30),
-    zipCode: z.string().min(1).max(20),
-    country: z.enum(["US", "CA", "UK"]),
-    smsConsentFollowup: z.boolean(),
-    smsConsentPromo: z.boolean(),
-    answers: answersSchema,
-    backgroundOther: z.string().max(200).optional(),
-    source: z.string().max(60).optional(),
-    utmSource: z.string().max(60).optional(),
-    utmMedium: z.string().max(60).optional(),
-    utmCampaign: z.string().max(60).optional(),
-  })
-  .refine(
-    (d) =>
-      d.answers.background !== "other" ||
-      (d.backgroundOther && d.backgroundOther.trim().length > 0),
-    { message: "Background detail required when 'Other' is selected", path: ["backgroundOther"] }
-  )
+// Free-text inputs keyed by question id — "Other" detail and any always-
+// shown follow-up. Cap each entry generously; per-question limit covers
+// long answers like "What have you tried?" follow-ups.
+const freeTextMapSchema = z.record(z.string().max(2_000)).optional()
+
+const schema = z.object({
+  firstName: z.string().min(1).max(60),
+  lastName: z.string().min(1).max(60),
+  email: z.string().email().max(180),
+  phone: z.string().min(1).max(30),
+  zipCode: z.string().min(1).max(20),
+  country: z.enum(["US", "CA", "UK"]),
+  smsConsentFollowup: z.boolean(),
+  smsConsentPromo: z.boolean(),
+  answers: answersSchema,
+  /** "Other" inline detail per-question (id → free text). */
+  otherTextById: freeTextMapSchema,
+  /** Always-shown follow-up text per-question (id → free text). */
+  followUpTextById: freeTextMapSchema,
+  /**
+   * Legacy field — older form versions sent a single "backgroundOther"
+   * string. Kept optional + capped so old clients don't 400 during a
+   * deploy rollover. Server prefers `otherTextById` when both are set.
+   */
+  backgroundOther: z.string().max(200).optional(),
+  source: z.string().max(60).optional(),
+  utmSource: z.string().max(60).optional(),
+  utmMedium: z.string().max(60).optional(),
+  utmCampaign: z.string().max(60).optional(),
+})
 
 export async function POST(req: Request) {
   if (formRatelimit) {
@@ -75,6 +110,8 @@ export async function POST(req: Request) {
       smsConsentFollowup,
       smsConsentPromo,
       answers,
+      otherTextById,
+      followUpTextById,
       backgroundOther,
       source,
       utmSource,
@@ -139,6 +176,10 @@ export async function POST(req: Request) {
             smsConsentFollowup,
             smsConsentPromo,
             backgroundOther: backgroundOther ?? null,
+            // Free-text bucket per question id — preserves "Other" detail
+            // and follow-up answers so the team has full context in the CRM.
+            otherTextById: otherTextById ?? null,
+            followUpTextById: followUpTextById ?? null,
           },
           score: normalizedScore,
           source: source ?? "apply-form",
