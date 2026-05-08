@@ -93,11 +93,52 @@ export function TemplateEditorClient({
     html !== (override?.html ?? defaultHtml) ||
     note !== (override?.note ?? "")
 
-  async function handleSave() {
-    if (!subject.trim() || !html.trim()) {
-      toast.error("Subject + body are both required.")
-      return
+  // Latest timestamp the server reports for THIS template. Set every
+  // time we successfully save AND on every staleness poll. When the
+  // editor has unsaved edits AND remoteUpdatedAt is newer than
+  // lastSavedAt, a banner appears warning that someone else saved
+  // since the editor was opened.
+  const [remoteUpdatedAt, setRemoteUpdatedAt] = useState<string | null>(
+    override?.updatedAt ?? null,
+  )
+
+  const otherEditorSavedSince =
+    dirty &&
+    remoteUpdatedAt !== null &&
+    remoteUpdatedAt !== (lastSavedAt ?? null)
+
+  // Poll the server every 30s while the tab is open. Cheap (one row
+  // by primary key) and the only way an editor finds out a colleague
+  // hit save before they did. Skips while a save / send-test / revert
+  // is mid-flight to avoid clobbering its own optimistic update.
+  useEffect(() => {
+    let cancelled = false
+    async function poll() {
+      try {
+        const res = await fetch(
+          `/api/admin/email-templates/${encodeURIComponent(templateKey)}`,
+          { cache: "no-store" },
+        )
+        if (!res.ok) return
+        const body = (await res.json()) as {
+          override?: { updatedAt?: string } | null
+        }
+        if (cancelled) return
+        setRemoteUpdatedAt(body.override?.updatedAt ?? null)
+      } catch {
+        // Network blip — try again next tick.
+      }
     }
+    const id = setInterval(() => {
+      if (savingState === "idle") void poll()
+    }, 30_000)
+    return () => {
+      cancelled = true
+      clearInterval(id)
+    }
+  }, [templateKey, savingState])
+
+  async function performSave(force: boolean) {
     setSavingState("saving")
     try {
       const res = await fetch(
@@ -105,9 +146,45 @@ export function TemplateEditorClient({
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ subject, html, note: note || undefined }),
+          body: JSON.stringify({
+            subject,
+            html,
+            note: note || undefined,
+            // Optimistic-concurrency token: the timestamp we last saw on
+            // the server. Server returns 409 if the row has moved.
+            expectedUpdatedAt: force ? undefined : lastSavedAt ?? null,
+            ...(force ? { force: true } : {}),
+          }),
         },
       )
+
+      if (res.status === 409) {
+        const err = (await res.json().catch(() => ({}))) as {
+          message?: string
+          latest?: { updatedAt?: string }
+        }
+        const latestTs = err.latest?.updatedAt
+          ? new Date(err.latest.updatedAt).toLocaleTimeString()
+          : "just now"
+        const choice = window.confirm(
+          `Someone else saved this template at ${latestTs}.\n\n` +
+            `Click OK to overwrite their version with yours.\n` +
+            `Click Cancel to keep your edits visible and reload to see ` +
+            `their version (use the browser refresh button when ready).`,
+        )
+        if (choice) {
+          await performSave(true)
+        } else {
+          // Surface the remote update so the staleness banner stays
+          // visible until the user reloads.
+          if (err.latest?.updatedAt) setRemoteUpdatedAt(err.latest.updatedAt)
+          toast.message(
+            "Save canceled. Refresh to see their version, then re-apply your edits.",
+          )
+        }
+        return
+      }
+
       if (!res.ok) {
         const err = await res.json().catch(() => ({}))
         throw new Error(err?.error || `Save failed (${res.status})`)
@@ -115,7 +192,9 @@ export function TemplateEditorClient({
       const body = (await res.json()) as {
         override?: { updatedAt?: string }
       }
-      setLastSavedAt(body.override?.updatedAt ?? new Date().toISOString())
+      const ts = body.override?.updatedAt ?? new Date().toISOString()
+      setLastSavedAt(ts)
+      setRemoteUpdatedAt(ts)
       toast.success("Override saved. Future sends will use this version.")
       startTransition(() => router.refresh())
     } catch (err) {
@@ -124,6 +203,14 @@ export function TemplateEditorClient({
     } finally {
       setSavingState("idle")
     }
+  }
+
+  async function handleSave() {
+    if (!subject.trim() || !html.trim()) {
+      toast.error("Subject + body are both required.")
+      return
+    }
+    await performSave(false)
   }
 
   async function handleSendTest() {
@@ -206,6 +293,33 @@ export function TemplateEditorClient({
 
   return (
     <div className="space-y-5">
+      {/* Concurrent-edit banner — fires when the staleness poll
+          (or a save attempt) discovers someone else has saved this
+          template since the editor was opened AND the local editor
+          has unsaved changes. Without this, two admins editing the
+          same template at the same time would silently overwrite
+          each other on save. */}
+      {otherEditorSavedSince && (
+        <div className="flex items-start gap-3 px-4 py-3 rounded-xl border border-amber-300 bg-amber-50 text-amber-900">
+          <AlertTriangle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+          <div className="text-xs leading-relaxed">
+            <p className="font-semibold mb-0.5">
+              Someone else saved this template
+              {remoteUpdatedAt
+                ? ` at ${new Date(remoteUpdatedAt).toLocaleTimeString()}`
+                : ""}
+              .
+            </p>
+            <p>
+              You still have unsaved edits in this tab. If you hit Save,
+              you&apos;ll be asked whether to overwrite their version. To see
+              theirs first, refresh the page (your local edits will be
+              lost).
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Status strip */}
       <div
         className={cn(

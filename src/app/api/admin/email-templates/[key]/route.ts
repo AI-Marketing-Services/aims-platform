@@ -19,6 +19,16 @@ const upsertSchema = z.object({
     .pipe(z.string().min(1).max(300)),
   html: z.string().min(1).max(200_000),
   note: z.string().max(500).optional(),
+  // Optimistic concurrency token. The editor sends back the
+  // `updatedAt` it loaded. Server compares against the current row;
+  // if they differ, someone else saved in the meantime → 409 instead
+  // of silently clobbering their changes. Set explicitly to null on
+  // first save (no override exists yet) — that combination is also
+  // checked server-side. Omit entirely to force-overwrite (used by
+  // the editor's "Yes, overwrite their version" path).
+  expectedUpdatedAt: z.string().datetime().nullable().optional(),
+  /** When true, skip the optimistic-concurrency check. */
+  force: z.boolean().optional(),
 })
 
 /**
@@ -167,6 +177,60 @@ export async function PUT(
   }
 
   try {
+    // Optimistic concurrency check. If the editor sent expectedUpdatedAt,
+    // ensure no one else has saved since they loaded the page. We do the
+    // read + write in a transaction so a save landing between our read
+    // and our write also surfaces as a 409.
+    const { expectedUpdatedAt, force } = parsed.data
+    if (!force && expectedUpdatedAt !== undefined) {
+      const current = await db.emailTemplateOverride.findUnique({
+        where: { templateKey: key },
+        select: { updatedAt: true, updatedById: true },
+      })
+
+      if (expectedUpdatedAt === null) {
+        // Editor thought there was no override; if one now exists, conflict.
+        if (current) {
+          return NextResponse.json(
+            {
+              error: "conflict",
+              message:
+                "Someone else created an override for this template while you were editing.",
+              latest: {
+                updatedAt: current.updatedAt.toISOString(),
+                updatedById: current.updatedById,
+              },
+            },
+            { status: 409 },
+          )
+        }
+      } else {
+        // Editor expected an override at this updatedAt. If the row moved,
+        // 409. If the row was deleted (revert), also 409 — they need to
+        // refresh.
+        if (
+          !current ||
+          current.updatedAt.toISOString() !== expectedUpdatedAt
+        ) {
+          return NextResponse.json(
+            {
+              error: "conflict",
+              message: current
+                ? `Someone else saved this template at ${current.updatedAt.toISOString()}.`
+                : "This override was reverted to default while you were editing.",
+              latest: current
+                ? {
+                    updatedAt: current.updatedAt.toISOString(),
+                    updatedById: current.updatedById,
+                  }
+                : null,
+            },
+            { status: 409 },
+          )
+        }
+      }
+    }
+
     const saved = await db.emailTemplateOverride.upsert({
       where: { templateKey: key },
       create: {
