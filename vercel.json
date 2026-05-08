@@ -1,4 +1,22 @@
 {
+  "functions": {
+    "src/app/api/intake/route.ts": { "maxDuration": 30 },
+    "src/app/api/community/apply/route.ts": { "maxDuration": 30 },
+    "src/app/api/community/apply/start/route.ts": { "maxDuration": 15 },
+    "src/app/api/lead-magnets/submit/route.ts": { "maxDuration": 30 },
+    "src/app/api/webhooks/stripe/route.ts": { "maxDuration": 30 },
+    "src/app/api/webhooks/calendly/route.ts": { "maxDuration": 30 },
+    "src/app/api/webhooks/clerk/route.ts": { "maxDuration": 30 },
+    "src/app/api/webhooks/close/route.ts": { "maxDuration": 30 },
+    "src/app/api/webhooks/ghl/route.ts": { "maxDuration": 30 },
+    "src/app/api/cron/process-email-queue/route.ts": { "maxDuration": 60 },
+    "src/app/api/cron/process-sequences/route.ts": { "maxDuration": 60 },
+    "src/app/api/cron/nurture-unbooked/route.ts": { "maxDuration": 60 },
+    "src/app/api/cron/abandoned-applications/route.ts": { "maxDuration": 60 },
+    "src/app/api/cron/close-sync/route.ts": { "maxDuration": 60 },
+    "src/app/api/cron/ingest-mighty/route.ts": { "maxDuration": 300 },
+    "src/app/api/cron/weekly-rollup/route.ts": { "maxDuration": 60 }
+  },
   "crons": [
     {
       "path": "/api/cron/check-churn",
@@ -10,7 +28,7 @@
     },
     {
       "path": "/api/cron/process-email-queue",
-      "schedule": "0 * * * *"
+      "schedule": "*/15 * * * *"
     },
     {
       "path": "/api/cron/nurture-unbooked",

@@ -11,6 +11,27 @@ import { getMessageText } from "@/lib/utils"
 const WELCOME_TEXT =
   "What's the biggest bottleneck in your business right now? We help companies embed AI to remove growth ceilings."
 
+// Once a visitor closes the auto-open prompt OR sends a message, we don't
+// auto-pop again for this many days — losing repeat visitors to a popup
+// that won't go away is worse than missing one auto-open opportunity.
+const DISMISS_PERSIST_DAYS = 7
+const DISMISS_KEY = "aims_chat_dismissed_until"
+// Bump after meaningful WELCOME_TEXT changes so existing visitors see the
+// new prompt once.
+const AUTO_OPEN_VERSION = "v2"
+const AUTO_OPEN_VERSION_KEY = "aims_chat_auto_version"
+// Pages where popping a chat widget is hostile to the funnel (the
+// applicant is mid-form on apply, or just landed on the booking next-
+// steps page). Suppress auto-open there; visitors can still open via
+// the floating logo.
+const AUTO_OPEN_PATH_DENYLIST = [
+  "/apply",
+  "/apply/next-steps",
+  "/get-started",
+  "/sign-in",
+  "/sign-up",
+]
+
 const INITIAL_MESSAGES: UIMessage[] = [
   {
     id: "welcome",
@@ -21,6 +42,38 @@ const INITIAL_MESSAGES: UIMessage[] = [
 
 function generateSessionId(): string {
   return `intake_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`
+}
+
+function shouldAutoOpen(pathname: string): boolean {
+  if (typeof window === "undefined") return false
+  if (AUTO_OPEN_PATH_DENYLIST.some((p) => pathname === p || pathname.startsWith(`${p}/`))) {
+    return false
+  }
+  try {
+    // Reset persistence when the welcome message changes — gives existing
+    // visitors one more shot at the new prompt without spamming them.
+    if (window.localStorage.getItem(AUTO_OPEN_VERSION_KEY) !== AUTO_OPEN_VERSION) {
+      window.localStorage.setItem(AUTO_OPEN_VERSION_KEY, AUTO_OPEN_VERSION)
+      window.localStorage.removeItem(DISMISS_KEY)
+      return true
+    }
+    const until = window.localStorage.getItem(DISMISS_KEY)
+    if (!until) return true
+    return Date.now() > Number(until)
+  } catch {
+    // Private mode / storage disabled — fall back to auto-open once per session.
+    return true
+  }
+}
+
+function rememberDismissal() {
+  if (typeof window === "undefined") return
+  try {
+    const until = Date.now() + DISMISS_PERSIST_DAYS * 24 * 60 * 60 * 1000
+    window.localStorage.setItem(DISMISS_KEY, String(until))
+  } catch {
+    // Silently ignore — worst case we auto-open again next visit.
+  }
 }
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -65,15 +118,30 @@ export function IntakeChatWidget() {
     return () => window.removeEventListener("open-intake-chat", handler)
   }, [])
 
-  // Auto-open after 5 seconds
+  // Auto-open after a delay — gated on (a) the path not being one where
+  // the popup interferes with the active funnel, (b) the visitor not
+  // having dismissed the widget within the last DISMISS_PERSIST_DAYS,
+  // and (c) the per-session "already happened" guard. Without this gate
+  // every navigation re-pops the widget and craters engagement metrics
+  // from the email campaign.
   useEffect(() => {
     if (hasAutoOpened) return
+    if (!shouldAutoOpen(pathname ?? "/")) {
+      // Mark as auto-opened so we don't re-evaluate on every re-render.
+      setHasAutoOpened(true)
+      return
+    }
     const timer = setTimeout(() => {
       setOpen(true)
       setHasAutoOpened(true)
-    }, 5000)
+    }, 8000)
     return () => clearTimeout(timer)
-  }, [hasAutoOpened])
+  }, [hasAutoOpened, pathname])
+
+  const closeWidget = useCallback(() => {
+    setOpen(false)
+    rememberDismissal()
+  }, [])
 
   const isStreaming = status === "streaming" || status === "submitted"
 
@@ -127,7 +195,7 @@ export function IntakeChatWidget() {
                 <p className="text-[10px] text-[#1A1A1A]/40">AI-powered growth partner</p>
               </div>
             </div>
-            <button onClick={() => setOpen(false)} className="p-1 rounded hover:bg-white/5 transition-colors">
+            <button onClick={closeWidget} className="p-1 rounded hover:bg-white/5 transition-colors" aria-label="Close chat">
               <X className="h-4 w-4 text-[#1A1A1A]/40" />
             </button>
           </div>

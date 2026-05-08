@@ -566,6 +566,13 @@ model LeadMagnetSubmission {
   @@index([createdAt])
   @@index([operatorId])
   @@index([operatorUserId])
+  // Hot path: /api/community/apply 30-second double-submit guard does
+  //   findFirst({ where: { email, type: COLLECTIVE_APPLICATION,
+  //                        createdAt: { gte: now - 30s } } })
+  // and the Calendly webhook resolveDeal() also queries by (email, type).
+  // Compound is more selective than the planner combining the two single
+  // indexes via bitmap scan.
+  @@index([email, type, createdAt])
 }
 
 enum LeadMagnetType {

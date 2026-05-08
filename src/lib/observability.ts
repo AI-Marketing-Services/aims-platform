@@ -1,20 +1,19 @@
 /**
- * Observability wrapper — single seam between application code and the
- * future Sentry integration. Today: forwards to console + the existing
- * logger. Tomorrow: install @sentry/nextjs, set SENTRY_DSN, replace the
- * implementations of captureException / captureMessage with the Sentry
- * equivalents — every existing call site picks up Sentry without diff.
+ * Observability wrapper — single seam between application code and Sentry.
  *
- * NOTE: this is the migration scaffold. The reason it isn't already
- * wired to Sentry is that @sentry/nextjs requires a DSN env var + the
- * SDK install, which is a deploy-time decision. Once the DSN exists:
+ * All API routes, cron handlers, server actions, and error boundaries call
+ * `captureException` / `captureMessage` from this module. By keeping the
+ * Sentry import in one place we (a) avoid pulling the SDK into client
+ * bundles by accident and (b) can swap providers without touching call sites.
  *
- *   1. npm install @sentry/nextjs
- *   2. npx @sentry/wizard@latest -i nextjs   (auto-creates sentry.*.config.ts)
- *   3. Replace the bodies below with Sentry.captureException / captureMessage
+ * Sentry is enabled when:
+ *   - NEXT_PUBLIC_SENTRY_DSN (or SENTRY_DSN) is set, AND
+ *   - we're in production / on Vercel / SENTRY_DEV=1
  *
- * That's it. No call sites need to change.
+ * In all other cases this falls back to the structured logger so local dev
+ * still gets readable error output without burning Sentry quota.
  */
+import * as Sentry from "@sentry/nextjs"
 import { logger } from "@/lib/logger"
 
 interface CaptureContext {
@@ -24,8 +23,18 @@ interface CaptureContext {
   level?: "fatal" | "error" | "warning" | "info" | "debug"
 }
 
+const SENTRY_DSN =
+  process.env.NEXT_PUBLIC_SENTRY_DSN ?? process.env.SENTRY_DSN
+
+const SENTRY_ENABLED =
+  !!SENTRY_DSN &&
+  (process.env.NODE_ENV === "production" ||
+    process.env.VERCEL === "1" ||
+    process.env.SENTRY_DEV === "1")
+
 export function captureException(err: unknown, context?: CaptureContext): void {
-  // Today: structured log via logger.
+  // Always log locally — Sentry has aggressive sampling and we want full
+  // fidelity in Vercel logs for incident response.
   logger.error(
     err instanceof Error ? err.message : "unknown error",
     err,
@@ -36,10 +45,21 @@ export function captureException(err: unknown, context?: CaptureContext): void {
       userId: context?.user?.id,
     },
   )
-  // Future:
-  //   import * as Sentry from "@sentry/nextjs"
-  //   Sentry.captureException(err, { tags: context?.tags, extra: context?.extra,
-  //                                  user: context?.user, level: context?.level })
+
+  if (SENTRY_ENABLED) {
+    try {
+      Sentry.captureException(err, {
+        tags: context?.tags,
+        extra: context?.extra,
+        user: context?.user,
+        level: context?.level,
+      })
+    } catch (sentryErr) {
+      // Never let observability break the request flow — if Sentry is
+      // unhappy, log it and move on.
+      logger.warn("Sentry capture failed", { error: String(sentryErr) })
+    }
+  }
 }
 
 export function captureMessage(message: string, context?: CaptureContext): void {
@@ -54,9 +74,19 @@ export function captureMessage(message: string, context?: CaptureContext): void 
       ...(context?.extra as Record<string, unknown> | undefined),
     })
   }
-  // Future:
-  //   import * as Sentry from "@sentry/nextjs"
-  //   Sentry.captureMessage(message, { tags, extra, user, level })
+
+  if (SENTRY_ENABLED) {
+    try {
+      Sentry.captureMessage(message, {
+        tags: context?.tags,
+        extra: context?.extra,
+        user: context?.user,
+        level: context?.level,
+      })
+    } catch (sentryErr) {
+      logger.warn("Sentry message capture failed", { error: String(sentryErr) })
+    }
+  }
 }
 
 /**

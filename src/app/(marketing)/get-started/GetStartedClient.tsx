@@ -1,11 +1,152 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect, useRef } from "react"
 import { useSearchParams } from "next/navigation"
-import { Check, ArrowRight, ArrowLeft, CheckCircle2, AlertCircle } from "lucide-react"
+import { Check, ArrowRight, ArrowLeft, CheckCircle2, AlertCircle, Loader2, Calendar } from "lucide-react"
 import { toast } from "sonner"
 
-function CalBooking() {
+// Calendly URL for the AIMS sales team. Override per environment via
+// NEXT_PUBLIC_CALENDLY_AIMS_INTAKE; falls back to the Ryan calendar that's
+// already wired into the AOC apply flow so we don't ship a dead link if
+// the new env var isn't set.
+const CALENDLY_URL =
+  process.env.NEXT_PUBLIC_CALENDLY_AIMS_INTAKE ??
+  process.env.NEXT_PUBLIC_CALENDLY_RYAN ??
+  "https://calendly.com/ryan-breakthroughclosing"
+
+interface CalBookingProps {
+  name: string
+  email: string
+  company: string
+  goal: string
+  services: string[]
+  utm: {
+    source?: string | null
+    medium?: string | null
+    campaign?: string | null
+  }
+  onBooked: () => void
+}
+
+function CalBooking({ name, email, company, goal, services, utm, onBooked }: CalBookingProps) {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [fallback, setFallback] = useState(false)
+  const onBookedRef = useRef(onBooked)
+
+  // Keep the latest onBooked callback in a ref so we don't re-init the
+  // Calendly widget every time the parent re-renders (which would wipe
+  // any in-progress booking state).
+  useEffect(() => {
+    onBookedRef.current = onBooked
+  }, [onBooked])
+
+  // Build a Calendly URL with `a1=...` style answers + UTMs so the booking
+  // lands in Calendly with full context. The widget's prefill object only
+  // covers name/email — everything else has to ride on the URL.
+  const buildBookingUrl = useCallback(() => {
+    const params = new URLSearchParams({
+      hide_event_type_details: "1",
+      hide_gdpr_banner: "1",
+      // Visual tokens to match site palette without overriding Calendly's
+      // light theme.
+      primary_color: "C4972A",
+    })
+    if (utm.source) params.set("utm_source", utm.source)
+    if (utm.medium) params.set("utm_medium", utm.medium)
+    if (utm.campaign) params.set("utm_campaign", utm.campaign)
+    return `${CALENDLY_URL}${CALENDLY_URL.includes("?") ? "&" : "?"}${params.toString()}`
+  }, [utm.source, utm.medium, utm.campaign])
+
+  // Widget setup — load script, init inline widget with prefill, listen
+  // for the booking-complete postMessage from Calendly.
+  useEffect(() => {
+    if (typeof window === "undefined") return
+    const container = containerRef.current
+    if (!container) return
+
+    const url = buildBookingUrl()
+    let cancelled = false
+
+    const initCalendly = () => {
+      const Calendly = (
+        window as unknown as {
+          Calendly?: { initInlineWidget: (opts: Record<string, unknown>) => void }
+        }
+      ).Calendly
+      if (!Calendly || cancelled) return false
+      // Clear the skeleton state only once we're ready to inject.
+      container.innerHTML = ""
+      Calendly.initInlineWidget({
+        url,
+        parentElement: container,
+        prefill: {
+          name,
+          email,
+          customAnswers: {
+            // a1/a2 map to the first/second custom questions on the
+            // Calendly event. If the linked event doesn't have those
+            // questions configured, Calendly silently ignores them — safe.
+            a1: company,
+            a2: services.join(", "),
+            a3: goal,
+          },
+        },
+      })
+      return true
+    }
+
+    // Listen for the booking-complete postMessage so we can fire the
+    // conversion event + advance the flow.
+    const onMessage = (e: MessageEvent) => {
+      const data = e.data as { event?: string }
+      if (typeof data === "object" && data?.event === "calendly.event_scheduled") {
+        onBookedRef.current()
+      }
+    }
+    window.addEventListener("message", onMessage)
+
+    // Load widget.js if not present already (ApplyForm may have loaded it).
+    const existing = document.querySelector<HTMLScriptElement>(
+      'script[src="https://assets.calendly.com/assets/external/widget.js"]'
+    )
+    if (existing) {
+      if ((window as unknown as { Calendly?: unknown }).Calendly) {
+        initCalendly()
+      } else {
+        existing.addEventListener("load", initCalendly, { once: true })
+      }
+    } else {
+      const script = document.createElement("script")
+      script.src = "https://assets.calendly.com/assets/external/widget.js"
+      script.async = true
+      script.onload = initCalendly
+      script.onerror = () => {
+        if (!cancelled) setFallback(true)
+      }
+      document.head.appendChild(script)
+
+      const link = document.createElement("link")
+      link.rel = "stylesheet"
+      link.href = "https://assets.calendly.com/assets/external/widget.css"
+      document.head.appendChild(link)
+    }
+
+    // Failsafe — if the widget hasn't initialised after 8 seconds (corp
+    // network blocking, ad blocker, slow 3G), drop to the new-tab fallback
+    // so the user can still book.
+    const failsafe = setTimeout(() => {
+      if (cancelled) return
+      const Calendly = (window as unknown as { Calendly?: unknown }).Calendly
+      if (!Calendly) setFallback(true)
+    }, 8000)
+
+    return () => {
+      cancelled = true
+      clearTimeout(failsafe)
+      window.removeEventListener("message", onMessage)
+    }
+  }, [buildBookingUrl, name, email, company, goal, services])
+
   return (
     <div className="space-y-6">
       <div className="text-center">
@@ -13,17 +154,46 @@ function CalBooking() {
           <Check className="h-6 w-6 text-green-400" />
         </div>
         <h2 className="text-2xl font-bold text-foreground">Request submitted!</h2>
-        <p className="mt-2 text-muted-foreground">Pick a time that works best for your strategy call below.</p>
+        <p className="mt-2 text-muted-foreground">
+          Pick a time that works best for your strategy call below.
+        </p>
       </div>
-      <div className="rounded-sm border border-border overflow-hidden">
-        <iframe
-          src="https://cal.com/adamwolfe/aims?embed=true&layout=month_view&theme=dark&brandColor=%23C4972A&hideEventTypeDetails=true"
-          width="100%"
-          height="640"
-          style={{ border: "none", display: "block" }}
-          title="Book a strategy call"
-        />
-      </div>
+
+      {fallback ? (
+        <div className="rounded-lg border border-border bg-card p-8 text-center">
+          <Calendar className="w-10 h-10 text-primary mx-auto mb-4" />
+          <h3 className="text-lg font-semibold mb-2">Your calendar is one click away</h3>
+          <p className="text-sm text-muted-foreground mb-6 max-w-sm mx-auto">
+            Pick a time that works for you — opens Calendly in a new tab.
+          </p>
+          <a
+            href={buildBookingUrl()}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center justify-center gap-2 rounded-md bg-primary px-6 py-3 text-sm font-bold uppercase tracking-wider text-white hover:bg-primary/90 transition-colors"
+          >
+            Open the calendar
+            <ArrowRight className="w-4 h-4" />
+          </a>
+        </div>
+      ) : (
+        <div
+          ref={containerRef}
+          className="calendly-inline-widget rounded-sm border border-border overflow-hidden bg-white"
+          style={{ minWidth: "320px", height: "720px" }}
+        >
+          {/* Skeleton until the widget injects */}
+          <div className="flex flex-col items-center justify-center h-full p-6">
+            <Loader2 className="w-8 h-8 text-primary animate-spin mb-4" />
+            <p className="text-sm font-medium text-foreground mb-1">
+              Loading available times…
+            </p>
+            <p className="text-xs text-muted-foreground">
+              This usually takes a few seconds.
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
@@ -64,6 +234,16 @@ export function GetStartedClient() {
   const searchParams = useSearchParams()
   const preselectedService = searchParams.get("service") ?? ""
 
+  // UTM/attribution from query string. We capture once on mount so the
+  // values survive any state churn during the form steps and ride along
+  // to both the intake API and the Calendly URL for end-to-end attribution.
+  const [utm] = useState(() => ({
+    source: searchParams.get("utm_source"),
+    medium: searchParams.get("utm_medium"),
+    campaign: searchParams.get("utm_campaign"),
+    ref: searchParams.get("ref"),
+  }))
+
   const [step, setStep] = useState(1)
   const [form, setForm] = useState<FormData>({
     services: preselectedService ? [preselectedService] : [],
@@ -77,6 +257,7 @@ export function GetStartedClient() {
     goal: "",
   })
   const [submitted, setSubmitted] = useState(false)
+  const [booked, setBooked] = useState(false)
   const [touched, setTouched] = useState<Record<string, boolean>>({})
 
   const markTouched = useCallback((field: string) => {
@@ -114,7 +295,13 @@ export function GetStartedClient() {
       const res = await fetch("/api/intake", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          ...form,
+          utmSource: utm.source ?? undefined,
+          utmMedium: utm.medium ?? undefined,
+          utmCampaign: utm.campaign ?? undefined,
+          source: utm.ref ?? undefined,
+        }),
       })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))
@@ -126,6 +313,28 @@ export function GetStartedClient() {
       }
       setSubmitted(true)
       toast.success("Request submitted! Now book your call.")
+
+      // Fire a generic intake-converted event so analytics tools (Vercel
+      // Analytics, GA via gtag, Plausible, IDPixel) can attribute. Each
+      // tool no-ops if not loaded — safe to call all of them.
+      try {
+        const w = window as unknown as {
+          va?: (event: string, props?: Record<string, unknown>) => void
+          gtag?: (cmd: string, action: string, props?: Record<string, unknown>) => void
+          plausible?: (event: string, opts?: { props?: Record<string, unknown> }) => void
+        }
+        const props = {
+          form: "get-started",
+          services: form.services.join(","),
+          utm_source: utm.source ?? undefined,
+          utm_campaign: utm.campaign ?? undefined,
+        }
+        w.va?.("event", { name: "intake_submitted", ...props })
+        w.gtag?.("event", "intake_submitted", props)
+        w.plausible?.("intake_submitted", { props })
+      } catch {
+        // Analytics is best-effort — never block the funnel on it.
+      }
     } catch {
       setSubmitError("Network error. Please check your connection and try again.")
       toast.error("Network error. Please try again.")
@@ -133,11 +342,58 @@ export function GetStartedClient() {
     }
   }
 
+  const handleBooked = useCallback(() => {
+    setBooked(true)
+    // Same multi-tool conversion fire as above. The booking event is the
+    // primary KPI — capture it everywhere we have an analytics surface.
+    try {
+      const w = window as unknown as {
+        va?: (event: string, props?: Record<string, unknown>) => void
+        gtag?: (cmd: string, action: string, props?: Record<string, unknown>) => void
+        plausible?: (event: string, opts?: { props?: Record<string, unknown> }) => void
+      }
+      const props = {
+        form: "get-started",
+        utm_source: utm.source ?? undefined,
+        utm_campaign: utm.campaign ?? undefined,
+      }
+      w.va?.("event", { name: "consult_booked", ...props })
+      w.gtag?.("event", "consult_booked", props)
+      w.plausible?.("consult_booked", { props })
+    } catch {
+      // ignore analytics errors
+    }
+  }, [utm.source, utm.campaign])
+
   if (submitted) {
     return (
       <div className="min-h-screen pt-20 bg-background">
         <div className="container mx-auto max-w-2xl px-4 py-16">
-          <CalBooking />
+          {booked ? (
+            <div className="rounded-lg border border-border bg-card p-10 text-center">
+              <div className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-green-900/20 mb-4">
+                <Check className="h-7 w-7 text-green-400" />
+              </div>
+              <h2 className="text-2xl font-bold mb-3">You&rsquo;re booked.</h2>
+              <p className="text-muted-foreground mb-2">
+                We just sent a confirmation to <span className="font-medium text-foreground">{form.email}</span> with
+                everything you need to prep.
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Check your inbox (and spam folder, just in case).
+              </p>
+            </div>
+          ) : (
+            <CalBooking
+              name={form.name}
+              email={form.email}
+              company={form.company}
+              goal={form.goal}
+              services={form.services}
+              utm={{ source: utm.source, medium: utm.medium, campaign: utm.campaign }}
+              onBooked={handleBooked}
+            />
+          )}
         </div>
       </div>
     )

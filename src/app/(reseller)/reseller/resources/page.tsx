@@ -17,7 +17,10 @@ const SALES_RESOURCES = [
 const VIDEO_RESOURCES = [
   { title: "Platform Walkthrough", desc: "15-min overview of all 15 services", type: "Video", href: "https://www.youtube.com/@aims-eos" },
   { title: "How to Pitch AIMS", desc: "Sales coaching from the team", type: "Video", href: "https://www.youtube.com/@aims-eos" },
-  { title: "Book a Strategy Call", desc: "1:1 session with the partnerships team", type: "Call", href: "https://cal.com/aims/strategy" },
+  // Calendly is the canonical scheduler — Cal.com link removed (was the
+  // legacy adamwolfe/aims handle). NEXT_PUBLIC_CALENDLY_RYAN is the
+  // partnerships-team default; override per env if needed.
+  { title: "Book a Strategy Call", desc: "1:1 session with the partnerships team", type: "Call", href: process.env.NEXT_PUBLIC_CALENDLY_RYAN ?? "https://calendly.com/ryan-breakthroughclosing" },
 ]
 
 export default async function ResellerResourcesPage() {

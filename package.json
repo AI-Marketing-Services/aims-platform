@@ -34,6 +34,7 @@
     "@dnd-kit/utilities": "^3.2.2",
     "@prisma/adapter-neon": "^7.4.2",
     "@prisma/client": "^6",
+    "@sentry/nextjs": "^10.52.0",
     "@tailwindcss/typography": "^0.5.19",
     "@types/sanitize-html": "^2.16.1",
     "@upstash/ratelimit": "^2",

@@ -1,5 +1,6 @@
 import type { NextConfig } from "next"
 import bundleAnalyzer from "@next/bundle-analyzer"
+import { withSentryConfig } from "@sentry/nextjs"
 
 const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === "true",
@@ -174,4 +175,44 @@ const nextConfig: NextConfig = {
   },
 }
 
-export default withBundleAnalyzer(nextConfig)
+// Sentry — wraps the config so production builds upload sourcemaps and
+// register the tunnel route. SENTRY_AUTH_TOKEN is required for sourcemap
+// upload (Vercel injects it on production deploys); without it the build
+// still succeeds but uploads are skipped.
+const sentryWebpackPluginOptions = {
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+  // Suppress noisy logs during `next build` — auth failures and the like
+  // still surface, but the per-asset upload chatter is quieted.
+  silent: !process.env.CI,
+  // Hide source contents from the Sentry UI. We still upload sourcemaps so
+  // stack traces are decoded, but the file contents stay private.
+  widenClientFileUpload: true,
+  hideSourceMaps: true,
+  // Don't fail the build if Sentry CLI hits an issue (rate limit, network).
+  // Uploading sourcemaps is best-effort — broken builds because of an
+  // observability tool would be worse than blind stack traces.
+  errorHandler: (err: Error) => {
+    console.warn("[sentry] sourcemap upload skipped:", err.message)
+  },
+  // Disable the `_sentry` proxy route — we serve directly from sentry.io
+  // and don't need to bypass ad blockers for backend traffic.
+  tunnelRoute: undefined,
+  // Auto-instrument server functions for tracing. Newer @sentry/nextjs
+  // moved this under `webpack.*` and shows a deprecation warning if set
+  // at the top level.
+  webpack: {
+    autoInstrumentServerFunctions: true,
+  },
+  // Disable telemetry beacons from the build plugin itself.
+  telemetry: false,
+}
+
+// Only wrap with Sentry when DSN is configured — keeps `next build`
+// runnable in fresh clones without Sentry env vars.
+const finalConfig =
+  process.env.NEXT_PUBLIC_SENTRY_DSN || process.env.SENTRY_DSN
+    ? withSentryConfig(nextConfig, sentryWebpackPluginOptions)
+    : nextConfig
+
+export default withBundleAnalyzer(finalConfig)

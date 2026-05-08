@@ -5,6 +5,7 @@ import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
 import { notify } from "@/lib/notifications"
 import { sendPostBookingConfirmationEmail } from "@/lib/email/post-booking-education"
+import { sendNoShowRecoveryEmail } from "@/lib/email/no-show-recovery"
 import { queueEmailSequence } from "@/lib/email/queue"
 
 const CALENDLY_WEBHOOK_SECRET = process.env.CALENDLY_WEBHOOK_SECRET
@@ -145,9 +146,16 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 })
   }
 
-  // Only handle invitee.created (new booking). Cancellations and reschedules
-  // fire their own events and aren't wired up yet.
-  if (event.event !== "invitee.created") {
+  // Calendly fires three events we care about: invitee.created (new
+  // booking), invitee.canceled (cancellation OR reschedule on the OLD
+  // event — Calendly fires .canceled on the old slot then .created on
+  // the new one), and invitee.no_show.marked. Anything else gets a 200
+  // skip so Calendly stops retrying.
+  if (
+    event.event !== "invitee.created" &&
+    event.event !== "invitee.canceled" &&
+    event.event !== "invitee.no_show.marked"
+  ) {
     return NextResponse.json({ ok: true, skipped: true })
   }
 
@@ -186,6 +194,115 @@ export async function POST(req: Request) {
     )
     return NextResponse.json({ ok: true, skipped: "non_aoc_event_type" })
   }
+
+  // ── Cancellation handler ────────────────────────────────────────────────
+  // Cancel = applicant clicked "cancel booking" in Calendly OR rescheduled.
+  // Calendly fires this on the OLD event when a reschedule happens; the new
+  // slot fires its own invitee.created. Either way we want the deal to:
+  //   - log a CANCELED activity so admin sees it in the timeline
+  //   - drop back to APPLICATION_SUBMITTED so nurture-unbooked picks them
+  //     up again if they don't rebook within a few days
+  //   - cancel the morning-of reminder so we don't email about a meeting
+  //     that no longer exists
+  if (event.event === "invitee.canceled") {
+    if (!email) {
+      return NextResponse.json({ error: "Missing email" }, { status: 400 })
+    }
+    const match = await resolveDeal(email)
+    if (match) {
+      try {
+        const currentDeal = await db.deal.findUnique({
+          where: { id: match.dealId },
+          select: { stage: true },
+        })
+        // Only walk the stage backwards if we're still in the booked-but-
+        // not-yet-completed window. Don't touch deals that have already
+        // progressed past the call (CONSULT_COMPLETED, MEMBER_JOINED, etc).
+        const shouldRevertStage = currentDeal?.stage === "CONSULT_BOOKED"
+        await db.deal.update({
+          where: { id: match.dealId },
+          data: {
+            ...(shouldRevertStage ? { stage: "APPLICATION_SUBMITTED" } : {}),
+            activities: {
+              create: {
+                type: "NOTE_ADDED",
+                detail: `Calendly consult canceled by ${name || email}.`,
+                metadata: { calendlyEventUri: scheduledEvent?.uri ?? null },
+              },
+            },
+          },
+        })
+      } catch (err) {
+        logger.error("Calendly webhook: cancel deal update failed", err)
+      }
+    }
+    // Cancel any pending morning-of reminder for this email so we don't
+    // ping the applicant about a meeting that no longer exists.
+    try {
+      await db.emailQueueItem.updateMany({
+        where: {
+          recipientEmail: email,
+          sequenceKey: "post-booking-morning-of",
+          status: "pending",
+        },
+        data: { status: "cancelled" },
+      })
+    } catch (err) {
+      logger.error("Calendly webhook: cancel morning-of reminder failed", err)
+    }
+    notify({
+      type: "new_lead",
+      title: "Calendly consult canceled",
+      message: `${name || email} canceled their AOC consult. Deal moved back to APPLICATION_SUBMITTED.`,
+      urgency: "normal",
+    }).catch(() => {})
+    return NextResponse.json({ ok: true, canceled: true })
+  }
+
+  // ── No-show handler ─────────────────────────────────────────────────────
+  // Calendly's "mark as no-show" feature fires invitee.no_show.marked. If we
+  // get one, log it on the deal, send the recovery email, and notify ops.
+  if (event.event === "invitee.no_show.marked") {
+    if (!email) {
+      return NextResponse.json({ error: "Missing email" }, { status: 400 })
+    }
+    const match = await resolveDeal(email)
+    let tier: "hot" | "warm" | "cold" | null = null
+    if (match) {
+      try {
+        const deal = await db.deal.update({
+          where: { id: match.dealId },
+          data: {
+            activities: {
+              create: {
+                type: "NOTE_ADDED",
+                detail: `Calendly no-show: ${name || email} did not attend their consult.`,
+                metadata: { calendlyEventUri: scheduledEvent?.uri ?? null },
+              },
+            },
+          },
+          select: { leadScoreTier: true },
+        })
+        tier = (deal.leadScoreTier as "hot" | "warm" | "cold" | null) ?? null
+      } catch (err) {
+        logger.error("Calendly webhook: no-show deal update failed", err)
+      }
+    }
+    // Recovery email — single low-pressure rebook nudge. Fires regardless
+    // of whether we matched the deal so a Calendly-only contact still
+    // gets the email. Failure is logged but does not break the webhook.
+    sendNoShowRecoveryEmail({ to: email, name: name ?? "", tier }).catch(
+      (err) => logger.error("No-show recovery email failed", err)
+    )
+    notify({
+      type: "new_lead",
+      title: "Calendly no-show",
+      message: `${name || email} no-showed their AOC consult. Recovery email sent.`,
+      urgency: "normal",
+    }).catch(() => {})
+    return NextResponse.json({ ok: true, noShow: true })
+  }
+
   const eventStartTime = scheduledEvent?.start_time ?? null
   const meetingUrl = scheduledEvent?.location?.join_url ?? null
   const rescheduleUrl = invitee?.reschedule_url ?? null

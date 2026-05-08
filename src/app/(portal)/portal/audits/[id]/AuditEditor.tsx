@@ -1043,7 +1043,7 @@ export function AuditEditor({ quiz, site }: AuditEditorProps) {
             value={state.successCtaUrl}
             onChange={(e) => updateField("successCtaUrl", e.target.value)}
             className={inputClass}
-            placeholder="https://cal.com/you/intro"
+            placeholder="https://calendly.com/you/intro"
           />
         </Field>
       </Section>
