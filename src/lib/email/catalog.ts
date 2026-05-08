@@ -38,6 +38,72 @@ export interface TemplateCatalogEntry {
 const APP =
   process.env.NEXT_PUBLIC_APP_URL ?? "https://www.aioperatorcollective.com"
 
+/**
+ * Generate catalog entries for a queued sequence (one per day).
+ *
+ * The build* functions return rendered subject + html given an emailIndex.
+ * For the admin "send test" feature we wrap each day in a sender that
+ * renders the same content via process-email-queue's templateKey path,
+ * so the test send and the real send go through the exact same code.
+ */
+function buildQueuedSequenceCatalog(
+  prefix: string,
+  displayPrefix: string,
+  sequenceKey:
+    | "post-booking-education"
+    | "operator-vault"
+    | "business-ai-audit"
+    | "w2-playbook",
+  days: number[],
+  descriptionTemplate: string,
+  phase: TemplateCatalogEntry["phase"],
+): TemplateCatalogEntry[] {
+  return days.map((day) => {
+    const emailIndex = day - 1
+    return {
+      templateKey: `${prefix}.day-${day}`,
+      displayName: `${displayPrefix} — Day ${day}`,
+      description: descriptionTemplate.replace("{n}", String(day)),
+      phase,
+      sample: (to: string) => ({ to, name: "Adam Wolfe", emailIndex }),
+      send: async (args: Record<string, unknown>) => {
+        const a = args as { to: string; name?: string }
+        const { sendTrackedEmail, emailLayout } = await import("./index")
+        const { AOC_FROM_EMAIL, AOC_REPLY_TO } = await import("./senders")
+
+        let content: { subject: string; html: string } | null = null
+        if (sequenceKey === "post-booking-education") {
+          const { buildPostBookingEducationEmail } = await import(
+            "./post-booking-education"
+          )
+          content = buildPostBookingEducationEmail(emailIndex, { name: a.name ?? "" })
+        } else if (sequenceKey === "operator-vault") {
+          const { buildOperatorVaultEmail } = await import("./community-sequence")
+          content = buildOperatorVaultEmail(emailIndex, { name: a.name ?? "" })
+        } else if (sequenceKey === "business-ai-audit") {
+          const { buildBusinessAIAuditEmail } = await import("./business-audit-sequence")
+          content = buildBusinessAIAuditEmail(emailIndex, { name: a.name ?? "" })
+        } else if (sequenceKey === "w2-playbook") {
+          const { buildW2PlaybookEmail } = await import("./w2-playbook-sequence")
+          content = buildW2PlaybookEmail(emailIndex, { name: a.name ?? "" })
+        }
+        if (!content) {
+          throw new Error(`No builder for ${sequenceKey} day ${day}`)
+        }
+        return sendTrackedEmail({
+          from: AOC_FROM_EMAIL,
+          to: a.to,
+          replyTo: AOC_REPLY_TO,
+          subject: content.subject,
+          html: emailLayout(content.html, content.subject),
+          serviceArm: "ai-operator-collective",
+          templateKey: `${prefix}.day-${day}`,
+        })
+      },
+    }
+  })
+}
+
 export const EMAIL_TEMPLATES: TemplateCatalogEntry[] = [
   // ─── Foundation / signup ─────────────────────────────────────────────
   {
@@ -436,6 +502,70 @@ export const EMAIL_TEMPLATES: TemplateCatalogEntry[] = [
       return sendOperatorVaultEmail(args as { to: string; name: string })
     },
   },
+
+  // ─── Queued post-booking drip (Days 1-3 + morning-of) ────────────────
+  // These fire from /api/cron/process-email-queue once the Calendly
+  // webhook queues them at booking time. The cron passes templateKey
+  // so admin edits flow through.
+  ...buildQueuedSequenceCatalog(
+    "aoc.post-booking-education",
+    "AOC: Post-Booking Education",
+    "post-booking-education",
+    [1, 2, 3],
+    "Fires after a Calendly booking. Day {n} is queued by the Calendly webhook + delivered by process-email-queue.",
+    "foundation",
+  ),
+  {
+    templateKey: "aoc.post-booking-morning-of",
+    displayName: "AOC: Booking Reminder (~3h before)",
+    description:
+      "Morning-of reminder fired ~3h before the scheduled call. Queued by Calendly webhook, delivered by process-email-queue.",
+    phase: "foundation",
+    sample: (to) => ({ to, name: "Adam Wolfe" }),
+    send: async (args) => {
+      const { buildPostBookingEducationEmail } = await import("./post-booking-education")
+      const { sendTrackedEmail, emailLayout } = await import("./index")
+      const { AOC_FROM_EMAIL, AOC_REPLY_TO } = await import("./senders")
+      const a = args as { to: string; name?: string }
+      const content = buildPostBookingEducationEmail(3, { name: a.name ?? "" })
+      if (!content) throw new Error("morning-of preview unavailable")
+      return sendTrackedEmail({
+        from: AOC_FROM_EMAIL,
+        to: a.to,
+        replyTo: AOC_REPLY_TO,
+        subject: content.subject,
+        html: emailLayout(content.html, content.subject),
+        serviceArm: "ai-operator-collective",
+        templateKey: "aoc.post-booking-morning-of",
+      })
+    },
+  },
+
+  // ─── Queued lead-magnet drips ────────────────────────────────────────
+  ...buildQueuedSequenceCatalog(
+    "lead-magnet.operator-vault",
+    "Lead Magnet: Operator Vault drip",
+    "operator-vault",
+    [1, 2, 3, 4, 5],
+    "Day {n} of the operator-vault drip. Queued at vault-unlock submit.",
+    "foundation",
+  ),
+  ...buildQueuedSequenceCatalog(
+    "lead-magnet.business-ai-audit",
+    "Lead Magnet: Business AI Audit drip",
+    "business-ai-audit",
+    [1, 2],
+    "Day {n} of the business-ai-audit drip.",
+    "foundation",
+  ),
+  ...buildQueuedSequenceCatalog(
+    "lead-magnet.w2-playbook",
+    "Lead Magnet: W2 Playbook drip",
+    "w2-playbook",
+    [1, 2],
+    "Day {n} of the w2-playbook drip.",
+    "foundation",
+  ),
 
   // ─── Subscription lifecycle ──────────────────────────────────────────
   {

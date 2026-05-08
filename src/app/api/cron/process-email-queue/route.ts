@@ -9,6 +9,40 @@ import { buildW2PlaybookEmail } from "@/lib/email/w2-playbook-sequence"
 import { buildPostBookingEducationEmail } from "@/lib/email/post-booking-education"
 import { AOC_FROM_EMAIL, AOC_REPLY_TO } from "@/lib/email/senders"
 
+/**
+ * Map a queued (sequenceKey, emailIndex) tuple to its admin-editable
+ * templateKey so /admin/email-templates overrides flow through to the
+ * actual send. Without this, edits in the admin UI silently fail to
+ * apply for any email that goes through the queue cron — exactly the
+ * thing that would surprise us during a campaign.
+ *
+ * Keep these strings in sync with EMAIL_TEMPLATES catalog entries.
+ */
+function templateKeyFor(sequenceKey: string, emailIndex: number): string | undefined {
+  if (sequenceKey === "post-booking-education") {
+    if (emailIndex === 0) return "aoc.post-booking-education.day-1"
+    if (emailIndex === 1) return "aoc.post-booking-education.day-2"
+    if (emailIndex === 2) return "aoc.post-booking-education.day-3"
+  }
+  if (sequenceKey === "post-booking-morning-of") {
+    return "aoc.post-booking-morning-of"
+  }
+  if (sequenceKey === "operator-vault") {
+    if (emailIndex >= 0 && emailIndex <= 4) {
+      return `lead-magnet.operator-vault.day-${emailIndex + 1}`
+    }
+  }
+  if (sequenceKey === "business-ai-audit") {
+    if (emailIndex === 0) return "lead-magnet.business-ai-audit.day-1"
+    if (emailIndex === 1) return "lead-magnet.business-ai-audit.day-2"
+  }
+  if (sequenceKey === "w2-playbook") {
+    if (emailIndex === 0) return "lead-magnet.w2-playbook.day-1"
+    if (emailIndex === 1) return "lead-magnet.w2-playbook.day-2"
+  }
+  return undefined
+}
+
 export const maxDuration = 60
 
 const MAX_RETRIES = 6
@@ -95,6 +129,7 @@ export async function GET(req: Request) {
           continue
         }
 
+        const templateKey = templateKeyFor(item.sequenceKey, item.emailIndex)
         await sendTrackedEmail({
           from: AOC_FROM_EMAIL,
           to: item.recipientEmail,
@@ -102,6 +137,11 @@ export async function GET(req: Request) {
           subject: emailContent.subject,
           html: emailLayout(emailContent.html, emailContent.subject),
           serviceArm: "ai-operator-collective",
+          // Wiring this through is what lets admin edits at
+          // /admin/email-templates actually take effect for queued
+          // sequence emails (everything past day 0 of the post-booking
+          // drip + the lead-magnet drips).
+          ...(templateKey ? { templateKey } : {}),
         })
 
         await db.emailQueueItem.update({
