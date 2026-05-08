@@ -5,9 +5,7 @@ import {
   h1,
   p,
   btn,
-  divider,
 } from "./index"
-import { buildAIPlaybookPDF } from "@/lib/pdf/ai-playbook"
 import { AOC_FROM_EMAIL as FROM_EMAIL, AOC_REPLY_TO as REPLY_TO, RYAN_SALES_BCC } from "./senders"
 
 export interface EmailContent {
@@ -33,9 +31,63 @@ function playCard(num: string, title: string, body: string): string {
   `
 }
 
+function formatCallTime(value?: string | null): string | null {
+  if (!value) return null
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return null
+
+  return date.toLocaleString("en-US", {
+    weekday: "long",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    timeZoneName: "short",
+  })
+}
+
+function callDetails(params: {
+  eventStartTime?: string | null
+  meetingUrl?: string | null
+  rescheduleUrl?: string | null
+}): string {
+  const rows: string[] = []
+  const formattedTime = formatCallTime(params.eventStartTime)
+
+  if (formattedTime) {
+    rows.push(`<strong style="color:#111827;">Time:</strong> ${escapeHtml(formattedTime)}`)
+  } else {
+    rows.push(
+      `<strong style="color:#111827;">Time:</strong> Check your Calendly confirmation for the exact time.`
+    )
+  }
+
+  rows.push(`<strong style="color:#111827;">With:</strong> Ryan from the AIOC team`)
+
+  if (params.meetingUrl) {
+    const safeMeetingUrl = escapeHtml(params.meetingUrl)
+    rows.push(
+      `<strong style="color:#111827;">Where:</strong> <a href="${safeMeetingUrl}" style="color:#981B1B;font-weight:700;">Join the call</a>`
+    )
+  } else {
+    rows.push(
+      `<strong style="color:#111827;">Where:</strong> Check your Calendly confirmation for the meeting link.`
+    )
+  }
+
+  if (params.rescheduleUrl) {
+    const safeRescheduleUrl = escapeHtml(params.rescheduleUrl)
+    rows.push(
+      `<strong style="color:#111827;">Reschedule:</strong> <a href="${safeRescheduleUrl}" style="color:#981B1B;font-weight:700;">Use this link if the time no longer works</a>`
+    )
+  }
+
+  return p(rows.join("<br/>"))
+}
+
 /* -------------------------------------------------------------------------- */
 /*  Day 0 — sent IMMEDIATELY after booking via Calendly webhook               */
-/*          (has PDF attached; skips the queue)                                */
+/*          (skips the queue so the applicant gets confirmation immediately)   */
 /* -------------------------------------------------------------------------- */
 
 export async function sendPostBookingConfirmationEmail(params: {
@@ -49,57 +101,53 @@ export async function sendPostBookingConfirmationEmail(params: {
   const safeName = escapeHtml(params.name || "").trim()
   const firstName = safeName.split(" ")[0] || "there"
 
-  const whenLine = params.eventStartTime
-    ? `Your call is confirmed for <strong style="color:#111827;">${new Date(params.eventStartTime).toLocaleString("en-US", { weekday: "long", month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZoneName: "short" })}</strong>.`
-    : "Your call is confirmed. Check your inbox for the Calendly confirmation with the exact time."
-
   const nextStepsUrl = `${appUrl()}/apply/next-steps?email=${encodeURIComponent(params.to)}`
 
-  let pdfBuffer: Buffer | null = null
-  try {
-    pdfBuffer = await buildAIPlaybookPDF()
-  } catch {
-    pdfBuffer = null
-  }
-
   const body = `
-    ${h1(`${firstName}, your call is confirmed.`)}
-    ${p(whenLine)}
-    ${p(`Hey ${firstName}, Matt here. Excited to meet you. Here's how we'll spend our time together, and how to make sure you get the most out of it.`)}
+    ${h1(`${firstName}, you're on the calendar.`)}
+    ${callDetails({
+      eventStartTime: params.eventStartTime,
+      meetingUrl: params.meetingUrl,
+      rescheduleUrl: params.rescheduleUrl,
+    })}
+    ${p(`Hey ${firstName}, Jess here. Before you speak with Ryan, I want you thinking about the right things.`)}
 
-    ${p("<strong style='color:#111827;'>What the call is about:</strong> I'll walk you through a short presentation on where AI actually creates leverage for people like you, answer any burning questions you've been sitting on, and we'll figure out together whether the Collective is a good fit. That's it. No high-pressure pitch.")}
+    ${p("You raised your hand because you see AI changing work and you do not want to sit on the sidelines watching it happen.")}
 
-    ${p("A few things to lock in before we meet:")}
+    ${p("That is the right instinct.")}
+
+    ${p("But the useful question is not <em>which AI tools should I learn?</em>")}
+
+    ${p("The useful question is:")}
+
+    ${p("<strong style='color:#111827;'>What business problems do I understand well enough to start solving?</strong>")}
+
+    ${p("Bring raw material to the call, not a polished plan.")}
 
     ${playCard(
       "1.",
-      "RSVP and add it to your calendar right now.",
-      "Tap the calendar invite Calendly sent you and accept it. If it landed on your phone, make sure it saved to your primary calendar, not a secondary account you never check. Double-book protection."
+      "The work environments you understand",
+      "Think about the industries, departments, roles, or business types you have seen up close. Your background is not random. It may be the starting point."
     )}
     ${playCard(
       "2.",
-      "Be at a computer, not your phone.",
-      "I'll be sharing my screen and walking you through a presentation. Mobile works in a pinch, but you'll get way more out of it on a laptop or desktop. Plan to sit down somewhere quiet with no distractions."
+      "The little fires you have noticed",
+      "Manual reports. Missed follow-up. Messy handoffs. Repeated customer questions. Workarounds everyone accepts because \"that's just how it works.\""
     )}
     ${playCard(
       "3.",
-      "Bring one or two burning AI questions.",
-      "What are you actually stuck on? What tools are you eyeing but haven't pulled the trigger on? What would save you the most time this month if it just worked? Come with those, and we'll tear through them live."
-    )}
-    ${playCard(
-      "4.",
-      "Skim the AI Operator Playbook (attached).",
-      "Five short chapters, about 15 minutes. Not required. But if you read it, our call goes deeper and you leave with more."
+      "What you want this skill set to help you build toward",
+      "More useful skills. Better business conversations. More agency in a market being reshaped by AI. You do not need the whole answer yet, but have an honest starting point."
     )}
 
-    ${btn("Open prep resources and AI use cases", nextStepsUrl)}
+    ${btn("Review the prep page", nextStepsUrl)}
 
     <p style="margin:32px 0 0;font-size:13px;color:#4B5563;line-height:1.6;">
-      Matt<br/>
+      Jess<br/>
       <span style="color:#9CA3AF;font-size:12px;">AI Operator Collective</span>
     </p>
     <p style="margin:24px 0 0;font-size:11px;color:#9CA3AF;line-height:1.55;font-style:italic;">
-      Over the next few days I'll send a few short emails: four proven playbook moves, my personal AI tool stack, and a handful of copy-paste prompts. Not a firehose. Reply "stop" anytime.
+      If the time no longer works, use the reschedule link above instead of missing it.
     </p>
   `
 
@@ -108,20 +156,11 @@ export async function sendPostBookingConfirmationEmail(params: {
     to: params.to,
     bcc: RYAN_SALES_BCC,
     replyTo: REPLY_TO,
-    subject: `${firstName}, your AI Operator call is confirmed`,
+    subject: `${firstName}, your AIOC call is confirmed`,
     html: emailLayout(
       body,
-      "RSVP, be at a computer, bring your burning AI questions."
+      "Here's what to think through before you speak with Ryan."
     ),
-    attachments: pdfBuffer
-      ? [
-          {
-            filename: "AI-Operator-Playbook.pdf",
-            content: pdfBuffer,
-            contentType: "application/pdf",
-          },
-        ]
-      : undefined,
     serviceArm: "ai-operator-collective",
     templateKey: "aoc.post-booking-confirmation",
   })
@@ -138,43 +177,61 @@ export function buildPostBookingEducationEmail(
   const name = (metadata.name as string) || "there"
   const firstName = escapeHtml(name).split(" ")[0] || "there"
   const nextStepsUrl = `${appUrl()}/apply/next-steps`
+  const eventStartTime = (metadata.eventStartTime as string | null) || null
+  const meetingUrl = (metadata.meetingUrl as string | null) || null
+  const rescheduleUrl = (metadata.rescheduleUrl as string | null) || null
 
   if (emailIndex === 0) {
-    // Day 1 — Playbook patterns
+    // Day 1 — Problem-first reframe
     return {
-      subject: "The 4 moves our best operators make in their first 90 days",
+      subject: "Tools are not the product",
       html: `
-        ${h1(`${firstName}, here's what actually moves the needle.`)}
-        ${p(`Hey ${firstName}, Matt here. Before our call I wanted to show you the pattern we see over and over among operators who start strong in the Collective. These aren't hypothetical. They come up in almost every Collective call where someone is actually shipping.`)}
-        ${p("Four moves. All four are in your playbook. Read these so our call can go deeper.")}
+        ${h1("Tools are not the product.")}
+        ${p(`Hi ${firstName},`)}
+        ${p("Most people start with AI tools because tools are easy to see.")}
+
+        ${p("Claude. ChatGPT. Zapier. Make. Agents. Automations. Whatever is shiny this week.")}
+
+        ${p("Tools matter.")}
+
+        ${p("But they are not the product.")}
+
+        ${p("A business does not care that you know a tool. A business cares whether you understand a problem worth solving.")}
+
+        ${p("That is the core of how we think about AIOC.")}
+
+        ${p("AI is gasoline.")}
+
+        ${p("Your job is to find the fire.")}
 
         ${playCard(
-          "Move 1",
-          "Pick a lane and stop hedging.",
-          "\"Small businesses\" is not an ICP. \"Anyone who needs marketing\" is not an ICP. The operators who get traction fast are the ones who pick one specific buyer they actually understand: a role, an industry, a company stage. Once you have that, everything downstream gets easier."
+          "1.",
+          "A business problem has weight",
+          "Missed leads. Slow follow-up. Reports built by hand. Customer questions answered from scratch. Internal handoffs that keep breaking."
         )}
         ${playCard(
-          "Move 2",
-          "Put your offer in one sentence.",
-          "<em>\"I help [specific buyer] [specific outcome] by [specific mechanism].\"</em> If you can't finish that sentence without hedging, you don't have an offer yet. You have a job title. This is the single hardest thing to write and the single biggest unlock."
+          "2.",
+          "A tool is only useful after diagnosis",
+          "If there is no real business pain underneath, AI just makes a cleaner demo. Interesting, maybe. Valuable, not necessarily."
         )}
         ${playCard(
-          "Move 3",
-          "Use the discovery script, then price in ranges.",
-          "The playbook's discovery script surfaces the real pain in 25 minutes without making the prospect feel like they're being sold to. When they ask what it costs, a range (\"engagements in this space run $X to $Y depending on scope\") moves you from vendor to advisor in one sentence."
-        )}
-        ${playCard(
-          "Move 4",
-          "Run the same play again instead of inventing new ones.",
-          "The operators who scale fastest aren't the ones reinventing their offer every two weeks. They're the ones running the same proven play four or five times. Use your playbook as-is, iterate on delivery, keep the same offer stable while you build momentum."
+          "3.",
+          "Operators learn to see the fire",
+          "The skill is noticing where time, money, attention, or opportunity is leaking, then using AI to make that problem smaller, faster, cheaper, or less painful."
         )}
 
-        ${p(`When we talk, we'll figure out which of these four you're strongest on, and which one is the current bottleneck for you, ${firstName}. The whole point is to save you months of trial and error.`)}
+        ${p("Before your call with Ryan, think of one or two business problems you have seen up close.")}
 
-        ${btn("Open prep resources", nextStepsUrl)}
+        ${p("Not \"AI ideas.\"")}
+
+        ${p("Business problems.")}
+
+        ${p("That is the better starting point.")}
+
+        ${btn("Review the prep page", nextStepsUrl)}
 
         <p style="margin:32px 0 0;font-size:13px;color:#4B5563;line-height:1.6;">
-          Matt<br/>
+          Jess<br/>
           <span style="color:#9CA3AF;font-size:12px;">AI Operator Collective</span>
         </p>
       `,
@@ -182,70 +239,52 @@ export function buildPostBookingEducationEmail(
   }
 
   if (emailIndex === 1) {
-    // Day 2 — AI tools (Matt's personal stack)
+    // Day 2 — Work history as raw material
     return {
-      subject: "The 10 AI tools I actually use every day",
+      subject: "Your background is raw material",
       html: `
-        ${h1(`${firstName}, here's the stack I really use.`)}
-        ${p(`Hey ${firstName}, Matt again. There are 500+ "top AI tool" lists on LinkedIn this week. Most are recycled. This one is different. It's the tools I personally use multiple times a day to run the AIMS portfolio. If I stopped using any of these tomorrow, my work would be slower.`)}
+        ${h1("Your background is not dead weight.")}
+        ${p(`Hi ${firstName},`)}
+        ${p("If you are coming from a W2 role, a corporate job, or a generalist background, it can be easy to assume you are behind.")}
+
+        ${p("You may look at AI engineers, automation builders, or people posting polished case studies online and think:")}
+
+        ${p("<em>I do not have that kind of technical background.</em>")}
+
+        ${p("That may be true.")}
+
+        ${p("It is also not the whole story.")}
+
+        ${p("A lot of useful AI work starts with understanding how businesses actually operate.")}
+
+        ${p("And if you have spent years inside a company, you have seen things that matter.")}
 
         ${playCard(
-          "01",
-          "Claude",
-          "My primary thinking partner. I use it for analysis, strategy sessions, coding, spreadsheet work, and building micro-tools with no-code directly inside of Claude. If I had to pick one AI tool to keep and delete everything else, this is it. <a href=\"https://claude.ai\" style=\"color:#981B1B;\">claude.ai</a>"
+          "1.",
+          "You have seen the mess",
+          "Meetings that should have been docs. Reports nobody trusts. Handoffs that break every week. Follow-up that depends on memory. Systems people work around instead of using."
         )}
         ${playCard(
-          "02",
-          "Perplexity",
-          "The best AI-powered research tool I've found. Answers come with real citations so you can trust them. Their new browser agent (Comet) also automates research tasks across the web. I use it anytime I'd normally open 12 tabs. <a href=\"https://perplexity.ai\" style=\"color:#981B1B;\">perplexity.ai</a>"
+          "2.",
+          "You know the language of work",
+          "You understand how people explain problems, avoid problems, inherit problems, and quietly tolerate problems. That is useful."
         )}
         ${playCard(
-          "03",
-          "Dex",
-          "A Chrome browser agent that works alongside you with full context of what's on your screen. You don't have to describe what you're looking at. It already sees it. Huge for anyone who lives in the browser."
-        )}
-        ${playCard(
-          "04",
-          "Raycast",
-          "Command-K for your whole Mac. Launch apps, respond to Slack, check email, run AI prompts, all without leaving your keyboard. Once you use it for a week, using a laptop without it feels broken. <a href=\"https://raycast.com\" style=\"color:#981B1B;\">raycast.com</a>"
-        )}
-        ${playCard(
-          "05",
-          "Wispr Flow",
-          "The best speech-to-text tool I've used. Hold a button, talk, release, and your words appear wherever the cursor is. I draft entire emails and doc sections this way faster than I can type. <a href=\"https://wisprflow.ai\" style=\"color:#981B1B;\">wisprflow.ai</a>"
-        )}
-        ${playCard(
-          "06",
-          "Little Bird (honorable mention)",
-          "Joins all my calls like a meeting notetaker, records my screen during the day, AND runs any automation I describe in plain English. \"Go check my email, Slack messages, and build out my to-do list for today.\" New, powerful, worth watching."
-        )}
-        ${playCard(
-          "07",
-          "v0 (by Vercel)",
-          "For building app mockups or small websites fast. Type what you want, get a working prototype in minutes. Great for validating ideas without hiring a designer. <a href=\"https://v0.dev\" style=\"color:#981B1B;\">v0.dev</a>"
-        )}
-        ${playCard(
-          "08",
-          "Instantly",
-          "My cold outreach workhorse. Manages sending accounts, warmup, sequences, and reply handling. If you're running any outbound campaign to businesses, this is the engine. <a href=\"https://instantly.ai\" style=\"color:#981B1B;\">instantly.ai</a>"
-        )}
-        ${playCard(
-          "09",
-          "Notion + Notion AI",
-          "Where my playbooks, SOPs, and research live. Notion AI actually retrieves from YOUR docs instead of generating generic text. It's like having a research assistant who's read everything you've ever written. <a href=\"https://notion.so\" style=\"color:#981B1B;\">notion.so</a>"
-        )}
-        ${playCard(
-          "10",
-          "Firecrawl",
-          "Turns any website into clean Markdown that an LLM can read. Every research or scraping workflow I run starts here. Feed it a URL, get a perfectly formatted doc ready to hand to Claude. <a href=\"https://firecrawl.dev\" style=\"color:#981B1B;\">firecrawl.dev</a>"
+          "3.",
+          "AIOC helps turn that into capability",
+          "The goal is not to make you an AI influencer. The goal is to help you build a practical skill set you can take into real business conversations."
         )}
 
-        ${p(`You don't need all 10 on day one, ${firstName}. Start with Claude, Perplexity, and Raycast. Those three alone will give most people 5+ hours back per week.`)}
+        ${p("Before your call, write down two or three business types, roles, or work environments you understand better than the average person.")}
 
-        ${btn("Open prep resources", nextStepsUrl)}
+        ${p("That is raw material.")}
+
+        ${p("Bring it with you.")}
+
+        ${btn("Review the prep page", nextStepsUrl)}
 
         <p style="margin:32px 0 0;font-size:13px;color:#4B5563;line-height:1.6;">
-          Matt<br/>
+          Jess<br/>
           <span style="color:#9CA3AF;font-size:12px;">AI Operator Collective</span>
         </p>
       `,
@@ -253,45 +292,48 @@ export function buildPostBookingEducationEmail(
   }
 
   if (emailIndex === 2) {
-    // Day 3 — Prompts
+    // Day 3 — Call preparation
     return {
-      subject: "5 prompts that save Collective operators 10+ hours/week",
+      subject: "What Ryan will ask about",
       html: `
-        ${h1(`${firstName}, steal these 5 prompts.`)}
-        ${p(`Hey ${firstName}, Matt here. These are the prompts members of the Collective paste into Claude or ChatGPT multiple times a day. Steal them directly. They're designed to be copy-pasted, not admired.`)}
+        ${h1("Bring raw material, not a perfect plan.")}
+        ${p(`Hi ${firstName},`)}
+        ${p("For your call with Ryan, you do not need to show up as an expert.")}
+
+        ${p("You do not need a finished offer.")}
+
+        ${p("You do not need a perfect niche, a logo, a website, or a 47-step plan.")}
+
+        ${p("The point of the conversation is to understand where you are starting and whether AIOC is the right next room.")}
+
+        ${p("Here is what Ryan will be listening for.")}
 
         ${playCard(
-          "Prompt 1",
-          "Discovery call synthesizer",
-          "<em>Paste the transcript. Pull out: (1) the real pain (not the stated pain), (2) the exact words the prospect used for success, (3) the 3 objections most likely to come up, (4) a proposed scope and price range based on the pain size. Return as sections.</em>"
+          "1.",
+          "What are you building toward?",
+          "More agency. More useful skills. Better business conversations. A practical path into AI-enabled work. Be honest about what you want this to make possible."
         )}
         ${playCard(
-          "Prompt 2",
-          "ICP list cleaner",
-          "<em>I'm going to paste a list of 200 companies. Score each 1 to 10 on fit based on this ICP: [paste ICP]. For anything scored 7+, write a one-line \"why they fit\" I can drop into a cold email. Return as CSV: company, score, why.</em>"
+          "2.",
+          "What raw material do you already have?",
+          "Your work history, industry exposure, operational experience, relationships, curiosity, and the business problems you have seen up close."
         )}
         ${playCard(
-          "Prompt 3",
-          "Offer-in-one-sentence stress test",
-          "<em>Here's my current offer: [paste]. Act as a skeptical buyer in my ICP. Give me the 5 questions this offer fails to answer, the 3 competitors they'd immediately mentally compare to, and a rewritten version that's 40% more specific without adding length.</em>"
-        )}
-        ${playCard(
-          "Prompt 4",
-          "Proposal to SOW converter",
-          "<em>Turn this proposal into a tight SOW a mid-market buyer would actually sign. Scope, deliverables, timeline, out-of-scope items, and payment terms in that order. Max 1 page. No filler.</em>"
-        )}
-        ${playCard(
-          "Prompt 5",
-          "LinkedIn post from operator note",
-          "<em>Here's a raw ops note: [paste]. Turn it into a LinkedIn post in my voice: opinion up top, one specific example in the middle, one contrarian line to close. No hashtags. No \"here's why\" phrases.</em>"
+          "3.",
+          "Are you ready for reps?",
+          "AIOC is not passive content. It is practice: noticing problems, talking to businesses, mapping workflows, thinking through ROI, and learning how useful AI solutions actually get shaped."
         )}
 
-        ${p(`On our call we'll go through which of these maps to your actual work. See you soon, ${firstName}.`)}
+        ${p("Each cohort is small, so fit matters.")}
 
-        ${btn("Open the prompt library", nextStepsUrl)}
+        ${p("That is a good thing.")}
+
+        ${p("It means the call is not about convincing everyone. It is about figuring out who is ready for this kind of work now.")}
+
+        ${btn("Review the prep page", nextStepsUrl)}
 
         <p style="margin:32px 0 0;font-size:13px;color:#4B5563;line-height:1.6;">
-          Matt<br/>
+          Jess<br/>
           <span style="color:#9CA3AF;font-size:12px;">AI Operator Collective</span>
         </p>
       `,
@@ -301,21 +343,28 @@ export function buildPostBookingEducationEmail(
   if (emailIndex === 3) {
     // Meeting morning — final reminder
     return {
-      subject: `${firstName}, your AI Operator call is today`,
+      subject: `${firstName}, your AIOC call is today`,
       html: `
-        ${h1("Today's the day.")}
-        ${p(`Hey ${firstName}, Matt here. Quick reminder that we're on today. A few nudges so it goes smoothly:`)}
+        ${h1("Your AIOC call is today.")}
+        ${p(`Hi ${firstName},`)}
+        ${p("Quick reminder that your AIOC strategy conversation with Ryan is today.")}
 
-        ${playCard("1.", "Sit down at a computer, not your phone.", "I'll share my screen and walk you through a short presentation. Mobile will miss half of it.")}
-        ${playCard("2.", "Have one or two AI questions ready.", "What are you stuck on? What would save you the most time this month if it just worked? Come with those and we'll tear through them live.")}
-        ${playCard("3.", "Skim the playbook if you haven't.", "10 minutes is enough. It makes the call go deeper.")}
+        ${callDetails({ eventStartTime, meetingUrl, rescheduleUrl })}
 
-        ${p("If something's come up and you genuinely can't make it, hit the reschedule link in your Calendly confirmation. No hard feelings. Otherwise, see you soon.")}
+        ${p("If screen sharing is part of the call, join from a computer if you can.")}
+
+        ${p("Before you join, have these three things in mind:")}
+
+        ${playCard("1.", "Two or three work environments you understand", "Industries, departments, roles, companies, or business types you have seen up close.")}
+        ${playCard("2.", "One or two little fires you have noticed", "Manual work, missed follow-up, messy handoffs, repeated questions, broken reporting, or other business problems that keep costing time and attention.")}
+        ${playCard("3.", "What you want this skill set to help you build toward", "You do not need a perfect answer. Just an honest one.")}
+
+        ${p("Otherwise, Ryan will see you soon.")}
 
         ${btn("Review the prep page", nextStepsUrl)}
 
         <p style="margin:32px 0 0;font-size:13px;color:#4B5563;line-height:1.6;">
-          Matt<br/>
+          Jess<br/>
           <span style="color:#9CA3AF;font-size:12px;">AI Operator Collective</span>
         </p>
       `,
@@ -332,8 +381,8 @@ export function buildPostBookingEducationEmail(
 export const POST_BOOKING_EDUCATION_SEQUENCE = {
   name: "Post-Booking Education (AOC)",
   emails: [
-    { delay: 1, subject: "The 4 moves our best operators make early", templateKey: "aoc-day-1-playbook-moves" },
-    { delay: 2, subject: "The 10 AI tools I actually use every day", templateKey: "aoc-day-2-tools" },
-    { delay: 3, subject: "5 prompts that save operators 10+ hours/week", templateKey: "aoc-day-3-prompts" },
+    { delay: 1, subject: "Tools are not the product", templateKey: "aoc-day-1-problem-first" },
+    { delay: 2, subject: "Your background is raw material", templateKey: "aoc-day-2-raw-material" },
+    { delay: 3, subject: "What Ryan will ask about", templateKey: "aoc-day-3-call-prep" },
   ],
 } as const

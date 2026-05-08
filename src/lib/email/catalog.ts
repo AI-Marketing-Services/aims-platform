@@ -241,7 +241,7 @@ export const EMAIL_TEMPLATES: TemplateCatalogEntry[] = [
     templateKey: "aoc.post-booking-confirmation",
     displayName: "AOC: Post-Booking Confirmation",
     description:
-      "Fires after Calendly webhook reports event_scheduled. Sets expectations + reschedule/cancel links.",
+      "Fires after Calendly webhook reports event_scheduled. Confirms the call, shows meeting details, and frames call prep.",
     phase: "foundation",
     sample: (to) => ({
       to,

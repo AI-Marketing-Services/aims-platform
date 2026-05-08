@@ -654,9 +654,9 @@ export const EMAIL_SEQUENCES = {
   "post-booking-education": {
     name: "Post-Booking Education (AOC)",
     emails: [
-      { delay: 1, subject: "The 4 moves our best operators make early", templateKey: "aoc-day-1-playbook-moves" },
-      { delay: 2, subject: "The 10 AI tools I actually use every day", templateKey: "aoc-day-2-tools" },
-      { delay: 3, subject: "5 prompts that save operators 10+ hours/week", templateKey: "aoc-day-3-prompts" },
+      { delay: 1, subject: "Tools are not the product", templateKey: "aoc-day-1-problem-first" },
+      { delay: 2, subject: "Your background is raw material", templateKey: "aoc-day-2-raw-material" },
+      { delay: 3, subject: "What Ryan will ask about", templateKey: "aoc-day-3-call-prep" },
     ],
   },
 } as const

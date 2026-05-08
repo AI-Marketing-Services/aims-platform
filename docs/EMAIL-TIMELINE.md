@@ -68,11 +68,11 @@ This is the path someone takes when they apply to the AI Operator Collective fro
 
 | Day | Email (templateKey) | What it says | Trigger |
 |-----|---------------------|--------------|---------|
-| T+0 (immediate) | `aoc.post-booking-confirmation` | Sets expectations, attaches Playbook PDF, includes reschedule + cancel links | Calendly webhook `invitee.created` |
-| T+1 day | `aoc-day-1-playbook-moves` | "The 4 moves our best operators make early" | Queued at booking, fired by `process-email-queue` cron |
-| T+2 days | `aoc-day-2-tools` | "The 10 AI tools I actually use every day" | Same |
-| T+3 days | `aoc-day-3-prompts` | "5 prompts that save operators 10+ hours/week" | Same |
-| 3h before scheduled call | `post-booking-morning-of` | Morning-of reminder. Skipped if call is < 30 min away. | Computed from Cal event start time |
+| T+0 (immediate) | `aoc.post-booking-confirmation` | Confirms the call, shows call details, and frames the raw material to bring before speaking with Ryan | Calendly webhook `invitee.created` |
+| T+1 day | `aoc-day-1-problem-first` | "Tools are not the product" | Queued at booking, fired by `process-email-queue` cron |
+| T+2 days | `aoc-day-2-raw-material` | "Your background is raw material" | Same |
+| T+3 days | `aoc-day-3-call-prep` | "What Ryan will ask about" | Same |
+| 3h before scheduled call | `post-booking-morning-of` | Morning-of reminder with call details. Skipped if call is < 30 min away. | Computed from Cal event start time |
 
 ### 2c. After they close (manual)
 

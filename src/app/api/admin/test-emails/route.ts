@@ -116,7 +116,7 @@ export async function GET(req: Request) {
     sendAbandonedApplicationEmail({ to: TO, name: NAME })
   ))
 
-  results.push(await fire("post-booking-confirmation (day 0 + PDF)", () =>
+  results.push(await fire("post-booking-confirmation (day 0)", () =>
     sendPostBookingConfirmationEmail({
       to: TO,
       name: NAME,

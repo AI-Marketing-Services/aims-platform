@@ -54,7 +54,7 @@ export const TIMELINE_BUCKETS: TimelineBucket[] = [
     key: "post-booking",
     label: "AOC Application — After they book",
     blurb:
-      "Triggered when Calendly fires invitee.created. Confirms the call + a 3-day education drip.",
+      "Triggered when Calendly fires invitee.created. Confirms the call, prepares the applicant, and sends a pre-call reminder.",
   },
   {
     key: "post-close",
@@ -187,9 +187,9 @@ export const TIMELINE: Record<BucketKey, TimelineRow[]> = {
         "Calendly invitee.created webhook — fires immediately on booking.",
       order: 1,
     },
-    // The 3 chapter drips (aoc-day-1/2/3) live in the queue, not the
-    // catalog (no per-message override surface today). Listed here as
-    // context for the team but no editor row appears for them.
+    // The three preparation emails live in the queue, not the catalog
+    // (no per-message override surface today). Listed in docs/EMAIL-TIMELINE.md
+    // as context for the team, but no editor row appears for them.
   ],
 
   "post-close": [

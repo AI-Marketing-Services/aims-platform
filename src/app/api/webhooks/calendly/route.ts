@@ -402,9 +402,9 @@ export async function POST(req: Request) {
     }).catch((err) => logger.error("Orphan booking notify failed", err))
   }
 
-  // ── 2. Day-0 confirmation email with Playbook PDF ──────────────────────
+  // ── 2. Day-0 confirmation email ────────────────────────────────────────
   // Fires even on orphan bookings — the applicant did book, they deserve
-  // the confirmation. Attachment means we skip the queue and send direct.
+  // the confirmation. We skip the queue and send direct.
   try {
     await sendPostBookingConfirmationEmail({
       to: email,
@@ -424,6 +424,7 @@ export async function POST(req: Request) {
       name,
       eventStartTime,
       meetingUrl,
+      rescheduleUrl,
     })
   } catch (err) {
     logger.error("Calendly webhook: queue post-booking education failed", err)
@@ -454,7 +455,7 @@ export async function POST(req: Request) {
               sequenceKey: "post-booking-morning-of",
               emailIndex: 0,
               scheduledFor,
-              metadata: { name, eventStartTime, meetingUrl },
+              metadata: { name, eventStartTime, meetingUrl, rescheduleUrl },
             },
           })
         }
