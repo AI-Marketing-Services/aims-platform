@@ -240,21 +240,54 @@ export default async function ApplicationsPage() {
                 </summary>
                 <div className="p-4 pt-0 space-y-2 border-t border-line">
                   {QUESTIONS.map((q) => {
-                    const selectedValue = answers[q.id]
-                    const selectedOption = q.options.find(
-                      (o) => o.value === selectedValue
-                    )
+                    const rawValue = answers[q.id] as
+                      | string
+                      | string[]
+                      | undefined
+                      | null
+
+                    // Render the answer in human-readable form. Three cases:
+                    //   - text question:   show typed text, 0 pts (placeholder
+                    //                      option no longer matches)
+                    //   - multi-select:    map values to labels, join with
+                    //                      ", "; sum points capped at 2
+                    //   - single-select:   look up option label + points
+                    let displayLabel: string = "-"
+                    let displayPoints: number = 0
+
+                    if (q.text && typeof rawValue === "string" && rawValue.length > 0) {
+                      displayLabel = rawValue
+                      displayPoints = 0
+                    } else if (
+                      q.selection === "multi" &&
+                      Array.isArray(rawValue) &&
+                      rawValue.length > 0
+                    ) {
+                      const matched = q.options.filter((o) =>
+                        rawValue.includes(o.value),
+                      )
+                      displayLabel = matched.map((o) => o.label).join(", ")
+                      displayPoints = Math.min(
+                        matched.reduce((acc, o) => acc + o.points, 0),
+                        2,
+                      )
+                    } else if (typeof rawValue === "string" && rawValue.length > 0) {
+                      const opt = q.options.find((o) => o.value === rawValue)
+                      displayLabel = opt?.label ?? rawValue
+                      displayPoints = opt?.points ?? 0
+                    }
+
                     return (
                       <div key={q.id} className="flex gap-3 text-sm">
                         <span className="text-ink/50 flex-shrink-0 w-5 font-mono">
                           Q{QUESTIONS.indexOf(q) + 1}
                         </span>
-                        <div>
+                        <div className="min-w-0 flex-1">
                           <p className="text-ink/70">{q.question}</p>
-                          <p className="text-ink font-medium">
-                            {selectedOption?.label ?? selectedValue ?? "-"}
+                          <p className="text-ink font-medium break-words">
+                            {displayLabel}
                             <span className="text-ink/40 ml-2">
-                              ({selectedOption?.points ?? 0} pts)
+                              ({displayPoints} pts)
                             </span>
                           </p>
                         </div>

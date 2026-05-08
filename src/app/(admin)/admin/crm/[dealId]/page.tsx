@@ -5,6 +5,7 @@ import { db } from "@/lib/db"
 import { DealDetailClient } from "./DealDetailClient"
 import { Breadcrumbs } from "@/components/shared/Breadcrumbs"
 import { getProgressSummaryForAdmin } from "@/lib/onboarding/progress"
+import { QUESTIONS } from "@/lib/collective-application"
 
 export const dynamic = "force-dynamic"
 
@@ -62,21 +63,63 @@ export default async function AdminDealDetailPage({ params }: { params: Promise<
   }).catch(() => null)
 
   // The apply route spreads answers flat into the data blob:
-  //   data: { ...answers, firstName, lastName, phone, zipCode, country, ... }
-  // So timeline/revenue_goal/etc. live at the TOP LEVEL of appData — not nested.
+  //   data: { ...answers, firstName, lastName, phone, zipCode, country,
+  //           otherTextById, followUpTextById }
+  // So every question id (current_role, why_now, hours_per_week, etc.)
+  // lives at the TOP LEVEL of appData. Values are mixed-shape:
+  //   - text questions:    string
+  //   - multi-select:      string[]
+  //   - single-select:     string
+  //
+  // Previously this picked five hardcoded keys from the OLD 5-question
+  // schema (timeline / revenue_goal / investment / decision_maker /
+  // background) — none of which exist anymore, which is why every row
+  // rendered as "—" on the Deal detail page.
   const appData = applicationSubmission?.data as Record<string, unknown> | null | undefined
   const zipCode = typeof appData?.zipCode === "string" ? appData.zipCode : null
   const country = typeof appData?.country === "string" ? appData.country : null
-  const applicationAnswers =
+
+  const applicationAnswers: Record<string, string | string[] | undefined> | null =
     appData != null
-      ? {
-          timeline:       typeof appData.timeline       === "string" ? appData.timeline       : undefined,
-          revenue_goal:   typeof appData.revenue_goal   === "string" ? appData.revenue_goal   : undefined,
-          investment:     typeof appData.investment     === "string" ? appData.investment     : undefined,
-          decision_maker: typeof appData.decision_maker === "string" ? appData.decision_maker : undefined,
-          background:     typeof appData.background     === "string" ? appData.background     : undefined,
-        }
+      ? Object.fromEntries(
+          QUESTIONS.map((q) => {
+            const v = appData[q.id]
+            if (typeof v === "string") return [q.id, v]
+            if (Array.isArray(v)) {
+              const arr = v.filter((x): x is string => typeof x === "string")
+              return [q.id, arr]
+            }
+            return [q.id, undefined]
+          }),
+        )
       : null
+
+  // "Other" inline text + always-shown follow-up text — keyed by
+  // question id. Surface alongside the per-question answer so the
+  // operator sees the context the applicant typed.
+  const otherTextById =
+    appData != null && typeof appData.otherTextById === "object" && appData.otherTextById !== null
+      ? (appData.otherTextById as Record<string, unknown>)
+      : null
+  const followUpTextById =
+    appData != null && typeof appData.followUpTextById === "object" && appData.followUpTextById !== null
+      ? (appData.followUpTextById as Record<string, unknown>)
+      : null
+
+  const otherTextSafe: Record<string, string> | null = otherTextById
+    ? Object.fromEntries(
+        Object.entries(otherTextById).filter(
+          (entry): entry is [string, string] => typeof entry[1] === "string",
+        ),
+      )
+    : null
+  const followUpTextSafe: Record<string, string> | null = followUpTextById
+    ? Object.fromEntries(
+        Object.entries(followUpTextById).filter(
+          (entry): entry is [string, string] => typeof entry[1] === "string",
+        ),
+      )
+    : null
   const applicationSubmittedAt = applicationSubmission?.createdAt?.toISOString() ?? null
 
   const mightyInvites = await db.mightyInvite
@@ -189,6 +232,8 @@ export default async function AdminDealDetailPage({ params }: { params: Promise<
         country={country}
         applicationAnswers={applicationAnswers}
         applicationSubmittedAt={applicationSubmittedAt}
+        applicationOtherText={otherTextSafe}
+        applicationFollowUpText={followUpTextSafe}
       />
     </div>
   )
