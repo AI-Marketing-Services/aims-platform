@@ -45,11 +45,12 @@ import {
 import type { FeatureKey } from "@/lib/quests/registry"
 import { useQuests } from "@/components/quests/QuestContext"
 import { FEATURE_ENTITLEMENTS, type FeatureEntitlement } from "@/lib/plans/registry"
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { cn } from "@/lib/utils"
 import { NotificationBell } from "@/components/shared/NotificationBell"
 import { OnboardingProgressWidget } from "@/components/portal/OnboardingProgressWidget"
 import { QuestProgressRing } from "@/components/quests/QuestProgressRing"
+import { CollapsibleNavSection } from "@/components/shared/CollapsibleNavSection"
 
 // Sidebar items grouped logically. Items in `ADMIN_ONLY_ROUTES` below
 // are filtered out for non-admin viewers so the portal stays focused
@@ -82,59 +83,99 @@ type NavItem = {
   entitlement?: FeatureEntitlement
 }
 
-const PORTAL_NAV: readonly NavItem[] = [
-  // Mission control + getting started — never gated
-  { label: "Dashboard", href: "/portal/dashboard", icon: LayoutDashboard },
-  { label: "Getting Started", href: "/portal/onboard", icon: Rocket },
-  { label: "Quests", href: "/portal/quests", icon: Trophy },
+/**
+ * Sectioned nav structure. Each section has a stable label that doubles
+ * as the localStorage key for collapsed-state persistence — don't
+ * rename without a migration on the persisted keys.
+ *
+ * Section order is the operator's daily-driver order: top-of-screen =
+ * what they touch first. Collapsibles inside CollapsibleNavSection
+ * mean even users who never scroll see "Marketplace" without it
+ * pushing the active surface off-screen.
+ */
+type NavSection = {
+  section: string
+  items: readonly NavItem[]
+}
 
-  // Daily-driver scorecard sits high — operators land here every morning
-  // to set their week, log activity, and track progress vs. target.
-  { label: "Scorecard", href: "/portal/scorecard", icon: Target, gate: "crm", entitlement: FEATURE_ENTITLEMENTS.CRM },
-
-  // Daily operator work
-  { label: "Client CRM", href: "/portal/crm", icon: Briefcase, gate: "crm", entitlement: FEATURE_ENTITLEMENTS.CRM },
-  { label: "Lead Scout", href: "/portal/crm/scout", icon: MapPin, gate: "lead_scout", entitlement: FEATURE_ENTITLEMENTS.LEAD_SCOUT },
-  { label: "AI Audit", href: "/portal/audits", icon: ClipboardCheck, gate: "audits", entitlement: FEATURE_ENTITLEMENTS.AUDITS },
-  { label: "Lead Magnets", href: "/portal/lead-magnets", icon: FileText, gate: "audits", entitlement: FEATURE_ENTITLEMENTS.AUDITS },
-  { label: "Email Sequences", href: "/portal/sequences", icon: Send, entitlement: FEATURE_ENTITLEMENTS.SEQUENCES },
-  { label: "Booking Page", href: "/portal/booking", icon: CalendarDays, entitlement: FEATURE_ENTITLEMENTS.BOOKING },
-  { label: "Discovery Recorder", href: "/portal/recordings", icon: Mic, entitlement: FEATURE_ENTITLEMENTS.RECORDINGS },
-  { label: "Follow-up Rules", href: "/portal/follow-up-rules", icon: Bell, gate: "follow_up_rules", entitlement: FEATURE_ENTITLEMENTS.FOLLOW_UP_RULES },
-
-  // Revenue + reporting
-  { label: "Proposals", href: "/portal/proposals", icon: FileSignature, entitlement: FEATURE_ENTITLEMENTS.PROPOSALS },
-  { label: "Invoices", href: "/portal/invoices", icon: FileText, entitlement: FEATURE_ENTITLEMENTS.INVOICES },
-  { label: "Client Updates", href: "/portal/client-updates", icon: Mail, entitlement: FEATURE_ENTITLEMENTS.CLIENT_UPDATES },
-  { label: "Revenue", href: "/portal/revenue", icon: TrendingUp, gate: "revenue", entitlement: FEATURE_ENTITLEMENTS.REVENUE },
-  { label: "My Metrics", href: "/portal/metrics", icon: BarChart3 },
-
-  // AI + content tools
-  { label: "Deal Assistant", href: "/portal/deal-assistant", icon: Bot, entitlement: FEATURE_ENTITLEMENTS.DEAL_ASSISTANT },
-  { label: "AI Scripts", href: "/portal/scripts", icon: FileCode2, gate: "scripts", entitlement: FEATURE_ENTITLEMENTS.SCRIPTS },
-  { label: "Content Engine", href: "/portal/content", icon: PenLine, gate: "content", entitlement: FEATURE_ENTITLEMENTS.CONTENT },
-  { label: "Templates", href: "/portal/templates", icon: Library, entitlement: FEATURE_ENTITLEMENTS.TEMPLATES },
-  { label: "Toolkit", href: "/portal/tools", icon: Wrench, gate: "ai_tools" },
-  { label: "Playbooks", href: "/portal/playbooks", icon: BookOpen, gate: "playbooks", entitlement: FEATURE_ENTITLEMENTS.PLAYBOOKS },
-  { label: "Pricing Calc", href: "/portal/calculator", icon: Calculator, gate: "calculator", entitlement: FEATURE_ENTITLEMENTS.CALCULATOR },
-
-  // Admin-only (filtered out below for clients)
-  { label: "Ops Excellence", href: "/portal/ops-excellence", icon: Gauge },
-  { label: "My Services", href: "/portal/services", icon: Layers },
-  { label: "Marketplace", href: "/portal/marketplace", icon: ShoppingBag },
-  { label: "Campaigns", href: "/portal/campaigns", icon: BarChart3 },
-  { label: "Signal", href: "/portal/signal", icon: Newspaper, gate: "signal" },
-
-  // Whitelabel — opens once onboarding hits 100%
-  { label: "Website", href: "/reseller/site", icon: Globe, requiresOnboardingComplete: true },
-  { label: "Branding", href: "/reseller/settings/branding", icon: Sparkles, requiresOnboardingComplete: true },
-  { label: "Domain", href: "/reseller/settings/domain", icon: Settings, requiresOnboardingComplete: true },
-
-  // Account
-  { label: "Billing", href: "/portal/billing", icon: CreditCard },
-  { label: "Referrals", href: "/portal/referrals", icon: Users, gate: "referrals" },
-  { label: "Support", href: "/portal/support", icon: LifeBuoy },
-  { label: "Settings", href: "/portal/settings", icon: Settings },
+const PORTAL_NAV_SECTIONS: readonly NavSection[] = [
+  {
+    section: "Mission control",
+    items: [
+      { label: "Dashboard", href: "/portal/dashboard", icon: LayoutDashboard },
+      { label: "Getting Started", href: "/portal/onboard", icon: Rocket },
+      { label: "Quests", href: "/portal/quests", icon: Trophy },
+      // Daily-driver scorecard sits in mission control — operators
+      // land here every morning to set their week.
+      { label: "Scorecard", href: "/portal/scorecard", icon: Target, gate: "crm", entitlement: FEATURE_ENTITLEMENTS.CRM },
+    ],
+  },
+  {
+    section: "Pipeline",
+    items: [
+      { label: "Client CRM", href: "/portal/crm", icon: Briefcase, gate: "crm", entitlement: FEATURE_ENTITLEMENTS.CRM },
+      { label: "Lead Scout", href: "/portal/crm/scout", icon: MapPin, gate: "lead_scout", entitlement: FEATURE_ENTITLEMENTS.LEAD_SCOUT },
+      { label: "AI Audit", href: "/portal/audits", icon: ClipboardCheck, gate: "audits", entitlement: FEATURE_ENTITLEMENTS.AUDITS },
+      { label: "Lead Magnets", href: "/portal/lead-magnets", icon: FileText, gate: "audits", entitlement: FEATURE_ENTITLEMENTS.AUDITS },
+      { label: "Email Sequences", href: "/portal/sequences", icon: Send, entitlement: FEATURE_ENTITLEMENTS.SEQUENCES },
+      { label: "Booking Page", href: "/portal/booking", icon: CalendarDays, entitlement: FEATURE_ENTITLEMENTS.BOOKING },
+      { label: "Discovery Recorder", href: "/portal/recordings", icon: Mic, entitlement: FEATURE_ENTITLEMENTS.RECORDINGS },
+      { label: "Follow-up Rules", href: "/portal/follow-up-rules", icon: Bell, gate: "follow_up_rules", entitlement: FEATURE_ENTITLEMENTS.FOLLOW_UP_RULES },
+    ],
+  },
+  {
+    section: "Revenue",
+    items: [
+      { label: "Proposals", href: "/portal/proposals", icon: FileSignature, entitlement: FEATURE_ENTITLEMENTS.PROPOSALS },
+      { label: "Invoices", href: "/portal/invoices", icon: FileText, entitlement: FEATURE_ENTITLEMENTS.INVOICES },
+      { label: "Client Updates", href: "/portal/client-updates", icon: Mail, entitlement: FEATURE_ENTITLEMENTS.CLIENT_UPDATES },
+      { label: "Revenue", href: "/portal/revenue", icon: TrendingUp, gate: "revenue", entitlement: FEATURE_ENTITLEMENTS.REVENUE },
+      { label: "My Metrics", href: "/portal/metrics", icon: BarChart3 },
+    ],
+  },
+  {
+    section: "AI tools",
+    items: [
+      { label: "Deal Assistant", href: "/portal/deal-assistant", icon: Bot, entitlement: FEATURE_ENTITLEMENTS.DEAL_ASSISTANT },
+      { label: "AI Scripts", href: "/portal/scripts", icon: FileCode2, gate: "scripts", entitlement: FEATURE_ENTITLEMENTS.SCRIPTS },
+      { label: "Content Engine", href: "/portal/content", icon: PenLine, gate: "content", entitlement: FEATURE_ENTITLEMENTS.CONTENT },
+      { label: "Templates", href: "/portal/templates", icon: Library, entitlement: FEATURE_ENTITLEMENTS.TEMPLATES },
+      { label: "Toolkit", href: "/portal/tools", icon: Wrench, gate: "ai_tools" },
+      { label: "Playbooks", href: "/portal/playbooks", icon: BookOpen, gate: "playbooks", entitlement: FEATURE_ENTITLEMENTS.PLAYBOOKS },
+      { label: "Pricing Calc", href: "/portal/calculator", icon: Calculator, gate: "calculator", entitlement: FEATURE_ENTITLEMENTS.CALCULATOR },
+    ],
+  },
+  {
+    // Admin-only items rolled into one section so they group together
+    // when a previewing admin scans the sidebar. Filtered entirely
+    // out below for non-admins.
+    section: "Platform ops",
+    items: [
+      { label: "Ops Excellence", href: "/portal/ops-excellence", icon: Gauge },
+      { label: "My Services", href: "/portal/services", icon: Layers },
+      { label: "Campaigns", href: "/portal/campaigns", icon: BarChart3 },
+      { label: "Signal", href: "/portal/signal", icon: Newspaper, gate: "signal" },
+    ],
+  },
+  {
+    section: "Whitelabel",
+    items: [
+      // Whitelabel — opens once onboarding hits 100%.
+      { label: "Website", href: "/reseller/site", icon: Globe, requiresOnboardingComplete: true },
+      { label: "Branding", href: "/reseller/settings/branding", icon: Sparkles, requiresOnboardingComplete: true },
+      { label: "Domain", href: "/reseller/settings/domain", icon: Settings, requiresOnboardingComplete: true },
+    ],
+  },
+  {
+    section: "Account",
+    items: [
+      { label: "Marketplace", href: "/portal/marketplace", icon: ShoppingBag },
+      { label: "Billing", href: "/portal/billing", icon: CreditCard },
+      { label: "Referrals", href: "/portal/referrals", icon: Users, gate: "referrals" },
+      { label: "Support", href: "/portal/support", icon: LifeBuoy },
+      { label: "Settings", href: "/portal/settings", icon: Settings },
+    ],
+  },
 ] as const
 
 // Routes hidden from CLIENT users. Admins (and admins previewing as
@@ -181,8 +222,23 @@ export function PortalSidebar({
   const [collapsed, setCollapsed] = useState(false)
   const { isFeatureUnlocked, loading: questsLoading } = useQuests()
 
-  const visibleNav = PORTAL_NAV.filter(
-    (item) => !ADMIN_ONLY_ROUTES.includes(item.href) || isAdminEmail
+  // Build the visible nav: filter out admin-only items for non-admins,
+  // drop entire empty sections so we never render a header above
+  // nothing.
+  const visibleSections = useMemo(() => {
+    return PORTAL_NAV_SECTIONS.map((s) => ({
+      section: s.section,
+      items: s.items.filter(
+        (item) => !ADMIN_ONLY_ROUTES.includes(item.href) || isAdminEmail,
+      ),
+    })).filter((s) => s.items.length > 0)
+  }, [isAdminEmail])
+
+  // Flat list across all visible sections — used for active-href
+  // resolution (longest-prefix wins, same as before).
+  const visibleNav = useMemo(
+    () => visibleSections.flatMap((s) => s.items),
+    [visibleSections],
   )
 
   // Pick the single best-matching nav item for the current pathname so that
@@ -200,6 +256,17 @@ export function PortalSidebar({
       return best
     }, null)
 
+  // Which section contains the active route — used to override any
+  // persisted "collapsed" state so users never land on a route whose
+  // section is folded shut.
+  const activeSectionLabel = useMemo(() => {
+    if (!activeHref) return null
+    return (
+      visibleSections.find((s) => s.items.some((i) => i.href === activeHref))
+        ?.section ?? null
+    )
+  }, [activeHref, visibleSections])
+
   return (
     <aside
       className={cn(
@@ -216,71 +283,94 @@ export function PortalSidebar({
 
       {/* Navigation. Bumped up from py-1.5/text-xs to py-2/text-[13px]
           for slightly more substance, but stays compact enough that
-          even the full nav (~18 items for clients) fits without a
-          scrollbar on a ~900px viewport. Icons stay 4×4 (16px). */}
-      <nav className="flex-1 py-2 px-2 space-y-0.5 overflow-y-auto custom-scrollbar">
-        {visibleNav.map((item) => {
-          const isActive = activeHref === item.href
-          // Don't dim items while quests are still loading — avoids a flash of
-          // "everything is locked" on first paint.
-          const isQuestLocked =
-            !!item.gate && !questsLoading && !isFeatureUnlocked(item.gate)
-          const isOnboardingLocked =
-            !!item.requiresOnboardingComplete && !onboardingCompletedAt
-          // Entitlement check — admins / super-admins always pass (they
-          // bypass paywalls in EntitlementGate too). Non-admins see a
-          // Lock icon next to any item whose destination page is gated
-          // by an entitlement they don't have. Was missing for
-          // Proposals/Invoices/Sequences/etc. before this fix.
-          const isEntitlementLocked =
-            !isAdminEmail &&
-            !!item.entitlement &&
-            !activeEntitlements.includes(item.entitlement)
-          const isLocked =
-            isQuestLocked || isOnboardingLocked || isEntitlementLocked
-          // Locked whitelabel items send the user to /portal/onboard instead
-          // of bouncing them with a 403 — better than a dead-end click.
-          const targetHref = isOnboardingLocked
-            ? "/portal/onboard?from=whitelabel"
-            : item.href
+          even the full nav (~30 items for admins) fits without a long
+          scroll. Icons stay 4×4 (16px). Sections collapse — see
+          CollapsibleNavSection for the persistence + auto-expand
+          rules. */}
+      <nav className="flex-1 py-2 overflow-y-auto custom-scrollbar">
+        {visibleSections.map((group, groupIdx) => {
+          const isActiveSection = activeSectionLabel === group.section
+          // Mission control + the active section default-open. Other
+          // sections collapsed-by-default so a fresh user (or an admin
+          // previewing as client) sees a tidy spine instead of a wall.
+          const defaultCollapsed =
+            !isActiveSection && groupIdx > 0
           return (
-            <Link
-              key={item.href}
-              href={targetHref}
-              title={
-                isOnboardingLocked
-                  ? "Finish onboarding to unlock whitelabel"
-                  : isEntitlementLocked
-                    ? "Upgrade your plan to unlock"
-                    : isQuestLocked
-                      ? "Locked — open the Quests map to unlock"
-                      : undefined
-              }
-              className={cn(
-                "flex items-center gap-2.5 rounded-lg py-2 text-[13px] font-medium transition-all duration-150",
-                isActive
-                  ? "bg-primary/10 text-primary border-l-2 border-primary pl-[10px]"
-                  : isLocked
-                    ? "text-muted-foreground/50 hover:text-muted-foreground hover:bg-surface/40 pl-3"
-                    : "text-muted-foreground hover:text-foreground hover:bg-surface/80 pl-3"
-              )}
+            <CollapsibleNavSection
+              key={group.section}
+              storageKey={`aoc.portal-sidebar.${group.section}`}
+              label={group.section}
+              defaultCollapsed={defaultCollapsed}
+              hideLabel={collapsed}
             >
-              <item.icon className={cn("h-4 w-4 shrink-0", isActive && "text-primary")} />
-              {!collapsed && (
-                <span className="flex-1">{item.label}</span>
-              )}
-              {!collapsed && isLocked && (
-                <Lock className="h-3 w-3 shrink-0 text-muted-foreground/50" />
-              )}
-              {!collapsed && item.label === "Dashboard" && hasUnread && (
-                <span className="ml-auto h-2 w-2 rounded-full bg-primary" />
-              )}
-              {!collapsed && item.label === "Getting Started" && onboardingPercent < 100 && onboardingPercent > 0 && (
-                <span className="ml-auto text-[10px] font-bold text-primary/80 bg-primary/10 px-1.5 py-0.5 rounded-full">
-                  {onboardingPercent}%
-                </span>
-              )}
-            </Link>
+              <div className="px-2 space-y-0.5">
+                {group.items.map((item) => {
+                  const isActive = activeHref === item.href
+                  // Don't dim items while quests are still loading —
+                  // avoids a flash of "everything is locked" on first
+                  // paint.
+                  const isQuestLocked =
+                    !!item.gate && !questsLoading && !isFeatureUnlocked(item.gate)
+                  const isOnboardingLocked =
+                    !!item.requiresOnboardingComplete && !onboardingCompletedAt
+                  // Entitlement check — admins / super-admins always
+                  // pass (they bypass paywalls in EntitlementGate
+                  // too). Non-admins see a Lock icon next to any item
+                  // whose destination page is gated by an entitlement
+                  // they don't have.
+                  const isEntitlementLocked =
+                    !isAdminEmail &&
+                    !!item.entitlement &&
+                    !activeEntitlements.includes(item.entitlement)
+                  const isLocked =
+                    isQuestLocked || isOnboardingLocked || isEntitlementLocked
+                  // Locked whitelabel items send the user to
+                  // /portal/onboard instead of bouncing with a 403.
+                  const targetHref = isOnboardingLocked
+                    ? "/portal/onboard?from=whitelabel"
+                    : item.href
+                  return (
+                    <Link
+                      key={item.href}
+                      href={targetHref}
+                      title={
+                        isOnboardingLocked
+                          ? "Finish onboarding to unlock whitelabel"
+                          : isEntitlementLocked
+                            ? "Upgrade your plan to unlock"
+                            : isQuestLocked
+                              ? "Locked — open the Quests map to unlock"
+                              : undefined
+                      }
+                      className={cn(
+                        "flex items-center gap-2.5 rounded-lg py-2 text-[13px] font-medium transition-all duration-150",
+                        isActive
+                          ? "bg-primary/10 text-primary border-l-2 border-primary pl-[10px]"
+                          : isLocked
+                            ? "text-muted-foreground/50 hover:text-muted-foreground hover:bg-surface/40 pl-3"
+                            : "text-muted-foreground hover:text-foreground hover:bg-surface/80 pl-3"
+                      )}
+                    >
+                      <item.icon className={cn("h-4 w-4 shrink-0", isActive && "text-primary")} />
+                      {!collapsed && (
+                        <span className="flex-1">{item.label}</span>
+                      )}
+                      {!collapsed && isLocked && (
+                        <Lock className="h-3 w-3 shrink-0 text-muted-foreground/50" />
+                      )}
+                      {!collapsed && item.label === "Dashboard" && hasUnread && (
+                        <span className="ml-auto h-2 w-2 rounded-full bg-primary" />
+                      )}
+                      {!collapsed && item.label === "Getting Started" && onboardingPercent < 100 && onboardingPercent > 0 && (
+                        <span className="ml-auto text-[10px] font-bold text-primary/80 bg-primary/10 px-1.5 py-0.5 rounded-full">
+                          {onboardingPercent}%
+                        </span>
+                      )}
+                    </Link>
+                  )
+                })}
+              </div>
+            </CollapsibleNavSection>
           )
         })}
       </nav>
