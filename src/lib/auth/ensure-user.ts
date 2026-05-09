@@ -3,6 +3,7 @@ import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
 import type { User } from "@prisma/client"
+import { readFirstTouch, classifySignupSource } from "@/lib/analytics/first-touch"
 
 /**
  * Trial credit grant given to every brand-new user. Mirrored as the User
@@ -57,6 +58,15 @@ export async function getOrCreateDbUserByClerkId(clerkId: string): Promise<User>
     }
   }
 
+  // Read first-touch attribution from the visitor's cookie. Best-effort —
+  // if we can't (server context outside a request, no cookie, malformed
+  // payload), the User row just lacks attribution rather than the whole
+  // signup failing.
+  const firstTouch = await readFirstTouch().catch(
+    () => ({}) as Awaited<ReturnType<typeof readFirstTouch>>,
+  )
+  const signupSource = classifySignupSource(firstTouch)
+
   const created = await db.user.upsert({
     where: { clerkId },
     update: {
@@ -73,6 +83,17 @@ export async function getOrCreateDbUserByClerkId(clerkId: string): Promise<User>
       // the grant timestamp so the monthly-grant cron knows we just gave
       // them their starter pack and shouldn't double-grant on the 1st.
       creditGrantedAt: new Date(),
+      // First-touch attribution — stamped ONCE on user create. Read-only
+      // afterwards (no UPDATE branch above). Powers /admin/cfo CAC view.
+      firstUtmSource: firstTouch.utmSource ?? null,
+      firstUtmMedium: firstTouch.utmMedium ?? null,
+      firstUtmCampaign: firstTouch.utmCampaign ?? null,
+      firstUtmContent: firstTouch.utmContent ?? null,
+      firstUtmTerm: firstTouch.utmTerm ?? null,
+      firstReferrer: firstTouch.referrer ?? null,
+      firstLandingPath: firstTouch.landingPath ?? null,
+      signupSource,
+      signupAt: new Date(),
     },
   })
 

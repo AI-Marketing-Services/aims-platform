@@ -11,6 +11,14 @@ export const dynamic = "force-dynamic"
 
 const bodySchema = z.object({
   interval: z.enum(["monthly", "annual", "one_time"]).default("monthly"),
+  // Optional trial — only honored for subscription products. Capped at 30
+  // days so a malicious client can't extend their own trial via the wire.
+  trialDays: z.number().int().min(0).max(30).optional(),
+  // Last-touch UTM — the Buy CTA passes these along so we can stamp
+  // them on Purchase.lastUtm* for "what made them upgrade" analytics.
+  utmSource: z.string().max(100).optional(),
+  utmMedium: z.string().max(100).optional(),
+  utmCampaign: z.string().max(100).optional(),
 })
 
 /**
@@ -39,6 +47,14 @@ export async function POST(
   }
   const parsed = bodySchema.safeParse(body)
   const interval = parsed.success ? parsed.data.interval : "monthly"
+  const trialDays = parsed.success ? parsed.data.trialDays : undefined
+  const lastUtm = parsed.success
+    ? {
+        utmSource: parsed.data.utmSource,
+        utmMedium: parsed.data.utmMedium,
+        utmCampaign: parsed.data.utmCampaign,
+      }
+    : {}
 
   if (!clerkId) {
     return NextResponse.json(
@@ -102,6 +118,9 @@ export async function POST(
         userId: dbUser.id,
         intervalType: interval,
         ...(referringResellerId ? { referringResellerId } : {}),
+        ...(lastUtm.utmSource ? { utmSource: lastUtm.utmSource } : {}),
+        ...(lastUtm.utmMedium ? { utmMedium: lastUtm.utmMedium } : {}),
+        ...(lastUtm.utmCampaign ? { utmCampaign: lastUtm.utmCampaign } : {}),
       },
       // For subscriptions we pass through the same metadata to the
       // subscription itself so renewal webhooks see it without needing
@@ -109,11 +128,19 @@ export async function POST(
       ...(isSubscription
         ? {
             subscription_data: {
+              // trial_period_days only applies on subscription create; if
+              // the customer is reactivating mid-cycle Stripe ignores it.
+              ...(trialDays && trialDays > 0
+                ? { trial_period_days: trialDays }
+                : {}),
               metadata: {
                 source: "product",
                 productSlug: product.slug,
                 userId: dbUser.id,
                 ...(referringResellerId ? { referringResellerId } : {}),
+                ...(lastUtm.utmSource ? { utmSource: lastUtm.utmSource } : {}),
+                ...(lastUtm.utmMedium ? { utmMedium: lastUtm.utmMedium } : {}),
+                ...(lastUtm.utmCampaign ? { utmCampaign: lastUtm.utmCampaign } : {}),
               },
             },
           }

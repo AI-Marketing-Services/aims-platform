@@ -35,6 +35,7 @@ import {
   Bug,
   Bell,
   CreditCard,
+  TrendingUp,
 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
@@ -100,6 +101,15 @@ function useNavCounts(): NavCounts {
 // Fulfillment, Lead Magnets, Vendor Savings, etc.) stay routable but
 // out of the menu so the daily driver feels lean.
 const ADMIN_NAV = [
+  {
+    section: "Finance",
+    items: [
+      { label: "CFO Dashboard", href: "/admin/cfo", icon: TrendingUp },
+      { label: "Campaigns + ROAS", href: "/admin/campaigns", icon: BarChart3 },
+      { label: "Funnels", href: "/admin/funnels", icon: FileBarChart },
+      { label: "Email Performance", href: "/admin/email-performance", icon: Mail },
+    ],
+  },
   {
     section: "Community",
     items: [

@@ -7,6 +7,8 @@ import {
   FEATURE_CATALOG,
   plansIncludingFeature,
 } from "@/lib/plans/registry"
+import { ADDONS } from "@/lib/plans/addons"
+import { listActiveEntitlements } from "@/lib/entitlements"
 import { PortalMarketplaceClient } from "./PortalMarketplaceClient"
 
 export const metadata = { title: "Marketplace" }
@@ -22,11 +24,12 @@ export const dynamic = "force-dynamic"
 export default async function PortalMarketplacePage() {
   const dbUser = await ensureDbUser()
 
-  // Resolve catalog Product rows by slug. Both plans + credit packs live
-  // in the same Product table, so one query covers everything.
+  // Resolve catalog Product rows by slug. Plans + credit packs + add-ons
+  // all live in the same Product table, so one query covers everything.
   const slugs = [
     ...PLANS.map((p) => p.slug),
     ...CREDIT_PACKS.map((p) => p.slug),
+    ...ADDONS.map((a) => a.slug),
   ]
   const products = await db.product.findMany({
     where: { slug: { in: slugs }, isActive: true },
@@ -65,6 +68,36 @@ export default async function PortalMarketplacePage() {
     sortOrder: pack.sortOrder,
     isCheckoutReady: Boolean(productBySlug[pack.slug]?.stripePriceOneTime),
   }))
+
+  // A-la-carte add-on cards — recurring or one-time products that ride
+  // on top of the plan tiers. Each card shows a "Buy" button that hits
+  // /api/checkout/<slug>; the entitlement key drives the "Active" badge.
+  const addons = ADDONS.map((a) => {
+    const product = productBySlug[a.slug]
+    return {
+      slug: a.slug,
+      name: a.name,
+      tagline: a.tagline,
+      description: a.description,
+      highlights: a.highlights,
+      iconName: a.iconName,
+      category: a.category,
+      price: a.price,
+      pricing: a.pricing,
+      entitlements: [...a.entitlements],
+      href: a.href,
+      launchStatus: a.launchStatus,
+      sortOrder: a.sortOrder,
+      badge: a.badge ?? null,
+      isCheckoutReady:
+        a.pricing === "recurring"
+          ? Boolean(product?.stripePriceMonthly)
+          : Boolean(product?.stripePriceOneTime),
+    }
+  })
+
+  const allActive = await listActiveEntitlements(dbUser.id).catch(() => [])
+  const activeAddonKeys = allActive.filter((k) => k.startsWith("addon_"))
 
   // Features grid — every gated feature with its full description, the
   // plans that include it, and the deep-link to use it once unlocked.
@@ -108,6 +141,8 @@ export default async function PortalMarketplacePage() {
         plans={plans}
         creditPacks={creditPacks}
         features={features}
+        addons={addons}
+        activeAddonKeys={activeAddonKeys}
       />
     </div>
   )

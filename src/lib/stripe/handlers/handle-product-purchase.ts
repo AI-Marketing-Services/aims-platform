@@ -11,6 +11,12 @@ import {
   logCommissionFailure,
 } from "@/lib/commerce/commission"
 import { notifyNewPurchase } from "@/lib/notifications"
+import {
+  recordPurchaseInvoice,
+  recordCheckoutInvoice,
+  recordRefund,
+  recordPromoRedemption,
+} from "@/lib/stripe/revenue-events"
 
 const VALID_ROLE_UPGRADES: ReadonlySet<UserRole> = new Set([
   "CLIENT",
@@ -89,6 +95,12 @@ export async function handleProductCheckoutCompleted(
       .catch(() => {})
   }
 
+  // Last-touch UTM — pull from session metadata if the checkout endpoint
+  // forwarded it (we'll wire this in /api/checkout/[slug]).
+  const lastUtmSource = session.metadata?.utmSource || null
+  const lastUtmMedium = session.metadata?.utmMedium || null
+  const lastUtmCampaign = session.metadata?.utmCampaign || null
+
   const purchase = await db.purchase.create({
     data: {
       userId,
@@ -101,7 +113,28 @@ export async function handleProductCheckoutCompleted(
       amountCents,
       currency,
       intervalType: session.mode === "subscription" ? intervalType : "one_time",
+      lastUtmSource,
+      lastUtmMedium,
+      lastUtmCampaign,
     },
+  })
+
+  // Snapshot per-period revenue. The renewal path writes a fresh row on
+  // each invoice.paid; this initial create row ensures we never drop the
+  // first month's revenue from MRR/LTV calculations.
+  await recordCheckoutInvoice({
+    purchaseId: purchase.id,
+    userId,
+    session,
+    invoiceType: session.mode === "subscription" ? "subscription_create" : "one_time",
+  })
+
+  // Capture promo redemption if Stripe applied one to this checkout.
+  await recordPromoRedemption({
+    userId,
+    purchaseId: purchase.id,
+    source: session.mode === "subscription" ? "subscription_create" : "one_time",
+    session,
   })
 
   // Apply role upgrade if this product grants one (e.g. CLIENT → RESELLER).
@@ -241,10 +274,30 @@ export async function handleProductInvoicePaid(invoice: Stripe.Invoice): Promise
 
   const baseAmountCents = invoice.amount_paid ?? 0
 
-  // Update Purchase with latest period info.
+  // Update Purchase with latest period info. Dunning state is tracked
+  // on Subscription (legacy model still owns the dunning state machine);
+  // here we just sync amount + status.
   await db.purchase.update({
     where: { id: purchase.id },
     data: { amountCents: baseAmountCents, status: "active" },
+  })
+
+  // Snapshot per-period revenue + reset dunning. PurchaseInvoice is what
+  // /admin/cfo joins against for historical MRR; without it the
+  // dashboard would lose every month after the first.
+  await recordPurchaseInvoice({
+    purchaseId: purchase.id,
+    userId: purchase.userId,
+    invoice,
+    invoiceType: "subscription_renewal",
+  })
+
+  // Promo on a renewal? Stripe attaches the discount to the invoice.
+  await recordPromoRedemption({
+    userId: purchase.userId,
+    purchaseId: purchase.id,
+    source: "subscription_renewal",
+    invoice,
   })
 
   // Refresh entitlements (push expiresAt forward for subs).
@@ -383,7 +436,10 @@ export async function handleProductChargeRefunded(charge: Stripe.Charge): Promis
   const refundedCents = charge.amount_refunded ?? 0
   if (refundedCents <= 0) return
 
-  // Try to resolve the purchase via subscription, then via session.
+  // Try to resolve the purchase via:
+  //   1. subscription (invoice.subscription)
+  //   2. direct charge id match (one-time payments)
+  //   3. payment_intent → checkout session lookup (one-time fallback)
   let purchase = null
   if (charge.invoice) {
     // Charges from subscription invoices link via invoice→subscription
@@ -398,9 +454,51 @@ export async function handleProductChargeRefunded(charge: Stripe.Charge): Promis
       })
     }
   }
-  // Fallback: one-time charges — we'd need session.payment_intent → charge linkage.
-  // Best-effort: skip silently. Adam can manually adjust via admin tools if needed.
-  if (!purchase) return
+
+  // Fallback A: one-time charges record stripeChargeId on the Purchase row.
+  if (!purchase && charge.id) {
+    purchase = await db.purchase.findFirst({
+      where: { stripeChargeId: charge.id },
+    })
+  }
+
+  // Fallback B: look up via payment_intent → checkout session.
+  if (!purchase && charge.payment_intent) {
+    const piId =
+      typeof charge.payment_intent === "string"
+        ? charge.payment_intent
+        : charge.payment_intent.id
+    const sessions = await import("@/lib/stripe")
+      .then((m) =>
+        m.stripe.checkout.sessions.list({ payment_intent: piId, limit: 1 }).catch(() => null),
+      )
+      .catch(() => null)
+    const sessionId = sessions?.data?.[0]?.id
+    if (sessionId) {
+      purchase = await db.purchase.findFirst({
+        where: { stripeCheckoutSessionId: sessionId },
+      })
+    }
+  }
+
+  if (!purchase) {
+    logger.warn("Refund webhook: could not resolve Purchase row", {
+      chargeId: charge.id,
+      paymentIntent:
+        typeof charge.payment_intent === "string"
+          ? charge.payment_intent
+          : charge.payment_intent?.id,
+    })
+    return
+  }
+
+  // Persist the refund row + bump Purchase.refundedCents.
+  await recordRefund({
+    purchaseId: purchase.id,
+    userId: purchase.userId,
+    charge,
+    notes: `Refund on charge ${charge.id}`,
+  })
 
   await appendClawback({
     purchaseId: purchase.id,

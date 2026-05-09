@@ -24,6 +24,24 @@ model User {
   locationCount Int      @default(1)
   heardAbout    String?
 
+  // First-touch attribution — stamped ONCE on user create from the
+  // attribution cookie + landing headers. Powers the CFO dashboard's
+  // CAC + ROAS-by-channel views. Read-only after first set; renewals,
+  // upgrades, and re-logins NEVER overwrite these — that's what
+  // `lastUtm*` (on Purchase) is for.
+  firstUtmSource   String?
+  firstUtmMedium   String?
+  firstUtmCampaign String?
+  firstUtmContent  String?
+  firstUtmTerm     String?
+  firstReferrer    String? // raw HTTP Referer header at signup
+  firstLandingPath String? // pathname they hit before signing up
+  // Computed bucket (paid-search | paid-social | email | referral |
+  // organic | direct | unknown) — denormalized for fast group-by in
+  // /admin/cfo and /admin/campaigns. Recomputed by the signup hook.
+  signupSource     String?
+  signupAt         DateTime? // copy of createdAt for fast cohort group-by
+
   deals                    Deal[]
   referredDeals            Deal[]                    @relation("ReferringReseller")
   subscriptions            Subscription[]
@@ -472,6 +490,12 @@ model Subscription {
   currentPeriodEnd      DateTime?
   cancelledAt           DateTime?
   cancelReason          String?
+  // Dunning state — incremented by handle-invoice on
+  // `invoice.payment_failed`, reset to 0 on `invoice.paid`. After 3
+  // consecutive failures we cancel automatically. Drives the
+  // /admin/cfo "at-risk MRR" panel.
+  dunningAttempts       Int       @default(0)
+  lastDunningAt         DateTime?
 
   opsExcellenceEngagement OpsExcellenceEngagement?
 
@@ -2149,18 +2173,248 @@ model Purchase {
   endedAt   DateTime?
   cancelAt  DateTime?
 
+  // Trial bookkeeping — copied from Stripe Subscription on create. Powers
+  // trial-conversion reporting + grace-period UI.
+  trialStartedAt   DateTime?
+  trialEndsAt      DateTime?
+  trialConvertedAt DateTime?
+
+  // Lifetime totals — incremented by handlers; never decremented.
+  // Together with PurchaseInvoice they let us reconstruct LTV at any
+  // point in time without a full webhook replay.
+  lifetimeRevenueCents Int @default(0)
+  refundedCents        Int @default(0)
+
+  // Captured on cancel (from portal cancel form OR
+  // subscription.deleted metadata). Closes the loop on the existing
+  // Subscription.cancelReason which the legacy model already had.
+  churnReason String? @db.Text
+
+  // Last-touch UTM — overwritten on every renewal/upgrade so we can
+  // attribute "what made them upgrade?" separately from "what made
+  // them sign up?" (User.firstUtm*).
+  lastUtmSource   String?
+  lastUtmMedium   String?
+  lastUtmCampaign String?
+
   metadata Json?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  commissions  CommissionEvent[]
-  entitlements Entitlement[]
+  commissions      CommissionEvent[]
+  entitlements     Entitlement[]
+  purchaseInvoices PurchaseInvoice[]
+  refunds          Refund[]
+  promoRedemptions PromoRedemption[]
 
   @@index([userId])
   @@index([referringResellerId])
   @@index([status])
   @@index([productId])
+  @@index([trialEndsAt])
+}
+
+// ============ REVENUE TIME-SERIES ============
+//
+// One row per `invoice.paid` (or `checkout.session.completed` for
+// one-time charges). This is the canonical source of "what was
+// recognized in month X?" so MRR/ARR/cohort retention can be
+// reconstructed at any point regardless of the current Purchase row's
+// state. Purchase.amountCents gets overwritten on each renewal —
+// PurchaseInvoice never does.
+//
+// Required for: /admin/cfo MRR-over-time, churned-MRR detection,
+// expansion-MRR detection, LTV computation per cohort.
+model PurchaseInvoice {
+  id String @id @default(cuid())
+
+  purchaseId String
+  purchase   Purchase @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+
+  // Snapshot the user so we can group cohorts by signupAt without a
+  // join. Always `purchase.userId` — kept here only for query speed.
+  userId String
+
+  // Stripe linkage
+  stripeInvoiceId  String? @unique
+  stripeChargeId   String?
+  stripeCustomerId String?
+
+  amountCents     Int
+  amountPaidCents Int // amount actually received after discount
+  amountTaxCents  Int    @default(0)
+  amountFeeCents  Int    @default(0) // Stripe processing fee, if available
+  discountCents   Int    @default(0)
+  currency        String @default("usd")
+
+  // "subscription_create" | "subscription_renewal" | "one_time" |
+  // "upgrade" | "downgrade" | "topup". Used for net-new vs expansion
+  // vs churned MRR computation.
+  invoiceType String
+
+  // Period this invoice covered — from Stripe invoice line items. Null
+  // for one-time charges.
+  periodStart DateTime?
+  periodEnd   DateTime?
+
+  paidAt DateTime @default(now())
+
+  metadata Json?
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, paidAt])
+  @@index([purchaseId])
+  @@index([paidAt])
+}
+
+// ============ REFUNDS ============
+//
+// First-class refund record — refund-rate by product, dispute outcomes,
+// and the trail behind every CommissionEvent clawback. Written by the
+// `charge.refunded` webhook handler.
+model Refund {
+  id String @id @default(cuid())
+
+  purchaseId String
+  purchase   Purchase @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+
+  userId String
+
+  stripeRefundId String  @unique
+  stripeChargeId String?
+
+  amountCents Int
+  currency    String @default("usd")
+
+  // "duplicate" | "fraudulent" | "requested_by_customer" |
+  // "expired_uncaptured_charge" — straight from Stripe.
+  reason String?
+
+  // Free-text from the admin who processed it (if internal-initiated).
+  notes String? @db.Text
+
+  refundedAt DateTime @default(now())
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([purchaseId])
+  @@index([refundedAt])
+}
+
+// ============ PROMO CODE REDEMPTIONS ============
+//
+// Captures Stripe's `total_discount_amounts` from `invoice.paid` and
+// `total_details.amount_discount` from `checkout.session.completed`.
+// Powers /admin/cfo's "promo-effectiveness" view — total discount $
+// deployed per code and conversion rate to second-month renewal.
+model PromoRedemption {
+  id String @id @default(cuid())
+
+  purchaseId String?
+  purchase   Purchase? @relation(fields: [purchaseId], references: [id], onDelete: SetNull)
+
+  userId String
+
+  // Stripe coupon/promo code linkage
+  stripeCouponId    String?
+  stripePromoCodeId String?
+  code              String? // human-readable code (e.g. "LAUNCH50")
+
+  amountOffCents Int  @default(0)
+  percentOff     Int? // 0-100, if percentage discount
+
+  // Type — "subscription_create" | "subscription_renewal" | "one_time".
+  source String
+
+  redeemedAt DateTime @default(now())
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([code])
+  @@index([redeemedAt])
+}
+
+// ============ MARKETING SPEND ============
+//
+// Manual or connector-fed ad/marketing spend, keyed by UTM. Joined
+// against User.firstUtm* + Purchase.lifetimeRevenueCents to compute
+// ROAS + CAC per channel. At launch this is admin-entered weekly;
+// post-launch we'll build a Google Ads / Meta ingestion connector.
+model CampaignSpend {
+  id String @id @default(cuid())
+
+  // Required for UTM-based attribution lookups. Combination is unique
+  // PER PERIOD so admins can append weekly without overwriting history.
+  utmSource   String
+  utmMedium   String?
+  utmCampaign String?
+
+  // Period this spend covered. Daily granularity is overkill;
+  // weekly buckets keep input volume sane.
+  periodStart DateTime
+  periodEnd   DateTime
+
+  spendCents Int
+  currency   String @default("usd")
+
+  // Free-text — e.g. "Google Ads — branded search" or "Meta — UGC
+  // creative test #4".
+  channel String?
+  notes   String? @db.Text
+
+  // Who entered this row (admin user id). Null for connector-fed rows.
+  enteredById String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([utmSource, utmCampaign])
+  @@index([periodStart, periodEnd])
+}
+
+// ============ EMAIL ENGAGEMENT EVENTS ============
+//
+// One row per webhook event from Resend. Powers send → delivered →
+// opened → clicked → signup → paid attribution chain in
+// /admin/email-performance. Joined to EmailQueueItem (existing model)
+// via `queueItemId` when known, or to User via `email`.
+model EmailEvent {
+  id String @id @default(cuid())
+
+  // "delivered" | "opened" | "clicked" | "bounced" | "complained" |
+  // "unsubscribed" | "delivery_delayed"
+  eventType String
+
+  // Resend message id — every event in a thread shares this.
+  resendMessageId String?
+
+  // Dedupe key — Resend retries are guaranteed to use the same id.
+  resendEventId String? @unique
+
+  // The email this event was for (always lower-case).
+  email String
+
+  // Optional — set when we can correlate back to a queue row.
+  queueItemId String?
+
+  // For click events — the URL that was clicked.
+  clickedUrl String?
+
+  // The campaign / template / sequence that produced the email. Pulled
+  // from EmailQueueItem when correlatable, otherwise from headers we
+  // attach when sending.
+  templateKey String?
+  campaignTag String?
+
+  occurredAt DateTime @default(now())
+  createdAt  DateTime @default(now())
+
+  @@index([email, occurredAt])
+  @@index([eventType, occurredAt])
+  @@index([campaignTag])
+  @@index([queueItemId])
 }
 
 model Entitlement {

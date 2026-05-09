@@ -21,6 +21,7 @@
 import { PrismaClient } from "@prisma/client"
 import Stripe from "stripe"
 import { PLANS, CREDIT_PACKS } from "../src/lib/plans/registry"
+import { ADDONS } from "../src/lib/plans/addons"
 
 async function main() {
   if (!process.env.DATABASE_URL) {
@@ -215,7 +216,105 @@ async function main() {
       })
     }
 
-    console.log("\n[OK] Plans + credit packs synced.")
+    // ─── A-LA-CARTE ADD-ONS ───────────────────────────────────────────
+    console.log("\n─── Add-ons ─────────────────────────────────────────")
+    for (const addon of ADDONS) {
+      const existingProducts = await stripe.products.search({
+        query: `metadata['slug']:'${addon.slug}'`,
+        limit: 1,
+      })
+      const stripeProduct =
+        existingProducts.data[0] ??
+        (await stripe.products.create({
+          name: `AIMS ${addon.name}`,
+          description: addon.tagline,
+          metadata: {
+            slug: addon.slug,
+            kind: "addon",
+            category: addon.category,
+            launchStatus: addon.launchStatus,
+          },
+        }))
+
+      const prices = await stripe.prices.list({
+        product: stripeProduct.id,
+        active: true,
+        limit: 100,
+      })
+      const targetCents = Math.round(addon.price * 100)
+      const isRecurring = addon.pricing === "recurring"
+      const matched = prices.data.find((p) => {
+        if (p.unit_amount !== targetCents || p.currency !== "usd") return false
+        if (isRecurring) return p.recurring?.interval === "month"
+        return p.recurring === null
+      })
+      const stripePrice =
+        matched ??
+        (await stripe.prices.create({
+          product: stripeProduct.id,
+          unit_amount: targetCents,
+          currency: "usd",
+          ...(isRecurring
+            ? { recurring: { interval: "month" } }
+            : {}),
+          metadata: {
+            slug: addon.slug,
+            kind: isRecurring ? "addon-monthly" : "addon-onetime",
+          },
+        }))
+
+      console.log(
+        `  ${addon.slug.padEnd(28)} → ${stripeProduct.id}  $${addon.price}${
+          isRecurring ? "/mo" : " one-time"
+        }  [${addon.launchStatus}]`,
+      )
+
+      await db.product.upsert({
+        where: { slug: addon.slug },
+        create: {
+          slug: addon.slug,
+          name: addon.name,
+          description: addon.description,
+          type: "addon",
+          isActive: true,
+          sortOrder: 100 + addon.sortOrder, // sort after credit packs
+          ...(isRecurring
+            ? { stripePriceMonthly: stripePrice.id }
+            : { stripePriceOneTime: stripePrice.id }),
+          entitlements: addon.entitlements,
+          metadata: {
+            tagline: addon.tagline,
+            highlights: addon.highlights,
+            iconName: addon.iconName,
+            category: addon.category,
+            launchStatus: addon.launchStatus,
+            badge: addon.badge ?? null,
+            href: addon.href,
+          },
+        },
+        update: {
+          name: addon.name,
+          description: addon.description,
+          isActive: true,
+          sortOrder: 100 + addon.sortOrder,
+          ...(isRecurring
+            ? { stripePriceMonthly: stripePrice.id }
+            : { stripePriceOneTime: stripePrice.id }),
+          entitlements: addon.entitlements,
+          metadata: {
+            tagline: addon.tagline,
+            highlights: addon.highlights,
+            iconName: addon.iconName,
+            category: addon.category,
+            launchStatus: addon.launchStatus,
+            badge: addon.badge ?? null,
+            href: addon.href,
+          },
+        },
+      })
+    }
+
+    console.log("\n[OK] Plans + credit packs + add-ons synced.")
   } finally {
     await db.$disconnect()
   }

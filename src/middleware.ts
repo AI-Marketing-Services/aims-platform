@@ -1,6 +1,44 @@
 import { clerkClient, clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server"
-import { NextResponse } from "next/server"
+import { NextResponse, NextRequest } from "next/server"
 import { RESERVED_SUBDOMAINS } from "@/lib/tenant/reserved-subdomains"
+import {
+  FIRST_TOUCH_COOKIE,
+  FIRST_TOUCH_MAX_AGE,
+  buildFirstTouchCookieValue,
+} from "@/lib/analytics/first-touch"
+
+/**
+ * Stamp the first-touch cookie on a fresh visitor. Idempotent — never
+ * overwrites. Called from the public-route fast path so the cookie is
+ * set on the first marketing/landing pageview, well before the user
+ * eventually signs up. Read on signup by `getOrCreateDbUserByClerkId`
+ * and persisted onto User.firstUtm*.
+ */
+function stampFirstTouch(req: NextRequest, res: NextResponse): NextResponse {
+  if (req.cookies.get(FIRST_TOUCH_COOKIE)) return res
+  const url = req.nextUrl
+  const sp = url.searchParams
+  const value = buildFirstTouchCookieValue({
+    utmSource: sp.get("utm_source") ?? undefined,
+    utmMedium: sp.get("utm_medium") ?? undefined,
+    utmCampaign: sp.get("utm_campaign") ?? undefined,
+    utmContent: sp.get("utm_content") ?? undefined,
+    utmTerm: sp.get("utm_term") ?? undefined,
+    referrer: req.headers.get("referer") ?? undefined,
+    landingPath: url.pathname,
+    ts: new Date().toISOString(),
+  })
+  res.cookies.set({
+    name: FIRST_TOUCH_COOKIE,
+    value,
+    httpOnly: false, // readable by client analytics if we ever want it
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: FIRST_TOUCH_MAX_AGE,
+  })
+  return res
+}
 
 // ---------------------------------------------------------------------------
 // Hostname-based tenant routing
@@ -65,6 +103,9 @@ const isPublicRoute = createRouteMatcher([
   "/sign-in(.*)",
   "/sign-up(.*)",
   "/api/webhooks(.*)",
+  // Resend webhook explicitly listed even though /api/webhooks(.*) catches
+  // it — keep them adjacent in case anyone tightens the wildcard later.
+  "/api/webhooks/resend(.*)",
   // Bootstrap endpoint authenticates with a shared secret, not Clerk.
   // Leaving it out of the public list would force Clerk auth ahead of
   // the route's own secret check, making it impossible to promote the
@@ -232,7 +273,7 @@ export default clerkMiddleware(async (auth, req) => {
     return NextResponse.redirect(new URL("/?signups_closed=1", req.url))
   }
 
-  if (isPublicRoute(req)) return NextResponse.next()
+  if (isPublicRoute(req)) return stampFirstTouch(req, NextResponse.next())
 
   const { userId, sessionClaims } = await auth()
 

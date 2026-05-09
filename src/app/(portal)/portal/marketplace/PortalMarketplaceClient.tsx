@@ -62,6 +62,24 @@ interface FeatureCard {
   cheapestPlanPriceMonthly: number | null
 }
 
+interface AddonCard {
+  slug: string
+  name: string
+  tagline: string
+  description: string
+  highlights: string[]
+  iconName: string
+  category: string
+  price: number
+  pricing: "recurring" | "one_time"
+  entitlements: string[]
+  href: string
+  launchStatus: "real" | "configure"
+  sortOrder: number
+  badge: string | null
+  isCheckoutReady: boolean
+}
+
 // Mapped here (instead of dynamic import) so tree-shaking still works
 // and we don't bundle every lucide icon.
 const FEATURE_ICONS: Record<string, LucideIcon> = {
@@ -85,6 +103,9 @@ interface Props {
   plans: PlanCard[]
   creditPacks: CreditPackCard[]
   features: FeatureCard[]
+  addons: AddonCard[]
+  /** Entitlement keys the user already has — drives "Active" badge. */
+  activeAddonKeys: string[]
 }
 
 export function PortalMarketplaceClient({
@@ -92,6 +113,8 @@ export function PortalMarketplaceClient({
   plans,
   creditPacks,
   features,
+  addons,
+  activeAddonKeys,
 }: Props) {
   const [busy, setBusy] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -333,6 +356,114 @@ export function PortalMarketplaceClient({
               )}
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* A-la-carte add-ons — recurring or one-time products that ride
+          on top of the plan tiers. Grouped by category for scanability.
+          Each card hits /api/checkout/<slug> for instant checkout. */}
+      <section>
+        <div className="flex items-baseline justify-between mb-5">
+          <div>
+            <h2 className="text-lg font-bold text-foreground">A-la-carte add-ons</h2>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Bolt these onto any plan. Each is its own subscription — start, stop, or
+              swap any time without touching your main plan.
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {[...addons]
+            .sort((a, b) => a.sortOrder - b.sortOrder)
+            .map((addon) => {
+              const isActive = addon.entitlements.some((k) =>
+                activeAddonKeys.includes(k),
+              )
+              const isRecurring = addon.pricing === "recurring"
+              return (
+                <div
+                  key={addon.slug}
+                  className={`relative rounded-2xl border p-5 flex flex-col bg-card ${
+                    isActive ? "border-primary/50" : "border-border"
+                  }`}
+                >
+                  {addon.badge ? (
+                    <span className="absolute -top-2.5 left-5 px-2.5 py-0.5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-wider">
+                      {addon.badge}
+                    </span>
+                  ) : null}
+                  {isActive ? (
+                    <span className="absolute top-3 right-3 inline-flex items-center gap-1 rounded-full border border-primary/40 bg-primary/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-primary">
+                      <Check className="h-3 w-3" /> Active
+                    </span>
+                  ) : null}
+
+                  <div className="mb-3">
+                    <h3 className="text-base font-bold text-foreground">{addon.name}</h3>
+                    <p className="text-[11px] uppercase tracking-wider text-muted-foreground mt-0.5">
+                      {addon.category}
+                    </p>
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-4">{addon.tagline}</p>
+
+                  <ul className="space-y-1.5 mb-5 flex-1">
+                    {addon.highlights.slice(0, 4).map((h, i) => (
+                      <li key={i} className="flex items-start gap-2 text-xs text-foreground">
+                        <Check className="h-3.5 w-3.5 text-primary flex-shrink-0 mt-0.5" />
+                        <span>{h}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <p className="text-xl font-bold text-foreground mb-3">
+                    ${addon.price}
+                    <span className="text-xs font-medium text-muted-foreground">
+                      {isRecurring ? "/mo" : " one-time"}
+                    </span>
+                  </p>
+
+                  {isActive ? (
+                    <Link
+                      href={addon.href}
+                      className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary text-primary-foreground px-4 py-2 text-sm font-bold hover:opacity-90"
+                    >
+                      Open <ArrowRight className="h-4 w-4" />
+                    </Link>
+                  ) : !addon.isCheckoutReady ? (
+                    <button
+                      type="button"
+                      disabled
+                      className="rounded-lg border border-border bg-card px-4 py-2 text-sm font-medium text-muted-foreground cursor-not-allowed"
+                    >
+                      Coming soon
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        handleCheckout(addon.slug, isRecurring ? "monthly" : "one_time")
+                      }
+                      disabled={busy === addon.slug}
+                      className="inline-flex items-center justify-center gap-2 rounded-lg border border-primary text-primary hover:bg-primary/5 px-4 py-2 text-sm font-bold transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                    >
+                      {busy === addon.slug
+                        ? "Starting checkout…"
+                        : isRecurring
+                          ? "Add to plan"
+                          : "Buy"}
+                      {busy !== addon.slug && <ArrowRight className="h-4 w-4" />}
+                    </button>
+                  )}
+
+                  {addon.launchStatus === "configure" ? (
+                    <p className="text-[10px] text-muted-foreground mt-2">
+                      DFY: our team configures + ships within 7 business days.
+                    </p>
+                  ) : null}
+                </div>
+              )
+            })}
         </div>
       </section>
 

@@ -13,6 +13,18 @@ import { getDubClient } from "@/lib/dub"
 export async function handleInvoicePaidEvent(invoice: Stripe.Invoice) {
   await handleInvoicePaid(invoice)
 
+  // Successful payment → reset dunning counters on both legacy
+  // Subscription + new Purchase rows.
+  if (invoice.subscription) {
+    const subId = invoice.subscription as string
+    await db.subscription
+      .updateMany({
+        where: { stripeSubId: subId, dunningAttempts: { gt: 0 } },
+        data: { dunningAttempts: 0, lastDunningAt: null },
+      })
+      .catch(() => {})
+  }
+
   // Send renewal confirmation email for subscription_cycle invoices (not first payment)
   if (invoice.billing_reason === "subscription_cycle" && invoice.subscription && invoice.amount_paid > 0) {
     try {
@@ -119,23 +131,66 @@ export async function handleInvoicePaidEvent(invoice: Stripe.Invoice) {
 }
 
 /**
- * Handles invoice.payment_failed events — marks subscriptions as PAST_DUE
- * and notifies the client via email.
+ * Handles invoice.payment_failed events — marks subscriptions as PAST_DUE,
+ * increments dunning attempt counters, sends graduated emails, and on the
+ * 3rd consecutive failure auto-cancels at Stripe.
+ *
+ * The dunning state machine sits on the legacy Subscription model so the
+ * /admin/cfo "at-risk MRR" panel can read it directly. We also bump
+ * Purchase.status to "past_due" so the entitlement reconciler revokes
+ * coverage if Stripe gives up.
  */
 export async function handleInvoicePaymentFailedEvent(invoice: Stripe.Invoice) {
   if (!invoice.subscription) return
 
-  await db.subscription.updateMany({
-    where: { stripeSubId: invoice.subscription as string },
-    data: { status: "PAST_DUE" },
+  const stripeSubId = invoice.subscription as string
+
+  // Bump Subscription dunning state.
+  const sub = await db.subscription.findFirst({
+    where: { stripeSubId },
+    include: { user: true, serviceArm: true },
   })
+
+  const nextAttempts = (sub?.dunningAttempts ?? 0) + 1
+  await db.subscription
+    .updateMany({
+      where: { stripeSubId },
+      data: {
+        status: "PAST_DUE",
+        dunningAttempts: nextAttempts,
+        lastDunningAt: new Date(),
+      },
+    })
+    .catch(() => {})
+
+  // Mirror onto Purchase so the new analytics layer sees it too.
+  await db.purchase
+    .updateMany({
+      where: { stripeSubscriptionId: stripeSubId },
+      data: { status: "past_due" },
+    })
+    .catch(() => {})
+
+  // Auto-cancel at attempt 3 — anything past this point is wasted
+  // Stripe retry credits + a worse customer relationship.
+  if (nextAttempts >= 3) {
+    try {
+      const stripe = (await import("@/lib/stripe")).stripe
+      await stripe.subscriptions.cancel(stripeSubId, {
+        invoice_now: false,
+        prorate: false,
+      })
+      logger.warn("Auto-cancelled subscription after 3 dunning failures", {
+        stripeSubId,
+        userId: sub?.userId,
+      })
+    } catch (cancelErr) {
+      logger.error("Auto-cancel after dunning failed", cancelErr, { stripeSubId })
+    }
+  }
 
   // Notify client so they can update payment method
   try {
-    const sub = await db.subscription.findFirst({
-      where: { stripeSubId: invoice.subscription as string },
-      include: { user: true, serviceArm: true },
-    })
     if (sub?.user) {
       const retryDate = invoice.next_payment_attempt
         ? new Date(invoice.next_payment_attempt * 1000)

@@ -42,9 +42,30 @@ export async function sendTrackedEmail(
      *  enables admin edits at /admin/email-templates to override
      *  subject + html at send-time. */
     templateKey?: string
+    /** When this send originated from the EmailQueueItem cron, pass
+     *  the queue id so we can correlate Resend webhook events back to
+     *  the queue row in /admin/email-performance. */
+    queueItemId?: string
+    /** Free-text campaign tag — "post-booking-day-1", "lead-magnet-vault",
+     *  "newsletter-2026-05-08". Indexed on EmailEvent for analytics. */
+    campaignTag?: string
   },
 ) {
-  const { serviceArm, clientId, templateKey, ...emailParams } = params
+  const { serviceArm, clientId, templateKey, queueItemId, campaignTag, ...emailParams } =
+    params
+
+  // Stamp tracking headers so the Resend webhook can correlate events
+  // back to a queue row / template / campaign without a database lookup.
+  // These propagate to Resend's webhook payload via `data.headers`.
+  if (templateKey || queueItemId || campaignTag) {
+    const existingHeaders = (emailParams as { headers?: Record<string, string> }).headers ?? {}
+    ;(emailParams as { headers?: Record<string, string> }).headers = {
+      ...existingHeaders,
+      ...(templateKey ? { "X-Template-Key": templateKey } : {}),
+      ...(queueItemId ? { "X-Queue-Item-Id": queueItemId } : {}),
+      ...(campaignTag ? { "X-Campaign-Tag": campaignTag } : {}),
+    }
+  }
 
   // Dry-run short-circuit. When the admin editor renders a template
   // preview, it wraps the send call in `withDryRun(...)`. We capture
