@@ -46,3 +46,10 @@ design-assets/
 # Playwright test artifacts
 /test-results/
 /playwright-report/
+
+# Nested clones / experimental dirs that should never be committed.
+# These showed up as untracked directories at the repo root and were
+# being staged accidentally. They contain their own .git/ trees.
+/aims-platform/
+/rtk/
+
