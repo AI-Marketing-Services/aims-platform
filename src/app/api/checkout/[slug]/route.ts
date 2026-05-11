@@ -154,10 +154,35 @@ export async function POST(
       slug,
       userId: dbUser.id,
     })
-    // TEMP DEBUG 2026-05-11: surface raw Stripe error in response body
-    // so we can diagnose the prod 500. REVERT once root cause identified.
+    // TEMP DEBUG 2026-05-11: persist the raw error to DB so I can query
+    // it from the terminal without needing Vercel runtime logs (which
+    // aren't exposed via API for this account). REVERT once root cause
+    // identified — using ApiCostLog as a generic structured-log table.
     const errMsg = err instanceof Error ? err.message : String(err)
-    const errCode = (err as { code?: string; type?: string })?.code ?? (err as { code?: string; type?: string })?.type
+    const errStack = err instanceof Error ? err.stack : undefined
+    const errCode =
+      (err as { code?: string; type?: string })?.code ??
+      (err as { code?: string; type?: string })?.type
+    try {
+      await db.apiCostLog.create({
+        data: {
+          provider: "DEBUG_CHECKOUT",
+          model: "checkout-error",
+          endpoint: `/api/checkout/${slug}`,
+          cost: 0,
+          clientId: dbUser.id,
+          metadata: {
+            slug,
+            priceId,
+            interval,
+            userEmail: dbUser.email,
+            errMsg,
+            errCode,
+            errStack: errStack?.slice(0, 2000),
+          },
+        },
+      })
+    } catch {}
     return NextResponse.json(
       {
         error: "checkout_failed",
