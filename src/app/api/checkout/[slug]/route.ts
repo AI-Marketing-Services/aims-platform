@@ -154,6 +154,16 @@ export async function POST(
       slug,
       userId: dbUser.id,
     })
-    return NextResponse.json({ error: "checkout_failed" }, { status: 500 })
+    // TEMP DEBUG 2026-05-11: surface raw Stripe error in response body
+    // so we can diagnose the prod 500. REVERT once root cause identified.
+    const errMsg = err instanceof Error ? err.message : String(err)
+    const errCode = (err as { code?: string; type?: string })?.code ?? (err as { code?: string; type?: string })?.type
+    return NextResponse.json(
+      {
+        error: "checkout_failed",
+        debug: { message: errMsg, code: errCode, slug, priceId, userEmail: dbUser.email },
+      },
+      { status: 500 },
+    )
   }
 }
