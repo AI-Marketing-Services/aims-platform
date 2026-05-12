@@ -344,8 +344,14 @@ export default clerkMiddleware(async (auth, req) => {
   if (isInternRoute(req) && !["INTERN", "ADMIN", "SUPER_ADMIN"].includes(role)) {
     return NextResponse.redirect(new URL("/portal/dashboard", req.url))
   }
-  if (isResellerRoute(req) && !["RESELLER", "ADMIN", "SUPER_ADMIN"].includes(role)) {
-    return NextResponse.redirect(new URL("/portal/dashboard", req.url))
+  // /reseller pages were consolidated into /portal on 2026-05-12.
+  // Anyone landing on the old path gets a permanent redirect to the
+  // equivalent /portal location instead of a 404 / silent denial.
+  if (isResellerRoute(req)) {
+    const newPath = req.nextUrl.pathname.replace(/^\/reseller(\/?)/, "/portal$1")
+    const url = new URL(newPath, req.url)
+    url.search = req.nextUrl.search
+    return NextResponse.redirect(url, 308)
   }
 
   if (isAdminApiRoute(req) && !["ADMIN", "SUPER_ADMIN"].includes(role)) {
@@ -354,7 +360,11 @@ export default clerkMiddleware(async (auth, req) => {
   if (isInternApiRoute(req) && !["INTERN", "ADMIN", "SUPER_ADMIN"].includes(role)) {
     return denyApi()
   }
-  if (isResellerApiRoute(req) && !["RESELLER", "ADMIN", "SUPER_ADMIN"].includes(role)) {
+  // /api/reseller/* endpoints still serve the whitelabel features
+  // (branding, domain, website). They remain role-gated to RESELLER,
+  // ADMIN, SUPER_ADMIN. Re-pathing them would force every fetch() call
+  // site to update; the URL is invisible to end users anyway.
+  if (isResellerApiRoute(req) && !["RESELLER", "ADMIN", "SUPER_ADMIN", "CLIENT"].includes(role)) {
     return denyApi()
   }
 

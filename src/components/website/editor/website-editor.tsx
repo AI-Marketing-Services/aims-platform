@@ -173,7 +173,7 @@ export function WebsiteEditor({ site, profile, templates }: Props) {
 
   const onTogglePublish = useCallback(async () => {
     if (!site?.subdomain) {
-      toast.error("Set a subdomain in /reseller/settings/domain first.")
+      toast.error("Set a subdomain in /portal/settings/domain first.")
       return
     }
     setSaving(true)
@@ -251,7 +251,7 @@ export function WebsiteEditor({ site, profile, templates }: Props) {
           You need to set up your operator subdomain before you can publish a
           website.{" "}
           <Link
-            href="/reseller/settings/domain"
+            href="/portal/settings/domain"
             className="font-semibold underline"
           >
             Set up your subdomain →
@@ -371,7 +371,7 @@ export function WebsiteEditor({ site, profile, templates }: Props) {
             </div>
           </div>
           <Link
-            href="/reseller/settings/branding"
+            href="/portal/settings/branding"
             className="text-xs font-semibold text-primary hover:underline"
           >
             Edit branding →

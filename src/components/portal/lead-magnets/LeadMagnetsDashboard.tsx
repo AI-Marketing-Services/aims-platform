@@ -145,14 +145,14 @@ export function LeadMagnetsDashboard({
             </p>
             <div className="mt-2.5 flex items-center gap-2 flex-wrap">
               <Link
-                href="/reseller/settings/branding"
+                href="/portal/settings/branding"
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
               >
                 <Settings className="h-3.5 w-3.5" />
                 {noSite ? "Set up branding" : "Open settings"}
               </Link>
               <Link
-                href="/reseller/settings/domain"
+                href="/portal/settings/domain"
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold border border-border hover:border-primary/40 hover:text-primary transition-colors"
               >
                 <Globe className="h-3.5 w-3.5" />

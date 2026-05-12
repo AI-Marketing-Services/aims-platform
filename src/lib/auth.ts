@@ -133,12 +133,16 @@ export function dashboardForRole(role: Role): string {
     case "ADMIN":
     case "SUPER_ADMIN":
       return "/admin/dashboard"
-    case "RESELLER":
-      return "/reseller/dashboard"
     case "INTERN":
       return "/intern/dashboard"
+    case "RESELLER":
     case "CLIENT":
     default:
+      // Reseller-portal pages were consolidated into the client portal
+      // on 2026-05-12. RESELLER role remains for commission attribution
+      // + access gating to whitelabel features, but lands on the same
+      // dashboard as CLIENT. The "Whitelabel" sidebar section is shown
+      // conditionally based on plan tier / entitlement, not URL.
       return "/portal/dashboard"
   }
 }

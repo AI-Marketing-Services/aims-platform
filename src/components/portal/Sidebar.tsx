@@ -161,9 +161,9 @@ const PORTAL_NAV_SECTIONS: readonly NavSection[] = [
     section: "Whitelabel",
     items: [
       // Whitelabel — opens once onboarding hits 100%.
-      { label: "Website", href: "/reseller/site", icon: Globe, requiresOnboardingComplete: true },
-      { label: "Branding", href: "/reseller/settings/branding", icon: Sparkles, requiresOnboardingComplete: true },
-      { label: "Domain", href: "/reseller/settings/domain", icon: Settings, requiresOnboardingComplete: true },
+      { label: "Website", href: "/portal/website", icon: Globe, requiresOnboardingComplete: true },
+      { label: "Branding", href: "/portal/settings/branding", icon: Sparkles, requiresOnboardingComplete: true },
+      { label: "Domain", href: "/portal/settings/domain", icon: Settings, requiresOnboardingComplete: true },
     ],
   },
   {

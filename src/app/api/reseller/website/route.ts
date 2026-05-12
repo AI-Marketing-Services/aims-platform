@@ -159,7 +159,7 @@ export async function PATCH(req: Request) {
       return NextResponse.json(
         {
           error:
-            "No operator site yet — set your subdomain in /reseller/settings/domain first.",
+            "No operator site yet — set your subdomain in /portal/settings/domain first.",
         },
         { status: 400 },
       )
