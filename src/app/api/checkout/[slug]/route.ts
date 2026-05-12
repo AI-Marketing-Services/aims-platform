@@ -100,7 +100,19 @@ export async function POST(
   const referringResellerId = await getValidatedAttributionResellerId(db)
 
   const isSubscription = interval !== "one_time"
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.aioperatorcollective.com"
+  // Use `||` not `??` — at runtime in some Vercel build scenarios
+  // `NEXT_PUBLIC_APP_URL` resolves to an empty string rather than
+  // undefined. Empty string is a truthy-ish gotcha for nullish-coalescing
+  // and Stripe rejects relative URLs with `url_invalid`. Belt-and-braces:
+  // also strip any trailing slash so we never produce a `//` in the path.
+  const rawAppUrl =
+    process.env.NEXT_PUBLIC_APP_URL ||
+    process.env.NEXT_PUBLIC_VERCEL_URL ||
+    "https://www.aioperatorcollective.com"
+  const appUrl = rawAppUrl
+    .trim()
+    .replace(/\/+$/, "")
+    .replace(/^(?!https?:\/\/)/, "https://")
 
   try {
     const session = await stripe.checkout.sessions.create({
