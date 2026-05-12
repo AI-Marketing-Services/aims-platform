@@ -124,7 +124,7 @@ export default async function PortalLayout({
   const firstName = dbUser?.name?.split(" ")[0] ?? "there"
 
   return (
-    <QuestProvider suppressCelebrations={isPreviewing}>
+    <QuestProvider>
       <div className="min-h-screen bg-background text-foreground">
       {/* Mobile top header - only visible on mobile */}
       <div className="lg:hidden flex items-center justify-between h-14 px-4 bg-deep border-b border-border sticky top-0 z-40">
