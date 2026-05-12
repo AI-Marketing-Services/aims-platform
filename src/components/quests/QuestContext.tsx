@@ -44,7 +44,20 @@ interface QuestContextValue extends QuestState {
 
 const QuestContext = createContext<QuestContextValue | null>(null)
 
-export function QuestProvider({ children }: { children: ReactNode }) {
+export function QuestProvider({
+  children,
+  suppressCelebrations = false,
+}: {
+  children: ReactNode
+  /**
+   * When true, completion modals are suppressed entirely. Quest progress
+   * still loads (so feature gates still resolve) and HIDDEN quests still
+   * auto-claim, but the full-screen UnlockModal never opens. Used when an
+   * admin previews-as-client so they can demo without celebration popups
+   * during walkthrough videos.
+   */
+  suppressCelebrations?: boolean
+}) {
   const [progress, setProgress] = useState<UserProgress | null>(null)
   const [featureFlags, setFeatureFlags] = useState<FeatureMap | null>(null)
   const [loading, setLoading] = useState(true)
@@ -82,7 +95,19 @@ export function QuestProvider({ children }: { children: ReactNode }) {
         // Only fire celebration on subsequent refreshes, not first load
         // (first load = grandfathered/backfilled rows shouldn't celebrate).
         shownRef.current.add(newlyCompleted.key)
-        setPendingUnlock(newlyCompleted)
+        // HIDDEN quests (Night Owl, Early Bird, easter-eggs) are designed
+        // to surface as quiet badges in the Quests page, NOT as a
+        // full-screen modal interruption. They auto-claim silently so the
+        // user still gets XP + credit ledger entries without an interstitial.
+        if (newlyCompleted.category === "HIDDEN") {
+          if (newlyCompleted.status === "COMPLETED") {
+            void fetch(`/api/portal/quests/${newlyCompleted.key}/claim`, {
+              method: "POST",
+            }).catch(() => {})
+          }
+        } else if (!suppressCelebrations) {
+          setPendingUnlock(newlyCompleted)
+        }
       }
     } finally {
       setLoading(false)
