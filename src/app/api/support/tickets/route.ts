@@ -33,6 +33,28 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid data", details: parsed.error.flatten() }, { status: 400 })
   }
 
+  // Server-side dedup: ignore an identical ticket created by the same
+  // user in the last 60 seconds. Defense-in-depth — the client now
+  // disables the button while in flight, but malicious / racey clients
+  // could still spam this endpoint. Returns the existing ticket id so
+  // the UI doesn't flash a misleading error.
+  try {
+    const recentDuplicate = await db.supportTicket.findFirst({
+      where: {
+        userId: dbUser.id,
+        subject: parsed.data.subject,
+        message: parsed.data.message,
+        createdAt: { gte: new Date(Date.now() - 60_000) },
+      },
+      select: { id: true },
+    })
+    if (recentDuplicate) {
+      return NextResponse.json({ id: recentDuplicate.id, deduped: true }, { status: 200 })
+    }
+  } catch {
+    // Best-effort dedup — fall through to the create if the lookup blows up.
+  }
+
   try {
     const ticket = await db.supportTicket.create({
       data: {

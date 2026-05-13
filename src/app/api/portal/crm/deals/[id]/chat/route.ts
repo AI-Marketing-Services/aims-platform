@@ -9,6 +9,8 @@ import {
   hasBalance,
   InsufficientCreditsError,
 } from "@/lib/enrichment/credits/ledger"
+import { hasEntitlement } from "@/lib/entitlements"
+import { FEATURE_ENTITLEMENTS } from "@/lib/plans/registry"
 import { stripDashes } from "@/lib/text/strip-dashes"
 import { markQuestEvent } from "@/lib/quests"
 
@@ -56,6 +58,35 @@ export async function POST(
   }
 
   const { id: dealId } = await params
+
+  // Entitlement gate — this endpoint loads the SAME full deal context as
+  // /assistant (company + contacts + activities + meeting notes +
+  // proposals). Without this gate, the freemium Ask AI tab on the deal
+  // page effectively delivers Deal Assistant outputs at 2 credits per
+  // turn instead of the $97/mo subscription. Closes that revenue leak.
+  // ADMIN/SUPER_ADMIN bypass so internal demos still work.
+  const user = await db.user.findUnique({
+    where: { id: dbUserId },
+    select: { role: true },
+  })
+  const isStaff = user?.role === "ADMIN" || user?.role === "SUPER_ADMIN"
+  if (!isStaff) {
+    const allowed = await hasEntitlement(
+      dbUserId,
+      FEATURE_ENTITLEMENTS.DEAL_ASSISTANT,
+    )
+    if (!allowed) {
+      return NextResponse.json(
+        {
+          error: "entitlement_required",
+          entitlement: FEATURE_ENTITLEMENTS.DEAL_ASSISTANT,
+          message:
+            "Ask-AI-about-this-deal requires the Deal Assistant feature. Upgrade your plan to use deal-specific AI.",
+        },
+        { status: 402 },
+      )
+    }
+  }
 
   let body: unknown
   try {

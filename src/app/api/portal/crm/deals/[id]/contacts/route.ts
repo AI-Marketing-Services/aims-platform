@@ -34,7 +34,18 @@ export async function POST(
     const body = await req.json()
     const parsed = createContactSchema.safeParse(body)
     if (!parsed.success) {
-      return NextResponse.json({ error: "Invalid data", issues: parsed.error.issues }, { status: 400 })
+      // Surface the first human-readable issue message in `error` so the
+      // UI's toast shows something actionable
+      // (e.g. "Add at least one of: last name, email, or phone") instead
+      // of a generic "Invalid data" string.
+      const firstIssue = parsed.error.issues[0]
+      return NextResponse.json(
+        {
+          error: firstIssue?.message ?? "Invalid contact data",
+          issues: parsed.error.issues,
+        },
+        { status: 400 },
+      )
     }
 
     const { email, ...rest } = parsed.data

@@ -159,6 +159,11 @@ export default function SupportPage() {
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [replyTexts, setReplyTexts] = useState<Record<string, string>>({})
   const [sending, setSending] = useState(false)
+  // Distinct from `sending` (which gates ticket replies) so the new-ticket
+  // form's button can be disabled independently while a POST is in flight.
+  // Without this, spam-clicking Submit fires N duplicate POSTs to
+  // /api/support/tickets before the optimistic state updates land.
+  const [submittingTicket, setSubmittingTicket] = useState(false)
 
   async function loadTickets() {
     setLoadingTickets(true)
@@ -193,6 +198,12 @@ export default function SupportPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    // Guard against double-submit (spam-click + multiple in-flight POSTs).
+    // The button visual state alone can't be trusted — keyboard Enter,
+    // touch double-tap, and accessibility software can all bypass the
+    // disabled CSS. State guard is the source of truth.
+    if (submittingTicket) return
+    setSubmittingTicket(true)
     const subjectWithContext = serviceContext
       ? `[${serviceContext}] ${subject}`
       : subject
@@ -222,6 +233,8 @@ export default function SupportPage() {
     } catch {
       setSubmitError("Failed to submit ticket. Please try again.")
       toast.error("Failed to submit ticket")
+    } finally {
+      setSubmittingTicket(false)
     }
   }
 
@@ -383,10 +396,11 @@ export default function SupportPage() {
             <div className="flex gap-3">
               <button
                 type="submit"
-                className="flex items-center gap-2 px-5 py-2.5 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors"
+                disabled={submittingTicket}
+                className="flex items-center gap-2 px-5 py-2.5 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 <Send className="w-4 h-4" />
-                Submit Ticket
+                {submittingTicket ? "Submitting…" : "Submit Ticket"}
               </button>
               <button
                 type="button"

@@ -51,6 +51,7 @@ import { NotificationBell } from "@/components/shared/NotificationBell"
 import { OnboardingProgressWidget } from "@/components/portal/OnboardingProgressWidget"
 import { QuestProgressRing } from "@/components/quests/QuestProgressRing"
 import { CollapsibleNavSection } from "@/components/shared/CollapsibleNavSection"
+import { CreditBadge } from "@/components/portal/CreditBadge"
 
 // Sidebar items grouped logically. Items in `ADMIN_ONLY_ROUTES` below
 // are filtered out for non-admin viewers so the portal stays focused
@@ -395,33 +396,15 @@ export function PortalSidebar({
         collapsed={collapsed}
       />
 
-      {/* Enrichment credits — shown on every page so operators always
-          know their balance before spending on Enrich / Scout. */}
+      {/* Enrichment credits — CreditBadge polls /api/portal/credits/balance
+          every 30s + listens for the 'aoc:credits-changed' window event,
+          so the displayed balance updates within seconds of earning or
+          spending credits without needing a full page refresh. */}
       {!collapsed && (
-        <Link
-          href="/portal/billing"
-          className={cn(
-            "mx-3 mb-2 flex items-center justify-between gap-2 rounded-lg px-3 py-2 text-xs transition-colors",
-            lowBalance
-              ? "border border-primary/40 bg-primary/5 hover:bg-primary/10"
-              : "border border-border bg-surface/40 hover:bg-surface",
-          )}
-        >
-          <div className="flex items-center gap-2">
-            <Sparkles className={cn("h-3.5 w-3.5", lowBalance ? "text-primary" : "text-primary")} />
-            <div>
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold leading-none">
-                Credits
-              </p>
-              <p className={cn("text-sm font-bold leading-tight mt-0.5", lowBalance ? "text-primary" : "text-foreground")}>
-                {creditBalance.toLocaleString()}
-              </p>
-            </div>
-          </div>
-          <span className="text-[9px] text-muted-foreground uppercase tracking-wider">
-            {creditPlanTier}
-          </span>
-        </Link>
+        <CreditBadge
+          initialBalance={creditBalance}
+          initialPlanTier={creditPlanTier}
+        />
       )}
 
       {/* Monthly Investment */}

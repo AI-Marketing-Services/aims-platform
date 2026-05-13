@@ -130,7 +130,16 @@ export function QuestProvider({
         method: "POST",
       })
       const data = await res.json()
-      if (data.ok) await refresh()
+      if (data.ok) {
+        await refresh()
+        // Nudge the sidebar CreditBadge to refetch immediately instead
+        // of waiting for its 30s polling tick. Otherwise the operator
+        // sees the celebration modal say "+15 credits" but the sidebar
+        // number stays stale until they spend something.
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new Event("aoc:credits-changed"))
+        }
+      }
       return data
     },
     [refresh],
