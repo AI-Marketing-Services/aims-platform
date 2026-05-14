@@ -117,6 +117,7 @@ const PORTAL_NAV_SECTIONS: readonly NavSection[] = [
       { label: "Client CRM", href: "/portal/crm", icon: Briefcase, gate: "crm", entitlement: FEATURE_ENTITLEMENTS.CRM },
       { label: "Lead Scout", href: "/portal/crm/scout", icon: MapPin, gate: "lead_scout", entitlement: FEATURE_ENTITLEMENTS.LEAD_SCOUT },
       { label: "AI Audit", href: "/portal/audits", icon: ClipboardCheck, gate: "audits", entitlement: FEATURE_ENTITLEMENTS.AUDITS },
+      { label: "First Win Audit", href: "/portal/first-win-audits", icon: Sparkles, gate: "audits", entitlement: FEATURE_ENTITLEMENTS.AUDITS },
       { label: "Lead Magnets", href: "/portal/lead-magnets", icon: FileText, gate: "audits", entitlement: FEATURE_ENTITLEMENTS.AUDITS },
       { label: "Email Sequences", href: "/portal/sequences", icon: Send, entitlement: FEATURE_ENTITLEMENTS.SEQUENCES },
       { label: "Booking Page", href: "/portal/booking", icon: CalendarDays, entitlement: FEATURE_ENTITLEMENTS.BOOKING },
