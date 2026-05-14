@@ -15,9 +15,28 @@ export interface ScoutedLead {
   snippet: string
 }
 
+/**
+ * Sentinel error so the route handler can distinguish "Tavily isn't
+ * configured in this environment" (operator-facing actionable message:
+ * use the Google Maps mode instead) from "Tavily returned zero results"
+ * (operator-facing: try a different query).
+ *
+ * Both used to silently return [], which surfaced as the same generic
+ * "No leads found" toast — leading operators to assume their query was
+ * the problem when it was actually a missing env var.
+ */
+export class TavilyNotConfiguredError extends Error {
+  constructor() {
+    super("Open-web search (Tavily) isn't configured for this environment.")
+    this.name = "TavilyNotConfiguredError"
+  }
+}
+
 async function tavilySearch(query: string): Promise<Array<{ url: string; title: string; content: string }>> {
   const key = process.env.TAVILY_API_KEY
-  if (!key) return []
+  if (!key) {
+    throw new TavilyNotConfiguredError()
+  }
 
   try {
     const res = await fetch(TAVILY_URL, {

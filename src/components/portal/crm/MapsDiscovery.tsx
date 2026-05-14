@@ -51,6 +51,11 @@ export function MapsDiscovery() {
   const [loadingMore, setLoadingMore] = useState(false)
   const [importing, setImporting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  // Track whether the operator has actually run a search yet. Without
+  // this, the empty-state UI is ambiguous: "0 results because you haven't
+  // searched yet" looks identical to "0 results because Google found
+  // nothing matching". The latter needs an actionable hint.
+  const [hasSearched, setHasSearched] = useState(false)
   const [lastCost, setLastCost] = useState<number | null>(null)
   const [nextPageToken, setNextPageToken] = useState<string | null>(null)
   const [importSummary, setImportSummary] = useState<{
@@ -105,6 +110,7 @@ export function MapsDiscovery() {
       setResults(data.results ?? [])
       setLastCost(data.creditCost ?? 0)
       setNextPageToken(data.nextPageToken ?? null)
+      setHasSearched(true)
     } catch (err) {
       setError(err instanceof Error ? err.message : "Network error")
     } finally {
@@ -565,13 +571,26 @@ export function MapsDiscovery() {
         </>
       )}
 
-      {results.length === 0 && !searching && (
+      {results.length === 0 && !searching && !hasSearched && (
         <div className="text-xs text-muted-foreground text-center py-6 border border-dashed border-border rounded-lg">
           Search for a business type + location to discover prospects.
           <br />
           Examples: <em>&quot;HVAC companies Austin TX&quot;</em>,{" "}
           <em>&quot;dental offices in Denver&quot;</em>,{" "}
           <em>&quot;property management Miami&quot;</em>
+        </div>
+      )}
+
+      {/* Distinct empty-state for a search that ran but returned nothing.
+          Without this, the operator can't tell the difference between
+          "I haven't searched yet" and "Google Places found no matches",
+          and assumes the feature is broken. */}
+      {results.length === 0 && !searching && hasSearched && !error && (
+        <div className="text-xs text-muted-foreground text-center py-6 border border-dashed border-border rounded-lg">
+          Google Places found no businesses for that query.
+          <br />
+          Try a broader location (state instead of zip code), drop
+          filters, or rephrase the business type.
         </div>
       )}
     </div>
