@@ -48,6 +48,22 @@ export async function POST(req: Request) {
   const contentType = req.headers.get("content-type") ?? ""
   const isMultipart = contentType.toLowerCase().startsWith("multipart/form-data")
 
+  // Pre-parse Content-Length ceiling so an authenticated attacker can't
+  // OOM the serverless function by streaming a 500MB multipart body —
+  // the 5MB SCREENSHOT_MAX_BYTES check below runs AFTER req.formData()
+  // has already buffered the entire request. 7MB allows our 5MB
+  // screenshot + headroom for the surrounding form fields + multipart
+  // boundary overhead.
+  if (isMultipart) {
+    const len = Number(req.headers.get("content-length") ?? "0")
+    if (len && len > 7 * 1024 * 1024) {
+      return NextResponse.json(
+        { error: "Request body too large. Screenshot must be under 5 MB." },
+        { status: 413 },
+      )
+    }
+  }
+
   let payload: z.infer<typeof feedbackSchema>
   let screenshot: File | null = null
 

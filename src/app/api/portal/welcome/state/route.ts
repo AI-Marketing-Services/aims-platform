@@ -38,12 +38,28 @@ const patchSchema = z.object({
 export async function GET() {
   const { userId: clerkId } = await auth()
   if (!clerkId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-  const dbUser = await getOrCreateDbUserByClerkId(clerkId)
-  return NextResponse.json({
-    step: dbUser.firstRunStep ?? "intro",
-    completedAt: dbUser.firstRunCompletedAt,
-    skippedAt: dbUser.firstRunSkippedAt,
-  })
+  try {
+    const dbUser = await getOrCreateDbUserByClerkId(clerkId)
+    return NextResponse.json({
+      step: dbUser.firstRunStep ?? "intro",
+      completedAt: dbUser.firstRunCompletedAt,
+      skippedAt: dbUser.firstRunSkippedAt,
+    })
+  } catch (err) {
+    // Clerk-webhook-race or DB blip — don't 500 the resume helper.
+    // A polling sidebar widget calling this every 30s shouldn't be the
+    // thing that crashes the experience. Degrade to a safe default;
+    // the next poll will recover.
+    logger.error("welcome/state GET failed; returning safe default", err, {
+      endpoint: "GET /api/portal/welcome/state",
+      userId: clerkId,
+    })
+    return NextResponse.json({
+      step: "intro",
+      completedAt: null,
+      skippedAt: null,
+    })
+  }
 }
 
 export async function PATCH(req: Request) {
@@ -65,14 +81,32 @@ export async function PATCH(req: Request) {
     )
   }
 
+  // Reject empty no-op bodies (`{}`) and mutually-exclusive flag
+  // collisions. Without this, a malformed client could simultaneously
+  // mark complete + skipped, leaving the row in an ambiguous state
+  // where both timestamps are set.
+  const { step, markComplete, markSkipped } = parsed.data
+  if (!step && !markComplete && !markSkipped) {
+    return NextResponse.json(
+      { error: "No state fields provided" },
+      { status: 400 },
+    )
+  }
+  if (markComplete && markSkipped) {
+    return NextResponse.json(
+      { error: "markComplete and markSkipped are mutually exclusive" },
+      { status: 400 },
+    )
+  }
+
   const now = new Date()
   const data: Record<string, unknown> = {}
-  if (parsed.data.step) data.firstRunStep = parsed.data.step
-  if (parsed.data.markComplete) {
+  if (step) data.firstRunStep = step
+  if (markComplete) {
     data.firstRunCompletedAt = now
     data.firstRunStep = "done"
   }
-  if (parsed.data.markSkipped) {
+  if (markSkipped) {
     data.firstRunSkippedAt = now
   }
 

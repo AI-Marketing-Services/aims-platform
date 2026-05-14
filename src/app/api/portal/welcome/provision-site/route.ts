@@ -118,13 +118,20 @@ export async function POST(req: Request) {
       ...(logoUrl !== undefined && { logoUrl }),
     }
 
+    // Always include subdomain on update path. Previously we only set
+    // it when `existing.subdomain !== subdomain` — but in the race
+    // condition where two requests both saw the subdomain as free,
+    // one might create with userId+subdomain and the OTHER hit the
+    // update branch with `existing` still null at lookup time but a
+    // row now existing by userId. Skipping the subdomain write on
+    // update would silently let that second request "succeed" without
+    // applying the user's typed value. Always writing the subdomain
+    // means we always get a P2002 if it collides — fail loudly and
+    // correctly instead of silently retaining the wrong value.
     const site = await db.operatorSite.upsert({
       where: { userId: dbUser.id },
       update: {
-        // Only flip subdomain when the operator actually changed it —
-        // touching the @unique column on every save would otherwise
-        // make Prisma race against itself and trip P2002 for no-ops.
-        ...(existing && existing.subdomain !== subdomain && { subdomain }),
+        subdomain,
         homepageContent: mergeBrand(existing?.homepageContent ?? null, brand),
       },
       create: {

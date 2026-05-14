@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { z } from "zod"
+import type Stripe from "stripe"
 import { db } from "@/lib/db"
 import { stripe } from "@/lib/stripe"
 import { getValidatedAttributionResellerId } from "@/lib/tenant/attribution"
@@ -114,19 +115,31 @@ export async function POST(
     .replace(/\/+$/, "")
     .replace(/^(?!https?:\/\/)/, "https://")
 
-  try {
-    const session = await stripe.checkout.sessions.create({
+  // Re-bind to non-null consts so the buildParams closure below can
+  // reference these without losing the post-guard narrowing through
+  // the function boundary.
+  const finalPriceId: string = priceId
+  const finalClerkId: string = clerkId
+  const finalProduct = product
+
+  // Build the params once so the retry path (auto-heal stale customer
+  // ID) doesn't have to duplicate the entire literal.
+  function buildParams(
+    customer?: string | null,
+    customerEmail?: string | null,
+  ): Stripe.Checkout.SessionCreateParams {
+    return {
       mode: isSubscription ? "subscription" : "payment",
-      line_items: [{ price: priceId, quantity: 1 }],
-      customer: dbUser.stripeCustomerId ?? undefined,
-      customer_email: dbUser.stripeCustomerId ? undefined : dbUser.email,
-      client_reference_id: clerkId,
+      line_items: [{ price: finalPriceId, quantity: 1 }],
+      ...(customer ? { customer } : {}),
+      ...(customer ? {} : { customer_email: customerEmail ?? dbUser.email }),
+      client_reference_id: finalClerkId,
       success_url: `${appUrl}/portal/dashboard?purchased=${slug}`,
       cancel_url: `${appUrl}/marketplace?canceled=${slug}`,
       allow_promotion_codes: true,
       metadata: {
         source: "product",
-        productSlug: product.slug,
+        productSlug: finalProduct.slug,
         userId: dbUser.id,
         intervalType: interval,
         ...(referringResellerId ? { referringResellerId } : {}),
@@ -134,20 +147,15 @@ export async function POST(
         ...(lastUtm.utmMedium ? { utmMedium: lastUtm.utmMedium } : {}),
         ...(lastUtm.utmCampaign ? { utmCampaign: lastUtm.utmCampaign } : {}),
       },
-      // For subscriptions we pass through the same metadata to the
-      // subscription itself so renewal webhooks see it without needing
-      // to look up the original session.
       ...(isSubscription
         ? {
             subscription_data: {
-              // trial_period_days only applies on subscription create; if
-              // the customer is reactivating mid-cycle Stripe ignores it.
               ...(trialDays && trialDays > 0
                 ? { trial_period_days: trialDays }
                 : {}),
               metadata: {
                 source: "product",
-                productSlug: product.slug,
+                productSlug: finalProduct.slug,
                 userId: dbUser.id,
                 ...(referringResellerId ? { referringResellerId } : {}),
                 ...(lastUtm.utmSource ? { utmSource: lastUtm.utmSource } : {}),
@@ -157,7 +165,47 @@ export async function POST(
             },
           }
         : {}),
-    })
+    }
+  }
+
+  try {
+    let session
+    try {
+      session = await stripe.checkout.sessions.create(
+        buildParams(dbUser.stripeCustomerId, dbUser.email),
+      )
+    } catch (firstErr) {
+      // Auto-heal: if Stripe rejects with `resource_missing` on the
+      // customer field (typically because the stored stripeCustomerId
+      // is from a different Stripe mode — TEST id while we're now in
+      // LIVE, or a different account entirely), null the column and
+      // retry with customer_email. The webhook will create a fresh
+      // live Customer on completion. Prevents the entire class of
+      // "checkout_failed" we hit during the test→live migration.
+      const e = firstErr as { code?: string; param?: string; raw?: { param?: string } }
+      const isCustomerMissing =
+        e?.code === "resource_missing" &&
+        (e?.param === "customer" || e?.raw?.param === "customer") &&
+        !!dbUser.stripeCustomerId
+      if (!isCustomerMissing) throw firstErr
+      logger.warn(
+        "Stripe checkout: stale stripeCustomerId, auto-healing",
+        {
+          endpoint: "POST /api/checkout/[slug]",
+          userId: dbUser.id,
+          staleCustomerId: dbUser.stripeCustomerId,
+        },
+      )
+      await db.user
+        .update({
+          where: { id: dbUser.id },
+          data: { stripeCustomerId: null },
+        })
+        .catch(() => {})
+      session = await stripe.checkout.sessions.create(
+        buildParams(null, dbUser.email),
+      )
+    }
 
     return NextResponse.json({ url: session.url, sessionId: session.id })
   } catch (err) {
