@@ -14,6 +14,7 @@ import { QuestProvider } from "@/components/quests/QuestContext"
 import { UnlockModal } from "@/components/quests/UnlockModal"
 import { PageTransition } from "@/components/shared/PageTransition"
 import { AdminPreviewBanner } from "@/components/shared/AdminPreviewBanner"
+import { WelcomeWizardBanner } from "@/components/portal/WelcomeWizardBanner"
 import { db } from "@/lib/db"
 import { getEffectiveRole, dashboardForRole } from "@/lib/auth"
 import { ensureDbUser } from "@/lib/auth/ensure-user"
@@ -57,6 +58,8 @@ export default async function PortalLayout({
     creditBalance: number
     creditPlanTier: string
     subscriptions: { monthlyAmount: number }[]
+    firstRunCompletedAt: Date | null
+    firstRunSkippedAt: Date | null
   } | null = null
   try {
     dbUser = await db.user.findUnique({
@@ -66,6 +69,8 @@ export default async function PortalLayout({
         name: true,
         creditBalance: true,
         creditPlanTier: true,
+        firstRunCompletedAt: true,
+        firstRunSkippedAt: true,
         subscriptions: {
           where: { status: "ACTIVE" },
           select: { monthlyAmount: true },
@@ -82,6 +87,17 @@ export default async function PortalLayout({
 
   const totalMrr = dbUser?.subscriptions.reduce((sum, s) => sum + s.monthlyAmount, 0) ?? 0
   const serviceCount = dbUser?.subscriptions.length ?? 0
+  // First-run wizard banner is rendered below for users who haven't
+  // completed or explicitly skipped the welcome tour. A banner is less
+  // aggressive than an auto-redirect (no loop risk, no surprise) but
+  // still gives the new operator a single highly-visible call-to-action
+  // to walk through the full setup flow. Suppressed during admin
+  // preview because admins testing the dashboard already know what
+  // they're doing.
+  const showWelcomeBanner =
+    !!dbUser &&
+    !dbUser.firstRunCompletedAt &&
+    !dbUser.firstRunSkippedAt
 
   const [unreadCount, onboardingProgress, activeEntitlements] = await Promise.all([
     dbUser
@@ -151,6 +167,7 @@ export default async function PortalLayout({
         />
         <main id="main-content" className="flex-1 overflow-y-auto custom-scrollbar">
           {isPreviewing && <AdminPreviewBanner viewingAs={effectiveRole} />}
+          {showWelcomeBanner && <WelcomeWizardBanner />}
           <PageTransition>
             <div className="p-4 pb-20 lg:p-6 lg:pb-8 xl:p-8">{children}</div>
           </PageTransition>

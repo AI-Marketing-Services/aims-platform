@@ -81,6 +81,15 @@ model User {
   emailNotifs      Boolean   @default(true)
   slackNotifs      Boolean   @default(false)
 
+  // First-run interactive wizard at /portal/welcome. NULL = never seen
+  // (auto-redirect new signups there). String = which step they paused
+  // at so we can resume. firstRunCompletedAt set when they finish all
+  // steps; firstRunSkippedAt set if they explicitly "skip for now".
+  // Either non-null suppresses the auto-redirect.
+  firstRunStep        String?
+  firstRunCompletedAt DateTime?
+  firstRunSkippedAt   DateTime?
+
   // Enrichment credits — denormalized current balance + plan tier; the
   // canonical history lives in the CreditTransaction ledger so we can
   // always reconstruct/audit a balance.
