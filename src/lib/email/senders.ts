@@ -19,9 +19,10 @@ export const AOC_REPLY_TO = "noreply@aioperatorcollective.com"
 export const AIMS_REPLY_TO = "noreply@aioperatorcollective.com"
 
 /**
- * Sales BCC address. Ryan is BCC'd on every applicant-facing email in the
- * AOC funnel so he can track the full user journey: partial application →
- * form submitted → call booked. One constant so if the address changes
- * there is a single place to update it.
+ * Sales BCC addresses for applicant/funnel emails. Keep this centralized so
+ * top-of-funnel visibility changes in one place instead of per template.
  */
-export const RYAN_SALES_BCC = "ryan@modern-amenities.com"
+export const RYAN_SALES_BCC = [
+  "ryan@modern-amenities.com",
+  "jess@aimanagingservices.com",
+]

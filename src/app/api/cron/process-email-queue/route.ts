@@ -7,6 +7,7 @@ import { buildOperatorVaultEmail } from "@/lib/email/community-sequence"
 import { buildBusinessAIAuditEmail } from "@/lib/email/business-audit-sequence"
 import { buildW2PlaybookEmail } from "@/lib/email/w2-playbook-sequence"
 import { buildPostBookingEducationEmail } from "@/lib/email/post-booking-education"
+import { buildScoreappFitEmail } from "@/lib/email/scoreapp-ai-operator-fit"
 import { AOC_FROM_EMAIL, AOC_REPLY_TO } from "@/lib/email/senders"
 
 /**
@@ -39,6 +40,9 @@ function templateKeyFor(sequenceKey: string, emailIndex: number): string | undef
   if (sequenceKey === "w2-playbook") {
     if (emailIndex === 0) return "lead-magnet.w2-playbook.day-1"
     if (emailIndex === 1) return "lead-magnet.w2-playbook.day-2"
+  }
+  if (sequenceKey.startsWith("scoreapp-")) {
+    return `${sequenceKey}.${emailIndex}`
   }
   return undefined
 }
@@ -119,6 +123,8 @@ export async function GET(req: Request) {
           emailContent = buildPostBookingEducationEmail(item.emailIndex, meta)
         } else if (item.sequenceKey === "post-booking-morning-of") {
           emailContent = buildPostBookingEducationEmail(3, meta)
+        } else if (item.sequenceKey.startsWith("scoreapp-")) {
+          emailContent = buildScoreappFitEmail(item.emailIndex, meta)
         }
         // All legacy AIMS sequences (post-quiz, post-calculator, post-audit,
         // post-purchase, partner-onboard, reseller-onboard) return null here

@@ -659,6 +659,40 @@ export const EMAIL_SEQUENCES = {
       { delay: 3, subject: "What Ryan will ask about", templateKey: "aoc-day-3-call-prep" },
     ],
   },
+  "scoreapp-diagnostician": {
+    name: "ScoreApp: Diagnostician Follow-up",
+    emails: [
+      { delay: 2, subject: "Your corporate experience is raw material", templateKey: "scoreapp-diagnostician-raw-material" },
+      { delay: 4, subject: "The bridge from diagnosis to AI", templateKey: "scoreapp-diagnostician-bridge" },
+      { delay: 7, subject: "This is the useful next step", templateKey: "scoreapp-diagnostician-next-step" },
+      { delay: 12, subject: "Last note on your scorecard", templateKey: "scoreapp-diagnostician-close" },
+    ],
+  },
+  "scoreapp-tinkerer": {
+    name: "ScoreApp: Tinkerer Follow-up",
+    emails: [
+      { delay: 2, subject: "The bridge from tinkering to paid work", templateKey: "scoreapp-tinkerer-paid-work" },
+      { delay: 4, subject: "Tools are not the business", templateKey: "scoreapp-tinkerer-problem-first" },
+      { delay: 7, subject: "This is the useful next step", templateKey: "scoreapp-tinkerer-next-step" },
+      { delay: 12, subject: "Last note on your scorecard", templateKey: "scoreapp-tinkerer-close" },
+    ],
+  },
+  "scoreapp-multi-threader": {
+    name: "ScoreApp: Multi-Threader Follow-up",
+    emails: [
+      { delay: 3, subject: "The pattern your scorecard is pointing at", templateKey: "scoreapp-multi-threader-pattern" },
+      { delay: 7, subject: "Why ideas die around month three", templateKey: "scoreapp-multi-threader-month-three" },
+      { delay: 12, subject: "Pick one path for 90 days", templateKey: "scoreapp-multi-threader-close" },
+    ],
+  },
+  "scoreapp-spectator": {
+    name: "ScoreApp: Spectator Follow-up",
+    emails: [
+      { delay: 3, subject: "How operator income actually works", templateKey: "scoreapp-spectator-operator-income" },
+      { delay: 7, subject: "What real operator weeks look like", templateKey: "scoreapp-spectator-real-weeks" },
+      { delay: 12, subject: "Keeping the door open", templateKey: "scoreapp-spectator-close" },
+    ],
+  },
 } as const
 
 export type SequenceKey = keyof typeof EMAIL_SEQUENCES
