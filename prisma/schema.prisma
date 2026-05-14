@@ -2508,6 +2508,14 @@ model PortalFeedback {
   pageUrl   String?
   userAgent String?
 
+  // Vercel Blob public URL when the reporter attached a screenshot.
+  // Optional — bugs filed without an image still go through. Stored as
+  // a single URL string (not a relation) because feedback is fire-and-
+  // forget and we don't manage attachment lifecycle separately. Length
+  // capped at 1024 chars defensively even though Vercel Blob URLs are
+  // ~140 chars in practice.
+  screenshotUrl String? @db.VarChar(1024)
+
   // NEW | TRIAGED | IN_PROGRESS | RESOLVED | WONT_FIX
   status    String  @default("NEW")
   adminNote String? @db.Text

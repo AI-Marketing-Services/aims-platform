@@ -44,6 +44,7 @@ export default async function AdminFeedbackPage() {
     details: i.details,
     pageUrl: i.pageUrl,
     userAgent: i.userAgent,
+    screenshotUrl: i.screenshotUrl,
     status: i.status,
     adminNote: i.adminNote,
     reporterEmail: i.reporterEmail,

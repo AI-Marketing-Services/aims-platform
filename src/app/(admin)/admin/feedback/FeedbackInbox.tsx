@@ -11,6 +11,7 @@ type Item = {
   details: string
   pageUrl: string | null
   userAgent: string | null
+  screenshotUrl: string | null
   status: string
   adminNote: string | null
   reporterEmail: string
@@ -189,6 +190,33 @@ export function FeedbackInbox({
                         {item.details}
                       </p>
                     </div>
+
+                    {item.screenshotUrl && (
+                      <div>
+                        <p className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground mb-1.5">
+                          Screenshot
+                        </p>
+                        {/* Link wrapper lets admin open the full-res image
+                            in a new tab; the inline render is bounded so
+                            5MB phone screenshots don't blow out the row. */}
+                        <a
+                          href={item.screenshotUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block rounded-lg border border-border overflow-hidden bg-background hover:border-primary/40 transition-colors"
+                        >
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={item.screenshotUrl}
+                            alt="Reporter screenshot"
+                            className="max-h-96 w-full object-contain bg-black/5"
+                          />
+                        </a>
+                        <p className="text-[10px] text-muted-foreground mt-1">
+                          Click image to open at full resolution.
+                        </p>
+                      </div>
+                    )}
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
                       <div>
