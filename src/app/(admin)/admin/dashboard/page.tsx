@@ -4,6 +4,7 @@ import {
   UserPlus,
   Calendar,
   ClipboardCheck,
+  Compass,
   FlaskConical,
   Mail,
   TrendingUp,
@@ -237,6 +238,11 @@ export default async function AdminDashboardPage() {
               href="/admin/follow-ups"
               icon={<Calendar className="h-4 w-4" />}
               label="Follow-up queue"
+            />
+            <QuickLink
+              href="/admin/wizard-funnel"
+              icon={<Compass className="h-4 w-4" />}
+              label="Wizard funnel"
             />
             <QuickLink
               href="/admin/simulate"

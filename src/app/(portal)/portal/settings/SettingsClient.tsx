@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
-import { User, Bell, Shield, ExternalLink, Plug, Pencil, Check, X } from "lucide-react"
+import { User, Bell, Shield, ExternalLink, Plug, Pencil, Check, X, Sparkles } from "lucide-react"
 import Image from "next/image"
 
 interface Props {
@@ -506,6 +506,41 @@ export function PortalSettingsClient({ clerkUser, dbUser }: Props) {
             )}
           </div>
         </div>
+      </div>
+
+      {/* First-run tour replay — lets operators who finished or
+          skipped the wizard re-enter the guided setup. Useful for
+          re-running the Lead Scout demo, re-claiming a subdomain, or
+          just orienting a teammate. Clicking the button resets
+          firstRunStep to "intro" via the same /welcome/state endpoint
+          and bounces them to the wizard. */}
+      <div className="rounded-xl border border-border bg-card p-6">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted">
+            <Sparkles className="h-4 w-4 text-muted-foreground" />
+          </div>
+          <h2 className="text-base font-semibold text-foreground">
+            Setup tour
+          </h2>
+        </div>
+        <p className="text-sm text-muted-foreground mb-3">
+          Walk through the welcome flow again — brand your portal, claim a
+          subdomain, scout fresh leads.
+        </p>
+        <button
+          onClick={async () => {
+            await fetch("/api/portal/welcome/state", {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ step: "intro" }),
+            })
+            window.location.href = "/portal/welcome"
+          }}
+          className="inline-flex items-center gap-2 rounded-lg border border-border bg-background px-4 py-2 text-sm font-semibold text-foreground hover:border-primary/40 hover:text-primary transition-colors"
+        >
+          <Sparkles className="h-3.5 w-3.5" />
+          Restart the setup tour
+        </button>
       </div>
 
       {/* Security */}
