@@ -36,6 +36,15 @@ interface ScoutResult {
   reviews_count?: number | null
   phone?: string | null
   website?: string | null
+  // Optional fields the maps-import endpoint can pass through to
+  // ClientDeal rows — they're returned by maps-search but the demo
+  // doesn't render them. Kept on the type so the import POST can
+  // forward the full place object without `any`-casts.
+  state?: string | null
+  zip?: string | null
+  lat?: number
+  lng?: number
+  types?: string[]
   alreadyImported?: boolean
 }
 
@@ -151,12 +160,32 @@ export default function ScoutDemoStep({
     async (toImport: ScoutResult[]) => {
       setPhase("importing")
       try {
+        // The maps-import route expects the FULL place objects (it
+        // mirrors them straight into ClientDeal rows on the server),
+        // not just place_ids. Earlier scaffold passed only ids which
+        // tripped Zod's `places` min(1) and returned 400 "Invalid
+        // payload" after the user had already seen the 5 cards
+        // animate in — confusing UX. Send the same shape we got
+        // back from maps-search.
         const res = await fetch("/api/portal/crm/scout/maps-import", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            place_ids: toImport.map((r) => r.place_id),
-            autoEnrich: true,
+            places: toImport.map((r) => ({
+              place_id: r.place_id,
+              name: r.name,
+              address: r.address ?? "",
+              phone: r.phone ?? null,
+              website: r.website ?? null,
+              rating: r.rating ?? null,
+              reviews_count: r.reviews_count ?? null,
+              state: r.state ?? null,
+              zip: r.zip ?? null,
+              lat: r.lat,
+              lng: r.lng,
+              types: r.types ?? [],
+            })),
+            enrichOnImport: true,
           }),
         })
 
