@@ -75,6 +75,7 @@ model User {
   commissionsEarned        CommissionEvent[]         @relation("ResellerCommissions")
   portalFeedback           PortalFeedback[]          @relation("PortalFeedbackReporter")
   auditQuizzes             AuditQuiz[]               @relation("AuditQuizOwner")
+  firstWinAudits           FirstWinAudit[]           @relation("FirstWinAuditOwner")
 
   stripeCustomerId String?   @unique
   lastLoginAt      DateTime?
@@ -1483,16 +1484,17 @@ model ClientDeal {
   nextAction      String?   @db.Text
   nextActionDueAt DateTime?
 
-  contacts      ClientContact[]
-  activities    ClientDealActivity[]
-  proposals     ClientProposal[]
-  invoices      ClientInvoice[]
-  aiScripts     AiScript[]
-  portalAccess  ClientPortalAccess[]
-  contentPieces ContentPiece[]
-  followUpRules FollowUpRule[]
-  enrichment    ClientDealEnrichment?
-  meetingNotes  ClientDealNote[]
+  contacts       ClientContact[]
+  activities     ClientDealActivity[]
+  proposals      ClientProposal[]
+  invoices       ClientInvoice[]
+  aiScripts      AiScript[]
+  portalAccess   ClientPortalAccess[]
+  contentPieces  ContentPiece[]
+  followUpRules  FollowUpRule[]
+  enrichment     ClientDealEnrichment?
+  meetingNotes   ClientDealNote[]
+  firstWinAudits FirstWinAudit[]
 
   wonAt      DateTime?
   lostAt     DateTime?
@@ -1929,6 +1931,183 @@ model AiScript {
   @@index([userId])
   @@index([userId, type])
   @@index([clientDealId])
+}
+
+// ============ FIRST WIN AUDITS ============
+
+enum FirstWinAuditStatus {
+  DRAFT
+  SURVEY_OPEN
+  ANALYZING
+  REPORT_READY
+  PRESENTED
+  CONVERTED
+  ARCHIVED
+}
+
+enum FirstWinSolutionLevel {
+  LEVEL_1
+  LEVEL_2
+  LEVEL_3
+}
+
+enum FirstWinUseCaseStatus {
+  IDENTIFIED
+  SHORTLISTED
+  PROPOSED
+  ACCEPTED
+  IMPLEMENTED
+  REJECTED
+}
+
+enum AuditChatUserType {
+  CLIENT
+  OPERATOR
+  AIMS_ADMIN
+}
+
+model FirstWinAudit {
+  id           String     @id @default(cuid())
+  userId       String
+  user         User       @relation("FirstWinAuditOwner", fields: [userId], references: [id], onDelete: Cascade)
+  clientDealId String
+  clientDeal   ClientDeal @relation(fields: [clientDealId], references: [id], onDelete: Cascade)
+
+  companyName String
+  industry    String?
+  status      FirstWinAuditStatus @default(DRAFT)
+
+  surveyOpenedAt      DateTime?
+  surveyClosedAt      DateTime?
+  reportGeneratedAt   DateTime?
+  consentAcceptedAt   DateTime?
+  aggregateUseAllowed Boolean   @default(true)
+
+  respondentInviteTokenHash String? @unique
+  clientReportTokenHash     String? @unique
+
+  respondents  AuditRespondent[]
+  responses    AuditSurveyResponse[]
+  useCases     AuditUseCase[]
+  reports      AuditReport[]
+  chatSessions AuditChatSession[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([clientDealId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model AuditRespondent {
+  id      String        @id @default(cuid())
+  auditId String
+  audit   FirstWinAudit @relation(fields: [auditId], references: [id], onDelete: Cascade)
+
+  name                String?
+  email               String?
+  department          String?
+  roleTitle           String?
+  isAnonymousToClient Boolean   @default(true)
+  submittedAt         DateTime?
+
+  responses AuditSurveyResponse[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([auditId])
+  @@index([email])
+}
+
+model AuditSurveyResponse {
+  id           String           @id @default(cuid())
+  auditId      String
+  audit        FirstWinAudit    @relation(fields: [auditId], references: [id], onDelete: Cascade)
+  respondentId String?
+  respondent   AuditRespondent? @relation(fields: [respondentId], references: [id], onDelete: SetNull)
+
+  questionKey    String
+  questionText   String
+  answer         String   @db.Text
+  answerType     String   @default("text")
+  sentimentScore Int?
+  frictionTags   String[]
+
+  createdAt DateTime @default(now())
+
+  @@index([auditId])
+  @@index([respondentId])
+  @@index([questionKey])
+}
+
+model AuditUseCase {
+  id      String        @id @default(cuid())
+  auditId String
+  audit   FirstWinAudit @relation(fields: [auditId], references: [id], onDelete: Cascade)
+
+  sourceResponseIds  String[]
+  department         String?
+  workflowName       String
+  problemSummary     String   @db.Text
+  currentTools       String[]
+  currentManualSteps String?  @db.Text
+  estimatedTimeCost  String?
+  frequency          String?
+  painLevel          Int?
+  dataSensitivity    String?
+
+  solutionLevel   FirstWinSolutionLevel
+  complexityScore Int
+  valueScore      Int
+  riskScore       Int
+  firstWinScore   Int
+  recommendation  String?               @db.Text
+  status          FirstWinUseCaseStatus @default(IDENTIFIED)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([auditId])
+  @@index([solutionLevel])
+  @@index([firstWinScore])
+  @@index([status])
+}
+
+model AuditReport {
+  id      String        @id @default(cuid())
+  auditId String
+  audit   FirstWinAudit @relation(fields: [auditId], references: [id], onDelete: Cascade)
+
+  version        Int
+  summaryJson    Json
+  reportMarkdown String  @db.Text
+  reportPdfUrl   String?
+  shareTokenHash String? @unique
+
+  createdAt DateTime @default(now())
+
+  @@unique([auditId, version])
+  @@index([auditId])
+}
+
+model AuditChatSession {
+  id      String        @id @default(cuid())
+  auditId String
+  audit   FirstWinAudit @relation(fields: [auditId], references: [id], onDelete: Cascade)
+
+  userType AuditChatUserType
+  email    String?
+  messages Json
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([auditId])
+  @@index([userType])
+  @@index([createdAt])
 }
 
 // ============ TIER 1 — CLIENT-FACING WHITELABEL PORTAL ============
