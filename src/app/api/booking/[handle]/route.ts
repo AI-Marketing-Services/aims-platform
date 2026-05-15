@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { z } from "zod"
 import { db } from "@/lib/db"
 import { logger } from "@/lib/logger"
+import { formRatelimit, getIp, rateLimitedResponse } from "@/lib/ratelimit"
 
 export const dynamic = "force-dynamic"
 
@@ -31,6 +32,20 @@ export async function POST(
   { params }: { params: Promise<{ handle: string }> },
 ) {
   const { handle } = await params
+
+  // Public endpoint — rate-limit by IP + handle to prevent CRM
+  // poisoning. Without this, anyone could scripted-submit thousands of
+  // fake bookings, filling the operator's pipeline with garbage and
+  // burning their enrichment credit pool indirectly. 5 per minute per
+  // (IP, handle) is plenty for a real visitor double-clicking but kills
+  // a flood.
+  if (formRatelimit) {
+    const key = `booking:${handle}:${getIp(req)}`
+    const { success } = await formRatelimit.limit(key)
+    if (!success) {
+      return rateLimitedResponse(req, `POST /api/booking/${handle}`, key)
+    }
+  }
 
   const availability = await db.bookingAvailability.findUnique({
     where: { handle: handle.toLowerCase() },

@@ -207,7 +207,7 @@ NEXT_PUBLIC_APP_URL=https://aimseos.com
 ## Notes for Future Sessions
 
 1. Stripe keys are placeholder — need real test keys from Stripe dashboard before checkout works
-2. CLERK_WEBHOOK_SECRET is set in Vercel: `whsec_Ne/LM1nOnfRxGjl+6QhlBPMzchrpKccG` — must be configured in Clerk dashboard pointing to `https://aimseos.com/api/webhooks/clerk`
+2. CLERK_WEBHOOK_SECRET is set in Vercel only — **DO NOT commit the value to git.** The previously-committed value at this line was rotated on 2026-05-15 after a security audit. Live value exists in Vercel prod env + the Clerk dashboard endpoint at `https://www.aioperatorcollective.com/api/webhooks/clerk`.
 3. Domain: aimseos.com — DNS A record `@` → `76.76.21.21`, CNAME `www` → `cname.vercel-dns.com` (Porkbun)
 4. Vercel project ID: `prj_5zC3XD872gBSKJrjMQAG4kzxzJy1` (team: `team_jNDVLuWxahtHSJVrGdHLOorp`)
 5. Neon DB: `ep-hidden-meadow-a4qtahc0` in us-east-1

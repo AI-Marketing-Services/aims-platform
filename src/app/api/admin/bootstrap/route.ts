@@ -28,7 +28,21 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Bootstrap not configured" }, { status: 500 })
   }
 
-  if (authHeader !== `Bearer ${process.env.BOOTSTRAP_SECRET}`) {
+  // Constant-time secret comparison. A plain `!==` leaks bytewise
+  // comparison timing — an attacker can iteratively guess the secret
+  // one byte at a time by measuring response latency. crypto.timingSafeEqual
+  // requires equal-length buffers; we pad/truncate the candidate to the
+  // expected length first to avoid a length-leak side channel.
+  const expected = `Bearer ${process.env.BOOTSTRAP_SECRET}`
+  const candidate = authHeader ?? ""
+  const { timingSafeEqual } = await import("node:crypto")
+  const candidateBuf = Buffer.alloc(expected.length)
+  Buffer.from(candidate).copy(candidateBuf, 0, 0, expected.length)
+  const expectedBuf = Buffer.from(expected)
+  const ok =
+    candidate.length === expected.length &&
+    timingSafeEqual(candidateBuf, expectedBuf)
+  if (!ok) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   }
 

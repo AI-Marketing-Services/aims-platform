@@ -89,14 +89,36 @@ function normalizeBaseUrl(raw: string | null): string | null {
 
 async function fetchPage(url: string): Promise<string | null> {
   try {
-    const res = await fetch(url, {
-      redirect: "follow",
-      signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
-      headers: {
-        "user-agent": "Mozilla/5.0 (compatible; AIMSEnrichBot/1.0)",
-        accept: "text/html,application/xhtml+xml",
-      },
-    })
+    // SSRF defense — validate hostname resolves to a public IP BEFORE
+    // touching fetch(). Block private/loopback/link-local ranges so a
+    // malicious deal.website like `http://169.254.169.254/` (AWS meta-
+    // data), `http://localhost`, etc. can't exfiltrate internal
+    // services. Manual redirect so each hop can be re-validated below.
+    const { assertPublicUrl } = await import("@/lib/security/ssrf-guard")
+    let nextUrl = await assertPublicUrl(url)
+    let hops = 0
+    let res: Response
+    while (true) {
+      res = await fetch(nextUrl, {
+        redirect: "manual",
+        signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+        headers: {
+          "user-agent": "Mozilla/5.0 (compatible; AIMSEnrichBot/1.0)",
+          accept: "text/html,application/xhtml+xml",
+        },
+      })
+      // Manual redirect handling — cap at 5 hops, re-validate each.
+      // Without this, a public host could 302 us into a private IP and
+      // bypass our pre-flight assertion above.
+      if (res.status >= 300 && res.status < 400 && hops < 5) {
+        const loc = res.headers.get("location")
+        if (!loc) break
+        nextUrl = await assertPublicUrl(new URL(loc, nextUrl).toString())
+        hops++
+        continue
+      }
+      break
+    }
     if (!res.ok) return null
     const ct = res.headers.get("content-type") ?? ""
     if (!ct.includes("text/html") && !ct.includes("application/xhtml+xml")) return null

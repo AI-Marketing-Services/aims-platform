@@ -13,6 +13,11 @@ export const dynamic = "force-dynamic"
 // Vercel — we cap files at 10MB anyway.
 
 const MAX_FILE_BYTES = 10 * 1024 * 1024 // 10 MB
+// Explicit allowlist. `application/octet-stream` was previously
+// included as a "generic" fallback — but any attacker can claim
+// octet-stream and upload an .exe / .jar / .html with embedded JS
+// that, served from our Blob bucket with public access, becomes a
+// drive-by-download host under our brand. Strict allowlist only.
 const ALLOWED_FILE_TYPES = new Set([
   "application/pdf",
   "text/plain",
@@ -28,8 +33,6 @@ const ALLOWED_FILE_TYPES = new Set([
   // video (small clips only — operators usually upload audio for transcripts)
   "video/mp4",
   "video/webm",
-  // generic
-  "application/octet-stream",
 ])
 
 const textNoteSchema = z.object({

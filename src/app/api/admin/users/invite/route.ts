@@ -41,6 +41,16 @@ export async function POST(req: Request) {
   const { email, role, firstName, lastName } = parsed.data
   const trimmedEmail = email.trim().toLowerCase()
 
+  // Privilege-escalation guard: only SUPER_ADMIN may invite a new
+  // SUPER_ADMIN. Mirrors the role-update route. Without this an ADMIN
+  // could invite a controlled email with SUPER_ADMIN role baked in.
+  if (role === "SUPER_ADMIN" && actingRole !== "SUPER_ADMIN") {
+    return NextResponse.json(
+      { error: "Only SUPER_ADMIN can invite SUPER_ADMIN users" },
+      { status: 403 },
+    )
+  }
+
   try {
     const clerk = await clerkClient()
 

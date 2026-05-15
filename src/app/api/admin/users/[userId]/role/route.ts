@@ -48,6 +48,17 @@ export async function PATCH(
     )
   }
 
+  // Privilege-escalation guard: only SUPER_ADMIN may grant SUPER_ADMIN.
+  // Without this, any compromised/disgruntled ADMIN could promote a
+  // second account they control to SUPER_ADMIN and gain account-wide
+  // control (bootstrap secrets, plan grants, role mutations, etc).
+  if (parsed.data.role === "SUPER_ADMIN" && actingRole !== "SUPER_ADMIN") {
+    return NextResponse.json(
+      { error: "Only SUPER_ADMIN can grant SUPER_ADMIN role" },
+      { status: 403 },
+    )
+  }
+
   try {
     const clerk = await clerkClient()
 
